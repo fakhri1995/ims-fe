@@ -4,12 +4,23 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { REQUESTER_PASSWORD_UPDATE } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdatePassword = hasPermission(REQUESTER_PASSWORD_UPDATE);
+
   const { name } = rt.query;
   const tok = initProps;
   var pathArr = rt.pathname.split("/").slice(1);
@@ -65,6 +76,12 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
     }
   };
 
+  useEffect(() => {
+    if (!isAllowedToUpdatePassword) {
+      permissionWarningNotification("Memperbarui", "Password Requester");
+    }
+  }, [isAllowedToUpdatePassword]);
+
   return (
     <Layout
       tok={tok}
@@ -89,7 +106,7 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
                   {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                 </Link>
                 <Button
-                  disabled={praloading}
+                  disabled={praloading || !isAllowedToUpdatePassword}
                   loading={loadingubahpass}
                   onClick={instanceForm.submit}
                   type="primary"

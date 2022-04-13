@@ -11,8 +11,19 @@ import {
 } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  REQUESTERS_GET,
+  REQUESTER_GROUP_GET,
+  REQUESTER_GROUP_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -25,7 +36,15 @@ function GroupsRequestersDetail({
   dataDetailGroup,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToShowRequesterList = hasPermission(REQUESTERS_GET);
+  const isAllowedToGetRequesterGroup = hasPermission(REQUESTER_GROUP_GET);
+  const isAllowedToUpdateRequesterGroup = hasPermission(REQUESTER_GROUP_UPDATE);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 2);
@@ -61,9 +80,9 @@ function GroupsRequestersDetail({
       ["user_ids"]: value,
     });
   };
-  function handleClick() {
-    console.log(editgroup);
-  }
+  // function handleClick() {
+  //   console.log(editgroup);
+  // }
   const handleEditGroup = () => {
     setLoadingbtn(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRequesterGroup`, {
@@ -105,19 +124,27 @@ function GroupsRequestersDetail({
   //------------------------------------------
 
   //------------populate list account-------------
-  const dataDD = dataListAccount.data.data.map((doc, idx) => {
-    return {
-      value: doc.id,
-      label: doc.name,
-    };
-  });
+  const dataDD = isAllowedToShowRequesterList
+    ? dataListAccount.data.data.map((doc, idx) => {
+        return {
+          value: doc.id,
+          label: doc.name,
+        };
+      })
+    : [];
 
-  function handleChange(value) {
-    console.log(`selected ${value}`);
-  }
+  // function handleChange(value) {
+  //   console.log(`selected ${value}`);
+  // }
 
   //----------------------------------------------
   const { TextArea } = Input;
+
+  useEffect(() => {
+    if (!isAllowedToGetRequesterGroup) {
+      permissionWarningNotification("Mendapatkan", "Detail Requester Group");
+    }
+  }, [isAllowedToGetRequesterGroup]);
 
   return (
     <Layout
@@ -146,6 +173,7 @@ function GroupsRequestersDetail({
                   {
                     // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Button
+                      disabled={!isAllowedToUpdateRequesterGroup}
                       type="primary"
                       size="middle"
                       onClick={instanceForm.submit}
@@ -158,157 +186,161 @@ function GroupsRequestersDetail({
               </div>
             </Sticky>
           </div>
-          <Form
-            layout="vertical"
-            onFinish={handleEditGroup}
-            style={{ display: "contents" }}
-            form={instanceForm}
-          >
-            <div
-              className=" col-span-1 md:col-span-3 flex flex-col"
-              id="formAgentsWrapper"
+          <AccessControl hasPermission={REQUESTERS_GET}>
+            <Form
+              layout="vertical"
+              onFinish={handleEditGroup}
+              style={{ display: "contents" }}
+              form={instanceForm}
             >
-              <div className="pb-4 md:mb-0 ">
-                <Form.Item
-                  name="name"
-                  style={{ marginRight: `1rem` }}
-                  label="Group Name"
-                  rules={[
+              <div
+                className=" col-span-1 md:col-span-3 flex flex-col"
+                id="formAgentsWrapper"
+              >
+                <div className="pb-4 md:mb-0 ">
+                  <Form.Item
+                    name="name"
+                    style={{ marginRight: `1rem` }}
+                    label="Group Name"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Nama grup harus diisi",
+                      },
+                    ]}
+                    initialValue={editgroup.name}
+                  >
                     {
-                      required: true,
-                      message: "Nama grup harus diisi",
-                    },
-                  ]}
-                  initialValue={editgroup.name}
-                >
-                  {
-                    // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                    <Input
-                      placeholder="Group Name"
-                      name={`name`}
-                      onChange={onChangeEditGroup}
-                    ></Input>
-                  }
-                </Form.Item>
-              </div>
+                      // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                      <Input
+                        placeholder="Group Name"
+                        name={`name`}
+                        onChange={onChangeEditGroup}
+                      ></Input>
+                    }
+                  </Form.Item>
+                </div>
 
-              <div className="pb-4 md:mb-0">
-                <Form.Item
-                  name="description"
-                  style={{ marginRight: `1rem` }}
-                  label="Group Description"
-                  rules={[
+                <div className="pb-4 md:mb-0">
+                  <Form.Item
+                    name="description"
+                    style={{ marginRight: `1rem` }}
+                    label="Group Description"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Deskripsi grup harus diisi",
+                      },
+                    ]}
+                    initialValue={editgroup.description}
+                  >
                     {
-                      required: true,
-                      message: "Deskripsi grup harus diisi",
-                    },
-                  ]}
-                  initialValue={editgroup.description}
-                >
-                  {
-                    // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                    <TextArea
-                      placeholder="Group Description"
-                      rows={2}
-                      name={`description`}
-                      onChange={onChangeEditGroup}
-                    />
-                  }
-                </Form.Item>
-              </div>
+                      // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                      <TextArea
+                        placeholder="Group Description"
+                        rows={2}
+                        name={`description`}
+                        onChange={onChangeEditGroup}
+                      />
+                    }
+                  </Form.Item>
+                </div>
 
-              <div className="pb-4 md:mb-0 ">
-                <Form.Item
-                  name="group_head"
-                  style={{ marginRight: `1rem` }}
-                  label="Group Head"
-                  rules={[
+                <div className="pb-4 md:mb-0 ">
+                  <Form.Item
+                    name="group_head"
+                    style={{ marginRight: `1rem` }}
+                    label="Group Head"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Ketua grup harus diisi",
+                      },
+                    ]}
+                    initialValue={editgroup.group_head}
+                  >
                     {
-                      required: true,
-                      message: "Ketua grup harus diisi",
-                    },
-                  ]}
-                  initialValue={editgroup.group_head}
-                >
-                  {
-                    // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                    <Select
-                      showSearch
-                      placeholder="Add Group Head"
-                      name={`group_head`}
-                      showArrow
-                      options={dataDD}
-                      optionFilterProp="label"
-                      onChange={onChangeEditGroupHeadGroup}
-                      style={{ width: "100%", lineHeight: "2.4" }}
-                    />
-                  }
-                </Form.Item>
-              </div>
+                      // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                      <Select
+                        showSearch
+                        placeholder="Add Group Head"
+                        name={`group_head`}
+                        showArrow
+                        options={dataDD}
+                        optionFilterProp="label"
+                        onChange={onChangeEditGroupHeadGroup}
+                        style={{ width: "100%", lineHeight: "2.4" }}
+                      />
+                    }
+                  </Form.Item>
+                </div>
 
-              {/* </div> */}
-              <Divider style={{ borderTop: "1px solid rgba(0, 0, 0, 0.2)" }} />
-              {
-                // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                <>
-                  <h1 className="font-semibold text-base w-auto py-2">
-                    Agents
-                  </h1>
-                  <div className="border-gray-300 md:px-4 px-0 py-4 mb-5 border bg-white w-full h-auto ">
-                    <Radio.Group
-                      className="flex flex-col md:flex-row"
-                      row
-                      onChange={onChange}
-                      value={value}
-                    >
-                      <Radio className="flex-initial font-bold " value={1}>
-                        Add as a Member
-                        <p
-                          className="pl-6 whitespace-normal font-normal"
-                          style={{ width: "min-content", minWidth: "15rem" }}
-                        >
-                          Members can be assigned tickets, tasks and other items
-                          that belong to this group.
-                        </p>
-                      </Radio>
-                      <Radio
-                        disabled
-                        className="flex-initial font-bold"
-                        value={2}
+                {/* </div> */}
+                <Divider
+                  style={{ borderTop: "1px solid rgba(0, 0, 0, 0.2)" }}
+                />
+                {
+                  // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                  <>
+                    <h1 className="font-semibold text-base w-auto py-2">
+                      Agents
+                    </h1>
+                    <div className="border-gray-300 md:px-4 px-0 py-4 mb-5 border bg-white w-full h-auto ">
+                      <Radio.Group
+                        className="flex flex-col md:flex-row"
+                        row
+                        onChange={onChange}
+                        value={value}
                       >
-                        Add as an Observer
-                        <p
-                          className="pl-6 whitespace-normal font-normal"
-                          style={{ width: "min-content", minWidth: "15rem" }}
+                        <Radio className="flex-initial font-bold " value={1}>
+                          Add as a Member
+                          <p
+                            className="pl-6 whitespace-normal font-normal"
+                            style={{ width: "min-content", minWidth: "15rem" }}
+                          >
+                            Members can be assigned tickets, tasks and other
+                            items that belong to this group.
+                          </p>
+                        </Radio>
+                        <Radio
+                          disabled
+                          className="flex-initial font-bold"
+                          value={2}
                         >
-                          Members can be assigned tickets, tasks and other items
-                          that belong to this group.
-                        </p>
-                      </Radio>
-                    </Radio.Group>
-                    <Row>
-                      <Col flex="auto">
-                        <Select
-                          placeholder="Add an Requester"
-                          showArrow
-                          mode="multiple"
-                          optionFilterProp="label"
-                          onChange={handleChangeEditRequester}
-                          defaultValue={editgroup.user_ids}
-                          options={dataDD}
-                          style={{
-                            width: "100%",
-                            padding: "0 5px",
-                            lineHeight: "2.4",
-                          }}
-                        />
-                      </Col>
-                    </Row>
-                  </div>
-                </>
-              }
-            </div>
-          </Form>
+                          Add as an Observer
+                          <p
+                            className="pl-6 whitespace-normal font-normal"
+                            style={{ width: "min-content", minWidth: "15rem" }}
+                          >
+                            Members can be assigned tickets, tasks and other
+                            items that belong to this group.
+                          </p>
+                        </Radio>
+                      </Radio.Group>
+                      <Row>
+                        <Col flex="auto">
+                          <Select
+                            placeholder="Add an Requester"
+                            showArrow
+                            mode="multiple"
+                            optionFilterProp="label"
+                            onChange={handleChangeEditRequester}
+                            defaultValue={editgroup.user_ids}
+                            options={dataDD}
+                            style={{
+                              width: "100%",
+                              padding: "0 5px",
+                              lineHeight: "2.4",
+                            }}
+                          />
+                        </Col>
+                      </Row>
+                    </div>
+                  </>
+                }
+              </div>
+            </Form>
+          </AccessControl>
           <div className={`${st.grupdesc} flex flex-col space-y-3 px-4`}></div>
         </div>
       </>

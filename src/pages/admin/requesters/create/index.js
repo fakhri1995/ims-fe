@@ -16,7 +16,8 @@ import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ROLES_GET } from "lib/features";
+import { REQUESTER_ADD, ROLES_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
@@ -45,6 +46,7 @@ function RequestersCreate({
    */
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+  const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
 
   const rt = useRouter();
   const tok = initProps;
@@ -155,6 +157,11 @@ function RequestersCreate({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToAddRequester) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
       method: `GET`,
       headers: {
@@ -167,7 +174,7 @@ function RequestersCreate({
         setdatacompanylist(res2.data.children);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToAddRequester]);
   useEffect(() => {
     if (isAllowedToGetRolesList) {
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
@@ -183,6 +190,12 @@ function RequestersCreate({
       return;
     }
   }, [isAllowedToGetRolesList]);
+
+  useEffect(() => {
+    if (!isAllowedToAddRequester) {
+      permissionWarningNotification("Menambahkan", "Requester");
+    }
+  }, [isAllowedToAddRequester]);
 
   return (
     <Layout
@@ -214,7 +227,7 @@ function RequestersCreate({
                 {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                 {/* </Link> */}
                 <Button
-                  disabled={praloading}
+                  disabled={praloading || !isAllowedToAddRequester}
                   loading={loadingcreate}
                   onClick={instanceForm.submit}
                   type="primary"

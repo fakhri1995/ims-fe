@@ -2,7 +2,7 @@ import { DeleteOutlined, DownOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Modal, Table, Tabs, notification } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -14,7 +14,12 @@ import {
   AGENT_GROUP_ADD,
   AGENT_GROUP_DELETE,
   AGENT_GROUP_UPDATE,
+  REQUESTER_GROUPS_GET,
+  REQUESTER_GROUP_ADD,
+  REQUESTER_GROUP_DELETE,
+  REQUESTER_GROUP_UPDATE,
 } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -37,6 +42,11 @@ function Groups({
   const isAllowedToUpdateAgentGroup = hasPermission(AGENT_GROUP_UPDATE);
   const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
   const isAllowedToDeleteAgentGroup = hasPermission(AGENT_GROUP_DELETE);
+
+  const isAllowedToShowRequesterGroups = hasPermission(REQUESTER_GROUPS_GET);
+  const isAllowedToUpdateRequesterGroup = hasPermission(REQUESTER_GROUP_UPDATE);
+  const isAllowedToAddRequesterGroup = hasPermission(REQUESTER_GROUP_ADD);
+  const isAllowedToDeleteRequesterGroup = hasPermission(REQUESTER_GROUP_DELETE);
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -172,6 +182,8 @@ function Groups({
         render(text, record) {
           const disableAgentsUpdateButton =
             variabel === "agents" && !isAllowedToUpdateAgentGroup;
+          const disableRequesterUpdateButton =
+            variabel === "requesters" && !isAllowedToUpdateRequesterGroup;
 
           return {
             props: {
@@ -180,7 +192,9 @@ function Groups({
             children: (
               <div>
                 <Button
-                  disabled={disableAgentsUpdateButton}
+                  disabled={
+                    disableAgentsUpdateButton || disableRequesterUpdateButton
+                  }
                   type="link"
                   className="m-0 p-0 text-black hover:text-primary100"
                 >
@@ -239,7 +253,7 @@ function Groups({
                   <>
                     {
                       // [141, 142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                      <Button>
+                      <Button disabled={!isAllowedToUpdateRequesterGroup}>
                         <Link
                           href={{
                             pathname:
@@ -295,6 +309,7 @@ function Groups({
                     {
                       // [143].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                       <Button
+                        disabled={!isAllowedToDeleteRequesterGroup}
                         onClick={() => {
                           onClickModalDeleteGroup(true, record, "requesters");
                         }}
@@ -339,6 +354,7 @@ function Groups({
           // [140].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
           <Menu.Item key="1">
             <Button
+              disabled={!isAllowedToAddRequesterGroup}
               type="link"
               block
               className="m-0 p-0 text-black hover:text-primary100"
@@ -356,6 +372,17 @@ function Groups({
       </Menu>
     );
   };
+
+  useEffect(() => {
+    if (!isAllowedToShowAgentGroups) {
+      permissionWarningNotification("Mendapatkan", "Daftar Group Agent");
+    }
+
+    if (!isAllowedToShowRequesterGroups) {
+      permissionWarningNotification("Mendapatkan", "Daftar Group Requester");
+    }
+  }, [isAllowedToShowAgentGroups, isAllowedToShowRequesterGroups]);
+
   return (
     <Layout
       tok={tok}
@@ -416,7 +443,9 @@ function Groups({
                       <Table
                         showHeader={false}
                         scroll={{ x: 400 }}
-                        dataSource={groupsRequesters}
+                        dataSource={
+                          isAllowedToShowRequesterGroups ? groupsRequesters : []
+                        }
                         columns={columns("requesters")}
                         onRow={(record, rowIndex) => {}}
                       ></Table>

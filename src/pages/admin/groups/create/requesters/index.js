@@ -11,8 +11,13 @@ import {
 } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { REQUESTERS_GET, REQUESTER_GROUP_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -24,7 +29,14 @@ function GroupsRequestersCreate({
   dataListAccount,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetRequesterList = hasPermission(REQUESTERS_GET);
+  const isAllowedToAddRequesterGroup = hasPermission(REQUESTER_GROUP_ADD);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 1);
@@ -108,14 +120,22 @@ function GroupsRequestersCreate({
   //------------------------------------------
 
   //------------populate list account-------------
-  const dataDD = dataListAccount.data.data.map((doc, idx) => {
-    return {
-      value: doc.id,
-      label: doc.name,
-    };
-  });
+  const dataDD = isAllowedToGetRequesterList
+    ? dataListAccount.data.data.map((doc, idx) => {
+        return {
+          value: doc.id,
+          label: doc.name,
+        };
+      })
+    : [];
   //----------------------------------------------
   const { TextArea } = Input;
+
+  useEffect(() => {
+    if (!isAllowedToAddRequesterGroup) {
+      permissionWarningNotification("Menambahkan", "Group Requester");
+    }
+  }, [isAllowedToAddRequesterGroup]);
 
   return (
     <Layout
@@ -145,6 +165,7 @@ function GroupsRequestersCreate({
                     </Button>
                   </Link>
                   <Button
+                    disabled={!isAllowedToAddRequesterGroup}
                     type="primary"
                     size="middle"
                     onClick={instanceForm.submit}
