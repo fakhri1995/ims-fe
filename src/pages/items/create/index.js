@@ -50,7 +50,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     deskripsi: "",
     manufacturer_id: null,
     is_consumable: false,
-    quantity: 0,
+    quantity: null,
     mig_id: "",
     notes: "",
     inventory_values: [],
