@@ -512,6 +512,33 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     }}
                   />
                 </Form.Item>
+                {updatedata.is_consumable && (
+                  <Form.Item name="quantity" label="Jumlah Barang">
+                    <InputNumber
+                      defaultValue={updatedata.quantities[0]?.quantity || 0}
+                      style={{ width: `100%` }}
+                      disabled
+                      rows={4}
+                      name="quantity"
+                      onChange={(value) => {
+                        setupdatedata(() => {
+                          const previousData = { ...updatedata };
+                          const quantityElementData =
+                            previousData.quantities[0];
+
+                          if (quantityElementData) {
+                            previousData.quantities[0] = {
+                              ...quantityElementData,
+                              quantity: value,
+                            };
+                          }
+
+                          return previousData;
+                        });
+                      }}
+                    />
+                  </Form.Item>
+                )}
               </Form>
             )}
           </div>
