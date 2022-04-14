@@ -1258,7 +1258,9 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                             });
                             temploc.inventory_parts = yo;
                             temploc.manufacturer_id = res2.data.manufacturer_id;
-                            temploc.is_consumable = res2.data.is_consumable;
+                            temploc.is_consumable = Boolean(
+                              res2.data.is_consumable
+                            );
                             return temploc;
                           });
                           setloadingspec(false);
@@ -1522,7 +1524,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   }}
                 />
               </Form.Item>
-              {Boolean(newdata.is_consumable) && (
+              {newdata.is_consumable && (
                 <Form.Item name="quantity" label="Jumlah Barang">
                   <InputNumber
                     style={{ width: `100%` }}

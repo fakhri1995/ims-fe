@@ -150,7 +150,7 @@ const Overview = ({
           </div>
           <div className="flex flex-col mb-5">
             <h1 className=" text-sm font-semibold mb-0">Location:</h1>
-            {maindata.is_consumable === true ? (
+            {maindata.is_consumable ? (
               maindata.quantities.map((doc, idx) => (
                 <p className="mb-0 text-sm">
                   {idx + 1}. {doc.name} - {doc.quantity}
@@ -2970,6 +2970,11 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             });
           } else {
             t[prop] = res2.data[prop];
+
+            // cast 0 | 1 into boolean value
+            if (prop === "is_consumable") {
+              t[prop] = Boolean(res2.data[prop]);
+            }
           }
         }
         setmaindata(t);
