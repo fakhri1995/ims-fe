@@ -389,6 +389,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             model_columns: newassetfielddata2.concat(newfieldmap),
             add_columns: temp.concat(newfieldmap),
             required_sn: res2.data.required_sn,
+            is_consumable: Boolean(res2.data.is_consumable),
           });
           setdefaultdata({
             ...defaultdata,
@@ -484,6 +485,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
             required_sn: res2.data.required_sn,
             asset_id: res2.data.code,
             model_columns: temp.concat(newfieldmap),
+            is_consumable: Boolean(res2.data.is_consumable),
           });
           setassettypecode2(res2.data.id);
           // setnewdatatrigger2(prev => !prev)
@@ -2613,7 +2615,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
           </div>
         </div>
 
-        {newdata.is_consumable === 0 && (
+        {!newdata.is_consumable && (
           <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col">
             <div className="mb-5">
               <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>

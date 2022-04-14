@@ -145,6 +145,11 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
             });
           } else {
             t[prop] = res2.data[prop];
+
+            // cast 0 | 1 into boolean value
+            if (prop === "is_consumable") {
+              t[prop] = Boolean(res2.data[prop]);
+            }
           }
         }
         setdisabledfield((prev) => {

@@ -234,6 +234,11 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
             });
           } else {
             t[prop] = res2.data[prop];
+
+            // cast 0 | 1 into boolean value
+            if (prop === "is_consumable") {
+              t[prop] = Boolean(res2.data[prop]);
+            }
           }
         }
         setdisplaydata(t);
@@ -465,7 +470,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
             </div>
           </div>
 
-          {displaydata.is_consumable === 0 && (
+          {!displaydata.is_consumable && (
             <div className="flex flex-col">
               <div className="mb-4 px-5 py-3">
                 <h1 className="font-bold mb-0 text-xl">
