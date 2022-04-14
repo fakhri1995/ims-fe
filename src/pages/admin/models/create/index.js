@@ -353,6 +353,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
             model_columns: temp.concat(newfieldmap),
             required_sn: res2.data.required_sn,
             asset_id: res2.data.id,
+            is_consumable: Boolean(res2.data.is_consumable),
           });
           setassettypecode(res2.data.id);
           // setnewdatatrigger(prev => !prev)
@@ -411,6 +412,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
             required_sn: res2.data.required_sn,
             asset_id: res2.data.id,
             model_columns: temp.concat(newfieldmap),
+            is_consumable: Boolean(res2.data.is_consumable),
           });
           setassettypecode2(res2.data.id);
           setloadingspec2(false);

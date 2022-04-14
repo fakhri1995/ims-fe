@@ -9,7 +9,12 @@ import {
   Tooltip,
   TreeSelect,
 } from "antd";
-import { NumberParam, useQueryParams, withDefault } from "next-query-params";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import QueryString from "qs";
@@ -27,7 +32,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     asset_id: withDefault(NumberParam, undefined),
     model_id: withDefault(NumberParam, undefined),
     location_id: withDefault(NumberParam, undefined),
-    mig_id: withDefault(NumberParam, undefined),
+    mig_id: withDefault(StringParam, undefined),
     status_condition: withDefault(NumberParam, /** 1-3 */ undefined),
     status_usage: withDefault(NumberParam, /** 1-3 */ undefined),
     sort_by: withDefault(
