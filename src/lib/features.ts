@@ -137,8 +137,8 @@ export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admi
  * - [ ] components/drawer/tickets/drawerTicketExports
  * - [ ] components/drawer/tickets/drawerTicketUpdate
  * - [ ] components/screen/form-aktivitas/DetailAktivitas/AktivitasUserListEditableCard
- * - [ ] /admin/groups/update/agents/[groupId]
- * - [ ] /admin/groups/create/agents
+ * - [x] /admin/groups/update/agents/[groupId]
+ * - [x] /admin/groups/create/agents
  */
 export const USERS_GET = "USERS_GET";
 /**

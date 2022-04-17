@@ -16,7 +16,7 @@ import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { AGENT_GROUP_ADD } from "lib/features";
+import { AGENTS_GET, AGENT_GROUP_ADD } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
@@ -35,6 +35,7 @@ function GroupsAgentsCreate({
   const rt = useRouter();
   const { hasPermission } = useAccessControl();
   const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
+  const isAllowedToShowAgentList = hasPermission(USERS_GET);
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -111,12 +112,14 @@ function GroupsAgentsCreate({
   //------------------------------------------
 
   //------------populate list account-------------
-  const dataDD = dataListAccount.data.map((doc, idx) => {
-    return {
-      value: doc.id,
-      label: doc.name,
-    };
-  });
+  const dataDD = isAllowedToShowAgentList
+    ? dataListAccount.data.map((doc, idx) => {
+        return {
+          value: doc.id,
+          label: doc.name,
+        };
+      })
+    : [];
   // console.log(dataDD)
   //----------------------------------------------
   const { TextArea } = Input;
