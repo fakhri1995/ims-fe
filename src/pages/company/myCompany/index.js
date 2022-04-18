@@ -67,7 +67,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
    * Dependencies
    */
   const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
   /** Bank Management */
   const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
   const isAllowedToUpdateMainBank = hasPermission(COMPANY_MAIN_BANK_UPDATE);
@@ -118,17 +119,17 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [displaydata, setdisplaydata] = useState({
     id: "",
-    name: "-",
-    address: "-",
-    phone_number: "-",
-    image_logo: "-",
-    singkatan: "-",
-    tanggal_pkp: isAllowedToGetCompanyDetail ? moment(new Date()) : "-",
-    penanggung_jawab: "-",
-    npwp: "-",
-    fax: "-",
-    email: "-",
-    website: "-",
+    name: "",
+    address: "",
+    phone_number: "",
+    image_logo: "",
+    singkatan: "",
+    tanggal_pkp: moment(new Date()),
+    penanggung_jawab: "",
+    npwp: "",
+    fax: "",
+    email: "",
+    website: "",
   });
   const [hapusbankdata, sethapusbankdata] = useState({
     id: "",
@@ -623,8 +624,21 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
   //useEffect
   useEffect(() => {
-    if (!isAllowedToGetCompanyDetail) {
+    if (!isAllowedToGetCompanyDetail && !isAccessControlPending) {
       permissionWarningNotification("Mendapatkan", "Detail Company");
+      setdisplaydata({
+        name: "-",
+        singkatan: "-",
+        address: "-",
+        penanggung_jawab: "-",
+        tanggal_pkp: "-",
+        npwp: "-",
+        email: "-",
+        phone_number: "-",
+        website: "-",
+        image_logo: "/image/Company.png",
+        fax: "-",
+      });
       setpraloadingedit(false);
       return;
     }
@@ -668,7 +682,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         return res2.data.id;
       })
       .then((res3) => {
-        if (!isAllowedToGetCompanyLog) {
+        if (!isAllowedToGetCompanyLog && !isAccessControlPending) {
           permissionWarningNotification(
             "Mendapatkan",
             "Riwayat Aktivitas Company"
@@ -694,7 +708,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             setpraloadingedit(false);
           });
       });
-  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
+  }, [
+    isAllowedToGetCompanyDetail,
+    isAllowedToGetCompanyLog,
+    isAccessControlPending,
+  ]);
   useEffect(() => {
     if (!isAllowedToGetMainBanks) {
       return;
