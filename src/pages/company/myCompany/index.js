@@ -705,7 +705,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, [bankloadinghapus, bankloadingedit, bankdrawer, isAllowedToGetMainBanks]);
   useEffect(() => {
-    if (!isAllowedToGetCompanyRelationshipInventories) {
+    if (!isAllowedToGetCompanyRelationshipInventories && viewrelasi) {
       permissionWarningNotification("Mendapatkan", "Relasi Inventory Company");
       setloadingrelasi(false);
       return;
@@ -736,6 +736,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     triggerupdaterelasi,
     isAllowedToGetCompanyRelationshipInventories,
   ]);
+
   return (
     <Layout
       tok={tok}
