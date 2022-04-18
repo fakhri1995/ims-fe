@@ -176,8 +176,9 @@ export const AccessControlProvider: FC = ({ children }) => {
       hasRole,
       hasPermission,
       updateAccessControl: refetch,
+      isPending,
     }),
-    [rolesRecord, permissionsRecord, hasRole, hasPermission, refetch]
+    [rolesRecord, permissionsRecord, hasRole, hasPermission, refetch, isPending]
   );
 
   return (
