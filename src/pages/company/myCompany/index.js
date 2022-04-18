@@ -22,10 +22,13 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  COMPANY_DETAIL_GET,
+  COMPANY_LOG_GET,
   COMPANY_MAIN_BANKS_GET,
   COMPANY_MAIN_BANK_ADD,
   COMPANY_MAIN_BANK_DELETE,
   COMPANY_MAIN_BANK_UPDATE,
+  COMPANY_RELATIONSHIP_INVENTORIES_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
@@ -63,10 +66,19 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
    */
   const rt = useRouter();
   const { hasPermission } = useAccessControl();
+  /** Bank Management */
   const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
   const isAllowedToUpdateMainBank = hasPermission(COMPANY_MAIN_BANK_UPDATE);
   const isAllowedToDeleteMainBank = hasPermission(COMPANY_MAIN_BANK_DELETE);
   const isAllowedToAddMainBank = hasPermission(COMPANY_MAIN_BANK_ADD);
+  /** Company detail management */
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
+  /** Aktivitas management */
+  const isAllowedToGetCompanyLog = hasPermission(COMPANY_LOG_GET);
+  /** Inventory management */
+  const isAllowedToGetCompanyRelationshipInventories = hasPermission(
+    COMPANY_RELATIONSHIP_INVENTORIES_GET
+  );
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();
@@ -99,17 +111,17 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [displaydata, setdisplaydata] = useState({
     id: "",
-    name: "",
-    address: "",
-    phone_number: "",
-    image_logo: "",
-    singkatan: "",
-    tanggal_pkp: moment(new Date()),
-    penanggung_jawab: "",
-    npwp: "",
-    fax: "",
-    email: "",
-    website: "",
+    name: "-",
+    address: "-",
+    phone_number: "-",
+    image_logo: "-",
+    singkatan: "-",
+    tanggal_pkp: isAllowedToGetCompanyDetail ? moment(new Date()) : "-",
+    penanggung_jawab: "-",
+    npwp: "-",
+    fax: "-",
+    email: "-",
+    website: "-",
   });
   const [hapusbankdata, sethapusbankdata] = useState({
     id: "",
@@ -350,6 +362,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     });
   };
   const fetchDataMoreLogs = () => {
+    if (!isAllowedToGetCompanyLog) {
+      sethasmore(false);
+      return;
+    }
+
     if (logs.length >= rawlogs.total || logs.length === 0) {
       sethasmore(false);
     } else {
@@ -599,6 +616,12 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      setpraloadingedit(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${dataProfile.data.company.id}`,
       {
@@ -638,6 +661,15 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         return res2.data.id;
       })
       .then((res3) => {
+        if (!isAllowedToGetCompanyLog) {
+          permissionWarningNotification(
+            "Mendapatkan",
+            "Riwayat Aktivitas Company"
+          );
+          setpraloadingedit(false);
+          return;
+        }
+
         fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyLog?id=${res3}&page=${page}`,
           {
@@ -655,7 +687,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             setpraloadingedit(false);
           });
       });
-  }, []);
+  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
   useEffect(() => {
     if (!isAllowedToGetMainBanks) {
       return;
@@ -673,6 +705,12 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, [bankloadinghapus, bankloadingedit, bankdrawer, isAllowedToGetMainBanks]);
   useEffect(() => {
+    if (!isAllowedToGetCompanyRelationshipInventories) {
+      permissionWarningNotification("Mendapatkan", "Relasi Inventory Company");
+      setloadingrelasi(false);
+      return;
+    }
+
     if (viewrelasi === true) {
       setloadingrelasi(true);
       fetch(
@@ -691,7 +729,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           setloadingrelasi(false);
         });
     }
-  }, [viewrelasi, drawerelasi, triggerdeleterelasi, triggerupdaterelasi]);
+  }, [
+    viewrelasi,
+    drawerelasi,
+    triggerdeleterelasi,
+    triggerupdaterelasi,
+    isAllowedToGetCompanyRelationshipInventories,
+  ]);
   return (
     <Layout
       tok={tok}
@@ -779,6 +823,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     className="mt-5 flex justify-center items-center cursor-pointer"
                     onClick={() => {
+                      if (!isAllowedToGetCompanyDetail) {
+                        permissionWarningNotification(
+                          "Memperbarui",
+                          "Detail Company"
+                        );
+                        return;
+                      }
                       seteditable(true);
                     }}
                   >
@@ -1342,7 +1393,9 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
                   <div className="flex justify-between items-center">
                     <H1>Akun Bank</H1>
-                    <div
+                    <Buttonsys
+                      type="primary"
+                      disabled={!isAllowedToAddMainBank}
                       onClick={() => {
                         if (!isAllowedToAddMainBank) {
                           permissionWarningNotification("Menambahkan", "Bank");
@@ -1352,8 +1405,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         setbankdrawer(true);
                       }}
                     >
-                      <Buttonsys type="primary">+ Tambah Akun Bank</Buttonsys>
-                    </div>
+                      + Tambah Akun Bank
+                    </Buttonsys>
                   </div>
                   <AccessControl hasPermission={COMPANY_MAIN_BANKS_GET}>
                     {banks.map((doc, idx) => {

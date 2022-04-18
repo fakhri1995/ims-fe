@@ -346,7 +346,7 @@ export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
  * - [ ] componets/table/tableCustom
  *
  * - [ ] pages/company/clients/[companyId]
- * - [ ] pages/company/myCompany
+ * - [x] pages/company/myCompany
  */
 export const COMPANY_RELATIONSHIP_INVENTORIES_GET =
   "COMPANY_RELATIONSHIP_INVENTORIES_GET";
@@ -373,10 +373,10 @@ export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
  * - [ ] pages/admin/requesters
  * - [ ] pages/admin/requesters/update/[userId]
  *
- * - [ ] pages/company/myCompany/locations
+ * - [ ] pages/company/myCompany/locations/[locId]
  * - [ ] pages/company/myCompany/locations
  * - [ ] pages/company/clients
- * - [ ] pages/company/clients/locations
+ * - [ ] pages/company/clients/locations/[locId]
  * - [ ] pages/company/clients/locations
  */
 export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
@@ -395,14 +395,14 @@ export const COMPANY_SUB_LOCATIONS_GET = "COMPANY_SUB_LOCATIONS_GET";
 /**
  * /getCompanyDetail
  *
- * - [ ] pages/company/myCompany
+ * - [x] pages/company/myCompany
  * - [ ] pages/company/clients/[companyId]
  */
 export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
 /**
  * /getSubCompanyDetail?id
  *
- * - [ ] pages/company/myCompany
+ * - [ ] pages/company/myCompany/locations
  * - [ ] pages/company/myCompany/locations/[locId]
  *
  * - [ ] pages/company/clients/[companyId]
@@ -420,7 +420,7 @@ export const COMPANY_SUB_PROFILE_GET = "COMPANY_SUB_PROFILE_GET";
 /**
  * /getCompanyLog
  *
- * - [ ] pages/company/myCompany
+ * - [x] pages/company/myCompany
  * - [ ] pages/company/clients/[companyId]
  */
 export const COMPANY_LOG_GET = "COMPANY_LOG_GET";
