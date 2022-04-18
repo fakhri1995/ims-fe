@@ -5,6 +5,19 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_BRANCHS_GET,
+  COMPANY_BRANCH_ADD,
+  COMPANY_LOCATIONS_GET,
+  COMPANY_MAIN_LOCATIONS_GET,
+  COMPANY_SUB_PROFILE_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Buttonsys from "../../../../components/button";
 import DrawerLokasi from "../../../../components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate";
 import {
@@ -23,7 +36,21 @@ import httpcookie from "cookie";
 Chart.register(ArcElement, Tooltip);
 
 const Index3 = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetMainLocations = hasPermission(COMPANY_MAIN_LOCATIONS_GET);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const isAllowedToGetSubCompanyProfile = hasPermission(
+    COMPANY_SUB_PROFILE_GET
+  );
+  const isAllowedToAddCompanyBranch = hasPermission(COMPANY_BRANCH_ADD);
+  const isAllowedToGetBranchesList = hasPermission(COMPANY_BRANCHS_GET);
+  const canAddNewLocation =
+    isAllowedToAddCompanyBranch && isAllowedToGetBranchesList;
+
   var activeTab = "profile";
   var temp2 = rt.pathname.split("/").slice(1);
   temp2.splice(1, 1);
@@ -34,41 +61,41 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
     activeTab = active;
   }
 
-  const [patharr, setpatharr] = useState([]);
-  const [rawdata, setrawdata] = useState({
-    id: "",
-    name: "",
-    address: "",
-    phone_number: "",
-    image_logo: "",
-    singkatan: "",
-    tanggal_pkp: moment(new Date()),
-    penanggung_jawab: "",
-    npwp: "",
-    fax: "",
-    email: "",
-    website: "",
-    role: "",
-    induk_level_1_count: "",
-    induk_level_2_count: "",
-    induk_level_3_count: "",
-  });
-  const [displaydata, setdisplaydata] = useState({
-    id: "",
-    name: "",
-    address: "",
-    phone_number: "",
-    image_logo: "",
-    singkatan: "",
-    tanggal_pkp: moment(new Date()),
-    penanggung_jawab: "",
-    npwp: "",
-    fax: "",
-    email: "",
-    website: "",
-  });
+  // const [patharr, setpatharr] = useState([]);
+  // const [rawdata, setrawdata] = useState({
+  //   id: "",
+  //   name: "",
+  //   address: "",
+  //   phone_number: "",
+  //   image_logo: "",
+  //   singkatan: "",
+  //   tanggal_pkp: moment(new Date()),
+  //   penanggung_jawab: "",
+  //   npwp: "",
+  //   fax: "",
+  //   email: "",
+  //   website: "",
+  //   role: "",
+  //   induk_level_1_count: "",
+  //   induk_level_2_count: "",
+  //   induk_level_3_count: "",
+  // });
+  // const [displaydata, setdisplaydata] = useState({
+  //   id: "",
+  //   name: "",
+  //   address: "",
+  //   phone_number: "",
+  //   image_logo: "",
+  //   singkatan: "",
+  //   tanggal_pkp: moment(new Date()),
+  //   penanggung_jawab: "",
+  //   npwp: "",
+  //   fax: "",
+  //   email: "",
+  //   website: "",
+  // });
   const [praloading, setpraloading] = useState(true);
-  const [isenabled, setisenabled] = useState(false);
+  // const [isenabled, setisenabled] = useState(false);
   //branch
   const [branchdata, setbranchdata] = useState([]);
   const [branchdata2, setbranchdata2] = useState([]);
@@ -113,6 +140,16 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
       setbranchdata(temp);
       setsortedname("A-Z");
     } else {
+      const userCompanyRole = dataProfile.data.company.role;
+      const canSeeMainLocations =
+        isAllowedToGetMainLocations && userCompanyRole !== 2;
+      const canSeeLocations = isAllowedToGetLocations && userCompanyRole === 2;
+
+      if (!canSeeMainLocations && !canSeeLocations) {
+        setpraloading(false);
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
           dataProfile.data.company.role !== 2
@@ -323,6 +360,18 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
 
   //USE EFECT
   useEffect(() => {
+    const userCompanyRole = dataProfile.data.company.role;
+    const canSeeMainLocations =
+      isAllowedToGetMainLocations && userCompanyRole !== 2;
+    const canSeeLocations = isAllowedToGetLocations && userCompanyRole === 2;
+
+    if (!canSeeMainLocations && !canSeeLocations) {
+      permissionWarningNotification("Mendapatkan", "Daftar Lokasi");
+      setpraloading(false);
+      setloadingselected(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.company.role !== 2
@@ -349,9 +398,15 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
         setpraloading(false);
         setloadingselected(false);
       });
-  }, [lokasidrawer]);
+  }, [lokasidrawer, isAllowedToGetMainLocations, isAllowedToGetLocations]);
   useEffect(() => {
     if (selected === true) {
+      if (!isAllowedToGetSubCompanyProfile) {
+        permissionWarningNotification("Mendapatkan", "Detail Sub Company");
+        setloadingselected(false);
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyProfile?id=${idselected}`,
         {
@@ -374,7 +429,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
           setloadingselected(false);
         });
     }
-  }, [idselected]);
+  }, [idselected, isAllowedToGetSubCompanyProfile]);
   return (
     <Layout
       tok={initProps}
@@ -395,7 +450,11 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
             </div>
             <div className="mx-0">
               <Buttonsys
-                type="ghost"
+                type={
+                  isAllowedToGetMainLocations || isAllowedToGetLocations
+                    ? "ghost"
+                    : "primary"
+                }
                 selected={sortedbtn === true ? true : false}
                 onClick={() => {
                   onSortLoc(sorted === -1 ? true : !sorted);
@@ -411,6 +470,7 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => {
                   setlokasidrawer(true);
                 }}
+                disabled={!canAddNewLocation}
               >
                 + Tambah Lokasi
               </Buttonsys>
@@ -585,16 +645,19 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
           )}
         </div>
       </div>
-      <DrawerLokasi
-        title={"Tambah Lokasi"}
-        visible={lokasidrawer}
-        onClose={() => {
-          setlokasidrawer(false);
-        }}
-        buttonOkText={"Simpan Lokasi"}
-        initProps={initProps}
-        onvisible={setlokasidrawer}
-      />
+
+      <AccessControl hasPermission={[COMPANY_BRANCH_ADD, COMPANY_BRANCHS_GET]}>
+        <DrawerLokasi
+          title={"Tambah Lokasi"}
+          visible={lokasidrawer}
+          onClose={() => {
+            setlokasidrawer(false);
+          }}
+          buttonOkText={"Simpan Lokasi"}
+          initProps={initProps}
+          onvisible={setlokasidrawer}
+        />
+      </AccessControl>
     </Layout>
   );
 };

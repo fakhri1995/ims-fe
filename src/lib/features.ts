@@ -326,6 +326,8 @@ export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
  * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate
  * - [ ] components/drawer/companies/drawerSubLokasi
  *
+ * - [x] pages/company/myCompany/locations
+ *
  * - [ ] pages/admin/agents
  * - [ ] pages/admin/agents/create
  * - [ ] pages/admin/agents/update/[userId]
@@ -363,7 +365,8 @@ export const COMPANY_INVENTORIES_GET = "COMPANY_INVENTORIES_GET";
 /**
  * /getMainLocations
  *
- * - [ ] pages/company/myCompany/locations
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/myCompany/locations
  */
 export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
 /**
@@ -373,8 +376,9 @@ export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
  * - [ ] pages/admin/requesters
  * - [ ] pages/admin/requesters/update/[userId]
  *
+ * - [x] pages/company/myCompany
  * - [ ] pages/company/myCompany/locations/[locId]
- * - [ ] pages/company/myCompany/locations
+ * - [x] pages/company/myCompany/locations
  * - [ ] pages/company/clients
  * - [ ] pages/company/clients/locations/[locId]
  * - [ ] pages/company/clients/locations
@@ -402,7 +406,6 @@ export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
 /**
  * /getSubCompanyDetail?id
  *
- * - [ ] pages/company/myCompany/locations
  * - [ ] pages/company/myCompany/locations/[locId]
  *
  * - [ ] pages/company/clients/[companyId]
@@ -412,7 +415,7 @@ export const COMPANY_SUB_DETAIL_GET = "COMPANY_SUB_DETAIL_GET";
 /**
  * /getSubCompanyProfile
  *
- * - [ ] pages/company/clients/locations
+ * - [x] pages/company/clients/locations
  * - [ ] pages/company/myCompany/locations
  */
 export const COMPANY_SUB_PROFILE_GET = "COMPANY_SUB_PROFILE_GET";
@@ -452,6 +455,7 @@ export const COMPANY_DELETE = "COMPANY_DELETE";
  * /addCompanyBranch
  *
  * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate
+ * - [x] pages/company/myCompany/locations
  */
 export const COMPANY_BRANCH_ADD = "COMPANY_BRANCH_ADD";
 /**

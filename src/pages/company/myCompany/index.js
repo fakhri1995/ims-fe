@@ -23,11 +23,13 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_DETAIL_GET,
+  COMPANY_LOCATIONS_GET,
   COMPANY_LOG_GET,
   COMPANY_MAIN_BANKS_GET,
   COMPANY_MAIN_BANK_ADD,
   COMPANY_MAIN_BANK_DELETE,
   COMPANY_MAIN_BANK_UPDATE,
+  COMPANY_MAIN_LOCATIONS_GET,
   COMPANY_RELATIONSHIP_INVENTORIES_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -79,6 +81,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToGetCompanyRelationshipInventories = hasPermission(
     COMPANY_RELATIONSHIP_INVENTORIES_GET
   );
+  /** Locations management */
+  const isAllowedToGetMainLocations = hasPermission(COMPANY_MAIN_LOCATIONS_GET);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const canSeeAllLocations =
+    isAllowedToGetMainLocations || isAllowedToGetLocations;
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();
@@ -1047,6 +1054,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
               <H1>Lokasi</H1>
               <div
                 onClick={() => {
+                  if (!canSeeAllLocations) {
+                    permissionWarningNotification(
+                      "Melihat",
+                      "Daftar Semua Lokasi"
+                    );
+                    return;
+                  }
                   rt.push(`/company/myCompany/locations?id=${displaydata.id}`);
                 }}
               >
