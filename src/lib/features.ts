@@ -471,25 +471,26 @@ export const COMPANY_SUB_ADD = "COMPANY_SUB_ADD";
 /**
  * /getMainBanks
  *
- * - [ ] pages/company/myCompany
+ * - [x] pages/company/myCompany
  */
 export const COMPANY_MAIN_BANKS_GET = "COMPANY_MAIN_BANKS_GET";
 /**
  * /addMainBank
  *
  * - [ ] components/drawer/companies/mycompany/drawerMyCompanyBankCreate
+ * - [x] pages/company/myCompany
  */
 export const COMPANY_MAIN_BANK_ADD = "COMPANY_MAIN_BANK_ADD";
 /**
  * /updateMainBank
  *
- * - [ ] pages/company/myCompany
+ * - [x] pages/company/myCompany
  */
 export const COMPANY_MAIN_BANK_UPDATE = "COMPANY_MAIN_BANK_UPDATE";
 /**
  * /deleteMainBank
  *
- * - [ ] pages/company/myCompany
+ * - [x] pages/company/myCompany
  */
 export const COMPANY_MAIN_BANK_DELETE = "COMPANY_MAIN_BANK_DELETE";
 

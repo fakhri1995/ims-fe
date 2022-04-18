@@ -17,6 +17,18 @@ import { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_MAIN_BANKS_GET,
+  COMPANY_MAIN_BANK_ADD,
+  COMPANY_MAIN_BANK_DELETE,
+  COMPANY_MAIN_BANK_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Buttonsys from "../../../components/button";
 import DrawerBank from "../../../components/drawer/companies/mycompany/drawerMyCompanyBankCreate";
 import DrawerAddRelasi from "../../../components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate";
@@ -46,7 +58,16 @@ import { H1, H2, Label } from "../../../components/typography";
 import httpcookie from "cookie";
 
 const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
   const rt = useRouter();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
+  const isAllowedToUpdateMainBank = hasPermission(COMPANY_MAIN_BANK_UPDATE);
+  const isAllowedToDeleteMainBank = hasPermission(COMPANY_MAIN_BANK_DELETE);
+  const isAllowedToAddMainBank = hasPermission(COMPANY_MAIN_BANK_ADD);
+
   const tok = initProps;
   const [instanceForm] = Form.useForm();
   var activeTab = "profile";
@@ -636,6 +657,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, []);
   useEffect(() => {
+    if (!isAllowedToGetMainBanks) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getMainBanks`, {
       method: `GET`,
       headers: {
@@ -646,7 +671,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       .then((res2) => {
         setbanks(res2.data);
       });
-  }, [bankloadinghapus, bankloadingedit, bankdrawer]);
+  }, [bankloadinghapus, bankloadingedit, bankdrawer, isAllowedToGetMainBanks]);
   useEffect(() => {
     if (viewrelasi === true) {
       setloadingrelasi(true);
@@ -1319,68 +1344,91 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     <H1>Akun Bank</H1>
                     <div
                       onClick={() => {
+                        if (!isAllowedToAddMainBank) {
+                          permissionWarningNotification("Menambahkan", "Bank");
+                          return;
+                        }
+
                         setbankdrawer(true);
                       }}
                     >
                       <Buttonsys type="primary">+ Tambah Akun Bank</Buttonsys>
                     </div>
                   </div>
-                  {banks.map((doc, idx) => {
-                    return (
-                      <div className="flex mt-5">
-                        {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
-                        <div
-                          className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}
-                        >
-                          <div className="absolute bottom-0 right-2">
-                            <img
-                              src="/image/visa.png"
-                              className="object-contain"
-                            />
-                          </div>
-                        </div>
-                        <div className="w-7/12 flex flex-col justify-between">
-                          <div className="flex justify-between w-full items-center">
-                            <H2>{doc.name ?? "-"}</H2>
-                            <div className="flex">
-                              <div
-                                className="mx-1 cursor-pointer"
-                                onClick={() => {
-                                  seteditbankdata({ ...doc });
-                                  setbankdraweredit(true);
-                                }}
-                              >
-                                <EditIconSvg size={15} color={`#35763B`} />
-                              </div>
-                              <div
-                                className="mx-1 cursor-pointer"
-                                onClick={() => {
-                                  sethapusbankdata({
-                                    ...hapusbankdata,
-                                    id: doc.id,
-                                  });
-                                  setbankmodalhapus(true);
-                                }}
-                              >
-                                <TrashIconSvg size={15} color={`#BF4A40`} />
-                              </div>
+                  <AccessControl hasPermission={COMPANY_MAIN_BANKS_GET}>
+                    {banks.map((doc, idx) => {
+                      return (
+                        <div className="flex mt-5">
+                          {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
+                          <div
+                            className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}
+                          >
+                            <div className="absolute bottom-0 right-2">
+                              <img
+                                src="/image/visa.png"
+                                className="object-contain"
+                              />
                             </div>
                           </div>
-                          <div className=" flex flex-col">
-                            <Label>
-                              ***
-                              {doc.account_number.slice(
-                                doc.account_number.length - 4,
-                                doc.account_number.length
-                              )}{" "}
-                              - {doc.owner}
-                            </Label>
-                            <Label>{doc.currency ?? "-"}</Label>
+                          <div className="w-7/12 flex flex-col justify-between">
+                            <div className="flex justify-between w-full items-center">
+                              <H2>{doc.name ?? "-"}</H2>
+                              <div className="flex">
+                                <div
+                                  className="mx-1 cursor-pointer"
+                                  onClick={() => {
+                                    if (!isAllowedToUpdateMainBank) {
+                                      permissionWarningNotification(
+                                        "Memperbarui",
+                                        "Bank"
+                                      );
+                                      return;
+                                    }
+
+                                    seteditbankdata({ ...doc });
+                                    setbankdraweredit(true);
+                                  }}
+                                >
+                                  <EditIconSvg size={15} color={`#35763B`} />
+                                </div>
+                                <div
+                                  className="mx-1 cursor-pointer"
+                                  onClick={() => {
+                                    if (!isAllowedToDeleteMainBank) {
+                                      permissionWarningNotification(
+                                        "Menghapus",
+                                        "Bank"
+                                      );
+                                      return;
+                                    }
+
+                                    sethapusbankdata({
+                                      ...hapusbankdata,
+                                      id: doc.id,
+                                    });
+                                    setbankmodalhapus(true);
+                                  }}
+                                >
+                                  <TrashIconSvg size={15} color={`#BF4A40`} />
+                                </div>
+                              </div>
+                            </div>
+                            <div className=" flex flex-col">
+                              <Label>
+                                ***
+                                {doc.account_number.slice(
+                                  doc.account_number.length - 4,
+                                  doc.account_number.length
+                                )}{" "}
+                                - {doc.owner}
+                              </Label>
+                              <Label>{doc.currency ?? "-"}</Label>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </AccessControl>
                   <DrawerBank
                     title={"Tambah Bank"}
                     visible={bankdrawer}
