@@ -358,7 +358,7 @@ export const COMPANY_RELATIONSHIP_INVENTORIES_GET =
  * - [ ] components/table/tableCustom
  *
  * - [ ] pages/company/clients/locations/[locId]
- * - [ ] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
  */
 export const COMPANY_INVENTORIES_GET = "COMPANY_INVENTORIES_GET";
 
@@ -377,7 +377,7 @@ export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
  * - [ ] pages/admin/requesters/update/[userId]
  *
  * - [x] pages/company/myCompany
- * - [ ] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
  * - [x] pages/company/myCompany/locations
  * - [ ] pages/company/clients
  * - [ ] pages/company/clients/locations/[locId]
@@ -406,7 +406,7 @@ export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
 /**
  * /getSubCompanyDetail?id
  *
- * - [ ] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
  *
  * - [ ] pages/company/clients/[companyId]
  * - [ ] pages/company/clients/locations/[locId]
@@ -440,13 +440,13 @@ export const COMPANY_STATUS = "COMPANY_STATUS";
  * - [ ] pages/company/clients/[companyId]
  * - [ ] pages/company/clients/locations/[locId]
  *
- * - [ ] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
  */
 export const COMPANY_UPDATE = "COMPANY_UPDATE";
 /**
  * /deleteCompany
  *
- * - [ ] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations/[locId]
  * - [ ] pages/company/myCompany/locations/[locId]
  */
 export const COMPANY_DELETE = "COMPANY_DELETE";
@@ -469,6 +469,8 @@ export const COMPANY_CLIENT_ADD = "COMPANY_CLIENT_ADD";
  * /addCompanySub
  *
  * - [ ] components/drawer/companies/drawerSubLokasi
+ *
+ * - [x] company/myCompany/locations/[locId]
  */
 export const COMPANY_SUB_ADD = "COMPANY_SUB_ADD";
 
