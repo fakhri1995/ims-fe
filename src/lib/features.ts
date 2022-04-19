@@ -347,7 +347,7 @@ export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
  *
  * - [ ] componets/table/tableCustom
  *
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  * - [x] pages/company/myCompany
  */
 export const COMPANY_RELATIONSHIP_INVENTORIES_GET =
@@ -400,7 +400,7 @@ export const COMPANY_SUB_LOCATIONS_GET = "COMPANY_SUB_LOCATIONS_GET";
  * /getCompanyDetail
  *
  * - [x] pages/company/myCompany
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
 /**
@@ -424,20 +424,20 @@ export const COMPANY_SUB_PROFILE_GET = "COMPANY_SUB_PROFILE_GET";
  * /getCompanyLog
  *
  * - [x] pages/company/myCompany
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_LOG_GET = "COMPANY_LOG_GET";
 
 /**
  * /companyActivation
  *
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_STATUS = "COMPANY_STATUS";
 /**
  * /updateCompany
  *
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  * - [ ] pages/company/clients/locations/[locId]
  *
  * - [x] pages/company/myCompany/locations/[locId]
@@ -504,24 +504,26 @@ export const COMPANY_MAIN_BANK_DELETE = "COMPANY_MAIN_BANK_DELETE";
 /**
  * /getClientBanks
  *
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_CLIENT_BANKS_GET = "COMPANY_CLIENT_BANKS_GET";
 /**
  * /addClientBank
  *
  * - [ ] components/drawer/companies/clients/drawerClientCompanyBankCreate
+ *
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_CLIENT_BANK_ADD = "COMPANY_CLIENT_BANK_ADD";
 /**
- * /deleteClientBank
+ * /updateClientBank
  *
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_CLIENT_BANK_UPDATE = "COMPANY_CLIENT_BANK_UPDATE";
 /**
- * /updateClientBank
+ * /deleteClientBank
  *
- * - [ ] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
