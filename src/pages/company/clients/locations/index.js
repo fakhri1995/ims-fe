@@ -5,6 +5,18 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_CLIENTS_GET,
+  COMPANY_CLIENT_ADD,
+  COMPANY_LOCATIONS_GET,
+  COMPANY_SUB_PROFILE_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Buttonsys from "../../../../components/button";
 import DrawerLokasiClient from "../../../../components/drawer/companies/clients/drawerClientCompanyLokasiCreate";
 import {
@@ -23,7 +35,25 @@ import httpcookie from "cookie";
 Chart.register(ArcElement, Tooltip);
 
 const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const isAllowedToGetSubCompanyProfile = hasPermission(
+    COMPANY_SUB_PROFILE_GET
+  );
+  const isAllowedToAddClientCompany = hasPermission(COMPANY_CLIENT_ADD);
+  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
+  const canAddNewLocation =
+    isAllowedToAddClientCompany && isAllowedToGetCompanyClientList;
+
   const rt = useRouter();
+
   var activeTab = "profile";
   const { active, id, company_name } = rt.query;
   var temp2 = rt.pathname.split("/").slice(1);
@@ -33,25 +63,25 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
     activeTab = active;
   }
 
-  const [patharr, setpatharr] = useState([]);
-  const [rawdata, setrawdata] = useState({
-    id: "",
-    name: "",
-    address: "",
-    phone_number: "",
-    image_logo: "",
-    singkatan: "",
-    tanggal_pkp: moment(new Date()),
-    penanggung_jawab: "",
-    npwp: "",
-    fax: "",
-    email: "",
-    website: "",
-    role: "",
-    induk_level_1_count: "",
-    induk_level_2_count: "",
-    induk_level_3_count: "",
-  });
+  // const [patharr, setpatharr] = useState([]);
+  // const [rawdata, setrawdata] = useState({
+  //   id: "",
+  //   name: "",
+  //   address: "",
+  //   phone_number: "",
+  //   image_logo: "",
+  //   singkatan: "",
+  //   tanggal_pkp: moment(new Date()),
+  //   penanggung_jawab: "",
+  //   npwp: "",
+  //   fax: "",
+  //   email: "",
+  //   website: "",
+  //   role: "",
+  //   induk_level_1_count: "",
+  //   induk_level_2_count: "",
+  //   induk_level_3_count: "",
+  // });
   const [displaydata, setdisplaydata] = useState({
     id: "",
     name: "",
@@ -67,7 +97,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
     website: "",
   });
   const [praloading, setpraloading] = useState(true);
-  const [isenabled, setisenabled] = useState(false);
+  // const [isenabled, setisenabled] = useState(false);
   //branch
   const [branchdata, setbranchdata] = useState([]);
   const [branchdata2, setbranchdata2] = useState([]);
@@ -112,6 +142,11 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
       setbranchdata(temp);
       setsortedname("A-Z");
     } else {
+      if (!isAllowedToGetLocations) {
+        setpraloading(false);
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations?company_id=${id}`,
         {
@@ -318,6 +353,12 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //USE EFECT
   useEffect(() => {
+    if (!isAllowedToGetLocations) {
+      setpraloading(false);
+      setloadingselected(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations?company_id=${id}`,
       {
@@ -340,9 +381,22 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
         setpraloading(false);
         setloadingselected(false);
       });
-  }, [lokasidrawer]);
+  }, [lokasidrawer, isAllowedToGetLocations]);
+
+  useEffect(() => {
+    if (!isAllowedToGetLocations) {
+      permissionWarningNotification("Mendapatkan", "Daftar Lokasi");
+    }
+  }, [isAllowedToGetLocations]);
+
   useEffect(() => {
     if (selected === true) {
+      if (!isAllowedToGetSubCompanyProfile) {
+        permissionWarningNotification("Mendapatkan", "Detail Sub Company");
+        setloadingselected(false);
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyProfile?id=${idselected}`,
         {
@@ -365,7 +419,8 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
           setloadingselected(false);
         });
     }
-  }, [idselected]);
+  }, [idselected, isAllowedToGetSubCompanyProfile]);
+
   return (
     <Layout
       tok={initProps}
@@ -404,6 +459,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => {
                   setlokasidrawer(true);
                 }}
+                disabled={!canAddNewLocation}
               >
                 + Tambah Lokasi
               </Buttonsys>
@@ -441,7 +497,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <Spin />
               </div>
             ) : (
-              <>
+              <AccessControl hasPermission={COMPANY_SUB_PROFILE_GET}>
                 <div className="flex shadow-md rounded-md bg-white p-5 mb-5 mx-2">
                   <div className="mr-5">
                     <img
@@ -487,12 +543,12 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                       <div className="w-32 h-32" id="chart">
                         <Pie
                           data={{
-                            labels: selecteddata.asset_cluster.map(
+                            labels: selecteddata.asset_cluster?.map(
                               (doc) => doc.name
                             ),
                             datasets: [
                               {
-                                data: selecteddata.asset_cluster.map(
+                                data: selecteddata.asset_cluster?.map(
                                   (doc) => doc.asset_count
                                 ),
                                 backgroundColor: [
@@ -560,7 +616,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
                     <H1>Keuangan</H1>
                   </div>
                 </div>
-              </>
+              </AccessControl>
             )
           ) : (
             <div className="flex h-screen items-center justify-center">
@@ -572,17 +628,20 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
           )}
         </div>
       </div>
-      <DrawerLokasiClient
-        title={"Tambah Lokasi"}
-        visible={lokasidrawer}
-        onClose={() => {
-          setlokasidrawer(false);
-        }}
-        buttonOkText={"Simpan Lokasi"}
-        initProps={initProps}
-        onvisible={setlokasidrawer}
-        displaydata={displaydata}
-      />
+
+      <AccessControl hasPermission={[COMPANY_CLIENT_ADD, COMPANY_CLIENTS_GET]}>
+        <DrawerLokasiClient
+          title={"Tambah Lokasi"}
+          visible={lokasidrawer}
+          onClose={() => {
+            setlokasidrawer(false);
+          }}
+          buttonOkText={"Simpan Lokasi"}
+          initProps={initProps}
+          onvisible={setlokasidrawer}
+          displaydata={displaydata}
+        />
+      </AccessControl>
     </Layout>
   );
 };

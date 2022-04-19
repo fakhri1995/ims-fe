@@ -339,6 +339,7 @@ export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
  * - [ ] pages/admin/requesters
  *
  * - [x] pages/company/clients
+ * - [x] pages/company/clients/locations
  */
 export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
 
@@ -380,7 +381,7 @@ export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
  * - [x] pages/company/myCompany/locations/[locId]
  * - [x] pages/company/myCompany/locations
  * - [ ] pages/company/clients
- * - [ ] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations/[locId]
  * - [ ] pages/company/clients/locations
  */
 export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
@@ -416,7 +417,7 @@ export const COMPANY_SUB_DETAIL_GET = "COMPANY_SUB_DETAIL_GET";
  * /getSubCompanyProfile
  *
  * - [x] pages/company/clients/locations
- * - [ ] pages/company/myCompany/locations
+ * - [x] pages/company/myCompany/locations
  */
 export const COMPANY_SUB_PROFILE_GET = "COMPANY_SUB_PROFILE_GET";
 
@@ -462,6 +463,8 @@ export const COMPANY_BRANCH_ADD = "COMPANY_BRANCH_ADD";
  * /addCompanyClient
  *
  * - [x] pages/company/clients
+ * - [x] pages/company/clients/locations
+ *
  * - [ ] components/drawer/companies/clients/drawerClientCompanyLokasiCreate
  * - [ ] components/drawer/companies/clients/drawerClientCompanyCreate
  */
