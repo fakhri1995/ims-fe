@@ -1285,34 +1285,37 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                   )}
                 </div>
               </Form>
-              <ModalEdit
-                title={`Konfirmasi Edit Perusahaan`}
-                visible={modaledit}
-                level={displaydata.level}
-                onCancel={() => {
-                  setmodaledit(false);
-                }}
-                footer={
-                  <div className="flex justify-between items-center">
-                    <Buttonsys
-                      type="default"
-                      onClick={() => {
-                        setmodaledit(false);
-                      }}
-                    >
-                      Batalkan
-                    </Buttonsys>
-                    <Buttonsys
-                      type="primary"
-                      onClick={handleEdit}
-                      disabled={!isAllowedToUpdateCompany}
-                    >
-                      <CheckIconSvg size={15} color={`#ffffff`} />
-                      Simpan
-                    </Buttonsys>
-                  </div>
-                }
-              ></ModalEdit>
+
+              <AccessControl hasPermission={COMPANY_UPDATE}>
+                <ModalEdit
+                  title={`Konfirmasi Edit Perusahaan`}
+                  visible={modaledit}
+                  level={displaydata.level}
+                  onCancel={() => {
+                    setmodaledit(false);
+                  }}
+                  footer={
+                    <div className="flex justify-between items-center">
+                      <Buttonsys
+                        type="default"
+                        onClick={() => {
+                          setmodaledit(false);
+                        }}
+                      >
+                        Batalkan
+                      </Buttonsys>
+                      <Buttonsys
+                        type="primary"
+                        onClick={handleEdit}
+                        disabled={!isAllowedToUpdateCompany}
+                      >
+                        <CheckIconSvg size={15} color={`#ffffff`} />
+                        Simpan
+                      </Buttonsys>
+                    </div>
+                  }
+                ></ModalEdit>
+              </AccessControl>
 
               <AccessControl hasPermission={COMPANY_DELETE}>
                 <ModalHapusLokasiCekChild
@@ -1354,7 +1357,7 @@ const Index4 = ({ initProps, dataProfile, sidemenu, locid }) => {
                           <Buttonsys
                             /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary"
                             color="danger"
-                            disabled={!isAllowedToDeleteCompany}
+                            disabled={tipe === 1 && !isAllowedToDeleteCompany}
                             onClick={() => {
                               if (tipe === 1) {
                                 handleDelete();

@@ -205,19 +205,19 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   //relasi-update
   const [drawerupdaterelasi, setdrawerupdaterelasi] = useState(false);
   const [fetchingmodel, setfetchingmodel] = useState(false);
-  const [dataupdaterelasi, setdataupdaterelasi] = useState({
-    id: null,
-    subject_id: null,
-    relationship_id: null,
-    connected_id: null,
-    is_inverse: null,
-    relationship: {
-      id: null,
-      relationship_type: "",
-      inverse_relationship_type: "",
-    },
-    inventory: {},
-  });
+  // const [dataupdaterelasi, setdataupdaterelasi] = useState({
+  //   id: null,
+  //   subject_id: null,
+  //   relationship_id: null,
+  //   connected_id: null,
+  //   is_inverse: null,
+  //   relationship: {
+  //     id: null,
+  //     relationship_type: "",
+  //     inverse_relationship_type: "",
+  //   },
+  //   inventory: {},
+  // });
   const [dataApiupdate, setdataApiupdate] = useState({
     id: null,
     relationship_id: null,
@@ -236,7 +236,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     useState(-1);
   const [detailtipeupdate, setdetailtipeupdate] = useState(-9);
   const [detailtipedataupdate, setdetailtipedataupdate] = useState([]);
-  const [disabledupdate, setdisabledupdate] = useState(true);
+  // const [disabledupdate, setdisabledupdate] = useState(true);
   const [loadingupdate, setloadingupdate] = useState(false);
   const [sublocdata, setsublocdata] = useState(null);
   const [subloctrig, setsubloctrig] = useState(-1);
@@ -713,6 +713,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           });
       });
   }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
+
   useEffect(() => {
     if (!isAllowedToGetMainBanks) {
       return;
@@ -729,14 +730,18 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         setbanks(res2.data);
       });
   }, [bankloadinghapus, bankloadingedit, bankdrawer, isAllowedToGetMainBanks]);
-  useEffect(() => {
-    if (!isAllowedToGetCompanyRelationshipInventories && viewrelasi) {
-      permissionWarningNotification("Mendapatkan", "Relasi Inventory Company");
-      setloadingrelasi(false);
-      return;
-    }
 
+  useEffect(() => {
     if (viewrelasi === true) {
+      if (!isAllowedToGetCompanyRelationshipInventories) {
+        permissionWarningNotification(
+          "Mendapatkan",
+          "Relasi Inventory Company"
+        );
+        // setloadingrelasi(false);
+        return;
+      }
+
       setloadingrelasi(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyRelationshipInventory?id=${dataProfile.data.company.id}&page=${pagerelasi}&rows=${rowsrelasi}`,
