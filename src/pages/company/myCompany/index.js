@@ -66,9 +66,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
-  const rt = useRouter();
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   /** Bank Management */
   const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
   const isAllowedToUpdateMainBank = hasPermission(COMPANY_MAIN_BANK_UPDATE);
@@ -87,6 +89,8 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
   const canSeeAllLocations =
     isAllowedToGetMainLocations || isAllowedToGetLocations;
+
+  const rt = useRouter();
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();
@@ -624,7 +628,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
   //useEffect
   useEffect(() => {
-    if (!isAllowedToGetCompanyDetail && !isAccessControlPending) {
+    if (!isAllowedToGetCompanyDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Company");
       setdisplaydata({
         name: "-",
@@ -682,7 +686,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         return res2.data.id;
       })
       .then((res3) => {
-        if (!isAllowedToGetCompanyLog && !isAccessControlPending) {
+        if (!isAllowedToGetCompanyLog) {
           permissionWarningNotification(
             "Mendapatkan",
             "Riwayat Aktivitas Company"
@@ -708,11 +712,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             setpraloadingedit(false);
           });
       });
-  }, [
-    isAllowedToGetCompanyDetail,
-    isAllowedToGetCompanyLog,
-    isAccessControlPending,
-  ]);
+  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
   useEffect(() => {
     if (!isAllowedToGetMainBanks) {
       return;
