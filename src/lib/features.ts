@@ -309,6 +309,11 @@ export const REQUESTER_GROUP_UPDATE = "REQUESTER_GROUP_UPDATE";
 export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
 
 /**
+ * Daftar feature untuk Company management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076466/Company+Management
+ */
+/**
  * /getAllCompanyList
  *
  * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
@@ -358,7 +363,7 @@ export const COMPANY_RELATIONSHIP_INVENTORIES_GET =
  *
  * - [ ] components/table/tableCustom
  *
- * - [ ] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations/[locId]
  * - [x] pages/company/myCompany/locations/[locId]
  */
 export const COMPANY_INVENTORIES_GET = "COMPANY_INVENTORIES_GET";
@@ -380,9 +385,8 @@ export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
  * - [x] pages/company/myCompany
  * - [x] pages/company/myCompany/locations/[locId]
  * - [x] pages/company/myCompany/locations
- * - [ ] pages/company/clients
  * - [x] pages/company/clients/locations/[locId]
- * - [ ] pages/company/clients/locations
+ * - [x] pages/company/clients/locations
  */
 export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
 /**
@@ -409,8 +413,7 @@ export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
  *
  * - [x] pages/company/myCompany/locations/[locId]
  *
- * - [ ] pages/company/clients/[companyId]
- * - [ ] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations/[locId]
  */
 export const COMPANY_SUB_DETAIL_GET = "COMPANY_SUB_DETAIL_GET";
 /**
@@ -439,7 +442,7 @@ export const COMPANY_STATUS = "COMPANY_STATUS";
  * /updateCompany
  *
  * - [x] pages/company/clients/[companyId]
- * - [ ] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations/[locId]
  *
  * - [x] pages/company/myCompany/locations/[locId]
  */
@@ -448,7 +451,7 @@ export const COMPANY_UPDATE = "COMPANY_UPDATE";
  * /deleteCompany
  *
  * - [x] pages/company/clients/locations/[locId]
- * - [ ] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
  */
 export const COMPANY_DELETE = "COMPANY_DELETE";
 
@@ -475,6 +478,7 @@ export const COMPANY_CLIENT_ADD = "COMPANY_CLIENT_ADD";
  * - [ ] components/drawer/companies/drawerSubLokasi
  *
  * - [x] company/myCompany/locations/[locId]
+ * - [x] company/clients/locations/[locId]
  */
 export const COMPANY_SUB_ADD = "COMPANY_SUB_ADD";
 
