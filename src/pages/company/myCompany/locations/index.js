@@ -39,8 +39,11 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetMainLocations = hasPermission(COMPANY_MAIN_LOCATIONS_GET);
   const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
   const isAllowedToGetSubCompanyProfile = hasPermission(
@@ -50,6 +53,8 @@ const Index3 = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToGetBranchesList = hasPermission(COMPANY_BRANCHS_GET);
   const canAddNewLocation =
     isAllowedToAddCompanyBranch && isAllowedToGetBranchesList;
+
+  const rt = useRouter();
 
   var activeTab = "profile";
   var temp2 = rt.pathname.split("/").slice(1);
