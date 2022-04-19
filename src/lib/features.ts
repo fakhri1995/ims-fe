@@ -338,7 +338,7 @@ export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
  *
  * - [ ] pages/admin/requesters
  *
- * - [ ] pages/company/clients
+ * - [x] pages/company/clients
  */
 export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
 
@@ -461,8 +461,9 @@ export const COMPANY_BRANCH_ADD = "COMPANY_BRANCH_ADD";
 /**
  * /addCompanyClient
  *
- * - [ ] pages/company/clients/index
+ * - [x] pages/company/clients
  * - [ ] components/drawer/companies/clients/drawerClientCompanyLokasiCreate
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyCreate
  */
 export const COMPANY_CLIENT_ADD = "COMPANY_CLIENT_ADD";
 /**

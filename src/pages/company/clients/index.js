@@ -6,6 +6,12 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 import DrawerCreateClient from "components/drawer/companies/clients/drawerClientCompanyCreate";
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -24,7 +30,19 @@ import httpcookie from "cookie";
 // }
 
 function ClientsIndex({ initProps, dataProfile, sidemenu }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
+  const isAllowedToAddCompanyClient = hasPermission(COMPANY_CLIENT_ADD);
+
   const rt = useRouter();
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(1, 1);
@@ -350,6 +368,12 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetCompanyClientList && !isAccessControlPending) {
+      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      setloaddatatable(false);
+      return;
+    }
+
     setloaddatatable(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
       method: `GET`,
@@ -364,7 +388,12 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
         setdatatable2(res2.data);
         setloaddatatable(false);
       });
-  }, [refreshCompanyClientList]);
+  }, [
+    refreshCompanyClientList,
+    isAllowedToGetCompanyClientList,
+    isAccessControlPending,
+  ]);
+
   return (
     <Layout
       tok={tok}
@@ -373,16 +402,18 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
       pathArr={pathArr}
       st={st}
     >
-      <DrawerCreateClient
-        title="Tambah Client"
-        buttonOkText="Simpan"
-        initProps={initProps}
-        visible={drawablecreate}
-        onvisible={setDrawablecreate}
-        onSucceed={() => {
-          triggerRefreshCompanyClientList((prev) => ++prev);
-        }}
-      />
+      <AccessControl hasPermission={COMPANY_CLIENT_ADD}>
+        <DrawerCreateClient
+          title="Tambah Client"
+          buttonOkText="Simpan"
+          initProps={initProps}
+          visible={drawablecreate}
+          onvisible={setDrawablecreate}
+          onSucceed={() => {
+            triggerRefreshCompanyClientList((prev) => ++prev);
+          }}
+        />
+      </AccessControl>
 
       <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
         <div className=" w-full flex justify-between items-center px-2">
@@ -396,6 +427,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
                 // rt.push(`/admin/clients/locations/new?parent=list&frominduk=0`);
                 setDrawablecreate(true);
               }}
+              disabled={!isAllowedToAddCompanyClient}
             >
               Tambah
             </Button>
