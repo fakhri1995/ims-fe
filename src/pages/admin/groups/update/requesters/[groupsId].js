@@ -39,11 +39,16 @@ function GroupsRequestersDetail({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToShowRequesterList = hasPermission(REQUESTERS_GET);
   const isAllowedToGetRequesterGroup = hasPermission(REQUESTER_GROUP_GET);
   const isAllowedToUpdateRequesterGroup = hasPermission(REQUESTER_GROUP_UPDATE);
+
+  const rt = useRouter();
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -54,12 +59,24 @@ function GroupsRequestersDetail({
   const [instanceForm] = Form.useForm();
   const [loadingbtn, setLoadingbtn] = useState(false);
 
-  const [editgroup, setEditgroup] = useState({
-    id: dataDetailGroup.data.group_detail.id,
-    name: dataDetailGroup.data.group_detail.name,
-    description: dataDetailGroup.data.group_detail.description,
-    group_head: dataDetailGroup.data.group_detail.group_head,
-    user_ids: dataDetailGroup.data.group_user,
+  const [editgroup, setEditgroup] = useState(() => {
+    return {
+      id: isAllowedToGetRequesterGroup
+        ? dataDetailGroup.data.group_detail.id
+        : null,
+      name: isAllowedToGetRequesterGroup
+        ? dataDetailGroup.data.group_detail.name
+        : "",
+      description: isAllowedToGetRequesterGroup
+        ? dataDetailGroup.data.group_detail.description
+        : "",
+      group_head: isAllowedToGetRequesterGroup
+        ? dataDetailGroup.data.group_detail.group_head
+        : null,
+      user_ids: isAllowedToGetRequesterGroup
+        ? dataDetailGroup.data.group_user
+        : null,
+    };
   });
   const onChangeEditGroup = (e) => {
     var val = e.target.value;
@@ -173,7 +190,10 @@ function GroupsRequestersDetail({
                   {
                     // [142].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                     <Button
-                      disabled={!isAllowedToUpdateRequesterGroup}
+                      disabled={
+                        !isAllowedToUpdateRequesterGroup &&
+                        !isAllowedToGetRequesterGroup
+                      }
                       type="primary"
                       size="middle"
                       onClick={instanceForm.submit}

@@ -199,6 +199,7 @@ export const AGENT_DELETE = "AGENT_DELETE";
  * /getAgentGroups
  *
  * - [x] /admin/groups
+ * - [x] /admin/groups/update/agents/[groupsId]
  */
 export const AGENT_GROUPS_GET = "AGENT_GROUPS_GET";
 /**
@@ -280,6 +281,7 @@ export const REQUESTER_DELETE = "REQUESTER_DELETE";
  * /getRequesterGroups
  *
  * - [x] /admin/groups
+ * - [x] /admin/groups/update/requesters/[groupsId]
  */
 export const REQUESTER_GROUPS_GET = "REQUESTER_GROUPS_GET";
 /**

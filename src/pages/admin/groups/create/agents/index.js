@@ -16,7 +16,7 @@ import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { AGENTS_GET, AGENT_GROUP_ADD } from "lib/features";
+import { AGENT_GROUP_ADD, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
@@ -32,10 +32,15 @@ function GroupsAgentsCreate({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
   const isAllowedToShowAgentList = hasPermission(USERS_GET);
+
+  const rt = useRouter();
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -126,7 +131,7 @@ function GroupsAgentsCreate({
 
   useEffect(() => {
     if (!isAllowedToAddAgentGroup) {
-      permissionWarningNotification("Menambahkan", "Agent Group ");
+      permissionWarningNotification("Menambahkan", "Agent Group");
     }
   }, [isAllowedToAddAgentGroup]);
 
@@ -160,7 +165,9 @@ function GroupsAgentsCreate({
                   <Button
                     type="primary"
                     size="middle"
-                    disabled={!isAllowedToAddAgentGroup}
+                    disabled={
+                      !isAllowedToAddAgentGroup && !isAllowedToShowAgentList
+                    }
                     onClick={instanceForm.submit}
                     loading={loadingbtn}
                   >
@@ -242,6 +249,7 @@ function GroupsAgentsCreate({
                     optionFilterProp="label"
                     onChange={onChangeCreateGroupHeadGroup}
                     style={{ width: "100%", lineHeight: "2.4" }}
+                    disabled={!isAllowedToShowAgentList}
                   />
                 </Form.Item>
               </div>
@@ -292,6 +300,7 @@ function GroupsAgentsCreate({
                       }}
                       optionFilterProp="label"
                       options={dataDD}
+                      disabled={!isAllowedToShowAgentList}
                     />
                   </Col>
                 </Row>

@@ -32,10 +32,15 @@ function GroupsRequestersCreate({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRequesterList = hasPermission(REQUESTERS_GET);
   const isAllowedToAddRequesterGroup = hasPermission(REQUESTER_GROUP_ADD);
+
+  const rt = useRouter();
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -246,6 +251,7 @@ function GroupsRequestersCreate({
                     name={`group_head`}
                     showArrow
                     options={dataDD}
+                    disabled={!isAllowedToGetRequesterList}
                     optionFilterProp="label"
                     onChange={onChangeCreateGroupHeadGroup}
                     style={{ width: "100%", lineHeight: "2.4" }}
@@ -292,6 +298,7 @@ function GroupsRequestersCreate({
                       showArrow
                       mode="multiple"
                       options={dataDD}
+                      disabled={!isAllowedToGetRequesterList}
                       optionFilterProp="label"
                       onChange={handleChangeAddRequester}
                       style={{

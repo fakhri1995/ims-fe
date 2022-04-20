@@ -36,8 +36,11 @@ function Groups({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToShowAgentGroups = hasPermission(AGENT_GROUPS_GET);
   const isAllowedToUpdateAgentGroup = hasPermission(AGENT_GROUP_UPDATE);
   const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
@@ -47,6 +50,8 @@ function Groups({
   const isAllowedToUpdateRequesterGroup = hasPermission(REQUESTER_GROUP_UPDATE);
   const isAllowedToAddRequesterGroup = hasPermission(REQUESTER_GROUP_ADD);
   const isAllowedToDeleteRequesterGroup = hasPermission(REQUESTER_GROUP_DELETE);
+
+  const rt = useRouter();
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
