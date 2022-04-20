@@ -16,6 +16,8 @@ export interface IAccessControlCtx {
   ) => boolean;
 
   updateAccessControl: () => void;
+
+  isPending: boolean;
 }
 
 export const accessControlContextDefaultValue: IAccessControlCtx = {
@@ -26,6 +28,8 @@ export const accessControlContextDefaultValue: IAccessControlCtx = {
   hasPermission: () => false,
 
   updateAccessControl: () => {},
+
+  isPending: false,
 };
 
 export const AccessControlContext = createContext<IAccessControlCtx>(

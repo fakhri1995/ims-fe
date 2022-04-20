@@ -1,44 +1,64 @@
-import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
-import PlusOutlined from "@ant-design/icons/PlusOutlined";
-import { Button, Input, Table, notification } from "antd";
+// import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
+// import PlusOutlined from "@ant-design/icons/PlusOutlined";
+import { Button, Table } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import DrawerCreateClient from "components/drawer/companies/clients/drawerClientCompanyCreate";
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
-function modifData(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].name;
-    dataa[i]["children"] = dataa[i].members;
-    delete dataa[i].members;
-    if (dataa[i].children) [modifData(dataa[i].children)];
-  }
-  return dataa;
-}
+// function modifData(dataa) {
+//   for (var i = 0; i < dataa.length; i++) {
+//     dataa[i]["key"] = dataa[i].id;
+//     dataa[i]["value"] = dataa[i].id;
+//     dataa[i]["title"] = dataa[i].name;
+//     dataa[i]["children"] = dataa[i].members;
+//     delete dataa[i].members;
+//     if (dataa[i].children) [modifData(dataa[i].children)];
+//   }
+//   return dataa;
+// }
 
 function ClientsIndex({ initProps, dataProfile, sidemenu }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
+  const isAllowedToAddCompanyClient = hasPermission(COMPANY_CLIENT_ADD);
+
   const rt = useRouter();
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(1, 1);
   const [drawablecreate, setDrawablecreate] = useState(false);
-  const [loadingupload, setLoadingupload] = useState(false);
-  const [loadingbtn, setloadingbtn] = useState(false);
+  // const [loadingupload, setLoadingupload] = useState(false);
+  // const [loadingbtn, setloadingbtn] = useState(false);
   // const [instanceForm] = Form.useForm()
   // const { Option } = Select
-  const [newclients, setnewclients] = useState({
-    name: "",
-    role: 2,
-    address: "",
-    phone_number: "",
-    image_logo: "",
-    parent_id: 0,
-  });
+  // const [newclients, setnewclients] = useState({
+  //   name: "",
+  //   role: 2,
+  //   address: "",
+  //   phone_number: "",
+  //   image_logo: "",
+  //   parent_id: 0,
+  // });
   const [datatable, setdatatable] = useState([]);
   const [datatable2, setdatatable2] = useState([]);
   const [loaddatatable, setloaddatatable] = useState(false);
@@ -209,142 +229,151 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
     //     }
     // }
   ];
-  const closeClientsDrawer = () => {
-    setnewclients({
-      name: "",
-      role: 0,
-      address: "",
-      phone_number: "",
-      image_logo: "",
-      parent_id: null,
-    });
-  };
+  // const closeClientsDrawer = () => {
+  //   setnewclients({
+  //     name: "",
+  //     role: 0,
+  //     address: "",
+  //     phone_number: "",
+  //     image_logo: "",
+  //     parent_id: null,
+  //   });
+  // };
 
-  const beforeUploadProfileImage = (file) => {
-    const isJpgOrPng =
-      file.type === "image/jpeg" ||
-      file.type === "image/png" ||
-      file.type === "image/jpg";
-    if (!isJpgOrPng) {
-      message.error("You can only upload JPG/PNG file!");
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error("Image must smaller than 2MB!");
-    }
-    return isJpgOrPng && isLt2M;
-  };
-  const onChangeProfileImage = async (info) => {
-    if (info.file.status === "uploading") {
-      setLoadingupload(true);
-      return;
-    }
-    if (info.file.status === "done") {
-      const formData = new FormData();
-      formData.append("file", info.file.originFileObj);
-      formData.append("upload_preset", "migsys");
-      return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setLoadingupload(false);
-          setnewclients({
-            ...newclients,
-            image_logo: res2.secure_url,
-          });
-        });
-    }
-  };
-  const uploadButton = (
-    <div>
-      {loadingupload ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Unggah</div>
-    </div>
-  );
-  const onChangeCreateClients = (e) => {
-    var val = e.target.value;
-    if (e.target.name === "role") {
-      val = parseInt(e.target.value);
-    }
-    setnewclients({
-      ...newclients,
-      [e.target.name]: val,
-    });
-  };
-  const onChangeParent = (value) => {
-    setnewclients({
-      ...newclients,
-      parent_id: value,
-    });
-  };
-  const onChangeSearch = (e) => {
-    const filtered = datatable2.filter((flt) => {
-      return flt.name.toLowerCase().includes(e.target.value.toLowerCase());
-    });
-    setdatatable(filtered);
-  };
-  const handleSubmitCreateClients = () => {
-    setnewclients({
-      ...newclients,
-      role: 2,
-    });
-    if (newclients.address === "") {
-      setnewclients({
-        ...newclients,
-        address: "-",
-      });
-    }
-    if (newclients.phone_number === "") {
-      setnewclients({
-        ...newclients,
-        phone_number: "-",
-      });
-    }
-    setloadingbtn(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyClient`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newclients),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setloadingbtn(false);
-        if (res2.success) {
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setnewclients({
-            name: "",
-            role: 0,
-            address: "",
-            phone_number: "",
-            image_logo: "",
-            parent_id: null,
-          });
-          setTimeout(() => {
-            setDrawablecreate(false);
-            rt.push(`/admin/clients`);
-          }, 800);
-        } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-            style: {
-              zIndex: `1000`,
-            },
-          });
-        }
-      });
-  };
+  // const beforeUploadProfileImage = (file) => {
+  //   const isJpgOrPng =
+  //     file.type === "image/jpeg" ||
+  //     file.type === "image/png" ||
+  //     file.type === "image/jpg";
+  //   if (!isJpgOrPng) {
+  //     message.error("You can only upload JPG/PNG file!");
+  //   }
+  //   const isLt2M = file.size / 1024 / 1024 < 2;
+  //   if (!isLt2M) {
+  //     message.error("Image must smaller than 2MB!");
+  //   }
+  //   return isJpgOrPng && isLt2M;
+  // };
+  // const onChangeProfileImage = async (info) => {
+  //   if (info.file.status === "uploading") {
+  //     setLoadingupload(true);
+  //     return;
+  //   }
+  //   if (info.file.status === "done") {
+  //     const formData = new FormData();
+  //     formData.append("file", info.file.originFileObj);
+  //     formData.append("upload_preset", "migsys");
+  //     return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
+  //       method: "POST",
+  //       body: formData,
+  //     })
+  //       .then((res) => res.json())
+  //       .then((res2) => {
+  //         setLoadingupload(false);
+  //         setnewclients({
+  //           ...newclients,
+  //           image_logo: res2.secure_url,
+  //         });
+  //       });
+  //   }
+  // };
+  // const uploadButton = (
+  //   <div>
+  //     {loadingupload ? <LoadingOutlined /> : <PlusOutlined />}
+  //     <div style={{ marginTop: 8 }}>Unggah</div>
+  //   </div>
+  // );
+  // const onChangeCreateClients = (e) => {
+  //   var val = e.target.value;
+  //   if (e.target.name === "role") {
+  //     val = parseInt(e.target.value);
+  //   }
+  //   setnewclients({
+  //     ...newclients,
+  //     [e.target.name]: val,
+  //   });
+  // };
+  // const onChangeParent = (value) => {
+  //   setnewclients({
+  //     ...newclients,
+  //     parent_id: value,
+  //   });
+  // };
+  // const onChangeSearch = (e) => {
+  //   const filtered = datatable2.filter((flt) => {
+  //     return flt.name.toLowerCase().includes(e.target.value.toLowerCase());
+  //   });
+  //   setdatatable(filtered);
+  // };
+  // const handleSubmitCreateClients = () => {
+  //   setnewclients({
+  //     ...newclients,
+  //     role: 2,
+  //   });
+  //   if (newclients.address === "") {
+  //     setnewclients({
+  //       ...newclients,
+  //       address: "-",
+  //     });
+  //   }
+  //   if (newclients.phone_number === "") {
+  //     setnewclients({
+  //       ...newclients,
+  //       phone_number: "-",
+  //     });
+  //   }
+  //   setloadingbtn(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyClient`, {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: JSON.parse(tok),
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(newclients),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setloadingbtn(false);
+  //       if (res2.success) {
+  //         notification["success"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //         setnewclients({
+  //           name: "",
+  //           role: 0,
+  //           address: "",
+  //           phone_number: "",
+  //           image_logo: "",
+  //           parent_id: null,
+  //         });
+  //         setTimeout(() => {
+  //           setDrawablecreate(false);
+  //           rt.push(`/admin/clients`);
+  //         }, 800);
+  //       } else if (!res2.success) {
+  //         notification["error"]({
+  //           message: res2.message.errorInfo.status_detail,
+  //           duration: 3,
+  //           style: {
+  //             zIndex: `1000`,
+  //           },
+  //         });
+  //       }
+  //     });
+  // };
+
+  const [refreshCompanyClientList, triggerRefreshCompanyClientList] =
+    useState(0);
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetCompanyClientList && !isAccessControlPending) {
+      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      setloaddatatable(false);
+      return;
+    }
+
     setloaddatatable(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
       method: `GET`,
@@ -359,7 +388,12 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
         setdatatable2(res2.data);
         setloaddatatable(false);
       });
-  }, []);
+  }, [
+    refreshCompanyClientList,
+    isAllowedToGetCompanyClientList,
+    isAccessControlPending,
+  ]);
+
   return (
     <Layout
       tok={tok}
@@ -368,6 +402,19 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
       pathArr={pathArr}
       st={st}
     >
+      <AccessControl hasPermission={COMPANY_CLIENT_ADD}>
+        <DrawerCreateClient
+          title="Tambah Client"
+          buttonOkText="Simpan"
+          initProps={initProps}
+          visible={drawablecreate}
+          onvisible={setDrawablecreate}
+          onSucceed={() => {
+            triggerRefreshCompanyClientList((prev) => ++prev);
+          }}
+        />
+      </AccessControl>
+
       <div className="flex justify-start md:justify-end p-3 md:border-t-2 md:border-b-2 bg-white mb-4 md:mb-8">
         <div className=" w-full flex justify-between items-center px-2">
           <h1 className="font-bold">Clients</h1>
@@ -377,8 +424,10 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
               type="primary"
               size="large"
               onClick={() => {
-                rt.push(`/admin/clients/locations/new?parent=list&frominduk=0`);
+                // rt.push(`/admin/clients/locations/new?parent=list&frominduk=0`);
+                setDrawablecreate(true);
               }}
+              disabled={!isAllowedToAddCompanyClient}
             >
               Tambah
             </Button>

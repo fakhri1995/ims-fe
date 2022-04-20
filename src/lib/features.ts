@@ -307,3 +307,237 @@ export const REQUESTER_GROUP_UPDATE = "REQUESTER_GROUP_UPDATE";
  * - [x] /admin/groups
  */
 export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
+
+/**
+ * Daftar feature untuk Company management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076466/Company+Management
+ */
+/**
+ * /getAllCompanyList
+ *
+ * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [ ] components/drawer/tasks/drawerTaskCreate
+ *
+ * - [ ] pages/tasks/mytask
+ * - [ ] pages/tasks/admin
+ * - [ ] pages/tasks
+ */
+export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
+/**
+ * /getBranchCompanyList
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate
+ * - [ ] components/drawer/companies/drawerSubLokasi
+ *
+ * - [x] pages/company/myCompany/locations
+ *
+ * - [ ] pages/admin/agents
+ * - [ ] pages/admin/agents/create
+ * - [ ] pages/admin/agents/update/[userId]
+ */
+export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
+/**
+ * /getCompanyClientList
+ *
+ * - [ ] pages/admin/requesters
+ *
+ * - [x] pages/company/clients
+ * - [x] pages/company/clients/locations
+ */
+export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
+
+/**
+ * /getCompanyRelationshipInventory
+ *
+ * - [ ] componets/table/tableCustom
+ *
+ * - [x] pages/company/clients/[companyId]
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_RELATIONSHIP_INVENTORIES_GET =
+  "COMPANY_RELATIONSHIP_INVENTORIES_GET";
+/**
+ * /getCompanyInventories
+ *
+ * - [ ] components/table/tableCustom
+ *
+ * - [x] pages/company/clients/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
+ */
+export const COMPANY_INVENTORIES_GET = "COMPANY_INVENTORIES_GET";
+
+/**
+ * /getMainLocations
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/myCompany/locations
+ */
+export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
+/**
+ * /getLocations
+ *
+ * - [ ] pages/admin/requesters/update/[userId]
+ * - [ ] pages/admin/requesters
+ * - [ ] pages/admin/requesters/update/[userId]
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations
+ * - [x] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations
+ */
+export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
+/**
+ * /getSubLocations
+ *
+ * - [ ] pages/items/create
+ *
+ * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [ ] components/modal/modalCustom
+ * - [ ] components/drawer/tasks/drawerTaskCreate
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ */
+export const COMPANY_SUB_LOCATIONS_GET = "COMPANY_SUB_LOCATIONS_GET";
+
+/**
+ * /getCompanyDetail
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
+/**
+ * /getSubCompanyDetail?id
+ *
+ * - [x] pages/company/myCompany/locations/[locId]
+ *
+ * - [x] pages/company/clients/locations/[locId]
+ */
+export const COMPANY_SUB_DETAIL_GET = "COMPANY_SUB_DETAIL_GET";
+/**
+ * /getSubCompanyProfile
+ *
+ * - [x] pages/company/clients/locations
+ * - [x] pages/company/myCompany/locations
+ */
+export const COMPANY_SUB_PROFILE_GET = "COMPANY_SUB_PROFILE_GET";
+
+/**
+ * /getCompanyLog
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_LOG_GET = "COMPANY_LOG_GET";
+
+/**
+ * /companyActivation
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_STATUS = "COMPANY_STATUS";
+/**
+ * /updateCompany
+ *
+ * - [x] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/locations/[locId]
+ *
+ * - [x] pages/company/myCompany/locations/[locId]
+ */
+export const COMPANY_UPDATE = "COMPANY_UPDATE";
+/**
+ * /deleteCompany
+ *
+ * - [x] pages/company/clients/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
+ */
+export const COMPANY_DELETE = "COMPANY_DELETE";
+
+/**
+ * /updateMainCompany
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_UPDATE = "COMPANY_MAIN_UPDATE";
+
+/**
+ * /addCompanyBranch
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate
+ * - [x] pages/company/myCompany/locations
+ */
+export const COMPANY_BRANCH_ADD = "COMPANY_BRANCH_ADD";
+/**
+ * /addCompanyClient
+ *
+ * - [x] pages/company/clients
+ * - [x] pages/company/clients/locations
+ *
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyLokasiCreate
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyCreate
+ */
+export const COMPANY_CLIENT_ADD = "COMPANY_CLIENT_ADD";
+/**
+ * /addCompanySub
+ *
+ * - [ ] components/drawer/companies/drawerSubLokasi
+ *
+ * - [x] company/myCompany/locations/[locId]
+ * - [x] company/clients/locations/[locId]
+ */
+export const COMPANY_SUB_ADD = "COMPANY_SUB_ADD";
+
+/**
+ * /getMainBanks
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANKS_GET = "COMPANY_MAIN_BANKS_GET";
+/**
+ * /addMainBank
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyBankCreate
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANK_ADD = "COMPANY_MAIN_BANK_ADD";
+/**
+ * /updateMainBank
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANK_UPDATE = "COMPANY_MAIN_BANK_UPDATE";
+/**
+ * /deleteMainBank
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANK_DELETE = "COMPANY_MAIN_BANK_DELETE";
+
+/**
+ * /getClientBanks
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANKS_GET = "COMPANY_CLIENT_BANKS_GET";
+/**
+ * /addClientBank
+ *
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyBankCreate
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANK_ADD = "COMPANY_CLIENT_BANK_ADD";
+/**
+ * /updateClientBank
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANK_UPDATE = "COMPANY_CLIENT_BANK_UPDATE";
+/**
+ * /deleteClientBank
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
