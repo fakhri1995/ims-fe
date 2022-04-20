@@ -413,6 +413,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         phone_number: "-",
       });
     }
+    if (displaydata.name === "" || displaydata.name === undefined) {
+      notification.error({
+        message: "Nama Perusahaan tidak boloh kosong!",
+      });
+      return;
+    }
+
     seteditloading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateMainCompany`, {
       method: "PUT",
