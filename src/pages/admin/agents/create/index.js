@@ -20,7 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { AGENT_ADD, ROLES_GET } from "lib/features";
+import { AGENT_ADD, COMPANY_BRANCHS_GET, ROLES_GET } from "lib/features";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 
@@ -37,6 +37,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToAddAgent = hasPermission(AGENT_ADD);
+  const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
 
   const { originPath } = rt.query;
   const tok = initProps;
@@ -197,7 +198,8 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   //useEffect
   //get Asal Lokasi
   useEffect(() => {
-    if (!isAllowedToAddAgent) {
+    if (!isAllowedToGetBranchCompanyList) {
+      setpraloading(false);
       return;
     }
 
@@ -212,7 +214,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         setdatacompanylist([res2.data]);
         setpraloading(false);
       });
-  }, [isAllowedToAddAgent]);
+  }, [isAllowedToGetBranchCompanyList]);
   //data Roles
   useEffect(() => {
     if (!isAllowedToAddAgent || !isAllowedToGetRolesList) {
@@ -253,7 +255,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                   <Button type="default">Batal</Button>
                 </Link>
                 <Button
-                  disabled={praloading || !isAllowedToAddAgent}
+                  disabled={
+                    praloading ||
+                    !isAllowedToAddAgent ||
+                    !isAllowedToGetBranchCompanyList
+                  }
                   type="primary"
                   loading={loadingsave}
                   onClick={instanceForm.submit}
@@ -311,6 +317,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       allowClear
                       dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                       treeData={datacompanylist}
+                      disabled={!isAllowedToGetBranchCompanyList}
                       placeholder="Pilih Asal Lokasi"
                       treeDefaultExpandAll
                       onChange={(value) => {

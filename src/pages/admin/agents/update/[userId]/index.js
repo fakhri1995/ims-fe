@@ -33,12 +33,17 @@ function AgentUpdate({
   /**
    * Dependencies
    */
-  const axiosClient = useAxiosClient();
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToGetAgentDetail = hasPermission(AGENT_GET);
   const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
+
+  const axiosClient = useAxiosClient();
+  const rt = useRouter();
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();

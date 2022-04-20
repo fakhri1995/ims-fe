@@ -166,6 +166,7 @@ export const AGENT_GET = "AGENT_GET";
  * /addAgentMember
  *
  * - [x] /admin/agents/create
+ * - [x] /admin/agents
  */
 export const AGENT_ADD = "AGENT_ADD";
 /**
@@ -333,8 +334,8 @@ export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
  *
  * - [x] pages/company/myCompany/locations
  *
- * - [ ] pages/admin/agents
- * - [ ] pages/admin/agents/create
+ * - [x] pages/admin/agents
+ * - [x] pages/admin/agents/create
  * - [ ] pages/admin/agents/update/[userId]
  */
 export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";

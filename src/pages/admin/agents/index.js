@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { AGENTS_GET } from "lib/features";
+import { AGENTS_GET, AGENT_ADD, COMPANY_BRANCHS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
@@ -18,9 +18,16 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetAgentList = hasPermission(AGENTS_GET);
+  const isAllowedToAddAganet = hasPermission(AGENT_ADD);
+  const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
+
+  const rt = useRouter();
 
   var location_id1 = "",
     name1 = "",
@@ -250,7 +257,13 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         setpraloading(false);
       });
   }, [isAllowedToGetAgentList]);
+
   useEffect(() => {
+    if (!isAllowedToGetBranchCompanyList) {
+      setdatarawloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
@@ -276,7 +289,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         setdatalokasi([res2.data]);
         setdatarawloading(false);
       });
-  }, []);
+  }, [isAllowedToGetBranchCompanyList]);
+
   return (
     <Layout
       tok={tok}
@@ -294,15 +308,21 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
           {
             // [109].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
             <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-              <Link
-                href={{
-                  pathname: "/admin/agents/create/",
+              <Button
+                size="large"
+                type="primary"
+                disabled={!isAllowedToAddAganet}
+                onClick={() => {
+                  rt.push("/admin/agents/create");
                 }}
               >
-                <Button size="large" type="primary">
-                  Tambah
-                </Button>
-              </Link>
+                Tambah
+              </Button>
+              {/* <Link
+                href={{
+                  pathname: "/admin/agents/create/",
+                }}>
+              </Link> */}
             </div>
           }
         </div>
@@ -326,7 +346,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     </div>
                     <div className="col-span-2 mr-1">
                       <TreeSelect
-                        disabled={!isAllowedToGetAgentList}
+                        disabled={!isAllowedToGetBranchCompanyList}
                         defaultValue={
                           location_id1 === "" ? null : Number(defasset)
                         }

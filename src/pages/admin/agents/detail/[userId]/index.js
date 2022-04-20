@@ -148,13 +148,18 @@ function AgentDetail({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetAgentDetail = hasPermission(AGENT_GET);
   const isAllowedToAgentActivation = hasPermission(AGENT_STATUS);
   const isAllowedToDeleteAgent = hasPermission(AGENT_DELETE);
   const isAllowedToUpdatePassword = hasPermission(AGENT_PASSWORD_UPDATE);
   const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
+
+  const rt = useRouter();
 
   const tok = initProps;
   const { TabPane } = Tabs;
