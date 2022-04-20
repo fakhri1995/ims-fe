@@ -30,6 +30,7 @@ import {
   COMPANY_MAIN_BANK_DELETE,
   COMPANY_MAIN_BANK_UPDATE,
   COMPANY_MAIN_LOCATIONS_GET,
+  COMPANY_MAIN_UPDATE,
   COMPANY_RELATIONSHIP_INVENTORIES_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -78,6 +79,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToAddMainBank = hasPermission(COMPANY_MAIN_BANK_ADD);
   /** Company detail management */
   const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
+  const isAllowedToUpdateMainCompanyDetail = hasPermission(COMPANY_MAIN_UPDATE);
   /** Aktivitas management */
   const isAllowedToGetCompanyLog = hasPermission(COMPANY_LOG_GET);
   /** Inventory management */
@@ -844,6 +846,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           instanceForm.submit();
                           setmodaledit(true);
                         }}
+                        disabled={!isAllowedToUpdateMainCompanyDetail}
                       >
                         <CheckIconSvg size={15} color={`#ffffff`} />
                         Simpan
@@ -854,13 +857,6 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     className="mt-5 flex justify-center items-center cursor-pointer"
                     onClick={() => {
-                      if (!isAllowedToGetCompanyDetail) {
-                        permissionWarningNotification(
-                          "Memperbarui",
-                          "Detail Company"
-                        );
-                        return;
-                      }
                       seteditable(true);
                     }}
                   >
@@ -1032,7 +1028,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       </div>
                     )}
                   </div>
-                  {editable && (
+                  {/* {editable && (
                     <div className="flex justify-center items-center mb-10">
                       <Buttonsys type="primary" color="danger">
                         <div className="mr-1">
@@ -1041,7 +1037,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         Hapus Lokasi
                       </Buttonsys>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </Form>
               <ModalEdit

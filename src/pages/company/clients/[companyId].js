@@ -901,7 +901,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       </div>
                     )}
                   </div>
-                  {editable && (
+                  {/* {editable && (
                     <div className="flex justify-center items-center mb-10">
                       <Buttonsys type="primary" color="danger">
                         <div className="mr-1">
@@ -910,7 +910,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         Hapus Lokasi
                       </Buttonsys>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </Form>
               <AccessControl hasPermission={COMPANY_UPDATE}>

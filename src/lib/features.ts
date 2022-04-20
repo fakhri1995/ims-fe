@@ -456,6 +456,13 @@ export const COMPANY_UPDATE = "COMPANY_UPDATE";
 export const COMPANY_DELETE = "COMPANY_DELETE";
 
 /**
+ * /updateMainCompany
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_UPDATE = "COMPANY_MAIN_UPDATE";
+
+/**
  * /addCompanyBranch
  *
  * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate

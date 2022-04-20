@@ -24,6 +24,9 @@ import {
 import { H2, Label, Text } from "../../../typography";
 import DrawerCore from "../../drawerCore";
 
+/** Hardcoded company ID untuk Mitramas Infosys Global */
+const MIG_COMPANY_ID = 1;
+
 const DrawerCreateClient = ({
   title,
   visible,
@@ -37,7 +40,7 @@ const DrawerCreateClient = ({
 }) => {
   // const rt = useRouter();
   const [createdata, setcreatedata] = useState({
-    parent_id: /** 1 = Mitramas Infosys Global */ 1,
+    parent_id: MIG_COMPANY_ID,
     name: "",
     address: "",
     phone_number: "",
@@ -132,7 +135,7 @@ const DrawerCreateClient = ({
                 duration: 3,
               });
               setcreatedata({
-                parent_id: 1,
+                parent_id: MIG_COMPANY_ID,
                 name: "",
                 address: "",
                 phone_number: "",
@@ -198,7 +201,7 @@ const DrawerCreateClient = ({
               duration: 3,
             });
             setcreatedata({
-              parent_id: 1,
+              parent_id: MIG_COMPANY_ID,
               name: "",
               address: "",
               phone_number: "",
@@ -265,7 +268,7 @@ const DrawerCreateClient = ({
       visible={visible}
       onClose={() => {
         setcreatedata({
-          parent_id: 1,
+          parent_id: MIG_COMPANY_ID,
           name: "",
           address: "",
           phone_number: "",
