@@ -4,6 +4,20 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_DELETE,
+  COMPANY_INVENTORIES_GET,
+  COMPANY_LOCATIONS_GET,
+  COMPANY_SUB_ADD,
+  COMPANY_SUB_DETAIL_GET,
+  COMPANY_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Buttonsys from "../../../../components/button";
 import DrawerSublokasi from "../../../../components/drawer/companies/drawerSubLokasi";
 import {
@@ -68,7 +82,25 @@ function modifForIndukSubLokasi(rawdata, modifdata) {
 }
 
 const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetSubCompanyDetail = hasPermission(COMPANY_SUB_DETAIL_GET);
+  const isAllowedToGetCompanyInventories = hasPermission(
+    COMPANY_INVENTORIES_GET
+  );
+  const isAllowedToUpdateCompany = hasPermission(COMPANY_UPDATE);
+  const isAllowedToDeleteCompany = hasPermission(COMPANY_DELETE);
+  const isAllowedToGetCompanyLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const isAllowedToAddSubLocation = hasPermission(COMPANY_SUB_ADD);
+
   const rt = useRouter();
+
   const [instanceForm] = Form.useForm();
   var pathArr = rt.pathname.split("/").slice(1);
   // pathArr.splice(2, 1)
@@ -180,17 +212,17 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   const [loadingdelete, setloadingdelete] = useState(false);
   //1. cek
   const [modalcheckchild, setmodalcheckchild] = useState(false);
-  const [modalchecksubchild, setmodalchecksubchild] = useState(false);
+  // const [modalchecksubchild, setmodalchecksubchild] = useState(false);
   //2. move sublokasi
   const [modalmove, setmodalmove] = useState(false);
-  const [modalsubmove, setmodalsubmove] = useState(false);
+  // const [modalsubmove, setmodalsubmove] = useState(false);
   //3. konfirmasi
   const [modalconfirm, setmodalconfirm] = useState(false);
-  const [modalsubconfirm, setmodalsubconfirm] = useState(false);
+  // const [modalsubconfirm, setmodalsubconfirm] = useState(false);
   //4. inventory exist
   const [datainvexist, setdatainvexist] = useState([]);
   const [modalinvexist, setmodalinvexist] = useState(false);
-  const [modalsubinvexist, setmodalsubinvexist] = useState(false);
+  // const [modalsubinvexist, setmodalsubinvexist] = useState(false);
 
   //columns table items
   const columnitems = [
@@ -287,6 +319,11 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
       setsubloc(temp);
       setsortedname("A-Z");
     } else {
+      if (!isAllowedToGetSubCompanyDetail) {
+        setloadingsorted(false);
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyDetail?id=${locid}`,
         {
@@ -578,6 +615,25 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     });
 
   useEffect(() => {
+    if (!isAllowedToGetSubCompanyDetail) {
+      /** Set empty / placeholder content when there is no permission to retrieve the actual data */
+      setdisplaydata((prev) => ({
+        ...prev,
+        address: "-",
+        penanggung_jawab: "-",
+        phone_number: "-",
+        level: null,
+        npwp: "-",
+        tanggal_pkp: "-",
+        email: "-",
+        fax: "-",
+        website: "-",
+      }));
+      setpraloadingedit(false);
+      setloadingsorted(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubCompanyDetail?id=${locid}`,
       {
@@ -644,9 +700,15 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
         setpraloadingedit(false);
         setloadingsorted(false);
       });
-  }, [sublokasidrawer, refreshpage]);
+  }, [sublokasidrawer, refreshpage, isAllowedToGetSubCompanyDetail]);
 
   useEffect(() => {
+    if (!isAllowedToGetCompanyInventories) {
+      permissionWarningNotification("Mendapatkan", "Inventory Company");
+      setpraloadingitem(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyInventories?id=${locid}&page=${page}&rows=${rows}&keyword=${keyworditems}&sort_by=${sortingitems.sort_by}&sort_type=${sortingitems.sort_type}`,
       {
@@ -662,9 +724,14 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
         setitems(res2.data.data);
         setpraloadingitem(false);
       });
-  }, []);
+  }, [isAllowedToGetCompanyInventories]);
 
   useEffect(() => {
+    if (!isAllowedToGetCompanyLocations) {
+      permissionWarningNotification("Mendapatkan", "Lokasi Company");
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
       method: `GET`,
       headers: {
@@ -675,7 +742,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
       .then((res2) => {
         setrawlocations([res2.data]);
       });
-  }, []);
+  }, [isAllowedToGetCompanyLocations]);
 
   return (
     <Layout
@@ -755,7 +822,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                   ) : (
                     <H1>{displaydata.name ?? "-"}</H1>
                   )}
-                  <Label>{rawdata.parent.name}</Label>
+                  <Label>{rawdata.parent?.name}</Label>
                 </div>
                 {editable ? (
                   <div className="flex justify-center items-center mt-5">
@@ -770,7 +837,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                     </div>
                     <div className="mx-1" onClick={() => {}}>
                       <Buttonsys
-                        disabled={disabledsave}
+                        disabled={disabledsave || !isAllowedToUpdateCompany}
                         type="primary"
                         submit={true}
                         onClick={() => {
@@ -1210,6 +1277,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                           setmodalcheckchild(true);
                           // }
                         }}
+                        disabled={!isAllowedToDeleteCompany}
                       >
                         <div className="mr-1">
                           <TrashIconSvg size={18} color={"#FFFFFF"} />
@@ -1220,134 +1288,149 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                   )}
                 </div>
               </Form>
-              <ModalEdit
-                title={`Konfirmasi Edit Perusahaan`}
-                visible={modaledit}
-                level={displaydata.level}
-                onCancel={() => {
-                  setmodaledit(false);
-                }}
-                footer={
-                  <div className="flex justify-between items-center">
-                    <Buttonsys
-                      type="default"
-                      onClick={() => {
-                        setmodaledit(false);
-                      }}
-                    >
-                      Batalkan
-                    </Buttonsys>
-                    <Buttonsys type="primary" onClick={handleEdit}>
-                      <CheckIconSvg size={15} color={`#ffffff`} />
-                      Simpan
-                    </Buttonsys>
-                  </div>
-                }
-              ></ModalEdit>
-              <ModalHapusLokasiCekChild
-                title={
-                  <strong>
-                    Sebelum menghapus{" "}
-                    {tipe === 1 ? `lokasi induk` : `Sublokasi`}...
-                  </strong>
-                }
-                visible={modalcheckchild}
-                onCancel={() => {
-                  setmodalcheckchild(false);
-                }}
-                footer={
-                  <Spin spinning={loadingdelete}>
+
+              <AccessControl hasPermission={COMPANY_UPDATE}>
+                <ModalEdit
+                  title={`Konfirmasi Edit Perusahaan`}
+                  visible={modaledit}
+                  level={displaydata.level}
+                  onCancel={() => {
+                    setmodaledit(false);
+                  }}
+                  footer={
                     <div className="flex justify-between items-center">
                       <Buttonsys
                         type="default"
                         onClick={() => {
-                          setdeletedata({ ...deletedata, new_parent: null });
-                          setmodalcheckchild(false);
+                          setmodaledit(false);
                         }}
                       >
                         Batalkan
                       </Buttonsys>
-                      <div className="flex items-center justify-end">
-                        <div className="mr-5">
-                          <Buttonsys
-                            /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary"
-                            onClick={() => {
-                              setmodalcheckchild(false);
-                              setmodalmove(true);
-                            }}
-                          >
-                            <MoveIconSvg size={15} />
-                            Pindahkan Inventori
-                          </Buttonsys>
-                        </div>
+                      <Buttonsys
+                        type="primary"
+                        onClick={handleEdit}
+                        disabled={!isAllowedToUpdateCompany}
+                      >
+                        <CheckIconSvg size={15} color={`#ffffff`} />
+                        Simpan
+                      </Buttonsys>
+                    </div>
+                  }
+                ></ModalEdit>
+              </AccessControl>
+
+              <AccessControl hasPermission={COMPANY_DELETE}>
+                <ModalHapusLokasiCekChild
+                  title={
+                    <strong>
+                      Sebelum menghapus{" "}
+                      {tipe === 1 ? `lokasi induk` : `Sublokasi`}...
+                    </strong>
+                  }
+                  visible={modalcheckchild}
+                  onCancel={() => {
+                    setmodalcheckchild(false);
+                  }}
+                  footer={
+                    <Spin spinning={loadingdelete}>
+                      <div className="flex justify-between items-center">
                         <Buttonsys
-                          /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary"
-                          color="danger"
+                          type="default"
                           onClick={() => {
-                            if (tipe === 1) {
-                              handleDelete();
-                            } else {
-                              setmodalcheckchild(false);
-                              setmodalconfirm(true);
-                            }
+                            setdeletedata({ ...deletedata, new_parent: null });
+                            setmodalcheckchild(false);
                           }}
                         >
-                          <TrashIconSvg size={15} color={`#ffffff`} />
-                          {displaydata.level === 2
-                            ? `Hapus Sub Lokasi`
-                            : `Hapus Lokasi`}
+                          Batalkan
                         </Buttonsys>
+                        <div className="flex items-center justify-end">
+                          <div className="mr-5">
+                            <Buttonsys
+                              /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary"
+                              onClick={() => {
+                                setmodalcheckchild(false);
+                                setmodalmove(true);
+                              }}
+                            >
+                              <MoveIconSvg size={15} />
+                              Pindahkan Inventori
+                            </Buttonsys>
+                          </div>
+                          <Buttonsys
+                            /*disabled={rawdata.induk_level_1_count > 0 ? true : false}*/ type="primary"
+                            color="danger"
+                            onClick={() => {
+                              if (tipe === 1) {
+                                handleDelete();
+                              } else {
+                                setmodalcheckchild(false);
+                                setmodalconfirm(true);
+                              }
+                            }}
+                            disabled={tipe === 1 && !isAllowedToDeleteCompany}
+                          >
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            {displaydata.level === 2
+                              ? `Hapus Sub Lokasi`
+                              : `Hapus Lokasi`}
+                          </Buttonsys>
+                        </div>
                       </div>
-                    </div>
-                  </Spin>
-                }
-                subloc={subloc}
-                rawdata={rawdata}
-              ></ModalHapusLokasiCekChild>
-              <ModalHapusLokasiMoveChild
-                title={
-                  <strong>
-                    {rawdata.level === 1
-                      ? `Peringatan`
-                      : `Pemindahan Inventori`}
-                  </strong>
-                }
-                visible={modalmove}
-                footer={
-                  <Spin spinning={loadingdelete}>
-                    <div className="flex justify-between items-center">
-                      <Buttonsys
-                        type="default"
-                        onClick={() => {
-                          setdeletedata({ ...deletedata, new_parent: null });
-                          setmodalmove(false);
-                          setmodalcheckchild(true);
-                        }}
-                      >
-                        Batalkan
-                      </Buttonsys>
-                      <div className="flex items-center">
+                    </Spin>
+                  }
+                  subloc={subloc}
+                  rawdata={rawdata}
+                ></ModalHapusLokasiCekChild>
+                <ModalHapusLokasiMoveChild
+                  title={
+                    <strong>
+                      {rawdata.level === 1
+                        ? `Peringatan`
+                        : `Pemindahan Inventori`}
+                    </strong>
+                  }
+                  visible={modalmove}
+                  footer={
+                    <Spin spinning={loadingdelete}>
+                      <div className="flex justify-between items-center">
                         <Buttonsys
-                          disabled={
-                            deletedata.new_parent === null ? true : false
-                          }
-                          type="primary"
-                          color="danger"
-                          onClick={handleDelete}
+                          type="default"
+                          onClick={() => {
+                            setdeletedata({ ...deletedata, new_parent: null });
+                            setmodalmove(false);
+                            setmodalcheckchild(true);
+                          }}
                         >
-                          <TrashIconSvg size={15} color={`#ffffff`} />
-                          Lanjutkan penghapusan
+                          Batalkan
                         </Buttonsys>
+                        <div className="flex items-center">
+                          <Buttonsys
+                            disabled={
+                              isAllowedToDeleteCompany
+                                ? deletedata.new_parent === null
+                                  ? true
+                                  : false
+                                : true
+                            }
+                            type="primary"
+                            color="danger"
+                            onClick={handleDelete}
+                          >
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            Lanjutkan penghapusan
+                          </Buttonsys>
+                        </div>
                       </div>
-                    </div>
-                  </Spin>
-                }
-                rawdata={rawdata}
-                rawlocations={rawlocations}
-                deletedata={deletedata}
-                setdeletedata={setdeletedata}
-                initProps={initProps}
-              ></ModalHapusLokasiMoveChild>
+                    </Spin>
+                  }
+                  rawdata={rawdata}
+                  rawlocations={rawlocations}
+                  deletedata={deletedata}
+                  setdeletedata={setdeletedata}
+                  initProps={initProps}
+                ></ModalHapusLokasiMoveChild>
+              </AccessControl>
               {/* Hanya untuk Lokasi */}
               <ModalHapusInventoryExist
                 title={<strong>Tidak dapat menghapus Lokasi</strong>}
@@ -1392,6 +1475,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                           type="primary"
                           color="danger"
                           onClick={handleDelete}
+                          disabled={!isAllowedToDeleteCompany}
                         >
                           <TrashIconSvg size={15} color={`#ffffff`} />
                           Ya, saya yakin dan hapus lokasi
@@ -1419,6 +1503,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                     placeholder="Cari ID, Tipe Aset, Model"
                     onChange={onSearchItems}
                     allowClear
+                    disabled={!isAllowedToGetCompanyInventories}
                   />
                 </div>
               </div>
@@ -1474,6 +1559,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                     onClick={() => {
                       setsublokasidrawer(true);
                     }}
+                    disabled={!isAllowedToAddSubLocation}
                   >
                     + Tambah Sublokasi
                   </Buttonsys>
@@ -1553,17 +1639,20 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                 </div>
               </div>
             ) : null}
-            <DrawerSublokasi
-              title={"Tambah Sublokasi"}
-              visible={sublokasidrawer}
-              onClose={() => {
-                setsublokasidrawer(false);
-              }}
-              buttonOkText={"Simpan Sublokasi"}
-              initProps={initProps}
-              onvisible={setsublokasidrawer}
-              subchildren={induksubloc}
-            />
+
+            <AccessControl hasPermission={COMPANY_SUB_ADD}>
+              <DrawerSublokasi
+                title={"Tambah Sublokasi"}
+                visible={sublokasidrawer}
+                onClose={() => {
+                  setsublokasidrawer(false);
+                }}
+                buttonOkText={"Simpan Sublokasi"}
+                initProps={initProps}
+                onvisible={setsublokasidrawer}
+                subchildren={induksubloc}
+              />
+            </AccessControl>
           </div>
         </div>
       </div>

@@ -11,8 +11,13 @@ import {
 } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { AGENT_GROUP_ADD, USERS_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -24,7 +29,19 @@ function GroupsAgentsCreate({
   dataListAccount,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToAddAgentGroup = hasPermission(AGENT_GROUP_ADD);
+  const isAllowedToShowAgentList = hasPermission(USERS_GET);
+
   const rt = useRouter();
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 1);
@@ -100,16 +117,24 @@ function GroupsAgentsCreate({
   //------------------------------------------
 
   //------------populate list account-------------
-  const dataDD = dataListAccount.data.map((doc, idx) => {
-    return {
-      value: doc.id,
-      label: doc.name,
-    };
-  });
+  const dataDD = isAllowedToShowAgentList
+    ? dataListAccount.data.map((doc, idx) => {
+        return {
+          value: doc.id,
+          label: doc.name,
+        };
+      })
+    : [];
   // console.log(dataDD)
   //----------------------------------------------
   const { TextArea } = Input;
-  const { Option } = Select;
+
+  useEffect(() => {
+    if (!isAllowedToAddAgentGroup) {
+      permissionWarningNotification("Menambahkan", "Agent Group");
+    }
+  }, [isAllowedToAddAgentGroup]);
+
   return (
     <Layout
       tok={tok}
@@ -140,6 +165,9 @@ function GroupsAgentsCreate({
                   <Button
                     type="primary"
                     size="middle"
+                    disabled={
+                      !isAllowedToAddAgentGroup && !isAllowedToShowAgentList
+                    }
                     onClick={instanceForm.submit}
                     loading={loadingbtn}
                   >
@@ -221,6 +249,7 @@ function GroupsAgentsCreate({
                     optionFilterProp="label"
                     onChange={onChangeCreateGroupHeadGroup}
                     style={{ width: "100%", lineHeight: "2.4" }}
+                    disabled={!isAllowedToShowAgentList}
                   />
                 </Form.Item>
               </div>
@@ -271,6 +300,7 @@ function GroupsAgentsCreate({
                       }}
                       optionFilterProp="label"
                       options={dataDD}
+                      disabled={!isAllowedToShowAgentList}
                     />
                   </Col>
                 </Row>

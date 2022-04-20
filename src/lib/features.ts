@@ -124,3 +124,423 @@ export const MODULE_UPDATE = "MODULE_UPDATE"; // route: `/admin/modules/update/m
 export const MODULE_DELETE = "MODULE_DELETE"; // route: `/admin/modules`
 export const MODULE_FEATURES_ADD = "MODULE_FEATURES_ADD"; // route: `/admin/modules`
 export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admin/modules`
+
+/**
+ * Daftar feature untuk User Management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/72187905/User+Management
+ */
+/**
+ * /getFilterUsers | UserService.filterUsers
+ *
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [ ] components/drawer/tickets/drawerTicketExports
+ * - [ ] components/drawer/tickets/drawerTicketUpdate
+ * - [ ] components/screen/form-aktivitas/DetailAktivitas/AktivitasUserListEditableCard
+ * - [x] /admin/groups/update/agents/[groupId]
+ * - [x] /admin/groups/create/agents
+ */
+export const USERS_GET = "USERS_GET";
+/**
+ * /getFilterGroups
+ *
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [ ] components/drawer/tickets/drawerTicketExports
+ */
+export const GROUPS_GET = "GROUPS_GET";
+
+/**
+ * /getAgentList
+ *
+ * - [x] /admin/agents
+ */
+export const AGENTS_GET = "AGENTS_GET";
+/**
+ * /getAgentDetail
+ *
+ * - [x] /admin/agents/update/[userId]
+ * - [x] /admin/agents/detail/[userId]
+ */
+export const AGENT_GET = "AGENT_GET";
+/**
+ * /addAgentMember
+ *
+ * - [x] /admin/agents/create
+ * - [x] /admin/agents
+ */
+export const AGENT_ADD = "AGENT_ADD";
+/**
+ * /updateAgentDetail
+ *
+ * - [x] /admin/agents/update/[userId]
+ * - [x] /admin/agents/detail/[userId]
+ */
+export const AGENT_UPDATE = "AGENT_UPDATE";
+/**
+ * /changeAgentPassword
+ *
+ * - [x] /admin/agents/password/[userId]
+ * - [x] /admin/agents/detail/[userId]
+ */
+export const AGENT_PASSWORD_UPDATE = "AGENT_PASSWORD_UPDATE";
+/**
+ * /agentActivation
+ *
+ * - [x] /admin/agents/detail/[userId]
+ */
+export const AGENT_STATUS = "AGENT_STATUS";
+/**
+ * /deleteAgent
+ *
+ * - [x] /admin/agents/detail/[userId]
+ */
+export const AGENT_DELETE = "AGENT_DELETE";
+/**
+ * /getAgentGroups
+ *
+ * - [x] /admin/groups
+ * - [x] /admin/groups/update/agents/[groupsId]
+ */
+export const AGENT_GROUPS_GET = "AGENT_GROUPS_GET";
+/**
+ * /getAgentGroup
+ *
+ * - There is no implementation on the client-side for this feature.
+ */
+export const AGENT_GROUP_GET = "AGENT_GROUP_GET";
+/**
+ * /addAgentGroup
+ *
+ * - [x] /admin/groups/create/agents
+ * - [x] /admin/groups
+ */
+export const AGENT_GROUP_ADD = "AGENT_GROUP_ADD";
+/**
+ * /updateAgentGroup
+ *
+ * - [x] /admin/groups/update/agents/[groupsId]
+ * - [x] /admin/groups
+ */
+export const AGENT_GROUP_UPDATE = "AGENT_GROUP_UPDATE";
+/**
+ * /deleteAgentGroup
+ *
+ * - [x] /admin/groups
+ */
+export const AGENT_GROUP_DELETE = "AGENT_GROUP_DELETE";
+
+/**
+ * /getRequesterList
+ *
+ * - [x] /admin/groups/update/requesters/[groupsId]
+ * - [x] /admin/groups/create/requesters
+ * - [x] /admin/requesters
+ */
+export const REQUESTERS_GET = "REQUESTERS_GET";
+/**
+ * /getRequesterDetail
+ *
+ * - [x] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/update/[userId]
+ */
+export const REQUESTER_GET = "REQUESTER_GET";
+/**
+ * /addRequesterMember
+ *
+ * - [x] /admin/requesters/create
+ * - [x] /admin/requesters
+ */
+export const REQUESTER_ADD = "REQUESTER_ADD";
+/**
+ * /updateRequesterDetail
+ *
+ * - [x] /admin/requesters/update/[userId]
+ * - [x] /admin/requesters/detail/[userId]
+ */
+export const REQUESTER_UPDATE = "REQUESTER_UPDATE";
+/**
+ * /changeRequesterPassword
+ *
+ * - [x] /admin/requesters/detail/[userId]
+ * - [x] /admin/requesters/password/[userId]
+ */
+export const REQUESTER_PASSWORD_UPDATE = "REQUESTER_PASSWORD_UPDATE";
+/**
+ * /requesterActivation
+ *
+ * - [x] /admin/requesters/detail/[userId]
+ */
+export const REQUESTER_STATUS = "REQUESTER_STATUS";
+/**
+ * /deleteRequester
+ *
+ * - [x] /admin/requesters/detail/[userId]
+ */
+export const REQUESTER_DELETE = "REQUESTER_DELETE";
+/**
+ * /getRequesterGroups
+ *
+ * - [x] /admin/groups
+ * - [x] /admin/groups/update/requesters/[groupsId]
+ */
+export const REQUESTER_GROUPS_GET = "REQUESTER_GROUPS_GET";
+/**
+ * /addRequesterGroup
+ *
+ * - [x] /admin/groups/create/requesters
+ * - [x] /admin/groups
+ */
+export const REQUESTER_GROUP_ADD = "REQUESTER_GROUP_ADD";
+/**
+ * /getRequesterGroup
+ *
+ * - [x] /admin/groups/update/requesters/[groupId]
+ */
+export const REQUESTER_GROUP_GET = "REQUESTER_GROUP_GET";
+/**
+ * /updateRequesterGroup
+ *
+ * - [x] /admin/groups/update/requesters/[groupsId]
+ * - [x] /admin/groups
+ */
+export const REQUESTER_GROUP_UPDATE = "REQUESTER_GROUP_UPDATE";
+/**
+ * /deleteRequesterGroup
+ *
+ * - [x] /admin/groups
+ */
+export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
+
+/**
+ * Daftar feature untuk Company management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076466/Company+Management
+ */
+/**
+ * /getAllCompanyList
+ *
+ * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [ ] components/drawer/tasks/drawerTaskCreate
+ *
+ * - [ ] pages/tasks/mytask
+ * - [ ] pages/tasks/admin
+ * - [ ] pages/tasks
+ */
+export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
+/**
+ * /getBranchCompanyList
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate
+ * - [ ] components/drawer/companies/drawerSubLokasi
+ *
+ * - [x] pages/company/myCompany/locations
+ *
+ * - [x] pages/admin/agents
+ * - [x] pages/admin/agents/create
+ * - [ ] pages/admin/agents/update/[userId]
+ */
+export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
+/**
+ * /getCompanyClientList
+ * /getClientCompanyList
+ *
+ * - [x] pages/admin/requesters
+ *
+ * - [x] pages/company/clients
+ * - [x] pages/company/clients/locations
+ */
+export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
+
+/**
+ * /getCompanyRelationshipInventory
+ *
+ * - [ ] componets/table/tableCustom
+ *
+ * - [x] pages/company/clients/[companyId]
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_RELATIONSHIP_INVENTORIES_GET =
+  "COMPANY_RELATIONSHIP_INVENTORIES_GET";
+/**
+ * /getCompanyInventories
+ *
+ * - [ ] components/table/tableCustom
+ *
+ * - [x] pages/company/clients/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
+ */
+export const COMPANY_INVENTORIES_GET = "COMPANY_INVENTORIES_GET";
+
+/**
+ * /getMainLocations
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/myCompany/locations
+ */
+export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
+/**
+ * /getLocations
+ *
+ * - [x] pages/admin/requesters/update/[userId]
+ * - [x] pages/admin/requesters
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/myCompany/locations/[locId]
+ * - [x] pages/company/myCompany/locations
+ * - [x] pages/company/clients/locations/[locId]
+ * - [x] pages/company/clients/locations
+ */
+export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
+/**
+ * /getSubLocations
+ *
+ * - [ ] pages/items/create
+ *
+ * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [ ] components/modal/modalCustom
+ * - [ ] components/drawer/tasks/drawerTaskCreate
+ * - [ ] components/drawer/tasks/drawerTaskUpdate
+ */
+export const COMPANY_SUB_LOCATIONS_GET = "COMPANY_SUB_LOCATIONS_GET";
+
+/**
+ * /getCompanyDetail
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_DETAIL_GET = "COMPANY_DETAIL_GET";
+/**
+ * /getSubCompanyDetail?id
+ *
+ * - [x] pages/company/myCompany/locations/[locId]
+ *
+ * - [x] pages/company/clients/locations/[locId]
+ */
+export const COMPANY_SUB_DETAIL_GET = "COMPANY_SUB_DETAIL_GET";
+/**
+ * /getSubCompanyProfile
+ *
+ * - [x] pages/company/clients/locations
+ * - [x] pages/company/myCompany/locations
+ */
+export const COMPANY_SUB_PROFILE_GET = "COMPANY_SUB_PROFILE_GET";
+
+/**
+ * /getCompanyLog
+ *
+ * - [x] pages/company/myCompany
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_LOG_GET = "COMPANY_LOG_GET";
+
+/**
+ * /companyActivation
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_STATUS = "COMPANY_STATUS";
+/**
+ * /updateCompany
+ *
+ * - [x] pages/company/clients/[companyId]
+ * - [x] pages/company/clients/locations/[locId]
+ *
+ * - [x] pages/company/myCompany/locations/[locId]
+ */
+export const COMPANY_UPDATE = "COMPANY_UPDATE";
+/**
+ * /deleteCompany
+ *
+ * - [x] pages/company/clients/locations/[locId]
+ * - [x] pages/company/myCompany/locations/[locId]
+ */
+export const COMPANY_DELETE = "COMPANY_DELETE";
+
+/**
+ * /updateMainCompany
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_UPDATE = "COMPANY_MAIN_UPDATE";
+
+/**
+ * /addCompanyBranch
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyLokasiCreate
+ * - [x] pages/company/myCompany/locations
+ */
+export const COMPANY_BRANCH_ADD = "COMPANY_BRANCH_ADD";
+/**
+ * /addCompanyClient
+ *
+ * - [x] pages/company/clients
+ * - [x] pages/company/clients/locations
+ *
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyLokasiCreate
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyCreate
+ */
+export const COMPANY_CLIENT_ADD = "COMPANY_CLIENT_ADD";
+/**
+ * /addCompanySub
+ *
+ * - [ ] components/drawer/companies/drawerSubLokasi
+ *
+ * - [x] company/myCompany/locations/[locId]
+ * - [x] company/clients/locations/[locId]
+ */
+export const COMPANY_SUB_ADD = "COMPANY_SUB_ADD";
+
+/**
+ * /getMainBanks
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANKS_GET = "COMPANY_MAIN_BANKS_GET";
+/**
+ * /addMainBank
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyBankCreate
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANK_ADD = "COMPANY_MAIN_BANK_ADD";
+/**
+ * /updateMainBank
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANK_UPDATE = "COMPANY_MAIN_BANK_UPDATE";
+/**
+ * /deleteMainBank
+ *
+ * - [x] pages/company/myCompany
+ */
+export const COMPANY_MAIN_BANK_DELETE = "COMPANY_MAIN_BANK_DELETE";
+
+/**
+ * /getClientBanks
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANKS_GET = "COMPANY_CLIENT_BANKS_GET";
+/**
+ * /addClientBank
+ *
+ * - [ ] components/drawer/companies/clients/drawerClientCompanyBankCreate
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANK_ADD = "COMPANY_CLIENT_BANK_ADD";
+/**
+ * /updateClientBank
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANK_UPDATE = "COMPANY_CLIENT_BANK_UPDATE";
+/**
+ * /deleteClientBank
+ *
+ * - [x] pages/company/clients/[companyId]
+ */
+export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";

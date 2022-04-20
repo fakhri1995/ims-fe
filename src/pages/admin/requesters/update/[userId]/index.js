@@ -5,25 +5,33 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
 import { useAccessControl } from "contexts/access-control";
 
-import { ROLES_GET } from "lib/features";
+import {
+  COMPANY_LOCATIONS_GET,
+  REQUESTER_GET,
+  REQUESTER_UPDATE,
+  ROLES_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
-function modifData(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].name;
-    dataa[i]["children"] = dataa[i].members;
-    delete dataa[i].members;
-    if (dataa[i].children) [modifData(dataa[i].children)];
-  }
-  return dataa;
-}
+// function modifData(dataa) {
+//   for (var i = 0; i < dataa.length; i++) {
+//     dataa[i]["key"] = dataa[i].id;
+//     dataa[i]["value"] = dataa[i].id;
+//     dataa[i]["title"] = dataa[i].name;
+//     dataa[i]["children"] = dataa[i].members;
+//     delete dataa[i].members;
+//     if (dataa[i].children) [modifData(dataa[i].children)];
+//   }
+//   return dataa;
+// }
 
 function RequestersUpdate({
   initProps,
@@ -36,9 +44,17 @@ function RequestersUpdate({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+  const isAllowedToGetRequesterDetail = hasPermission(REQUESTER_GET);
+  const isAllowedToUpdateRequester = hasPermission(REQUESTER_UPDATE);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+
+  const rt = useRouter();
 
   const tok = initProps;
   // var pathArr = rt.pathname.split("/").slice(1)
@@ -165,87 +181,93 @@ function RequestersUpdate({
       });
     // }
   };
-  const handleActivationRequesters = (status) => {
-    var keaktifan = false;
-    if (status === "aktif") {
-      keaktifan = false;
-      setloadingubahaktif(true);
-    } else if (status === "nonAktif") {
-      keaktifan = true;
-      setloadingubahnonaktif(true);
-    }
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requesterActivation`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: data1.id,
-        is_enabled: keaktifan,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setVisible(false);
-          setVisiblenon(false);
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            if (status === "aktif") {
-              setloadingubahaktif(false);
-            } else if (status === "nonAktif") {
-              setloadingubahnonaktif(false);
-            }
-            rt.push(`/admin/requesters/${data1.id}`);
-          }, 500);
-        } else if (!res2.success) {
-          setVisible(false);
-          setVisiblenon(false);
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-        }
-      });
-  };
-  const handleUbahPassword = () => {
-    setloadingubahpass(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(datapass),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setVisibleubahpass(false);
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setloadingubahpass(false);
-            rt.push(`/admin/requesters/${data1.id}`);
-          }, 500);
-        } else if (!res2.success) {
-          setVisibleubahpass(false);
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-        }
-      });
-  };
+  // const handleActivationRequesters = (status) => {
+  //   var keaktifan = false;
+  //   if (status === "aktif") {
+  //     keaktifan = false;
+  //     setloadingubahaktif(true);
+  //   } else if (status === "nonAktif") {
+  //     keaktifan = true;
+  //     setloadingubahnonaktif(true);
+  //   }
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requesterActivation`, {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: JSON.parse(tok),
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       user_id: data1.id,
+  //       is_enabled: keaktifan,
+  //     }),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setVisible(false);
+  //         setVisiblenon(false);
+  //         notification["success"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //         setTimeout(() => {
+  //           if (status === "aktif") {
+  //             setloadingubahaktif(false);
+  //           } else if (status === "nonAktif") {
+  //             setloadingubahnonaktif(false);
+  //           }
+  //           rt.push(`/admin/requesters/${data1.id}`);
+  //         }, 500);
+  //       } else if (!res2.success) {
+  //         setVisible(false);
+  //         setVisiblenon(false);
+  //         notification["error"]({
+  //           message: res2.message.errorInfo.status_detail,
+  //           duration: 3,
+  //         });
+  //       }
+  //     });
+  // };
+  // const handleUbahPassword = () => {
+  //   setloadingubahpass(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: JSON.parse(tok),
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(datapass),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setVisibleubahpass(false);
+  //         notification["success"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //         setTimeout(() => {
+  //           setloadingubahpass(false);
+  //           rt.push(`/admin/requesters/${data1.id}`);
+  //         }, 500);
+  //       } else if (!res2.success) {
+  //         setVisibleubahpass(false);
+  //         notification["error"]({
+  //           message: res2.message.errorInfo.status_detail,
+  //           duration: 3,
+  //         });
+  //       }
+  //     });
+  // };
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetRequesterDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Requester");
+      setpreloading(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterDetail?account_id=${userid}`,
       {
@@ -303,8 +325,13 @@ function RequestersUpdate({
 
         setpreloading(false);
       });
-  }, [isAllowedToGetRolesList]);
+  }, [isAllowedToGetRolesList, isAllowedToGetRequesterDetail]);
+
   useEffect(() => {
+    if (!isAllowedToGetLocations) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations`, {
       method: `GET`,
       headers: {
@@ -315,7 +342,7 @@ function RequestersUpdate({
       .then((res2) => {
         setdatacompanylist(res2.data.children);
       });
-  }, []);
+  }, [isAllowedToGetLocations]);
 
   return (
     <Layout
@@ -340,7 +367,7 @@ function RequestersUpdate({
                 {
                   // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button
-                    disabled={preloading}
+                    disabled={preloading || !isAllowedToUpdateRequester}
                     type="primary"
                     loading={loadingupdate}
                     onClick={instanceForm.submit}
@@ -352,16 +379,17 @@ function RequestersUpdate({
             </div>
           </Sticky>
         </div>
-        <div
-          className=" col-span-1 md:col-span-3 flex flex-col"
-          id="formAgentsWrapper"
-        >
-          <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
-            <div className="border-b border-black p-4 font-semibold mb-5 flex">
-              <div className=" mr-3 md:mr-5 pt-1">
-                Ubah Profil Requester - {data1.fullname}
-              </div>
-              {/* {
+        <AccessControl hasPermission={REQUESTER_UPDATE}>
+          <div
+            className=" col-span-1 md:col-span-3 flex flex-col"
+            id="formAgentsWrapper"
+          >
+            <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-5">
+              <div className="border-b border-black p-4 font-semibold mb-5 flex">
+                <div className=" mr-3 md:mr-5 pt-1">
+                  Ubah Profil Requester - {data1.fullname}
+                </div>
+                {/* {
                                 [114].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                                     <div className="pt-1">
                                         {
@@ -381,32 +409,32 @@ function RequestersUpdate({
                                         }
                                     </div>
                             } */}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-4">
-              <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
-                <img
-                  src={data1.profile_image}
-                  alt="imageProfile"
-                  className=" object-cover w-32 h-32 rounded-full mb-4"
-                />
-                {
-                  // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                  <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
-                    <input
-                      type="file"
-                      style={{ display: `none` }}
-                      name="profile_image"
-                      onChange={onChangeEditFoto}
-                    />
-                    {loadingfoto ? (
-                      <LoadingOutlined />
-                    ) : (
-                      <EditOutlined style={{ fontSize: `1.2rem` }} />
-                    )}
-                    Ganti Foto
-                  </label>
-                }
-                {/* {
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-4">
+                <div className="p-3 col-span-1 md:col-span-1 flex flex-col items-center">
+                  <img
+                    src={data1.profile_image}
+                    alt="imageProfile"
+                    className=" object-cover w-32 h-32 rounded-full mb-4"
+                  />
+                  {
+                    // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
+                    <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
+                      <input
+                        type="file"
+                        style={{ display: `none` }}
+                        name="profile_image"
+                        onChange={onChangeEditFoto}
+                      />
+                      {loadingfoto ? (
+                        <LoadingOutlined />
+                      ) : (
+                        <EditOutlined style={{ fontSize: `1.2rem` }} />
+                      )}
+                      Ganti Foto
+                    </label>
+                  }
+                  {/* {
                                     [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                                     <div className="w-full h-auto">
                                         <button className="w-full h-auto py-2 text-center bg-primary hover:bg-secondary text-white rounded-sm" onClick={() => { setVisibleubahpass(true) }}>
@@ -414,165 +442,165 @@ function RequestersUpdate({
                                         </button>
                                     </div >
                                 } */}
-              </div>
-              {preloading ? null : (
-                <div className="p-3 col-span-1 md:col-span-3">
-                  <Form
-                    layout="vertical"
-                    initialValues={data1}
-                    form={instanceForm}
-                    onFinish={handleSubmitEditAccount}
-                  >
-                    <Form.Item
-                      label="Asal Lokasi"
-                      name="company_id"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Asal lokasi wajib diisi",
-                        },
-                      ]}
+                </div>
+                {preloading ? null : (
+                  <div className="p-3 col-span-1 md:col-span-3">
+                    <Form
+                      layout="vertical"
+                      initialValues={data1}
+                      form={instanceForm}
+                      onFinish={handleSubmitEditAccount}
                     >
-                      <TreeSelect
-                        allowClear
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        treeData={datacompanylist}
-                        placeholder="Pilih Asal Lokasi"
-                        treeDefaultExpandAll
-                        defaultValue={companyid}
-                        disabled
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Nama Lengkap"
-                      required
-                      tooltip="Wajib diisi"
-                      name="fullname"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Nama Lengkap wajib diisi",
-                        },
-                      ]}
-                    >
-                      {
-                        // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                        <Input
-                          defaultValue={data1.fullname}
-                          onChange={onChangeEditAgents}
-                          name="fullname"
-                        />
-                        // :
-                        // <div className="col-span-1 flex flex-col mb-5">
-                        //     <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
-                        //     <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
-                        // </div>
-                      }
-                    </Form.Item>
-                    <Form.Item
-                      label="Email"
-                      required
-                      name="email"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Email wajib diisi",
-                        },
-                        {
-                          pattern:
-                            /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                          message: "Email belum diisi dengan benar",
-                        },
-                      ]}
-                    >
-                      <Input
-                        disabled
-                        value={data1.email}
-                        name={`email`}
-                        onChange={onChangeEditAgents}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="Posisi"
-                      required
-                      name="position"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Posisi wajib diisi",
-                        },
-                      ]}
-                    >
-                      <Input
-                        value={data1.position}
-                        name={`position`}
-                        onChange={onChangeEditAgents}
-                      />
-                    </Form.Item>
-                    <Form.Item
-                      label="No. Handphone"
-                      required
-                      tooltip="Wajib diisi"
-                      name="phone_number"
-                      rules={[
-                        {
-                          required: true,
-                          message: "No. Handphone wajib diisi",
-                        },
-                        {
-                          pattern: /(\-)|(^\d*$)/,
-                          message: "No. Handphone harus berisi angka",
-                        },
-                      ]}
-                    >
-                      {
-                        // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                        <Input
-                          defaultValue={data1.phone_number}
-                          onChange={onChangeEditAgents}
-                          name="phone_number"
-                        />
-                        // :
-                        // <div className="col-span-1 flex flex-col mb-5">
-                        //     <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
-                        //     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
-                        // </div>
-                      }
-                    </Form.Item>
-                    <h1 className="font-semibold">Role:</h1>
-                    {
-                      // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                      <Select
-                        mode="multiple"
-                        disabled={!isAllowedToGetRolesList}
-                        onChange={(value) => {
-                          onChangeRole(value);
-                        }}
-                        defaultValue={
-                          isAllowedToGetRolesList ? idrole : undefined
-                        }
-                        style={{ width: `100%` }}
+                      <Form.Item
+                        label="Asal Lokasi"
+                        name="company_id"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Asal lokasi wajib diisi",
+                          },
+                        ]}
                       >
-                        {dataraw1.data.map((doc, idx) => {
-                          return (
-                            <Option key={idx} value={doc.id}>
-                              {doc.name}
-                            </Option>
-                          );
-                        })}
-                      </Select>
-                      // :
-                      // <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
-                      //     {
-                      //         dataraw1.data.map((doc, idx) => {
-                      //             return (
-                      //                 <Option key={idx} value={doc.id}>{doc.name}</Option>
-                      //             )
-                      //         })
-                      //     }
-                      // </Select>
-                    }
-                    {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
+                        <TreeSelect
+                          allowClear
+                          dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                          treeData={datacompanylist}
+                          placeholder="Pilih Asal Lokasi"
+                          treeDefaultExpandAll
+                          defaultValue={companyid}
+                          disabled
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Nama Lengkap"
+                        required
+                        tooltip="Wajib diisi"
+                        name="fullname"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Nama Lengkap wajib diisi",
+                          },
+                        ]}
+                      >
+                        {
+                          // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                          <Input
+                            defaultValue={data1.fullname}
+                            onChange={onChangeEditAgents}
+                            name="fullname"
+                          />
+                          // :
+                          // <div className="col-span-1 flex flex-col mb-5">
+                          //     <h1 className="font-semibold text-sm">Nama Lengkap:</h1>
+                          //     <h1 className="text-sm font-normal text-black">{data1.fullname}</h1>
+                          // </div>
+                        }
+                      </Form.Item>
+                      <Form.Item
+                        label="Email"
+                        required
+                        name="email"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Email wajib diisi",
+                          },
+                          {
+                            pattern:
+                              /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                            message: "Email belum diisi dengan benar",
+                          },
+                        ]}
+                      >
+                        <Input
+                          disabled
+                          value={data1.email}
+                          name={`email`}
+                          onChange={onChangeEditAgents}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="Posisi"
+                        required
+                        name="position"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Posisi wajib diisi",
+                          },
+                        ]}
+                      >
+                        <Input
+                          value={data1.position}
+                          name={`position`}
+                          onChange={onChangeEditAgents}
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        label="No. Handphone"
+                        required
+                        tooltip="Wajib diisi"
+                        name="phone_number"
+                        rules={[
+                          {
+                            required: true,
+                            message: "No. Handphone wajib diisi",
+                          },
+                          {
+                            pattern: /(\-)|(^\d*$)/,
+                            message: "No. Handphone harus berisi angka",
+                          },
+                        ]}
+                      >
+                        {
+                          // [116].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                          <Input
+                            defaultValue={data1.phone_number}
+                            onChange={onChangeEditAgents}
+                            name="phone_number"
+                          />
+                          // :
+                          // <div className="col-span-1 flex flex-col mb-5">
+                          //     <h1 className="font-semibold text-sm">Nomor Telepon:</h1>
+                          //     <h1 className="text-sm font-normal text-black">{data1.phone_number}</h1>
+                          // </div>
+                        }
+                      </Form.Item>
+                      <h1 className="font-semibold">Role:</h1>
+                      {
+                        // [133].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
+                        <Select
+                          mode="multiple"
+                          disabled={!isAllowedToGetRolesList}
+                          onChange={(value) => {
+                            onChangeRole(value);
+                          }}
+                          defaultValue={
+                            isAllowedToGetRolesList ? idrole : undefined
+                          }
+                          style={{ width: `100%` }}
+                        >
+                          {dataraw1.data.map((doc, idx) => {
+                            return (
+                              <Option key={idx} value={doc.id}>
+                                {doc.name}
+                              </Option>
+                            );
+                          })}
+                        </Select>
+                        // :
+                        // <Select disabled onChange={(value) => { onChangeRole(value) }} defaultValue={idrole} style={{ width: `100%` }}>
+                        //     {
+                        //         dataraw1.data.map((doc, idx) => {
+                        //             return (
+                        //                 <Option key={idx} value={doc.id}>{doc.name}</Option>
+                        //             )
+                        //         })
+                        //     }
+                        // </Select>
+                      }
+                      {/* <Form.Item label="Role" required tooltip="Wajib diisi" name="role" initialValue={data1.role}
                                         rules={[
                                             {
                                                 required: true,
@@ -581,12 +609,12 @@ function RequestersUpdate({
                                         ]}>
                                         <input type="number" defaultValue={data1.role} name={'role'} onChange={onChangeEditAgents} />
                                     </Form.Item> */}
-                  </Form>
-                </div>
-              )}
+                    </Form>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          {/* <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
+            {/* <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
                         <div className="border-b border-black p-4 font-semibold mb-5">
                             Detail Perusahaan
                         </div>
@@ -606,7 +634,7 @@ function RequestersUpdate({
                             </div>
                         </div>
                     </div> */}
-          {/* <div className="w-full p-3 md:p-5 h-auto">
+            {/* <div className="w-full p-3 md:p-5 h-auto">
                         {
                             dataDetailAccount.data.data.attribute.is_enabled ?
                                 <button className=" w-full h-auto py-2 text-center bg-red-600 text-white hover:bg-red-800 rounded-md" onClick={() => { setVisible(true) }}>
@@ -618,7 +646,7 @@ function RequestersUpdate({
                                 </button>
                         }
                     </div > */}
-          {/* <Modal
+            {/* <Modal
                         title="Konfirmasi untuk menon-aktifkan akun"
                         visible={visible}
                         onOk={() => { handleActivationRequesters("aktif") }}
@@ -646,7 +674,8 @@ function RequestersUpdate({
                     >
                         <Input.Password name="new_password" value={datapass.new_password} placeholder="Password Baru" type="password" onChange={(e) => { setDatapass({ ...datapass, [e.target.name]: e.target.value }) }} style={{ marginBottom: `2rem` }} />
                     </Modal> */}
-        </div>
+          </div>
+        </AccessControl>
         {/* <div className="col-span-1 md:col-span-1 hidden md:flex flex-col space-y-4 p-4">
                     <div className="font-semibold text-base">Requesters</div>
                     <p className="font-normal text-sm">

@@ -9,11 +9,28 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import InfiniteScroll from "react-infinite-scroll-component";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_CLIENT_BANKS_GET,
+  COMPANY_CLIENT_BANK_ADD,
+  COMPANY_CLIENT_BANK_DELETE,
+  COMPANY_CLIENT_BANK_UPDATE,
+  COMPANY_DETAIL_GET,
+  COMPANY_LOG_GET,
+  COMPANY_RELATIONSHIP_INVENTORIES_GET,
+  COMPANY_STATUS,
+  COMPANY_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Buttonsys from "../../../components/button";
 import DrawerBankClient from "../../../components/drawer/companies/clients/drawerClientCompanyBankCreate";
@@ -44,7 +61,29 @@ import { H1, H2, Label } from "../../../components/typography";
 import httpcookie from "cookie";
 
 const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetCompanyLog = hasPermission(COMPANY_LOG_GET);
+  const isAllowedToUpdateCompany = hasPermission(COMPANY_UPDATE);
+  const isAllowedToActivationCompany = hasPermission(COMPANY_STATUS);
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
+  const isAllowedToGetRelationshipInventories = hasPermission(
+    COMPANY_RELATIONSHIP_INVENTORIES_GET
+  );
+  /** Bank related stuff */
+  const isAllowedToAddBank = hasPermission(COMPANY_CLIENT_BANK_ADD);
+  const isAllowedToDeleteBank = hasPermission(COMPANY_CLIENT_BANK_DELETE);
+  const isAllowedToUpdateBank = hasPermission(COMPANY_CLIENT_BANK_UPDATE);
+  const isAllowedToGetListBank = hasPermission(COMPANY_CLIENT_BANKS_GET);
+
   const rt = useRouter();
+
   const tok = initProps;
   const [instanceForm] = Form.useForm();
   var activeTab = "profile";
@@ -269,6 +308,11 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     });
   };
   const fetchDataMoreLogs = () => {
+    if (!isAllowedToGetCompanyLog) {
+      sethasmore(false);
+      return;
+    }
+
     if (logs.length >= rawlogs.total || logs.length === 0) {
       sethasmore(false);
     } else {
@@ -429,6 +473,25 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      setdisplaydata({
+        name: "-",
+        singkatan: "-",
+        address: "-",
+        penanggung_jawab: "-",
+        tanggal_pkp: "-",
+        npwp: "-",
+        email: "-",
+        phone_number: "-",
+        website: "-",
+        image_logo: "/image/Company.png",
+        fax: "-",
+      });
+      setpraloadingedit(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${companyid}`,
       {
@@ -468,6 +531,15 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         return res2.data.id;
       })
       .then((res3) => {
+        if (!isAllowedToGetCompanyLog) {
+          permissionWarningNotification(
+            "Mendapatkan",
+            "Riwayat Aktivitas Company"
+          );
+          setpraloadingedit(false);
+          return;
+        }
+
         fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyLog?id=${companyid}&page=${page}`,
           {
@@ -485,8 +557,13 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
             setpraloadingedit(false);
           });
       });
-  }, []);
+  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
+
   useEffect(() => {
+    if (!isAllowedToGetListBank) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientBanks?id=${companyid}`,
       {
@@ -500,9 +577,18 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       .then((res2) => {
         setbanks(res2.data);
       });
-  }, [bankloadinghapus, bankloadingedit, bankdrawer]);
+  }, [bankloadinghapus, bankloadingedit, bankdrawer, isAllowedToGetListBank]);
+
   useEffect(() => {
     if (viewrelasi === true) {
+      if (!isAllowedToGetRelationshipInventories) {
+        permissionWarningNotification(
+          "Mendapatkan",
+          "Relasi Inventory Company"
+        );
+        return;
+      }
+
       setloadingrelasi(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyRelationshipInventory?id=${companyid}&page=${pagerelasi}&rows=${rowsrelasi}`,
@@ -520,7 +606,8 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
           setloadingrelasi(false);
         });
     }
-  }, [viewrelasi]);
+  }, [viewrelasi, isAllowedToGetRelationshipInventories]);
+
   return (
     <Layout
       tok={tok}
@@ -614,6 +701,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           instanceForm.submit();
                           setmodaledit(true);
                         }}
+                        disabled={!isAllowedToUpdateCompany}
                       >
                         <CheckIconSvg size={15} color={`#ffffff`} />
                         Simpan
@@ -634,36 +722,40 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   </div>
                 )}
                 <div className="mt-7 flex flex-col px-5">
-                  <div className="flex flex-col mb-5">
-                    <Label>Status Perusahaan</Label>
-                    {statusloading ? null : isenabled ? (
-                      <div className="flex justify-between">
-                        <p className="text-primary100 font-semibold mb-0">
-                          Aktif
-                        </p>
-                        <Switch
-                          defaultChecked={true}
-                          onChange={(checked) => {
-                            setmodalstatus(true);
-                            setisenabled(checked);
-                            setstatusloading(true);
-                          }}
-                        />
-                      </div>
-                    ) : (
-                      <div className="flex justify-between">
-                        <p className="font-semibold mb-0">Non Aktif</p>
-                        <Switch
-                          defaultChecked={false}
-                          onChange={(checked) => {
-                            setmodalstatus(true);
-                            setisenabled(checked);
-                            setstatusloading(true);
-                          }}
-                        />
-                      </div>
-                    )}
-                  </div>
+                  <AccessControl hasPermission={COMPANY_STATUS}>
+                    <div className="flex flex-col mb-5">
+                      <Label>Status Perusahaan</Label>
+                      {statusloading ? null : isenabled ? (
+                        <div className="flex justify-between">
+                          <p className="text-primary100 font-semibold mb-0">
+                            Aktif
+                          </p>
+                          <Switch
+                            defaultChecked={true}
+                            disabled={!isAllowedToActivationCompany}
+                            onChange={(checked) => {
+                              setmodalstatus(true);
+                              setisenabled(checked);
+                              setstatusloading(true);
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex justify-between">
+                          <p className="font-semibold mb-0">Non Aktif</p>
+                          <Switch
+                            defaultChecked={false}
+                            disabled={!isAllowedToActivationCompany}
+                            onChange={(checked) => {
+                              setmodalstatus(true);
+                              setisenabled(checked);
+                              setstatusloading(true);
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </AccessControl>
                   <div className={`flex flex-col mb-5`}>
                     <Label>Singkatan</Label>
                     {editable ? (
@@ -809,7 +901,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       </div>
                     )}
                   </div>
-                  {editable && (
+                  {/* {editable && (
                     <div className="flex justify-center items-center mb-10">
                       <Buttonsys type="primary" color="danger">
                         <div className="mr-1">
@@ -818,58 +910,71 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         Hapus Lokasi
                       </Buttonsys>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </Form>
-              <ModalEdit
-                title={`Konfirmasi Edit Perusahaan`}
-                visible={modaledit}
-                onCancel={() => {
-                  setmodaledit(false);
-                }}
-                footer={
-                  <div className="flex justify-between items-center">
-                    <Buttonsys
-                      type="default"
-                      onClick={() => {
-                        setmodaledit(false);
-                      }}
-                    >
-                      Batalkan
-                    </Buttonsys>
-                    <Buttonsys type="primary" onClick={handleEdit}>
-                      <CheckIconSvg size={15} color={`#ffffff`} />
-                      Simpan
-                    </Buttonsys>
-                  </div>
-                }
-              ></ModalEdit>
-              <ModalStatus
-                title={`Konfirmasi Ganti Status Perusahaan`}
-                visible={modalstatus}
-                onCancel={() => {
-                  setmodalstatus(false);
-                }}
-                footer={
-                  <div className="flex justify-between items-center">
-                    <Buttonsys
-                      type="default"
-                      onClick={() => {
-                        setmodalstatus(false);
-                        setisenabled(rawdata.is_enabled);
-                        setstatusloading(false);
-                      }}
-                    >
-                      Batalkan
-                    </Buttonsys>
-                    <Buttonsys type="primary" onClick={handleStatus}>
-                      <CheckIconSvg size={15} color={`#ffffff`} />
-                      Simpan
-                    </Buttonsys>
-                  </div>
-                }
-                checked={isenabled}
-              ></ModalStatus>
+              <AccessControl hasPermission={COMPANY_UPDATE}>
+                <ModalEdit
+                  title={`Konfirmasi Edit Perusahaan`}
+                  visible={modaledit}
+                  onCancel={() => {
+                    setmodaledit(false);
+                  }}
+                  footer={
+                    <div className="flex justify-between items-center">
+                      <Buttonsys
+                        type="default"
+                        onClick={() => {
+                          setmodaledit(false);
+                        }}
+                      >
+                        Batalkan
+                      </Buttonsys>
+                      <Buttonsys
+                        type="primary"
+                        onClick={handleEdit}
+                        disabled={!isAllowedToUpdateCompany}
+                      >
+                        <CheckIconSvg size={15} color={`#ffffff`} />
+                        Simpan
+                      </Buttonsys>
+                    </div>
+                  }
+                ></ModalEdit>
+              </AccessControl>
+
+              <AccessControl hasPermission={COMPANY_STATUS}>
+                <ModalStatus
+                  title={`Konfirmasi Ganti Status Perusahaan`}
+                  visible={modalstatus}
+                  onCancel={() => {
+                    setmodalstatus(false);
+                  }}
+                  footer={
+                    <div className="flex justify-between items-center">
+                      <Buttonsys
+                        type="default"
+                        onClick={() => {
+                          setmodalstatus(false);
+                          setisenabled(rawdata.is_enabled);
+                          setstatusloading(false);
+                        }}
+                      >
+                        Batalkan
+                      </Buttonsys>
+                      <Buttonsys
+                        type="primary"
+                        onClick={handleStatus}
+                        disabled={!isAllowedToActivationCompany}
+                      >
+                        <CheckIconSvg size={15} color={`#ffffff`} />
+                        Simpan
+                      </Buttonsys>
+                    </div>
+                  }
+                  checked={isenabled}
+                ></ModalStatus>
+              </AccessControl>
             </Spin>
           </div>
         )}
@@ -963,13 +1068,15 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
                   <div className="flex justify-between items-center">
                     <H1>Akun Bank</H1>
-                    <div
+                    <Buttonsys
+                      type="primary"
+                      disabled={!isAllowedToAddBank}
                       onClick={() => {
                         setbankdrawer(true);
                       }}
                     >
-                      <Buttonsys type="primary">+ Tambah Akun Bank</Buttonsys>
-                    </div>
+                      + Tambah Akun Bank
+                    </Buttonsys>
                   </div>
                   {banks.map((doc, idx) => {
                     return (
@@ -992,6 +1099,14 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                               <div
                                 className="mx-1 cursor-pointer"
                                 onClick={() => {
+                                  if (!isAllowedToUpdateBank) {
+                                    permissionWarningNotification(
+                                      "Memperbarui",
+                                      "Bank"
+                                    );
+                                    return;
+                                  }
+
                                   seteditbankdata({ ...doc });
                                   setbankdraweredit(true);
                                 }}
@@ -1001,6 +1116,14 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                               <div
                                 className="mx-1 cursor-pointer"
                                 onClick={() => {
+                                  if (!isAllowedToDeleteBank) {
+                                    permissionWarningNotification(
+                                      "Menghapus",
+                                      "Bank"
+                                    );
+                                    return;
+                                  }
+
                                   sethapusbankdata({
                                     ...hapusbankdata,
                                     id: doc.id,
@@ -1027,162 +1150,171 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       </div>
                     );
                   })}
-                  <DrawerBankClient
-                    title={"Tambah Bank"}
-                    visible={bankdrawer}
-                    onClose={() => {
-                      setbankdrawer(false);
-                    }}
-                    buttonOkText={"Simpan Bank"}
-                    initProps={initProps}
-                    onvisible={setbankdrawer}
-                    companyid={companyid}
-                  ></DrawerBankClient>
-                  <DrawerCore
-                    title={`Edit Bank`}
-                    visible={bankdraweredit}
-                    onClose={() => {
-                      setbankdraweredit(false);
-                    }}
-                    buttonOkText={`Simpan Bank`}
-                    onClick={handleEditBank}
-                  >
-                    <Spin spinning={bankloadingedit}>
-                      <div className="flex flex-col">
-                        <div className="flex justify-center items-center mb-5">
-                          {/* <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank> */}
-                          <div
-                            className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${editbankdata.color_first} ${editbankdata.color_second} relative mr-3`}
-                          >
-                            <div className="absolute bottom-0 right-2">
-                              <img
-                                src="/image/visa.png"
-                                className="object-contain"
-                              />
+                  <AccessControl hasPermission={COMPANY_CLIENT_BANK_ADD}>
+                    <DrawerBankClient
+                      title={"Tambah Bank"}
+                      visible={bankdrawer}
+                      onClose={() => {
+                        setbankdrawer(false);
+                      }}
+                      buttonOkText={"Simpan Bank"}
+                      initProps={initProps}
+                      onvisible={setbankdrawer}
+                      companyid={companyid}
+                    ></DrawerBankClient>
+                  </AccessControl>
+
+                  <AccessControl hasPermission={COMPANY_CLIENT_BANK_UPDATE}>
+                    <DrawerCore
+                      title={`Edit Bank`}
+                      visible={bankdraweredit}
+                      onClose={() => {
+                        setbankdraweredit(false);
+                      }}
+                      buttonOkText={`Simpan Bank`}
+                      onClick={handleEditBank}
+                    >
+                      <Spin spinning={bankloadingedit}>
+                        <div className="flex flex-col">
+                          <div className="flex justify-center items-center mb-5">
+                            {/* <AtmBank from={editbankdata.color_first} to={editbankdata.color_second}></AtmBank> */}
+                            <div
+                              className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${editbankdata.color_first} ${editbankdata.color_second} relative mr-3`}
+                            >
+                              <div className="absolute bottom-0 right-2">
+                                <img
+                                  src="/image/visa.png"
+                                  className="object-contain"
+                                />
+                              </div>
                             </div>
                           </div>
+                          <div className="flex justify-center mb-10">
+                            <div
+                              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${
+                                editbankdata.color_first === "from-state1" &&
+                                "border-primary100"
+                              } mx-2`}
+                              onClick={() => {
+                                seteditbankdata({
+                                  ...editbankdata,
+                                  color_first: "from-state1",
+                                  color_second: "to-state2",
+                                });
+                              }}
+                            ></div>
+                            <div
+                              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${
+                                editbankdata.color_first === "from-state3" &&
+                                "border-primary100"
+                              } mx-2`}
+                              onClick={() => {
+                                seteditbankdata({
+                                  ...editbankdata,
+                                  color_first: "from-state3",
+                                  color_second: "to-state4",
+                                });
+                              }}
+                            ></div>
+                            <div
+                              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${
+                                editbankdata.color_first === "from-red-200" &&
+                                "border-primary100"
+                              } mx-2`}
+                              onClick={() => {
+                                seteditbankdata({
+                                  ...editbankdata,
+                                  color_first: "from-red-200",
+                                  color_second: "to-red-600",
+                                });
+                              }}
+                            ></div>
+                            <div
+                              className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${
+                                editbankdata.color_first ===
+                                  "from-purple-600" && "border-primary100"
+                              } mx-2`}
+                              onClick={() => {
+                                seteditbankdata({
+                                  ...editbankdata,
+                                  color_first: "from-purple-600",
+                                  color_second: "to-pink-600",
+                                });
+                              }}
+                            ></div>
+                          </div>
+                          <div className="flex flex-col ">
+                            <InputRequired
+                              name="name"
+                              defaultValue={editbankdata.name}
+                              onChangeInput={onChangeInputBankEdit}
+                              label="Nama Bank"
+                            ></InputRequired>
+                            <InputRequired
+                              name="account_number"
+                              defaultValue={editbankdata.account_number}
+                              onChangeInput={onChangeInputBankEdit}
+                              label="Nomor Rekening"
+                            ></InputRequired>
+                            <InputRequired
+                              name="owner"
+                              defaultValue={editbankdata.owner}
+                              onChangeInput={onChangeInputBankEdit}
+                              label="Nama Pemegang Rekening"
+                            ></InputRequired>
+                            <RadioRequired
+                              name="currency"
+                              label="Mata Uang"
+                              defaultValue={editbankdata.currency}
+                              onChangeRadio={onChangeRadioBankEdit}
+                              options={[
+                                {
+                                  value: "IDR",
+                                  title: "IDR",
+                                },
+                                {
+                                  value: "USD",
+                                  title: "USD",
+                                },
+                              ]}
+                            ></RadioRequired>
+                          </div>
                         </div>
-                        <div className="flex justify-center mb-10">
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state1 to-state2 border cursor-pointer ${
-                              editbankdata.color_first === "from-state1" &&
-                              "border-primary100"
-                            } mx-2`}
+                      </Spin>
+                    </DrawerCore>
+                  </AccessControl>
+
+                  <AccessControl hasPermission={COMPANY_CLIENT_BANK_DELETE}>
+                    <ModalHapus
+                      title={`Konfirmasi Hapus Bank`}
+                      visible={bankmodalhapus}
+                      onCancel={() => {
+                        setbankmodalhapus(false);
+                      }}
+                      footer={
+                        <div className="flex justify-between items-center">
+                          <Buttonsys
+                            type="default"
+                            color="danger"
                             onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-state1",
-                                color_second: "to-state2",
-                              });
+                              setbankmodalhapus(false);
                             }}
-                          ></div>
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-state3 to-state4 border cursor-pointer ${
-                              editbankdata.color_first === "from-state3" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-state3",
-                                color_second: "to-state4",
-                              });
-                            }}
-                          ></div>
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-red-200 to-red-600 border cursor-pointer ${
-                              editbankdata.color_first === "from-red-200" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-red-200",
-                                color_second: "to-red-600",
-                              });
-                            }}
-                          ></div>
-                          <div
-                            className={`w-8 h-8 rounded-full bg-gradient-to-tl from-purple-600 to-pink-600 border cursor-pointer ${
-                              editbankdata.color_first === "from-purple-600" &&
-                              "border-primary100"
-                            } mx-2`}
-                            onClick={() => {
-                              seteditbankdata({
-                                ...editbankdata,
-                                color_first: "from-purple-600",
-                                color_second: "to-pink-600",
-                              });
-                            }}
-                          ></div>
+                          >
+                            Batalkan
+                          </Buttonsys>
+                          <Buttonsys
+                            type="primary"
+                            color="danger"
+                            onClick={handleDeleteBank}
+                            disabled={!isAllowedToDeleteBank}
+                          >
+                            <TrashIconSvg size={15} color={`#ffffff`} />
+                            Ya, saya yakin dan hapus bank
+                          </Buttonsys>
                         </div>
-                        <div className="flex flex-col ">
-                          <InputRequired
-                            name="name"
-                            defaultValue={editbankdata.name}
-                            onChangeInput={onChangeInputBankEdit}
-                            label="Nama Bank"
-                          ></InputRequired>
-                          <InputRequired
-                            name="account_number"
-                            defaultValue={editbankdata.account_number}
-                            onChangeInput={onChangeInputBankEdit}
-                            label="Nomor Rekening"
-                          ></InputRequired>
-                          <InputRequired
-                            name="owner"
-                            defaultValue={editbankdata.owner}
-                            onChangeInput={onChangeInputBankEdit}
-                            label="Nama Pemegang Rekening"
-                          ></InputRequired>
-                          <RadioRequired
-                            name="currency"
-                            label="Mata Uang"
-                            defaultValue={editbankdata.currency}
-                            onChangeRadio={onChangeRadioBankEdit}
-                            options={[
-                              {
-                                value: "IDR",
-                                title: "IDR",
-                              },
-                              {
-                                value: "USD",
-                                title: "USD",
-                              },
-                            ]}
-                          ></RadioRequired>
-                        </div>
-                      </div>
-                    </Spin>
-                  </DrawerCore>
-                  <ModalHapus
-                    title={`Konfirmasi Hapus Bank`}
-                    visible={bankmodalhapus}
-                    onCancel={() => {
-                      setbankmodalhapus(false);
-                    }}
-                    footer={
-                      <div className="flex justify-between items-center">
-                        <Buttonsys
-                          type="default"
-                          color="danger"
-                          onClick={() => {
-                            setbankmodalhapus(false);
-                          }}
-                        >
-                          Batalkan
-                        </Buttonsys>
-                        <Buttonsys
-                          type="primary"
-                          color="danger"
-                          onClick={handleDeleteBank}
-                        >
-                          <TrashIconSvg size={15} color={`#ffffff`} />
-                          Ya, saya yakin dan hapus bank
-                        </Buttonsys>
-                      </div>
-                    }
-                  ></ModalHapus>
+                      }
+                    ></ModalHapus>
+                  </AccessControl>
                 </div>
                 {/* Relationship */}
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 h-full">

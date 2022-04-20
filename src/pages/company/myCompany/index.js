@@ -17,6 +17,24 @@ import { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_DETAIL_GET,
+  COMPANY_LOCATIONS_GET,
+  COMPANY_LOG_GET,
+  COMPANY_MAIN_BANKS_GET,
+  COMPANY_MAIN_BANK_ADD,
+  COMPANY_MAIN_BANK_DELETE,
+  COMPANY_MAIN_BANK_UPDATE,
+  COMPANY_MAIN_LOCATIONS_GET,
+  COMPANY_MAIN_UPDATE,
+  COMPANY_RELATIONSHIP_INVENTORIES_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Buttonsys from "../../../components/button";
 import DrawerBank from "../../../components/drawer/companies/mycompany/drawerMyCompanyBankCreate";
 import DrawerAddRelasi from "../../../components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate";
@@ -46,7 +64,36 @@ import { H1, H2, Label } from "../../../components/typography";
 import httpcookie from "cookie";
 
 const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  /** Bank Management */
+  const isAllowedToGetMainBanks = hasPermission(COMPANY_MAIN_BANKS_GET);
+  const isAllowedToUpdateMainBank = hasPermission(COMPANY_MAIN_BANK_UPDATE);
+  const isAllowedToDeleteMainBank = hasPermission(COMPANY_MAIN_BANK_DELETE);
+  const isAllowedToAddMainBank = hasPermission(COMPANY_MAIN_BANK_ADD);
+  /** Company detail management */
+  const isAllowedToGetCompanyDetail = hasPermission(COMPANY_DETAIL_GET);
+  const isAllowedToUpdateMainCompanyDetail = hasPermission(COMPANY_MAIN_UPDATE);
+  /** Aktivitas management */
+  const isAllowedToGetCompanyLog = hasPermission(COMPANY_LOG_GET);
+  /** Inventory management */
+  const isAllowedToGetCompanyRelationshipInventories = hasPermission(
+    COMPANY_RELATIONSHIP_INVENTORIES_GET
+  );
+  /** Locations management */
+  const isAllowedToGetMainLocations = hasPermission(COMPANY_MAIN_LOCATIONS_GET);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const canSeeAllLocations =
+    isAllowedToGetMainLocations || isAllowedToGetLocations;
+
   const rt = useRouter();
+
   const tok = initProps;
   const [instanceForm] = Form.useForm();
   var activeTab = "profile";
@@ -160,19 +207,19 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
   //relasi-update
   const [drawerupdaterelasi, setdrawerupdaterelasi] = useState(false);
   const [fetchingmodel, setfetchingmodel] = useState(false);
-  const [dataupdaterelasi, setdataupdaterelasi] = useState({
-    id: null,
-    subject_id: null,
-    relationship_id: null,
-    connected_id: null,
-    is_inverse: null,
-    relationship: {
-      id: null,
-      relationship_type: "",
-      inverse_relationship_type: "",
-    },
-    inventory: {},
-  });
+  // const [dataupdaterelasi, setdataupdaterelasi] = useState({
+  //   id: null,
+  //   subject_id: null,
+  //   relationship_id: null,
+  //   connected_id: null,
+  //   is_inverse: null,
+  //   relationship: {
+  //     id: null,
+  //     relationship_type: "",
+  //     inverse_relationship_type: "",
+  //   },
+  //   inventory: {},
+  // });
   const [dataApiupdate, setdataApiupdate] = useState({
     id: null,
     relationship_id: null,
@@ -191,7 +238,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     useState(-1);
   const [detailtipeupdate, setdetailtipeupdate] = useState(-9);
   const [detailtipedataupdate, setdetailtipedataupdate] = useState([]);
-  const [disabledupdate, setdisabledupdate] = useState(true);
+  // const [disabledupdate, setdisabledupdate] = useState(true);
   const [loadingupdate, setloadingupdate] = useState(false);
   const [sublocdata, setsublocdata] = useState(null);
   const [subloctrig, setsubloctrig] = useState(-1);
@@ -329,6 +376,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     });
   };
   const fetchDataMoreLogs = () => {
+    if (!isAllowedToGetCompanyLog) {
+      sethasmore(false);
+      return;
+    }
+
     if (logs.length >= rawlogs.total || logs.length === 0) {
       sethasmore(false);
     } else {
@@ -361,6 +413,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         phone_number: "-",
       });
     }
+    if (displaydata.name === "" || displaydata.name === undefined) {
+      notification.error({
+        message: "Nama Perusahaan tidak boloh kosong!",
+      });
+      return;
+    }
+
     seteditloading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateMainCompany`, {
       method: "PUT",
@@ -578,6 +637,25 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetCompanyDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Company");
+      setdisplaydata({
+        name: "-",
+        singkatan: "-",
+        address: "-",
+        penanggung_jawab: "-",
+        tanggal_pkp: "-",
+        npwp: "-",
+        email: "-",
+        phone_number: "-",
+        website: "-",
+        image_logo: "/image/Company.png",
+        fax: "-",
+      });
+      setpraloadingedit(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyDetail?id=${dataProfile.data.company.id}`,
       {
@@ -617,6 +695,15 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         return res2.data.id;
       })
       .then((res3) => {
+        if (!isAllowedToGetCompanyLog) {
+          permissionWarningNotification(
+            "Mendapatkan",
+            "Riwayat Aktivitas Company"
+          );
+          setpraloadingedit(false);
+          return;
+        }
+
         fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyLog?id=${res3}&page=${page}`,
           {
@@ -634,8 +721,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             setpraloadingedit(false);
           });
       });
-  }, []);
+  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
+
   useEffect(() => {
+    if (!isAllowedToGetMainBanks) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getMainBanks`, {
       method: `GET`,
       headers: {
@@ -646,9 +738,19 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
       .then((res2) => {
         setbanks(res2.data);
       });
-  }, [bankloadinghapus, bankloadingedit, bankdrawer]);
+  }, [bankloadinghapus, bankloadingedit, bankdrawer, isAllowedToGetMainBanks]);
+
   useEffect(() => {
     if (viewrelasi === true) {
+      if (!isAllowedToGetCompanyRelationshipInventories) {
+        permissionWarningNotification(
+          "Mendapatkan",
+          "Relasi Inventory Company"
+        );
+        // setloadingrelasi(false);
+        return;
+      }
+
       setloadingrelasi(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyRelationshipInventory?id=${dataProfile.data.company.id}&page=${pagerelasi}&rows=${rowsrelasi}`,
@@ -666,7 +768,14 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           setloadingrelasi(false);
         });
     }
-  }, [viewrelasi, drawerelasi, triggerdeleterelasi, triggerupdaterelasi]);
+  }, [
+    viewrelasi,
+    drawerelasi,
+    triggerdeleterelasi,
+    triggerupdaterelasi,
+    isAllowedToGetCompanyRelationshipInventories,
+  ]);
+
   return (
     <Layout
       tok={tok}
@@ -744,6 +853,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           instanceForm.submit();
                           setmodaledit(true);
                         }}
+                        disabled={!isAllowedToUpdateMainCompanyDetail}
                       >
                         <CheckIconSvg size={15} color={`#ffffff`} />
                         Simpan
@@ -925,7 +1035,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       </div>
                     )}
                   </div>
-                  {editable && (
+                  {/* {editable && (
                     <div className="flex justify-center items-center mb-10">
                       <Buttonsys type="primary" color="danger">
                         <div className="mr-1">
@@ -934,7 +1044,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         Hapus Lokasi
                       </Buttonsys>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </Form>
               <ModalEdit
@@ -970,6 +1080,13 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
               <H1>Lokasi</H1>
               <div
                 onClick={() => {
+                  if (!canSeeAllLocations) {
+                    permissionWarningNotification(
+                      "Melihat",
+                      "Daftar Semua Lokasi"
+                    );
+                    return;
+                  }
                   rt.push(`/company/myCompany/locations?id=${displaydata.id}`);
                 }}
               >
@@ -1317,70 +1434,95 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="flex flex-col shadow-md rounded-md bg-white p-8 mb-5">
                   <div className="flex justify-between items-center">
                     <H1>Akun Bank</H1>
-                    <div
+                    <Buttonsys
+                      type="primary"
+                      disabled={!isAllowedToAddMainBank}
                       onClick={() => {
+                        if (!isAllowedToAddMainBank) {
+                          permissionWarningNotification("Menambahkan", "Bank");
+                          return;
+                        }
+
                         setbankdrawer(true);
                       }}
                     >
-                      <Buttonsys type="primary">+ Tambah Akun Bank</Buttonsys>
-                    </div>
+                      + Tambah Akun Bank
+                    </Buttonsys>
                   </div>
-                  {banks.map((doc, idx) => {
-                    return (
-                      <div className="flex mt-5">
-                        {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
-                        <div
-                          className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}
-                        >
-                          <div className="absolute bottom-0 right-2">
-                            <img
-                              src="/image/visa.png"
-                              className="object-contain"
-                            />
-                          </div>
-                        </div>
-                        <div className="w-7/12 flex flex-col justify-between">
-                          <div className="flex justify-between w-full items-center">
-                            <H2>{doc.name ?? "-"}</H2>
-                            <div className="flex">
-                              <div
-                                className="mx-1 cursor-pointer"
-                                onClick={() => {
-                                  seteditbankdata({ ...doc });
-                                  setbankdraweredit(true);
-                                }}
-                              >
-                                <EditIconSvg size={15} color={`#35763B`} />
-                              </div>
-                              <div
-                                className="mx-1 cursor-pointer"
-                                onClick={() => {
-                                  sethapusbankdata({
-                                    ...hapusbankdata,
-                                    id: doc.id,
-                                  });
-                                  setbankmodalhapus(true);
-                                }}
-                              >
-                                <TrashIconSvg size={15} color={`#BF4A40`} />
-                              </div>
+                  <AccessControl hasPermission={COMPANY_MAIN_BANKS_GET}>
+                    {banks.map((doc, idx) => {
+                      return (
+                        <div className="flex mt-5">
+                          {/* <AtmMain idx={idx} from={doc.color_first} to={doc.color_second}></AtmMain> */}
+                          <div
+                            className={`w-5/12 h-28 rounded-md bg-gradient-to-tl ${doc.color_first} ${doc.color_second} relative mr-3`}
+                          >
+                            <div className="absolute bottom-0 right-2">
+                              <img
+                                src="/image/visa.png"
+                                className="object-contain"
+                              />
                             </div>
                           </div>
-                          <div className=" flex flex-col">
-                            <Label>
-                              ***
-                              {doc.account_number.slice(
-                                doc.account_number.length - 4,
-                                doc.account_number.length
-                              )}{" "}
-                              - {doc.owner}
-                            </Label>
-                            <Label>{doc.currency ?? "-"}</Label>
+                          <div className="w-7/12 flex flex-col justify-between">
+                            <div className="flex justify-between w-full items-center">
+                              <H2>{doc.name ?? "-"}</H2>
+                              <div className="flex">
+                                <div
+                                  className="mx-1 cursor-pointer"
+                                  onClick={() => {
+                                    if (!isAllowedToUpdateMainBank) {
+                                      permissionWarningNotification(
+                                        "Memperbarui",
+                                        "Bank"
+                                      );
+                                      return;
+                                    }
+
+                                    seteditbankdata({ ...doc });
+                                    setbankdraweredit(true);
+                                  }}
+                                >
+                                  <EditIconSvg size={15} color={`#35763B`} />
+                                </div>
+                                <div
+                                  className="mx-1 cursor-pointer"
+                                  onClick={() => {
+                                    if (!isAllowedToDeleteMainBank) {
+                                      permissionWarningNotification(
+                                        "Menghapus",
+                                        "Bank"
+                                      );
+                                      return;
+                                    }
+
+                                    sethapusbankdata({
+                                      ...hapusbankdata,
+                                      id: doc.id,
+                                    });
+                                    setbankmodalhapus(true);
+                                  }}
+                                >
+                                  <TrashIconSvg size={15} color={`#BF4A40`} />
+                                </div>
+                              </div>
+                            </div>
+                            <div className=" flex flex-col">
+                              <Label>
+                                ***
+                                {doc.account_number.slice(
+                                  doc.account_number.length - 4,
+                                  doc.account_number.length
+                                )}{" "}
+                                - {doc.owner}
+                              </Label>
+                              <Label>{doc.currency ?? "-"}</Label>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
+                      );
+                    })}
+                  </AccessControl>
                   <DrawerBank
                     title={"Tambah Bank"}
                     visible={bankdrawer}

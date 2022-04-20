@@ -4,13 +4,31 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { AGENTS_GET, AGENT_ADD, COMPANY_BRANCHS_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetAgentList = hasPermission(AGENTS_GET);
+  const isAllowedToAddAganet = hasPermission(AGENT_ADD);
+  const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
+
   const rt = useRouter();
+
   var location_id1 = "",
     name1 = "",
     is_enabled1 = "";
@@ -181,6 +199,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetAgentList) {
+      setpraloading(false);
+      setdatarawloading(false);
+
+      permissionWarningNotification("Mendapatkan", "Daftar Agent");
+      return;
+    }
+
     setpraloading(true);
     setdatarawloading(true);
     fetch(
@@ -230,8 +256,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         setdataagents(dataDD);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToGetAgentList]);
+
   useEffect(() => {
+    if (!isAllowedToGetBranchCompanyList) {
+      setdatarawloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
@@ -257,7 +289,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         setdatalokasi([res2.data]);
         setdatarawloading(false);
       });
-  }, []);
+  }, [isAllowedToGetBranchCompanyList]);
+
   return (
     <Layout
       tok={tok}
@@ -275,15 +308,21 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
           {
             // [109].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
             <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-              <Link
-                href={{
-                  pathname: "/admin/agents/create/",
+              <Button
+                size="large"
+                type="primary"
+                disabled={!isAllowedToAddAganet}
+                onClick={() => {
+                  rt.push("/admin/agents/create");
                 }}
               >
-                <Button size="large" type="primary">
-                  Tambah
-                </Button>
-              </Link>
+                Tambah
+              </Button>
+              {/* <Link
+                href={{
+                  pathname: "/admin/agents/create/",
+                }}>
+              </Link> */}
             </div>
           }
         </div>
@@ -296,6 +335,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                   <div className=" w-10/12 mr-1 grid grid-cols-6">
                     <div className="col-span-3 mr-1">
                       <Input
+                        disabled={!isAllowedToGetAgentList}
                         defaultValue={name1}
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         placeholder="Cari nama agent"
@@ -306,6 +346,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     </div>
                     <div className="col-span-2 mr-1">
                       <TreeSelect
+                        disabled={!isAllowedToGetBranchCompanyList}
                         defaultValue={
                           location_id1 === "" ? null : Number(defasset)
                         }
@@ -331,6 +372,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     </div>
                     <div className="col-span-1 mr-1">
                       <Select
+                        disabled={!isAllowedToGetAgentList}
                         defaultValue={
                           is_enabled1 === ""
                             ? null
@@ -351,6 +393,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                   <div className="w-2/12">
                     <Button
                       type="primary"
+                      disabled={!isAllowedToGetAgentList}
                       style={{ width: `100%` }}
                       onClick={onFinalClick}
                     >
@@ -362,6 +405,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
               )}
               <Table
                 pagination={{
+                  disabled: !isAllowedToGetAgentList,
                   pageSize: 10,
                   total: rawdata.total,
                   onChange: (page, pageSize) => {

@@ -4,24 +4,34 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_CLIENTS_GET,
+  COMPANY_LOCATIONS_GET,
+  REQUESTERS_GET,
+  REQUESTER_ADD,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
-function modifData(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].name;
-    dataa[i]["children"] = dataa[i].members;
-    delete dataa[i].members;
-    if (dataa[i].children) {
-      modifData(dataa[i].children);
-    }
-  }
-  return dataa;
-}
+// function modifData(dataa) {
+//   for (var i = 0; i < dataa.length; i++) {
+//     dataa[i]["key"] = dataa[i].id;
+//     dataa[i]["value"] = dataa[i].id;
+//     dataa[i]["title"] = dataa[i].name;
+//     dataa[i]["children"] = dataa[i].members;
+//     delete dataa[i].members;
+//     if (dataa[i].children) {
+//       modifData(dataa[i].children);
+//     }
+//   }
+//   return dataa;
+// }
 
 function Requesters({
   initProps,
@@ -30,7 +40,21 @@ function Requesters({
   dataCompanyList,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRequesterList = hasPermission(REQUESTERS_GET);
+  const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
+
   const rt = useRouter();
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   const { originPath } = rt.query;
@@ -95,8 +119,8 @@ function Requesters({
   const [asalcompanyvalue, setasalcompanyvalue] = useState(null);
   const [statusvalue, setstatusvalue] = useState(null);
   const [loadinglokasi, setloadinglokasi] = useState(true);
-  const [namaasset, setnamaasset] = useState(location_id1);
-  const [defasset, setdefasset] = useState(null);
+  // const [namaasset, setnamaasset] = useState(location_id1);
+  // const [defasset, setdefasset] = useState(null);
   const [defasset2, setdefasset2] = useState(null);
 
   //function
@@ -415,6 +439,12 @@ function Requesters({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetRequesterList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Requester");
+      setpraloading(false);
+      return;
+    }
+
     setpraloading(true);
     setdatarawloading(true);
     setdatarawloading2(true);
@@ -469,8 +499,14 @@ function Requesters({
         setDataSource(dataDD);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToGetRequesterList]);
+
   useEffect(() => {
+    if (!isAllowedToGetCompanyClientList) {
+      setdatarawloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
       method: `GET`,
       headers: {
@@ -482,8 +518,14 @@ function Requesters({
         setdatacompany(res2.data);
         setdatarawloading(false);
       });
-  }, []);
+  }, [isAllowedToGetCompanyClientList]);
+
   useEffect(() => {
+    if (!isAllowedToGetLocations) {
+      setdatarawloading2(false);
+      return;
+    }
+
     setloadinglokasi(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
@@ -530,9 +572,14 @@ function Requesters({
         }
         setdatarawloading2(false);
       });
-  }, []);
+  }, [isAllowedToGetLocations]);
+
   useEffect(() => {
     if (asallokasitrigger !== -1) {
+      if (!isAllowedToGetLocations) {
+        return;
+      }
+
       setloadinglokasi(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
@@ -558,7 +605,8 @@ function Requesters({
           }
         });
     }
-  }, [asallokasitrigger]);
+  }, [asallokasitrigger, isAllowedToGetLocations]);
+
   return (
     <Layout
       tok={tok}
@@ -584,6 +632,7 @@ function Requesters({
                 <Button
                   /*onClick={() => { console.log(asalcompanyfilteract, company_id1, asalcompanyvalue); console.log(asallokasifilteract, location_id1, asallokasivalue) }}*/ size="large"
                   type="primary"
+                  disabled={!isAllowedToAddRequester}
                 >
                   Tambah
                 </Button>
@@ -619,6 +668,7 @@ function Requesters({
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeAsalCompany}
                         allowClear
+                        disabled={!isAllowedToGetCompanyClientList}
                       >
                         {datacompany.map((doc, idx) => {
                           return (
@@ -655,7 +705,7 @@ function Requesters({
                         treeDefaultExpandAll
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeAsalLokasi}
-                        disabled={loadinglokasi}
+                        disabled={loadinglokasi || !isAllowedToGetLocations}
                         showSearch
                         treeNodeFilterProp="title"
                         filterTreeNode={(search, item) => {
@@ -694,6 +744,7 @@ function Requesters({
                 {datarawloading ? null : (
                   <div className="w-2/12">
                     <Button
+                      disabled={!isAllowedToGetRequesterList}
                       type="primary"
                       style={{ width: `100%` }}
                       onClick={onFinalClick}
@@ -705,6 +756,7 @@ function Requesters({
               </div>
               <Table
                 pagination={{
+                  disabled: !isAllowedToGetRequesterList,
                   pageSize: 10,
                   total: rawdata.total,
                   onChange: (page, pageSize) => {

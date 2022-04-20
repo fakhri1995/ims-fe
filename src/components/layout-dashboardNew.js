@@ -45,7 +45,7 @@ function LayoutDashboard({
   }
 
   const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
-    return doc[0].toUpperCase() + doc.slice(1);
+    return doc[0]?.toUpperCase() + doc.slice(1);
   });
 
   const childBreacrumbDD = childBreacrumbCC;

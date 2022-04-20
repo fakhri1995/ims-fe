@@ -1,17 +1,20 @@
 import { EditOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, TreeSelect, notification } from "antd";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import Sticky from "wil-react-sticky";
+
+import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { ROLES_GET } from "lib/features";
+import { AGENT_GET, AGENT_UPDATE, ROLES_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 
@@ -30,10 +33,17 @@ function AgentUpdate({
   /**
    * Dependencies
    */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+  const isAllowedToGetAgentDetail = hasPermission(AGENT_GET);
+  const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
+
   const axiosClient = useAxiosClient();
   const rt = useRouter();
-  const { hasPermission } = useAccessControl();
-  const isAllowedToGetRolesList = hasPermission(ROLES_GET);
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();
@@ -165,6 +175,11 @@ function AgentUpdate({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetAgentDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Agent");
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userid}`,
       {
@@ -216,9 +231,13 @@ function AgentUpdate({
         setdefaultcompany(res2.data.company_id);
         setpreloading(false);
       });
-  }, []);
+  }, [isAllowedToGetAgentDetail]);
 
   useEffect(() => {
+    if (!isAllowedToGetAgentDetail) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
@@ -229,7 +248,7 @@ function AgentUpdate({
       .then((res2) => {
         setdatacompanylist([res2.data]);
       });
-  }, []);
+  }, [isAllowedToGetAgentDetail]);
 
   useEffect(() => {
     if (isAllowedToGetRolesList) {
@@ -273,7 +292,7 @@ function AgentUpdate({
                 </Button>
                 {
                   <Button
-                    disabled={preloading}
+                    disabled={preloading || !isAllowedToUpdateAgent}
                     type="primary"
                     loading={loadingupdate}
                     onClick={instanceForm.submit}
@@ -303,13 +322,27 @@ function AgentUpdate({
                   className=" object-cover w-32 h-32 rounded-full mb-4"
                 />
                 {
-                  <label className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3">
-                    <input
-                      type="file"
-                      style={{ display: `none` }}
-                      name="profile_image"
-                      onChange={onChangeEditFoto}
-                    />
+                  <label
+                    className="custom-file-upload py-2 px-2 inline-block cursor-pointer text-sm text-black border rounded-sm bg-white hover:border-blue-500 hover:text-blue-500 mb-3"
+                    onClick={(e) => {
+                      if (!isAllowedToUpdateAgent) {
+                        permissionWarningNotification(
+                          "Memperbarui",
+                          "Detail Agent"
+                        );
+                        e.stopPropagation();
+                        return;
+                      }
+                    }}
+                  >
+                    <AccessControl hasPermission={AGENT_UPDATE}>
+                      <input
+                        type="file"
+                        style={{ display: `none` }}
+                        name="profile_image"
+                        onChange={onChangeEditFoto}
+                      />
+                    </AccessControl>
                     {loadingfoto ? (
                       <LoadingOutlined />
                     ) : (
@@ -469,12 +502,6 @@ function AgentUpdate({
                     <Form.Item
                       label="Form Aktivitas"
                       name="attendance_form_ids"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Form Aktivitas wajib diisi",
-                        },
-                      ]}
                     >
                       <Select
                         showSearch
@@ -484,6 +511,10 @@ function AgentUpdate({
                         onSearch={(value) => setFormAktivitasValue(value)}
                         onChange={(value) => {
                           if (value === undefined || value === "") {
+                            setdataupdate((prev) => ({
+                              ...prev,
+                              attendance_form_ids: [],
+                            }));
                             setFormAktivitasValue("");
                             return;
                           }

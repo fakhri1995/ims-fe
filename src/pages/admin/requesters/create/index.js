@@ -9,14 +9,14 @@ import {
   Upload,
   notification,
 } from "antd";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ROLES_GET } from "lib/features";
+import { COMPANY_CLIENTS_GET, REQUESTER_ADD, ROLES_GET } from "lib/features";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
@@ -45,6 +45,8 @@ function RequestersCreate({
    */
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+  const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
+  const isAllowedToGetClientCompanyList = hasPermission(COMPANY_CLIENTS_GET);
 
   const rt = useRouter();
   const tok = initProps;
@@ -155,6 +157,11 @@ function RequestersCreate({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetClientCompanyList) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
       method: `GET`,
       headers: {
@@ -167,7 +174,8 @@ function RequestersCreate({
         setdatacompanylist(res2.data.children);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToGetClientCompanyList]);
+
   useEffect(() => {
     if (isAllowedToGetRolesList) {
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
@@ -214,7 +222,11 @@ function RequestersCreate({
                 {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                 {/* </Link> */}
                 <Button
-                  disabled={praloading}
+                  disabled={
+                    praloading ||
+                    !isAllowedToAddRequester ||
+                    !isAllowedToGetClientCompanyList
+                  }
                   loading={loadingcreate}
                   onClick={instanceForm.submit}
                   type="primary"
@@ -273,6 +285,7 @@ function RequestersCreate({
                       allowClear
                       dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                       treeData={datacompanylist}
+                      disabled={!isAllowedToGetClientCompanyList}
                       placeholder="Pilih Asal Lokasi"
                       treeDefaultExpandAll
                       onChange={(value) => {

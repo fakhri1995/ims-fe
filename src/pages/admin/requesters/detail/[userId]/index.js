@@ -5,6 +5,19 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  REQUESTER_DELETE,
+  REQUESTER_GET,
+  REQUESTER_PASSWORD_UPDATE,
+  REQUESTER_STATUS,
+  REQUESTER_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -132,14 +145,31 @@ function RequestersDetail({
   userid,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRequesterDetail = hasPermission(REQUESTER_GET);
+  const isAllowedToUpdateRequesterDetail = hasPermission(REQUESTER_UPDATE);
+  const isAllowedToChangeRequesterPassword = hasPermission(
+    REQUESTER_PASSWORD_UPDATE
+  );
+  const isAllowedToUpdateRequesterStatus = hasPermission(REQUESTER_STATUS);
+  const isAllowedToDeleteRequester = hasPermission(REQUESTER_DELETE);
+
   const rt = useRouter();
+
   const tok = initProps;
   // var pathArr = rt.pathname.split("/").slice(1)
   // pathArr[pathArr.length - 1] = dataDetailRequester.data.fullname
   // const [instanceForm] = Form.useForm()
   // const { Option } = Select
 
-  const [loadingfoto, setLoadingfoto] = useState(false);
+  // const [loadingfoto, setLoadingfoto] = useState(false);
   // const [data1, setData1] = useState({
   //     id: dataDetailRequester.data.user_id,
   //     fullname: dataDetailRequester.data.fullname,
@@ -166,10 +196,10 @@ function RequestersDetail({
   //     account_id: dataDetailRequester.data.user_id,
   //     role_ids: [dataDetailRequester.data.feature_roles[0]]
   // })
-  const [datarole, setdatarole] = useState({
-    account_id: 0,
-    role_ids: 0,
-  });
+  // const [datarole, setdatarole] = useState({
+  //   account_id: 0,
+  //   role_ids: 0,
+  // });
   const [datapass, setDatapass] = useState({
     user_id: data1.id,
     new_password: "",
@@ -179,99 +209,99 @@ function RequestersDetail({
   const [visiblehapus, setvisiblehapus] = useState(false);
   const [loadinghapus, setloadinghapus] = useState(false);
   const [visibleubahpass, setVisibleubahpass] = useState(false);
-  const [loadingupdate, setLoadingupdate] = useState(false);
+  // const [loadingupdate, setLoadingupdate] = useState(false);
   const [loadingubahpass, setloadingubahpass] = useState(false);
   const [loadingubahaktif, setloadingubahaktif] = useState(false);
   const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false);
-  const [dataraw1, setdataraw1] = useState({ data: [] });
+  // const [dataraw1, setdataraw1] = useState({ data: [] });
   const [praloading, setpraloading] = useState(true);
 
-  const onChangeRole = (value) => {
-    //multiple roles
-    // const arr = datarole.role_ids
-    //single roles
-    const arr = [];
-    arr.push(value);
-    setdatarole({
-      ...datarole,
-      role_ids: arr,
-    });
-  };
-  const onChangeEditAgents = (e) => {
-    setData1({
-      ...data1,
-      [e.target.name]: e.target.value,
-    });
-  };
-  const onChangeEditFoto = async (e) => {
-    setLoadingfoto(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    setData1({
-      ...data1,
-      profile_image: datajson.secure_url,
-    });
-    setLoadingfoto(false);
-  };
-  const handleSubmitEditAccount = () => {
-    setLoadingupdate(true);
-    if (
-      [133].every((curr) => dataProfile.data.registered_feature.includes(curr))
-    ) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateFeatureRequester`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(tok),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datarole),
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setLoadingupdate(false);
-        });
-    }
-    if (
-      [116].every((curr) => dataProfile.data.registered_feature.includes(curr))
-    ) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRequesterDetail`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(tok),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data1),
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setLoadingupdate(false);
-          if (res2.success) {
-            notification["success"]({
-              message: res2.message,
-              duration: 3,
-            });
-            setTimeout(() => {
-              rt.push(`/admin/requesters/${data1.id}`);
-            }, 300);
-          } else if (!res2.success) {
-            notification["error"]({
-              message: res2.message.errorInfo.status_detail,
-              duration: 3,
-            });
-          }
-        });
-    }
-  };
+  // const onChangeRole = (value) => {
+  //   //multiple roles
+  //   // const arr = datarole.role_ids
+  //   //single roles
+  //   const arr = [];
+  //   arr.push(value);
+  //   setdatarole({
+  //     ...datarole,
+  //     role_ids: arr,
+  //   });
+  // };
+  // const onChangeEditAgents = (e) => {
+  //   setData1({
+  //     ...data1,
+  //     [e.target.name]: e.target.value,
+  //   });
+  // };
+  // const onChangeEditFoto = async (e) => {
+  //   setLoadingfoto(true);
+  //   const foto = e.target.files;
+  //   const formdata = new FormData();
+  //   formdata.append("file", foto[0]);
+  //   formdata.append("upload_preset", "migsys");
+  //   const fetching = await fetch(
+  //     `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
+  //     {
+  //       method: "POST",
+  //       body: formdata,
+  //     }
+  //   );
+  //   const datajson = await fetching.json();
+  //   setData1({
+  //     ...data1,
+  //     profile_image: datajson.secure_url,
+  //   });
+  //   setLoadingfoto(false);
+  // };
+  // const handleSubmitEditAccount = () => {
+  //   setLoadingupdate(true);
+  //   if (
+  //     [133].every((curr) => dataProfile.data.registered_feature.includes(curr))
+  //   ) {
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateFeatureRequester`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: JSON.parse(tok),
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(datarole),
+  //     })
+  //       .then((res) => res.json())
+  //       .then((res2) => {
+  //         setLoadingupdate(false);
+  //       });
+  //   }
+  //   if (
+  //     [116].every((curr) => dataProfile.data.registered_feature.includes(curr))
+  //   ) {
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRequesterDetail`, {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: JSON.parse(tok),
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(data1),
+  //     })
+  //       .then((res) => res.json())
+  //       .then((res2) => {
+  //         setLoadingupdate(false);
+  //         if (res2.success) {
+  //           notification["success"]({
+  //             message: res2.message,
+  //             duration: 3,
+  //           });
+  //           setTimeout(() => {
+  //             rt.push(`/admin/requesters/${data1.id}`);
+  //           }, 300);
+  //         } else if (!res2.success) {
+  //           notification["error"]({
+  //             message: res2.message.errorInfo.status_detail,
+  //             duration: 3,
+  //           });
+  //         }
+  //       });
+  //   }
+  // };
   const handleActivationRequesters = (status) => {
     var keaktifan = false;
     if (status === "aktif") {
@@ -349,40 +379,46 @@ function RequestersDetail({
         }
       });
   };
-  const handleUbahPassword = () => {
-    setloadingubahpass(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(datapass),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setVisibleubahpass(false);
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setloadingubahpass(false);
-            rt.push(`/admin/requesters/${data1.id}`);
-          }, 500);
-        } else if (!res2.success) {
-          setVisibleubahpass(false);
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-        }
-      });
-  };
+  // const handleUbahPassword = () => {
+  //   setloadingubahpass(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeRequesterPassword`, {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: JSON.parse(tok),
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(datapass),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       if (res2.success) {
+  //         setVisibleubahpass(false);
+  //         notification["success"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //         setTimeout(() => {
+  //           setloadingubahpass(false);
+  //           rt.push(`/admin/requesters/${data1.id}`);
+  //         }, 500);
+  //       } else if (!res2.success) {
+  //         setVisibleubahpass(false);
+  //         notification["error"]({
+  //           message: res2.message.errorInfo.status_detail,
+  //           duration: 3,
+  //         });
+  //       }
+  //     });
+  // };
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetRequesterDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Requester");
+      setpraloading(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterDetail?account_id=${userid}`,
       {
@@ -438,7 +474,7 @@ function RequestersDetail({
     //             setpraloading(false)
     //         })
     // })
-  }, [ubahstatus]);
+  }, [ubahstatus, isAllowedToGetRequesterDetail]);
 
   // useEffect(() => {
   //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
@@ -476,7 +512,7 @@ function RequestersDetail({
                 {
                   // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button
-                    disabled={praloading}
+                    disabled={praloading || !isAllowedToUpdateRequesterDetail}
                     type="primary"
                     onClick={() => {
                       rt.push(`/admin/requesters/update/${data1.id}`);
@@ -490,7 +526,9 @@ function RequestersDetail({
                   // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <div className="w-full h-auto">
                     <Button
-                      disabled={praloading}
+                      disabled={
+                        praloading || !isAllowedToChangeRequesterPassword
+                      }
                       type="primary"
                       onClick={() => {
                         rt.push(
@@ -505,6 +543,7 @@ function RequestersDetail({
                 {
                   <div className="w-full h-auto">
                     <Button
+                      disabled={!isAllowedToDeleteRequester}
                       type="danger"
                       onClick={() => {
                         setvisiblehapus(true);
@@ -533,7 +572,9 @@ function RequestersDetail({
                       <div className="pt-1">
                         {isenabled ? (
                           <Switch
-                            disabled={praloading}
+                            disabled={
+                              praloading || !isAllowedToUpdateRequesterStatus
+                            }
                             checked={true}
                             onChange={() => {
                               setVisible(true);
@@ -542,7 +583,9 @@ function RequestersDetail({
                           ></Switch>
                         ) : (
                           <Switch
-                            disabled={praloading}
+                            disabled={
+                              praloading || !isAllowedToUpdateRequesterStatus
+                            }
                             checked={false}
                             onChange={() => {
                               setVisiblenon(true);
@@ -907,46 +950,52 @@ function RequestersDetail({
                                 </button>
                         }
                     </div > */}
-          <Modal
-            title="Konfirmasi untuk menon-aktifkan akun"
-            visible={visible}
-            onOk={() => {
-              handleActivationRequesters("aktif");
-            }}
-            onCancel={() => setVisible(false)}
-            okText="Ya"
-            cancelText="Tidak"
-            okButtonProps={{ loading: loadingubahaktif }}
-          >
-            Apakah anda yakin ingin menon-aktifkan akun requester{" "}
-            <strong>{data1.name}</strong>?
-          </Modal>
-          <Modal
-            title="Konfirmasi untuk mengakaktifkan akun"
-            visible={visiblenon}
-            onOk={() => {
-              handleActivationRequesters("nonAktif");
-            }}
-            onCancel={() => setVisiblenon(false)}
-            okText="Ya"
-            cancelText="Tidak"
-            okButtonProps={{ loading: loadingubahnonaktif }}
-          >
-            Apakah anda yakin ingin mengaktifkan akun requester{" "}
-            <strong>{data1.name}</strong>?`
-          </Modal>
-          <Modal
-            title="Konfirmasi untuk menghapus akun Requester"
-            visible={visiblehapus}
-            onOk={handleDeleteRequesters}
-            onCancel={() => setvisiblehapus(false)}
-            okText="Ya"
-            cancelText="Tidak"
-            okButtonProps={{ loading: loadinghapus }}
-          >
-            Apakah anda yakin ingin menghapus akun requester{" "}
-            <strong>{data1.name}</strong>?`
-          </Modal>
+          <AccessControl hasPermission={REQUESTER_STATUS}>
+            <Modal
+              title="Konfirmasi untuk menon-aktifkan akun"
+              visible={visible}
+              onOk={() => {
+                handleActivationRequesters("aktif");
+              }}
+              onCancel={() => setVisible(false)}
+              okText="Ya"
+              cancelText="Tidak"
+              okButtonProps={{ loading: loadingubahaktif }}
+            >
+              Apakah anda yakin ingin menon-aktifkan akun requester{" "}
+              <strong>{data1.name}</strong>?
+            </Modal>
+
+            <Modal
+              title="Konfirmasi untuk mengakaktifkan akun"
+              visible={visiblenon}
+              onOk={() => {
+                handleActivationRequesters("nonAktif");
+              }}
+              onCancel={() => setVisiblenon(false)}
+              okText="Ya"
+              cancelText="Tidak"
+              okButtonProps={{ loading: loadingubahnonaktif }}
+            >
+              Apakah anda yakin ingin mengaktifkan akun requester{" "}
+              <strong>{data1.name}</strong>?`
+            </Modal>
+          </AccessControl>
+
+          <AccessControl hasPermission={REQUESTER_DELETE}>
+            <Modal
+              title="Konfirmasi untuk menghapus akun Requester"
+              visible={visiblehapus}
+              onOk={handleDeleteRequesters}
+              onCancel={() => setvisiblehapus(false)}
+              okText="Ya"
+              cancelText="Tidak"
+              okButtonProps={{ loading: loadinghapus }}
+            >
+              Apakah anda yakin ingin menghapus akun requester{" "}
+              <strong>{data1.name}</strong>?`
+            </Modal>
+          </AccessControl>
           {/* <Modal
                         title="Ubah Password"
                         visible={visibleubahpass}

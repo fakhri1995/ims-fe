@@ -20,7 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { ROLES_GET } from "lib/features";
+import { AGENT_ADD, COMPANY_BRANCHS_GET, ROLES_GET } from "lib/features";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 
@@ -36,6 +36,8 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   const rt = useRouter();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
+  const isAllowedToAddAgent = hasPermission(AGENT_ADD);
+  const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
 
   const { originPath } = rt.query;
   const tok = initProps;
@@ -70,11 +72,15 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   );
 
   useEffect(() => {
+    if (!isAllowedToAddAgent) {
+      return;
+    }
+
     findFormAktivitas({
       queryKey: ["ATTENDANCE_FORMS_GET", debouncedSearchFormAktivitasValue],
       exact: true,
     });
-  }, [debouncedSearchFormAktivitasValue]);
+  }, [debouncedSearchFormAktivitasValue, isAllowedToAddAgent]);
 
   //useState
   //data payload
@@ -192,6 +198,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   //useEffect
   //get Asal Lokasi
   useEffect(() => {
+    if (!isAllowedToGetBranchCompanyList) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
       method: `GET`,
       headers: {
@@ -203,23 +214,24 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         setdatacompanylist([res2.data]);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToGetBranchCompanyList]);
   //data Roles
   useEffect(() => {
-    if (isAllowedToGetRolesList) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setdataroles(res2.data);
-        });
+    if (!isAllowedToAddAgent || !isAllowedToGetRolesList) {
       return;
     }
-  }, [isAllowedToGetRolesList]);
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setdataroles(res2.data);
+      });
+  }, [isAllowedToGetRolesList, isAllowedToAddAgent]);
 
   return (
     <Layout
@@ -243,7 +255,11 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                   <Button type="default">Batal</Button>
                 </Link>
                 <Button
-                  disabled={praloading}
+                  disabled={
+                    praloading ||
+                    !isAllowedToAddAgent ||
+                    !isAllowedToGetBranchCompanyList
+                  }
                   type="primary"
                   loading={loadingsave}
                   onClick={instanceForm.submit}
@@ -301,6 +317,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       allowClear
                       dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                       treeData={datacompanylist}
+                      disabled={!isAllowedToGetBranchCompanyList}
                       placeholder="Pilih Asal Lokasi"
                       treeDefaultExpandAll
                       onChange={(value) => {
@@ -415,16 +432,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       onChange={onChangeCreateAgents}
                     />
                   </Form.Item>
-                  <Form.Item
-                    label="Form Aktivitas"
-                    name="attendance_form_ids"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Form Aktivitas wajib diisi",
-                      },
-                    ]}
-                  >
+                  <Form.Item label="Form Aktivitas" name="attendance_form_ids">
                     <Select
                       showSearch
                       allowClear

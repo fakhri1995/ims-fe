@@ -5,6 +5,19 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  AGENT_DELETE,
+  AGENT_GET,
+  AGENT_PASSWORD_UPDATE,
+  AGENT_STATUS,
+  AGENT_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -132,7 +145,22 @@ function AgentDetail({
   userid,
   sidemenu,
 }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetAgentDetail = hasPermission(AGENT_GET);
+  const isAllowedToAgentActivation = hasPermission(AGENT_STATUS);
+  const isAllowedToDeleteAgent = hasPermission(AGENT_DELETE);
+  const isAllowedToUpdatePassword = hasPermission(AGENT_PASSWORD_UPDATE);
+  const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
+
   const rt = useRouter();
+
   const tok = initProps;
   const { TabPane } = Tabs;
 
@@ -260,6 +288,11 @@ function AgentDetail({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetAgentDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Agent");
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentDetail?account_id=${userid}`,
       {
@@ -297,7 +330,7 @@ function AgentDetail({
         setpraloading(false);
         // return res2.data.roles
       });
-  }, [ubahstatus]);
+  }, [ubahstatus, isAllowedToGetAgentDetail]);
 
   return (
     <Layout
@@ -320,7 +353,7 @@ function AgentDetail({
                 {
                   // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button
-                    disabled={praloading}
+                    disabled={praloading || !isAllowedToUpdateAgent}
                     type="primary"
                     onClick={() => {
                       rt.push(`/admin/agents/update/${data1.id}`);
@@ -334,7 +367,7 @@ function AgentDetail({
                   // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <div className="w-full h-auto">
                     <Button
-                      disabled={praloading}
+                      disabled={praloading || !isAllowedToUpdatePassword}
                       type="primary"
                       onClick={() => {
                         rt.push(
@@ -349,6 +382,7 @@ function AgentDetail({
                 {
                   <div className="w-full h-auto">
                     <Button
+                      disabled={!isAllowedToDeleteAgent}
                       type="danger"
                       onClick={() => {
                         setvisiblehapus(true);
@@ -362,6 +396,7 @@ function AgentDetail({
             </div>
           </Sticky>
         </div>
+
         <div
           className=" col-span-1 md:col-span-4 flex flex-col"
           id="formAgentsWrapper"
@@ -377,7 +412,7 @@ function AgentDetail({
                       <div className="pt-1">
                         {isenabled ? (
                           <Switch
-                            disabled={praloading}
+                            disabled={praloading || !isAllowedToAgentActivation}
                             checked={true}
                             onChange={() => {
                               setVisible(true);
@@ -386,7 +421,7 @@ function AgentDetail({
                           ></Switch>
                         ) : (
                           <Switch
-                            disabled={praloading}
+                            disabled={praloading || !isAllowedToAgentActivation}
                             checked={false}
                             onChange={() => {
                               setVisiblenon(true);
@@ -581,46 +616,52 @@ function AgentDetail({
               </TabPane>
             </Tabs>
           </div>
-          <Modal
-            title="Konfirmasi untuk menon-aktifkan akun"
-            visible={visible}
-            onOk={() => {
-              handleActivationRequesters("aktif");
-            }}
-            onCancel={() => setVisible(false)}
-            okText="Ya"
-            cancelText="Tidak"
-            okButtonProps={{ loading: loadingubahaktif }}
-          >
-            Apakah anda yakin ingin menon-aktifkan akun agent{" "}
-            <strong>{data1.name}</strong>?
-          </Modal>
-          <Modal
-            title="Konfirmasi untuk mengakaktifkan akun"
-            visible={visiblenon}
-            onOk={() => {
-              handleActivationRequesters("nonAktif");
-            }}
-            onCancel={() => setVisiblenon(false)}
-            okText="Ya"
-            cancelText="Tidak"
-            okButtonProps={{ loading: loadingubahnonaktif }}
-          >
-            Apakah anda yakin ingin mengaktifkan akun agent{" "}
-            <strong>{data1.name}</strong>?`
-          </Modal>
-          <Modal
-            title="Konfirmasi untuk menghapus akun Agent"
-            visible={visiblehapus}
-            onOk={handleDeleteAgent}
-            onCancel={() => setvisiblehapus(false)}
-            okText="Ya"
-            cancelText="Tidak"
-            okButtonProps={{ loading: loadinghapus }}
-          >
-            Apakah anda yakin ingin menghapus akun agent{" "}
-            <strong>{data1.name}</strong>?`
-          </Modal>
+
+          <AccessControl hasPermission={AGENT_STATUS}>
+            <Modal
+              title="Konfirmasi untuk menon-aktifkan akun"
+              visible={visible}
+              onOk={() => {
+                handleActivationRequesters("aktif");
+              }}
+              onCancel={() => setVisible(false)}
+              okText="Ya"
+              cancelText="Tidak"
+              okButtonProps={{ loading: loadingubahaktif }}
+            >
+              Apakah anda yakin ingin menon-aktifkan akun agent{" "}
+              <strong>{data1.name}</strong>?
+            </Modal>
+            <Modal
+              title="Konfirmasi untuk mengakaktifkan akun"
+              visible={visiblenon}
+              onOk={() => {
+                handleActivationRequesters("nonAktif");
+              }}
+              onCancel={() => setVisiblenon(false)}
+              okText="Ya"
+              cancelText="Tidak"
+              okButtonProps={{ loading: loadingubahnonaktif }}
+            >
+              Apakah anda yakin ingin mengaktifkan akun agent{" "}
+              <strong>{data1.name}</strong>?`
+            </Modal>
+          </AccessControl>
+
+          <AccessControl hasPermission={AGENT_DELETE}>
+            <Modal
+              title="Konfirmasi untuk menghapus akun Agent"
+              visible={visiblehapus}
+              onOk={handleDeleteAgent}
+              onCancel={() => setvisiblehapus(false)}
+              okText="Ya"
+              cancelText="Tidak"
+              okButtonProps={{ loading: loadinghapus }}
+            >
+              Apakah anda yakin ingin menghapus akun agent{" "}
+              <strong>{data1.name}</strong>?`
+            </Modal>
+          </AccessControl>
         </div>
       </div>
     </Layout>
