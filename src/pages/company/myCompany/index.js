@@ -415,7 +415,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     }
     if (displaydata.name === "" || displaydata.name === undefined) {
       notification.error({
-        message: "Nama Perusahaan tidak boloh kosong!",
+        message: "Nama Perusahaan wajib diisi!",
       });
       return;
     }
