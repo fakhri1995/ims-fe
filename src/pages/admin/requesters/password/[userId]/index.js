@@ -7,7 +7,6 @@ import Sticky from "wil-react-sticky";
 import { useAccessControl } from "contexts/access-control";
 
 import { REQUESTER_PASSWORD_UPDATE } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -75,12 +74,6 @@ function RequestersPassword({ initProps, dataProfile, sidemenu, userid }) {
         });
     }
   };
-
-  useEffect(() => {
-    if (!isAllowedToUpdatePassword) {
-      permissionWarningNotification("Memperbarui", "Password Requester");
-    }
-  }, [isAllowedToUpdatePassword]);
 
   return (
     <Layout

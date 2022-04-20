@@ -6,7 +6,12 @@ import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { REQUESTERS_GET, REQUESTER_ADD } from "lib/features";
+import {
+  COMPANY_CLIENTS_GET,
+  COMPANY_LOCATIONS_GET,
+  REQUESTERS_GET,
+  REQUESTER_ADD,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
@@ -38,10 +43,17 @@ function Requesters({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRequesterList = hasPermission(REQUESTERS_GET);
   const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
+
+  const rt = useRouter();
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -488,8 +500,9 @@ function Requesters({
         setpraloading(false);
       });
   }, [isAllowedToGetRequesterList]);
+
   useEffect(() => {
-    if (!isAllowedToGetRequesterList) {
+    if (!isAllowedToGetCompanyClientList) {
       setdatarawloading(false);
       return;
     }
@@ -505,12 +518,14 @@ function Requesters({
         setdatacompany(res2.data);
         setdatarawloading(false);
       });
-  }, [isAllowedToGetRequesterList]);
+  }, [isAllowedToGetCompanyClientList]);
+
   useEffect(() => {
-    if (!isAllowedToGetRequesterList) {
+    if (!isAllowedToGetLocations) {
       setdatarawloading2(false);
       return;
     }
+
     setloadinglokasi(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
@@ -557,9 +572,14 @@ function Requesters({
         }
         setdatarawloading2(false);
       });
-  }, [isAllowedToGetRequesterList]);
+  }, [isAllowedToGetLocations]);
+
   useEffect(() => {
     if (asallokasitrigger !== -1) {
+      if (!isAllowedToGetLocations) {
+        return;
+      }
+
       setloadinglokasi(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
@@ -585,7 +605,8 @@ function Requesters({
           }
         });
     }
-  }, [asallokasitrigger]);
+  }, [asallokasitrigger, isAllowedToGetLocations]);
+
   return (
     <Layout
       tok={tok}
@@ -647,6 +668,7 @@ function Requesters({
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeAsalCompany}
                         allowClear
+                        disabled={!isAllowedToGetCompanyClientList}
                       >
                         {datacompany.map((doc, idx) => {
                           return (
@@ -683,7 +705,7 @@ function Requesters({
                         treeDefaultExpandAll
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeAsalLokasi}
-                        disabled={loadinglokasi}
+                        disabled={loadinglokasi || !isAllowedToGetLocations}
                         showSearch
                         treeNodeFilterProp="title"
                         filterTreeNode={(search, item) => {

@@ -148,8 +148,11 @@ function RequestersDetail({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRequesterDetail = hasPermission(REQUESTER_GET);
   const isAllowedToUpdateRequesterDetail = hasPermission(REQUESTER_UPDATE);
   const isAllowedToChangeRequesterPassword = hasPermission(
@@ -157,6 +160,8 @@ function RequestersDetail({
   );
   const isAllowedToUpdateRequesterStatus = hasPermission(REQUESTER_STATUS);
   const isAllowedToDeleteRequester = hasPermission(REQUESTER_DELETE);
+
+  const rt = useRouter();
 
   const tok = initProps;
   // var pathArr = rt.pathname.split("/").slice(1)

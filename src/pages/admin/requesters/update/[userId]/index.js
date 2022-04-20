@@ -9,7 +9,12 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { REQUESTER_GET, REQUESTER_UPDATE, ROLES_GET } from "lib/features";
+import {
+  COMPANY_LOCATIONS_GET,
+  REQUESTER_GET,
+  REQUESTER_UPDATE,
+  ROLES_GET,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
@@ -39,11 +44,17 @@ function RequestersUpdate({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToGetRequesterDetail = hasPermission(REQUESTER_GET);
   const isAllowedToUpdateRequester = hasPermission(REQUESTER_UPDATE);
+  const isAllowedToGetLocations = hasPermission(COMPANY_LOCATIONS_GET);
+
+  const rt = useRouter();
 
   const tok = initProps;
   // var pathArr = rt.pathname.split("/").slice(1)
@@ -251,12 +262,6 @@ function RequestersUpdate({
 
   //useEffect
   useEffect(() => {
-    if (!isAllowedToUpdateRequester) {
-      permissionWarningNotification("Memperbarui", "Detail Requester");
-      setpreloading(false);
-      return;
-    }
-
     if (!isAllowedToGetRequesterDetail) {
       permissionWarningNotification("Mendapatkan", "Detail Requester");
       setpreloading(false);
@@ -320,13 +325,10 @@ function RequestersUpdate({
 
         setpreloading(false);
       });
-  }, [
-    isAllowedToGetRolesList,
-    isAllowedToGetRequesterDetail,
-    isAllowedToUpdateRequester,
-  ]);
+  }, [isAllowedToGetRolesList, isAllowedToGetRequesterDetail]);
+
   useEffect(() => {
-    if (!isAllowedToUpdateRequester) {
+    if (!isAllowedToGetLocations) {
       return;
     }
 
@@ -340,7 +342,7 @@ function RequestersUpdate({
       .then((res2) => {
         setdatacompanylist(res2.data.children);
       });
-  }, [isAllowedToUpdateRequester]);
+  }, [isAllowedToGetLocations]);
 
   return (
     <Layout

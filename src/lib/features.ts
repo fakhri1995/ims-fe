@@ -341,8 +341,9 @@ export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
 export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
 /**
  * /getCompanyClientList
+ * /getClientCompanyList
  *
- * - [ ] pages/admin/requesters
+ * - [x] pages/admin/requesters
  *
  * - [x] pages/company/clients
  * - [x] pages/company/clients/locations
@@ -379,9 +380,8 @@ export const COMPANY_MAIN_LOCATIONS_GET = "COMPANY_MAIN_LOCATIONS_GET";
 /**
  * /getLocations
  *
- * - [ ] pages/admin/requesters/update/[userId]
- * - [ ] pages/admin/requesters
- * - [ ] pages/admin/requesters/update/[userId]
+ * - [x] pages/admin/requesters/update/[userId]
+ * - [x] pages/admin/requesters
  *
  * - [x] pages/company/myCompany
  * - [x] pages/company/myCompany/locations/[locId]
