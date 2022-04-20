@@ -4,7 +4,7 @@ Description=Front End for IMS staging systemd config
 [Service]
 User=root
 WorkingDirectory=/var/www/html/ims-fe
-ExecStart=/bin/bash -c 'cd /var/www/html/ims-fe/ && export PORT=3001 && npm run start'
+ExecStart=/bin/bash -c 'cd /var/www/html/ims-fe/ && export PORT=3001 && yarn start'
 Restart=always
 
 [Install]
