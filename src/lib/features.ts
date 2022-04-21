@@ -558,7 +558,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  * - [ ] src/pages/items/createpart/[itemId]
  *
  * - [x] src/pages/admin/assets/index
- * - [ ] src/pages/admin/assets/update/[assettypeId]
+ * - [x] src/pages/admin/assets/update/[assettypeId]
  * - [x] src/pages/admin/assets/detail/[assettypeId]
  * - [x] src/pages/admin/assets/create/index
  *
@@ -572,7 +572,7 @@ export const ASSETS_GET = "ASSETS_GET";
 /**
  * /getAsset
  *
- * - [ ] src/pages/admin/assets/update/[assettypeId]
+ * - [x] src/pages/admin/assets/update/[assettypeId]
  * - [x] src/pages/admin/assets/detail/[assettypeId]
  *
  * - [ ] src/pages/admin/models/index
@@ -596,7 +596,7 @@ export const ASSET_ADD = "ASSET_ADD";
 /**
  * /updateAsset
  *
- * - [ ] src/pages/admin/assets/update/[assettypeId]
+ * - [x] src/pages/admin/assets/update/[assettypeId]
  * - [x] src/pages/admin/assets/detail/[assettypeId]
  */
 export const ASSET_UPDATE = "ASSET_UPDATE";
