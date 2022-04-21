@@ -553,64 +553,89 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
 /**
  * /getAssets
  *
- * - [ ] src/pages/items/index
- * - [ ] src/pages/items/detail/[itemId]
- * - [ ] src/pages/items/createpart/[itemId]
+ * - [ ] pages/items/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createpart/[itemId]
  *
- * - [x] src/pages/admin/assets/index
- * - [x] src/pages/admin/assets/update/[assettypeId]
- * - [x] src/pages/admin/assets/detail/[assettypeId]
- * - [x] src/pages/admin/assets/create/index
+ * - [x] pages/admin/assets/index
+ * - [x] pages/admin/assets/update/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
+ * - [x] pages/admin/assets/create/index
  *
- * - [ ] src/pages/admin/models/index
- * - [ ] src/pages/admin/models/create/index
- * - [ ] src/pages/admin/models/update2/[modelId]
+ * - [ ] pages/admin/models/index
+ * - [ ] pages/admin/models/create/index
+ * - [ ] pages/admin/models/update2/[modelId]
  *
- * - [ ] src/components/drawer/tickets/drawerTicketConnectItem
+ * - [ ] components/drawer/tickets/drawerTicketConnectItem
  */
 export const ASSETS_GET = "ASSETS_GET";
 /**
  * /getAsset
  *
- * - [x] src/pages/admin/assets/update/[assettypeId]
- * - [x] src/pages/admin/assets/detail/[assettypeId]
+ * - [x] pages/admin/assets/update/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
  *
- * - [ ] src/pages/admin/models/index
- * - [ ] src/pages/admin/models/update2/[modelId]
- * - [ ] src/pages/admin/models/create/index
+ * - [ ] pages/admin/models/index
+ * - [ ] pages/admin/models/update2/[modelId]
+ * - [ ] pages/admin/models/create/index
  *
- * - [ ] src/pages/items/index
- * - [ ] src/pages/items/detail/[itemId]
- * - [ ] src/pages/items/createpart/[itemId]
+ * - [ ] pages/items/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createpart/[itemId]
  *
- * - [ ] src/components/drawer/tickets/drawerTicketConnectItem
+ * - [ ] components/drawer/tickets/drawerTicketConnectItem
  */
 export const ASSET_GET = "ASSETS_GET";
 /**
  * /addAsset
  *
- * - [x] src/pages/admin/assets/index
- * - [x] src/pages/admin/assets/create/index
+ * - [x] pages/admin/assets/index
+ * - [x] pages/admin/assets/create/index
  */
 export const ASSET_ADD = "ASSET_ADD";
 /**
  * /updateAsset
  *
- * - [x] src/pages/admin/assets/update/[assettypeId]
- * - [x] src/pages/admin/assets/detail/[assettypeId]
+ * - [x] pages/admin/assets/update/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
  */
 export const ASSET_UPDATE = "ASSET_UPDATE";
 /**
  * /deleteAsset
  *
- * - [x] src/pages/admin/assets/detail/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
  */
 export const ASSET_DELETE = "ASSET_DELETE";
 
 /**
+ * /getVendors
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDORS_GET = "VENDORS_GET";
+/**
+ * /addVendor
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDOR_ADD = "VENDOR_ADD";
+/**
+ * /updateVendor
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDOR_UPDATE = "VENDOR_UPDATE";
+/**
+ * /deleteVendor
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDOR_DELETE = "VENDOR_DELETE";
+
+/**
  * /getModels
  *
- * - [x] src/pages/admin/assets/detail/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
  */
 export const MODELS_GET = "MODELS_GET";
 export const MODEL_GET = "MODEL_GET";
