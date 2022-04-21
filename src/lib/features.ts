@@ -560,7 +560,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  * - [x] src/pages/admin/assets/index.js
  * - [ ] src/pages/admin/assets/update/[assettypeId].js
  * - [ ] src/pages/admin/assets/detail/[assettypeId].js
- * - [ ] src/pages/admin/assets/create/index.js
+ * - [x] src/pages/admin/assets/create/index.js
  *
  * - [ ] src/pages/admin/models/index.js
  * - [ ] src/pages/admin/models/create/index.js
@@ -592,7 +592,7 @@ export const ASSET_GET = "";
  * /addAsset
  *
  * - [x] src/pages/admin/assets/index.js
- * - [ ] src/pages/admin/assets/create/index.js
+ * - [x] src/pages/admin/assets/create/index.js
  */
 export const ASSET_ADD = "";
 /**
