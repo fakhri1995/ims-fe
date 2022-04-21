@@ -8,6 +8,18 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  MANUFACTURERS_GET,
+  MANUFACTURER_ADD,
+  MANUFACTURER_DELETE,
+  MANUFACTURER_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../../lib/helper";
@@ -15,6 +27,19 @@ import httpcookie from "cookie";
 
 const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1.Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAlloweedToSeeManufacturerList = hasPermission(MANUFACTURERS_GET);
+  const isAllowedToAddManufacturer = hasPermission(MANUFACTURER_ADD);
+  const isAllowedToUpdateManufacturer = hasPermission(MANUFACTURER_UPDATE);
+  const isAllowedToDeleteManufacturer = hasPermission(MANUFACTURER_DELETE);
+
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
@@ -169,6 +194,12 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   //5.useEffect
   useEffect(() => {
+    if (!isAlloweedToSeeManufacturerList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Manufacturer");
+      setpraloading(false);
+      return;
+    }
+
     setpraloading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getManufacturers`, {
       method: `GET`,
@@ -183,7 +214,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
         setdisplaydata3(res2.data);
         setpraloading(false);
       });
-  }, [displaytrigger]);
+  }, [displaytrigger, isAlloweedToSeeManufacturerList]);
 
   return (
     <Layout
@@ -204,6 +235,7 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
             }}
             size="large"
             type="primary"
+            disabled={!isAllowedToAddManufacturer}
           >
             Tambah
           </Button>
@@ -264,6 +296,14 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                           <div className="flex items-center pr-5">
                             <EditOutlined
                               onClick={() => {
+                                if (!isAllowedToUpdateManufacturer) {
+                                  permissionWarningNotification(
+                                    "Memperbarui",
+                                    "Manufacturer"
+                                  );
+                                  return;
+                                }
+
                                 setdataupdate({ id: doc.id, name: doc.name });
                                 setmodalupdate(true);
                                 setdisabledupdate(false);
@@ -277,6 +317,14 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
                             />
                             <DeleteOutlined
                               onClick={() => {
+                                if (!isAllowedToDeleteManufacturer) {
+                                  permissionWarningNotification(
+                                    "Menghapus",
+                                    "Manufacturer"
+                                  );
+                                  return;
+                                }
+
                                 setdatadelete({ id: doc.id });
                                 setdataupdate({ id: doc.id, name: doc.name });
                                 setmodaldelete(true);
@@ -302,142 +350,151 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </div>
       </div>
-      <Modal
-        title={
-          <div className="flex justify-between p-5 mt-5">
-            <h1 className="font-bold text-xl">Form Tambah Manufacturer</h1>
-            <div className="flex">
-              <>
-                <Button
-                  type="danger"
-                  onClick={() => {
-                    setmodaladd(false);
-                    setdataadd({ ...dataadd, name: "" });
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={disabledadd}
-                  onClick={handleAddManufacturer}
-                  loading={loadingadd}
-                >
-                  Simpan
-                </Button>
-              </>
+
+      <AccessControl hasPermission={MANUFACTURER_ADD}>
+        <Modal
+          title={
+            <div className="flex justify-between p-5 mt-5">
+              <h1 className="font-bold text-xl">Form Tambah Manufacturer</h1>
+              <div className="flex">
+                <>
+                  <Button
+                    type="danger"
+                    onClick={() => {
+                      setmodaladd(false);
+                      setdataadd({ ...dataadd, name: "" });
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={disabledadd || !isAllowedToAddManufacturer}
+                    onClick={handleAddManufacturer}
+                    loading={loadingadd}
+                  >
+                    Simpan
+                  </Button>
+                </>
+              </div>
+            </div>
+          }
+          visible={modaladd}
+          onCancel={() => {
+            setmodaladd(false);
+          }}
+          footer={null}
+          width={700}
+        >
+          <div className="flex flex-col mb-3">
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">
+                Nama Manufacturer <span className="namamanu"></span>
+              </p>
+              <Input
+                value={dataadd.name}
+                placeholder="Masukkan Nama Manufacturer"
+                onChange={(e) => {
+                  e.target.value === ""
+                    ? setdisabledadd(true)
+                    : setdisabledadd(false);
+                  setdataadd({ name: e.target.value });
+                }}
+              ></Input>
+              <style jsx>
+                {`
+                                  .namamanu::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+              </style>
             </div>
           </div>
-        }
-        visible={modaladd}
-        onCancel={() => {
-          setmodaladd(false);
-        }}
-        footer={null}
-        width={700}
-      >
-        <div className="flex flex-col mb-3">
+        </Modal>
+      </AccessControl>
+
+      <AccessControl hasPermission={MANUFACTURER_UPDATE}>
+        <Modal
+          title={
+            <div className="flex justify-between p-5 mt-5">
+              <h1 className="font-bold text-xl">Form Ubah Manufacturer</h1>
+              <div className="flex">
+                <>
+                  <Button
+                    type="danger"
+                    onClick={() => {
+                      setmodalupdate(false);
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={disabledupdate || !isAllowedToUpdateManufacturer}
+                    onClick={handleUpdateManufacturer}
+                    loading={loadingupdate}
+                  >
+                    Simpan
+                  </Button>
+                </>
+              </div>
+            </div>
+          }
+          visible={modalupdate}
+          onCancel={() => {
+            setmodalupdate(false);
+          }}
+          footer={null}
+          width={700}
+        >
           <div className="flex flex-col mb-3">
-            <p className="mb-0">
-              Nama Manufacturer <span className="namamanu"></span>
-            </p>
-            <Input
-              value={dataadd.name}
-              placeholder="Masukkan Nama Manufacturer"
-              onChange={(e) => {
-                e.target.value === ""
-                  ? setdisabledadd(true)
-                  : setdisabledadd(false);
-                setdataadd({ name: e.target.value });
-              }}
-            ></Input>
-            <style jsx>
-              {`
-                                .namamanu::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-            </style>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        title={
-          <div className="flex justify-between p-5 mt-5">
-            <h1 className="font-bold text-xl">Form Ubah Manufacturer</h1>
-            <div className="flex">
-              <>
-                <Button
-                  type="danger"
-                  onClick={() => {
-                    setmodalupdate(false);
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={disabledupdate}
-                  onClick={handleUpdateManufacturer}
-                  loading={loadingupdate}
-                >
-                  Simpan
-                </Button>
-              </>
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">
+                Nama Manufacturer <span className="namamanu"></span>
+              </p>
+              <Input
+                placeholder="Masukkan Nama Manufacturer"
+                value={dataupdate.name}
+                defaultValue={dataupdate.name}
+                onChange={(e) => {
+                  e.target.value === ""
+                    ? setdisabledupdate(true)
+                    : setdisabledupdate(false);
+                  setdataupdate({ ...dataupdate, name: e.target.value });
+                }}
+              ></Input>
+              <style jsx>
+                {`
+                                  .namamanu::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+              </style>
             </div>
           </div>
-        }
-        visible={modalupdate}
-        onCancel={() => {
-          setmodalupdate(false);
-        }}
-        footer={null}
-        width={700}
-      >
-        <div className="flex flex-col mb-3">
-          <div className="flex flex-col mb-3">
-            <p className="mb-0">
-              Nama Manufacturer <span className="namamanu"></span>
-            </p>
-            <Input
-              placeholder="Masukkan Nama Manufacturer"
-              value={dataupdate.name}
-              defaultValue={dataupdate.name}
-              onChange={(e) => {
-                e.target.value === ""
-                  ? setdisabledupdate(true)
-                  : setdisabledupdate(false);
-                setdataupdate({ ...dataupdate, name: e.target.value });
-              }}
-            ></Input>
-            <style jsx>
-              {`
-                                .namamanu::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-            </style>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        title="Konfirmasi Hapus Manufacturer"
-        visible={modaldelete}
-        onCancel={() => {
-          setmodaldelete(false);
-        }}
-        okText="Ya"
-        cancelText="Tidak"
-        onOk={handleDeleteManufacturer}
-        okButtonProps={{ loading: loadingdelete }}
-      >
-        Apakah Anda yakin ingin menghapus Manufacturer "
-        <strong>{dataupdate.name}</strong>"?
-      </Modal>
+        </Modal>
+      </AccessControl>
+
+      <AccessControl hasPermission={MANUFACTURER_DELETE}>
+        <Modal
+          title="Konfirmasi Hapus Manufacturer"
+          visible={modaldelete}
+          onCancel={() => {
+            setmodaldelete(false);
+          }}
+          okText="Ya"
+          cancelText="Tidak"
+          onOk={handleDeleteManufacturer}
+          okButtonProps={{ loading: loadingdelete }}
+        >
+          Apakah Anda yakin ingin menghapus Manufacturer "
+          <strong>{dataupdate.name}</strong>"?
+        </Modal>
+      </AccessControl>
     </Layout>
   );
 };

@@ -633,6 +633,37 @@ export const VENDOR_UPDATE = "VENDOR_UPDATE";
 export const VENDOR_DELETE = "VENDOR_DELETE";
 
 /**
+ * /getManufacturers
+ *
+ * - [x] pages/admin/manufacturers/index
+ *
+ * - [ ] pages/admin/models/create/index
+ * - [ ] pages/admin/models/update2/[modelId]
+ */
+export const MANUFACTURERS_GET = "MANUFACTURERS_GET";
+/**
+ * /addManufacturer
+ *
+ * - [ ] pages/admin/models/update2/[modelId]
+ * - [ ] pages/admin/models/create/index
+ *
+ * - [x] pages/admin/manufacturers/index
+ */
+export const MANUFACTURER_ADD = "MANUFACTURER_ADD";
+/**
+ * /updateManufacturer
+ *
+ * - [x] pages/admin/manufacturers/index
+ */
+export const MANUFACTURER_UPDATE = "MANUFACTURER_UPDATE";
+/**
+ * /deleteManufacturer
+ *
+ * - [x] pages/admin/manufacturers/index
+ */
+export const MANUFACTURER_DELETE = "MANUFACTURER_DELETE";
+
+/**
  * /getModels
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
