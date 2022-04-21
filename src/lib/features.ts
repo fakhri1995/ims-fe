@@ -553,57 +553,67 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
 /**
  * /getAssets
  *
- * - [ ] src/pages/items/index.js
- * - [ ] src/pages/items/detail/[itemId].js
- * - [ ] src/pages/items/createpart/[itemId].js
+ * - [ ] src/pages/items/index
+ * - [ ] src/pages/items/detail/[itemId]
+ * - [ ] src/pages/items/createpart/[itemId]
  *
- * - [x] src/pages/admin/assets/index.js
- * - [ ] src/pages/admin/assets/update/[assettypeId].js
- * - [ ] src/pages/admin/assets/detail/[assettypeId].js
- * - [x] src/pages/admin/assets/create/index.js
+ * - [x] src/pages/admin/assets/index
+ * - [ ] src/pages/admin/assets/update/[assettypeId]
+ * - [x] src/pages/admin/assets/detail/[assettypeId]
+ * - [x] src/pages/admin/assets/create/index
  *
- * - [ ] src/pages/admin/models/index.js
- * - [ ] src/pages/admin/models/create/index.js
- * - [ ] src/pages/admin/models/update2/[modelId].js
+ * - [ ] src/pages/admin/models/index
+ * - [ ] src/pages/admin/models/create/index
+ * - [ ] src/pages/admin/models/update2/[modelId]
  *
- * - [ ] src/components/drawer/tickets/drawerTicketConnectItem.js
+ * - [ ] src/components/drawer/tickets/drawerTicketConnectItem
  */
-export const ASSETS_GET = "";
+export const ASSETS_GET = "ASSETS_GET";
 /**
- * /getAset
+ * /getAsset
  *
- * - [ ] src/pages/admin/assets/index.js
- * - [ ] src/pages/admin/assets/create/index.js
- * - [ ] src/pages/admin/assets/update/[assettypeId].js
- * - [ ] src/pages/admin/assets/detail/[assettypeId].js
+ * - [ ] src/pages/admin/assets/update/[assettypeId]
+ * - [x] src/pages/admin/assets/detail/[assettypeId]
  *
- * - [ ] src/pages/admin/models/index.js
- * - [ ] src/pages/admin/models/update2/[modelId].js
- * - [ ] src/pages/admin/models/create/index.js
+ * - [ ] src/pages/admin/models/index
+ * - [ ] src/pages/admin/models/update2/[modelId]
+ * - [ ] src/pages/admin/models/create/index
  *
- * - [ ] src/pages/items/index.js
- * - [ ] src/pages/items/detail/[itemId].js
- * - [ ] src/pages/items/createpart/[itemId].js
+ * - [ ] src/pages/items/index
+ * - [ ] src/pages/items/detail/[itemId]
+ * - [ ] src/pages/items/createpart/[itemId]
  *
- * - [ ] src/components/drawer/tickets/drawerTicketConnectItem.js
+ * - [ ] src/components/drawer/tickets/drawerTicketConnectItem
  */
-export const ASSET_GET = "";
+export const ASSET_GET = "ASSETS_GET";
 /**
  * /addAsset
  *
- * - [x] src/pages/admin/assets/index.js
- * - [x] src/pages/admin/assets/create/index.js
+ * - [x] src/pages/admin/assets/index
+ * - [x] src/pages/admin/assets/create/index
  */
-export const ASSET_ADD = "";
+export const ASSET_ADD = "ASSET_ADD";
 /**
  * /updateAsset
  *
- * - [ ] src/pages/admin/assets/update/[assettypeId].js
+ * - [ ] src/pages/admin/assets/update/[assettypeId]
+ * - [x] src/pages/admin/assets/detail/[assettypeId]
  */
-export const ASSET_UPDATE = "";
+export const ASSET_UPDATE = "ASSET_UPDATE";
 /**
  * /deleteAsset
  *
- * - [ ] src/pages/admin/assets/detail/[assettypeId].js
+ * - [x] src/pages/admin/assets/detail/[assettypeId]
  */
-export const ASSET_DELETE = "";
+export const ASSET_DELETE = "ASSET_DELETE";
+
+/**
+ * /getModels
+ *
+ * - [x] src/pages/admin/assets/detail/[assettypeId]
+ */
+export const MODELS_GET = "MODELS_GET";
+export const MODEL_GET = "MODEL_GET";
+export const MODEL_ADD = "MODEL_ADD";
+export const MODEL_UPDATE = "MODEL_UPDATE";
+export const MODEL_DELETE = "MODEL_DELETE";
