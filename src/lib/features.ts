@@ -544,3 +544,66 @@ export const COMPANY_CLIENT_BANK_UPDATE = "COMPANY_CLIENT_BANK_UPDATE";
  * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
+
+/**
+ * Daftar feature untuk Asset management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076627/Asset+Management
+ */
+/**
+ * /getAssets
+ *
+ * - [ ] src/pages/items/index.js
+ * - [ ] src/pages/items/detail/[itemId].js
+ * - [ ] src/pages/items/createpart/[itemId].js
+ *
+ * - [x] src/pages/admin/assets/index.js
+ * - [ ] src/pages/admin/assets/update/[assettypeId].js
+ * - [ ] src/pages/admin/assets/detail/[assettypeId].js
+ * - [ ] src/pages/admin/assets/create/index.js
+ *
+ * - [ ] src/pages/admin/models/index.js
+ * - [ ] src/pages/admin/models/create/index.js
+ * - [ ] src/pages/admin/models/update2/[modelId].js
+ *
+ * - [ ] src/components/drawer/tickets/drawerTicketConnectItem.js
+ */
+export const ASSETS_GET = "";
+/**
+ * /getAset
+ *
+ * - [ ] src/pages/admin/assets/index.js
+ * - [ ] src/pages/admin/assets/create/index.js
+ * - [ ] src/pages/admin/assets/update/[assettypeId].js
+ * - [ ] src/pages/admin/assets/detail/[assettypeId].js
+ *
+ * - [ ] src/pages/admin/models/index.js
+ * - [ ] src/pages/admin/models/update2/[modelId].js
+ * - [ ] src/pages/admin/models/create/index.js
+ *
+ * - [ ] src/pages/items/index.js
+ * - [ ] src/pages/items/detail/[itemId].js
+ * - [ ] src/pages/items/createpart/[itemId].js
+ *
+ * - [ ] src/components/drawer/tickets/drawerTicketConnectItem.js
+ */
+export const ASSET_GET = "";
+/**
+ * /addAsset
+ *
+ * - [x] src/pages/admin/assets/index.js
+ * - [ ] src/pages/admin/assets/create/index.js
+ */
+export const ASSET_ADD = "";
+/**
+ * /updateAsset
+ *
+ * - [ ] src/pages/admin/assets/update/[assettypeId].js
+ */
+export const ASSET_UPDATE = "";
+/**
+ * /deleteAsset
+ *
+ * - [ ] src/pages/admin/assets/detail/[assettypeId].js
+ */
+export const ASSET_DELETE = "";
