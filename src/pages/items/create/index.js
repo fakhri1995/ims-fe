@@ -851,14 +851,35 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
   //3.handler and onchange
   const handleCreateItem = () => {
     const invcolumns = newdata.inventory_values.map((doc, idx) => {
-      if (doc.data_type === "dropdown" || doc.data_type === "checkbox") {
-        return {
-          ...doc,
-          value: JSON.stringify(doc.value),
-        };
-      } else {
-        return { ...doc };
+      const mappedInventoryValue = { ...doc };
+      const currentInventoryValue = mappedInventoryValue.value;
+
+      switch (doc.data_type) {
+        case "dropdown":
+        case "checkbox":
+          mappedInventoryValue.value = JSON.stringify(doc.value);
+          break;
+        default:
+          // Backend akan error kalau nilai `value` null | undefined.
+          // Sebelum kirim ke backend, map dulu value yang null | undefined menjadi empty string.
+          if (
+            currentInventoryValue === null ||
+            currentInventoryValue === undefined
+          ) {
+            mappedInventoryValue.value = "";
+          }
+          break;
       }
+
+      return mappedInventoryValue;
+      // if (doc.data_type === "dropdown" || doc.data_type === "checkbox") {
+      //   return {
+      //     ...doc,
+      //     value: JSON.stringify(doc.value),
+      //   };
+      // } else {
+      //   return { ...doc };
+      // }
     });
     const recursivePartItem = (item) => {
       var temp11 = [];
@@ -916,10 +937,17 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
           setmodalfinal(false);
           rt.push(`/items/detail/${res2.id}`);
         } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
+          const hasErrorMessage = typeof res2["message"] === "string";
+
+          notification.error({
+            message: !hasErrorMessage
+              ? "Terjadi kesalahan saat menambahkan Item"
+              : res2.message,
           });
+          // notification["error"]({
+          //   message: res2.message,
+          //   duration: 3,
+          // });
         }
       });
   };
