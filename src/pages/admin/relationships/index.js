@@ -3,10 +3,22 @@ import {
   EditOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Empty, Input, Modal, Spin, Table, notification } from "antd";
-import Link from "next/link";
+import { Button, Input, Modal, Table, notification } from "antd";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  RELATIONSHIPS_GET,
+  RELATIONSHIP_ADD,
+  RELATIONSHIP_DELETE,
+  RELATIONSHIP_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -15,6 +27,19 @@ import httpcookie from "cookie";
 
 const Relationships = ({ dataProfile, sidemenu, initProps }) => {
   // 1.Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToSeeRelationshipList = hasPermission(RELATIONSHIPS_GET);
+  const isAllowedToAddRelationship = hasPermission(RELATIONSHIP_ADD);
+  const isAllowedToUpdateRelationship = hasPermission(RELATIONSHIP_UPDATE);
+  const isAllowedToDeleteRelationship = hasPermission(RELATIONSHIP_DELETE);
+
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
@@ -84,6 +109,14 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                 <>
                   <EditOutlined
                     onClick={() => {
+                      if (!isAllowedToUpdateRelationship) {
+                        permissionWarningNotification(
+                          "Memperbarui",
+                          "Relationship Type"
+                        );
+                        return;
+                      }
+
                       setdataupdate({
                         id: record.id,
                         relationship_type: record.relationship_type,
@@ -103,6 +136,14 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
                   />
                   <DeleteOutlined
                     onClick={() => {
+                      if (!isAllowedToDeleteRelationship) {
+                        permissionWarningNotification(
+                          "Menghapus",
+                          "Relationship Type"
+                        );
+                        return;
+                      }
+
                       setdatadelete({ id: record.id });
                       setdataupdate({
                         id: record.id,
@@ -188,6 +229,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
         }
       });
   };
+
   const handleUpdateRelationships = () => {
     setloadingupdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRelationship`, {
@@ -220,6 +262,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
         }
       });
   };
+
   const handleDeleteRelationships = () => {
     setloadingdelete(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRelationship`, {
@@ -251,6 +294,11 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
 
   //5.useEffect
   useEffect(() => {
+    if (!isAllowedToSeeRelationshipList) {
+      setpraloading(false);
+      return;
+    }
+
     setpraloading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationships`, {
       method: `GET`,
@@ -265,7 +313,13 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
         setdisplaydata3(res2.data);
         setpraloading(false);
       });
-  }, [displaytrigger]);
+  }, [displaytrigger, isAllowedToSeeRelationshipList]);
+
+  useEffect(() => {
+    if (!isAllowedToSeeRelationshipList) {
+      permissionWarningNotification("Melihat", "Daftar Relationship Type");
+    }
+  }, [isAllowedToSeeRelationshipList]);
 
   return (
     <Layout
@@ -294,6 +348,7 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
             }}
             size="large"
             type="primary"
+            disabled={!isAllowedToAddRelationship}
           >
             Tambah
           </Button>
@@ -342,252 +397,263 @@ const Relationships = ({ dataProfile, sidemenu, initProps }) => {
           ></Table>
         </div>
       </div>
-      <Modal
-        title={
-          <div className="flex justify-between p-5 mt-5">
-            <h1 className="font-bold text-xl">Form Tambah Relationship Type</h1>
-            <div className="flex">
-              <>
-                <Button
-                  type="danger"
-                  onClick={() => {
-                    setmodaladd(false);
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={disabledadd}
-                  onClick={handleAddRelationships}
-                  loading={loadingadd}
-                >
-                  Simpan
-                </Button>
-              </>
+
+      <AccessControl hasPermission={RELATIONSHIP_ADD}>
+        <Modal
+          title={
+            <div className="flex justify-between p-5 mt-5">
+              <h1 className="font-bold text-xl">
+                Form Tambah Relationship Type
+              </h1>
+              <div className="flex">
+                <>
+                  <Button
+                    type="danger"
+                    onClick={() => {
+                      setmodaladd(false);
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={disabledadd || !isAllowedToAddRelationship}
+                    onClick={handleAddRelationships}
+                    loading={loadingadd}
+                  >
+                    Simpan
+                  </Button>
+                </>
+              </div>
+            </div>
+          }
+          visible={modaladd}
+          onCancel={() => {
+            setmodaladd(false);
+          }}
+          footer={null}
+          width={700}
+        >
+          <div className="flex flex-col mb-3">
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">
+                Nama Relationship Type <span className="namamanu"></span>
+              </p>
+              <Input
+                value={dataadd.relationship_type}
+                placeholder="Masukkan Relationship Type"
+                onChange={(e) => {
+                  e.target.value === "" ||
+                  dataadd.inverse_relationship_type === "" ||
+                  e.target.value === dataadd.inverse_relationship_type
+                    ? setdisabledadd(true)
+                    : setdisabledadd(false);
+                  e.target.value === dataadd.inverse_relationship_type
+                    ? setsame(true)
+                    : setsame(false);
+                  setdataadd({ ...dataadd, relationship_type: e.target.value });
+                }}
+              ></Input>
+              <style jsx>
+                {`
+                                  .namamanu::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+              </style>
+            </div>
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">
+                Nama Inverse Relationship Type{" "}
+                <span className="namainversemanu"></span>
+              </p>
+              <Input
+                value={dataadd.inverse_relationship_type}
+                placeholder="Masukkan Inverse Relationship Type"
+                onChange={(e) => {
+                  e.target.value === "" ||
+                  dataadd.relationship_type === "" ||
+                  e.target.value === dataadd.relationship_type
+                    ? setdisabledadd(true)
+                    : setdisabledadd(false);
+                  e.target.value === dataadd.relationship_type
+                    ? setsame(true)
+                    : setsame(false);
+                  setdataadd({
+                    ...dataadd,
+                    inverse_relationship_type: e.target.value,
+                  });
+                }}
+              ></Input>
+              {same && (
+                <p className=" text-red-500 mb-0">
+                  Relationship Type dan Inverse harus berbeda
+                </p>
+              )}
+              <style jsx>
+                {`
+                                  .namainversemanu::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+              </style>
+            </div>
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">Deskripsi</p>
+              <Input.TextArea
+                rows={4}
+                value={dataadd.description}
+                placeholder="Masukkan Deskripsi"
+                onChange={(e) => {
+                  setdataadd({ ...dataadd, description: e.target.value });
+                }}
+              ></Input.TextArea>
             </div>
           </div>
-        }
-        visible={modaladd}
-        onCancel={() => {
-          setmodaladd(false);
-        }}
-        footer={null}
-        width={700}
-      >
-        <div className="flex flex-col mb-3">
+        </Modal>
+      </AccessControl>
+
+      <AccessControl hasPermission={RELATIONSHIP_UPDATE}>
+        <Modal
+          title={
+            <div className="flex justify-between p-5 mt-5">
+              <h1 className="font-bold text-xl">Form Ubah Relationship Type</h1>
+              <div className="flex">
+                <>
+                  <Button
+                    type="danger"
+                    onClick={() => {
+                      setmodalupdate(false);
+                    }}
+                    style={{ marginRight: `1rem` }}
+                  >
+                    Batal
+                  </Button>
+                  <Button
+                    type="primary"
+                    disabled={disabledupdate || !isAllowedToUpdateRelationship}
+                    onClick={handleUpdateRelationships}
+                    loading={loadingupdate}
+                  >
+                    Simpan
+                  </Button>
+                </>
+              </div>
+            </div>
+          }
+          visible={modalupdate}
+          onCancel={() => {
+            setmodalupdate(false);
+          }}
+          footer={null}
+          width={700}
+        >
           <div className="flex flex-col mb-3">
-            <p className="mb-0">
-              Nama Relationship Type <span className="namamanu"></span>
-            </p>
-            <Input
-              value={dataadd.relationship_type}
-              placeholder="Masukkan Relationship Type"
-              onChange={(e) => {
-                e.target.value === "" ||
-                dataadd.inverse_relationship_type === "" ||
-                e.target.value === dataadd.inverse_relationship_type
-                  ? setdisabledadd(true)
-                  : setdisabledadd(false);
-                e.target.value === dataadd.inverse_relationship_type
-                  ? setsame(true)
-                  : setsame(false);
-                setdataadd({ ...dataadd, relationship_type: e.target.value });
-              }}
-            ></Input>
-            <style jsx>
-              {`
-                                .namamanu::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-            </style>
-          </div>
-          <div className="flex flex-col mb-3">
-            <p className="mb-0">
-              Nama Inverse Relationship Type{" "}
-              <span className="namainversemanu"></span>
-            </p>
-            <Input
-              value={dataadd.inverse_relationship_type}
-              placeholder="Masukkan Inverse Relationship Type"
-              onChange={(e) => {
-                e.target.value === "" ||
-                dataadd.relationship_type === "" ||
-                e.target.value === dataadd.relationship_type
-                  ? setdisabledadd(true)
-                  : setdisabledadd(false);
-                e.target.value === dataadd.relationship_type
-                  ? setsame(true)
-                  : setsame(false);
-                setdataadd({
-                  ...dataadd,
-                  inverse_relationship_type: e.target.value,
-                });
-              }}
-            ></Input>
-            {same && (
-              <p className=" text-red-500 mb-0">
-                Relationship Type dan Inverse harus berbeda
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">
+                Nama Relationship Type <span className="namamanu"></span>
               </p>
-            )}
-            <style jsx>
-              {`
-                                .namainversemanu::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-            </style>
-          </div>
-          <div className="flex flex-col mb-3">
-            <p className="mb-0">Deskripsi</p>
-            <Input.TextArea
-              rows={4}
-              value={dataadd.description}
-              placeholder="Masukkan Deskripsi"
-              onChange={(e) => {
-                setdataadd({ ...dataadd, description: e.target.value });
-              }}
-            ></Input.TextArea>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        title={
-          <div className="flex justify-between p-5 mt-5">
-            <h1 className="font-bold text-xl">Form Ubah Relationship Type</h1>
-            <div className="flex">
-              <>
-                <Button
-                  type="danger"
-                  onClick={() => {
-                    setmodalupdate(false);
-                  }}
-                  style={{ marginRight: `1rem` }}
-                >
-                  Batal
-                </Button>
-                <Button
-                  type="primary"
-                  disabled={disabledupdate}
-                  onClick={handleUpdateRelationships}
-                  loading={loadingupdate}
-                >
-                  Simpan
-                </Button>
-              </>
+              <Input
+                value={dataupdate.relationship_type}
+                defaultValue={dataupdate.relationship_type}
+                placeholder="Masukkan Relationship Type"
+                onChange={(e) => {
+                  e.target.value === "" ||
+                  dataupdate.inverse_relationship_type === "" ||
+                  e.target.value === dataupdate.inverse_relationship_type
+                    ? setdisabledupdate(true)
+                    : setdisabledupdate(false);
+                  e.target.value === dataupdate.inverse_relationship_type
+                    ? setsame2(true)
+                    : setsame2(false);
+                  setdataupdate({
+                    ...dataupdate,
+                    relationship_type: e.target.value,
+                  });
+                }}
+              ></Input>
+              <style jsx>
+                {`
+                                  .namamanu::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+              </style>
+            </div>
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">
+                Nama Inverse Relationship Type{" "}
+                <span className="namainversemanu"></span>
+              </p>
+              <Input
+                value={dataupdate.inverse_relationship_type}
+                defaultValue={dataupdate.inverse_relationship_type}
+                placeholder="Masukkan Inverse Relationship Type"
+                onChange={(e) => {
+                  e.target.value === "" ||
+                  dataupdate.relationship_type === "" ||
+                  e.target.value === dataupdate.relationship_type
+                    ? setdisabledupdate(true)
+                    : setdisabledupdate(false);
+                  e.target.value === dataupdate.relationship_type
+                    ? setsame2(true)
+                    : setsame2(false);
+                  setdataupdate({
+                    ...dataupdate,
+                    inverse_relationship_type: e.target.value,
+                  });
+                }}
+              ></Input>
+              {same2 && (
+                <p className=" text-red-500 mb-0">
+                  Relationship Type dan Inverse harus berbeda
+                </p>
+              )}
+              <style jsx>
+                {`
+                                  .namainversemanu::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+              </style>
+            </div>
+            <div className="flex flex-col mb-3">
+              <p className="mb-0">Deskripsi</p>
+              <Input.TextArea
+                rows={4}
+                value={dataupdate.description}
+                defaultValue={dataupdate.description}
+                placeholder="Masukkan Deskripsi"
+                onChange={(e) => {
+                  setdataupdate({ ...dataupdate, description: e.target.value });
+                }}
+              ></Input.TextArea>
             </div>
           </div>
-        }
-        visible={modalupdate}
-        onCancel={() => {
-          setmodalupdate(false);
-        }}
-        footer={null}
-        width={700}
-      >
-        <div className="flex flex-col mb-3">
-          <div className="flex flex-col mb-3">
-            <p className="mb-0">
-              Nama Relationship Type <span className="namamanu"></span>
-            </p>
-            <Input
-              value={dataupdate.relationship_type}
-              defaultValue={dataupdate.relationship_type}
-              placeholder="Masukkan Relationship Type"
-              onChange={(e) => {
-                e.target.value === "" ||
-                dataupdate.inverse_relationship_type === "" ||
-                e.target.value === dataupdate.inverse_relationship_type
-                  ? setdisabledupdate(true)
-                  : setdisabledupdate(false);
-                e.target.value === dataupdate.inverse_relationship_type
-                  ? setsame2(true)
-                  : setsame2(false);
-                setdataupdate({
-                  ...dataupdate,
-                  relationship_type: e.target.value,
-                });
-              }}
-            ></Input>
-            <style jsx>
-              {`
-                                .namamanu::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-            </style>
-          </div>
-          <div className="flex flex-col mb-3">
-            <p className="mb-0">
-              Nama Inverse Relationship Type{" "}
-              <span className="namainversemanu"></span>
-            </p>
-            <Input
-              value={dataupdate.inverse_relationship_type}
-              defaultValue={dataupdate.inverse_relationship_type}
-              placeholder="Masukkan Inverse Relationship Type"
-              onChange={(e) => {
-                e.target.value === "" ||
-                dataupdate.relationship_type === "" ||
-                e.target.value === dataupdate.relationship_type
-                  ? setdisabledupdate(true)
-                  : setdisabledupdate(false);
-                e.target.value === dataupdate.relationship_type
-                  ? setsame2(true)
-                  : setsame2(false);
-                setdataupdate({
-                  ...dataupdate,
-                  inverse_relationship_type: e.target.value,
-                });
-              }}
-            ></Input>
-            {same2 && (
-              <p className=" text-red-500 mb-0">
-                Relationship Type dan Inverse harus berbeda
-              </p>
-            )}
-            <style jsx>
-              {`
-                                .namainversemanu::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-            </style>
-          </div>
-          <div className="flex flex-col mb-3">
-            <p className="mb-0">Deskripsi</p>
-            <Input.TextArea
-              rows={4}
-              value={dataupdate.description}
-              defaultValue={dataupdate.description}
-              placeholder="Masukkan Deskripsi"
-              onChange={(e) => {
-                setdataupdate({ ...dataupdate, description: e.target.value });
-              }}
-            ></Input.TextArea>
-          </div>
-        </div>
-      </Modal>
-      <Modal
-        title="Konfirmasi Hapus Relationship Type"
-        visible={modaldelete}
-        onCancel={() => {
-          setmodaldelete(false);
-        }}
-        okText="Ya"
-        cancelText="Tidak"
-        onOk={handleDeleteRelationships}
-        okButtonProps={{ loading: loadingdelete }}
-      >
-        Apakah Anda yakin ingin menghapus Relationship Type "
-        <strong>{dataupdate.relationship_type}</strong>"?
-      </Modal>
+        </Modal>
+      </AccessControl>
+
+      <AccessControl hasPermission={RELATIONSHIP_DELETE}>
+        <Modal
+          title="Konfirmasi Hapus Relationship Type"
+          visible={modaldelete}
+          onCancel={() => {
+            setmodaldelete(false);
+          }}
+          okText="Ya"
+          cancelText="Tidak"
+          onOk={handleDeleteRelationships}
+          okButtonProps={{ loading: loadingdelete }}
+        >
+          Apakah Anda yakin ingin menghapus Relationship Type "
+          <strong>{dataupdate.relationship_type}</strong>"?
+        </Modal>
+      </AccessControl>
     </Layout>
   );
 };

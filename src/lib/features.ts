@@ -664,6 +664,52 @@ export const MANUFACTURER_UPDATE = "MANUFACTURER_UPDATE";
 export const MANUFACTURER_DELETE = "MANUFACTURER_DELETE";
 
 /**
+ * /getRelationships
+ *
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [x] pages/admin/relationships/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiUpdate
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ */
+export const RELATIONSHIPS_GET = "RELATIONSHIPS_GET";
+/**
+ * /addRelationship
+ *
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/items/createrelationship/[itemId]
+ *
+ * - [x] pages/admin/relationships/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ */
+export const RELATIONSHIP_ADD = "RELATIONSHIP_ADD";
+/**
+ * /updateRelationship
+ *
+ * - [x] pages/admin/relationships/index
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiUpdate
+ */
+export const RELATIONSHIP_UPDATE = "RELATIONSHIP_UPDATE";
+/**
+ * /deleteRelationship
+ *
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [x] pages/admin/relationships/index
+ */
+export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
+
+/**
  * /getModels
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
