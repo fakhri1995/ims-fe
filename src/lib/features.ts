@@ -562,7 +562,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  * - [x] pages/admin/assets/detail/[assettypeId]
  * - [x] pages/admin/assets/create/index
  *
- * - [ ] pages/admin/models/index
+ * - [x] pages/admin/models/index
  * - [ ] pages/admin/models/create/index
  * - [ ] pages/admin/models/update2/[modelId]
  *
@@ -713,9 +713,56 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  * /getModels
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
+ *
+ * - [ ] services/models
+ *
+ * - [ ] pages/items/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createpart/[itemId]
+ * - [ ] pages/items/update/[itemId]
+ * - [ ] pages/items/create/index
+ *
+ * - [x] pages/admin/models/index
+ * - [ ] pages/admin/models/create/index
+ * - [ ] pages/admin/models/update2/[modelId]
+ *
+ * - [ ] pages/admin/assets/detail/[assettypeId]
+ *
+ * - [ ] hooks/api/models
  */
 export const MODELS_GET = "MODELS_GET";
+/**
+ * /getModel
+ *
+ * - [ ] components/screen/models/CreateConfigurationPart/InputPart
+ *
+ * - [ ] pages/items/create/index
+ *
+ * - [ ] pages/admin/models/detail/[modelId]
+ * - [ ] pages/admin/models/update2/[modelId]
+ * - [ ] pages/admin/models/create/index
+ */
 export const MODEL_GET = "MODEL_GET";
+/**
+ * /addModel
+ *
+ * - [ ] pages/admin/models/update2/[modelId]
+ * - [ ] pages/admin/models/create/index
+ * - [x] pages/admin/models/index
+ *
+ * - [ ] components/screen/models/CreateConfigurationPart/index
+ * - [ ] components/screen/models/CreateConfigurationPart/CreateConfigurationPart
+ */
 export const MODEL_ADD = "MODEL_ADD";
+/**
+ * /updateModel
+ *
+ * - [ ] pages/admin/models/update2/[modelId]
+ */
 export const MODEL_UPDATE = "MODEL_UPDATE";
+/**
+ * /deleteModel
+ *
+ * - [ ] pages/admin/models/detail/[modelId]
+ */
 export const MODEL_DELETE = "MODEL_DELETE";
