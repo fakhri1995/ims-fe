@@ -738,7 +738,7 @@ export const MODELS_GET = "MODELS_GET";
  *
  * - [ ] pages/items/create/index
  *
- * - [ ] pages/admin/models/detail/[modelId]
+ * - [x] pages/admin/models/detail/[modelId]
  * - [ ] pages/admin/models/update2/[modelId]
  * - [ ] pages/admin/models/create/index
  */
@@ -757,12 +757,13 @@ export const MODEL_ADD = "MODEL_ADD";
 /**
  * /updateModel
  *
+ * - [x] pages/admin/models/detail/[modelId]
  * - [ ] pages/admin/models/update2/[modelId]
  */
 export const MODEL_UPDATE = "MODEL_UPDATE";
 /**
  * /deleteModel
  *
- * - [ ] pages/admin/models/detail/[modelId]
+ * - [x] pages/admin/models/detail/[modelId]
  */
 export const MODEL_DELETE = "MODEL_DELETE";
