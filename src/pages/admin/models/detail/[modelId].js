@@ -174,6 +174,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
     id: "",
     asset_id: "",
     name: "",
+    sku: "",
     description: "",
     manufacturer_id: "",
     required_sn: false,
@@ -316,6 +317,28 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
         <AccessControl hasPermission={MODEL_GET}>
           <div className="col-span-1 md:col-span-4">
             <div className="py-3 px-5 mb-8 rounded-md border shadow-md flex flex-col w-9/12">
+              <div className="flex flex-col mb-4">
+                <h1 className="font-semibold mb-1">SKU:</h1>
+                {displaydata.asset.deleted_at !== null ? (
+                  <p className="mb-0 flex items-center">
+                    <span className="mb-0 text-xs w-auto mr-1">
+                      {!!displaydata.sku ? displaydata.sku : "-"}
+                    </span>
+                    <Tooltip
+                      placement="right"
+                      title="Assett Type telah dihapus. Segera lakukan pengubahan pada Asset Type!"
+                    >
+                      <ExclamationCircleOutlined
+                        style={{ color: `brown` }}
+                      ></ExclamationCircleOutlined>
+                    </Tooltip>
+                  </p>
+                ) : (
+                  <p className="mb-0 text-xs">
+                    {!!displaydata.sku ? displaydata.sku : "-"}
+                  </p>
+                )}
+              </div>
               <div className="flex flex-col mb-4">
                 <h1 className="font-semibold mb-1">Asset Type:</h1>
                 {displaydata.asset.deleted_at !== null ? (
