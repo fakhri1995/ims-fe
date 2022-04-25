@@ -1,4 +1,4 @@
-import { Button, message } from "antd";
+import { Button, notification } from "antd";
 import { FC, useState } from "react";
 
 import { useGetModel } from "hooks/api/models";
@@ -50,10 +50,18 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   };
 
   const onTambahButtonClicked = () => {
-    if (!currentModelPartId || currentModelPartQuantity === 0) {
-      message.error({
-        content:
-          "Pastikan telah mengisi Nama Model dan Jumlah lebih besar dari 0.",
+    if (!currentModelPartId) {
+      notification.error({
+        message:
+          "Pastikan telah mengisi Nama Model pada Konfigurasi Part Model.",
+      });
+      return;
+    }
+
+    if (currentModelPartQuantity === 0) {
+      notification.error({
+        message:
+          "Field Jumlah pada Konfigurasi Part Model harus lebih besar dari 0.",
       });
       return;
     }
@@ -72,8 +80,8 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
     /** Update parent's state untuk menjadi payload ke endpoint POST `/addModel` */
     onUpdateModelPartsPayload(currentModelPartId, currentModelPartQuantity);
 
-    message.success({
-      content: "Konfigurasi Part Berhasil diperbarui.",
+    notification.success({
+      message: "Konfigurasi Part Berhasil diperbarui.",
     });
 
     closeInputPart();

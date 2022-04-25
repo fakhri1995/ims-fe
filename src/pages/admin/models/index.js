@@ -1,7 +1,14 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Table, TreeSelect } from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -28,17 +35,18 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToSeeAssets = hasPermission(ASSETS_GET);
   const isAllowedToAddModel = hasPermission(MODEL_ADD);
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    asset_id: withDefault(NumberParam, undefined),
+    name: withDefault(StringParam, undefined),
+    sku: withDefault(StringParam, undefined),
+  });
+
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-  var asset_id1 = "",
-    name1 = "";
-  const { asset_id, name, sort_by, sort_type } = rt.query;
-  if (asset_id) {
-    asset_id1 = asset_id;
-  }
-  if (name) {
-    name1 = name;
-  }
 
   //2.useState
   const [displayentiredata, setdisplayentiredata] = useState({
@@ -61,18 +69,9 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [displaydata, setdisplaydata] = useState([]);
   const [assetdata, setassetdata] = useState([]);
-  // const [displaydata1, setdisplaydata1] = useState([]);
-  // const [displaydata2, setdisplaydata2] = useState([]);
-  const [namasearchact, setnamasearchact] = useState(
-    name1 === "" ? false : true
-  );
   const [namavalue, setnamavalue] = useState(null);
-  const [assettypefilteract, setassettypefilteract] = useState(
-    asset_id1 === "" ? false : true
-  );
-  const [assettypevalue, setassettypevalue] = useState(null);
-  const [namaasset, setnamaasset] = useState(asset_id1);
-  const [defasset, setdefasset] = useState(null);
+  const [skuSearchValue, setSkuSearchValue] = useState(null);
+  const [namaasset, setnamaasset] = useState(null);
   const [rowstate, setrowstate] = useState(0);
   const [praloading, setpraloading] = useState(true);
 
@@ -82,13 +81,11 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Nama",
       dataIndex: "name",
       sorter: (a, b) => a.name.length - b.name.length,
-      defaultSortOrder: `${
-        sort_type && sort_by === "name"
-          ? sort_type === "asc"
-            ? "ascend"
-            : "descend"
-          : null
-      }`,
+    },
+    {
+      title: "SKU",
+      dataIndex: "sku",
+      render: (skuValue) => (!!skuValue ? skuValue : "-"),
     },
     {
       title: "Asset Type",
@@ -98,92 +95,42 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Jumlah Item",
       dataIndex: "count",
       sorter: (a, b) => a.count - b.count,
-      defaultSortOrder: `${
-        sort_type && sort_by === "count"
-          ? sort_type === "asc"
-            ? "ascend"
-            : "descend"
-          : null
-      }`,
     },
   ];
 
   //3.onChange
   const onChangeSearch = (e) => {
     if (e.target.value === "") {
-      // setdisplaydata(displaydata2)
-      window.location.href = `/admin/models?asset_id=${
-        assettypefilteract ? asset_id1 : ""
-      }&name=&sort_by=${sort_by}&sort_type=${sort_type}`;
-      setnamasearchact(false);
+      setQueryParams({
+        name: undefined,
+      });
     } else {
-      setnamasearchact(true);
       setnamavalue(e.target.value);
     }
   };
-  const onChangeAssetType = (id) => {
-    if (typeof id === "undefined") {
-      // setdisplaydata(displaydata2)
-      window.location.href = `/admin/models?asset_id=&name=${
-        namasearchact ? name1 : ""
-      }&sort_by=${sort_by}&sort_type=${sort_type}`;
-      setassettypefilteract(false);
+  const onChangeSkuSearch = (e) => {
+    if (e.target.value === "") {
+      setQueryParams({
+        sku: undefined,
+      });
     } else {
-      setassettypefilteract(true);
-      setassettypevalue(id);
+      setSkuSearchValue(e.target.value);
     }
   };
+  const onChangeAssetType = (id) => {
+    setQueryParams({
+      asset_id: id,
+    });
+  };
   const onFinalClick = () => {
-    // var datatemp = displaydata1
-    // if (assettypefilteract) {
-    //     datatemp = datatemp.filter(flt => {
-    //         return (flt.asset_id === Number(assettypevalue)) || (flt.asset_name.replaceAll(/\s+\/\s+/g, "/").split("/")[0] === namaasset)
-    //     })
-    // }
-    // if (namasearchact) {
-    //     datatemp = datatemp.filter(flt => {
-    //         return flt.name.toLowerCase().includes(namavalue.toLowerCase())
-    //     })
-    // }
-    // setdisplaydata(datatemp)
-    window.location.href = `/admin/models?asset_id=${
-      assettypefilteract
-        ? assettypevalue === null
-          ? asset_id1
-          : assettypevalue
-        : ""
-    }&name=${
-      namasearchact ? (namavalue === null ? name1 : namavalue) : ""
-    }&sort_by=${sort_by}&sort_type=${sort_type}`;
+    setQueryParams({
+      name: namavalue,
+      sku: skuSearchValue,
+    });
   };
 
   //4.handler
   const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
-
-  //5.useEffect
-  useEffect(() => {
-    if (!isAllowedToSeeModels) {
-      return;
-    }
-
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdisplayentiredata(res2);
-        setdisplaydata(res2.data.data);
-        // setdisplaydata1(res2.data.data);
-        // setdisplaydata2(res2.data.data);
-        // console.log(assettypefilteract, namasearchact);
-      });
-  }, [isAllowedToSeeModels]);
 
   useEffect(() => {
     if (!isAllowedToSeeAssets) {
@@ -212,7 +159,6 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
           }
         };
         recursiveSearchAsset(res2.data, Number(namaasset));
-        setdefasset(selectedAsset.key);
         setassetdata(res2.data);
         setpraloading(false);
       });
@@ -223,6 +169,39 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       permissionWarningNotification("Mendapatkan", "Daftar Model");
     }
   }, [isAllowedToSeeModels]);
+
+  useEffect(() => {
+    if (!isAllowedToSeeModels) {
+      return;
+    }
+
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    setpraloading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels${payload}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setdisplayentiredata(res2);
+        setdisplaydata(res2.data.data);
+        setpraloading(false);
+      });
+  }, [
+    isAllowedToSeeModels,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.name,
+    queryParams.asset_id,
+    queryParams.sku,
+  ]);
 
   return (
     <Layout
@@ -247,12 +226,22 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
           {praloading ? null : (
             <div className="flex mb-8">
               <div className=" w-10/12 mr-1 grid grid-cols-6">
-                <div className="col-span-4 mr-1">
+                <div className="col-span-2 mr-1">
                   <Input
                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                    defaultValue={name1}
+                    defaultValue={queryParams.name}
                     placeholder="Cari Nama Model"
                     onChange={onChangeSearch}
+                    allowClear
+                    onKeyPress={onKeyPressHandler}
+                  ></Input>
+                </div>
+                <div className="col-span-2 mr-1">
+                  <Input
+                    style={{ width: `100%`, marginRight: `0.5rem` }}
+                    defaultValue={queryParams.sku}
+                    placeholder="Cari SKU"
+                    onChange={onChangeSkuSearch}
                     allowClear
                     onKeyPress={onKeyPressHandler}
                   ></Input>
@@ -261,7 +250,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <TreeSelect
                     allowClear
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    defaultValue={namaasset === "" ? null : defasset}
+                    defaultValue={namaasset || queryParams.asset_id}
                     treeData={assetdata}
                     disabled={!isAllowedToSeeAssets}
                     filter
@@ -282,6 +271,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onChange={(value, label, extra) => {
                       if (typeof value === "undefined") {
                         onChangeAssetType();
+                        setnamaasset(null);
                       } else {
                         onChangeAssetType(
                           extra.allCheckedNodes[0].node.props.id
@@ -306,28 +296,9 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
           <Table
             className="tableTypeTask"
             pagination={{
-              pageSize: 10,
+              current: queryParams.page,
+              pageSize: queryParams.rows,
               total: displayentiredata.data.total,
-              onChange: (page, pageSize) => {
-                setpraloading(true);
-                fetch(
-                  `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?page=${page}&rows=10&asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
-                  {
-                    method: `GET`,
-                    headers: {
-                      Authorization: JSON.parse(initProps),
-                    },
-                  }
-                )
-                  .then((res) => res.json())
-                  .then((res2) => {
-                    setdisplayentiredata(res2);
-                    setdisplaydata(res2.data.data);
-                    // setdisplaydata1(res2.data.data);
-                    // setdisplaydata2(res2.data.data);
-                    setpraloading(false);
-                  });
-              },
             }}
             scroll={{ x: 200 }}
             dataSource={displaydata}
@@ -339,67 +310,28 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                   setrowstate(record.id);
                 },
                 onClick: (event) => {
-                  // {
-                  //     [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
                   rt.push(`/admin/models/detail/${record.id}`);
-                  //         :
-                  //         null
-                  // }
                 },
               };
             }}
             rowClassName={(record, idx) => {
               return record.id === rowstate ? `cursor-pointer` : ``;
             }}
-            onChange={(pagination, filters, sorter, extra) => {
-              // console.log('params', pagination, filters, sorter, extra);
-              if (extra.action === "sort") {
-                if (sorter.column) {
-                  if (sorter.column.dataIndex === "name") {
-                    window.location.href = `/admin/models?asset_id=${
-                      assettypefilteract
-                        ? assettypevalue === null
-                          ? asset_id1
-                          : assettypevalue
-                        : ""
-                    }&name=${
-                      namasearchact
-                        ? namavalue === ""
-                          ? name1
-                          : namavalue
-                        : ""
-                    }&sort_by=name&sort_type=${
-                      sorter.order === "ascend" ? "asc" : "desc"
-                    }`;
-                  } else if (sorter.column.dataIndex === "count") {
-                    window.location.href = `/admin/models?asset_id=${
-                      assettypefilteract
-                        ? assettypevalue === null
-                          ? asset_id1
-                          : assettypevalue
-                        : ""
-                    }&name=${
-                      namasearchact
-                        ? namavalue === ""
-                          ? name1
-                          : namavalue
-                        : ""
-                    }&sort_by=count&sort_type=${
-                      sorter.order === "ascend" ? "asc" : "desc"
-                    }`;
-                  }
-                } else {
-                  window.location.href = `/admin/models?asset_id=${
-                    assettypefilteract
-                      ? assettypevalue === null
-                        ? asset_id1
-                        : assettypevalue
-                      : ""
-                  }&name=${
-                    namasearchact ? (namavalue === "" ? name1 : namavalue) : ""
-                  }&sort_by=&sort_type=`;
-                }
-              }
+            onChange={(pagination, _, sorter) => {
+              const sortTypePayload =
+                sorter.order === "ascend"
+                  ? "asc"
+                  : sorter.order === "descend"
+                  ? "desc"
+                  : undefined;
+
+              setQueryParams({
+                sort_type: sortTypePayload,
+                sort_by:
+                  sortTypePayload === undefined ? undefined : sorter.field,
+                page: pagination.current,
+                rows: pagination.pageSize,
+              });
             }}
           ></Table>
         </div>
