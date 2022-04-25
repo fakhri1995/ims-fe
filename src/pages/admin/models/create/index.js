@@ -1075,7 +1075,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                       }}
                       checked={newdata.is_consumable}
                     />{" "}
-                    Model Consumable dengan satuan jumlah
+                    Model Bulk
                   </div>
                 </Form>
               )}
@@ -2795,7 +2795,7 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                   }}
                   checked={newdata2.is_consumable}
                 />{" "}
-                Model Consumable dengan satuan jumlah
+                Model Bulk
               </div>
             </Form>
           </div>
