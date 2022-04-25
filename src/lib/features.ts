@@ -563,7 +563,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  * - [x] pages/admin/assets/create/index
  *
  * - [x] pages/admin/models/index
- * - [ ] pages/admin/models/create/index
+ * - [x] pages/admin/models/create/index
  * - [ ] pages/admin/models/update2/[modelId]
  *
  * - [ ] components/drawer/tickets/drawerTicketConnectItem
@@ -575,9 +575,8 @@ export const ASSETS_GET = "ASSETS_GET";
  * - [x] pages/admin/assets/update/[assettypeId]
  * - [x] pages/admin/assets/detail/[assettypeId]
  *
- * - [ ] pages/admin/models/index
  * - [ ] pages/admin/models/update2/[modelId]
- * - [ ] pages/admin/models/create/index
+ * - [x] pages/admin/models/create/index
  *
  * - [ ] pages/items/index
  * - [ ] pages/items/detail/[itemId]
@@ -637,7 +636,7 @@ export const VENDOR_DELETE = "VENDOR_DELETE";
  *
  * - [x] pages/admin/manufacturers/index
  *
- * - [ ] pages/admin/models/create/index
+ * - [x] pages/admin/models/create/index
  * - [ ] pages/admin/models/update2/[modelId]
  */
 export const MANUFACTURERS_GET = "MANUFACTURERS_GET";
@@ -645,7 +644,7 @@ export const MANUFACTURERS_GET = "MANUFACTURERS_GET";
  * /addManufacturer
  *
  * - [ ] pages/admin/models/update2/[modelId]
- * - [ ] pages/admin/models/create/index
+ * - [x] pages/admin/models/create/index
  *
  * - [x] pages/admin/manufacturers/index
  */
@@ -723,7 +722,6 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  * - [ ] pages/items/create/index
  *
  * - [x] pages/admin/models/index
- * - [ ] pages/admin/models/create/index
  * - [ ] pages/admin/models/update2/[modelId]
  *
  * - [ ] pages/admin/assets/detail/[assettypeId]
@@ -747,7 +745,7 @@ export const MODEL_GET = "MODEL_GET";
  * /addModel
  *
  * - [ ] pages/admin/models/update2/[modelId]
- * - [ ] pages/admin/models/create/index
+ * - [x] pages/admin/models/create/index
  * - [x] pages/admin/models/index
  *
  * - [ ] components/screen/models/CreateConfigurationPart/index
