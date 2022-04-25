@@ -1428,6 +1428,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                   <div className="flex">
                     <Checkbox
                       style={{ marginRight: `0.5rem` }}
+                      disabled
                       onChange={(e) => {
                         setnewdata({
                           ...newdata,
@@ -1436,7 +1437,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                       }}
                       checked={newdata.is_consumable}
                     />{" "}
-                    Model Consumable dengan satuan jumlah
+                    Model Bulk
                   </div>
                 </Form>
               )}

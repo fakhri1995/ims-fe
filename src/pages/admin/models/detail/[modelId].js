@@ -375,9 +375,7 @@ const DetailModel = ({ initProps, dataProfile, sidemenu, modelid }) => {
               <div className="flex flex-col">
                 <h1 className="font-semibold mb-1">Tipe Model:</h1>
                 <p className="mb-0 text-xs">
-                  {displaydata.is_consumable
-                    ? "Consumable"
-                    : "Tidak Consumable"}
+                  {displaydata.is_consumable ? "Bulk" : "Tidak Bulk"}
                 </p>
               </div>
             </div>
