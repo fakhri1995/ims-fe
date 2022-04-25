@@ -211,6 +211,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     id: "",
     asset_id: "",
     name: "",
+    sku: "",
     description: "",
     manufacturer_id: null,
     required_sn: false,
@@ -227,6 +228,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     id: "",
     asset_id: "",
     name: "",
+    sku: "",
     description: "",
     manufacturer_id: "",
     required_sn: false,
@@ -1363,6 +1365,15 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                         name="name"
                         onChange={(e) => {
                           setnewdata({ ...newdata, name: e.target.value });
+                        }}
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className="flex mb-2">
+                    <Form.Item name="sku" label="SKU" className="w-full">
+                      <Input
+                        onChange={(e) => {
+                          setnewdata({ ...newdata, sku: e.target.value });
                         }}
                       />
                     </Form.Item>
@@ -3296,6 +3307,13 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                     />
                   </Form.Item>
                 </div>
+                <Form.Item name="sku" label="SKU" className="w-full">
+                  <Input
+                    onChange={(e) => {
+                      setnewdata2({ ...newdata2, sku: e.target.value });
+                    }}
+                  />
+                </Form.Item>
                 <Form.Item
                   name="manufacturer_id"
                   label="Manufacturer"
