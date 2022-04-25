@@ -36,24 +36,11 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     status_condition: withDefault(NumberParam, /** 1-3 */ undefined),
     status_usage: withDefault(NumberParam, /** 1-3 */ undefined),
     sort_by: withDefault(
-      NumberParam,
+      StringParam,
       /** @type {"name"|"status_usage"|"status_condition"|"mig_id"} */ undefined
     ),
-    sort_type: withDefault(NumberParam, /** @type {"asc"|"desc"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
   });
-
-  /**
-   * Transform URL query paramter yang dynamic berdasarkan input User
-   *  menjadi payload untuk ke endpoint `/getInventories`.
-   *
-   * @example
-   * ```
-   * ?page=1&rows=10&asset_id=2
-   * ```
-   */
-  const queryParamsAsPayload = () => {
-    return QueryString.stringify(queryParams, { addQueryPrefix: true });
-  };
 
   const [dataRefresher, setDataRefresher] = useState(1);
 
@@ -311,7 +298,18 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   //5.useEffect
   useEffect(() => {
-    const payload = queryParamsAsPayload();
+    /**
+     * Transform URL query paramter yang dynamic berdasarkan input User
+     *  menjadi payload untuk ke endpoint `/getInventories`.
+     *
+     * @example
+     * ```
+     * ?page=1&rows=10&asset_id=2
+     * ```
+     */
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories${payload}`, {
       method: `GET`,
