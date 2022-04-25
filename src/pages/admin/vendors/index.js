@@ -15,12 +15,38 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  VENDORS_GET,
+  VENDOR_ADD,
+  VENDOR_DELETE,
+  VENDOR_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToSeeVendorList = hasPermission(VENDORS_GET);
+  const isAllowedToAddVendor = hasPermission(VENDOR_ADD);
+  const isAllowedToDeleteVendor = hasPermission(VENDOR_DELETE);
+  const isAllowedToUpdateVendor = hasPermission(VENDOR_UPDATE);
+
   const rt = useRouter();
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   const { originPath } = rt.query;
@@ -229,30 +255,32 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
         }
       });
   };
-  var vendors;
-  if (dataVendors.data == null) {
-    vendors = [];
-  } else {
-    vendors = dataVendors.data.map((doc, idx) => {
-      return {
-        idx: idx,
-        key: doc.id,
-        id: doc.id,
-        name: doc.name,
-        singkatan_nama: doc.singkatan_nama,
-        npwp: doc.npwp,
-        pic: doc.pic,
-        jabatan_pic: doc.jabatan_pic,
-        alamat: doc.alamat,
-        provinsi: doc.provinsi,
-        kab_kota: doc.kab_kota,
-        kode_pos: doc.kode_pos,
-        telepon: doc.telepon,
-        fax: doc.fax,
-        email: doc.email,
-        website: doc.website,
-      };
-    });
+  var vendors = [];
+  if (isAllowedToSeeVendorList) {
+    if (dataVendors.data == null) {
+      vendors = [];
+    } else {
+      vendors = dataVendors.data.map((doc, idx) => {
+        return {
+          idx: idx,
+          key: doc.id,
+          id: doc.id,
+          name: doc.name,
+          singkatan_nama: doc.singkatan_nama,
+          npwp: doc.npwp,
+          pic: doc.pic,
+          jabatan_pic: doc.jabatan_pic,
+          alamat: doc.alamat,
+          provinsi: doc.provinsi,
+          kab_kota: doc.kab_kota,
+          kode_pos: doc.kode_pos,
+          telepon: doc.telepon,
+          fax: doc.fax,
+          email: doc.email,
+          website: doc.website,
+        };
+      });
+    }
   }
   var actionsArr = [];
   for (var i = 0; i < vendors.length; i++) {
@@ -346,6 +374,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                     setDrawableedit(true);
                     setEditvendor(record);
                   }}
+                  disabled={!isAllowedToUpdateVendor}
                 >
                   <EditOutlined />
                 </Button>
@@ -373,6 +402,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                   onClick={() => {
                     onClickModalDeleteVendor(true, record);
                   }}
+                  disabled={!isAllowedToDeleteVendor}
                 >
                   <a>
                     <DeleteOutlined />
@@ -396,6 +426,12 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
     }
     // console.log(w)
   }, []);
+
+  useEffect(() => {
+    if (!isAllowedToSeeVendorList) {
+      permissionWarningNotification("Melihat", "Daftar Vendor");
+    }
+  }, [isAllowedToSeeVendorList]);
 
   return (
     <Layout
@@ -426,6 +462,7 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                     }}
                     type="primary"
                     size="large"
+                    disabled={!isAllowedToAddVendor}
                   >
                     Add New
                   </Button>
@@ -460,661 +497,671 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
               ></Table>
             </div>
 
-            <Modal
-              title="Konfirmasi untuk menghapus vendor"
-              visible={warningDelete.istrue}
-              onOk={() => {
-                handleDeleteVendor(warningDelete.key);
-              }}
-              onCancel={() => setWarningDelete(false, null)}
-              okButtonProps={{ disabled: loadingbtn }}
-            >
-              Apakah anda yakin ingin menghapus vendor{" "}
-              <strong>{warningDelete.name}</strong>?
-            </Modal>
+            <AccessControl hasPermission={VENDOR_DELETE}>
+              <Modal
+                title="Konfirmasi untuk menghapus vendor"
+                visible={warningDelete.istrue}
+                onOk={() => {
+                  handleDeleteVendor(warningDelete.key);
+                }}
+                onCancel={() => setWarningDelete(false, null)}
+                okButtonProps={{ disabled: loadingbtn }}
+              >
+                Apakah anda yakin ingin menghapus vendor{" "}
+                <strong>{warningDelete.name}</strong>?
+              </Modal>
+            </AccessControl>
           </div>
+
           <div className="flex flex-col space-y-3 px-4">
             {/* <div className="font-semibold text-sm">Vendors</div>
                         <p className="font-normal text-sm">
-                        Migsys lets you manage products and vendors side by side with your help desk. You can add multiple vendors to each of 
-                        your products and access contact information and details such as price, warranty and address alongside your product. 
-                        When you are managing your products, you can easily gather basic information such as cost, see how any of the other vendors 
-                        are priced and check to see if it’s still covered under a warranty. You can also quickly contact the vendor for troubleshooting 
+                        Migsys lets you manage products and vendors side by side with your help desk. You can add multiple vendors to each of
+                        your products and access contact information and details such as price, warranty and address alongside your product.
+                        When you are managing your products, you can easily gather basic information such as cost, see how any of the other vendors
+                        are priced and check to see if it’s still covered under a warranty. You can also quickly contact the vendor for troubleshooting
                         and fixing service issues.
                     </p> */}
           </div>
         </div>
-        <Drawer
-          title="New Vendor"
-          maskClosable={false}
-          visible={drawablecreate}
-          onClose={() => {
-            setDrawablecreate(false),
-              closeDrawer(),
-              createVendorForm.resetFields();
-          }}
-          destroyOnClose={true}
-          width={widthDrawer}
-          footer={
-            <div style={{ textAlign: "right" }}>
-              <button
-                onClick={() => {
-                  setDrawablecreate(false),
-                    closeDrawer(),
-                    createVendorForm.resetFields();
-                }}
-                className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4"
-              >
-                Cancel
-              </button>
-              <Button
-                loading={loadingbtn}
-                type="primary"
-                onClick={createVendorForm.submit}
-                className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md"
-              >
-                Submit
-              </Button>
-            </div>
-          }
-        >
-          <Form
-            form={createVendorForm}
-            layout="vertical"
-            onFinish={handleCreateVendor}
-            style={{ display: "contents" }}
+
+        <AccessControl hasPermission={VENDOR_ADD}>
+          <Drawer
+            title="New Vendor"
+            maskClosable={false}
+            visible={drawablecreate}
+            onClose={() => {
+              setDrawablecreate(false),
+                closeDrawer(),
+                createVendorForm.resetFields();
+            }}
+            destroyOnClose={true}
+            width={widthDrawer}
+            footer={
+              <div style={{ textAlign: "right" }}>
+                <button
+                  onClick={() => {
+                    setDrawablecreate(false),
+                      closeDrawer(),
+                      createVendorForm.resetFields();
+                  }}
+                  className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4"
+                >
+                  Cancel
+                </button>
+                <Button
+                  loading={loadingbtn}
+                  type="primary"
+                  onClick={createVendorForm.submit}
+                  className=" bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md"
+                  disabled={!isAllowedToAddVendor}
+                >
+                  Submit
+                </Button>
+              </div>
+            }
           >
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="name"
-                style={{ marginRight: `1rem` }}
-                label="Nama Vendor"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nama vendor harus diisi",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Nama Vendor"
-                  name={`name`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="singkatan_nama"
-                style={{ marginRight: `1rem` }}
-                label="Singkatan Nama"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Nama vendor harus diisi',
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Singkatan Nama Perusahaan"
-                  name={`singkatan_nama`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="npwp"
-                style={{ marginRight: `1rem` }}
-                label="NPWP"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Nama vendor harus diisi',
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="NPWP"
-                  name={`npwp`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="pic"
-                style={{ marginRight: `1rem` }}
-                label="Penanggung Jawab"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nama penanggung jawab harus diisi",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Penanggung Jawab"
-                  name={`pic`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="jabatan_pic"
-                style={{ marginRight: `1rem` }}
-                label="Jabatan Penanggung Jawab"
-                rules={[
-                  {
-                    required: true,
-                    message: "Jabatan penanggung jawab harus diisi",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Jabatan Penanggung Jawab"
-                  name={`jabatan_pic`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="alamat"
-                style={{ marginRight: `1rem` }}
-                label="Alamat"
-                rules={[
-                  {
-                    required: true,
-                    message: "Alamat harus diisi",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Alamat"
-                  name={`alamat`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="provinsi"
-                style={{ marginRight: `1rem` }}
-                label="Provinsi"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Alamat penanggung jawab harus diisi',
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Provinsi"
-                  name={`provinsi`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="kab_kota"
-                style={{ marginRight: `1rem` }}
-                label="Kab/Kota"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Alamat penanggung jawab harus diisi',
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Kab/Kota"
-                  name={`kab_kota`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="kode_pos"
-                style={{ marginRight: `1rem` }}
-                label="Kode Pos"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Alamat penanggung jawab harus diisi',
-                  },
-                  {
-                    type: `number`,
-                    message: "Kode Pos harus berupa angka",
-                  },
-                ]}
-              >
-                <InputNumber
-                  placeholder="Kode Pos"
-                  name={`kode_pos`}
-                  style={{ width: `100%` }}
-                  onChange={(val) => {
-                    setNewvendor({ ...newvendor, kode_pos: `${val}` });
+            <Form
+              form={createVendorForm}
+              layout="vertical"
+              onFinish={handleCreateVendor}
+              style={{ display: "contents" }}
+            >
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="name"
+                  style={{ marginRight: `1rem` }}
+                  label="Nama Vendor"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nama vendor harus diisi",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Nama Vendor"
+                    name={`name`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="singkatan_nama"
+                  style={{ marginRight: `1rem` }}
+                  label="Singkatan Nama"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Nama vendor harus diisi',
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Singkatan Nama Perusahaan"
+                    name={`singkatan_nama`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="npwp"
+                  style={{ marginRight: `1rem` }}
+                  label="NPWP"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Nama vendor harus diisi',
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="NPWP"
+                    name={`npwp`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="pic"
+                  style={{ marginRight: `1rem` }}
+                  label="Penanggung Jawab"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nama penanggung jawab harus diisi",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Penanggung Jawab"
+                    name={`pic`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="jabatan_pic"
+                  style={{ marginRight: `1rem` }}
+                  label="Jabatan Penanggung Jawab"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Jabatan penanggung jawab harus diisi",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Jabatan Penanggung Jawab"
+                    name={`jabatan_pic`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="alamat"
+                  style={{ marginRight: `1rem` }}
+                  label="Alamat"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Alamat harus diisi",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Alamat"
+                    name={`alamat`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="provinsi"
+                  style={{ marginRight: `1rem` }}
+                  label="Provinsi"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Alamat penanggung jawab harus diisi',
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Provinsi"
+                    name={`provinsi`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="kab_kota"
+                  style={{ marginRight: `1rem` }}
+                  label="Kab/Kota"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Alamat penanggung jawab harus diisi',
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Kab/Kota"
+                    name={`kab_kota`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="kode_pos"
+                  style={{ marginRight: `1rem` }}
+                  label="Kode Pos"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Alamat penanggung jawab harus diisi',
+                    },
+                    {
+                      type: `number`,
+                      message: "Kode Pos harus berupa angka",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    placeholder="Kode Pos"
+                    name={`kode_pos`}
+                    style={{ width: `100%` }}
+                    onChange={(val) => {
+                      setNewvendor({ ...newvendor, kode_pos: `${val}` });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="telepon"
+                  style={{ marginRight: `1rem` }}
+                  label="Telepon"
+                  rules={[
+                    {
+                      required: true,
+                      message: "No Telepon harus diisi",
+                    },
+                    {
+                      type: `number`,
+                      message: "Nomor Telepon harus berupa angka",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    placeholder="Telepon"
+                    name={`telepon`}
+                    style={{ width: `100%` }}
+                    onChange={(val) => {
+                      setNewvendor({ ...newvendor, telepon: `0${val}` });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="fax"
+                  style={{ marginRight: `1rem` }}
+                  label="Fax"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'No Fax harus diisi',
+                    },
+                    {
+                      type: `number`,
+                      message: "Fax harus berupa angka",
+                    },
+                  ]}
+                >
+                  <InputNumber
+                    placeholder="Fax"
+                    name={`fax`}
+                    style={{ width: `100%` }}
+                    onChange={(val) => {
+                      setNewvendor({ ...newvendor, fax: `0${val}` });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="email"
+                  style={{ marginRight: `1rem` }}
+                  label="Email"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'No Email harus diisi',
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Email"
+                    name={`email`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="website"
+                  style={{ marginRight: `1rem` }}
+                  label="Website"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'No Email harus diisi',
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Website"
+                    name={`website`}
+                    onChange={onChangeCreateVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+            </Form>
+          </Drawer>
+        </AccessControl>
+
+        <AccessControl hasPermission={VENDOR_UPDATE}>
+          <Drawer
+            title="Edit Vendor"
+            maskClosable={true}
+            visible={drawableedit}
+            onClose={() => {
+              setDrawableedit(false),
+                closeDrawerEdit(),
+                editVendorForm.resetFields();
+            }}
+            destroyOnClose={true}
+            width={widthDrawer}
+            footer={
+              <div style={{ textAlign: "right" }}>
+                <button
+                  onClick={() => {
+                    setDrawableedit(false), editVendorForm.resetFields();
                   }}
-                />
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="telepon"
-                style={{ marginRight: `1rem` }}
-                label="Telepon"
-                rules={[
-                  {
-                    required: true,
-                    message: "No Telepon harus diisi",
-                  },
-                  {
-                    type: `number`,
-                    message: "Nomor Telepon harus berupa angka",
-                  },
-                ]}
-              >
-                <InputNumber
-                  placeholder="Telepon"
-                  name={`telepon`}
-                  style={{ width: `100%` }}
-                  onChange={(val) => {
-                    setNewvendor({ ...newvendor, telepon: `0${val}` });
-                  }}
-                />
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="fax"
-                style={{ marginRight: `1rem` }}
-                label="Fax"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'No Fax harus diisi',
-                  },
-                  {
-                    type: `number`,
-                    message: "Fax harus berupa angka",
-                  },
-                ]}
-              >
-                <InputNumber
-                  placeholder="Fax"
-                  name={`fax`}
-                  style={{ width: `100%` }}
-                  onChange={(val) => {
-                    setNewvendor({ ...newvendor, fax: `0${val}` });
-                  }}
-                />
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="email"
-                style={{ marginRight: `1rem` }}
-                label="Email"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'No Email harus diisi',
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Email"
-                  name={`email`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="website"
-                style={{ marginRight: `1rem` }}
-                label="Website"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'No Email harus diisi',
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Website"
-                  name={`website`}
-                  onChange={onChangeCreateVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-          </Form>
-        </Drawer>
-        <Drawer
-          title="Edit Vendor"
-          maskClosable={true}
-          visible={drawableedit}
-          onClose={() => {
-            setDrawableedit(false),
-              closeDrawerEdit(),
-              editVendorForm.resetFields();
-          }}
-          destroyOnClose={true}
-          width={widthDrawer}
-          footer={
-            <div style={{ textAlign: "right" }}>
-              <button
-                onClick={() => {
-                  setDrawableedit(false), editVendorForm.resetFields();
-                }}
-                className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4"
-              >
-                Cancel
-              </button>
-              <Button
-                loading={loadingbtn}
-                type="primary"
-                onClick={editVendorForm.submit}
-                className="bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md"
-              >
-                Submit
-              </Button>
-            </div>
-          }
-        >
-          <Form
-            form={editVendorForm}
-            layout="vertical"
-            onFinish={handleEditVendor}
-            style={{ display: "contents" }}
+                  className="bg-white-700 hover:bg-gray-300 border text-black py-1 px-2 rounded-md w-20 mr-4"
+                >
+                  Cancel
+                </button>
+                <Button
+                  loading={loadingbtn}
+                  type="primary"
+                  onClick={editVendorForm.submit}
+                  className="bg-blue-500 hover:bg-blue-700 border text-white py-1 px-2 rounded-md"
+                >
+                  Submit
+                </Button>
+              </div>
+            }
           >
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="name"
-                style={{ marginRight: `1rem` }}
-                label="Nama Vendor"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nama vendor harus diisi",
-                  },
-                ]}
-                initialValue={editvendor.name}
-              >
-                <Input
-                  placeholder="Nama Vendor"
-                  name={`name`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="singkatan_nama"
-                style={{ marginRight: `1rem` }}
-                label="Singkatan Nama"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Nama vendor harus diisi',
-                  },
-                ]}
-                initialValue={editvendor.singkatan_nama}
-              >
-                <Input
-                  placeholder="Singkatan Nama Perusahaan"
-                  name={`singkatan_nama`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="npwp"
-                style={{ marginRight: `1rem` }}
-                label="NPWP"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Nama vendor harus diisi',
-                  },
-                ]}
-                initialValue={editvendor.npwp}
-              >
-                <Input
-                  placeholder="NPWP"
-                  name={`npwp`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="pic"
-                style={{ marginRight: `1rem` }}
-                label="Penanggung Jawab"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nama penanggung jawab harus diisi",
-                  },
-                ]}
-                initialValue={editvendor.pic}
-              >
-                <Input
-                  placeholder="Penanggung Jawab"
-                  name={`pic`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="jabatan_pic"
-                style={{ marginRight: `1rem` }}
-                label="Jabatan Penanggung Jawab"
-                rules={[
-                  {
-                    required: true,
-                    message: "Jabatan penanggung jawab harus diisi",
-                  },
-                ]}
-                initialValue={editvendor.jabatan_pic}
-              >
-                <Input
-                  placeholder="Jabatan Penanggung Jawab"
-                  name={`jabatan_pic`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="alamat"
-                style={{ marginRight: `1rem` }}
-                label="Alamat"
-                rules={[
-                  {
-                    required: true,
-                    message: "Alamat harus diisi",
-                  },
-                ]}
-                initialValue={editvendor.alamat}
-              >
-                <Input
-                  placeholder="Alamat"
-                  name={`alamat`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="provinsi"
-                style={{ marginRight: `1rem` }}
-                label="Provinsi"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Alamat penanggung jawab harus diisi',
-                  },
-                ]}
-                initialValue={editvendor.provinsi}
-              >
-                <Input
-                  placeholder="Provinsi"
-                  name={`provinsi`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="kab_kota"
-                style={{ marginRight: `1rem` }}
-                label="Kab/Kota"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Alamat penanggung jawab harus diisi',
-                  },
-                ]}
-                initialValue={editvendor.kab_kota}
-              >
-                <Input
-                  placeholder="Kab/Kota"
-                  name={`kab_kota`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="kode_pos"
-                style={{ marginRight: `1rem` }}
-                label="Kode Pos"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'Alamat penanggung jawab harus diisi',
-                  },
-                  {
-                    type: `number`,
-                    message: "Kode Pos harus berupa angka",
-                  },
-                ]}
-                initialValue={editvendor.kode_pos}
-              >
-                <InputNumber
-                  placeholder="Kode Pos"
-                  name={`kode_pos`}
-                  style={{ width: `100%` }}
-                  onChange={(val) => {
-                    setEditvendor({ ...editvendor, kode_pos: `${val}` });
-                  }}
-                />
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="telepon"
-                style={{ marginRight: `1rem` }}
-                label="Telepon"
-                rules={[
-                  {
-                    required: true,
-                    message: "No Telepon harus diisi",
-                  },
-                  {
-                    type: `number`,
-                    message: "Telepon harus berupa angka",
-                  },
-                ]}
-                initialValue={editvendor.telepon}
-              >
-                <InputNumber
-                  placeholder="Telepon"
-                  name={`telepon`}
-                  style={{ width: `100%` }}
-                  onChange={(val) => {
-                    setEditvendor({ ...editvendor, telepon: `0${val}` });
-                  }}
-                />
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="fax"
-                style={{ marginRight: `1rem` }}
-                label="Fax"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'No Fax harus diisi',
-                  },
-                  {
-                    type: `number`,
-                    message: "Fax harus berupa angka",
-                  },
-                ]}
-                initialValue={editvendor.fax}
-              >
-                <InputNumber
-                  placeholder="Fax"
-                  name={`fax`}
-                  style={{ width: `100%` }}
-                  onChange={(val) => {
-                    setEditvendor({ ...editvendor, fax: `0${val}` });
-                  }}
-                />
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="email"
-                style={{ marginRight: `1rem` }}
-                label="Email"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'No Email harus diisi',
-                  },
-                ]}
-                initialValue={editvendor.email}
-              >
-                <Input
-                  placeholder="Email"
-                  name={`email`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-            <div className="pb-0 md:mb-0 ">
-              <Form.Item
-                name="website"
-                style={{ marginRight: `1rem` }}
-                label="Website"
-                rules={[
-                  {
-                    required: false,
-                    // message: 'No Email harus diisi',
-                  },
-                ]}
-                initialValue={editvendor.website}
-              >
-                <Input
-                  placeholder="Website"
-                  name={`website`}
-                  onChange={onChangeEditVendor}
-                ></Input>
-              </Form.Item>
-            </div>
-          </Form>
-        </Drawer>
+            <Form
+              form={editVendorForm}
+              layout="vertical"
+              onFinish={handleEditVendor}
+              style={{ display: "contents" }}
+            >
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="name"
+                  style={{ marginRight: `1rem` }}
+                  label="Nama Vendor"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nama vendor harus diisi",
+                    },
+                  ]}
+                  initialValue={editvendor.name}
+                >
+                  <Input
+                    placeholder="Nama Vendor"
+                    name={`name`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="singkatan_nama"
+                  style={{ marginRight: `1rem` }}
+                  label="Singkatan Nama"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Nama vendor harus diisi',
+                    },
+                  ]}
+                  initialValue={editvendor.singkatan_nama}
+                >
+                  <Input
+                    placeholder="Singkatan Nama Perusahaan"
+                    name={`singkatan_nama`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="npwp"
+                  style={{ marginRight: `1rem` }}
+                  label="NPWP"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Nama vendor harus diisi',
+                    },
+                  ]}
+                  initialValue={editvendor.npwp}
+                >
+                  <Input
+                    placeholder="NPWP"
+                    name={`npwp`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="pic"
+                  style={{ marginRight: `1rem` }}
+                  label="Penanggung Jawab"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Nama penanggung jawab harus diisi",
+                    },
+                  ]}
+                  initialValue={editvendor.pic}
+                >
+                  <Input
+                    placeholder="Penanggung Jawab"
+                    name={`pic`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="jabatan_pic"
+                  style={{ marginRight: `1rem` }}
+                  label="Jabatan Penanggung Jawab"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Jabatan penanggung jawab harus diisi",
+                    },
+                  ]}
+                  initialValue={editvendor.jabatan_pic}
+                >
+                  <Input
+                    placeholder="Jabatan Penanggung Jawab"
+                    name={`jabatan_pic`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="alamat"
+                  style={{ marginRight: `1rem` }}
+                  label="Alamat"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Alamat harus diisi",
+                    },
+                  ]}
+                  initialValue={editvendor.alamat}
+                >
+                  <Input
+                    placeholder="Alamat"
+                    name={`alamat`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="provinsi"
+                  style={{ marginRight: `1rem` }}
+                  label="Provinsi"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Alamat penanggung jawab harus diisi',
+                    },
+                  ]}
+                  initialValue={editvendor.provinsi}
+                >
+                  <Input
+                    placeholder="Provinsi"
+                    name={`provinsi`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="kab_kota"
+                  style={{ marginRight: `1rem` }}
+                  label="Kab/Kota"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Alamat penanggung jawab harus diisi',
+                    },
+                  ]}
+                  initialValue={editvendor.kab_kota}
+                >
+                  <Input
+                    placeholder="Kab/Kota"
+                    name={`kab_kota`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="kode_pos"
+                  style={{ marginRight: `1rem` }}
+                  label="Kode Pos"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'Alamat penanggung jawab harus diisi',
+                    },
+                    {
+                      type: `number`,
+                      message: "Kode Pos harus berupa angka",
+                    },
+                  ]}
+                  initialValue={editvendor.kode_pos}
+                >
+                  <InputNumber
+                    placeholder="Kode Pos"
+                    name={`kode_pos`}
+                    style={{ width: `100%` }}
+                    onChange={(val) => {
+                      setEditvendor({ ...editvendor, kode_pos: `${val}` });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="telepon"
+                  style={{ marginRight: `1rem` }}
+                  label="Telepon"
+                  rules={[
+                    {
+                      required: true,
+                      message: "No Telepon harus diisi",
+                    },
+                    {
+                      type: `number`,
+                      message: "Telepon harus berupa angka",
+                    },
+                  ]}
+                  initialValue={editvendor.telepon}
+                >
+                  <InputNumber
+                    placeholder="Telepon"
+                    name={`telepon`}
+                    style={{ width: `100%` }}
+                    onChange={(val) => {
+                      setEditvendor({ ...editvendor, telepon: `0${val}` });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="fax"
+                  style={{ marginRight: `1rem` }}
+                  label="Fax"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'No Fax harus diisi',
+                    },
+                    {
+                      type: `number`,
+                      message: "Fax harus berupa angka",
+                    },
+                  ]}
+                  initialValue={editvendor.fax}
+                >
+                  <InputNumber
+                    placeholder="Fax"
+                    name={`fax`}
+                    style={{ width: `100%` }}
+                    onChange={(val) => {
+                      setEditvendor({ ...editvendor, fax: `0${val}` });
+                    }}
+                  />
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="email"
+                  style={{ marginRight: `1rem` }}
+                  label="Email"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'No Email harus diisi',
+                    },
+                  ]}
+                  initialValue={editvendor.email}
+                >
+                  <Input
+                    placeholder="Email"
+                    name={`email`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+              <div className="pb-0 md:mb-0 ">
+                <Form.Item
+                  name="website"
+                  style={{ marginRight: `1rem` }}
+                  label="Website"
+                  rules={[
+                    {
+                      required: false,
+                      // message: 'No Email harus diisi',
+                    },
+                  ]}
+                  initialValue={editvendor.website}
+                >
+                  <Input
+                    placeholder="Website"
+                    name={`website`}
+                    onChange={onChangeEditVendor}
+                  ></Input>
+                </Form.Item>
+              </div>
+            </Form>
+          </Drawer>
+        </AccessControl>
       </>
     </Layout>
   );

@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ASSETS_GET, MODELS_GET, MODEL_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../../lib/helper";
@@ -11,6 +16,18 @@ import httpcookie from "cookie";
 
 const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 1.Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToSeeModels = hasPermission(MODELS_GET);
+  const isAllowedToSeeAssets = hasPermission(ASSETS_GET);
+  const isAllowedToAddModel = hasPermission(MODEL_ADD);
+
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
   var asset_id1 = "",
@@ -44,8 +61,8 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [displaydata, setdisplaydata] = useState([]);
   const [assetdata, setassetdata] = useState([]);
-  const [displaydata1, setdisplaydata1] = useState([]);
-  const [displaydata2, setdisplaydata2] = useState([]);
+  // const [displaydata1, setdisplaydata1] = useState([]);
+  // const [displaydata2, setdisplaydata2] = useState([]);
   const [namasearchact, setnamasearchact] = useState(
     name1 === "" ? false : true
   );
@@ -145,6 +162,10 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //5.useEffect
   useEffect(() => {
+    if (!isAllowedToSeeModels) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?asset_id=${asset_id1}&name=${name1}&sort_by=${sort_by}&sort_type=${sort_type}`,
       {
@@ -158,12 +179,18 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((res2) => {
         setdisplayentiredata(res2);
         setdisplaydata(res2.data.data);
-        setdisplaydata1(res2.data.data);
-        setdisplaydata2(res2.data.data);
-        console.log(assettypefilteract, namasearchact);
+        // setdisplaydata1(res2.data.data);
+        // setdisplaydata2(res2.data.data);
+        // console.log(assettypefilteract, namasearchact);
       });
-  }, []);
+  }, [isAllowedToSeeModels]);
+
   useEffect(() => {
+    if (!isAllowedToSeeAssets) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -189,7 +216,13 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
         setassetdata(res2.data);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToSeeAssets]);
+
+  useEffect(() => {
+    if (!isAllowedToSeeModels) {
+      permissionWarningNotification("Mendapatkan", "Daftar Model");
+    }
+  }, [isAllowedToSeeModels]);
 
   return (
     <Layout
@@ -204,11 +237,9 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
           <div className="font-semibold text-base w-auto">Models</div>
         </div>
         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-          <Link href={"/admin/models/create"}>
-            <Button size="large" type="primary">
-              Tambah
-            </Button>
-          </Link>
+          <Button size="large" type="primary" disabled={!isAllowedToAddModel}>
+            <Link href={"/admin/models/create"}>Tambah</Link>
+          </Button>
         </div>
       </div>
       <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
@@ -232,6 +263,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     defaultValue={namaasset === "" ? null : defasset}
                     treeData={assetdata}
+                    disabled={!isAllowedToSeeAssets}
                     filter
                     placeholder="Cari Asset Type"
                     treeDefaultExpandAll
@@ -291,8 +323,8 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
                   .then((res2) => {
                     setdisplayentiredata(res2);
                     setdisplaydata(res2.data.data);
-                    setdisplaydata1(res2.data.data);
-                    setdisplaydata2(res2.data.data);
+                    // setdisplaydata1(res2.data.data);
+                    // setdisplaydata2(res2.data.data);
                     setpraloading(false);
                   });
               },

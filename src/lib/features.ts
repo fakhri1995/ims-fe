@@ -544,3 +544,223 @@ export const COMPANY_CLIENT_BANK_UPDATE = "COMPANY_CLIENT_BANK_UPDATE";
  * - [x] pages/company/clients/[companyId]
  */
 export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
+
+/**
+ * Daftar feature untuk Asset management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076627/Asset+Management
+ */
+/**
+ * /getAssets
+ *
+ * - [ ] pages/items/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createpart/[itemId]
+ *
+ * - [x] pages/admin/assets/index
+ * - [x] pages/admin/assets/update/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
+ * - [x] pages/admin/assets/create/index
+ *
+ * - [x] pages/admin/models/index
+ * - [x] pages/admin/models/create/index
+ * - [x] pages/admin/models/update2/[modelId]
+ *
+ * - [ ] components/drawer/tickets/drawerTicketConnectItem
+ */
+export const ASSETS_GET = "ASSETS_GET";
+/**
+ * /getAsset
+ *
+ * - [x] pages/admin/assets/update/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
+ *
+ * - [x] pages/admin/models/update2/[modelId]
+ * - [x] pages/admin/models/create/index
+ *
+ * - [ ] pages/items/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createpart/[itemId]
+ *
+ * - [ ] components/drawer/tickets/drawerTicketConnectItem
+ */
+export const ASSET_GET = "ASSETS_GET";
+/**
+ * /addAsset
+ *
+ * - [x] pages/admin/assets/index
+ * - [x] pages/admin/assets/create/index
+ */
+export const ASSET_ADD = "ASSET_ADD";
+/**
+ * /updateAsset
+ *
+ * - [x] pages/admin/assets/update/[assettypeId]
+ * - [x] pages/admin/assets/detail/[assettypeId]
+ */
+export const ASSET_UPDATE = "ASSET_UPDATE";
+/**
+ * /deleteAsset
+ *
+ * - [x] pages/admin/assets/detail/[assettypeId]
+ */
+export const ASSET_DELETE = "ASSET_DELETE";
+
+/**
+ * /getVendors
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDORS_GET = "VENDORS_GET";
+/**
+ * /addVendor
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDOR_ADD = "VENDOR_ADD";
+/**
+ * /updateVendor
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDOR_UPDATE = "VENDOR_UPDATE";
+/**
+ * /deleteVendor
+ *
+ * - [x] pages/admin/vendors/index
+ */
+export const VENDOR_DELETE = "VENDOR_DELETE";
+
+/**
+ * /getManufacturers
+ *
+ * - [x] pages/admin/manufacturers/index
+ *
+ * - [x] pages/admin/models/create/index
+ * - [x] pages/admin/models/update2/[modelId]
+ */
+export const MANUFACTURERS_GET = "MANUFACTURERS_GET";
+/**
+ * /addManufacturer
+ *
+ * - [x] pages/admin/models/update2/[modelId]
+ * - [x] pages/admin/models/create/index
+ *
+ * - [x] pages/admin/manufacturers/index
+ */
+export const MANUFACTURER_ADD = "MANUFACTURER_ADD";
+/**
+ * /updateManufacturer
+ *
+ * - [x] pages/admin/manufacturers/index
+ */
+export const MANUFACTURER_UPDATE = "MANUFACTURER_UPDATE";
+/**
+ * /deleteManufacturer
+ *
+ * - [x] pages/admin/manufacturers/index
+ */
+export const MANUFACTURER_DELETE = "MANUFACTURER_DELETE";
+
+/**
+ * /getRelationships
+ *
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [x] pages/admin/relationships/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiUpdate
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ */
+export const RELATIONSHIPS_GET = "RELATIONSHIPS_GET";
+/**
+ * /addRelationship
+ *
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/items/createrelationship/[itemId]
+ *
+ * - [x] pages/admin/relationships/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ */
+export const RELATIONSHIP_ADD = "RELATIONSHIP_ADD";
+/**
+ * /updateRelationship
+ *
+ * - [x] pages/admin/relationships/index
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiUpdate
+ */
+export const RELATIONSHIP_UPDATE = "RELATIONSHIP_UPDATE";
+/**
+ * /deleteRelationship
+ *
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [x] pages/admin/relationships/index
+ */
+export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
+
+/**
+ * /getModels
+ *
+ * - [x] pages/admin/assets/detail/[assettypeId]
+ *
+ * - [ ] services/models
+ *
+ * - [ ] pages/items/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createpart/[itemId]
+ * - [ ] pages/items/update/[itemId]
+ * - [ ] pages/items/create/index
+ *
+ * - [x] pages/admin/models/index
+ * - [x] pages/admin/models/update2/[modelId]
+ *
+ * - [ ] pages/admin/assets/detail/[assettypeId]
+ *
+ * - [ ] hooks/api/models
+ */
+export const MODELS_GET = "MODELS_GET";
+/**
+ * /getModel
+ *
+ * - [ ] components/screen/models/CreateConfigurationPart/InputPart
+ *
+ * - [ ] pages/items/create/index
+ *
+ * - [x] pages/admin/models/detail/[modelId]
+ * - [x] pages/admin/models/update2/[modelId]
+ */
+export const MODEL_GET = "MODEL_GET";
+/**
+ * /addModel
+ *
+ * - [x] pages/admin/models/update2/[modelId]
+ * - [x] pages/admin/models/create/index
+ * - [x] pages/admin/models/index
+ *
+ * - [ ] components/screen/models/CreateConfigurationPart/index
+ * - [ ] components/screen/models/CreateConfigurationPart/CreateConfigurationPart
+ */
+export const MODEL_ADD = "MODEL_ADD";
+/**
+ * /updateModel
+ *
+ * - [x] pages/admin/models/detail/[modelId]
+ * - [x] pages/admin/models/update2/[modelId]
+ */
+export const MODEL_UPDATE = "MODEL_UPDATE";
+/**
+ * /deleteModel
+ *
+ * - [x] pages/admin/models/detail/[modelId]
+ */
+export const MODEL_DELETE = "MODEL_DELETE";

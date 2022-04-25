@@ -1,29 +1,31 @@
-import {
-  CalendarOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
+import { CalendarOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
   Empty,
-  Input,
   Modal,
   Radio,
   Select,
-  Spin,
   Steps,
-  Table,
-  Tabs,
   TreeSelect,
   notification,
 } from "antd";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  ASSETS_GET,
+  ASSET_DELETE,
+  ASSET_GET,
+  ASSET_UPDATE,
+  MODELS_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
@@ -37,7 +39,14 @@ const Overview = ({
   praloading,
   idparent,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateAsset = hasPermission(ASSET_UPDATE);
+
   const rt = useRouter();
+
   const codeparent = displaydata.code.substring(0, displaydata.code.length - 4);
   return (
     <div className="flex flex-col">
@@ -45,6 +54,7 @@ const Overview = ({
         <h1 className="font-bold text-xl my-auto">Overview</h1>
         {praloading ? null : (
           <Button
+            disabled={!isAllowedToUpdateAsset}
             type="primary"
             onClick={() => {
               rt.push(
@@ -56,144 +66,165 @@ const Overview = ({
           </Button>
         )}
       </div>
-      <div className="mb-8 mx-5 p-5 border shadow-md rounded-md flex flex-col">
-        <div className="flex flex-col mb-3">
-          <h1 className=" text-sm font-semibold mb-0">Induk Asset Type:</h1>
-          <p className="mb-0 text-sm">{parentcode ? parentcode.title : "-"}</p>
-          {/* {
-                        praloadingoverview ?
-                            null
-                            :
-                            <p className="mb-0 text-sm">{parentcode ? parentcode.title : "-"}</p>
-                    } */}
+
+      <AccessControl hasPermission={ASSET_GET}>
+        <div className="mb-8 mx-5 p-5 border shadow-md rounded-md flex flex-col">
+          <div className="flex flex-col mb-3">
+            <h1 className=" text-sm font-semibold mb-0">Induk Asset Type:</h1>
+            <p className="mb-0 text-sm">
+              {parentcode ? parentcode.title : "-"}
+            </p>
+            {/* {
+                          praloadingoverview ?
+                              null
+                              :
+                              <p className="mb-0 text-sm">{parentcode ? parentcode.title : "-"}</p>
+                      } */}
+          </div>
+          <div className="flex flex-col mb-3">
+            <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
+            <p className="mb-0 text-sm">
+              {displaydata ? displaydata.description : "-"}
+            </p>
+            {/* {
+                          praloadingoverview ?
+                              null
+                              :
+                              <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
+                      } */}
+          </div>
+          <div className="flex flex-col mb-3">
+            <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
+            <p className="mb-0 text-sm">
+              {displaydata.required_sn ? "Wajib Ada" : "Tidak Wajib"}
+            </p>
+            {/* {
+                          praloadingoverview ?
+                              null
+                              :
+                              <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
+                      } */}
+          </div>
         </div>
-        <div className="flex flex-col mb-3">
-          <h1 className=" text-sm font-semibold mb-0">Deskripsi:</h1>
-          <p className="mb-0 text-sm">
-            {displaydata ? displaydata.description : "-"}
-          </p>
-          {/* {
-                        praloadingoverview ?
-                            null
-                            :
-                            <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
-                    } */}
-        </div>
-        <div className="flex flex-col mb-3">
-          <h1 className=" text-sm font-semibold mb-0">Serial Number:</h1>
-          <p className="mb-0 text-sm">
-            {displaydata.required_sn ? "Wajib Ada" : "Tidak Wajib"}
-          </p>
-          {/* {
-                        praloadingoverview ?
-                            null
-                            :
-                            <p className="mb-0 text-sm">{displaydata ? displaydata.description : "-"}</p>
-                    } */}
-        </div>
-      </div>
-      <div className="flex flex-col">
-        <h1 className="font-bold text-large mx-5 p-5">
-          Spesifikasi Asset Type
-        </h1>
-        <div className="mb-8 border shadow-md rounded-md flex flex-col mx-5 p-5">
-          {displaydata.asset_columns.length > 0 ? (
-            displaydata.asset_columns.map((doc, idx) => {
-              return (
-                <div className="mb-5">
-                  <div className="font-semibold mb-2">
-                    {doc.name}{" "}
-                    {doc.required ? <span className="judulField"></span> : null}{" "}
-                    <span className="text-gray-400">
-                      (
-                      {doc.data_type.charAt(0).toUpperCase() +
-                        doc.data_type.slice(1)}
-                      {doc.data_type === "single" && ` Textbox`}
-                      {doc.data_type === "paragraph" && ` Text`})
-                    </span>
-                  </div>
-                  {doc.data_type === "dropdown" ||
-                  doc.data_type === "checkbox" ||
-                  doc.data_type === "date" ||
-                  doc.data_type === "paragraph" ? (
-                    <>
-                      {doc.data_type === "dropdown" && (
-                        <Select
-                          disabled
-                          style={{
-                            width: `100%`,
-                            backgroundColor: `rgba(229, 231, 235,1)`,
-                            color: `rgba(229, 231, 235,1)`,
-                          }}
-                        >
-                          {doc.default.opsi.map((doc2, idx2) => (
-                            <Select.Option disabled value={idx2}>
-                              {doc2}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      )}
-                      {doc.data_type === "checkbox" && (
-                        <div className="w-full flex flex-col">
-                          {doc.default.opsi.map((doc3, idx3) => (
-                            <div className="flex mb-1">
-                              <Checkbox
-                                disabled
-                                style={{ marginRight: `0.5rem` }}
-                              ></Checkbox>
-                              <p className="mb-0">{doc3}</p>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {doc.data_type === "date" && (
-                        <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
-                          <p className="mb-0">{doc.default}</p>
-                          <div>
-                            <CalendarOutlined></CalendarOutlined>
-                          </div>
-                        </div>
-                      )}
-                      {doc.data_type === "paragraph" && (
-                        <div className="flex h-20 rounded border bg-gray-100 w-full px-3">
-                          {doc.default}
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div className="rounded border bg-gray-100 flex items-center w-full h-10 px-3">
-                      {doc.default}
+        <div className="flex flex-col">
+          <h1 className="font-bold text-large mx-5 p-5">
+            Spesifikasi Asset Type
+          </h1>
+          <div className="mb-8 border shadow-md rounded-md flex flex-col mx-5 p-5">
+            {displaydata.asset_columns.length > 0 ? (
+              displaydata.asset_columns.map((doc, idx) => {
+                return (
+                  <div className="mb-5">
+                    <div className="font-semibold mb-2">
+                      {doc.name}{" "}
+                      {doc.required ? (
+                        <span className="judulField"></span>
+                      ) : null}{" "}
+                      <span className="text-gray-400">
+                        (
+                        {doc.data_type.charAt(0).toUpperCase() +
+                          doc.data_type.slice(1)}
+                        {doc.data_type === "single" && ` Textbox`}
+                        {doc.data_type === "paragraph" && ` Text`})
+                      </span>
                     </div>
-                  )}
-                  <style jsx>
-                    {`
-                                                        .judulField::before{
-                                                            content: '*';
-                                                            color: red;
-                                                        }
-                                                    `}
-                  </style>
-                </div>
-              );
-            })
-          ) : (
-            <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          )}
+                    {doc.data_type === "dropdown" ||
+                    doc.data_type === "checkbox" ||
+                    doc.data_type === "date" ||
+                    doc.data_type === "paragraph" ? (
+                      <>
+                        {doc.data_type === "dropdown" && (
+                          <Select
+                            disabled
+                            style={{
+                              width: `100%`,
+                              backgroundColor: `rgba(229, 231, 235,1)`,
+                              color: `rgba(229, 231, 235,1)`,
+                            }}
+                          >
+                            {doc.default.opsi.map((doc2, idx2) => (
+                              <Select.Option disabled value={idx2}>
+                                {doc2}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        )}
+                        {doc.data_type === "checkbox" && (
+                          <div className="w-full flex flex-col">
+                            {doc.default.opsi.map((doc3, idx3) => (
+                              <div className="flex mb-1">
+                                <Checkbox
+                                  disabled
+                                  style={{ marginRight: `0.5rem` }}
+                                ></Checkbox>
+                                <p className="mb-0">{doc3}</p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                        {doc.data_type === "date" && (
+                          <div className="flex w-full items-center justify-between rounded bg-gray-100 h-10 px-3">
+                            <p className="mb-0">{doc.default}</p>
+                            <div>
+                              <CalendarOutlined></CalendarOutlined>
+                            </div>
+                          </div>
+                        )}
+                        {doc.data_type === "paragraph" && (
+                          <div className="flex h-20 rounded border bg-gray-100 w-full px-3">
+                            {doc.default}
+                          </div>
+                        )}
+                      </>
+                    ) : (
+                      <div className="rounded border bg-gray-100 flex items-center w-full h-10 px-3">
+                        {doc.default}
+                      </div>
+                    )}
+                    <style jsx>
+                      {`
+                                                          .judulField::before{
+                                                              content: '*';
+                                                              color: red;
+                                                          }
+                                                      `}
+                    </style>
+                  </div>
+                );
+              })
+            ) : (
+              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
+            )}
+          </div>
         </div>
-      </div>
+      </AccessControl>
     </div>
   );
 };
 
 const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
   //1. Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetAsset = hasPermission(ASSET_GET);
+  const isAllowedToGetAssets = hasPermission(ASSETS_GET);
+  const isAllowedToGetModels = hasPermission(MODELS_GET);
+  const isAllowedToDeleteAsset = hasPermission(ASSET_DELETE);
+
   const rt = useRouter();
+
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(3, 1);
   pathArr[pathArr.length - 1] = "Detail Asset Type";
-  const { TabPane } = Tabs;
+  // const { TabPane } = Tabs;
   const { Step } = Steps;
-  var activeTab = "overview";
+  // var activeTab = "overview";
   const { active } = rt.query;
   if (active) {
     activeTab = active;
@@ -280,6 +311,12 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetAsset) {
+      permissionWarningNotification("Mendapatkan", "Detail Asset");
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAsset?id=${assettypeid}`, {
       method: `GET`,
       headers: {
@@ -308,6 +345,11 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
         return prt;
       })
       .then((res3) => {
+        if (!isAllowedToGetAssets) {
+          setpraloading(false);
+          return;
+        }
+
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
           method: `GET`,
           headers: {
@@ -323,8 +365,13 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
             setpraloading(false);
           });
       });
-  }, []);
+  }, [isAllowedToGetAsset, isAllowedToGetAssets]);
+
   useEffect(() => {
+    if (!isAllowedToGetAssets) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -373,8 +420,13 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
         searchChild(res2.data);
         setchildassettype(child);
       });
-  }, []);
+  }, [isAllowedToGetAssets]);
+
   useEffect(() => {
+    if (!isAllowedToGetModels) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels`, {
       method: `GET`,
       headers: {
@@ -385,24 +437,28 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
       .then((res2) => {
         setmodeldata(res2.data.data);
       });
-  }, []);
+  }, [isAllowedToGetModels]);
+
   useEffect(() => {
     if (stepdelete === 0) {
       var el = document.getElementById("step1");
-      el.classList.add("flex", "flex-col");
-      el.classList.remove("hidden");
+      el?.classList.add("flex", "flex-col");
+      el?.classList.remove("hidden");
+
       var el2 = document.getElementById("step2");
-      el2.classList.remove("flex", "flex-col");
-      el2.classList.add("hidden");
+      el2?.classList.remove("flex", "flex-col");
+      el2?.classList.add("hidden");
     } else if (stepdelete === 1) {
       var el = document.getElementById("step2");
-      el.classList.add("flex", "flex-col");
-      el.classList.remove("hidden");
+      el?.classList.add("flex", "flex-col");
+      el?.classList.remove("hidden");
+
       var el2 = document.getElementById("step1");
-      el2.classList.add("hidden");
-      el2.classList.remove("flex", "flex-col");
+      el2?.classList.add("hidden");
+      el2?.classList.remove("flex", "flex-col");
     }
   }, [stepdelete]);
+
   return (
     <Layout
       tok={initProps}
@@ -427,7 +483,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
               <h1 className="font-bold text-xl py-2">{displaydata.name}</h1>
               <div className="flex mr-5 items-center">
                 <Button
-                  disabled={praloading}
+                  disabled={praloading || !isAllowedToDeleteAsset}
                   type="danger"
                   loading={loadingdelete}
                   onClick={() => {
@@ -509,7 +565,9 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                   </Button>
                   <Button
                     type="primary"
-                    disabled={newparentmodelradio === null}
+                    disabled={
+                      newparentmodelradio === null || !isAllowedToDeleteAsset
+                    }
                     onClick={handleDeleteAsset}
                     loading={loadingdelete}
                   >
@@ -717,7 +775,9 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                 </Button>
                 <Button
                   type="primary"
-                  disabled={newparentchildradio === null}
+                  disabled={
+                    newparentchildradio === null || !isAllowedToDeleteAsset
+                  }
                   onClick={handleDeleteAsset}
                   loading={loadingdelete}
                 >
@@ -836,7 +896,9 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
                 </Button>
                 <Button
                   type="primary"
-                  disabled={newparentmodelradio === null}
+                  disabled={
+                    newparentmodelradio === null || !isAllowedToDeleteAsset
+                  }
                   onClick={handleDeleteAsset}
                   loading={loadingdelete}
                 >

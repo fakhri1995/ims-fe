@@ -15,18 +15,37 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ASSETS_GET, ASSET_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
   //1. Init
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToAddAsset = hasPermission(ASSET_ADD);
+  const isAllowedToGetAssets = hasPermission(ASSETS_GET);
+
   const rt = useRouter();
+
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(3, 1);
   pathArr[pathArr.length - 1] = "Tambah Asset Type";
   const [instanceForm] = Form.useForm();
-  const [instanceForm2] = Form.useForm();
+  // const [instanceForm2] = Form.useForm();
   const { idparent, codeparent } = rt.query;
 
   //helperFunctions
@@ -153,6 +172,12 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToAddAsset || !isAllowedToGetAssets) {
+      permissionWarningNotification("Menambahkan", "Tipe Asset");
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -165,7 +190,8 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
         setpraloading(false);
         idparent !== "" ? setnewdata({ ...newdata, parent: idparent }) : null;
       });
-  }, []);
+  }, [isAllowedToAddAsset, isAllowedToGetAssets]);
+
   useEffect(() => {
     if (selectedfieldidx !== -1) {
       setaddedfield((prev) => {
@@ -174,12 +200,14 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
       });
     }
   }, [selectedfieldidxtrigger]);
+
   useEffect(() => {
     setnewdata({
       ...newdata,
       asset_columns: fielddata,
     });
   }, [newfieldidxtrigger]);
+
   useEffect(() => {
     if (currentnondropdownidx !== -1) {
       setfielddata((prev) => {
@@ -189,6 +217,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
       });
     }
   }, [currentnondropdowntrigger]);
+
   useEffect(() => {
     if (currentdropdownidx !== -1) {
       console.log("sini");
@@ -231,7 +260,7 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
                   type="primary"
                   loading={loadingcreate}
                   onClick={instanceForm.submit}
-                  disabled={disabledsimpan}
+                  disabled={disabledsimpan || !isAllowedToAddAsset}
                 >
                   Simpan
                 </Button>
@@ -239,605 +268,619 @@ const AssetsCreate = ({ sidemenu, dataProfile, initProps }) => {
             </div>
           </Sticky>
         </div>
-        <div className="col-span-1 md:col-span-4 px-5 mb-8">
-          <div className="shadow-md border p-8 flex flex-col rounded-md">
-            {praloading ? (
-              <Spin></Spin>
-            ) : (
-              <Form
-                form={instanceForm}
-                layout="vertical"
-                onFinish={handleCreateAsset}
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                  {idparent !== "" ? (
-                    <div className="flex flex-col">
-                      <p className="mb-2">
-                        <span className="judulField1"></span>
-                        Induk Asset Type
-                      </p>
-                      <TreeSelect
-                        style={{ marginRight: `1rem` }}
-                        treeData={assetdata}
-                        defaultValue={codeparent !== "" ? codeparent : null}
-                        disabled={idparent !== ""}
-                        showSearch
-                        treeNodeFilterProp="title"
-                        filterTreeNode={(search, item) => {
-                          /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                          /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                          return (
-                            item.title
-                              .toLowerCase()
-                              .indexOf(search.toLowerCase()) >= 0
-                          );
-                        }}
-                      ></TreeSelect>
-                      <style jsx>
-                        {`
-                                                        .judulField1::before{
-                                                            content: '*';
-                                                            color: red;
-                                                            margin-right: 5px;
-                                                        }
-                                                    `}
-                      </style>
-                    </div>
-                  ) : (
+        <AccessControl hasPermission={ASSET_ADD}>
+          <div className="col-span-1 md:col-span-4 px-5 mb-8">
+            <div className="shadow-md border p-8 flex flex-col rounded-md">
+              {praloading ? (
+                <Spin></Spin>
+              ) : (
+                <Form
+                  form={instanceForm}
+                  layout="vertical"
+                  onFinish={handleCreateAsset}
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
+                    {idparent !== "" ? (
+                      <div className="flex flex-col">
+                        <p className="mb-2">
+                          <span className="judulField1"></span>
+                          Induk Asset Type
+                        </p>
+                        <TreeSelect
+                          style={{ marginRight: `1rem` }}
+                          treeData={assetdata}
+                          defaultValue={codeparent !== "" ? codeparent : null}
+                          disabled={idparent !== ""}
+                          showSearch
+                          treeNodeFilterProp="title"
+                          filterTreeNode={(search, item) => {
+                            /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                            /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                            return (
+                              item.title
+                                .toLowerCase()
+                                .indexOf(search.toLowerCase()) >= 0
+                            );
+                          }}
+                        ></TreeSelect>
+                        <style jsx>
+                          {`
+                                                          .judulField1::before{
+                                                              content: '*';
+                                                              color: red;
+                                                              margin-right: 5px;
+                                                          }
+                                                      `}
+                        </style>
+                      </div>
+                    ) : (
+                      <Form.Item
+                        name="parent"
+                        label={
+                          <div className="flex">
+                            <span className="judulField"></span>
+                            <p className="mb-0 ml-1">Induk Asset Type</p>
+                            <style jsx>
+                              {`
+                                                                      .judulField::before{
+                                                                          content: '*';
+                                                                          color: red;
+                                                                      }
+                                                                  `}
+                            </style>
+                          </div>
+                        }
+                      >
+                        <TreeSelect
+                          style={{ marginRight: `1rem` }}
+                          dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                          treeData={assetdata}
+                          placeholder="Pilih parent"
+                          treeDefaultExpandAll
+                          onChange={(value, label, extra) => {
+                            typeof value === "undefined"
+                              ? setnewdata({ ...newdata, parent: null })
+                              : setnewdata({
+                                  ...newdata,
+                                  parent:
+                                    extra.allCheckedNodes[0].node.props.id,
+                                });
+                          }}
+                          allowClear
+                          showSearch
+                          treeNodeFilterProp="title"
+                          filterTreeNode={(search, item) => {
+                            /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                            /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                            return (
+                              item.title
+                                .toLowerCase()
+                                .indexOf(search.toLowerCase()) >= 0
+                            );
+                          }}
+                        />
+                      </Form.Item>
+                    )}
                     <Form.Item
-                      name="parent"
-                      label={
-                        <div className="flex">
-                          <span className="judulField"></span>
-                          <p className="mb-0 ml-1">Induk Asset Type</p>
-                          <style jsx>
-                            {`
-                                                                    .judulField::before{
-                                                                        content: '*';
-                                                                        color: red;
-                                                                    }
-                                                                `}
-                          </style>
-                        </div>
-                      }
+                      name="name"
+                      label="Nama Asset Type"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Nama Asset wajib diisi",
+                        },
+                      ]}
                     >
-                      <TreeSelect
-                        style={{ marginRight: `1rem` }}
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        treeData={assetdata}
-                        placeholder="Pilih parent"
-                        treeDefaultExpandAll
-                        onChange={(value, label, extra) => {
-                          typeof value === "undefined"
-                            ? setnewdata({ ...newdata, parent: null })
-                            : setnewdata({
-                                ...newdata,
-                                parent: extra.allCheckedNodes[0].node.props.id,
-                              });
-                        }}
-                        allowClear
-                        showSearch
-                        treeNodeFilterProp="title"
-                        filterTreeNode={(search, item) => {
-                          /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                          /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                          return (
-                            item.title
-                              .toLowerCase()
-                              .indexOf(search.toLowerCase()) >= 0
-                          );
+                      <Input
+                        name="name"
+                        onChange={(e) => {
+                          setnewdata({ ...newdata, name: e.target.value });
                         }}
                       />
                     </Form.Item>
-                  )}
-                  <Form.Item
-                    name="name"
-                    label="Nama Asset Type"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Nama Asset wajib diisi",
-                      },
-                    ]}
-                  >
-                    <Input
-                      name="name"
+                  </div>
+                  <Form.Item name="description" label="Deskripsi">
+                    <Input.TextArea
+                      rows={4}
+                      name="description"
                       onChange={(e) => {
-                        setnewdata({ ...newdata, name: e.target.value });
+                        setnewdata({ ...newdata, description: e.target.value });
                       }}
                     />
                   </Form.Item>
-                </div>
-                <Form.Item name="description" label="Deskripsi">
-                  <Input.TextArea
-                    rows={4}
-                    name="description"
-                    onChange={(e) => {
-                      setnewdata({ ...newdata, description: e.target.value });
-                    }}
-                  />
-                </Form.Item>
-                <div className="flex">
-                  <Checkbox
-                    style={{ marginRight: `0.5rem` }}
-                    onChange={(e) => {
-                      setnewdata({ ...newdata, required_sn: e.target.checked });
-                    }}
-                    checked={newdata.required_sn}
-                  />{" "}
-                  Serial Number wajib ada
-                </div>
-              </Form>
-            )}
-          </div>
-        </div>
-        <div className=" col-span-1 md:col-span-4 px-5 flex flex-col">
-          <div className="mb-5">
-            <h1 className="font-bold text-xl">Spesifikasi Asset Type</h1>
-          </div>
-          {fielddata.map((doc, idx) => {
-            return (
-              <>
-                {addedfield[idx] === true ? (
-                  <div
-                    key={idx}
-                    className={`${pointevent} shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer`}
-                    onClick={() => {
-                      const temp = [...addedfield];
-                      temp[idx] = false;
-                      for (var i = 0; i < temp.length; i++) {
-                        if (i !== idx) {
-                          temp[i] = true;
-                        }
-                      }
-                      setaddedfield(temp);
-                      setcurrentfield(fielddata[idx]);
-                      if (
-                        doc.data_type === "dropdown" ||
-                        doc.data_type === "checkbox"
-                      ) {
-                        setcurrentdropdown(doc.default.opsi);
-                        setcurrentdropdown2(doc.default.opsi);
-                      }
-                      if (
-                        fielddata[idx].data_type !== "dropdown" ||
-                        fielddata[idx].data_type !== "checkbox"
-                      ) {
-                        if (
-                          fielddata[idx].name !== "" &&
-                          fielddata[idx].data_type !== ""
-                        ) {
-                          setdisabledtambah(false);
-                        } else {
-                          setdisabledtambah(true);
-                        }
-                      } else {
-                        if (
-                          doc.default.opsi.some((docopsi) => docopsi === "")
-                        ) {
-                          setdisabledtambah(true);
-                        } else {
-                          setdisabledtambah(false);
-                        }
-                      }
-                      setdisabledaddfield(true);
-                      setdisabledsimpan(true);
-                      setpointevent("pointer-events-none");
-                    }}
-                  >
-                    <div className="font-semibold mb-2">
-                      {doc.name}
-                      {doc.required ? (
-                        <span className="judulField"></span>
-                      ) : null}{" "}
-                      <span className="text-gray-400">
-                        (
-                        {doc.data_type.charAt(0).toUpperCase() +
-                          doc.data_type.slice(1)}
-                        {doc.data_type === "single" && ` Textbox`}
-                        {doc.data_type === "paragraph" && ` Text`})
-                      </span>
-                    </div>
-                    <div className="rounded border w-full p-3">
-                      {doc.data_type === "dropdown" ||
-                      doc.data_type === "checkbox" ||
-                      doc.data_type === "date" ||
-                      doc.data_type === "paragraph" ? (
-                        <>
-                          {doc.data_type === "dropdown" && (
-                            <div className="flex flex-col z-50">
-                              <Select>
-                                {doc.default.opsi.map((docopsi, idxopsi) => {
-                                  <Select.Option key={idxopsi}>
-                                    {idxopsi}
-                                  </Select.Option>;
-                                })}
-                              </Select>
-                            </div>
-                          )}
-                          {doc.data_type === "checkbox" && (
-                            <div className="flex flex-col">
-                              {doc.default.opsi.map((docopsi, idxopsi) => (
-                                <div className="flex items-center  mb-2">
-                                  <Checkbox
-                                    style={{ marginRight: `0.5rem` }}
-                                    disabled
-                                  />{" "}
-                                  {docopsi}
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                          {doc.data_type === "date" && (
-                            <div className="flex justify-between">
-                              <p className="mb-0">{doc.default}</p>
-                              <div>
-                                <CalendarOutlined></CalendarOutlined>
-                              </div>
-                            </div>
-                          )}
-                          {doc.data_type === "paragraph" && (
-                            <div className="flex h-20"></div>
-                          )}
-                        </>
-                      ) : (
-                        <>{doc.default}</>
-                      )}
-                    </div>
-                    <style jsx>
-                      {`
-                                                        .judulField::before{
-                                                            content: '*';
-                                                            color: red;
-                                                        }
-                                                    `}
-                    </style>
+                  <div className="flex">
+                    <Checkbox
+                      style={{ marginRight: `0.5rem` }}
+                      onChange={(e) => {
+                        setnewdata({
+                          ...newdata,
+                          required_sn: e.target.checked,
+                        });
+                      }}
+                      checked={newdata.required_sn}
+                    />{" "}
+                    Serial Number wajib ada
                   </div>
-                ) : (
-                  <div
-                    key={idx}
-                    className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md"
-                  >
-                    <Form layout="vertical" initialValues={fielddata[idx]}>
-                      <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
-                        <Form.Item
-                          name="name"
-                          label="Nama Spesifikasi"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Nama Field wajib diisi",
-                            },
-                          ]}
-                        >
-                          <Input
-                            required
+                </Form>
+              )}
+            </div>
+          </div>
+          <div className=" col-span-1 md:col-span-4 px-5 flex flex-col">
+            <div className="mb-5">
+              <h1 className="font-bold text-xl">Spesifikasi Asset Type</h1>
+            </div>
+            {fielddata.map((doc, idx) => {
+              return (
+                <>
+                  {addedfield[idx] === true ? (
+                    <div
+                      key={idx}
+                      className={`${pointevent} shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md cursor-pointer`}
+                      onClick={() => {
+                        const temp = [...addedfield];
+                        temp[idx] = false;
+                        for (var i = 0; i < temp.length; i++) {
+                          if (i !== idx) {
+                            temp[i] = true;
+                          }
+                        }
+                        setaddedfield(temp);
+                        setcurrentfield(fielddata[idx]);
+                        if (
+                          doc.data_type === "dropdown" ||
+                          doc.data_type === "checkbox"
+                        ) {
+                          setcurrentdropdown(doc.default.opsi);
+                          setcurrentdropdown2(doc.default.opsi);
+                        }
+                        if (
+                          fielddata[idx].data_type !== "dropdown" ||
+                          fielddata[idx].data_type !== "checkbox"
+                        ) {
+                          if (
+                            fielddata[idx].name !== "" &&
+                            fielddata[idx].data_type !== ""
+                          ) {
+                            setdisabledtambah(false);
+                          } else {
+                            setdisabledtambah(true);
+                          }
+                        } else {
+                          if (
+                            doc.default.opsi.some((docopsi) => docopsi === "")
+                          ) {
+                            setdisabledtambah(true);
+                          } else {
+                            setdisabledtambah(false);
+                          }
+                        }
+                        setdisabledaddfield(true);
+                        setdisabledsimpan(true);
+                        setpointevent("pointer-events-none");
+                      }}
+                    >
+                      <div className="font-semibold mb-2">
+                        {doc.name}
+                        {doc.required ? (
+                          <span className="judulField"></span>
+                        ) : null}{" "}
+                        <span className="text-gray-400">
+                          (
+                          {doc.data_type.charAt(0).toUpperCase() +
+                            doc.data_type.slice(1)}
+                          {doc.data_type === "single" && ` Textbox`}
+                          {doc.data_type === "paragraph" && ` Text`})
+                        </span>
+                      </div>
+                      <div className="rounded border w-full p-3">
+                        {doc.data_type === "dropdown" ||
+                        doc.data_type === "checkbox" ||
+                        doc.data_type === "date" ||
+                        doc.data_type === "paragraph" ? (
+                          <>
+                            {doc.data_type === "dropdown" && (
+                              <div className="flex flex-col z-50">
+                                <Select>
+                                  {doc.default.opsi.map((docopsi, idxopsi) => {
+                                    <Select.Option key={idxopsi}>
+                                      {idxopsi}
+                                    </Select.Option>;
+                                  })}
+                                </Select>
+                              </div>
+                            )}
+                            {doc.data_type === "checkbox" && (
+                              <div className="flex flex-col">
+                                {doc.default.opsi.map((docopsi, idxopsi) => (
+                                  <div className="flex items-center  mb-2">
+                                    <Checkbox
+                                      style={{ marginRight: `0.5rem` }}
+                                      disabled
+                                    />{" "}
+                                    {docopsi}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {doc.data_type === "date" && (
+                              <div className="flex justify-between">
+                                <p className="mb-0">{doc.default}</p>
+                                <div>
+                                  <CalendarOutlined></CalendarOutlined>
+                                </div>
+                              </div>
+                            )}
+                            {doc.data_type === "paragraph" && (
+                              <div className="flex h-20"></div>
+                            )}
+                          </>
+                        ) : (
+                          <>{doc.default}</>
+                        )}
+                      </div>
+                      <style jsx>
+                        {`
+                                                          .judulField::before{
+                                                              content: '*';
+                                                              color: red;
+                                                          }
+                                                      `}
+                      </style>
+                    </div>
+                  ) : (
+                    <div
+                      key={idx}
+                      className="shadow-md border p-8 mx-3 md:mx-8 mb-5 flex flex-col rounded-md"
+                    >
+                      <Form layout="vertical" initialValues={fielddata[idx]}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 space-x-2">
+                          <Form.Item
                             name="name"
-                            onChange={(e) => {
-                              setcurrentfield({
-                                ...currentfield,
-                                name: e.target.value,
-                              });
-                              if (e.target.value === "") {
-                                setdisabledtambah(true);
-                              } else if (
-                                e.target.value !== "" &&
-                                currentfield.data_type !== "" &&
-                                currentdropdown.every(
-                                  (doca, idxa) => doca !== ""
-                                )
-                              ) {
-                                setdisabledtambah(false);
-                              }
-                            }}
-                          />
-                        </Form.Item>
-                        <Form.Item
-                          name="data_type"
-                          label="Tipe Field"
-                          rules={[
-                            {
-                              required: true,
-                              message: "Tipe Field wajib diisi",
-                            },
-                          ]}
-                        >
-                          <Select
-                            placeholder="Pilih Tipe Field"
-                            onChange={(value) => {
-                              setcurrentfield({
-                                ...currentfield,
-                                data_type: value,
-                              });
-                              if (
-                                value === "dropdown" ||
-                                value === "checkbox"
-                              ) {
-                                if (
+                            label="Nama Spesifikasi"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Nama Field wajib diisi",
+                              },
+                            ]}
+                          >
+                            <Input
+                              required
+                              name="name"
+                              onChange={(e) => {
+                                setcurrentfield({
+                                  ...currentfield,
+                                  name: e.target.value,
+                                });
+                                if (e.target.value === "") {
+                                  setdisabledtambah(true);
+                                } else if (
+                                  e.target.value !== "" &&
+                                  currentfield.data_type !== "" &&
                                   currentdropdown.every(
                                     (doca, idxa) => doca !== ""
                                   )
                                 ) {
                                   setdisabledtambah(false);
+                                }
+                              }}
+                            />
+                          </Form.Item>
+                          <Form.Item
+                            name="data_type"
+                            label="Tipe Field"
+                            rules={[
+                              {
+                                required: true,
+                                message: "Tipe Field wajib diisi",
+                              },
+                            ]}
+                          >
+                            <Select
+                              placeholder="Pilih Tipe Field"
+                              onChange={(value) => {
+                                setcurrentfield({
+                                  ...currentfield,
+                                  data_type: value,
+                                });
+                                if (
+                                  value === "dropdown" ||
+                                  value === "checkbox"
+                                ) {
+                                  if (
+                                    currentdropdown.every(
+                                      (doca, idxa) => doca !== ""
+                                    )
+                                  ) {
+                                    setdisabledtambah(false);
+                                  } else {
+                                    setdisabledtambah(true);
+                                  }
                                 } else {
+                                  setdisabledtambah(false);
+                                }
+                                if (value === "dropdown") {
+                                  setcurrentdropdown(["", ""]);
                                   setdisabledtambah(true);
                                 }
-                              } else {
-                                setdisabledtambah(false);
-                              }
-                              if (value === "dropdown") {
-                                setcurrentdropdown(["", ""]);
-                                setdisabledtambah(true);
-                              }
-                              if (value === "checkbox") {
-                                setcurrentdropdown(["", ""]);
-                                setdisabledtambah(true);
-                              }
-                            }}
-                            name="data_type"
-                          >
-                            <Select.Option value={"dropdown"}>
-                              Dropdown
-                            </Select.Option>
-                            <Select.Option value={"number"}>
-                              Number
-                            </Select.Option>
-                            <Select.Option value={"paragraph"}>
-                              Paragraph Text
-                            </Select.Option>
-                            <Select.Option value={"checkbox"}>
-                              Checkbox
-                            </Select.Option>
-                            <Select.Option value={"single"}>
-                              Single Textbox
-                            </Select.Option>
-                            <Select.Option value={"date"}>Date</Select.Option>
-                          </Select>
-                        </Form.Item>
-                      </div>
-                      {currentfield.data_type === "dropdown" ? (
-                        <div className="flex flex-col">
-                          {currentdropdown.map((doc, idxx) => (
-                            <div key={idxx} className="flex mb-3">
-                              <div className="w-11/12 mr-5">
-                                <Input
-                                  style={{ marginRight: `0.5rem` }}
-                                  defaultValue={doc}
-                                  placeholder={`Masukkan opsi ke-${idxx + 1}`}
-                                  onChange={(e) => {
-                                    setcurrentdropdown((prev) => {
-                                      const temp = prev;
-                                      temp[idxx] = e.target.value;
-                                      return temp;
-                                    });
-                                    setcurrentdropdown2((prev) => {
-                                      const temp = prev;
-                                      temp[idxx] = e.target.value;
-                                      return temp;
-                                    });
-                                    if (
-                                      e.target.value !== "" &&
-                                      currentdropdown.every(
-                                        (doca, idxa) => doca !== ""
-                                      ) &&
-                                      currentfield.name !== ""
-                                    ) {
-                                      setdisabledtambah(false);
-                                    } else if (
-                                      e.target.value === "" ||
-                                      currentfield.name === ""
-                                    ) {
-                                      setdisabledtambah(true);
-                                    }
+                                if (value === "checkbox") {
+                                  setcurrentdropdown(["", ""]);
+                                  setdisabledtambah(true);
+                                }
+                              }}
+                              name="data_type"
+                            >
+                              <Select.Option value={"dropdown"}>
+                                Dropdown
+                              </Select.Option>
+                              <Select.Option value={"number"}>
+                                Number
+                              </Select.Option>
+                              <Select.Option value={"paragraph"}>
+                                Paragraph Text
+                              </Select.Option>
+                              <Select.Option value={"checkbox"}>
+                                Checkbox
+                              </Select.Option>
+                              <Select.Option value={"single"}>
+                                Single Textbox
+                              </Select.Option>
+                              <Select.Option value={"date"}>Date</Select.Option>
+                            </Select>
+                          </Form.Item>
+                        </div>
+                        {currentfield.data_type === "dropdown" ? (
+                          <div className="flex flex-col">
+                            {currentdropdown.map((doc, idxx) => (
+                              <div key={idxx} className="flex mb-3">
+                                <div className="w-11/12 mr-5">
+                                  <Input
+                                    style={{ marginRight: `0.5rem` }}
+                                    defaultValue={doc}
+                                    placeholder={`Masukkan opsi ke-${idxx + 1}`}
+                                    onChange={(e) => {
+                                      setcurrentdropdown((prev) => {
+                                        const temp = prev;
+                                        temp[idxx] = e.target.value;
+                                        return temp;
+                                      });
+                                      setcurrentdropdown2((prev) => {
+                                        const temp = prev;
+                                        temp[idxx] = e.target.value;
+                                        return temp;
+                                      });
+                                      if (
+                                        e.target.value !== "" &&
+                                        currentdropdown.every(
+                                          (doca, idxa) => doca !== ""
+                                        ) &&
+                                        currentfield.name !== ""
+                                      ) {
+                                        setdisabledtambah(false);
+                                      } else if (
+                                        e.target.value === "" ||
+                                        currentfield.name === ""
+                                      ) {
+                                        setdisabledtambah(true);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                <div
+                                  className="w-1/12 flex justify-around"
+                                  onClick={() => {
+                                    setcurrentdropdown([]);
+                                    setcurrentdropdowntrigger((prev) => !prev);
+                                    setcurrentdropdownidx(idxx);
                                   }}
-                                />
-                              </div>
-                              <div
-                                className="w-1/12 flex justify-around"
-                                onClick={() => {
-                                  setcurrentdropdown([]);
-                                  setcurrentdropdowntrigger((prev) => !prev);
-                                  setcurrentdropdownidx(idxx);
-                                }}
-                              >
-                                <Button
-                                  color="black"
-                                  style={{ border: `1px solid black` }}
                                 >
-                                  -
-                                </Button>
+                                  <Button
+                                    color="black"
+                                    style={{ border: `1px solid black` }}
+                                  >
+                                    -
+                                  </Button>
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                          <div className="mx-auto my-3">
-                            <Button
-                              onClick={() => {
-                                setcurrentdropdown([...currentdropdown, ""]);
-                                setcurrentdropdown2([...currentdropdown2, ""]);
-                                setdisabledtambah(true);
-                              }}
-                            >
-                              + Tambah Opsi
-                            </Button>
-                          </div>
-                        </div>
-                      ) : null}
-                      {currentfield.data_type === "checkbox" ? (
-                        <div className="flex flex-col">
-                          {currentdropdown.map((doc, idxx) => (
-                            <div key={idxx} className="flex mb-3">
-                              <div className="w-11/12 mr-5">
-                                <Input
-                                  style={{ marginRight: `0.5rem` }}
-                                  defaultValue={doc}
-                                  placeholder={`Masukkan opsi ke-${idxx + 1}`}
-                                  onChange={(e) => {
-                                    setcurrentdropdown((prev) => {
-                                      const temp = prev;
-                                      temp[idxx] = e.target.value;
-                                      return temp;
-                                    });
-                                    setcurrentdropdown2((prev) => {
-                                      const temp = prev;
-                                      temp[idxx] = e.target.value;
-                                      return temp;
-                                    });
-                                    if (
-                                      e.target.value !== "" &&
-                                      currentdropdown.every(
-                                        (doca, idxa) => doca !== ""
-                                      ) &&
-                                      currentfield.name !== ""
-                                    ) {
-                                      setdisabledtambah(false);
-                                    } else if (
-                                      e.target.value === "" ||
-                                      currentfield.name === ""
-                                    ) {
-                                      setdisabledtambah(true);
-                                    }
-                                  }}
-                                />
-                              </div>
-                              <div
-                                className="w-1/12 flex justify-around"
+                            ))}
+                            <div className="mx-auto my-3">
+                              <Button
                                 onClick={() => {
-                                  setcurrentdropdown([]);
-                                  setcurrentdropdowntrigger((prev) => !prev);
-                                  setcurrentdropdownidx(idxx);
+                                  setcurrentdropdown([...currentdropdown, ""]);
+                                  setcurrentdropdown2([
+                                    ...currentdropdown2,
+                                    "",
+                                  ]);
+                                  setdisabledtambah(true);
                                 }}
                               >
-                                <Button type="danger">-</Button>
-                              </div>
+                                + Tambah Opsi
+                              </Button>
                             </div>
-                          ))}
-                          <div className="mx-auto my-3">
-                            <Button
-                              onClick={() => {
-                                setcurrentdropdown([...currentdropdown, ""]);
-                                setcurrentdropdown2([...currentdropdown2, ""]);
-                                setdisabledtambah(true);
-                              }}
-                            >
-                              + Tambah Opsi
-                            </Button>
                           </div>
-                        </div>
-                      ) : null}
-                      <hr />
-                      <div className="flex mt-4 justify-end">
-                        <Popconfirm
-                          placement="bottom"
-                          title={`Apakah anda yakin ingin menghapus field ${
-                            doc.name === "" ? "ini" : doc.name
-                          }?`}
-                          okText="Ya"
-                          cancelText="Tidak"
-                          onConfirm={() => {
-                            setfielddata((prev) =>
-                              prev.filter((_, idxx) => idxx !== idx)
-                            );
-                            setnewdata((prev) => {
-                              var temp = prev;
-                              temp.asset_columns.splice(idx, 1);
-                              return temp;
-                            });
-                            setaddedfield((prev) => {
-                              prev.splice(idx, 1);
-                              return prev;
-                            });
-                            setdisabledaddfield(false);
-                            setdisabledsimpan(false);
-                            setpointevent("");
-                          }}
-                        >
-                          <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
-                            <DeleteOutlined
-                              style={{ fontSize: `1.25rem` }}
-                            ></DeleteOutlined>
+                        ) : null}
+                        {currentfield.data_type === "checkbox" ? (
+                          <div className="flex flex-col">
+                            {currentdropdown.map((doc, idxx) => (
+                              <div key={idxx} className="flex mb-3">
+                                <div className="w-11/12 mr-5">
+                                  <Input
+                                    style={{ marginRight: `0.5rem` }}
+                                    defaultValue={doc}
+                                    placeholder={`Masukkan opsi ke-${idxx + 1}`}
+                                    onChange={(e) => {
+                                      setcurrentdropdown((prev) => {
+                                        const temp = prev;
+                                        temp[idxx] = e.target.value;
+                                        return temp;
+                                      });
+                                      setcurrentdropdown2((prev) => {
+                                        const temp = prev;
+                                        temp[idxx] = e.target.value;
+                                        return temp;
+                                      });
+                                      if (
+                                        e.target.value !== "" &&
+                                        currentdropdown.every(
+                                          (doca, idxa) => doca !== ""
+                                        ) &&
+                                        currentfield.name !== ""
+                                      ) {
+                                        setdisabledtambah(false);
+                                      } else if (
+                                        e.target.value === "" ||
+                                        currentfield.name === ""
+                                      ) {
+                                        setdisabledtambah(true);
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                <div
+                                  className="w-1/12 flex justify-around"
+                                  onClick={() => {
+                                    setcurrentdropdown([]);
+                                    setcurrentdropdowntrigger((prev) => !prev);
+                                    setcurrentdropdownidx(idxx);
+                                  }}
+                                >
+                                  <Button type="danger">-</Button>
+                                </div>
+                              </div>
+                            ))}
+                            <div className="mx-auto my-3">
+                              <Button
+                                onClick={() => {
+                                  setcurrentdropdown([...currentdropdown, ""]);
+                                  setcurrentdropdown2([
+                                    ...currentdropdown2,
+                                    "",
+                                  ]);
+                                  setdisabledtambah(true);
+                                }}
+                              >
+                                + Tambah Opsi
+                              </Button>
+                            </div>
                           </div>
-                        </Popconfirm>
-                        <div className=" flex items-center mr-4">
-                          <Checkbox
-                            checked={currentfield.required}
-                            style={{ marginRight: `0.3rem` }}
-                            onChange={(e) => {
-                              setcurrentfield({
-                                ...currentfield,
-                                required: e.target.checked,
-                              });
-                            }}
-                          />{" "}
-                          Required
-                        </div>
-                        <Button
-                          type="primary"
-                          disabled={disabledtambah}
-                          onClick={() => {
-                            setnewfieldidxtrigger((prev) => !prev);
-                            if (currentfield.data_type === "dropdown") {
-                              // setcurrentdropdownidx(idx)
-                              // setcurrentdropdowntrigger(prev => !prev)
-                              setfielddata((prev) => {
+                        ) : null}
+                        <hr />
+                        <div className="flex mt-4 justify-end">
+                          <Popconfirm
+                            placement="bottom"
+                            title={`Apakah anda yakin ingin menghapus field ${
+                              doc.name === "" ? "ini" : doc.name
+                            }?`}
+                            okText="Ya"
+                            cancelText="Tidak"
+                            onConfirm={() => {
+                              setfielddata((prev) =>
+                                prev.filter((_, idxx) => idxx !== idx)
+                              );
+                              setnewdata((prev) => {
                                 var temp = prev;
-                                temp[idx]["default"] = {
-                                  default: "-",
-                                  opsi: currentdropdown,
-                                };
+                                temp.asset_columns.splice(idx, 1);
                                 return temp;
                               });
-                            } else if (currentfield.data_type === "checkbox") {
-                              setfielddata((prev) => {
-                                var temp = prev;
-                                temp[idx]["default"] = {
-                                  default: [],
-                                  opsi: currentdropdown,
-                                };
-                                return temp;
-                              });
-                            } else {
-                              setcurrentnondropdownidx(idx);
-                              setcurrentnondropdowntrigger((prev) => !prev);
-                            }
-                            const temp = fielddata;
-                            temp[idx] = currentfield;
-                            setfielddata(temp);
-                            setaddedfield((prev) => {
-                              if (prev[idx] === false) {
-                                setselectedfieldidxtrigger((prev) => !prev);
-                                setselectedfieldidx(idx);
-                                prev[idx] = true;
+                              setaddedfield((prev) => {
+                                prev.splice(idx, 1);
                                 return prev;
-                              } else if (typeof prev[idx] === "undefined") {
-                                const temp2 = [...prev, true];
-                                return temp2;
+                              });
+                              setdisabledaddfield(false);
+                              setdisabledsimpan(false);
+                              setpointevent("");
+                            }}
+                          >
+                            <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
+                              <DeleteOutlined
+                                style={{ fontSize: `1.25rem` }}
+                              ></DeleteOutlined>
+                            </div>
+                          </Popconfirm>
+                          <div className=" flex items-center mr-4">
+                            <Checkbox
+                              checked={currentfield.required}
+                              style={{ marginRight: `0.3rem` }}
+                              onChange={(e) => {
+                                setcurrentfield({
+                                  ...currentfield,
+                                  required: e.target.checked,
+                                });
+                              }}
+                            />{" "}
+                            Required
+                          </div>
+                          <Button
+                            type="primary"
+                            disabled={disabledtambah}
+                            onClick={() => {
+                              setnewfieldidxtrigger((prev) => !prev);
+                              if (currentfield.data_type === "dropdown") {
+                                // setcurrentdropdownidx(idx)
+                                // setcurrentdropdowntrigger(prev => !prev)
+                                setfielddata((prev) => {
+                                  var temp = prev;
+                                  temp[idx]["default"] = {
+                                    default: "-",
+                                    opsi: currentdropdown,
+                                  };
+                                  return temp;
+                                });
+                              } else if (
+                                currentfield.data_type === "checkbox"
+                              ) {
+                                setfielddata((prev) => {
+                                  var temp = prev;
+                                  temp[idx]["default"] = {
+                                    default: [],
+                                    opsi: currentdropdown,
+                                  };
+                                  return temp;
+                                });
+                              } else {
+                                setcurrentnondropdownidx(idx);
+                                setcurrentnondropdowntrigger((prev) => !prev);
                               }
-                            });
-                            setdisabledaddfield(false);
-                            setdisabledsimpan(false);
-                            setpointevent("");
-                          }}
-                        >
-                          Tambah
-                        </Button>
-                      </div>
-                    </Form>
-                  </div>
-                )}
-              </>
-            );
-          })}
-          <div className="w-full flex justify-center mt-5">
-            <Button
-              disabled={disabledaddfield}
-              type="dashed"
-              style={{ width: `80%`, height: `4rem` }}
-              onClick={onClickAddField}
-            >
-              + Tambah Spesifikasi Asset Type
-            </Button>
+                              const temp = fielddata;
+                              temp[idx] = currentfield;
+                              setfielddata(temp);
+                              setaddedfield((prev) => {
+                                if (prev[idx] === false) {
+                                  setselectedfieldidxtrigger((prev) => !prev);
+                                  setselectedfieldidx(idx);
+                                  prev[idx] = true;
+                                  return prev;
+                                } else if (typeof prev[idx] === "undefined") {
+                                  const temp2 = [...prev, true];
+                                  return temp2;
+                                }
+                              });
+                              setdisabledaddfield(false);
+                              setdisabledsimpan(false);
+                              setpointevent("");
+                            }}
+                          >
+                            Tambah
+                          </Button>
+                        </div>
+                      </Form>
+                    </div>
+                  )}
+                </>
+              );
+            })}
+            <div className="w-full flex justify-center mt-5">
+              <Button
+                disabled={disabledaddfield}
+                type="dashed"
+                style={{ width: `80%`, height: `4rem` }}
+                onClick={onClickAddField}
+              >
+                + Tambah Spesifikasi Asset Type
+              </Button>
+            </div>
           </div>
-        </div>
+        </AccessControl>
       </div>
     </Layout>
   );
