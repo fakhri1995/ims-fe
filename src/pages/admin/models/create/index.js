@@ -52,8 +52,8 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
   }
   const isAllowedToAddModel = hasPermission(MODEL_ADD);
   const isAllowedToGetAsset = hasPermission(ASSET_GET);
-  const isAllowedToAddManufacturer = hasPermission(MANUFACTURER_ADD);
   const isAllowedToGetAssetList = hasPermission(ASSETS_GET);
+  const isAllowedToAddManufacturer = hasPermission(MANUFACTURER_ADD);
   const isAllowedToGetManufacturers = hasPermission(MANUFACTURERS_GET);
 
   useEffect(() => {
