@@ -144,9 +144,25 @@ const Overview = ({
           </div>
           <div className="flex flex-col mb-5">
             <h1 className=" text-sm font-semibold mb-0">Vendor:</h1>
-            <p className="mb-0 text-sm">
-              {maindata.vendor_id === null ? "-" : vendor}
-            </p>
+            {maindata.vendor_id !== null &&
+              maindata.vendor?.deleted_at !== null && (
+                <div className="flex items-center">
+                  <p className="mb-0 mr-1">{maindata.vendor?.name}</p>
+                  <Tooltip
+                    placement="right"
+                    title="Vendor telah dihapus, segera lakukan pengubahan Vendor!"
+                  >
+                    <ExclamationCircleOutlined
+                      style={{ color: `brown` }}
+                    ></ExclamationCircleOutlined>
+                  </Tooltip>
+                </div>
+              )}
+            {maindata.vendor_id !== null &&
+              maindata.vendor?.deleted_at === null && (
+                <p className="mb-0 text-sm">{maindata.vendor?.name}</p>
+              )}
+            {maindata.vendor_id === null && <p className="mb-0 text-sm">-</p>}
           </div>
           <div className="flex flex-col mb-5">
             <h1 className=" text-sm font-semibold mb-0">Owner:</h1>
