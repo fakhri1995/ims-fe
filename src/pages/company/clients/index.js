@@ -44,8 +44,9 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
   const rt = useRouter();
 
   const tok = initProps;
-  const pathArr = rt.pathname.split("/").slice(1);
-  pathArr.splice(1, 1);
+  const pathArr = [rt.pathname.split("/").pop()];
+  // const pathArr = rt.pathname.split("/").slice(1);
+  // pathArr.splice(1, 1);
   const [drawablecreate, setDrawablecreate] = useState(false);
   // const [loadingupload, setLoadingupload] = useState(false);
   // const [loadingbtn, setloadingbtn] = useState(false);

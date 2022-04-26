@@ -17,6 +17,7 @@ const nextConfig = {
     { source: "/term", destination: "/migwebsite/termofuse" },
     { source: "/privacy", destination: "/migwebsite/privacy" },
     { source: "/contactus", destination: "/migwebsite/contactus" },
+    { source: "/dashboard/clients", destination: "/company/clients" }
   ],
   webpack: (config) => {
     config.module.rules.push({

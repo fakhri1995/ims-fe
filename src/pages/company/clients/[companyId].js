@@ -11,7 +11,7 @@ import {
 import moment from "moment";
 // import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CountUp from "react-countup";
 import InfiniteScroll from "react-infinite-scroll-component";
 
@@ -608,6 +608,18 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     }
   }, [viewrelasi, isAllowedToGetRelationshipInventories]);
 
+  const breadcrumbValues = useMemo(() => {
+    const pageBreadcrumbValue = [
+      { name: "Clients", hrefValue: "/company/clients" },
+    ];
+
+    if (rawdata.name !== "") {
+      pageBreadcrumbValue.push({ name: rawdata.name });
+    }
+
+    return pageBreadcrumbValue;
+  }, [rawdata.name]);
+
   return (
     <Layout
       tok={tok}
@@ -616,6 +628,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       pathArr={patharr}
       st={st}
       idpage={companyid}
+      fixedBreadcrumbValues={breadcrumbValues}
     >
       <div className="grid grid-cols-12">
         {praloadingedit ? null : (
