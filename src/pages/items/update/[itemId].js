@@ -19,6 +19,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+import { useDebounce } from "hooks/use-debounce-value";
+
+import { UserService } from "apis/user";
+
 import Layout from "../../../components/layout-dashboard2";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -26,6 +31,8 @@ import httpcookie from "cookie";
 const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   // 1.Init
   const rt = useRouter();
+  const axiosClient = useAxiosClient();
+
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 2);
   pathArr[pathArr.length - 1] = "Ubah Item";
@@ -38,12 +45,13 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     id: Number(itemid),
     model_id: "",
     is_consumable: false,
+    owned_by: null, // number
     vendor_id: "",
     inventory_name: "",
     status_condition: "",
     status_usage: "",
     serial_number: "",
-    location: "",
+    location: "", // number
     is_exist: true,
     deskripsi: "",
     manufacturer_id: "",
@@ -52,9 +60,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     additional_attributes: [],
     inventory_values: [],
   });
-  useEffect(() => {
-    console.log(updatedata);
-  }, [updatedata]);
+
   const [invrelations, setinvrelations] = useState({
     models: [],
     assets: [],
@@ -65,6 +71,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     companies: [],
     tree_companies: [],
   });
+
   const [modeldata, setmodeldata] = useState([]);
   const [snitem, setsnitem] = useState(false);
   const [manuffielditem, setmanuffielditem] = useState(true);
@@ -72,6 +79,42 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [loadingupdate, setloadingupdate] = useState(false);
   const [modalupdate, setmodalupdate] = useState(false);
   const [disabledfield, setdisabledfield] = useState(true);
+
+  /**
+   * Daftar company untuk field "Owned By".
+   * State akan berubah ketika nilai dari `updatedata.location` berubah.
+   */
+  const [ownerList, setOwnerList] = useState([]);
+  const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
+  const [isInitialMount, setIsInitialMount] = useState(true);
+  const [ownedBySearchValue, setOwnedBySearchValue] = useState("");
+  const debouncedOwnedBySearchValue = useDebounce(ownedBySearchValue);
+  useEffect(() => {
+    const locationId = updatedata.location;
+    if (locationId === null || typeof locationId !== "number") {
+      return;
+    }
+
+    setIsFetchingOwnerList(true);
+    UserService.filterUsers(axiosClient, {
+      name: debouncedOwnedBySearchValue,
+      company_id: locationId,
+    }).then((response) => {
+      // resultList hasa to be an array
+      const resultList = response.data.data;
+      if (resultList instanceof Array) {
+        setOwnerList(resultList);
+        setIsFetchingOwnerList(false);
+
+        if (isInitialMount) {
+          instanceForm?.setFieldsValue({
+            owned_by: updatedata.owned_by,
+          });
+          setIsInitialMount(false);
+        }
+      }
+    });
+  }, [updatedata.location, debouncedOwnedBySearchValue]);
 
   //handler
   const handleUpdateItem = () => {
@@ -460,6 +503,37 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                       );
                     }}
                   ></TreeSelect>
+                </Form.Item>
+                <Form.Item name="owned_by" label="Owned By">
+                  <Select
+                    disabled={updatedata.location === null}
+                    showSearch
+                    filterOption={(input, opt) =>
+                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                      0
+                    }
+                    notFoundContent={
+                      isFetchingOwnerList ? <Spin size="small" /> : undefined
+                    }
+                    placeholder={
+                      updatedata.location === null
+                        ? "Pilih Lokasi terlebih dahulu"
+                        : "Pilih Owner"
+                    }
+                    onSearch={setOwnedBySearchValue}
+                    onChange={(value) => {
+                      if (typeof value === "number") {
+                        setupdatedata((prev) => ({
+                          ...prev,
+                          owned_by: value,
+                        }));
+                      }
+                    }}
+                  >
+                    {ownerList.map((user) => (
+                      <Select.Option value={user.id}>{user.name}</Select.Option>
+                    ))}
+                  </Select>
                 </Form.Item>
                 <Form.Item name="vendor_id" label="Vendor">
                   <Select

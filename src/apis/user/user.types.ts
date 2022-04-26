@@ -17,6 +17,7 @@ export type FilterUsersType =
 export type GetFilterUsersParamsType = Partial<{
   name: string;
   type: FilterUsersType;
+  company_id: number;
 }>;
 
 /**

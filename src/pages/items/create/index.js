@@ -22,6 +22,11 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+import { useDebounce } from "hooks/use-debounce-value";
+
+import { UserService } from "apis/user";
+
 import Layout from "../../../components/layout-dashboard2";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -29,6 +34,8 @@ import httpcookie from "cookie";
 const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
   // 1.Init
   const rt = useRouter();
+  const axiosClient = useAxiosClient();
+
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(3, 1);
   pathArr[pathArr.length - 1] = "Tambah Item";
@@ -45,6 +52,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     status_usage: null,
     serial_number: "",
     location: null,
+    owned_by: null,
     sub_location: null,
     is_exist: true,
     deskripsi: "",
@@ -102,6 +110,34 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
   const [emptyfieldpartmodel, setemptyfieldpartmodel] = useState(0);
   const [emptyfieldparttrigger, setemptyfieldparttrigger] = useState(0);
   const [subloctrigger, setsubloctrigger] = useState(-1);
+
+  /**
+   * Daftar company untuk field "Owned By".
+   * State akan berubah ketika nilai dari `newdata.location` berubah.
+   */
+  const [ownerList, setOwnerList] = useState([]);
+  const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
+  const [ownedBySearchValue, setOwnedBySearchValue] = useState("");
+  const debouncedOwnedBySearchValue = useDebounce(ownedBySearchValue);
+  useEffect(() => {
+    const locationId = newdata.location;
+    if (locationId === null || typeof locationId !== "number") {
+      return;
+    }
+
+    setIsFetchingOwnerList(true);
+    UserService.filterUsers(axiosClient, {
+      name: debouncedOwnedBySearchValue,
+      company_id: locationId,
+    }).then((response) => {
+      // resultList hasa to be an array
+      const resultList = response.data.data;
+      if (resultList instanceof Array) {
+        setOwnerList(resultList);
+        setIsFetchingOwnerList(false);
+      }
+    });
+  }, [newdata.location, debouncedOwnedBySearchValue]);
 
   //2.helper function
   const searchPart = (doc, partid) => {
@@ -1477,6 +1513,36 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     );
                   }}
                 ></TreeSelect>
+              </Form.Item>
+              <Form.Item name="owned_by" label="Owned By">
+                <Select
+                  disabled={newdata.location === null}
+                  showSearch
+                  filterOption={(input, opt) =>
+                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                  }
+                  notFoundContent={
+                    isFetchingOwnerList ? <Spin size="small" /> : undefined
+                  }
+                  placeholder={
+                    newdata.location === null
+                      ? "Pilih Lokasi terlebih dahulu"
+                      : "Pilih Owner"
+                  }
+                  onSearch={setOwnedBySearchValue}
+                  onChange={(value) => {
+                    if (typeof value === "number") {
+                      setnewdata((prev) => ({
+                        ...prev,
+                        owned_by: value,
+                      }));
+                    }
+                  }}
+                >
+                  {ownerList.map((user) => (
+                    <Select.Option value={user.id}>{user.name}</Select.Option>
+                  ))}
+                </Select>
               </Form.Item>
               {newdata.location !== null && (
                 <Form.Item name="sublocation" label="Sub Lokasi">

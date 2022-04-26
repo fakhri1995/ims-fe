@@ -149,6 +149,10 @@ const Overview = ({
             </p>
           </div>
           <div className="flex flex-col mb-5">
+            <h1 className=" text-sm font-semibold mb-0">Owner:</h1>
+            <p className="mb-0 text-sm">{maindata?.owner?.name || "-"}</p>
+          </div>
+          <div className="flex flex-col mb-5">
             <h1 className=" text-sm font-semibold mb-0">Location:</h1>
             {maindata.is_consumable ? (
               maindata.quantities.map((doc, idx) => (
@@ -2743,6 +2747,10 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     inventory_parts: [],
     associations: [],
     quantities: [],
+    owner: {
+      id: null,
+      name: "",
+    },
   });
   const [invrelations, setinvrelations] = useState({
     models: [
@@ -2992,11 +3000,13 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           .then((res2) => {
             setinvrelations(res2.data);
             var del_manuf = null;
+
             res3.manufacturer_id === 0 || res3.manufacturer_id === null
               ? (del_manuf = null)
               : (del_manuf = res2.data.manufacturers.filter(
                   (docfil) => docfil.id === res3.manufacturer_id
                 )[0].deleted_at);
+
             setmanuf({
               name:
                 res3.manufacturer_id === null || res3.manufacturer_id === 0
@@ -3006,6 +3016,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     )[0].name,
               isnull: del_manuf !== null ? false : true,
             });
+
             res3.vendor_id === null || res3.vendor_id === 0
               ? setvendor("-")
               : setvendor(
@@ -3013,6 +3024,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     (docfil) => docfil.id === res3.vendor_id
                   )[0]?.name
                 );
+
             setpraloading2(false);
           });
       });
