@@ -160,6 +160,9 @@ const ModulesIndex = ({
 
   //6. Module list
   const [checkedmodules, setcheckedmodules] = useState(0);
+  useEffect(() => {
+    console.log("checkedmodules", checkedmodules);
+  }, [checkedmodules]);
   const [checkedfeaturemodules, setcheckedfeaturemodules] = useState([]);
   const [checkeddatamodules, setcheckeddatamodules] = useState([]);
   const [idmodulemap, setidmodulemap] = useState([]);
@@ -663,7 +666,7 @@ const ModulesIndex = ({
                         setdisplayarrow(true);
                         setcheckeddatamodules([]);
                         setcheckeddatafeatures([]);
-                        setcheckedmodules(value);
+                        setcheckedmodules(Number(value));
                         setmodulecounter(0);
                         setfeaturecounter(0);
                         setdatadeletemodule({
@@ -1085,26 +1088,20 @@ const ModulesIndex = ({
         >
           <p>
             Apakah anda yakin ingin menghapus Module{" "}
-            <strong>
-              {datamodules[checkedmodules] > 0
-                ? datamodules[checkedmodules].name
-                : null}
-            </strong>{" "}
-            yang memiliki Feature berikut ini?
+            <strong>{datamodules[checkedmodules]?.name}</strong> yang memiliki
+            Feature berikut ini?
           </p>
-          {datamodules[checkedmodules] ? (
+          {datamodules[checkedmodules] === undefined ? (
             <p className="font-semibold">-</p>
           ) : (
             <ol>
-              {datamodules[checkedmodules]
-                ? datamodules[checkedmodules].features.map((doc, idx) => {
-                    return (
-                      <li key={idx} className="font-semibold">
-                        {idx + 1}. {doc.name}
-                      </li>
-                    );
-                  })
-                : "-"}
+              {datamodules[checkedmodules].features.map((doc, idx) => {
+                return (
+                  <li key={idx} className="font-semibold">
+                    {idx + 1}. {doc.name}
+                  </li>
+                );
+              })}
             </ol>
           )}
         </Modal>
