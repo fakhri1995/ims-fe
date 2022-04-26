@@ -160,9 +160,6 @@ const ModulesIndex = ({
 
   //6. Module list
   const [checkedmodules, setcheckedmodules] = useState(0);
-  useEffect(() => {
-    console.log("checkedmodules", checkedmodules);
-  }, [checkedmodules]);
   const [checkedfeaturemodules, setcheckedfeaturemodules] = useState([]);
   const [checkeddatamodules, setcheckeddatamodules] = useState([]);
   const [idmodulemap, setidmodulemap] = useState([]);
