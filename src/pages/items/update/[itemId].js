@@ -22,6 +22,7 @@ import Sticky from "wil-react-sticky";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
+import { CompanyService } from "apis/company";
 import { UserService } from "apis/user";
 
 import Layout from "../../../components/layout-dashboard2";
@@ -87,8 +88,6 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [ownerList, setOwnerList] = useState([]);
   const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
   const [isInitialMount, setIsInitialMount] = useState(true);
-  const [ownedBySearchValue, setOwnedBySearchValue] = useState("");
-  const debouncedOwnedBySearchValue = useDebounce(ownedBySearchValue);
   useEffect(() => {
     const locationId = updatedata.location;
     if (locationId === null || typeof locationId !== "number") {
@@ -96,11 +95,8 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     }
 
     setIsFetchingOwnerList(true);
-    UserService.filterUsers(axiosClient, {
-      name: debouncedOwnedBySearchValue,
-      company_id: locationId,
-    }).then((response) => {
-      // resultList hasa to be an array
+    CompanyService.getCompanyClientList(axiosClient, true).then((response) => {
+      // resultList has to be an array
       const resultList = response.data.data;
       if (resultList instanceof Array) {
         setOwnerList(resultList);
@@ -114,7 +110,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
         }
       }
     });
-  }, [updatedata.location, debouncedOwnedBySearchValue]);
+  }, [updatedata.location]);
 
   //handler
   const handleUpdateItem = () => {
@@ -520,7 +516,6 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         ? "Pilih Lokasi terlebih dahulu"
                         : "Pilih Owner"
                     }
-                    onSearch={setOwnedBySearchValue}
                     onChange={(value) => {
                       if (typeof value === "number") {
                         setupdatedata((prev) => ({
