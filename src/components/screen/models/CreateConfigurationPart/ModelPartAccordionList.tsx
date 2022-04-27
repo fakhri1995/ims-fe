@@ -2,7 +2,7 @@ import { CalendarOutlined, CloseCircleOutlined } from "@ant-design/icons";
 import { Checkbox, Collapse, Popconfirm, Timeline } from "antd";
 import type { FC, ReactNode } from "react";
 
-import { GetModelData } from "types/api/models/get-model";
+import type { GetModelData } from "apis/asset";
 
 const { Panel } = Collapse;
 
@@ -102,7 +102,7 @@ export const ModelPartAccordionList: FC<IModelPartAccordionList> = ({
               </div>
               {doc.model_columns.map((docmc, idxmc) => {
                 return (
-                  <div className="flex flex-col mb-5">
+                  <div className="flex flex-col mb-5" key={idxmc}>
                     <h1 className="font-semibold mb-1">
                       {docmc.name}{" "}
                       {docmc.required ? (

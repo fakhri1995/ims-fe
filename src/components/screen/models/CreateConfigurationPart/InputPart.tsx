@@ -1,8 +1,10 @@
 import { DeleteOutlined, PlusSquareTwoTone } from "@ant-design/icons";
 import { Button, Form, InputNumber, Select, Spin } from "antd";
-import type { FC } from "react";
+import { FC, useState } from "react";
 
-import { useGetModels } from "hooks/api/models";
+import { useDebounce } from "hooks/use-debounce-value";
+
+import { useGetModels } from "apis/asset";
 
 export interface IInputPart {
   /** Handler ketika close / trash can button diklik */
@@ -39,11 +41,13 @@ export const InputPart: FC<IInputPart> = ({
   onCurrentModelPartQuantityChange,
   onModalCrateNewModel,
 }) => {
-  const {
-    data: models,
-    isLoading: isFetchingModels,
-    refetchData: searchModel,
-  } = useGetModels();
+  const [modelSearchValue, setModelSearchValue] = useState("");
+  const debouncedModelSearchValue = useDebounce(modelSearchValue);
+
+  const { data: models, isFetching: isFetchingModels } = useGetModels({
+    rows: 10,
+    name: debouncedModelSearchValue,
+  });
 
   return (
     <div className="shadow-md border p-8 flex flex-col rounded-md relative">
@@ -69,10 +73,10 @@ export const InputPart: FC<IInputPart> = ({
             >
               <Select
                 notFoundContent={
-                  isFetchingModels ? <Spin size="small" /> : null
+                  isFetchingModels ? <Spin size="small" /> : undefined
                 }
                 onSearch={(searchValue) => {
-                  searchModel({ rows: 10, name: searchValue });
+                  setModelSearchValue(searchValue);
                 }}
                 showSearch
                 optionFilterProp="children"
@@ -82,7 +86,7 @@ export const InputPart: FC<IInputPart> = ({
                 }}
                 filterOption
               >
-                {models.map((doc) => (
+                {models?.map((doc) => (
                   <Select.Option key={doc.id} value={doc.id}>
                     {doc.name}
                   </Select.Option>
@@ -123,78 +127,9 @@ export const InputPart: FC<IInputPart> = ({
           </button>
 
           <Button
-            // loading={loadinggetmodel}
             type="primary"
             onClick={() => {
               onTambahButtonClicked();
-
-              // seteditpart(false);
-              // setloadinggetmodel(true);
-              // fetch(
-              //   `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModel?id=${currentidmodel}`,
-              //   {
-              //     method: `GET`,
-              //     headers: {
-              //       Authorization: JSON.parse(initProps),
-              //     },
-              //   }
-              // )
-              //   .then((res) => res.json())
-              //   .then((res2) => {
-              //     setmodelpartfielddata((prev) => {
-              //       var temp1 = prev;
-              //       var t = {};
-              //       for (var prop in res2.data) {
-              //         if (prop === "model_columns") {
-              //           t[prop] = res2.data[prop].map(
-              //             (doc, idx) => {
-              //               if (
-              //                 doc.data_type === "dropdown" ||
-              //                 doc.data_type === "checkbox"
-              //               ) {
-              //                 return {
-              //                   ...doc,
-              //                   default: JSON.parse(doc.default),
-              //                 };
-              //               } else {
-              //                 return { ...doc };
-              //               }
-              //             }
-              //           );
-              //         } else {
-              //           t[prop] = res2.data[prop];
-              //         }
-              //       }
-              //       temp1 = [...temp1, t];
-              //       return temp1;
-              //     });
-              //     // setconcatpartvalue(res2.data.model_parts)
-              //     // setconcatparttrigger(prev => !prev)
-              //     setnewdata((prev) => {
-              //       var temp = prev;
-              //       const idxdata2 = temp.model_parts
-              //         .map((doc3) => doc3.id)
-              //         .indexOf(currentidmodel);
-              //       if (
-              //         temp.model_parts.length === 0 ||
-              //         idxdata2 === -1
-              //       ) {
-              //         temp.model_parts.push({
-              //           id: currentidmodel,
-              //           quantity: 1,
-              //         });
-              //       } else if (idxdata2 !== -1) {
-              //         temp.model_parts.map((doc1) => {
-              //           if (doc1.id === currentidmodel) {
-              //             doc1.quantity = doc1.quantity + 1;
-              //           }
-              //         });
-              //       }
-              //       return temp;
-              //     });
-              //     setloadinggetmodel(false);
-              //     setcurrentidmodel("");
-              //   });
             }}
           >
             Tambah

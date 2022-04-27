@@ -1,7 +1,7 @@
 import { Button, notification } from "antd";
 import { FC, useState } from "react";
 
-import { useGetModel } from "hooks/api/models";
+import { useGetModel } from "apis/asset";
 
 import { useBulkConfigurationModelParts } from ".";
 import { InputPart } from "./InputPart";

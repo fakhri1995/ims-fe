@@ -713,8 +713,6 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
  *
- * - [ ] services/models
- *
  * - [ ] pages/items/index
  * - [ ] pages/items/detail/[itemId]
  * - [ ] pages/items/createpart/[itemId]
