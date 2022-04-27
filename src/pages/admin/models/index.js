@@ -86,6 +86,7 @@ const ModelsIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "SKU",
       dataIndex: "sku",
       render: (skuValue) => (!!skuValue ? skuValue : "-"),
+      sorter: true,
     },
     {
       title: "Asset Type",
