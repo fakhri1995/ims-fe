@@ -23,9 +23,8 @@ import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { useAxiosClient } from "hooks/use-axios-client";
-import { useDebounce } from "hooks/use-debounce-value";
 
-import { UserService } from "apis/user";
+import { CompanyService } from "apis/company";
 
 import Layout from "../../../components/layout-dashboard2";
 import st from "../../../components/layout-dashboard.module.css";
@@ -117,8 +116,6 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
    */
   const [ownerList, setOwnerList] = useState([]);
   const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
-  const [ownedBySearchValue, setOwnedBySearchValue] = useState("");
-  const debouncedOwnedBySearchValue = useDebounce(ownedBySearchValue);
   useEffect(() => {
     const locationId = newdata.location;
     if (locationId === null || typeof locationId !== "number") {
@@ -126,18 +123,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
 
     setIsFetchingOwnerList(true);
-    UserService.filterUsers(axiosClient, {
-      name: debouncedOwnedBySearchValue,
-      company_id: locationId,
-    }).then((response) => {
-      // resultList hasa to be an array
+    CompanyService.getCompanyClientList(axiosClient, true).then((response) => {
+      // resultList has to be an array
       const resultList = response.data.data;
       if (resultList instanceof Array) {
         setOwnerList(resultList);
         setIsFetchingOwnerList(false);
       }
     });
-  }, [newdata.location, debouncedOwnedBySearchValue]);
+  }, [newdata.location]);
 
   //2.helper function
   const searchPart = (doc, partid) => {
@@ -1529,7 +1523,6 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                       ? "Pilih Lokasi terlebih dahulu"
                       : "Pilih Owner"
                   }
-                  onSearch={setOwnedBySearchValue}
                   onChange={(value) => {
                     if (typeof value === "number") {
                       setnewdata((prev) => ({
