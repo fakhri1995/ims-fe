@@ -2,7 +2,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { Empty, Input, Progress, Spin, Tree } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -351,6 +351,8 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
       };
     });
 
+  const [reliableCompanyName, setReliableCompanyName] = useState("");
+
   //USE EFECT
   useEffect(() => {
     if (!isAllowedToGetLocations) {
@@ -374,10 +376,12 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
           ? (setbranchdata(res2.data.children),
             setbranchdata2(res2.data.children))
           : (setbranchdata([]), setbranchdata2([]));
-        const expandkeyArr = res2.data.children.map((doc) => doc.key);
+        const expandkeyArr = res2.data.children?.map((doc) => doc.key);
         res2.data.children
           ? setexpandedkeys(expandkeyArr)
           : setexpandedkeys([]);
+
+        setReliableCompanyName(res2.data.title);
         setpraloading(false);
         setloadingselected(false);
       });
@@ -421,6 +425,18 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [idselected, isAllowedToGetSubCompanyProfile]);
 
+  const pageBreadcrumbValue = useMemo(
+    () => [
+      { name: "Clients", hrefValue: "/company/clients" },
+      {
+        name: company_name || reliableCompanyName,
+        hrefValue: `/company/clients/${id}`,
+      },
+      { name: "Locations" },
+    ],
+    [company_name, reliableCompanyName, id]
+  );
+
   return (
     <Layout
       tok={initProps}
@@ -430,6 +446,7 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
       st={st}
       idpage={id}
       extra={company_name}
+      fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div className="grid grid-cols-12">
         <div className="col-span-6 flex flex-col m-3">
