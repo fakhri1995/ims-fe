@@ -2,7 +2,7 @@ import { DownOutlined, LoadingOutlined } from "@ant-design/icons";
 import { DatePicker, Empty, Form, Input, Spin, Tree, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -100,6 +100,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   const isAllowedToAddSubLocation = hasPermission(COMPANY_SUB_ADD);
 
   const rt = useRouter();
+  const { locId } = rt.query;
 
   const [instanceForm] = Form.useForm();
   var pathArr = rt.pathname.split("/").slice(1);
@@ -744,6 +745,37 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
       });
   }, [isAllowedToGetCompanyLocations]);
 
+  const pageBreadcrumbValue = useMemo(() => {
+    const breadcrumbValues = [
+      { name: "Clients", hrefValue: "/company/clients" },
+    ];
+
+    if (rawdata.parent !== null) {
+      const { id: parentCompanyId, name: parentCompanyName } = rawdata.parent;
+
+      if (!!parentCompanyId && !!parentCompanyName) {
+        // Company Name (redirect to company detail)
+        breadcrumbValues.push({
+          name: parentCompanyName,
+          hrefValue: `/company/clients/${parentCompanyId}`,
+        });
+
+        // Company's location list
+        breadcrumbValues.push({
+          name: "Locations",
+          hrefValue: `/company/clients/locations?id=${parentCompanyId}&company_name=${parentCompanyName}`,
+        });
+
+        // Trailing: Detail Lokasi
+        breadcrumbValues.push({ name: "Detail Lokasi" });
+
+        // -> Clients > COMPANY NAME > Locations > Detail Lokasi
+      }
+    }
+
+    return breadcrumbValues;
+  }, [rawdata.parent, locId]);
+
   return (
     <Layout
       tok={initProps}
@@ -752,6 +784,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
       pathArr={pathArr}
       st={st}
       idpage={locid}
+      fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div className="grid grid-cols-12">
         {praloadingedit ? null : (
