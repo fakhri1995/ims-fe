@@ -19,7 +19,7 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -116,12 +116,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
    */
   const [ownerList, setOwnerList] = useState([]);
   const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
-  useEffect(() => {
-    const locationId = newdata.location;
-    if (locationId === null || typeof locationId !== "number") {
-      return;
-    }
-
+  const fetchCompanyClientList = useCallback(() => {
     setIsFetchingOwnerList(true);
     CompanyService.getCompanyClientList(axiosClient, true).then((response) => {
       // resultList has to be an array
@@ -131,7 +126,10 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         setIsFetchingOwnerList(false);
       }
     });
-  }, [newdata.location]);
+  }, []);
+  useEffect(() => {
+    fetchCompanyClientList();
+  }, []);
 
   //2.helper function
   const searchPart = (doc, partid) => {
@@ -1510,7 +1508,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
               </Form.Item>
               <Form.Item name="owned_by" label="Owned By">
                 <Select
-                  disabled={newdata.location === null}
+                  disabled={disabledfielditem}
                   showSearch
                   filterOption={(input, opt) =>
                     opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
@@ -1518,17 +1516,18 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   notFoundContent={
                     isFetchingOwnerList ? <Spin size="small" /> : undefined
                   }
-                  placeholder={
-                    newdata.location === null
-                      ? "Pilih Lokasi terlebih dahulu"
-                      : "Pilih Owner"
-                  }
+                  placeholder="Pilih Owner"
                   onChange={(value) => {
                     if (typeof value === "number") {
                       setnewdata((prev) => ({
                         ...prev,
                         owned_by: value,
                       }));
+                    }
+                  }}
+                  onDropdownVisibleChange={(isOpen) => {
+                    if (isOpen) {
+                      fetchCompanyClientList();
                     }
                   }}
                 >

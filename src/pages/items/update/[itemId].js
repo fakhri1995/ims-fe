@@ -16,14 +16,12 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { useAxiosClient } from "hooks/use-axios-client";
-import { useDebounce } from "hooks/use-debounce-value";
 
 import { CompanyService } from "apis/company";
-import { UserService } from "apis/user";
 
 import Layout from "../../../components/layout-dashboard2";
 import st from "../../../components/layout-dashboard.module.css";
@@ -88,12 +86,7 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [ownerList, setOwnerList] = useState([]);
   const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
   const [isInitialMount, setIsInitialMount] = useState(true);
-  useEffect(() => {
-    const locationId = updatedata.location;
-    if (locationId === null || typeof locationId !== "number") {
-      return;
-    }
-
+  const fetchCompanyClientList = useCallback(() => {
     setIsFetchingOwnerList(true);
     CompanyService.getCompanyClientList(axiosClient, true).then((response) => {
       // resultList has to be an array
@@ -106,11 +99,17 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
           instanceForm?.setFieldsValue({
             owned_by: updatedata.owned_by,
           });
+
           setIsInitialMount(false);
         }
       }
     });
-  }, [updatedata.location]);
+  }, [updatedata.owned_by]);
+  useEffect(() => {
+    if (!!updatedata.owned_by && isInitialMount) {
+      fetchCompanyClientList();
+    }
+  }, [updatedata.owned_by, isInitialMount]);
 
   //handler
   const handleUpdateItem = () => {
@@ -502,7 +501,6 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 </Form.Item>
                 <Form.Item name="owned_by" label="Owned By">
                   <Select
-                    disabled={updatedata.location === null}
                     showSearch
                     filterOption={(input, opt) =>
                       opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
@@ -511,17 +509,18 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     notFoundContent={
                       isFetchingOwnerList ? <Spin size="small" /> : undefined
                     }
-                    placeholder={
-                      updatedata.location === null
-                        ? "Pilih Lokasi terlebih dahulu"
-                        : "Pilih Owner"
-                    }
+                    placeholder="Pilih Owner"
                     onChange={(value) => {
                       if (typeof value === "number") {
                         setupdatedata((prev) => ({
                           ...prev,
                           owned_by: value,
                         }));
+                      }
+                    }}
+                    onDropdownVisibleChange={(isOpen) => {
+                      if (isOpen) {
+                        fetchCompanyClientList();
                       }
                     }}
                   >
