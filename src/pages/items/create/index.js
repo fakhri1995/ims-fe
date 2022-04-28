@@ -894,7 +894,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
             currentInventoryValue === null ||
             currentInventoryValue === undefined
           ) {
-            mappedInventoryValue.value = "";
+            mappedInventoryValue.value = "-";
           }
           break;
       }
