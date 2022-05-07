@@ -28,6 +28,7 @@ import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
+import { CreateConfigurationPart } from "components/screen/models/CreateConfigurationPart";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -76,6 +77,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
   }, [isAllowedToUpdateModel]);
 
   const rt = useRouter();
+  const { modelId } = rt.query;
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(3, 1);
   pathArr[pathArr.length - 1] = "Ubah Model";
@@ -222,6 +224,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     delete_column_ids: [],
     update_columns: [],
     add_models: [],
+    update_models: [],
     delete_model_ids: [],
   });
   const [newdata2, setnewdata2] = useState({
@@ -239,6 +242,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
     delete_column_ids: [],
     update_columns: [],
     add_models: [],
+    update_models: [],
     delete_model_ids: [],
   });
   const [defaultdata, setdefaultdata] = useState([]);
@@ -595,6 +599,27 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
         t[prop] = newdata[prop];
       }
     }
+
+    /**
+     * Transform local state for Konfigurasi Part Model CRUD logic.
+     *
+     * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/149880867/Update+Model For understanding the payload and its object shape.
+     */
+    const modelPartsPayload = {
+      add_models: Object.entries(addModelParts).map(([id, quantity]) => ({
+        id,
+        quantity,
+      })),
+      update_models: Object.entries(updateModelParts).map(([id, quantity]) => ({
+        id,
+        quantity,
+      })),
+      delete_model_ids: Object.entries(deleteModelParts).map(([id, _]) => id),
+    };
+
+    /** Merge `modelPartsPayload` into final payload to the endpoint */
+    t = { ...t, ...modelPartsPayload };
+
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateModel`, {
       method: "PUT",
@@ -712,6 +737,70 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
           });
         }
       });
+  };
+
+  const [addModelParts, setAddModelParts] = useState({});
+  const [updateModelParts, setUpdateModelParts] = useState({});
+  const [deleteModelParts, setDeleteModelParts] = useState({});
+
+  /**
+   * A handler function to control `newdata.model_parts` value from children component (CreateConfigurationPart).
+   *
+   * @param {number} modelId
+   * @param {number} quantity
+   * @param {"upsert" | "delete"} action
+   */
+  const handlerModelPartsPayload = (modelId, quantity, action) => {
+    const existingModelPartIds = newdata.model_parts.map(
+      (modelPart) => modelPart.id
+    );
+    const isNewModelPart = !existingModelPartIds.includes(modelId);
+
+    const removeFromPreviousRecord = (previousState) => {
+      const previousStateClone = { ...previousState };
+      delete previousStateClone[modelId];
+
+      return previousStateClone;
+    };
+
+    /** Not exist */
+    if (isNewModelPart) {
+      switch (action) {
+        case "delete":
+          const isInAddQueue = modelId in addModelParts;
+          if (isInAddQueue) {
+            setAddModelParts(removeFromPreviousRecord);
+          }
+          break;
+        case "upsert":
+          const isInDeleteQueue = modelId in deleteModelParts;
+          if (isInDeleteQueue) {
+            setDeleteModelParts(removeFromPreviousRecord);
+          }
+
+          setAddModelParts((prev) => ({ ...prev, [modelId]: quantity }));
+          break;
+      }
+    } else {
+      switch (action) {
+        case "delete":
+          const isInUpdateQueue = modelId in updateModelParts;
+          if (isInUpdateQueue) {
+            setUpdateModelParts(removeFromPreviousRecord);
+          }
+
+          setDeleteModelParts((prev) => ({ ...prev, [modelId]: quantity }));
+          break;
+        case "upsert":
+          const isInDeleteQueue = modelId in deleteModelParts;
+          if (isInDeleteQueue) {
+            setDeleteModelParts(removeFromPreviousRecord);
+          }
+
+          setUpdateModelParts((prev) => ({ ...prev, [modelId]: quantity }));
+          break;
+      }
+    }
   };
 
   //5.useEffect
@@ -2730,6 +2819,16 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
           </div>
 
           {!newdata.is_consumable && (
+            <CreateConfigurationPart
+              isAllowedToEditPart
+              isUpdateMode
+              toggleModalCreateModel={setmodalcreatemodel}
+              onUpdateModelPartsPayload={handlerModelPartsPayload}
+              existingModelParts={modelpartfielddata}
+            />
+          )}
+
+          {/* {!newdata.is_consumable && (
             <div className=" mb-8 col-span-1 md:col-span-4 px-5 flex flex-col">
               <div className="mb-5">
                 <h1 className="font-bold text-xl">Konfigurasi Part Model</h1>
@@ -3203,7 +3302,7 @@ const ModelsUpdate2 = ({ sidemenu, dataProfile, initProps, modelid }) => {
                 </Button>
               </div>
             </div>
-          )}
+          )} */}
         </div>
 
         <AccessControl hasPermission={MODEL_ADD}>

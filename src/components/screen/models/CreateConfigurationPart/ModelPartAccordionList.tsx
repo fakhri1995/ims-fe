@@ -126,47 +126,51 @@ export const ModelPartAccordionList: FC<IModelPartAccordionList> = ({
                           {docmc.data_type === "dropdown" && (
                             <>
                               {/* {docmc.default.opsi.map( */}
-                              {docmc.default["opsi"].map((docopsi, idxopsi) => (
-                                <div
-                                  key={idxopsi}
-                                  className="rounded bg-white border w-3/12 flex items-center my-auto px-2 py-1 mb-1"
-                                >
-                                  <Checkbox
-                                    disabled
-                                    checked={
-                                      // idxopsi === docmc.default.default
-                                      idxopsi === docmc.default["default"]
-                                    }
-                                    style={{
-                                      marginRight: `0.5rem`,
-                                    }}
-                                  />
-                                  {docopsi}
-                                </div>
-                              ))}
+                              {docmc.default["opsi"]?.map(
+                                (docopsi, idxopsi) => (
+                                  <div
+                                    key={idxopsi}
+                                    className="rounded bg-white border w-3/12 flex items-center my-auto px-2 py-1 mb-1"
+                                  >
+                                    <Checkbox
+                                      disabled
+                                      checked={
+                                        // idxopsi === docmc.default.default
+                                        idxopsi === docmc.default["default"]
+                                      }
+                                      style={{
+                                        marginRight: `0.5rem`,
+                                      }}
+                                    />
+                                    {docopsi}
+                                  </div>
+                                )
+                              )}
                             </>
                           )}
                           {docmc.data_type === "checkbox" && (
                             <>
                               {/* {docmc.default.opsi.map( */}
-                              {docmc.default["opsi"].map((docopsi, idxopsi) => (
-                                <div
-                                  key={idxopsi}
-                                  className="rounded w-full flex items-center my-auto px-2 py-1 mb-1"
-                                >
-                                  <Checkbox
-                                    disabled
-                                    checked={
-                                      // idxopsi === docmc.default.default
-                                      idxopsi === docmc.default["default"]
-                                    }
-                                    style={{
-                                      marginRight: `0.5rem`,
-                                    }}
-                                  />
-                                  {docopsi}
-                                </div>
-                              ))}
+                              {docmc.default["opsi"]?.map(
+                                (docopsi, idxopsi) => (
+                                  <div
+                                    key={idxopsi}
+                                    className="rounded w-full flex items-center my-auto px-2 py-1 mb-1"
+                                  >
+                                    <Checkbox
+                                      disabled
+                                      checked={
+                                        // idxopsi === docmc.default.default
+                                        idxopsi === docmc.default["default"]
+                                      }
+                                      style={{
+                                        marginRight: `0.5rem`,
+                                      }}
+                                    />
+                                    {docopsi}
+                                  </div>
+                                )
+                              )}
                             </>
                           )}
                           {docmc.data_type === "date" && (
