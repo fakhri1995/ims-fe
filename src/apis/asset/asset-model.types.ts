@@ -69,14 +69,17 @@ export interface GetModelData {
   asset_id: number;
   name: string;
   description: string;
-  manufacturer_id: number;
+  manufacturer_id: number | null;
   required_sn: number;
+  is_consumable: number;
   deleted_at: null;
+  sku: string;
   inventories_count?: number;
   asset: Asset;
   manufacturer?: Manufacturer;
   model_columns: ModelColumn[];
   model_parts: GetModelData[];
+  quantity?: number;
 }
 
 export interface Asset {
