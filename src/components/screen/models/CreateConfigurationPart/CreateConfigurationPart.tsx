@@ -1,7 +1,7 @@
 import { Button, notification } from "antd";
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 
-import { useGetModel } from "apis/asset";
+import { GetModelData, useGetModel } from "apis/asset";
 
 import { useBulkConfigurationModelParts } from ".";
 import { InputPart } from "./InputPart";
@@ -9,20 +9,33 @@ import { ModelPartAccordionList } from "./ModelPartAccordionList";
 import { ModelPartTimelineItem } from "./ModelPartTimelineItem";
 
 export interface ICreateConfigurationPart {
+  /** Provide an existing model data (primarily for Update page) */
+  existingModelParts?: GetModelData[];
+
+  /** Set this to true when the component is mounted in Update page */
+  isUpdateMode: boolean;
+
   /** State to control whether the "Tambah Part Button" is enabled or disabled */
   isAllowedToEditPart?: boolean;
 
   /** Toggle the modal to create new modal (passthrough props) */
   toggleModalCreateModel: (isVisible: boolean) => void;
 
-  onUpdateModelPartsPayload: (modelId: number, quantity: number) => void;
+  /** Callback to its parent to decide how to manipulate any changes */
+  onUpdateModelPartsPayload: (
+    modelId: number,
+    quantity: number,
+    action: "upsert" | "delete"
+  ) => void;
 }
 
 /**
  * CreateConfigurationPart adalah komponen yang meng-handle section "Konfigurasi Part Model" pada screen atau halaman `/admin/models/create`.
  */
 export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
+  existingModelParts,
   isAllowedToEditPart = false,
+  isUpdateMode = false,
   toggleModalCreateModel,
   onUpdateModelPartsPayload,
 }) => {
@@ -41,6 +54,23 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
     setData: setModelPartData,
     refetchData: updateModelPartData,
   } = useGetModel();
+
+  useEffect(() => {
+    if (!existingModelParts) {
+      return;
+    }
+
+    // Set the data for rendering List of configuration parts (model_parts) in an Accordion
+    setModelPartData(existingModelParts);
+
+    // Map all existing model_parts ID and quantity into business logic
+    // Then, it can be manipulated later.
+    const buffer = {};
+    existingModelParts.forEach(({ id, quantity }) => {
+      buffer[id] = quantity;
+    });
+    setModelParts(buffer);
+  }, [existingModelParts]);
 
   const [isInputPartShown, setIsInputPartShown] = useState(false);
 
@@ -78,7 +108,11 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
     updateModelPartData(currentModelPartId);
 
     /** Update parent's state untuk menjadi payload ke endpoint POST `/addModel` */
-    onUpdateModelPartsPayload(currentModelPartId, currentModelPartQuantity);
+    onUpdateModelPartsPayload(
+      currentModelPartId,
+      currentModelPartQuantity,
+      "upsert"
+    );
 
     notification.success({
       message: "Konfigurasi Part Berhasil diperbarui.",
@@ -109,7 +143,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
     });
 
     /** Update parent's state untuk menjadi payload ke endpoint POST `/addModel`. Quantity 0 untuk menghapus. */
-    onUpdateModelPartsPayload(modelId, 0);
+    onUpdateModelPartsPayload(modelId, 0, "delete");
 
     closeInputPart();
   };

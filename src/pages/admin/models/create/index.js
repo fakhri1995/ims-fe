@@ -32,7 +32,6 @@ import {
   MANUFACTURERS_GET,
   MANUFACTURER_ADD,
   MODEL_ADD,
-  MODEL_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
