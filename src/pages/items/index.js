@@ -20,12 +20,37 @@ import { useRouter } from "next/router";
 import QueryString from "qs";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  ASSETS_GET,
+  INVENTORIES_GET,
+  INVENTORY_ADD,
+  INVENTORY_GET,
+  MODELS_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../lib/helper";
 import httpcookie from "cookie";
 
 const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToShowInventoryList = hasPermission(INVENTORIES_GET); // showing the table data and as a dependency for another search-related permissions
+  const isAllowedToSearchLocation = hasPermission(INVENTORY_GET);
+  const isAllowedToSearchAssetType = hasPermission(ASSETS_GET);
+  const isAllowedToSearchModel = hasPermission(MODELS_GET); // either GET /getModels or GET /getFilterModels
+  const isAllowedToAddInventory = hasPermission(INVENTORY_ADD);
+
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -181,7 +206,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: (a, b) => a.status_condition.id - b.status_condition.id,
+      sorter: isAllowedToShowInventoryList
+        ? (a, b) => a.status_condition.id - b.status_condition.id
+        : false,
     },
     {
       title: "Status Pemakaian",
@@ -210,7 +237,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: (a, b) => a.status_usage.id - b.status_usage.id,
+      sorter: isAllowedToShowInventoryList
+        ? (a, b) => a.status_usage.id - b.status_usage.id
+        : false,
     },
   ];
 
@@ -297,7 +326,13 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
 
   //5.useEffect
+  /** Data fetching for Items table's records */
   useEffect(() => {
+    if (!isAllowedToShowInventoryList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Inventory");
+      return;
+    }
+
     /**
      * Transform URL query paramter yang dynamic berdasarkan input User
      *  menjadi payload untuk ke endpoint `/getInventories`.
@@ -328,9 +363,16 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
+    isAllowedToShowInventoryList,
   ]);
 
+  /** Data fetching for "Cari Lokasi" input field  */
   useEffect(() => {
+    if (!isAllowedToShowInventoryList || !isAllowedToSearchLocation) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
       method: `GET`,
       headers: {
@@ -342,9 +384,15 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         setinvrelations(res2.data);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToShowInventoryList, isAllowedToSearchLocation]);
 
+  /** Data fetching for "Cari Model" input field */
   useEffect(() => {
+    if (!isAllowedToShowInventoryList || !isAllowedToSearchModel) {
+      setpraloading2(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels?rows=50&asset_id=${
         queryParams.asset_id || ""
@@ -363,9 +411,14 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
           : setmodelfilter(res2.data.data);
         setpraloading2(false);
       });
-  }, []);
+  }, [isAllowedToShowInventoryList, isAllowedToSearchModel]);
 
+  /** Data fetching for "Cari Asset Type" input field */
   useEffect(() => {
+    if (!isAllowedToShowInventoryList || !isAllowedToSearchAssetType) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -390,8 +443,9 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         recursiveSearchAsset(res2.data, Number(namaasset));
         setassetdata(res2.data);
       });
-  }, []);
+  }, [isAllowedToShowInventoryList, isAllowedToSearchAssetType]);
 
+  /** Always clear "Cari Model" input field when User changes "Cari Asset Type" */
   useEffect(() => {
     setSelectedModelName(undefined);
     setQueryParams({
@@ -412,11 +466,13 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="font-bold text-2xl w-auto">Items</div>
         </div>
         <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
-          <Link href={"/items/create"}>
-            <Button size="large" type="primary">
-              Tambah
-            </Button>
-          </Link>
+          <Button
+            size="large"
+            type="primary"
+            disabled={!isAllowedToAddInventory}
+          >
+            <Link href={"/items/create"}>Tambah</Link>
+          </Button>
         </div>
       </div>
       <div className="h-auto w-full grid grid-cols-1 md:grid-cols-5 mb-5 bg-white rounded-md">
@@ -432,6 +488,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onChange={onChangeMigid}
                     allowClear
                     onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToShowInventoryList}
                   ></Input>
                 </div>
                 <div className="col-span-2 mr-1">
@@ -439,7 +496,16 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     allowClear
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     defaultValue={queryParams.asset_id}
-                    treeData={assetdata}
+                    // treeData={assetdata}
+                    treeData={
+                      isAllowedToShowInventoryList && isAllowedToSearchAssetType
+                        ? assetdata
+                        : []
+                    }
+                    disabled={
+                      !isAllowedToShowInventoryList ||
+                      !isAllowedToSearchAssetType
+                    }
                     placeholder="Cari Asset Type"
                     treeDefaultExpandAll
                     style={{ width: `100%` }}
@@ -505,7 +571,10 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                           .toLowerCase()
                           .indexOf(input.toLowerCase()) >= 0
                       }
-                      disabled={modelfilter.length === 0}
+                      disabled={
+                        modelfilter.length === 0 ||
+                        !isAllowedToShowInventoryList
+                      }
                       placeholder="Cari Model"
                       style={{ width: `100%` }}
                       allowClear
@@ -534,8 +603,13 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <TreeSelect
                     allowClear
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                    treeData={[invrelations.tree_companies]}
+                    treeData={
+                      isAllowedToShowInventoryList && isAllowedToSearchLocation
+                        ? [invrelations.tree_companies]
+                        : []
+                    }
                     defaultValue={queryParams.location_id}
+                    disabled={!isAllowedToShowInventoryList}
                     placeholder="Cari Lokasi"
                     treeDefaultExpandAll
                     style={{ width: `100%` }}
@@ -566,6 +640,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <Select
                     placeholder="Kondisi"
                     defaultValue={queryParams.status_condition}
+                    disabled={!isAllowedToShowInventoryList}
                     style={{ width: `100%` }}
                     allowClear
                     onChange={(value) => {
@@ -589,6 +664,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <Select
                     placeholder="Pemakaian"
                     defaultValue={queryParams.status_usage}
+                    disabled={!isAllowedToShowInventoryList}
                     style={{ width: `100%` }}
                     allowClear
                     onChange={(value) => {
@@ -613,6 +689,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     type="primary"
                     style={{ width: `100%` }}
                     onClick={onFinalClick}
+                    disabled={!isAllowedToShowInventoryList}
                   >
                     <SearchOutlined />
                   </Button>

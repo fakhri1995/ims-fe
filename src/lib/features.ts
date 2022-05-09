@@ -553,7 +553,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
 /**
  * /getAssets
  *
- * - [ ] pages/items/index
+ * - [x] pages/items/index
  * - [ ] pages/items/detail/[itemId]
  * - [ ] pages/items/createpart/[itemId]
  *
@@ -713,7 +713,7 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
  *
- * - [ ] pages/items/index
+ * - [x] pages/items/index
  * - [ ] pages/items/detail/[itemId]
  * - [ ] pages/items/createpart/[itemId]
  * - [ ] pages/items/update/[itemId]
@@ -762,3 +762,52 @@ export const MODEL_UPDATE = "MODEL_UPDATE";
  * - [x] pages/admin/models/detail/[modelId]
  */
 export const MODEL_DELETE = "MODEL_DELETE";
+
+/**
+ * Daftar feature untuk Inventory management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076719/Inventori
+ */
+/**
+ * /getInventories
+ *
+ * - [x] pages/items/index
+ */
+export const INVENTORIES_GET = "INVENTORIES_GET";
+/**
+ * /getInventoryRelations
+ * /getInventory
+ *
+ * - [x] pages/items/index
+ * - [ ] pages/items/createpart/[itemId]
+ * - [ ] pages/items/create/index
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/update/[itemId]
+ *
+ * - [ ] pages/admin/contracts/[contractId]
+ */
+export const INVENTORY_GET = "INVENTORY_GET";
+/**
+ * /addInventory
+ *
+ * - [x] pages/items/index
+ * - [ ] pages/items/create/index
+ * - [ ] pages/items/createpart/[itemId]
+ * - [ ] pages/items/detail/[itemId]
+ */
+export const INVENTORY_ADD = "INVENTORY_ADD";
+export const INVENTORY_UPDATE = "INVENTORY_UPDATE";
+export const INVENTORY_DELETE = "INVENTORY_DELETE";
+export const INVENTORY_NOTES_ADD = "INVENTORY_NOTES_ADD";
+export const INVENTORY_STATUS_USAGE = "INVENTORY_STATUS_USAGE";
+export const INVENTORY_STATUS_CONDITION = "INVENTORY_STATUS_CONDITION";
+export const INVENTORY_PARTS_ADD = "INVENTORY_PARTS_ADD";
+export const INVENTORY_PART_REMOVE = "INVENTORY_PART_REMOVE";
+export const INVENTORY_PART_REPLACE = "INVENTORY_PART_REPLACE";
+export const INVENTORY_LOG_GET = "INVENTORY_LOG_GET";
+export const INVENTORY_IMPORT = "INVENTORY_IMPORT";
+export const COMPANY_RELATIONSHIP_INVENTORY_GET =
+  "COMPANY_RELATIONSHIP_INVENTORY_GET";
+export const RELATIONSHIP_INVENTORY_ADD = "RELATIONSHIP_INVENTORY_ADD";
+export const RELATIONSHIP_INVENTORY_UPDATE = "RELATIONSHIP_INVENTORY_UPDATE";
+export const RELATIONSHIP_INVENTORY_DELETE = "RELATIONSHIP_INVENTORY_DELETE";
