@@ -109,8 +109,11 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   /** Effect to set default "Sub Lokasi" input field if it's in valid condition */
   useEffect(() => {
     const locationId = updatedata.location_inventory.id;
-    if (sublocdata.length === 0 || locationId === -1) {
-      // skip setting form's fields value for initial mount
+    const locationRole = updatedata.location_inventory.role;
+    if (sublocdata.length === 0 || locationId === -1 || locationRole !== 4) {
+      // skip setting form's fields value for initial mount.
+      //
+      // `locationRole` 4 => it's a valid sublocation value. Otherwise, we should not update sublocation input field value.
       return;
     }
 
