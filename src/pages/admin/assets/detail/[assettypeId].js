@@ -435,7 +435,7 @@ const AssetTypeDetail = ({ initProps, sidemenu, dataProfile, assettypeid }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setmodeldata(res2.data.data);
+        setmodeldata(res2.data.data || []);
       });
   }, [isAllowedToGetModels]);
 
