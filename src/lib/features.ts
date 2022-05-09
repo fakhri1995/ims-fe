@@ -557,7 +557,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  *
  * - [x] pages/items/index
  * - [ ] pages/items/detail/[itemId]
- * - [ ] pages/items/createpart/[itemId]
+ * - [x] pages/items/createpart/[itemId]
  *
  * - [x] pages/admin/assets/index
  * - [x] pages/admin/assets/update/[assettypeId]
@@ -718,7 +718,7 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  *
  * - [x] pages/items/index
  * - [ ] pages/items/detail/[itemId]
- * - [ ] pages/items/createpart/[itemId]
+ * - [x] pages/items/createpart/[itemId]
  * - [ ] pages/items/update/[itemId]
  * - [x] pages/items/create/index
  *
@@ -782,7 +782,7 @@ export const INVENTORIES_GET = "INVENTORIES_GET";
  * /getInventory
  *
  * - [x] pages/items/index
- * - [ ] pages/items/createpart/[itemId]
+ * - [x] pages/items/createpart/[itemId]
  * - [x] pages/items/create/index
  * - [ ] pages/items/detail/[itemId]
  * - [ ] pages/items/update/[itemId]
@@ -804,6 +804,12 @@ export const INVENTORY_DELETE = "INVENTORY_DELETE";
 export const INVENTORY_NOTES_ADD = "INVENTORY_NOTES_ADD";
 export const INVENTORY_STATUS_USAGE = "INVENTORY_STATUS_USAGE";
 export const INVENTORY_STATUS_CONDITION = "INVENTORY_STATUS_CONDITION";
+/**
+ * /getInventoryAddable
+ * /addInventoryParts
+ *
+ * - [x] pages/items/createpart/[itemId]
+ */
 export const INVENTORY_PARTS_ADD = "INVENTORY_PARTS_ADD";
 export const INVENTORY_PART_REMOVE = "INVENTORY_PART_REMOVE";
 export const INVENTORY_PART_REPLACE = "INVENTORY_PART_REPLACE";
