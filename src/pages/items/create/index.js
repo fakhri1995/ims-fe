@@ -1594,37 +1594,6 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     }}
                   ></TreeSelect>
                 </Form.Item>
-                <Form.Item name="owned_by" label="Owned By">
-                  <Select
-                    disabled={disabledfielditem}
-                    showSearch
-                    filterOption={(input, opt) =>
-                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0
-                    }
-                    notFoundContent={
-                      isFetchingOwnerList ? <Spin size="small" /> : undefined
-                    }
-                    placeholder="Pilih Owner"
-                    onChange={(value) => {
-                      if (typeof value === "number") {
-                        setnewdata((prev) => ({
-                          ...prev,
-                          owned_by: value,
-                        }));
-                      }
-                    }}
-                    onDropdownVisibleChange={(isOpen) => {
-                      if (isOpen) {
-                        fetchCompanyClientList();
-                      }
-                    }}
-                  >
-                    {ownerList.map((user) => (
-                      <Select.Option value={user.id}>{user.name}</Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
                 {newdata.location !== null && (
                   <Form.Item name="sublocation" label="Sub Lokasi">
                     <TreeSelect
@@ -1656,6 +1625,37 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     ></TreeSelect>
                   </Form.Item>
                 )}
+                <Form.Item name="owned_by" label="Owned By">
+                  <Select
+                    disabled={disabledfielditem}
+                    showSearch
+                    filterOption={(input, opt) =>
+                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                      0
+                    }
+                    notFoundContent={
+                      isFetchingOwnerList ? <Spin size="small" /> : undefined
+                    }
+                    placeholder="Pilih Owner"
+                    onChange={(value) => {
+                      if (typeof value === "number") {
+                        setnewdata((prev) => ({
+                          ...prev,
+                          owned_by: value,
+                        }));
+                      }
+                    }}
+                    onDropdownVisibleChange={(isOpen) => {
+                      if (isOpen) {
+                        fetchCompanyClientList();
+                      }
+                    }}
+                  >
+                    {ownerList.map((user) => (
+                      <Select.Option value={user.id}>{user.name}</Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
                 <Form.Item name="vendor_id" label="Vendor">
                   <Select
                     disabled={disabledfielditem}

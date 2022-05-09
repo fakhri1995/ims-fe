@@ -58,6 +58,12 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
     notes: "",
     additional_attributes: [],
     inventory_values: [],
+    location_inventory: {
+      id: -1,
+      name: "",
+      role: -1,
+      top_parent_id: null,
+    },
   });
 
   const [invrelations, setinvrelations] = useState({
@@ -79,13 +85,46 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [modalupdate, setmodalupdate] = useState(false);
   const [disabledfield, setdisabledfield] = useState(true);
 
+  const [sublocdata, setsublocdata] = useState([]);
+  const [subloctrigger, setsubloctrigger] = useState(-1);
+  /** Effect to fetch SubLocation list when User change "Location" input field */
+  useEffect(() => {
+    if (subloctrigger !== -1) {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${subloctrigger}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setsublocdata(res2.data.children || []);
+        });
+    }
+  }, [subloctrigger]);
+
+  /** Effect to set default "Sub Lokasi" input field if it's in valid condition */
+  useEffect(() => {
+    const locationId = updatedata.location_inventory.id;
+    if (sublocdata.length === 0 || locationId === -1) {
+      // skip setting form's fields value for initial mount
+      return;
+    }
+
+    instanceForm?.setFieldsValue({
+      sublocation: locationId,
+    });
+  }, [sublocdata, updatedata.location_inventory.id]);
+
   /**
    * Daftar company untuk field "Owned By".
    * State akan berubah ketika nilai dari `updatedata.location` berubah.
    */
   const [ownerList, setOwnerList] = useState([]);
   const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
-  const [isInitialMount, setIsInitialMount] = useState(true);
   const fetchCompanyClientList = useCallback(() => {
     setIsFetchingOwnerList(true);
     CompanyService.getCompanyClientList(axiosClient, true).then((response) => {
@@ -94,22 +133,24 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
       if (resultList instanceof Array) {
         setOwnerList(resultList);
         setIsFetchingOwnerList(false);
-
-        if (isInitialMount) {
-          instanceForm?.setFieldsValue({
-            owned_by: updatedata.owned_by,
-          });
-
-          setIsInitialMount(false);
-        }
       }
     });
   }, [updatedata.owned_by]);
+
+  /** Effect to set default value of `owned_by` input field. */
   useEffect(() => {
-    if (!!updatedata.owned_by && isInitialMount) {
+    if (ownerList.length > 0) {
+      instanceForm?.setFieldsValue({
+        owned_by: updatedata.owned_by,
+      });
+    }
+  }, [ownerList, instanceForm]);
+
+  useEffect(() => {
+    if (!!updatedata.owned_by) {
       fetchCompanyClientList();
     }
-  }, [updatedata.owned_by, isInitialMount]);
+  }, [updatedata.owned_by]);
 
   //handler
   const handleUpdateItem = () => {
@@ -190,6 +231,30 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
             }
           }
         }
+
+        /** Mapping the data from backend to our "Location" and "Sub Lokasi" input field */
+        const inventoryParentLocationId = t.location_inventory.top_parent_id;
+        if (inventoryParentLocationId !== null) {
+          instanceForm?.setFieldsValue({
+            location: inventoryParentLocationId,
+          });
+
+          const inventoryLocationRole = t.location_inventory.role;
+          /**
+           * Role explanation:
+           *
+           * 2 -> client
+           * 3 -> company
+           * 4 -> sub
+           *
+           * We're hitting the `/getSublocations` endpoint if the given role
+           *  value is equal to 4.
+           */
+          if (inventoryLocationRole === 4) {
+            setsubloctrigger(inventoryParentLocationId);
+          }
+        }
+
         setdisabledfield((prev) => {
           if (
             t.additional_attributes
@@ -479,12 +544,12 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 )}
                 <Form.Item name="location" label="Location">
                   <TreeSelect
-                    defaultValue={updatedata.location}
                     treeDefaultExpandedKeys={[invrelations.tree_companies.key]}
                     placeholder="Pilih Location"
                     treeData={[invrelations.tree_companies]}
                     onChange={(value) => {
                       setupdatedata({ ...updatedata, location: value });
+                      setsubloctrigger(value);
                     }}
                     showSearch
                     treeNodeFilterProp="title"
@@ -499,6 +564,37 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     }}
                   ></TreeSelect>
                 </Form.Item>
+                {updatedata.location !== null && (
+                  <Form.Item name="sublocation" label="Sub Lokasi">
+                    <TreeSelect
+                      allowClear
+                      // disabled={disabledfielditem}
+                      placeholder="Pilih Location"
+                      treeData={sublocdata}
+                      onChange={(value) => {
+                        if (typeof value === "undefined") {
+                          setupdatedata({
+                            ...updatedata,
+                            location: updatedata.sub_location,
+                          });
+                        } else {
+                          setupdatedata({ ...updatedata, location: value });
+                        }
+                      }}
+                      showSearch
+                      treeNodeFilterProp="title"
+                      filterTreeNode={(search, item) => {
+                        /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                        /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                        return (
+                          item.title
+                            .toLowerCase()
+                            .indexOf(search.toLowerCase()) >= 0
+                        );
+                      }}
+                    ></TreeSelect>
+                  </Form.Item>
+                )}
                 <Form.Item name="owned_by" label="Owned By">
                   <Select
                     showSearch
