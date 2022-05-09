@@ -345,6 +345,8 @@ export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
  * /getCompanyClientList
  * /getClientCompanyList
  *
+ * - [x] pages/items/create
+ *
  * - [x] pages/admin/requesters
  *
  * - [x] pages/company/clients
@@ -395,7 +397,7 @@ export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
 /**
  * /getSubLocations
  *
- * - [ ] pages/items/create
+ * - [x] pages/items/create
  *
  * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [ ] components/modal/modalCustom
@@ -710,6 +712,7 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
 
 /**
  * /getModels
+ * /getFilterModels
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
  *
@@ -717,7 +720,7 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  * - [ ] pages/items/detail/[itemId]
  * - [ ] pages/items/createpart/[itemId]
  * - [ ] pages/items/update/[itemId]
- * - [ ] pages/items/create/index
+ * - [x] pages/items/create/index
  *
  * - [x] pages/admin/models/index
  * - [x] pages/admin/models/update2/[modelId]
@@ -732,7 +735,7 @@ export const MODELS_GET = "MODELS_GET";
  *
  * - [ ] components/screen/models/CreateConfigurationPart/InputPart
  *
- * - [ ] pages/items/create/index
+ * - [x] pages/items/create/index
  *
  * - [x] pages/admin/models/detail/[modelId]
  * - [x] pages/admin/models/update2/[modelId]
@@ -780,7 +783,7 @@ export const INVENTORIES_GET = "INVENTORIES_GET";
  *
  * - [x] pages/items/index
  * - [ ] pages/items/createpart/[itemId]
- * - [ ] pages/items/create/index
+ * - [x] pages/items/create/index
  * - [ ] pages/items/detail/[itemId]
  * - [ ] pages/items/update/[itemId]
  *
@@ -791,7 +794,7 @@ export const INVENTORY_GET = "INVENTORY_GET";
  * /addInventory
  *
  * - [x] pages/items/index
- * - [ ] pages/items/create/index
+ * - [x] pages/items/create/index
  * - [ ] pages/items/createpart/[itemId]
  * - [ ] pages/items/detail/[itemId]
  */

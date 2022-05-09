@@ -22,7 +22,21 @@ import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  COMPANY_CLIENTS_GET,
+  COMPANY_SUB_LOCATIONS_GET,
+  INVENTORY_ADD,
+  INVENTORY_GET,
+  MODELS_GET,
+  MODEL_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import { CompanyService } from "apis/company";
 
@@ -31,6 +45,21 @@ import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToAddInventory = hasPermission(INVENTORY_ADD);
+  const isAllowedToGetModelList = hasPermission(MODELS_GET); // for both /getModels and /getFilterModels
+  const isAllowedToGetInventoryRelations = hasPermission(INVENTORY_GET);
+  const isAllowedToGetSubLocations = hasPermission(COMPANY_SUB_LOCATIONS_GET);
+  const isAllowedToGetCompanyClientList = hasPermission(COMPANY_CLIENTS_GET);
+  const isAllowedToGetModel = hasPermission(MODEL_GET);
+
   // 1.Init
   const rt = useRouter();
   const axiosClient = useAxiosClient();
@@ -117,6 +146,10 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
   const [ownerList, setOwnerList] = useState([]);
   const [isFetchingOwnerList, setIsFetchingOwnerList] = useState(false);
   const fetchCompanyClientList = useCallback(() => {
+    if (!isAllowedToGetCompanyClientList) {
+      return;
+    }
+
     setIsFetchingOwnerList(true);
     CompanyService.getCompanyClientList(axiosClient, true).then((response) => {
       // resultList has to be an array
@@ -126,7 +159,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         setIsFetchingOwnerList(false);
       }
     });
-  }, []);
+  }, [isAllowedToGetCompanyClientList]);
   useEffect(() => {
     fetchCompanyClientList();
   }, []);
@@ -982,19 +1015,41 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
 
   //4.useEffect
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setmodeldata(res2.data.data);
-        setpraloading(false);
-      });
-  }, []);
+    if (!isAllowedToAddInventory) {
+      permissionWarningNotification("Menambahkan", "Inventory");
+    }
+  }, [isAllowedToAddInventory]);
+
+  /**
+   * NOTE: Saya disable ini karena state `modeldata` sama sekali tidak ada yang consume.
+   *        Jadi saya rasa ini unecessary data fetching.
+   */
+  // useEffect(() => {
+  //   if (!isAllowedToAddInventory || !isAllowedToGetModelList) {
+  //     setpraloading(false);
+  //     return;
+  //   }
+
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setmodeldata(res2.data.data);
+  //       setpraloading(false);
+  //     });
+  // }, [isAllowedToAddInventory, isAllowedToGetModelList]);
+
+  /** Data fetching for: "Vendor", "Manufacturer", and "Location" input field */
   useEffect(() => {
+    if (!isAllowedToAddInventory || !isAllowedToGetInventoryRelations) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
       method: `GET`,
       headers: {
@@ -1006,8 +1061,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         setinvrelations(res2.data);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToAddInventory, isAllowedToGetInventoryRelations]);
+
+  /** Data fetching for: "Pilih Nama Model" input field */
   useEffect(() => {
+    if (!isAllowedToAddInventory || !isAllowedToGetModelList) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterModels`, {
       method: `GET`,
       headers: {
@@ -1019,9 +1081,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         setmodelfilter(res2.data);
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToAddInventory, isAllowedToGetModelList]);
+
+  /** Data fetching for: "Pilih Location" (Sub Lokasi) input field */
   useEffect(() => {
     if (subloctrigger !== -1) {
+      if (!isAllowedToAddInventory || !isAllowedToGetSubLocations) {
+        return;
+      }
+
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${subloctrigger}`,
         {
@@ -1036,7 +1104,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
           setsublocdata(res2.data.children);
         });
     }
-  }, [subloctrigger]);
+  }, [subloctrigger, isAllowedToAddInventory, isAllowedToGetSubLocations]);
+
   useEffect(() => {
     if (emptyfieldparttrigger !== 0) {
       if (emptyfieldpartmodel.enable_part === true) {
@@ -1090,7 +1159,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   </Button>
                 </Link>
                 <Button
-                  disabled={disabledfield}
+                  disabled={disabledfield || !isAllowedToAddInventory}
                   type="primary"
                   onClick={() => {
                     instanceForm.submit();
@@ -1102,456 +1171,415 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
             </div>
           </Sticky>
         </div>
-        <div className="col-span-1 md:col-span-4 mb-6 py-3 px-12">
-          <div className="shadow-md border p-5 flex flex-col rounded-md">
-            <Form
-              form={instanceForm}
-              layout="vertical"
-              onFinish={() => {
-                setmodalfinal(true);
-              }}
-            >
-              <Form.Item
-                name="model_id"
-                label="Nama Model"
-                rules={[
-                  {
-                    required: true,
-                    message: "Model wajib dipilih",
-                  },
-                ]}
+        <AccessControl hasPermission={INVENTORY_ADD}>
+          <div className="col-span-1 md:col-span-4 mb-6 py-3 px-12">
+            <div className="shadow-md border p-5 flex flex-col rounded-md">
+              <Form
+                form={instanceForm}
+                layout="vertical"
+                onFinish={() => {
+                  setmodalfinal(true);
+                }}
               >
-                <Select
-                  showSearch
-                  optionFilterProp="children"
-                  placeholder="Pilih Nama Model"
-                  notFoundContent={fetchingmodel ? <Spin size="small" /> : null}
-                  onSearch={(value) => {
-                    setfetchingmodel(true);
-                    fetch(
-                      `${
-                        process.env.NEXT_PUBLIC_BACKEND_URL
-                      }/getFilterModels?name=${value !== "" ? value : ""}`,
-                      {
-                        method: `GET`,
-                        headers: {
-                          Authorization: JSON.parse(initProps),
-                        },
-                      }
-                    )
-                      .then((res) => res.json())
-                      .then((res2) => {
-                        setmodelfilter(res2.data);
-                        setfetchingmodel(false);
-                      });
-                  }}
-                  filterOption={(input, opt) =>
-                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
-                  onChange={(value, option) => {
-                    setnewdata({ ...newdata, model_id: value });
-                    // const selectedmodel = invrelations.models.filter(docmodel => docmodel.id === value)[0]
-                    // const selectedasset = invrelations.assets.filter(docasset => docasset.id === selectedmodel.asset_id)
-                    setassetnameitem(option.asset_name);
-                    // const snitemmodel = modeldata.filter(docfilter => docfilter.id === value)
-                    // setsnitem(snitemmodel.length > 0 ? snitemmodel[0].required_sn : false)
-                    setsnitem(option.required_sn);
-                    setloadingspec(true);
-                    setmanuffielditem(false);
-                    fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModel?id=${value}`,
-                      {
-                        method: `GET`,
-                        headers: {
-                          Authorization: JSON.parse(initProps),
-                        },
-                      }
-                    )
-                      .then((res) => res.json())
-                      .then((res2) => {
-                        var temp = [];
-                        if (res2.success) {
-                          //model_columns
-                          temp = res2.data.model_columns.map((doc, idx) => {
-                            if (
-                              doc.data_type === "dropdown" ||
-                              doc.data_type === "checkbox"
-                            ) {
-                              return {
-                                ...doc,
-                                default: JSON.parse(doc.default),
-                              };
-                            } else if (
-                              doc.data_type === "number" ||
-                              doc.data_type === "date"
-                            ) {
-                              if (doc.default === "-") {
+                <Form.Item
+                  name="model_id"
+                  label="Nama Model"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Model wajib dipilih",
+                    },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    optionFilterProp="children"
+                    placeholder="Pilih Nama Model"
+                    notFoundContent={
+                      fetchingmodel ? <Spin size="small" /> : null
+                    }
+                    disabled={!isAllowedToGetModelList || !isAllowedToGetModel}
+                    onSearch={(value) => {
+                      setfetchingmodel(true);
+                      fetch(
+                        `${
+                          process.env.NEXT_PUBLIC_BACKEND_URL
+                        }/getFilterModels?name=${value !== "" ? value : ""}`,
+                        {
+                          method: `GET`,
+                          headers: {
+                            Authorization: JSON.parse(initProps),
+                          },
+                        }
+                      )
+                        .then((res) => res.json())
+                        .then((res2) => {
+                          setmodelfilter(res2.data);
+                          setfetchingmodel(false);
+                        });
+                    }}
+                    filterOption={(input, opt) =>
+                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                      0
+                    }
+                    onChange={(value, option) => {
+                      setnewdata({ ...newdata, model_id: value });
+                      // const selectedmodel = invrelations.models.filter(docmodel => docmodel.id === value)[0]
+                      // const selectedasset = invrelations.assets.filter(docasset => docasset.id === selectedmodel.asset_id)
+                      setassetnameitem(option.asset_name);
+                      // const snitemmodel = modeldata.filter(docfilter => docfilter.id === value)
+                      // setsnitem(snitemmodel.length > 0 ? snitemmodel[0].required_sn : false)
+                      setsnitem(option.required_sn);
+                      setloadingspec(true);
+                      setmanuffielditem(false);
+                      fetch(
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getModel?id=${value}`,
+                        {
+                          method: `GET`,
+                          headers: {
+                            Authorization: JSON.parse(initProps),
+                          },
+                        }
+                      )
+                        .then((res) => res.json())
+                        .then((res2) => {
+                          var temp = [];
+                          if (res2.success) {
+                            //model_columns
+                            temp = res2.data.model_columns.map((doc, idx) => {
+                              if (
+                                doc.data_type === "dropdown" ||
+                                doc.data_type === "checkbox"
+                              ) {
                                 return {
                                   ...doc,
-                                  default: "",
+                                  default: JSON.parse(doc.default),
                                 };
-                              } else {
-                                return {
-                                  ...doc,
-                                };
-                              }
-                            } else {
-                              return { ...doc };
-                            }
-                          });
-                          setdisabledfield((prev) => {
-                            if (
-                              temp
-                                .filter((doc) => doc.required)
-                                .some(
-                                  (docsome) =>
-                                    docsome.default === null ||
-                                    docsome.default === "" ||
-                                    docsome.default === "-" ||
-                                    docsome.default.default === "-"
-                                )
-                            ) {
-                              return true;
-                            } else {
-                              return false;
-                            }
-                          });
-                          setcolumnsmodeldata(temp);
-                          setdynamicfielditem(temp);
-                          //model_parts
-                          var level = -1;
-                          const recursivePartModel = (item, level) => {
-                            level += 1;
-                            var temp11 = [];
-                            for (var i = 0; i < item.length; i++) {
-                              var temp1 = {};
-                              temp1 = item[i].model_columns.map((doc, idx) => {
-                                if (
-                                  doc.data_type === "dropdown" ||
-                                  doc.data_type === "checkbox"
-                                ) {
+                              } else if (
+                                doc.data_type === "number" ||
+                                doc.data_type === "date"
+                              ) {
+                                if (doc.default === "-") {
                                   return {
                                     ...doc,
-                                    data_type: doc.data_type,
-                                    model_inventory_column_id: doc.id,
-                                    value:
-                                      doc.default === "" || doc.default === "-"
-                                        ? doc.default
-                                        : JSON.parse(doc.default),
-                                    default:
-                                      doc.default === "" || doc.default === "-"
-                                        ? doc.default
-                                        : JSON.parse(doc.default),
-                                  };
-                                } else if (
-                                  doc.data_type === "number" ||
-                                  doc.data_type === "date"
-                                ) {
-                                  return {
-                                    ...doc,
-                                    data_type: doc.data_type,
-                                    model_inventory_column_id: doc.id,
-                                    value:
-                                      doc.default === "" || doc.default === "-"
-                                        ? ""
-                                        : doc.default,
-                                    default:
-                                      doc.default === "" || doc.default === "-"
-                                        ? ""
-                                        : doc.default,
+                                    default: "",
                                   };
                                 } else {
                                   return {
                                     ...doc,
-                                    data_type: doc.data_type,
-                                    model_inventory_column_id: doc.id,
-                                    value: doc.default,
                                   };
                                 }
-                              });
-                              temp11.push({
-                                model_name: item[i].name,
-                                asset_name: item[i].asset.name,
-                                enable_part: false,
-                                disable_part: level > 0 ? true : false,
-                                id: item[i].id,
-                                model_id: item[i].id,
-                                vendor_id: null,
-                                inventory_name: "",
-                                status_condition: null,
-                                status_usage: null,
-                                serial_number: "",
-                                is_exist: true,
-                                deskripsi: "",
-                                manufacturer_id: null,
-                                mig_id: "",
-                                inventory_values: temp1,
-                                inventory_parts:
-                                  item[i].model_parts.length > 0
-                                    ? recursivePartModel(
-                                        item[i].model_parts,
-                                        level
-                                      )
-                                    : [],
-                              });
-                            }
-                            return temp11;
-                          };
-                          const yo = recursivePartModel(
-                            res2.data.model_parts,
-                            level
-                          );
-                          setpartmodeldata(yo);
-                          setnewdata((prev) => {
-                            var temploc = prev;
-                            temploc.inventory_values = [];
-                            temp.forEach((doc) => {
-                              temploc.inventory_values.push({
-                                data_type: doc.data_type,
-                                model_inventory_column_id: doc.id,
-                                value: doc.default,
-                              });
+                              } else {
+                                return { ...doc };
+                              }
                             });
-                            temploc.inventory_parts = yo;
-                            temploc.manufacturer_id = res2.data.manufacturer_id;
-                            temploc.is_consumable = Boolean(
-                              res2.data.is_consumable
+                            setdisabledfield((prev) => {
+                              if (
+                                temp
+                                  .filter((doc) => doc.required)
+                                  .some(
+                                    (docsome) =>
+                                      docsome.default === null ||
+                                      docsome.default === "" ||
+                                      docsome.default === "-" ||
+                                      docsome.default.default === "-"
+                                  )
+                              ) {
+                                return true;
+                              } else {
+                                return false;
+                              }
+                            });
+                            setcolumnsmodeldata(temp);
+                            setdynamicfielditem(temp);
+                            //model_parts
+                            var level = -1;
+                            const recursivePartModel = (item, level) => {
+                              level += 1;
+                              var temp11 = [];
+                              for (var i = 0; i < item.length; i++) {
+                                var temp1 = {};
+                                temp1 = item[i].model_columns.map(
+                                  (doc, idx) => {
+                                    if (
+                                      doc.data_type === "dropdown" ||
+                                      doc.data_type === "checkbox"
+                                    ) {
+                                      return {
+                                        ...doc,
+                                        data_type: doc.data_type,
+                                        model_inventory_column_id: doc.id,
+                                        value:
+                                          doc.default === "" ||
+                                          doc.default === "-"
+                                            ? doc.default
+                                            : JSON.parse(doc.default),
+                                        default:
+                                          doc.default === "" ||
+                                          doc.default === "-"
+                                            ? doc.default
+                                            : JSON.parse(doc.default),
+                                      };
+                                    } else if (
+                                      doc.data_type === "number" ||
+                                      doc.data_type === "date"
+                                    ) {
+                                      return {
+                                        ...doc,
+                                        data_type: doc.data_type,
+                                        model_inventory_column_id: doc.id,
+                                        value:
+                                          doc.default === "" ||
+                                          doc.default === "-"
+                                            ? ""
+                                            : doc.default,
+                                        default:
+                                          doc.default === "" ||
+                                          doc.default === "-"
+                                            ? ""
+                                            : doc.default,
+                                      };
+                                    } else {
+                                      return {
+                                        ...doc,
+                                        data_type: doc.data_type,
+                                        model_inventory_column_id: doc.id,
+                                        value: doc.default,
+                                      };
+                                    }
+                                  }
+                                );
+                                temp11.push({
+                                  model_name: item[i].name,
+                                  asset_name: item[i].asset.name,
+                                  enable_part: false,
+                                  disable_part: level > 0 ? true : false,
+                                  id: item[i].id,
+                                  model_id: item[i].id,
+                                  vendor_id: null,
+                                  inventory_name: "",
+                                  status_condition: null,
+                                  status_usage: null,
+                                  serial_number: "",
+                                  is_exist: true,
+                                  deskripsi: "",
+                                  manufacturer_id: null,
+                                  mig_id: "",
+                                  inventory_values: temp1,
+                                  inventory_parts:
+                                    item[i].model_parts.length > 0
+                                      ? recursivePartModel(
+                                          item[i].model_parts,
+                                          level
+                                        )
+                                      : [],
+                                });
+                              }
+                              return temp11;
+                            };
+                            const yo = recursivePartModel(
+                              res2.data.model_parts,
+                              level
                             );
-                            return temploc;
-                          });
-                          setloadingspec(false);
-                          setdisabledfielditem(false);
-                          setmanuffielditem(true);
-                        } else {
-                          setcolumnsmodeldata([]);
-                          setpartmodeldata([]);
-                          setloadingspec(false);
-                          setdisabledfielditem(false);
-                          setmanuffielditem(true);
-                        }
-                      });
-                  }}
-                >
-                  {modelfilter.map((doc, idx) => (
-                    <Select.Option
-                      value={doc.id}
-                      asset_name={doc.asset.name}
-                      required_sn={doc.required_sn}
-                    >
-                      {doc.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="model_id"
-                label={
-                  <div className="flex">
-                    <span className="judulField"></span>
-                    <p className="mb-0 ml-1">Asset Type</p>
-                    <style jsx>
-                      {`
-                                            .judulField::before{
-                                                content: '*';
-                                                color: red;
-                                            }
-                                        `}
-                    </style>
-                  </div>
-                }
-              >
-                <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">
-                  {assetnameitem}
-                </div>
-              </Form.Item>
-              {/* <Form.Item name="inventory_name" label="Nama Item"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Nama Item wajib diisi',
-                                    },
-                                ]}>
-                                <Input disabled={disabledfielditem} name="inventory_name" onChange={(e) => { setnewdata({ ...newdata, inventory_name: e.target.value }) }} />
-                            </Form.Item> */}
-              <Form.Item
-                name="mig_id"
-                label="MIG ID"
-                rules={[
-                  {
-                    required: true,
-                    message: "MIG ID wajib diisi",
-                  },
-                ]}
-              >
-                <Input
-                  disabled={disabledfielditem}
-                  name="mig_id"
-                  onChange={(e) => {
-                    setnewdata({ ...newdata, mig_id: e.target.value });
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                name="status_condition"
-                label="Kondisi"
-                rules={[
-                  {
-                    required: true,
-                    message: "Kondisi wajib dipilih",
-                  },
-                ]}
-              >
-                <Select
-                  disabled={disabledfielditem}
-                  placeholder="Pilih Kondisi"
-                  onChange={(value) => {
-                    setnewdata({ ...newdata, status_condition: value });
-                  }}
-                >
-                  <Select.Option value={1}>
-                    <div className="p-1 flex w-full items-center">
-                      <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                      <p className="mb-0">Good</p>
-                    </div>
-                  </Select.Option>
-                  <Select.Option value={2}>
-                    <div className="p-1 flex w-full items-center">
-                      <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
-                      <p className="mb-0">Grey</p>
-                    </div>
-                  </Select.Option>
-                  <Select.Option value={3}>
-                    <div className="p-1 flex w-full items-center">
-                      <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                      <p className="mb-0">Bad</p>
-                    </div>
-                  </Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="status_usage"
-                label="Status Pemakaian"
-                rules={[
-                  {
-                    required: true,
-                    message: "Status Pemakaian wajib dipilih",
-                  },
-                ]}
-              >
-                <Select
-                  disabled={disabledfielditem}
-                  placeholder="Pilih Status Pemakaian"
-                  onChange={(value) => {
-                    setnewdata({ ...newdata, status_usage: value });
-                  }}
-                >
-                  <Select.Option value={1}>In Used</Select.Option>
-                  <Select.Option value={2}>In Stock</Select.Option>
-                  <Select.Option value={3}>Replacement</Select.Option>
-                </Select>
-              </Form.Item>
-              {snitem ? (
+                            setpartmodeldata(yo);
+                            setnewdata((prev) => {
+                              var temploc = prev;
+                              temploc.inventory_values = [];
+                              temp.forEach((doc) => {
+                                temploc.inventory_values.push({
+                                  data_type: doc.data_type,
+                                  model_inventory_column_id: doc.id,
+                                  value: doc.default,
+                                });
+                              });
+                              temploc.inventory_parts = yo;
+                              temploc.manufacturer_id =
+                                res2.data.manufacturer_id;
+                              temploc.is_consumable = Boolean(
+                                res2.data.is_consumable
+                              );
+                              return temploc;
+                            });
+                            setloadingspec(false);
+                            setdisabledfielditem(false);
+                            setmanuffielditem(true);
+                          } else {
+                            setcolumnsmodeldata([]);
+                            setpartmodeldata([]);
+                            setloadingspec(false);
+                            setdisabledfielditem(false);
+                            setmanuffielditem(true);
+                          }
+                        });
+                    }}
+                  >
+                    {modelfilter.map((doc, idx) => (
+                      <Select.Option
+                        value={doc.id}
+                        asset_name={doc.asset.name}
+                        required_sn={doc.required_sn}
+                      >
+                        {doc.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
                 <Form.Item
-                  name="serial_number"
-                  label="Serial Number"
+                  name="model_id"
+                  label={
+                    <div className="flex">
+                      <span className="judulField"></span>
+                      <p className="mb-0 ml-1">Asset Type</p>
+                      <style jsx>
+                        {`
+                                              .judulField::before{
+                                                  content: '*';
+                                                  color: red;
+                                              }
+                                          `}
+                      </style>
+                    </div>
+                  }
+                >
+                  <div className="w-full rounded-sm flex items-center bg-gray-100 border p-2 h-8">
+                    {assetnameitem}
+                  </div>
+                </Form.Item>
+                {/* <Form.Item name="inventory_name" label="Nama Item"
+                                  rules={[
+                                      {
+                                          required: true,
+                                          message: 'Nama Item wajib diisi',
+                                      },
+                                  ]}>
+                                  <Input disabled={disabledfielditem} name="inventory_name" onChange={(e) => { setnewdata({ ...newdata, inventory_name: e.target.value }) }} />
+                              </Form.Item> */}
+                <Form.Item
+                  name="mig_id"
+                  label="MIG ID"
                   rules={[
                     {
                       required: true,
-                      message: "Serial Number wajib diisi",
+                      message: "MIG ID wajib diisi",
                     },
                   ]}
                 >
                   <Input
                     disabled={disabledfielditem}
-                    name="serial_number"
+                    name="mig_id"
                     onChange={(e) => {
-                      setnewdata({ ...newdata, serial_number: e.target.value });
+                      setnewdata({ ...newdata, mig_id: e.target.value });
                     }}
                   />
                 </Form.Item>
-              ) : (
-                <Form.Item name="serial_number" label="Serial Number">
-                  <Input
-                    disabled={disabledfielditem}
-                    name="serial_number"
-                    onChange={(e) => {
-                      setnewdata({ ...newdata, serial_number: e.target.value });
-                    }}
-                  />
-                </Form.Item>
-              )}
-              <Form.Item name="location" label="Lokasi">
-                <TreeSelect
-                  disabled={disabledfielditem}
-                  treeDefaultExpandedKeys={[invrelations.tree_companies.key]}
-                  placeholder="Pilih Location"
-                  treeData={[invrelations.tree_companies]}
-                  onChange={(value) => {
-                    setnewdata({
-                      ...newdata,
-                      location: value,
-                      sub_location: value,
-                    });
-                    setsubloctrigger(value);
-                  }}
-                  showSearch
-                  treeNodeFilterProp="title"
-                  filterTreeNode={(search, item) => {
-                    /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                    /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                    return (
-                      item.title.toLowerCase().indexOf(search.toLowerCase()) >=
-                      0
-                    );
-                  }}
-                ></TreeSelect>
-              </Form.Item>
-              <Form.Item name="owned_by" label="Owned By">
-                <Select
-                  disabled={disabledfielditem}
-                  showSearch
-                  filterOption={(input, opt) =>
-                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
-                  notFoundContent={
-                    isFetchingOwnerList ? <Spin size="small" /> : undefined
-                  }
-                  placeholder="Pilih Owner"
-                  onChange={(value) => {
-                    if (typeof value === "number") {
-                      setnewdata((prev) => ({
-                        ...prev,
-                        owned_by: value,
-                      }));
-                    }
-                  }}
-                  onDropdownVisibleChange={(isOpen) => {
-                    if (isOpen) {
-                      fetchCompanyClientList();
-                    }
-                  }}
+                <Form.Item
+                  name="status_condition"
+                  label="Kondisi"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Kondisi wajib dipilih",
+                    },
+                  ]}
                 >
-                  {ownerList.map((user) => (
-                    <Select.Option value={user.id}>{user.name}</Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              {newdata.location !== null && (
-                <Form.Item name="sublocation" label="Sub Lokasi">
-                  <TreeSelect
-                    allowClear
+                  <Select
                     disabled={disabledfielditem}
-                    placeholder="Pilih Location"
-                    treeData={sublocdata}
+                    placeholder="Pilih Kondisi"
                     onChange={(value) => {
-                      if (typeof value === "undefined") {
+                      setnewdata({ ...newdata, status_condition: value });
+                    }}
+                  >
+                    <Select.Option value={1}>
+                      <div className="p-1 flex w-full items-center">
+                        <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                        <p className="mb-0">Good</p>
+                      </div>
+                    </Select.Option>
+                    <Select.Option value={2}>
+                      <div className="p-1 flex w-full items-center">
+                        <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
+                        <p className="mb-0">Grey</p>
+                      </div>
+                    </Select.Option>
+                    <Select.Option value={3}>
+                      <div className="p-1 flex w-full items-center">
+                        <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                        <p className="mb-0">Bad</p>
+                      </div>
+                    </Select.Option>
+                  </Select>
+                </Form.Item>
+                <Form.Item
+                  name="status_usage"
+                  label="Status Pemakaian"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Status Pemakaian wajib dipilih",
+                    },
+                  ]}
+                >
+                  <Select
+                    disabled={disabledfielditem}
+                    placeholder="Pilih Status Pemakaian"
+                    onChange={(value) => {
+                      setnewdata({ ...newdata, status_usage: value });
+                    }}
+                  >
+                    <Select.Option value={1}>In Used</Select.Option>
+                    <Select.Option value={2}>In Stock</Select.Option>
+                    <Select.Option value={3}>Replacement</Select.Option>
+                  </Select>
+                </Form.Item>
+                {snitem ? (
+                  <Form.Item
+                    name="serial_number"
+                    label="Serial Number"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Serial Number wajib diisi",
+                      },
+                    ]}
+                  >
+                    <Input
+                      disabled={disabledfielditem}
+                      name="serial_number"
+                      onChange={(e) => {
                         setnewdata({
                           ...newdata,
-                          location: newdata.sub_location,
+                          serial_number: e.target.value,
                         });
-                      } else {
-                        setnewdata({ ...newdata, location: value });
-                      }
+                      }}
+                    />
+                  </Form.Item>
+                ) : (
+                  <Form.Item name="serial_number" label="Serial Number">
+                    <Input
+                      disabled={disabledfielditem}
+                      name="serial_number"
+                      onChange={(e) => {
+                        setnewdata({
+                          ...newdata,
+                          serial_number: e.target.value,
+                        });
+                      }}
+                    />
+                  </Form.Item>
+                )}
+                <Form.Item name="location" label="Lokasi">
+                  <TreeSelect
+                    disabled={disabledfielditem}
+                    treeDefaultExpandedKeys={[invrelations.tree_companies.key]}
+                    placeholder="Pilih Location"
+                    treeData={[invrelations.tree_companies]}
+                    onChange={(value) => {
+                      setnewdata({
+                        ...newdata,
+                        location: value,
+                        sub_location: value,
+                      });
+                      setsubloctrigger(value);
                     }}
                     showSearch
                     treeNodeFilterProp="title"
@@ -1566,125 +1594,490 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     }}
                   ></TreeSelect>
                 </Form.Item>
-              )}
-              <Form.Item name="vendor_id" label="Vendor">
-                <Select
-                  disabled={disabledfielditem}
-                  placeholder="Pilih vendor"
-                  onChange={(value) => {
-                    setnewdata({ ...newdata, vendor_id: value });
-                  }}
-                >
-                  {invrelations.vendors.map((doc, idx) => {
-                    return (
-                      <Select.Option value={doc.id}>{doc.name}</Select.Option>
-                    );
-                  })}
-                </Select>
-              </Form.Item>
-              {manuffielditem ? (
-                <Form.Item name="manufacturer_id" label="Manufacturer">
+                <Form.Item name="owned_by" label="Owned By">
                   <Select
                     disabled={disabledfielditem}
-                    defaultValue={newdata.manufacturer_id}
-                    placeholder="Pilih Manufacturer"
+                    showSearch
+                    filterOption={(input, opt) =>
+                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                      0
+                    }
+                    notFoundContent={
+                      isFetchingOwnerList ? <Spin size="small" /> : undefined
+                    }
+                    placeholder="Pilih Owner"
                     onChange={(value) => {
-                      setnewdata({ ...newdata, manufacturer_id: value });
+                      if (typeof value === "number") {
+                        setnewdata((prev) => ({
+                          ...prev,
+                          owned_by: value,
+                        }));
+                      }
+                    }}
+                    onDropdownVisibleChange={(isOpen) => {
+                      if (isOpen) {
+                        fetchCompanyClientList();
+                      }
                     }}
                   >
-                    {invrelations.manufacturers.map((doc, idx) => {
+                    {ownerList.map((user) => (
+                      <Select.Option value={user.id}>{user.name}</Select.Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+                {newdata.location !== null && (
+                  <Form.Item name="sublocation" label="Sub Lokasi">
+                    <TreeSelect
+                      allowClear
+                      disabled={disabledfielditem}
+                      placeholder="Pilih Location"
+                      treeData={sublocdata}
+                      onChange={(value) => {
+                        if (typeof value === "undefined") {
+                          setnewdata({
+                            ...newdata,
+                            location: newdata.sub_location,
+                          });
+                        } else {
+                          setnewdata({ ...newdata, location: value });
+                        }
+                      }}
+                      showSearch
+                      treeNodeFilterProp="title"
+                      filterTreeNode={(search, item) => {
+                        /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                        /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                        return (
+                          item.title
+                            .toLowerCase()
+                            .indexOf(search.toLowerCase()) >= 0
+                        );
+                      }}
+                    ></TreeSelect>
+                  </Form.Item>
+                )}
+                <Form.Item name="vendor_id" label="Vendor">
+                  <Select
+                    disabled={disabledfielditem}
+                    placeholder="Pilih vendor"
+                    onChange={(value) => {
+                      setnewdata({ ...newdata, vendor_id: value });
+                    }}
+                  >
+                    {invrelations.vendors.map((doc, idx) => {
                       return (
                         <Select.Option value={doc.id}>{doc.name}</Select.Option>
                       );
                     })}
                   </Select>
                 </Form.Item>
-              ) : null}
-              <Form.Item name="deskripsi" label="Deskripsi">
-                <Input.TextArea
-                  disabled={disabledfielditem}
-                  rows={4}
-                  name="deskripsi"
-                  onChange={(e) => {
-                    setnewdata({ ...newdata, deskripsi: e.target.value });
-                  }}
-                />
-              </Form.Item>
-              {newdata.is_consumable && (
-                <Form.Item name="quantity" label="Jumlah Barang">
-                  <InputNumber
-                    style={{ width: `100%` }}
+                {manuffielditem ? (
+                  <Form.Item name="manufacturer_id" label="Manufacturer">
+                    <Select
+                      disabled={disabledfielditem}
+                      defaultValue={newdata.manufacturer_id}
+                      placeholder="Pilih Manufacturer"
+                      onChange={(value) => {
+                        setnewdata({ ...newdata, manufacturer_id: value });
+                      }}
+                    >
+                      {invrelations.manufacturers.map((doc, idx) => {
+                        return (
+                          <Select.Option value={doc.id}>
+                            {doc.name}
+                          </Select.Option>
+                        );
+                      })}
+                    </Select>
+                  </Form.Item>
+                ) : null}
+                <Form.Item name="deskripsi" label="Deskripsi">
+                  <Input.TextArea
                     disabled={disabledfielditem}
                     rows={4}
-                    name="quantity"
-                    onChange={(value) => {
-                      setnewdata({ ...newdata, quantity: value });
+                    name="deskripsi"
+                    onChange={(e) => {
+                      setnewdata({ ...newdata, deskripsi: e.target.value });
                     }}
                   />
                 </Form.Item>
-              )}
-            </Form>
+                {newdata.is_consumable && (
+                  <Form.Item name="quantity" label="Jumlah Barang">
+                    <InputNumber
+                      style={{ width: `100%` }}
+                      disabled={disabledfielditem}
+                      rows={4}
+                      name="quantity"
+                      onChange={(value) => {
+                        setnewdata({ ...newdata, quantity: value });
+                      }}
+                    />
+                  </Form.Item>
+                )}
+              </Form>
+            </div>
           </div>
-        </div>
-        <div className="col-span-1 md:col-span-4 mb-6 py-3 px-12">
-          <div className="mb-3">
-            <h1 className="font-bold text-xl">Spesifikasi Item</h1>
-          </div>
-          <div className="shadow-md border p-5 flex flex-col rounded-md">
-            {loadingspec ? (
-              <Spin />
-            ) : (
-              <>
-                {columnsmodeldata.length === 0 ? (
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                ) : (
-                  <Form layout="vertical" form={instanceForm2}>
-                    {columnsmodeldata.map((docinvvalue, idxinvvalue) => {
-                      if (docinvvalue.required) {
-                        // const idxfieldmain = newdata.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
-                        return (
-                          <Form.Item
-                            name={docinvvalue.name}
-                            label={
-                              <div className="flex">
-                                <span className="judulField"></span>
-                                <p className="mb-0 ml-1">{docinvvalue.name}</p>
-                                <style jsx>
-                                  {`
-                                                                                .judulField::before{
-                                                                                    content: '*';
-                                                                                    color: red;
-                                                                                }
-                                                                            `}
-                                </style>
-                              </div>
-                            }
-                          >
-                            <>
-                              {docinvvalue.data_type === "dropdown" && (
-                                <>
+
+          <div className="col-span-1 md:col-span-4 mb-6 py-3 px-12">
+            <div className="mb-3">
+              <h1 className="font-bold text-xl">Spesifikasi Item</h1>
+            </div>
+            <div className="shadow-md border p-5 flex flex-col rounded-md">
+              {loadingspec ? (
+                <Spin />
+              ) : (
+                <>
+                  {columnsmodeldata.length === 0 ? (
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                  ) : (
+                    <Form layout="vertical" form={instanceForm2}>
+                      {columnsmodeldata.map((docinvvalue, idxinvvalue) => {
+                        if (docinvvalue.required) {
+                          // const idxfieldmain = newdata.inventory_values.map(docname => docname.model_inventory_column_id).indexOf(docinvvalue.id)
+                          return (
+                            <Form.Item
+                              name={docinvvalue.name}
+                              label={
+                                <div className="flex">
+                                  <span className="judulField"></span>
+                                  <p className="mb-0 ml-1">
+                                    {docinvvalue.name}
+                                  </p>
+                                  <style jsx>
+                                    {`
+                                                                                  .judulField::before{
+                                                                                      content: '*';
+                                                                                      color: red;
+                                                                                  }
+                                                                              `}
+                                  </style>
+                                </div>
+                              }
+                            >
+                              <>
+                                {docinvvalue.data_type === "dropdown" && (
+                                  <>
+                                    <Select
+                                      defaultValue={docinvvalue.default.default}
+                                      style={{ width: `100%` }}
+                                      onChange={(value, label) => {
+                                        if (typeof value === "undefined") {
+                                          setdisabledfield(true);
+                                        } else {
+                                          setdisabledfield(false);
+                                          setnewdata((prev) => {
+                                            var temp = prev;
+                                            const idxfield =
+                                              temp.inventory_values
+                                                .map(
+                                                  (docname) =>
+                                                    docname.model_inventory_column_id
+                                                )
+                                                .indexOf(docinvvalue.id);
+                                            temp.inventory_values[
+                                              idxfield
+                                            ].value.default = value;
+                                            return temp;
+                                          });
+                                        }
+                                      }}
+                                    >
+                                      {docinvvalue.default.opsi.map(
+                                        (doc2, idx2) => (
+                                          <Select.Option
+                                            key={doc2}
+                                            value={idx2}
+                                          >
+                                            {doc2}
+                                          </Select.Option>
+                                        )
+                                      )}
+                                    </Select>
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus dipilih
+                                      </p>
+                                    ) : null}
+                                  </>
+                                )}
+                                {docinvvalue.data_type === "checkbox" && (
+                                  <div className="w-full flex flex-col">
+                                    {docinvvalue.default.opsi.map(
+                                      (doc3, idx3) => {
+                                        return (
+                                          <div className="flex mb-1">
+                                            <Checkbox
+                                              defaultChecked={docinvvalue.default.default.includes(
+                                                idx3
+                                              )}
+                                              style={{ marginRight: `0.5rem` }}
+                                              onChange={(e) => {
+                                                if (
+                                                  docinvvalue.default.default
+                                                    .length === 0
+                                                ) {
+                                                  setdisabledfield(true);
+                                                } else {
+                                                  setdisabledfield(false);
+                                                  setnewdata((prev) => {
+                                                    var temp = prev;
+                                                    const idxfield =
+                                                      temp.inventory_values
+                                                        .map(
+                                                          (docname) =>
+                                                            docname.model_inventory_column_id
+                                                        )
+                                                        .indexOf(
+                                                          docinvvalue.id
+                                                        );
+                                                    if (
+                                                      e.target.checked === true
+                                                    ) {
+                                                      temp.inventory_values[
+                                                        idxfield
+                                                      ].value.default.push(
+                                                        idx3
+                                                      );
+                                                    } else {
+                                                      var idxtoremove =
+                                                        temp.inventory_values[
+                                                          idxfield
+                                                        ].value.default.indexOf(
+                                                          idx3
+                                                        );
+                                                      temp.inventory_values[
+                                                        idxfield
+                                                      ].value.default.splice(
+                                                        idxtoremove,
+                                                        1
+                                                      );
+                                                    }
+                                                    return temp;
+                                                  });
+                                                }
+                                              }}
+                                            ></Checkbox>
+                                            <p className="mb-0">{doc3}</p>
+                                          </div>
+                                        );
+                                      }
+                                    )}
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus dipilih
+                                      </p>
+                                    ) : null}
+                                  </div>
+                                )}
+                                {docinvvalue.data_type === "date" && (
+                                  <>
+                                    <DatePicker
+                                      /*style={dynamicfielditem[idxinvvalue].value === "" ? { borderColor: `red` } : null}*/ defaultValue={
+                                        docinvvalue.default === ""
+                                          ? null
+                                          : moment(docinvvalue.default)
+                                      }
+                                      onChange={(date, datestring) => {
+                                        if (datestring === "") {
+                                          setdisabledfield(true);
+                                        } else {
+                                          setdisabledfield(false);
+                                          setnewdata((prev) => {
+                                            var temp = prev;
+                                            const idxfield =
+                                              temp.inventory_values
+                                                .map(
+                                                  (docname) =>
+                                                    docname.model_inventory_column_id
+                                                )
+                                                .indexOf(docinvvalue.id);
+                                            temp.inventory_values[
+                                              idxfield
+                                            ].value = datestring;
+                                            return temp;
+                                          });
+                                        }
+                                        // setdynamicfielditem(prev => {
+                                        //     var temp = prev
+                                        //     temp[idxinvvalue].value = datestring
+                                        //     return temp
+                                        // })
+                                      }}
+                                    ></DatePicker>
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus dipilih
+                                      </p>
+                                    ) : null}
+                                    {/* {
+                                                                                      dynamicfielditem[idxinvvalue].value === "" ?
+                                                                                          null
+                                                                                          :
+                                                                                          <p className="text-red-500 mb-0">{docinvvalue.name} wajib dipilih</p>
+                                                                                  } */}
+                                  </>
+                                )}
+                                {docinvvalue.data_type === "paragraph" && (
+                                  <>
+                                    <Input.TextArea
+                                      rows={4}
+                                      defaultValue={docinvvalue.default}
+                                      onChange={(e) => {
+                                        if (e.target.value === "") {
+                                          setdisabledfield(true);
+                                        } else {
+                                          setdisabledfield(false);
+                                          setnewdata((prev) => {
+                                            var temp = prev;
+                                            const idxfield =
+                                              temp.inventory_values
+                                                .map(
+                                                  (docname) =>
+                                                    docname.model_inventory_column_id
+                                                )
+                                                .indexOf(docinvvalue.id);
+                                            temp.inventory_values[
+                                              idxfield
+                                            ].value = e.target.value;
+                                            return temp;
+                                          });
+                                        }
+                                      }}
+                                    ></Input.TextArea>
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus diisi
+                                      </p>
+                                    ) : null}
+                                  </>
+                                )}
+                                {docinvvalue.data_type === "number" && (
+                                  <>
+                                    <InputNumber
+                                      defaultValue={docinvvalue.default}
+                                      onChange={(value) => {
+                                        if (value === "" || value === null) {
+                                          setdisabledfield(true);
+                                        } else {
+                                          setdisabledfield(false);
+                                          setnewdata((prev) => {
+                                            var temp = prev;
+                                            const idxfield =
+                                              temp.inventory_values
+                                                .map(
+                                                  (docname) =>
+                                                    docname.model_inventory_column_id
+                                                )
+                                                .indexOf(docinvvalue.id);
+                                            temp.inventory_values[
+                                              idxfield
+                                            ].value = `${value}`;
+                                            return temp;
+                                          });
+                                        }
+                                      }}
+                                    ></InputNumber>
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus diisi
+                                      </p>
+                                    ) : null}
+                                  </>
+                                )}
+                                {docinvvalue.data_type === "single" && (
+                                  <>
+                                    <Input
+                                      defaultValue={docinvvalue.default}
+                                      onChange={(e) => {
+                                        if (e.target.value === "") {
+                                          setdisabledfield(true);
+                                        } else {
+                                          setdisabledfield(false);
+                                          setnewdata((prev) => {
+                                            var temp = prev;
+                                            const idxfield =
+                                              temp.inventory_values
+                                                .map(
+                                                  (docname) =>
+                                                    docname.model_inventory_column_id
+                                                )
+                                                .indexOf(docinvvalue.id);
+                                            temp.inventory_values[
+                                              idxfield
+                                            ].value = e.target.value;
+                                            return temp;
+                                          });
+                                        }
+                                      }}
+                                    ></Input>
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus diisi
+                                      </p>
+                                    ) : null}
+                                  </>
+                                )}
+                                {docinvvalue.data_type === "String" && (
+                                  <>
+                                    <Input
+                                      defaultValue={docinvvalue.default}
+                                      onChange={(e) => {
+                                        if (e.target.value === "") {
+                                          setdisabledfield(true);
+                                        } else {
+                                          setdisabledfield(false);
+                                          setnewdata((prev) => {
+                                            var temp = prev;
+                                            const idxfield =
+                                              temp.inventory_values
+                                                .map(
+                                                  (docname) =>
+                                                    docname.model_inventory_column_id
+                                                )
+                                                .indexOf(docinvvalue.id);
+                                            temp.inventory_values[
+                                              idxfield
+                                            ].value = e.target.value;
+                                            return temp;
+                                          });
+                                        }
+                                      }}
+                                    ></Input>
+                                    {disabledfield ? (
+                                      <p className=" text-red-500 mb-0">
+                                        {docinvvalue.name} harus diisi
+                                      </p>
+                                    ) : null}
+                                  </>
+                                )}
+                              </>
+                            </Form.Item>
+                          );
+                        } else {
+                          return (
+                            <Form.Item
+                              name={docinvvalue.name}
+                              label={docinvvalue.name}
+                            >
+                              <>
+                                {docinvvalue.data_type === "dropdown" && (
                                   <Select
                                     defaultValue={docinvvalue.default.default}
                                     style={{ width: `100%` }}
                                     onChange={(value, label) => {
-                                      if (typeof value === "undefined") {
-                                        setdisabledfield(true);
-                                      } else {
-                                        setdisabledfield(false);
-                                        setnewdata((prev) => {
-                                          var temp = prev;
-                                          const idxfield = temp.inventory_values
-                                            .map(
-                                              (docname) =>
-                                                docname.model_inventory_column_id
-                                            )
-                                            .indexOf(docinvvalue.id);
-                                          temp.inventory_values[
-                                            idxfield
-                                          ].value.default = value;
-                                          return temp;
-                                        });
-                                      }
+                                      setnewdata((prev) => {
+                                        var temp = prev;
+                                        const idxfield = temp.inventory_values
+                                          .map(
+                                            (docname) =>
+                                              docname.model_inventory_column_id
+                                          )
+                                          .indexOf(docinvvalue.id);
+                                        temp.inventory_values[
+                                          idxfield
+                                        ].value.default = value;
+                                        return temp;
+                                      });
                                     }}
                                   >
                                     {docinvvalue.default.opsi.map(
@@ -1695,32 +2088,19 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       )
                                     )}
                                   </Select>
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus dipilih
-                                    </p>
-                                  ) : null}
-                                </>
-                              )}
-                              {docinvvalue.data_type === "checkbox" && (
-                                <div className="w-full flex flex-col">
-                                  {docinvvalue.default.opsi.map(
-                                    (doc3, idx3) => {
-                                      return (
-                                        <div className="flex mb-1">
-                                          <Checkbox
-                                            defaultChecked={docinvvalue.default.default.includes(
-                                              idx3
-                                            )}
-                                            style={{ marginRight: `0.5rem` }}
-                                            onChange={(e) => {
-                                              if (
-                                                docinvvalue.default.default
-                                                  .length === 0
-                                              ) {
-                                                setdisabledfield(true);
-                                              } else {
-                                                setdisabledfield(false);
+                                )}
+                                {docinvvalue.data_type === "checkbox" && (
+                                  <div className="w-full flex flex-col">
+                                    {docinvvalue.default.opsi.map(
+                                      (doc3, idx3) => {
+                                        return (
+                                          <div className="flex mb-1">
+                                            <Checkbox
+                                              defaultChecked={docinvvalue.default.default.includes(
+                                                idx3
+                                              )}
+                                              style={{ marginRight: `0.5rem` }}
+                                              onChange={(e) => {
                                                 setnewdata((prev) => {
                                                   var temp = prev;
                                                   const idxfield =
@@ -1752,1139 +2132,875 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                   }
                                                   return temp;
                                                 });
-                                              }
-                                            }}
-                                          ></Checkbox>
-                                          <p className="mb-0">{doc3}</p>
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus dipilih
-                                    </p>
-                                  ) : null}
-                                </div>
-                              )}
-                              {docinvvalue.data_type === "date" && (
-                                <>
+                                              }}
+                                            ></Checkbox>
+                                            <p className="mb-0">{doc3}</p>
+                                          </div>
+                                        );
+                                      }
+                                    )}
+                                  </div>
+                                )}
+                                {docinvvalue.data_type === "date" && (
                                   <DatePicker
-                                    /*style={dynamicfielditem[idxinvvalue].value === "" ? { borderColor: `red` } : null}*/ defaultValue={
+                                    defaultValue={
                                       docinvvalue.default === ""
                                         ? null
                                         : moment(docinvvalue.default)
                                     }
                                     onChange={(date, datestring) => {
-                                      if (datestring === "") {
-                                        setdisabledfield(true);
-                                      } else {
-                                        setdisabledfield(false);
-                                        setnewdata((prev) => {
-                                          var temp = prev;
-                                          const idxfield = temp.inventory_values
-                                            .map(
-                                              (docname) =>
-                                                docname.model_inventory_column_id
-                                            )
-                                            .indexOf(docinvvalue.id);
-                                          temp.inventory_values[
-                                            idxfield
-                                          ].value = datestring;
-                                          return temp;
-                                        });
-                                      }
-                                      // setdynamicfielditem(prev => {
-                                      //     var temp = prev
-                                      //     temp[idxinvvalue].value = datestring
-                                      //     return temp
-                                      // })
+                                      setnewdata((prev) => {
+                                        var temp = prev;
+                                        const idxfield = temp.inventory_values
+                                          .map(
+                                            (docname) =>
+                                              docname.model_inventory_column_id
+                                          )
+                                          .indexOf(docinvvalue.id);
+                                        temp.inventory_values[idxfield].value =
+                                          datestring;
+                                        return temp;
+                                      });
                                     }}
                                   ></DatePicker>
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus dipilih
-                                    </p>
-                                  ) : null}
-                                  {/* {
-                                                                                    dynamicfielditem[idxinvvalue].value === "" ?
-                                                                                        null
-                                                                                        :
-                                                                                        <p className="text-red-500 mb-0">{docinvvalue.name} wajib dipilih</p>
-                                                                                } */}
-                                </>
-                              )}
-                              {docinvvalue.data_type === "paragraph" && (
-                                <>
+                                )}
+                                {docinvvalue.data_type === "paragraph" && (
                                   <Input.TextArea
                                     rows={4}
                                     defaultValue={docinvvalue.default}
                                     onChange={(e) => {
-                                      if (e.target.value === "") {
-                                        setdisabledfield(true);
-                                      } else {
-                                        setdisabledfield(false);
-                                        setnewdata((prev) => {
-                                          var temp = prev;
-                                          const idxfield = temp.inventory_values
-                                            .map(
-                                              (docname) =>
-                                                docname.model_inventory_column_id
-                                            )
-                                            .indexOf(docinvvalue.id);
-                                          temp.inventory_values[
-                                            idxfield
-                                          ].value = e.target.value;
-                                          return temp;
-                                        });
-                                      }
+                                      setnewdata((prev) => {
+                                        var temp = prev;
+                                        const idxfield = temp.inventory_values
+                                          .map(
+                                            (docname) =>
+                                              docname.model_inventory_column_id
+                                          )
+                                          .indexOf(docinvvalue.id);
+                                        temp.inventory_values[idxfield].value =
+                                          e.target.value;
+                                        return temp;
+                                      });
                                     }}
                                   ></Input.TextArea>
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus diisi
-                                    </p>
-                                  ) : null}
-                                </>
-                              )}
-                              {docinvvalue.data_type === "number" && (
-                                <>
+                                )}
+                                {docinvvalue.data_type === "number" && (
                                   <InputNumber
                                     defaultValue={docinvvalue.default}
                                     onChange={(value) => {
-                                      if (value === "" || value === null) {
-                                        setdisabledfield(true);
-                                      } else {
-                                        setdisabledfield(false);
-                                        setnewdata((prev) => {
-                                          var temp = prev;
-                                          const idxfield = temp.inventory_values
-                                            .map(
-                                              (docname) =>
-                                                docname.model_inventory_column_id
-                                            )
-                                            .indexOf(docinvvalue.id);
-                                          temp.inventory_values[
-                                            idxfield
-                                          ].value = `${value}`;
-                                          return temp;
-                                        });
-                                      }
+                                      setnewdata((prev) => {
+                                        var temp = prev;
+                                        const idxfield = temp.inventory_values
+                                          .map(
+                                            (docname) =>
+                                              docname.model_inventory_column_id
+                                          )
+                                          .indexOf(docinvvalue.id);
+                                        temp.inventory_values[
+                                          idxfield
+                                        ].value = `${value}`;
+                                        return temp;
+                                      });
                                     }}
                                   ></InputNumber>
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus diisi
-                                    </p>
-                                  ) : null}
-                                </>
-                              )}
-                              {docinvvalue.data_type === "single" && (
-                                <>
+                                )}
+                                {docinvvalue.data_type === "single" && (
                                   <Input
                                     defaultValue={docinvvalue.default}
                                     onChange={(e) => {
-                                      if (e.target.value === "") {
-                                        setdisabledfield(true);
-                                      } else {
-                                        setdisabledfield(false);
-                                        setnewdata((prev) => {
-                                          var temp = prev;
-                                          const idxfield = temp.inventory_values
-                                            .map(
-                                              (docname) =>
-                                                docname.model_inventory_column_id
-                                            )
-                                            .indexOf(docinvvalue.id);
-                                          temp.inventory_values[
-                                            idxfield
-                                          ].value = e.target.value;
-                                          return temp;
-                                        });
-                                      }
+                                      setnewdata((prev) => {
+                                        var temp = prev;
+                                        const idxfield = temp.inventory_values
+                                          .map(
+                                            (docname) =>
+                                              docname.model_inventory_column_id
+                                          )
+                                          .indexOf(docinvvalue.id);
+                                        temp.inventory_values[idxfield].value =
+                                          e.target.value;
+                                        return temp;
+                                      });
                                     }}
                                   ></Input>
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus diisi
-                                    </p>
-                                  ) : null}
-                                </>
-                              )}
-                              {docinvvalue.data_type === "String" && (
-                                <>
+                                )}
+                                {docinvvalue.data_type === "String" && (
                                   <Input
                                     defaultValue={docinvvalue.default}
                                     onChange={(e) => {
-                                      if (e.target.value === "") {
-                                        setdisabledfield(true);
-                                      } else {
-                                        setdisabledfield(false);
-                                        setnewdata((prev) => {
-                                          var temp = prev;
-                                          const idxfield = temp.inventory_values
-                                            .map(
-                                              (docname) =>
-                                                docname.model_inventory_column_id
-                                            )
-                                            .indexOf(docinvvalue.id);
-                                          temp.inventory_values[
-                                            idxfield
-                                          ].value = e.target.value;
-                                          return temp;
-                                        });
-                                      }
+                                      setnewdata((prev) => {
+                                        var temp = prev;
+                                        const idxfield = temp.inventory_values
+                                          .map(
+                                            (docname) =>
+                                              docname.model_inventory_column_id
+                                          )
+                                          .indexOf(docinvvalue.id);
+                                        temp.inventory_values[idxfield].value =
+                                          e.target.value;
+                                        return temp;
+                                      });
                                     }}
                                   ></Input>
-                                  {disabledfield ? (
-                                    <p className=" text-red-500 mb-0">
-                                      {docinvvalue.name} harus diisi
-                                    </p>
-                                  ) : null}
-                                </>
-                              )}
-                            </>
-                          </Form.Item>
-                        );
-                      } else {
-                        return (
-                          <Form.Item
-                            name={docinvvalue.name}
-                            label={docinvvalue.name}
-                          >
-                            <>
-                              {docinvvalue.data_type === "dropdown" && (
-                                <Select
-                                  defaultValue={docinvvalue.default.default}
-                                  style={{ width: `100%` }}
-                                  onChange={(value, label) => {
-                                    setnewdata((prev) => {
-                                      var temp = prev;
-                                      const idxfield = temp.inventory_values
-                                        .map(
-                                          (docname) =>
-                                            docname.model_inventory_column_id
-                                        )
-                                        .indexOf(docinvvalue.id);
-                                      temp.inventory_values[
-                                        idxfield
-                                      ].value.default = value;
-                                      return temp;
-                                    });
-                                  }}
-                                >
-                                  {docinvvalue.default.opsi.map(
-                                    (doc2, idx2) => (
-                                      <Select.Option key={doc2} value={idx2}>
-                                        {doc2}
-                                      </Select.Option>
-                                    )
-                                  )}
-                                </Select>
-                              )}
-                              {docinvvalue.data_type === "checkbox" && (
-                                <div className="w-full flex flex-col">
-                                  {docinvvalue.default.opsi.map(
-                                    (doc3, idx3) => {
-                                      return (
-                                        <div className="flex mb-1">
-                                          <Checkbox
-                                            defaultChecked={docinvvalue.default.default.includes(
-                                              idx3
-                                            )}
-                                            style={{ marginRight: `0.5rem` }}
-                                            onChange={(e) => {
-                                              setnewdata((prev) => {
-                                                var temp = prev;
-                                                const idxfield =
-                                                  temp.inventory_values
-                                                    .map(
-                                                      (docname) =>
-                                                        docname.model_inventory_column_id
-                                                    )
-                                                    .indexOf(docinvvalue.id);
-                                                if (e.target.checked === true) {
-                                                  temp.inventory_values[
-                                                    idxfield
-                                                  ].value.default.push(idx3);
-                                                } else {
-                                                  var idxtoremove =
-                                                    temp.inventory_values[
-                                                      idxfield
-                                                    ].value.default.indexOf(
-                                                      idx3
-                                                    );
-                                                  temp.inventory_values[
-                                                    idxfield
-                                                  ].value.default.splice(
-                                                    idxtoremove,
-                                                    1
-                                                  );
-                                                }
-                                                return temp;
-                                              });
-                                            }}
-                                          ></Checkbox>
-                                          <p className="mb-0">{doc3}</p>
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </div>
-                              )}
-                              {docinvvalue.data_type === "date" && (
-                                <DatePicker
-                                  defaultValue={
-                                    docinvvalue.default === ""
-                                      ? null
-                                      : moment(docinvvalue.default)
-                                  }
-                                  onChange={(date, datestring) => {
-                                    setnewdata((prev) => {
-                                      var temp = prev;
-                                      const idxfield = temp.inventory_values
-                                        .map(
-                                          (docname) =>
-                                            docname.model_inventory_column_id
-                                        )
-                                        .indexOf(docinvvalue.id);
-                                      temp.inventory_values[idxfield].value =
-                                        datestring;
-                                      return temp;
-                                    });
-                                  }}
-                                ></DatePicker>
-                              )}
-                              {docinvvalue.data_type === "paragraph" && (
-                                <Input.TextArea
-                                  rows={4}
-                                  defaultValue={docinvvalue.default}
-                                  onChange={(e) => {
-                                    setnewdata((prev) => {
-                                      var temp = prev;
-                                      const idxfield = temp.inventory_values
-                                        .map(
-                                          (docname) =>
-                                            docname.model_inventory_column_id
-                                        )
-                                        .indexOf(docinvvalue.id);
-                                      temp.inventory_values[idxfield].value =
-                                        e.target.value;
-                                      return temp;
-                                    });
-                                  }}
-                                ></Input.TextArea>
-                              )}
-                              {docinvvalue.data_type === "number" && (
-                                <InputNumber
-                                  defaultValue={docinvvalue.default}
-                                  onChange={(value) => {
-                                    setnewdata((prev) => {
-                                      var temp = prev;
-                                      const idxfield = temp.inventory_values
-                                        .map(
-                                          (docname) =>
-                                            docname.model_inventory_column_id
-                                        )
-                                        .indexOf(docinvvalue.id);
-                                      temp.inventory_values[
-                                        idxfield
-                                      ].value = `${value}`;
-                                      return temp;
-                                    });
-                                  }}
-                                ></InputNumber>
-                              )}
-                              {docinvvalue.data_type === "single" && (
-                                <Input
-                                  defaultValue={docinvvalue.default}
-                                  onChange={(e) => {
-                                    setnewdata((prev) => {
-                                      var temp = prev;
-                                      const idxfield = temp.inventory_values
-                                        .map(
-                                          (docname) =>
-                                            docname.model_inventory_column_id
-                                        )
-                                        .indexOf(docinvvalue.id);
-                                      temp.inventory_values[idxfield].value =
-                                        e.target.value;
-                                      return temp;
-                                    });
-                                  }}
-                                ></Input>
-                              )}
-                              {docinvvalue.data_type === "String" && (
-                                <Input
-                                  defaultValue={docinvvalue.default}
-                                  onChange={(e) => {
-                                    setnewdata((prev) => {
-                                      var temp = prev;
-                                      const idxfield = temp.inventory_values
-                                        .map(
-                                          (docname) =>
-                                            docname.model_inventory_column_id
-                                        )
-                                        .indexOf(docinvvalue.id);
-                                      temp.inventory_values[idxfield].value =
-                                        e.target.value;
-                                      return temp;
-                                    });
-                                  }}
-                                ></Input>
-                              )}
-                            </>
-                          </Form.Item>
-                        );
-                      }
-                    })}
-                  </Form>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-        <div className="col-span-1 md:col-span-4 mb-6 py-3 px-12">
-          <div className="mb-3 flex items-center">
-            <h1 className="font-bold text-xl mb-0 mr-1">
-              Konfigurasi Part Item
-            </h1>
-            <div className="pb-1">
-              <Tooltip
-                placement="right"
-                title="Anda tidak wajib mengisi seluruh Spesifikasi dari item part, kecuali Nama Item, MIG ID, Kondisi, dan Status Pemakaian!"
-              >
-                <QuestionCircleOutlined size="large"></QuestionCircleOutlined>
-              </Tooltip>
+                                )}
+                              </>
+                            </Form.Item>
+                          );
+                        }
+                      })}
+                    </Form>
+                  )}
+                </>
+              )}
             </div>
           </div>
-          <div>
-            {loadingspec ? (
-              <Spin />
-            ) : (
-              <>
-                {partmodeldata.length === 0 ? (
-                  <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
-                ) : (
-                  <Collapse>
-                    {partmodeldata.map((docpart, idxpart) => {
-                      return (
-                        <Panel
-                          id={`panel${idxpart}`}
-                          key={idxpart}
-                          header={<strong>{docpart.model_name}</strong>}
-                          extra={
-                            <div className="flex">
-                              <Checkbox
-                                disabled={docpart.disable_part}
-                                value={docpart.enable_part}
-                                style={{ marginRight: `0.5rem` }}
-                                onChange={(e) => {
-                                  var temp = newdata.inventory_parts;
-                                  const selectedpart = changeEnablePart(
-                                    temp,
-                                    docpart.model_id,
-                                    e.target.checked
-                                  );
-                                  setpartmodeldata(selectedpart);
-                                  setnewdata((prev) => {
-                                    var temp = prev;
-                                    temp.inventory_parts = selectedpart;
-                                    return temp;
-                                  });
-                                }}
-                              ></Checkbox>
-                              <p className="mb-0">
-                                {docpart.enable_part
-                                  ? "Item Ada"
-                                  : "Item Tidak Ada"}
-                              </p>
-                            </div>
-                          }
-                        >
-                          <div className="flex flex-col p-5 mb-3 relative">
-                            {docpart.enable_part === false ? (
-                              <div className="absolute left-0 right-0 top-0 bottom-0 z-10 bg-white bg-opacity-80"></div>
-                            ) : null}
-                            <Form layout="vertical">
-                              <Form.Item
-                                name="model_id"
-                                label={
-                                  <div className="flex">
-                                    <span className="judulField"></span>
-                                    <p className="mb-0 ml-1">Asset Type</p>
-                                    <style jsx>
-                                      {`
-                                                                                        .judulField::before{
-                                                                                            content: '*';
-                                                                                            color: red;
-                                                                                        }
-                                                                                    `}
-                                    </style>
+
+          <div className="col-span-1 md:col-span-4 mb-6 py-3 px-12">
+            <div className="mb-3 flex items-center">
+              <h1 className="font-bold text-xl mb-0 mr-1">
+                Konfigurasi Part Item
+              </h1>
+              <div className="pb-1">
+                <Tooltip
+                  placement="right"
+                  title="Anda tidak wajib mengisi seluruh Spesifikasi dari item part, kecuali Nama Item, MIG ID, Kondisi, dan Status Pemakaian!"
+                >
+                  <QuestionCircleOutlined size="large"></QuestionCircleOutlined>
+                </Tooltip>
+              </div>
+            </div>
+            <div>
+              {loadingspec ? (
+                <Spin />
+              ) : (
+                <>
+                  {partmodeldata.length === 0 ? (
+                    <Empty image={Empty.PRESENTED_IMAGE_SIMPLE}></Empty>
+                  ) : (
+                    <Collapse>
+                      {partmodeldata.map((docpart, idxpart) => {
+                        return (
+                          <Panel
+                            id={`panel${idxpart}`}
+                            key={idxpart}
+                            header={<strong>{docpart.model_name}</strong>}
+                            extra={
+                              <div className="flex">
+                                <Checkbox
+                                  disabled={docpart.disable_part}
+                                  value={docpart.enable_part}
+                                  style={{ marginRight: `0.5rem` }}
+                                  onChange={(e) => {
+                                    var temp = newdata.inventory_parts;
+                                    const selectedpart = changeEnablePart(
+                                      temp,
+                                      docpart.model_id,
+                                      e.target.checked
+                                    );
+                                    setpartmodeldata(selectedpart);
+                                    setnewdata((prev) => {
+                                      var temp = prev;
+                                      temp.inventory_parts = selectedpart;
+                                      return temp;
+                                    });
+                                  }}
+                                ></Checkbox>
+                                <p className="mb-0">
+                                  {docpart.enable_part
+                                    ? "Item Ada"
+                                    : "Item Tidak Ada"}
+                                </p>
+                              </div>
+                            }
+                          >
+                            <div className="flex flex-col p-5 mb-3 relative">
+                              {docpart.enable_part === false ? (
+                                <div className="absolute left-0 right-0 top-0 bottom-0 z-10 bg-white bg-opacity-80"></div>
+                              ) : null}
+                              <Form layout="vertical">
+                                <Form.Item
+                                  name="model_id"
+                                  label={
+                                    <div className="flex">
+                                      <span className="judulField"></span>
+                                      <p className="mb-0 ml-1">Asset Type</p>
+                                      <style jsx>
+                                        {`
+                                                                                          .judulField::before{
+                                                                                              content: '*';
+                                                                                              color: red;
+                                                                                          }
+                                                                                      `}
+                                      </style>
+                                    </div>
+                                  }
+                                >
+                                  <div className="w-full rounded bg-gray-200 p-2 h-10">
+                                    {docpart.asset_name}
                                   </div>
-                                }
-                              >
-                                <div className="w-full rounded bg-gray-200 p-2 h-10">
-                                  {docpart.asset_name}
-                                </div>
-                              </Form.Item>
-                              {/* <Form.Item name="inventory_name" label={
-                                                                            <div className="flex">
-                                                                                <span className="namaItem"></span>
-                                                                                <p className="mb-0 ml-1">Nama Item</p>
-                                                                                <style jsx>
-                                                                                    {`
-                                                                                    .namaItem::before{
-                                                                                        content: '*';
-                                                                                        color: red;
-                                                                                    }
-                                                                                `}
-                                                                                </style>
-                                                                            </div>
-                                                                        }>
-                                                                            <Input name="inventory_name" onChange={(e) => {
-                                                                                var temp = newdata.inventory_parts
-                                                                                const selectedpart = changeDataPart(temp, docpart.model_id, "inventory_name", e.target.value)
-                                                                                setnewdata(prev => {
-                                                                                    var temp2 = prev
-                                                                                    temp2.inventory_parts = selectedpart
-                                                                                    return temp2
-                                                                                })
-                                                                                setemptyfieldpartmodel(docpart)
-                                                                                setemptyfieldparttrigger(prev => prev + 1)
-                                                                            }} />
-                                                                        </Form.Item> */}
-                              <Form.Item
-                                name="mig_id"
-                                label={
-                                  <div className="flex">
-                                    <span className="migId"></span>
-                                    <p className="mb-0 ml-1">MIG ID</p>
-                                    <style jsx>
-                                      {`
-                                                                                    .migId::before{
-                                                                                        content: '*';
-                                                                                        color: red;
-                                                                                    }
-                                                                                `}
-                                    </style>
-                                  </div>
-                                }
-                              >
-                                <Input
+                                </Form.Item>
+                                {/* <Form.Item name="inventory_name" label={
+                                                                              <div className="flex">
+                                                                                  <span className="namaItem"></span>
+                                                                                  <p className="mb-0 ml-1">Nama Item</p>
+                                                                                  <style jsx>
+                                                                                      {`
+                                                                                      .namaItem::before{
+                                                                                          content: '*';
+                                                                                          color: red;
+                                                                                      }
+                                                                                  `}
+                                                                                  </style>
+                                                                              </div>
+                                                                          }>
+                                                                              <Input name="inventory_name" onChange={(e) => {
+                                                                                  var temp = newdata.inventory_parts
+                                                                                  const selectedpart = changeDataPart(temp, docpart.model_id, "inventory_name", e.target.value)
+                                                                                  setnewdata(prev => {
+                                                                                      var temp2 = prev
+                                                                                      temp2.inventory_parts = selectedpart
+                                                                                      return temp2
+                                                                                  })
+                                                                                  setemptyfieldpartmodel(docpart)
+                                                                                  setemptyfieldparttrigger(prev => prev + 1)
+                                                                              }} />
+                                                                          </Form.Item> */}
+                                <Form.Item
                                   name="mig_id"
-                                  onChange={(e) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "mig_id",
-                                      e.target.value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
-                                />
-                              </Form.Item>
-                              <Form.Item
-                                name="status_condition"
-                                label={
-                                  <div className="flex">
-                                    <span className="kondisi"></span>
-                                    <p className="mb-0 ml-1">Kondisi</p>
-                                    <style jsx>
-                                      {`
-                                                                                    .kondisi::before{
-                                                                                        content: '*';
-                                                                                        color: red;
-                                                                                    }
-                                                                                `}
-                                    </style>
-                                  </div>
-                                }
-                              >
-                                <Select
-                                  placeholder="Pilih Kondisi"
-                                  onChange={(value) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "status_condition",
-                                      value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
+                                  label={
+                                    <div className="flex">
+                                      <span className="migId"></span>
+                                      <p className="mb-0 ml-1">MIG ID</p>
+                                      <style jsx>
+                                        {`
+                                                                                      .migId::before{
+                                                                                          content: '*';
+                                                                                          color: red;
+                                                                                      }
+                                                                                  `}
+                                      </style>
+                                    </div>
+                                  }
                                 >
-                                  <Select.Option value={1}>
-                                    <div className="p-1 flex w-full items-center">
-                                      <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                                      <p className="mb-0">Good</p>
+                                  <Input
+                                    name="mig_id"
+                                    onChange={(e) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "mig_id",
+                                        e.target.value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  />
+                                </Form.Item>
+                                <Form.Item
+                                  name="status_condition"
+                                  label={
+                                    <div className="flex">
+                                      <span className="kondisi"></span>
+                                      <p className="mb-0 ml-1">Kondisi</p>
+                                      <style jsx>
+                                        {`
+                                                                                      .kondisi::before{
+                                                                                          content: '*';
+                                                                                          color: red;
+                                                                                      }
+                                                                                  `}
+                                      </style>
                                     </div>
-                                  </Select.Option>
-                                  <Select.Option value={2}>
-                                    <div className="p-1 flex w-full items-center">
-                                      <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
-                                      <p className="mb-0">Grey</p>
-                                    </div>
-                                  </Select.Option>
-                                  <Select.Option value={3}>
-                                    <div className="p-1 flex w-full items-center">
-                                      <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                                      <p className="mb-0">Bad</p>
-                                    </div>
-                                  </Select.Option>
-                                </Select>
-                              </Form.Item>
-                              <Form.Item
-                                name="status_usage"
-                                label={
-                                  <div className="flex">
-                                    <span className="pemakaian"></span>
-                                    <p className="mb-0 ml-1">
-                                      Status Pemakaian
-                                    </p>
-                                    <style jsx>
-                                      {`
-                                                                                .pemakaian::before{
-                                                                                    content: '*';
-                                                                                    color: red;
-                                                                                }
-                                                                            `}
-                                    </style>
-                                  </div>
-                                }
-                              >
-                                <Select
-                                  placeholder="Pilih Status Pemakaian"
-                                  onChange={(value) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "status_usage",
-                                      value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
+                                  }
                                 >
-                                  <Select.Option value={1}>
-                                    In Used
-                                  </Select.Option>
-                                  <Select.Option value={2}>
-                                    In Stock
-                                  </Select.Option>
-                                  <Select.Option value={3}>
-                                    Replacement
-                                  </Select.Option>
-                                </Select>
-                              </Form.Item>
-                              <Form.Item
-                                name="serial_number"
-                                label={
-                                  <div className="flex">
-                                    <span className="sn"></span>
-                                    <p className="mb-0 ml-1">Serial Number</p>
-                                    <style jsx>
-                                      {`
-                                                                                .sn::before{
-                                                                                    content: '*';
-                                                                                    color: red;
-                                                                                }
-                                                                            `}
-                                    </style>
-                                  </div>
-                                }
-                              >
-                                <Input
+                                  <Select
+                                    placeholder="Pilih Kondisi"
+                                    onChange={(value) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "status_condition",
+                                        value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  >
+                                    <Select.Option value={1}>
+                                      <div className="p-1 flex w-full items-center">
+                                        <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                                        <p className="mb-0">Good</p>
+                                      </div>
+                                    </Select.Option>
+                                    <Select.Option value={2}>
+                                      <div className="p-1 flex w-full items-center">
+                                        <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
+                                        <p className="mb-0">Grey</p>
+                                      </div>
+                                    </Select.Option>
+                                    <Select.Option value={3}>
+                                      <div className="p-1 flex w-full items-center">
+                                        <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                                        <p className="mb-0">Bad</p>
+                                      </div>
+                                    </Select.Option>
+                                  </Select>
+                                </Form.Item>
+                                <Form.Item
+                                  name="status_usage"
+                                  label={
+                                    <div className="flex">
+                                      <span className="pemakaian"></span>
+                                      <p className="mb-0 ml-1">
+                                        Status Pemakaian
+                                      </p>
+                                      <style jsx>
+                                        {`
+                                                                                  .pemakaian::before{
+                                                                                      content: '*';
+                                                                                      color: red;
+                                                                                  }
+                                                                              `}
+                                      </style>
+                                    </div>
+                                  }
+                                >
+                                  <Select
+                                    placeholder="Pilih Status Pemakaian"
+                                    onChange={(value) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "status_usage",
+                                        value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  >
+                                    <Select.Option value={1}>
+                                      In Used
+                                    </Select.Option>
+                                    <Select.Option value={2}>
+                                      In Stock
+                                    </Select.Option>
+                                    <Select.Option value={3}>
+                                      Replacement
+                                    </Select.Option>
+                                  </Select>
+                                </Form.Item>
+                                <Form.Item
                                   name="serial_number"
-                                  onChange={(e) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "serial_number",
-                                      e.target.value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
-                                />
-                              </Form.Item>
-                              <Form.Item name="vendor_id" label="Vendor">
-                                <Select
-                                  placeholder="Pilih vendor"
-                                  onChange={(value) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "vendor_id",
-                                      value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
+                                  label={
+                                    <div className="flex">
+                                      <span className="sn"></span>
+                                      <p className="mb-0 ml-1">Serial Number</p>
+                                      <style jsx>
+                                        {`
+                                                                                  .sn::before{
+                                                                                      content: '*';
+                                                                                      color: red;
+                                                                                  }
+                                                                              `}
+                                      </style>
+                                    </div>
+                                  }
                                 >
-                                  {invrelations.vendors.map((doc, idx) => {
-                                    return (
-                                      <Select.Option value={doc.id}>
-                                        {doc.name}
-                                      </Select.Option>
-                                    );
-                                  })}
-                                </Select>
-                              </Form.Item>
-                              <Form.Item
-                                name="manufacturer_id"
-                                label="Manufacturer"
-                              >
-                                <Select
-                                  defaultValue={docpart.manufacturer_id}
-                                  placeholder="Pilih Manufacturer"
-                                  onChange={(value) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "manufacturer_id",
-                                      value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
-                                >
-                                  {invrelations.manufacturers.map(
-                                    (doc, idx) => {
+                                  <Input
+                                    name="serial_number"
+                                    onChange={(e) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "serial_number",
+                                        e.target.value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  />
+                                </Form.Item>
+                                <Form.Item name="vendor_id" label="Vendor">
+                                  <Select
+                                    placeholder="Pilih vendor"
+                                    onChange={(value) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "vendor_id",
+                                        value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  >
+                                    {invrelations.vendors.map((doc, idx) => {
                                       return (
                                         <Select.Option value={doc.id}>
                                           {doc.name}
                                         </Select.Option>
                                       );
-                                    }
-                                  )}
-                                </Select>
-                              </Form.Item>
-                              <Form.Item name="deskripsi" label="Deskripsi">
-                                <Input.TextArea
-                                  rows={4}
-                                  name="deskripsi"
-                                  onChange={(e) => {
-                                    var temp = newdata.inventory_parts;
-                                    const selectedpart = changeDataPart(
-                                      temp,
-                                      docpart.model_id,
-                                      "deskripsi",
-                                      e.target.value
-                                    );
-                                    setnewdata((prev) => {
-                                      var temp2 = prev;
-                                      temp2.inventory_parts = selectedpart;
-                                      return temp2;
-                                    });
-                                    setemptyfieldpartmodel(docpart);
-                                    setemptyfieldparttrigger(
-                                      (prev) => prev + 1
-                                    );
-                                  }}
-                                />
-                              </Form.Item>
-                              {docpart.inventory_values.map(
-                                (docvalue, idxvalue) => {
-                                  return (
-                                    <Form.Item
-                                      key={idxvalue}
-                                      name={docvalue.name}
-                                      label={
-                                        <div className="flex">
-                                          {docvalue.required ? (
-                                            <span
-                                              className={docvalue.name.replace(
-                                                /\s+/g,
-                                                ""
-                                              )}
-                                            ></span>
-                                          ) : null}
-                                          <p className="mb-0 ml-1">
-                                            {docvalue.name}
-                                          </p>
-                                          <style jsx>
-                                            {`
-                                                                                                    .${docvalue.name.replace(
-                                                                                                      /\s+/g,
-                                                                                                      ""
-                                                                                                    )}::before{
-                                                                                                        content: '*';
-                                                                                                        color: red;
-                                                                                                    }
-                                                                                                `}
-                                          </style>
-                                        </div>
+                                    })}
+                                  </Select>
+                                </Form.Item>
+                                <Form.Item
+                                  name="manufacturer_id"
+                                  label="Manufacturer"
+                                >
+                                  <Select
+                                    defaultValue={docpart.manufacturer_id}
+                                    placeholder="Pilih Manufacturer"
+                                    onChange={(value) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "manufacturer_id",
+                                        value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  >
+                                    {invrelations.manufacturers.map(
+                                      (doc, idx) => {
+                                        return (
+                                          <Select.Option value={doc.id}>
+                                            {doc.name}
+                                          </Select.Option>
+                                        );
                                       }
-                                    >
-                                      <>
-                                        {docvalue.data_type === "dropdown" && (
-                                          <Select
-                                            defaultValue={
-                                              docvalue.default.default
-                                            }
-                                            style={{ width: `100%` }}
-                                            onChange={(value, label) => {
-                                              var temp =
-                                                newdata.inventory_parts;
-                                              const selectedpart =
-                                                changeInventoryValuesDropdownPart(
-                                                  temp,
-                                                  docpart.model_id,
-                                                  docvalue.id,
-                                                  value
-                                                );
-                                              setnewdata((prev) => {
-                                                var temp2 = prev;
-                                                temp2.inventory_parts =
-                                                  selectedpart;
-                                                return temp2;
-                                              });
-                                              setemptyfieldpartmodel(docpart);
-                                              setemptyfieldparttrigger(
-                                                (prev) => prev + 1
-                                              );
-                                            }}
-                                          >
-                                            {docvalue.default.opsi.map(
-                                              (doc2, idx2) => (
-                                                <Select.Option
-                                                  key={doc2}
-                                                  value={idx2}
-                                                >
-                                                  {doc2}
-                                                </Select.Option>
-                                              )
-                                            )}
-                                          </Select>
-                                        )}
-                                        {docvalue.data_type === "checkbox" && (
-                                          <div className="w-full flex flex-col">
-                                            {docvalue.default.opsi.map(
-                                              (doc3, idx3) => {
-                                                return (
-                                                  <div className="flex mb-1">
-                                                    <Checkbox
-                                                      defaultChecked={docvalue.default.default.includes(
-                                                        idx3
-                                                      )}
-                                                      style={{
-                                                        marginRight: `0.5rem`,
-                                                      }}
-                                                      onChange={(e) => {
-                                                        var temp =
-                                                          newdata.inventory_parts;
-                                                        const selectedpart =
-                                                          changeInventoryValuesCheckboxPart(
-                                                            temp,
-                                                            docpart.model_id,
-                                                            docvalue.id,
-                                                            e.target.checked,
-                                                            idx3,
-                                                            doc3
-                                                          );
-                                                        setnewdata((prev) => {
-                                                          var temp2 = prev;
-                                                          temp2.inventory_parts =
-                                                            selectedpart;
-                                                          return temp2;
-                                                        });
-                                                        setemptyfieldpartmodel(
-                                                          docpart
-                                                        );
-                                                        setemptyfieldparttrigger(
-                                                          (prev) => prev + 1
-                                                        );
-                                                      }}
-                                                    ></Checkbox>
-                                                    <p className="mb-0">
-                                                      {doc3}
-                                                    </p>
-                                                  </div>
-                                                );
-                                              }
-                                            )}
+                                    )}
+                                  </Select>
+                                </Form.Item>
+                                <Form.Item name="deskripsi" label="Deskripsi">
+                                  <Input.TextArea
+                                    rows={4}
+                                    name="deskripsi"
+                                    onChange={(e) => {
+                                      var temp = newdata.inventory_parts;
+                                      const selectedpart = changeDataPart(
+                                        temp,
+                                        docpart.model_id,
+                                        "deskripsi",
+                                        e.target.value
+                                      );
+                                      setnewdata((prev) => {
+                                        var temp2 = prev;
+                                        temp2.inventory_parts = selectedpart;
+                                        return temp2;
+                                      });
+                                      setemptyfieldpartmodel(docpart);
+                                      setemptyfieldparttrigger(
+                                        (prev) => prev + 1
+                                      );
+                                    }}
+                                  />
+                                </Form.Item>
+                                {docpart.inventory_values.map(
+                                  (docvalue, idxvalue) => {
+                                    return (
+                                      <Form.Item
+                                        key={idxvalue}
+                                        name={docvalue.name}
+                                        label={
+                                          <div className="flex">
+                                            {docvalue.required ? (
+                                              <span
+                                                className={docvalue.name.replace(
+                                                  /\s+/g,
+                                                  ""
+                                                )}
+                                              ></span>
+                                            ) : null}
+                                            <p className="mb-0 ml-1">
+                                              {docvalue.name}
+                                            </p>
+                                            <style jsx>
+                                              {`
+                                                                                                      .${docvalue.name.replace(
+                                                                                                        /\s+/g,
+                                                                                                        ""
+                                                                                                      )}::before{
+                                                                                                          content: '*';
+                                                                                                          color: red;
+                                                                                                      }
+                                                                                                  `}
+                                            </style>
                                           </div>
-                                        )}
-                                        {docvalue.data_type === "date" && (
-                                          <DatePicker
-                                            defaultValue={
-                                              docvalue.default === ""
-                                                ? null
-                                                : moment(docvalue.default)
-                                            }
-                                            onChange={(date, datestring) => {
-                                              var temp =
-                                                newdata.inventory_parts;
-                                              const selectedpart =
-                                                changeInventoryValuesPart(
-                                                  temp,
-                                                  docpart.model_id,
-                                                  docvalue.id,
-                                                  datestring
+                                        }
+                                      >
+                                        <>
+                                          {docvalue.data_type ===
+                                            "dropdown" && (
+                                            <Select
+                                              defaultValue={
+                                                docvalue.default.default
+                                              }
+                                              style={{ width: `100%` }}
+                                              onChange={(value, label) => {
+                                                var temp =
+                                                  newdata.inventory_parts;
+                                                const selectedpart =
+                                                  changeInventoryValuesDropdownPart(
+                                                    temp,
+                                                    docpart.model_id,
+                                                    docvalue.id,
+                                                    value
+                                                  );
+                                                setnewdata((prev) => {
+                                                  var temp2 = prev;
+                                                  temp2.inventory_parts =
+                                                    selectedpart;
+                                                  return temp2;
+                                                });
+                                                setemptyfieldpartmodel(docpart);
+                                                setemptyfieldparttrigger(
+                                                  (prev) => prev + 1
                                                 );
-                                              setnewdata((prev) => {
-                                                var temp2 = prev;
-                                                temp2.inventory_parts =
-                                                  selectedpart;
-                                                return temp2;
-                                              });
-                                              setemptyfieldpartmodel(docpart);
-                                              setemptyfieldparttrigger(
-                                                (prev) => prev + 1
-                                              );
-                                            }}
-                                          ></DatePicker>
-                                        )}
-                                        {docvalue.data_type === "paragraph" && (
-                                          <Input.TextArea
-                                            rows={4}
-                                            defaultValue={docvalue.default}
-                                            onChange={(e) => {
-                                              var temp =
-                                                newdata.inventory_parts;
-                                              const selectedpart =
-                                                changeInventoryValuesPart(
-                                                  temp,
-                                                  docpart.model_id,
-                                                  docvalue.id,
-                                                  e.target.value
+                                              }}
+                                            >
+                                              {docvalue.default.opsi.map(
+                                                (doc2, idx2) => (
+                                                  <Select.Option
+                                                    key={doc2}
+                                                    value={idx2}
+                                                  >
+                                                    {doc2}
+                                                  </Select.Option>
+                                                )
+                                              )}
+                                            </Select>
+                                          )}
+                                          {docvalue.data_type ===
+                                            "checkbox" && (
+                                            <div className="w-full flex flex-col">
+                                              {docvalue.default.opsi.map(
+                                                (doc3, idx3) => {
+                                                  return (
+                                                    <div className="flex mb-1">
+                                                      <Checkbox
+                                                        defaultChecked={docvalue.default.default.includes(
+                                                          idx3
+                                                        )}
+                                                        style={{
+                                                          marginRight: `0.5rem`,
+                                                        }}
+                                                        onChange={(e) => {
+                                                          var temp =
+                                                            newdata.inventory_parts;
+                                                          const selectedpart =
+                                                            changeInventoryValuesCheckboxPart(
+                                                              temp,
+                                                              docpart.model_id,
+                                                              docvalue.id,
+                                                              e.target.checked,
+                                                              idx3,
+                                                              doc3
+                                                            );
+                                                          setnewdata((prev) => {
+                                                            var temp2 = prev;
+                                                            temp2.inventory_parts =
+                                                              selectedpart;
+                                                            return temp2;
+                                                          });
+                                                          setemptyfieldpartmodel(
+                                                            docpart
+                                                          );
+                                                          setemptyfieldparttrigger(
+                                                            (prev) => prev + 1
+                                                          );
+                                                        }}
+                                                      ></Checkbox>
+                                                      <p className="mb-0">
+                                                        {doc3}
+                                                      </p>
+                                                    </div>
+                                                  );
+                                                }
+                                              )}
+                                            </div>
+                                          )}
+                                          {docvalue.data_type === "date" && (
+                                            <DatePicker
+                                              defaultValue={
+                                                docvalue.default === ""
+                                                  ? null
+                                                  : moment(docvalue.default)
+                                              }
+                                              onChange={(date, datestring) => {
+                                                var temp =
+                                                  newdata.inventory_parts;
+                                                const selectedpart =
+                                                  changeInventoryValuesPart(
+                                                    temp,
+                                                    docpart.model_id,
+                                                    docvalue.id,
+                                                    datestring
+                                                  );
+                                                setnewdata((prev) => {
+                                                  var temp2 = prev;
+                                                  temp2.inventory_parts =
+                                                    selectedpart;
+                                                  return temp2;
+                                                });
+                                                setemptyfieldpartmodel(docpart);
+                                                setemptyfieldparttrigger(
+                                                  (prev) => prev + 1
                                                 );
-                                              setnewdata((prev) => {
-                                                var temp2 = prev;
-                                                temp2.inventory_parts =
-                                                  selectedpart;
-                                                return temp2;
-                                              });
-                                              setemptyfieldpartmodel(docpart);
-                                              setemptyfieldparttrigger(
-                                                (prev) => prev + 1
-                                              );
-                                            }}
-                                          ></Input.TextArea>
-                                        )}
-                                        {docvalue.data_type === "number" && (
-                                          <InputNumber
-                                            defaultValue={docvalue.default}
-                                            onChange={(value) => {
-                                              var temp =
-                                                newdata.inventory_parts;
-                                              const selectedpart =
-                                                changeInventoryValuesPart(
-                                                  temp,
-                                                  docpart.model_id,
-                                                  docvalue.id,
-                                                  `${value}`
+                                              }}
+                                            ></DatePicker>
+                                          )}
+                                          {docvalue.data_type ===
+                                            "paragraph" && (
+                                            <Input.TextArea
+                                              rows={4}
+                                              defaultValue={docvalue.default}
+                                              onChange={(e) => {
+                                                var temp =
+                                                  newdata.inventory_parts;
+                                                const selectedpart =
+                                                  changeInventoryValuesPart(
+                                                    temp,
+                                                    docpart.model_id,
+                                                    docvalue.id,
+                                                    e.target.value
+                                                  );
+                                                setnewdata((prev) => {
+                                                  var temp2 = prev;
+                                                  temp2.inventory_parts =
+                                                    selectedpart;
+                                                  return temp2;
+                                                });
+                                                setemptyfieldpartmodel(docpart);
+                                                setemptyfieldparttrigger(
+                                                  (prev) => prev + 1
                                                 );
-                                              setnewdata((prev) => {
-                                                var temp2 = prev;
-                                                temp2.inventory_parts =
-                                                  selectedpart;
-                                                return temp2;
-                                              });
-                                              setemptyfieldpartmodel(docpart);
-                                              setemptyfieldparttrigger(
-                                                (prev) => prev + 1
-                                              );
-                                            }}
-                                          ></InputNumber>
-                                        )}
-                                        {docvalue.data_type === "single" && (
-                                          <Input
-                                            defaultValue={docvalue.default}
-                                            onChange={(e) => {
-                                              var temp =
-                                                newdata.inventory_parts;
-                                              const selectedpart =
-                                                changeInventoryValuesPart(
-                                                  temp,
-                                                  docpart.model_id,
-                                                  docvalue.id,
-                                                  e.target.value
+                                              }}
+                                            ></Input.TextArea>
+                                          )}
+                                          {docvalue.data_type === "number" && (
+                                            <InputNumber
+                                              defaultValue={docvalue.default}
+                                              onChange={(value) => {
+                                                var temp =
+                                                  newdata.inventory_parts;
+                                                const selectedpart =
+                                                  changeInventoryValuesPart(
+                                                    temp,
+                                                    docpart.model_id,
+                                                    docvalue.id,
+                                                    `${value}`
+                                                  );
+                                                setnewdata((prev) => {
+                                                  var temp2 = prev;
+                                                  temp2.inventory_parts =
+                                                    selectedpart;
+                                                  return temp2;
+                                                });
+                                                setemptyfieldpartmodel(docpart);
+                                                setemptyfieldparttrigger(
+                                                  (prev) => prev + 1
                                                 );
-                                              setnewdata((prev) => {
-                                                var temp2 = prev;
-                                                temp2.inventory_parts =
-                                                  selectedpart;
-                                                return temp2;
-                                              });
-                                              setemptyfieldpartmodel(docpart);
-                                              setemptyfieldparttrigger(
-                                                (prev) => prev + 1
-                                              );
-                                            }}
-                                          ></Input>
-                                        )}
-                                        {docvalue.data_type === "String" && (
-                                          <Input
-                                            defaultValue={docvalue.default}
-                                            onChange={(e) => {
-                                              var temp =
-                                                newdata.inventory_parts;
-                                              const selectedpart =
-                                                changeInventoryValuesPart(
-                                                  temp,
-                                                  docpart.model_id,
-                                                  docvalue.id,
-                                                  e.target.value
+                                              }}
+                                            ></InputNumber>
+                                          )}
+                                          {docvalue.data_type === "single" && (
+                                            <Input
+                                              defaultValue={docvalue.default}
+                                              onChange={(e) => {
+                                                var temp =
+                                                  newdata.inventory_parts;
+                                                const selectedpart =
+                                                  changeInventoryValuesPart(
+                                                    temp,
+                                                    docpart.model_id,
+                                                    docvalue.id,
+                                                    e.target.value
+                                                  );
+                                                setnewdata((prev) => {
+                                                  var temp2 = prev;
+                                                  temp2.inventory_parts =
+                                                    selectedpart;
+                                                  return temp2;
+                                                });
+                                                setemptyfieldpartmodel(docpart);
+                                                setemptyfieldparttrigger(
+                                                  (prev) => prev + 1
                                                 );
-                                              setnewdata((prev) => {
-                                                var temp2 = prev;
-                                                temp2.inventory_parts =
-                                                  selectedpart;
-                                                return temp2;
-                                              });
-                                              setemptyfieldpartmodel(docpart);
-                                              setemptyfieldparttrigger(
-                                                (prev) => prev + 1
-                                              );
-                                            }}
-                                          ></Input>
-                                        )}
-                                      </>
-                                    </Form.Item>
-                                  );
-                                }
-                              )}
-                            </Form>
-                          </div>
-                          {docpart.inventory_parts.length === 0 ? null : (
-                            <>
-                              <Timeline style={{ marginTop: `1rem` }}>
-                                {renderChildPartModel(docpart.inventory_parts)}
-                              </Timeline>
-                            </>
-                          )}
-                        </Panel>
-                      );
-                    })}
-                  </Collapse>
-                )}
-              </>
+                                              }}
+                                            ></Input>
+                                          )}
+                                          {docvalue.data_type === "String" && (
+                                            <Input
+                                              defaultValue={docvalue.default}
+                                              onChange={(e) => {
+                                                var temp =
+                                                  newdata.inventory_parts;
+                                                const selectedpart =
+                                                  changeInventoryValuesPart(
+                                                    temp,
+                                                    docpart.model_id,
+                                                    docvalue.id,
+                                                    e.target.value
+                                                  );
+                                                setnewdata((prev) => {
+                                                  var temp2 = prev;
+                                                  temp2.inventory_parts =
+                                                    selectedpart;
+                                                  return temp2;
+                                                });
+                                                setemptyfieldpartmodel(docpart);
+                                                setemptyfieldparttrigger(
+                                                  (prev) => prev + 1
+                                                );
+                                              }}
+                                            ></Input>
+                                          )}
+                                        </>
+                                      </Form.Item>
+                                    );
+                                  }
+                                )}
+                              </Form>
+                            </div>
+                            {docpart.inventory_parts.length === 0 ? null : (
+                              <>
+                                <Timeline style={{ marginTop: `1rem` }}>
+                                  {renderChildPartModel(
+                                    docpart.inventory_parts
+                                  )}
+                                </Timeline>
+                              </>
+                            )}
+                          </Panel>
+                        );
+                      })}
+                    </Collapse>
+                  )}
+                </>
+              )}
+            </div>
+          </div>
+          <Modal
+            title={
+              <h1 className="font-semibold">
+                Apakah anda yakin ingin{" "}
+                {emptyfieldpart.length > 0 ? "tetap" : ""} membuat item{" "}
+                {emptyfieldpart.length > 0
+                  ? "part ini"
+                  : `\"${newdata.inventory_name}\"`}
+                ?
+              </h1>
+            }
+            visible={modalfinal}
+            onCancel={() => {
+              setmodalfinal(false);
+            }}
+            okText="Ya"
+            cancelText="Tidak"
+            onOk={handleCreateItem}
+            okButtonProps={{ loading: loadingcreate }}
+          >
+            {emptyfieldpart.length > 0 ? (
+              <div className="flex flex-col mb-5">
+                <div className="flex flex-col mb-4">
+                  <p className="mb-2 text-xs">
+                    Anda belum melengkapi seluruh field wajib dari item part
+                    dengan model berikut ini :
+                  </p>
+                  <ul className="mb-2 text-xs">
+                    {emptyfieldpart.map((docempty, idxempty) => (
+                      <li key={idxempty}>
+                        - <strong>{docempty}</strong>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mb-2 text-xs">
+                    Jika field wajib tidak diisi, maka akan bernilai “-”
+                  </p>
+                </div>
+                <hr />
+                <div className="flex flex-col mt-4">
+                  <p className="mb-0">Notes</p>
+                  <Input
+                    placeholder="Masukkan Notes"
+                    onChange={(e) => {
+                      setnewdata((prev) => {
+                        var temp = prev;
+                        temp.notes = e.target.value;
+                        return temp;
+                      });
+                    }}
+                  ></Input>
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col">
+                <div className="flex flex-col">
+                  <p className="mb-0">Notes</p>
+                  <Input
+                    placeholder="Masukkan Notes"
+                    onChange={(e) => {
+                      setnewdata((prev) => {
+                        var temp = prev;
+                        temp.notes = e.target.value;
+                        return temp;
+                      });
+                    }}
+                  ></Input>
+                </div>
+              </div>
             )}
-          </div>
-        </div>
+          </Modal>
+        </AccessControl>
       </div>
-      <Modal
-        title={
-          <h1 className="font-semibold">
-            Apakah anda yakin ingin {emptyfieldpart.length > 0 ? "tetap" : ""}{" "}
-            membuat item{" "}
-            {emptyfieldpart.length > 0
-              ? "part ini"
-              : `\"${newdata.inventory_name}\"`}
-            ?
-          </h1>
-        }
-        visible={modalfinal}
-        onCancel={() => {
-          setmodalfinal(false);
-        }}
-        okText="Ya"
-        cancelText="Tidak"
-        onOk={handleCreateItem}
-        okButtonProps={{ loading: loadingcreate }}
-      >
-        {emptyfieldpart.length > 0 ? (
-          <div className="flex flex-col mb-5">
-            <div className="flex flex-col mb-4">
-              <p className="mb-2 text-xs">
-                Anda belum melengkapi seluruh field wajib dari item part dengan
-                model berikut ini :
-              </p>
-              <ul className="mb-2 text-xs">
-                {emptyfieldpart.map((docempty, idxempty) => (
-                  <li key={idxempty}>
-                    - <strong>{docempty}</strong>
-                  </li>
-                ))}
-              </ul>
-              <p className="mb-2 text-xs">
-                Jika field wajib tidak diisi, maka akan bernilai “-”
-              </p>
-            </div>
-            <hr />
-            <div className="flex flex-col mt-4">
-              <p className="mb-0">Notes</p>
-              <Input
-                placeholder="Masukkan Notes"
-                onChange={(e) => {
-                  setnewdata((prev) => {
-                    var temp = prev;
-                    temp.notes = e.target.value;
-                    return temp;
-                  });
-                }}
-              ></Input>
-            </div>
-          </div>
-        ) : (
-          <div className="flex flex-col">
-            <div className="flex flex-col">
-              <p className="mb-0">Notes</p>
-              <Input
-                placeholder="Masukkan Notes"
-                onChange={(e) => {
-                  setnewdata((prev) => {
-                    var temp = prev;
-                    temp.notes = e.target.value;
-                    return temp;
-                  });
-                }}
-              ></Input>
-            </div>
-          </div>
-        )}
-      </Modal>
     </Layout>
   );
 };
