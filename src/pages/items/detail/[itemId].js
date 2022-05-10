@@ -27,6 +27,28 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  ASSETS_GET,
+  INVENTORY_DELETE,
+  INVENTORY_GET, // <Activity>
+  INVENTORY_LOG_GET, // <Relationship>
+  INVENTORY_NOTES_ADD,
+  INVENTORY_PARTS_ADD, // <ItemDetail>
+  INVENTORY_PART_REMOVE,
+  INVENTORY_PART_REPLACE,
+  INVENTORY_STATUS_CONDITION,
+  INVENTORY_STATUS_USAGE, // <Overview>
+  INVENTORY_UPDATE,
+  MODELS_GET,
+  RELATIONSHIPS_GET, // <KonfigurasiPart>
+  RELATIONSHIP_INVENTORY_ADD,
+  RELATIONSHIP_INVENTORY_DELETE,
+  RELATIONSHIP_INVENTORY_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard2";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -39,6 +61,16 @@ const Overview = ({
   vendor,
   praloading,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToUpdateItem = hasPermission(INVENTORY_UPDATE);
+
   const rt = useRouter();
   //useState
   // const [invrelations2, setinvrelations2] = useState({});
@@ -56,6 +88,7 @@ const Overview = ({
             onClick={() => {
               rt.push(`/items/update/${itemid}`);
             }}
+            disabled={!isAllowedToUpdateItem}
           >
             Ubah
           </Button>
@@ -239,6 +272,7 @@ const Overview = ({
     </div>
   );
 };
+
 const KonfigurasiPart = ({
   initProps,
   itemid,
@@ -248,6 +282,21 @@ const KonfigurasiPart = ({
   models,
   setmodels,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToReplaceInventoryPart = hasPermission(INVENTORY_PART_REPLACE); // for /replaceInventoryPart and /getInventoryReplacements
+  const isAllowedToRemoveInventoryPart = hasPermission(INVENTORY_PART_REMOVE);
+  const isAllowedToGetModels = hasPermission(MODELS_GET); // for /getModels and /getFilterModels
+  const isAllowedToGetAssets = hasPermission(ASSETS_GET);
+  const isAllowedToGetInventory = hasPermission(INVENTORY_GET);
+  const isAllowedToAddParts = hasPermission(INVENTORY_PARTS_ADD);
+
   const rt = useRouter();
 
   //usestate
@@ -312,7 +361,7 @@ const KonfigurasiPart = ({
     notes: "",
   });
   const [modalremoved, setmodalremoved] = useState(false);
-  const [disabledremoved, setdisabledremoved] = useState(true);
+  // const [disabledremoved, setdisabledremoved] = useState(true);
   const [loadingremoved, setloadingremoved] = useState(false);
   const [fetchingmodel, setfetchingmodel] = useState(false);
   const [backupmodels, setbackupmodels] = useState(models);
@@ -389,6 +438,7 @@ const KonfigurasiPart = ({
                       <Button
                         type="text"
                         style={{ width: `100%` }}
+                        disabled={!isAllowedToRemoveInventoryPart}
                         onClick={() => {
                           setdataremoved(record);
                           setdataApiremoved({
@@ -405,6 +455,10 @@ const KonfigurasiPart = ({
                       <Button
                         type="text"
                         style={{ width: `100%` }}
+                        disabled={
+                          !isAllowedToReplaceInventoryPart ||
+                          !isAllowedToGetInventory
+                        }
                         onClick={() => {
                           setdatachanged(record);
                           setmodalchanged(true);
@@ -654,7 +708,17 @@ const KonfigurasiPart = ({
     setdatatable(datatemp);
   };
 
+  /** Data fetching for table's data source */
   useEffect(() => {
+    if (!isAllowedToGetInventory) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Konfigurasi Part Item"
+      );
+      setpraloadingpart(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventory?id=${itemid}`, {
       method: `GET`,
       headers: {
@@ -698,8 +762,20 @@ const KonfigurasiPart = ({
         setdatatable3(t);
         setpraloadingpart(false);
       });
-  }, [datatrigger]);
+  }, [datatrigger, isAllowedToGetInventory]);
+
+  /**
+   * Data fetching for "Nama Item Part Pengganti" input field
+   * Flow:
+   * 1. Click (X) Icon
+   * 2. Gantikan Part
+   * 3. A modal spawned with input field: "Nama Item Part Pengganti"
+   */
   useEffect(() => {
+    if (!isAllowedToReplaceInventoryPart) {
+      return;
+    }
+
     if (triggerchanged !== -1) {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryReplacements?id=${datachanged.model_inventory.asset_id}`,
@@ -719,8 +795,14 @@ const KonfigurasiPart = ({
           }
         });
     }
-  }, [triggerchanged]);
+  }, [triggerchanged, isAllowedToReplaceInventoryPart]);
+
+  /** Data fetching for "Cari Asset Type" input field */
   useEffect(() => {
+    if (!isAllowedToGetAssets) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -731,7 +813,7 @@ const KonfigurasiPart = ({
       .then((res2) => {
         setassetdata(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetAssets]);
 
   return (
     <div className="flex flex-col">
@@ -741,6 +823,7 @@ const KonfigurasiPart = ({
           <Button
             type="primary"
             size="large"
+            disabled={!isAllowedToAddParts}
             onClick={() => {
               /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(
                 `/items/createpart/${itemid}?nama=${mainpartdata.mig_id}`
@@ -758,6 +841,7 @@ const KonfigurasiPart = ({
               <Input
                 style={{ width: `100%`, marginRight: `0.5rem` }}
                 placeholder="Cari Nama Item"
+                disabled={!isAllowedToGetInventory}
                 onChange={(e) => onChangeSearch(e)}
                 allowClear
               ></Input>
@@ -767,6 +851,7 @@ const KonfigurasiPart = ({
                 allowClear
                 dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                 treeData={assetdata}
+                disabled={!isAllowedToGetModels || !isAllowedToGetAssets}
                 placeholder="Cari Asset Type"
                 treeDefaultExpandAll
                 style={{ width: `100%` }}
@@ -792,6 +877,7 @@ const KonfigurasiPart = ({
               <Select
                 showSearch
                 optionFilterProp="children"
+                disabled={!isAllowedToGetModels}
                 notFoundContent={fetchingmodel ? <Spin size="small" /> : null}
                 onSearch={(value) => {
                   setfetchingmodel(true);
@@ -840,6 +926,7 @@ const KonfigurasiPart = ({
                 type="primary"
                 style={{ width: `100%` }}
                 onClick={onFinalClick}
+                disabled={!isAllowedToGetInventory}
               >
                 <SearchOutlined />
               </Button>
@@ -1050,9 +1137,31 @@ const KonfigurasiPart = ({
     </div>
   );
 };
+
 const Relationship = ({ initProps, maindata, itemid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRelationships = hasPermission(RELATIONSHIPS_GET);
+  const isAllowedToDeleteRelationship = hasPermission(
+    RELATIONSHIP_INVENTORY_DELETE
+  );
+  const isAllowedToGetRelationship = hasPermission(RELATIONSHIP_INVENTORY_GET); // for /getRelationshipInventory and /getRelationshipInventoryDetailList
+  const isAllowedToAddRelationship = hasPermission(RELATIONSHIP_INVENTORY_ADD);
+
+  // conditional alias whether to let the "Tambah" button is disabled or not
+  const canAddNewRelationship =
+    !isAllowedToAddRelationship ||
+    !isAllowedToGetRelationships ||
+    !isAllowedToGetRelationship;
+
   //init
-  const rt = useRouter();
+  // const rt = useRouter();
   //usestate
   const [events, setevents] = useState("");
   const [datatable, setdatatable] = useState([]);
@@ -1061,7 +1170,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
   const [namasearchact, setnamasearchact] = useState(false);
   const [namavalue, setnamavalue] = useState("");
   const [datatrigger, setdatatrigger] = useState(0);
-  const [loadingrel, setloadingrel] = useState(false);
+  // const [loadingrel, setloadingrel] = useState(false);
   const [praloadingrel, setpraloadingrel] = useState(false);
   //delete
   const [dataApidelete, setdataApidelete] = useState({
@@ -1126,6 +1235,14 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 <>
                   <DeleteOutlined
                     onClick={() => {
+                      if (!isAllowedToDeleteRelationship) {
+                        permissionWarningNotification(
+                          "Menghapus",
+                          "Relationship"
+                        );
+                        return;
+                      }
+
                       setdataApidelete({ id: record.id });
                       setrelationdatadelete({
                         name: record.relationship_name,
@@ -1250,8 +1367,15 @@ const Relationship = ({ initProps, maindata, itemid }) => {
   };
 
   //useEffect
+  /** Data fetching for table data source */
   useEffect(() => {
     if (datatrigger !== -1) {
+      if (!isAllowedToGetRelationship) {
+        permissionWarningNotification("Mendapatkan", "Daftar Relationship");
+        setpraloadingrel(false);
+        return;
+      }
+
       setpraloadingrel(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventory?id=${itemid}&type_id=-4`,
@@ -1276,8 +1400,18 @@ const Relationship = ({ initProps, maindata, itemid }) => {
           setpraloadingrel(false);
         });
     }
-  }, [datatrigger]);
+  }, [datatrigger, isAllowedToGetRelationship]);
+
+  /**
+   * Data fetching for all relationship possible values (a modal after User click "Tambah" button).
+   *
+   * Field name: "Relationship Type"
+   */
   useEffect(() => {
+    if (!isAllowedToGetRelationships) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationships`, {
       method: `GET`,
       headers: {
@@ -1288,8 +1422,18 @@ const Relationship = ({ initProps, maindata, itemid }) => {
       .then((res2) => {
         setdisplaydatarelations(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetRelationships]);
+
+  /**
+   * Data fetching for "Tipe" input field in "Tambah" modal.
+   *
+   * Field name: "Tipe
+   */
   useEffect(() => {
+    if (!isAllowedToGetRelationship) {
+      return;
+    }
+
     if (subloctrig !== -1) {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventoryDetailList?type_id=${subloctrig}`,
@@ -1323,7 +1467,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
           // console.log();
         });
     }
-  }, [detailtipeadd, subloctrig]);
+  }, [detailtipeadd, subloctrig, isAllowedToGetRelationship]);
 
   return (
     <div className="flex flex-col">
@@ -1344,6 +1488,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
         <Button
           type="primary"
           size="large"
+          disabled={canAddNewRelationship}
           onClick={() => {
             setmodaladd(
               true
@@ -1362,6 +1507,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 placeholder="Cari Nama Item"
                 onChange={(e) => onChangeSearch(e)}
                 allowClear
+                disabled={!isAllowedToGetRelationship}
               ></Input>
             </div>
             <div className=" col-span-1">
@@ -1369,6 +1515,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 type="primary"
                 style={{ width: `100%` }}
                 onClick={onFinalClick}
+                disabled={!isAllowedToGetRelationship}
               >
                 <SearchOutlined />
               </Button>
@@ -1885,6 +2032,7 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
     </div>
   );
 };
+
 const Acitivty = ({
   itemid,
   initProps,
@@ -1893,13 +2041,29 @@ const Acitivty = ({
   praloading,
   activitytrigger,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetInventoryLog = hasPermission(INVENTORY_LOG_GET);
+
   const [daylogs, setdaylogs] = useState([]);
   const [weeklogs, setweeklogs] = useState([]);
   const [morelogs, setmorelogs] = useState([]);
   const [praloadinglogs, setpraloadinglogs] = useState(true);
-  const [inventories, setinventories] = useState([]);
+  // const [inventories, setinventories] = useState([]);
 
   useEffect(() => {
+    if (!isAllowedToGetInventoryLog) {
+      permissionWarningNotification("Melihat", "Aktivitas Item");
+      setpraloadinglogs(false);
+      return;
+    }
+
     setpraloadinglogs(true);
 
     fetch(
@@ -2612,7 +2776,7 @@ const Acitivty = ({
     //             setpraloadinglogs2(false)
     //         })
     // })
-  }, [activitytrigger]);
+  }, [activitytrigger, isAllowedToGetInventoryLog]);
 
   return (
     <div className="flex flex-col">
@@ -2712,6 +2876,24 @@ const Acitivty = ({
 };
 
 const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToDeleteItem = hasPermission(INVENTORY_DELETE);
+  const isAllowedToAddNotes = hasPermission(INVENTORY_NOTES_ADD);
+  const isAllowedToChangeStatusCondition = hasPermission(
+    INVENTORY_STATUS_CONDITION
+  );
+  const isAllowedToChangeStatusUsage = hasPermission(INVENTORY_STATUS_USAGE); // for /changeStatusUsage and /getChangeStatusUsageDetailList
+  const isAllowedToGetInventory = hasPermission(INVENTORY_GET); // for /getInventory and /getInventoryRelations
+  const isAllowedToGetModels = hasPermission(MODELS_GET);
+  const isAllowedToGetRelationship = hasPermission(RELATIONSHIP_INVENTORY_GET);
+
   //1. Init
   const rt = useRouter();
   var activeTab = "overview";
@@ -2967,7 +3149,15 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   };
 
   //useEffect
+  /** Data fetching for primarily all current inventory's detail */
   useEffect(() => {
+    if (!isAllowedToGetInventory) {
+      permissionWarningNotification("Mendapatkan", "Detail Item");
+      setpraloading2(false);
+      setpraloading(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventory?id=${itemid}`, {
       method: `GET`,
       headers: {
@@ -3044,8 +3234,14 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             setpraloading2(false);
           });
       });
-  }, []);
+  }, [isAllowedToGetInventory]);
+
+  /** Data fetching for list of model and pass them into <KonfigurasiPart> component */
   useEffect(() => {
+    if (!isAllowedToGetModels) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterModels`, {
       method: `GET`,
       headers: {
@@ -3057,8 +3253,20 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
       .then((res2) => {
         setmodels(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetModels]);
+
+  /**
+   * NOTE:
+   *  Untuk saat ini saya blm terlalu yakin gimana show data hasil dari endpoint ini pada UI.
+   *
+   *  Yang pasti, data ini digunakan ketika input "Status Pemakaian" di klik oleh User dan muncul modal.
+   *  Untuk saat ini, kita akan bergantung dengan `isAllowedToChangeStatusUsage`.
+   */
   useEffect(() => {
+    if (!isAllowedToChangeStatusUsage) {
+      return;
+    }
+
     if (changeusage.relationship_type_id !== "") {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getChangeStatusUsageDetailList?id=${changeusage.relationship_type_id}`,
@@ -3076,8 +3284,18 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             : setdetaillist(res2.data.data);
         });
     }
-  }, [changeusage]);
+  }, [changeusage, isAllowedToChangeStatusUsage]);
+
+  /**
+   * NOTE:
+   *  Sama seperti effect di atas, data dari endpoint ini akan diconsume pada modal "Status Pemakaian".
+   *  Untuk saat ini, kita akan bergantung dengan `isAllowedToChangeStatusUsage`.
+   */
   useEffect(() => {
+    if (!isAllowedToChangeStatusUsage || !isAllowedToGetRelationship) {
+      return;
+    }
+
     if (sublocationtrigger !== -1) {
       setloadingchangecompanyusage(true);
       fetch(
@@ -3095,8 +3313,21 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           setsublocations(res2.data.children);
         });
     }
-  }, [sublocationtrigger]);
+  }, [
+    sublocationtrigger,
+    isAllowedToGetRelationship,
+    isAllowedToChangeStatusUsage,
+  ]);
+
+  /**
+   * NOTE:
+   *  Data dari endpoint ini akan diconsume pada modal delete item.
+   */
   useEffect(() => {
+    if (!isAllowedToDeleteItem || !isAllowedToGetRelationship) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRelationshipInventory?id=${itemid}&type_id=-4`,
       {
@@ -3110,7 +3341,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
       .then((res2) => {
         setrelship(res2.data.from_inverse.concat(res2.data.not_from_inverse));
       });
-  }, []);
+  }, [isAllowedToGetRelationship, isAllowedToDeleteItem]);
+
   return (
     <Layout
       st={st}
@@ -3147,6 +3379,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                               ? null
                               : maindata.status_usage
                           }
+                          disabled={!isAllowedToChangeStatusUsage}
                           onChange={(value) => {
                             setdisabledusage((prev) => {
                               if (value !== 1) {
@@ -3192,6 +3425,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                             setmodalkondisi(true);
                             setdisplaykondisi(false);
                           }}
+                          disabled={!isAllowedToChangeStatusCondition}
                         >
                           <Select.Option value={1}>
                             <div className="p-1 flex w-full items-center">
@@ -3220,6 +3454,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
               <div className="flex space-x-2 items-center">
                 <Button
                   style={{ marginRight: `1rem` }}
+                  disabled={!isAllowedToAddNotes}
                   onClick={() => {
                     setmodalnotes(true);
                   }}
@@ -3230,6 +3465,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                 <Button
                   type="danger"
                   size="large"
+                  disabled={!isAllowedToDeleteItem}
                   onClick={() => {
                     setmodaldelete(true);
                   }}
