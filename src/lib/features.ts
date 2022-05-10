@@ -351,6 +351,8 @@ export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
  *
  * - [x] pages/company/clients
  * - [x] pages/company/clients/locations
+ *
+ * - [x] pages/items/update/[itemId]
  */
 export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
 
@@ -398,6 +400,7 @@ export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
  * /getSubLocations
  *
  * - [x] pages/items/create
+ * - [x] pages/items/update/[itemId]
  *
  * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [ ] components/modal/modalCustom
@@ -719,7 +722,7 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
  * - [x] pages/items/index
  * - [ ] pages/items/detail/[itemId]
  * - [x] pages/items/createpart/[itemId]
- * - [ ] pages/items/update/[itemId]
+ * - [x] pages/items/update/[itemId]
  * - [x] pages/items/create/index
  *
  * - [x] pages/admin/models/index
@@ -785,7 +788,7 @@ export const INVENTORIES_GET = "INVENTORIES_GET";
  * - [x] pages/items/createpart/[itemId]
  * - [x] pages/items/create/index
  * - [ ] pages/items/detail/[itemId]
- * - [ ] pages/items/update/[itemId]
+ * - [x] pages/items/update/[itemId]
  *
  * - [ ] pages/admin/contracts/[contractId]
  */
@@ -799,6 +802,11 @@ export const INVENTORY_GET = "INVENTORY_GET";
  * - [ ] pages/items/detail/[itemId]
  */
 export const INVENTORY_ADD = "INVENTORY_ADD";
+/**
+ * /updateInventory
+ *
+ * - [x] pages/items/update/[itemId]
+ */
 export const INVENTORY_UPDATE = "INVENTORY_UPDATE";
 export const INVENTORY_DELETE = "INVENTORY_DELETE";
 export const INVENTORY_NOTES_ADD = "INVENTORY_NOTES_ADD";
@@ -815,8 +823,28 @@ export const INVENTORY_PART_REMOVE = "INVENTORY_PART_REMOVE";
 export const INVENTORY_PART_REPLACE = "INVENTORY_PART_REPLACE";
 export const INVENTORY_LOG_GET = "INVENTORY_LOG_GET";
 export const INVENTORY_IMPORT = "INVENTORY_IMPORT";
+/**
+ * /getRelationshipInventoryRelation
+ * /getRelationshipInventoryDetailList
+ *
+ * - [ ] pages/items/createrelationship/[itemId]
+ * - [ ] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiUpdate
+ */
 export const COMPANY_RELATIONSHIP_INVENTORY_GET =
   "COMPANY_RELATIONSHIP_INVENTORY_GET";
+/**
+ * /addRelationshipInventories
+ *
+ * - [ ] pages/items/detail/[itemId]
+ * - [ ] pages/items/createrelationship/[itemId]
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ */
 export const RELATIONSHIP_INVENTORY_ADD = "RELATIONSHIP_INVENTORY_ADD";
 export const RELATIONSHIP_INVENTORY_UPDATE = "RELATIONSHIP_INVENTORY_UPDATE";
 export const RELATIONSHIP_INVENTORY_DELETE = "RELATIONSHIP_INVENTORY_DELETE";
