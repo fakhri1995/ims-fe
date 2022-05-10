@@ -13,11 +13,30 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ASSETS_GET, INVENTORY_PARTS_ADD, MODELS_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToAddInventoryParts = hasPermission(INVENTORY_PARTS_ADD); // for /addInventoryParts and /getInventoryAddable
+  const isAllowedToGetModelList = hasPermission(MODELS_GET); // for /getModels and /getFilterModels
+  const isAllowedToGetAssetType = hasPermission(ASSETS_GET);
+
   // 1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -53,40 +72,40 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
     total: null,
   });
   const [displaydata, setdisplaydata] = useState([]);
-  const [displaydata2, setdisplaydata2] = useState([]);
+  // const [displaydata2, setdisplaydata2] = useState([]);
   const [displaydata3, setdisplaydata3] = useState([]);
   const [newpartdata, setnewpartdata] = useState({
     id: Number(itemid),
     inventory_part_ids: [],
     notes: "",
   });
-  const [invrelations, setinvrelations] = useState({
-    models: [
-      {
-        id: "",
-        name: "",
-        deleted_at: null,
-      },
-    ],
-    assets: [
-      {
-        id: "",
-        name: "",
-        deleted_at: null,
-      },
-    ],
-    manufacturers: [
-      {
-        id: "",
-        name: "",
-        deleted_at: null,
-      },
-    ],
-    status_condition: [],
-    status_usage: [],
-    vendors: [],
-    companies: [],
-  });
+  // const [invrelations, setinvrelations] = useState({
+  //   models: [
+  //     {
+  //       id: "",
+  //       name: "",
+  //       deleted_at: null,
+  //     },
+  //   ],
+  //   assets: [
+  //     {
+  //       id: "",
+  //       name: "",
+  //       deleted_at: null,
+  //     },
+  //   ],
+  //   manufacturers: [
+  //     {
+  //       id: "",
+  //       name: "",
+  //       deleted_at: null,
+  //     },
+  //   ],
+  //   status_condition: [],
+  //   status_usage: [],
+  //   vendors: [],
+  //   companies: [],
+  // });
   const [listselectedpart, setlistselectedpart] = useState([]);
   const [namasearchact, setnamasearchact] = useState(
     name1 === "" ? false : true
@@ -103,7 +122,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   const [namaasset, setnamaasset] = useState(asset_id1);
   const [defasset, setdefasset] = useState(null);
   const [assetdata, setassetdata] = useState([]);
-  const [rowstate, setrowstate] = useState(0);
+  // const [rowstate, setrowstate] = useState(0);
   const [praloading, setpraloading] = useState(true);
   const [praloading2, setpraloading2] = useState(true);
   const [modaladd, setmodaladd] = useState(false);
@@ -376,7 +395,14 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
   };
 
   //useEffect
+  /** Data fetching to retrieve data source for table component */
   useEffect(() => {
+    if (!isAllowedToAddInventoryParts) {
+      permissionWarningNotification("Mendapatkan", "Daftar Inventory");
+      setpraloading(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryAddable?rows=10&page=1&asset_id=${asset_id1}&model_id=${model_id1}&name=${name1}&inventory_id=${itemId}`,
       {
@@ -411,13 +437,20 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
           return res;
         };
         const t = recursiveChangetoChildren(res2.data.data);
-        setdisplaydata(t);
-        setdisplaydata2(t);
-        setdisplaydata3(t);
+        setdisplaydata(t); // table data source
+        // setdisplaydata2(t);
+        setdisplaydata3(t); // record's children (a.k.a tree's node)
         setpraloading(false);
       });
-  }, []);
+  }, [isAllowedToAddInventoryParts]);
+
+  /** Data fetching for: "Cari Asset Type" input field data source */
   useEffect(() => {
+    if (!isAllowedToGetAssetType) {
+      setpraloading2(false);
+      return;
+    }
+
     setpraloading2(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
@@ -445,20 +478,27 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
         setassetdata(res2.data);
         setpraloading2(false);
       });
-  }, []);
+  }, [isAllowedToGetAssetType]);
+
+  // useEffect(() => {
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setinvrelations(res2.data);
+  //     });
+  // }, []);
+
+  /** Data fetching for: "Model" input field data source */
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventoryRelations`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setinvrelations(res2.data);
-      });
-  }, []);
-  useEffect(() => {
+    if (!isAllowedToGetModelList) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterModels`, {
       method: `GET`,
       headers: {
@@ -469,7 +509,8 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
       .then((res2) => {
         setmodelfilter(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetModelList]);
+
   return (
     <Layout
       dataProfile={dataProfile}
@@ -498,7 +539,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
             Batal
           </Button>
           <Button
-            disabled={disabledadd}
+            disabled={disabledadd || !isAllowedToAddInventoryParts}
             onClick={() => {
               setmodaladd(true);
             }}
@@ -520,6 +561,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                   placeholder="Cari MIG ID"
                   onChange={onChangeSearch}
                   allowClear
+                  disabled={!isAllowedToAddInventoryParts}
                 ></Input>
               </div>
               {praloading2 ? (
@@ -533,6 +575,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     allowClear
                     dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                     treeData={assetdata}
+                    disabled={!isAllowedToGetAssetType}
                     placeholder="Cari Asset Type"
                     treeDefaultExpandAll
                     style={{ width: `100%` }}
@@ -565,6 +608,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                   showSearch
                   optionFilterProp="children"
                   notFoundContent={fetchingmodel ? <Spin size="small" /> : null}
+                  disabled={!isAllowedToGetModelList}
                   onSearch={(value) => {
                     setfetchingmodel(true);
                     fetch(
@@ -613,6 +657,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                   type="primary"
                   style={{ width: `100%` }}
                   onClick={onFinalClick}
+                  disabled={!isAllowedToAddInventoryParts}
                 >
                   <SearchOutlined />
                 </Button>
@@ -690,7 +735,7 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
                     };
                     const t = recursiveChangetoChildren(res2.data.data);
                     setdisplaydata(t);
-                    setdisplaydata2(t);
+                    // setdisplaydata2(t);
                     setdisplaydata3(t);
                     setpraloading(false);
                   });
@@ -723,60 +768,63 @@ const CreateItemPart = ({ dataProfile, sidemenu, initProps, itemid }) => {
           ></Table>
         </div>
       </div>
-      <Modal
-        title={
-          <h1 className="font-semibold">
-            Apakah anda yakin untuk menambahkan Item berikut ini menjadi Item
-            Part "{nama}"?
-          </h1>
-        }
-        visible={modaladd}
-        onCancel={() => {
-          setmodaladd(false);
-        }}
-        okText="Ya"
-        cancelText="Tidak"
-        onOk={handleAddItemPart}
-        okButtonProps={{ loading: loadingadd }}
-        width={760}
-      >
-        <div className="flex flex-col">
-          <div className="flex flex-col mb-4">
-            {listselectedpart.map((doc, idx) => {
-              if (doc.parent !== "") {
-                return (
-                  <p className="mb-0 text-xs font-semibold">
-                    - {doc.mig_id}, sedang menjadi Item Part dari "
-                    {doc.parent.mig_id}"
-                  </p>
-                );
-              } else {
-                return (
-                  <p className="mb-0 text-xs font-semibold">- {doc.mig_id}</p>
-                );
-              }
-            })}
-          </div>
-          {listselectedpart.some((doc2) => doc2.parent !== "") && (
-            <div className="flex flex-col mb-3">
-              <p className="text-red-500 mb-0">
-                Dengan menyetujui hal ini, anda akan mengeluarkan item part
-                diatas dari item utama-nya!
-              </p>
-            </div>
-          )}
+
+      <AccessControl hasPermission={INVENTORY_PARTS_ADD}>
+        <Modal
+          title={
+            <h1 className="font-semibold">
+              Apakah anda yakin untuk menambahkan Item berikut ini menjadi Item
+              Part "{nama}"?
+            </h1>
+          }
+          visible={modaladd}
+          onCancel={() => {
+            setmodaladd(false);
+          }}
+          okText="Ya"
+          cancelText="Tidak"
+          onOk={handleAddItemPart}
+          okButtonProps={{ loading: loadingadd }}
+          width={760}
+        >
           <div className="flex flex-col">
-            <p className="mb-0">Notes</p>
-            <Input.TextArea
-              rows={4}
-              placeholder="Masukkan Notes"
-              onChange={(e) => {
-                setnewpartdata({ ...newpartdata, notes: e.target.value });
-              }}
-            ></Input.TextArea>
+            <div className="flex flex-col mb-4">
+              {listselectedpart.map((doc, idx) => {
+                if (doc.parent !== "") {
+                  return (
+                    <p className="mb-0 text-xs font-semibold">
+                      - {doc.mig_id}, sedang menjadi Item Part dari "
+                      {doc.parent.mig_id}"
+                    </p>
+                  );
+                } else {
+                  return (
+                    <p className="mb-0 text-xs font-semibold">- {doc.mig_id}</p>
+                  );
+                }
+              })}
+            </div>
+            {listselectedpart.some((doc2) => doc2.parent !== "") && (
+              <div className="flex flex-col mb-3">
+                <p className="text-red-500 mb-0">
+                  Dengan menyetujui hal ini, anda akan mengeluarkan item part
+                  diatas dari item utama-nya!
+                </p>
+              </div>
+            )}
+            <div className="flex flex-col">
+              <p className="mb-0">Notes</p>
+              <Input.TextArea
+                rows={4}
+                placeholder="Masukkan Notes"
+                onChange={(e) => {
+                  setnewpartdata({ ...newpartdata, notes: e.target.value });
+                }}
+              ></Input.TextArea>
+            </div>
           </div>
-        </div>
-      </Modal>
+        </Modal>
+      </AccessControl>
     </Layout>
   );
 };

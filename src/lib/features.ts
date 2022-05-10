@@ -345,10 +345,14 @@ export const COMPANY_BRANCHS_GET = "COMPANY_BRANCHS_GET";
  * /getCompanyClientList
  * /getClientCompanyList
  *
+ * - [x] pages/items/create
+ *
  * - [x] pages/admin/requesters
  *
  * - [x] pages/company/clients
  * - [x] pages/company/clients/locations
+ *
+ * - [x] pages/items/update/[itemId]
  */
 export const COMPANY_CLIENTS_GET = "COMPANY_CLIENTS_GET";
 
@@ -395,7 +399,8 @@ export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
 /**
  * /getSubLocations
  *
- * - [ ] pages/items/create
+ * - [x] pages/items/create
+ * - [x] pages/items/update/[itemId]
  *
  * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [ ] components/modal/modalCustom
@@ -553,9 +558,9 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
 /**
  * /getAssets
  *
- * - [ ] pages/items/index
- * - [ ] pages/items/detail/[itemId]
- * - [ ] pages/items/createpart/[itemId]
+ * - [x] pages/items/index
+ * - [x] pages/items/detail/[itemId]
+ * - [x] pages/items/createpart/[itemId]
  *
  * - [x] pages/admin/assets/index
  * - [x] pages/admin/assets/update/[assettypeId]
@@ -665,7 +670,7 @@ export const MANUFACTURER_DELETE = "MANUFACTURER_DELETE";
 /**
  * /getRelationships
  *
- * - [ ] pages/items/detail/[itemId]
+ * - [x] pages/items/detail/[itemId]
  *
  * - [ ] pages/company/myCompany/index
  *
@@ -710,14 +715,15 @@ export const RELATIONSHIP_DELETE = "RELATIONSHIP_DELETE";
 
 /**
  * /getModels
+ * /getFilterModels
  *
  * - [x] pages/admin/assets/detail/[assettypeId]
  *
- * - [ ] pages/items/index
- * - [ ] pages/items/detail/[itemId]
- * - [ ] pages/items/createpart/[itemId]
- * - [ ] pages/items/update/[itemId]
- * - [ ] pages/items/create/index
+ * - [x] pages/items/index
+ * - [x] pages/items/detail/[itemId]
+ * - [x] pages/items/createpart/[itemId]
+ * - [x] pages/items/update/[itemId]
+ * - [x] pages/items/create/index
  *
  * - [x] pages/admin/models/index
  * - [x] pages/admin/models/update2/[modelId]
@@ -732,7 +738,7 @@ export const MODELS_GET = "MODELS_GET";
  *
  * - [ ] components/screen/models/CreateConfigurationPart/InputPart
  *
- * - [ ] pages/items/create/index
+ * - [x] pages/items/create/index
  *
  * - [x] pages/admin/models/detail/[modelId]
  * - [x] pages/admin/models/update2/[modelId]
@@ -762,3 +768,127 @@ export const MODEL_UPDATE = "MODEL_UPDATE";
  * - [x] pages/admin/models/detail/[modelId]
  */
 export const MODEL_DELETE = "MODEL_DELETE";
+
+/**
+ * Daftar feature untuk Inventory management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67076719/Inventori
+ */
+/**
+ * /getInventories
+ *
+ * - [x] pages/items/index
+ */
+export const INVENTORIES_GET = "INVENTORIES_GET";
+/**
+ * /getInventoryRelations
+ * /getInventory
+ *
+ * - [x] pages/items/index
+ * - [x] pages/items/createpart/[itemId]
+ * - [x] pages/items/create/index
+ * - [x] pages/items/detail/[itemId]
+ * - [x] pages/items/update/[itemId]
+ *
+ * - [ ] pages/admin/contracts/[contractId]
+ */
+export const INVENTORY_GET = "INVENTORY_GET";
+/**
+ * /addInventory
+ *
+ * - [x] pages/items/index
+ * - [x] pages/items/create/index
+ * - [ ] pages/items/createpart/[itemId]
+ * - [ ] pages/items/detail/[itemId]
+ */
+export const INVENTORY_ADD = "INVENTORY_ADD";
+/**
+ * /updateInventory
+ *
+ * - [x] pages/items/update/[itemId]
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_UPDATE = "INVENTORY_UPDATE";
+/**
+ * /deleteInventory
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_DELETE = "INVENTORY_DELETE";
+/**
+ * /addInventoryNotes
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_NOTES_ADD = "INVENTORY_NOTES_ADD";
+/**
+ * /changeStatusUsage
+ * /getChangeStatusUsageDetailList
+ *
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_STATUS_USAGE = "INVENTORY_STATUS_USAGE";
+/**
+ * /changeStatusCondition
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_STATUS_CONDITION = "INVENTORY_STATUS_CONDITION";
+/**
+ * /getInventoryAddable
+ * /addInventoryParts
+ *
+ * - [x] pages/items/createpart/[itemId]
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_PARTS_ADD = "INVENTORY_PARTS_ADD";
+/**
+ * /removeInventoryPart
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_PART_REMOVE = "INVENTORY_PART_REMOVE";
+/**
+ * /replaceInventoryPart
+ * /getInventoryReplacements
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_PART_REPLACE = "INVENTORY_PART_REPLACE";
+/**
+ * /getActivityInventoryLogs
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_LOG_GET = "INVENTORY_LOG_GET";
+export const INVENTORY_IMPORT = "INVENTORY_IMPORT";
+/**
+ * /getRelationshipInventory
+ * /getRelationshipInventoryRelation
+ * /getRelationshipInventoryDetailList
+ *
+ * - [x] pages/items/detail/[itemId]
+ *
+ * - [ ] pages/company/myCompany/index
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiUpdate
+ */
+export const COMPANY_RELATIONSHIP_INVENTORY_GET =
+  "COMPANY_RELATIONSHIP_INVENTORY_GET";
+/**
+ * /addRelationshipInventories
+ *
+ * - [x] pages/items/detail/[itemId]
+ *
+ * - [ ] components/drawer/companies/mycompany/drawerMyCompanyRelasiCreate
+ */
+export const RELATIONSHIP_INVENTORY_ADD = "RELATIONSHIP_INVENTORY_ADD";
+export const RELATIONSHIP_INVENTORY_UPDATE = "RELATIONSHIP_INVENTORY_UPDATE";
+/**
+ * /deleteRelationshipInventory
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const RELATIONSHIP_INVENTORY_DELETE = "RELATIONSHIP_INVENTORY_DELETE";
