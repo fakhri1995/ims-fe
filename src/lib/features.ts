@@ -959,9 +959,9 @@ export const TICKETS_CLOSED_GET = "TICKETS_CLOSED_GET";
  * - [ ] pages/tasks/index
  *
  * - [ ] components/drawer/tickets/drawerTicketUpdate
- * - [ ] components/drawer/tickets/drawerTicketTypeUpdate
+ * - [x] components/drawer/tickets/drawerTicketTypeUpdate
  * - [x] components/drawer/tickets/drawerTicketCreate
- * - [ ] components/drawer/tickets/drawerTicketTypeCreate
+ * - [x] components/drawer/tickets/drawerTicketTypeCreate
  */
 export const TICKET_GET = "TICKET_GET";
 export const TICKET_LOG_GET = "TICKET_LOG_GET";
@@ -981,7 +981,27 @@ export const TICKET_EXPORT = "TICKET_EXPORT";
  */
 export const TICKETS_EXPORT = "TICKETS_EXPORT";
 
+/**
+ * /getTicketDetailTypes
+ *
+ * - [x] pages/tickets/tickettypes/index
+ */
 export const TICKET_DETAIL_TYPES_GET = "TICKET_DETAIL_TYPES_GET";
+/**
+ * /addTicketDetailType
+ *
+ * - [x] components/drawer/tickets/drawerTicketTypeCreate
+ */
 export const TICKET_DETAIL_TYPE_ADD = "TICKET_DETAIL_TYPE_ADD";
+/**
+ * /updateTicketDetailType
+ *
+ * - [x] components/drawer/tickets/drawerTicketTypeUpdate
+ */
 export const TICKET_DETAIL_TYPE_UPDATE = "TICKET_DETAIL_TYPE_UPDATE";
+/**
+ * /deleteTicketDetailType
+ *
+ * - [x] pages/tickets/tickettypes/index
+ */
 export const TICKET_DETAIL_TYPE_DELETE = "TICKET_DETAIL_TYPE_DELETE";
