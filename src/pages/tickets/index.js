@@ -1,17 +1,23 @@
 import { SearchOutlined } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Empty,
-  Input,
-  Select,
-  Spin,
-  TreeSelect,
-} from "antd";
+import { DatePicker, Empty, Input, Select, Spin, TreeSelect } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  TICKETS_CLIENT_GET,
+  TICKETS_EXPORT,
+  TICKETS_GET,
+  TICKET_ADD,
+  TICKET_CLIENT_GET,
+  TICKET_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../components/button";
 import DrawerTicketCreate from "../../components/drawer/tickets/drawerTicketCreate";
@@ -20,11 +26,8 @@ import {
   AdjusmentsHorizontalIconSvg,
   AlerttriangleIconSvg,
   HistoryIconSvg,
-  MappinIconSvg,
-  SearchIconSvg,
   TableExportIconSvg,
   TicketIconSvg,
-  UserIconSvg,
 } from "../../components/icon";
 import st from "../../components/layout-dashboard.module.css";
 import Layout from "../../components/layout-dashboardNew";
@@ -54,6 +57,29 @@ Chart.register(
 );
 
 const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  // role === 1 -> internal, role !== 1 -> client
+  const isClient = dataProfile.data.role !== 1;
+
+  const isAllowedGetTickets = hasPermission(
+    isClient ? TICKETS_CLIENT_GET : TICKETS_GET
+  );
+  const isAllowedGetTicket = hasPermission(
+    isClient ? TICKET_CLIENT_GET : TICKET_GET
+  );
+
+  const isAllowedToAddTicket = hasPermission(TICKET_ADD);
+  const canCreateNewTicket = isAllowedToAddTicket && isAllowedToAddTicket;
+
+  const isAllowedToExportTickets = hasPermission(TICKETS_EXPORT);
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -69,7 +95,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   const [datacountsticket, setdatacountsticket] = useState("");
   //2.4.TAMBAH TIKET
   const [drawerticketscreate, setdrawerticketscreate] = useState(false);
-  const [loadingticketscreate, setloadingticketscreate] = useState(false);
+  // const [loadingticketscreate, setloadingticketscreate] = useState(false);
   const [refreshcreateticketscreate, setrefreshcreateticketscreate] =
     useState(-1);
   //2.5.EKSPOR TIKET
@@ -120,7 +146,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     sort_type: "desc",
   });
   //Filter
-  const [datafilterttickets, setdatafilterttickets] = useState([]);
+  // const [datafilterttickets, setdatafilterttickets] = useState([]);
   const [searcingfiltertickets, setsearcingfiltertickets] = useState("");
   const [tickettypefiltertickets, settickettypefiltertickets] = useState("");
   const [fromfiltertickets, setfromfiltertickets] = useState("");
@@ -147,7 +173,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.full_name}</>,
         };
       },
-      sorter: (a, b) => a.id > b.id,
+      sorter: isAllowedGetTickets ? (a, b) => a.id > b.id : false,
     },
     {
       title: "Tipe Tiket",
@@ -157,7 +183,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.type_name}</>,
         };
       },
-      sorter: (a, b) => a.type_name.localeCompare(b.type_name),
+      sorter: isAllowedGetTickets
+        ? (a, b) => a.type_name.localeCompare(b.type_name)
+        : false,
     },
     {
       title: "Diajukan Oleh",
@@ -185,7 +213,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.raised_at}</>,
         };
       },
-      sorter: (a, b) => a.raised_at.localeCompare(b.raised_at),
+      sorter: isAllowedGetTickets
+        ? (a, b) => a.raised_at.localeCompare(b.raised_at)
+        : false,
       defaultSortOrder: "descend",
     },
     {
@@ -261,7 +291,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: (a, b) => a.status_name.localeCompare(b.status_name),
+      sorter: isAllowedGetTickets
+        ? (a, b) => a?.status_name.localeCompare(b?.status_name)
+        : false,
     },
   ];
 
@@ -285,7 +317,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdatarawtickets(res2.data);
         setdatatickets(res2.data.data);
-        setdatafilterttickets(res2.data.data);
+        // setdatafilterttickets(res2.data.data);
         setloadingtickets(false);
       });
   };
@@ -294,6 +326,13 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
 
   //5.useEffect
   useEffect(() => {
+    if (!isAllowedGetTickets) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tiket");
+
+      setloadingdataresolvedtimes(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
@@ -326,8 +365,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         setdatastatusticket(res2.data.statuses);
         setloadingdataresolvedtimes(false);
       });
-  }, []);
+  }, [isAllowedGetTickets]);
+
   useEffect(() => {
+    if (!isAllowedGetTickets) {
+      setloadingtickets(false);
+      return;
+    }
+
     setloadingtickets(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
@@ -346,11 +391,16 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdatarawtickets(res2.data);
         setdatatickets(res2.data.data);
-        setdatafilterttickets(res2.data.data);
+        // setdatafilterttickets(res2.data.data);
         setloadingtickets(false);
       });
-  }, [refreshcreateticketscreate]);
+  }, [refreshcreateticketscreate, isAllowedGetTickets]);
+
   useEffect(() => {
+    if (!isAllowedGetTicket) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
@@ -368,7 +418,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdataticketrelation(res2.data);
       });
-  }, []);
+  }, [isAllowedGetTicket]);
 
   return (
     <Layout
@@ -502,14 +552,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       <div className=" flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-overdue font-semibold text-base mr-1">
-                            {datastatusticket[0].status_count}
+                            {datastatusticket[0]?.status_count}
                           </p>
                           <div>
                             <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
                           </div>
                         </div>
                         <div className=" justify-end flex">
-                          <Label>{datastatusticket[0].status_name}</Label>
+                          <Label>{datastatusticket[0]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
@@ -520,11 +570,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       <div className=" flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-open font-semibold text-base mr-1">
-                            {datastatusticket[1].status_count}
+                            {datastatusticket[1]?.status_count}
                           </p>
                         </div>
                         <div className=" justify-end flex">
-                          <Label>{datastatusticket[1].status_name}</Label>
+                          <Label>{datastatusticket[1]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
@@ -535,11 +585,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       <div className=" flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-onprogress font-semibold text-base mr-1">
-                            {datastatusticket[2].status_count}
+                            {datastatusticket[2]?.status_count}
                           </p>
                         </div>
                         <div className=" justify-end flex">
-                          <Label>{datastatusticket[2].status_name}</Label>
+                          <Label>{datastatusticket[2]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
@@ -550,11 +600,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       <div className=" flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-onhold font-semibold text-base mr-1">
-                            {datastatusticket[3].status_count}
+                            {datastatusticket[3]?.status_count}
                           </p>
                         </div>
                         <div className=" justify-end flex">
-                          <Label>{datastatusticket[3].status_name}</Label>
+                          <Label>{datastatusticket[3]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
@@ -565,11 +615,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       <div className=" flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-closed font-semibold text-base mr-1">
-                            {datastatusticket[4].status_count}
+                            {datastatusticket[4]?.status_count}
                           </p>
                         </div>
                         <div className=" justify-end flex">
-                          <Label>{datastatusticket[4].status_name}</Label>
+                          <Label>{datastatusticket[4]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
@@ -580,11 +630,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       <div className=" flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-canceled font-semibold text-base mr-1">
-                            {datastatusticket[5].status_count}
+                            {datastatusticket[5]?.status_count}
                           </p>
                         </div>
                         <div className=" justify-end flex">
-                          <Label>{datastatusticket[5].status_name}</Label>
+                          <Label>{datastatusticket[5]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
@@ -606,6 +656,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 <div
                   className="shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-3 flex items-center mb-2"
                   onClick={() => {
+                    if (!canCreateNewTicket) {
+                      permissionWarningNotification("Membuat", "Tiket Baru");
+                      return;
+                    }
+
                     setdrawerticketscreate(true);
                   }}
                 >
@@ -627,6 +682,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     <div
                       className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
                       onClick={() => {
+                        if (!isAllowedToExportTickets) {
+                          permissionWarningNotification(
+                            "Melakukan",
+                            "Expor Tiket"
+                          );
+                          return;
+                        }
+
                         setdrawerticketexports(true);
                       }}
                     >
@@ -750,6 +813,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               <div
                 className="col-span-4 shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-3 flex items-center mb-6"
                 onClick={() => {
+                  if (!canCreateNewTicket) {
+                    permissionWarningNotification("Membuat", "Tiket Baru");
+                    return;
+                  }
+
                   setdrawerticketscreate(true);
                 }}
               >
@@ -792,6 +860,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
+                  disabled={!isAllowedGetTickets}
                 />
               </div>
 
@@ -803,6 +872,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       ? null
                       : tickettypefiltertickets
                   }
+                  disabled={!isAllowedToAddTicket || !isAllowedGetTickets}
                   placeholder="Semua Tipe Tiket"
                   style={{ width: `100%` }}
                   allowClear
@@ -826,6 +896,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 <DatePicker.RangePicker
                   style={{ width: `100%` }}
                   allowEmpty
+                  disabled={!isAllowedGetTickets}
                   className="datepickerStatus"
                   value={
                     fromfiltertickets === ""
@@ -844,6 +915,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 <TreeSelect
                   style={{ width: `100%` }}
                   allowClear
+                  disabled={!isAllowedGetTicket || !isAllowedGetTickets}
                   placeholder="Semua Lokasi"
                   showSearch
                   suffixIcon={<SearchOutlined />}
@@ -879,6 +951,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   value={
                     statusfiltertickets === "" ? null : statusfiltertickets
                   }
+                  disabled={!isAllowedGetTicket || !isAllowedGetTickets}
                   placeholder="Status"
                   style={{ width: `100%` }}
                   allowClear
@@ -988,7 +1061,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               <div className="mx-1 w-1/12">
-                <ButtonSys type={`primary`} onClick={onFilterTickets}>
+                <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterTickets}
+                  disabled={!isAllowedGetTickets}
+                >
                   {/* <div className='mr-1'>
                                         <SearchIconSvg size={15} color={`#ffffff`} />
                                     </div> */}
@@ -1025,31 +1102,37 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </div>
       </div>
-      <DrawerTicketCreate
-        title={"Tiket Baru"}
-        visible={drawerticketscreate}
-        onClose={() => {
-          setdrawerticketscreate(false);
-        }}
-        buttonOkText={"Simpan"}
-        initProps={initProps}
-        onvisible={setdrawerticketscreate}
-        refreshtickets={refreshcreateticketscreate}
-        setrefreshtickets={setrefreshcreateticketscreate}
-        dataprofile={dataProfile}
-      />
-      {dataProfile.data.role === 1 && (
-        <DrawerTicketExports
-          title={"Ekspor Tiket"}
-          visible={drawerticketexports}
+
+      {canCreateNewTicket && (
+        <DrawerTicketCreate
+          title={"Tiket Baru"}
+          visible={drawerticketscreate}
           onClose={() => {
-            setdrawerticketexports(false);
+            setdrawerticketscreate(false);
           }}
-          buttonOkText={"Ekspor Tiket"}
+          buttonOkText={"Simpan"}
           initProps={initProps}
-          onvisible={setdrawerticketexports}
+          onvisible={setdrawerticketscreate}
+          refreshtickets={refreshcreateticketscreate}
+          setrefreshtickets={setrefreshcreateticketscreate}
+          dataprofile={dataProfile}
         />
       )}
+
+      <AccessControl hasPermission={TICKETS_EXPORT}>
+        {dataProfile.data.role === 1 && (
+          <DrawerTicketExports
+            title={"Ekspor Tiket"}
+            visible={drawerticketexports}
+            onClose={() => {
+              setdrawerticketexports(false);
+            }}
+            buttonOkText={"Ekspor Tiket"}
+            initProps={initProps}
+            onvisible={setdrawerticketexports}
+          />
+        )}
+      </AccessControl>
     </Layout>
   );
 };

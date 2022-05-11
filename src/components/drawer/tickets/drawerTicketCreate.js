@@ -10,51 +10,42 @@ import {
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
-import ButtonSys from "../../button";
-import {
-  AssetIconSvg,
-  CalendartimeIconSvg,
-  CircleXIconSvg,
-  CloudUploadIconSvg,
-  TrashIconSvg,
-  UserIconSvg,
-} from "../../icon";
-import {
-  InputRequired,
-  SelectRequired,
-  TextAreaNotRequired,
-} from "../../input";
-import { H1, H2, Label } from "../../typography";
-import DrawerCore from "../drawerCore";
+// function modifData1(dataa) {
+//   for (var i = 0; i < dataa.length; i++) {
+//     dataa[i]["key"] = dataa[i].id;
+//     dataa[i]["value"] = dataa[i].id;
+//     dataa[i]["title"] = dataa[i].mig_id;
+//     if (dataa[i].inventory_parts) {
+//       dataa[i]["children"] = dataa[i].inventory_parts;
+//       delete dataa[i].inventory_parts;
+//       modifData1(dataa[i].children);
+//     }
+//   }
+//   return dataa;
+// }
+// function modifData2(dataa) {
+//   for (var i = 0; i < dataa.length; i++) {
+//     dataa[i]["key"] = dataa[i].id;
+//     dataa[i]["value"] = dataa[i].id;
+//     dataa[i][
+//       "title"
+//     ] = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+//     if (dataa[i].inventory_parts) {
+//       dataa[i]["children"] = dataa[i].inventory_parts;
+//       delete dataa[i].inventory_parts;
+//       modifData2(dataa[i].children);
+//     }
+//   }
+//   return dataa;
+// }
+import { useAccessControl } from "contexts/access-control";
 
-function modifData1(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].mig_id;
-    if (dataa[i].inventory_parts) {
-      dataa[i]["children"] = dataa[i].inventory_parts;
-      delete dataa[i].inventory_parts;
-      modifData1(dataa[i].children);
-    }
-  }
-  return dataa;
-}
-function modifData2(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i][
-      "title"
-    ] = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
-    if (dataa[i].inventory_parts) {
-      dataa[i]["children"] = dataa[i].inventory_parts;
-      delete dataa[i].inventory_parts;
-      modifData2(dataa[i].children);
-    }
-  }
-  return dataa;
-}
+import { TICKET_ADD, TICKET_CLIENT_GET, TICKET_GET } from "lib/features";
+
+import ButtonSys from "../../button";
+import { CloudUploadIconSvg, TrashIconSvg } from "../../icon";
+import { Label } from "../../typography";
+import DrawerCore from "../drawerCore";
 
 const DrawerTicketCreate = ({
   title,
@@ -68,6 +59,19 @@ const DrawerTicketCreate = ({
   setrefreshtickets,
   dataprofile,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isClient = dataprofile.data.role !== 1;
+
+  /** The following two features is required to create / add new ticket. */
+  const isAllowedToAddTicket = hasPermission(TICKET_ADD);
+  const isAllowedToGetTicket = hasPermission(
+    isClient ? TICKET_CLIENT_GET : TICKET_GET
+  ); // input field's data source: Tipe Tiket, Jenis Aset, and Lokasi Kejadian. All of them are required.
+  const canCreateNewTicket = isAllowedToAddTicket && isAllowedToGetTicket;
+
   /** Payload `incident_time` harus sesuai dengan format berikut */
   const incidentTimePayoadFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -219,6 +223,10 @@ const DrawerTicketCreate = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetTicket) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataprofile.data.role === 1
@@ -234,15 +242,16 @@ const DrawerTicketCreate = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        setdatatypetickets(res2.data.ticket_types);
-        setdatatasktickets(res2.data.ticket_detail_types);
+        setdatatypetickets(res2.data.ticket_types); // input field "Tipe Tiket"
+        setdatatasktickets(res2.data.ticket_detail_types); // input field "Jenis Aset"
         setdataloctickets([
           dataprofile.data.role === 1
             ? res2.data.companies
             : res2.data.companies.data,
-        ]);
+        ]); // input field "Lokasi Kejadian"
       });
-  }, []);
+  }, [isAllowedToGetTicket]);
+
   useEffect(() => {
     if (
       datapayload.type_id !== null &&
@@ -278,7 +287,7 @@ const DrawerTicketCreate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleAddTicket}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !canCreateNewTicket}
     >
       {loadingsave ? (
         <>
@@ -315,6 +324,7 @@ const DrawerTicketCreate = ({
                   setdisabledtrigger((prev) => prev + 1);
                 }}
                 value={datapayload.type_id}
+                disabled={!isAllowedToGetTicket}
               >
                 {datatypetickets.map((doc, idx) => (
                   <Select.Option value={doc.id}>{doc.name}</Select.Option>
@@ -346,6 +356,7 @@ const DrawerTicketCreate = ({
                   setdisabledtrigger((prev) => prev + 1);
                 }}
                 value={datapayload.ticket_detail_type_id}
+                disabled={!isAllowedToGetTicket}
               >
                 {datatasktickets.map((doc, idx) => {
                   return (
@@ -435,6 +446,7 @@ const DrawerTicketCreate = ({
                 style={{ width: `100%` }}
                 allowClear
                 placeholder="Semua Lokasi"
+                disabled={!isAllowedToGetTicket}
                 showSearch
                 suffixIcon={<SearchOutlined />}
                 showArrow

@@ -134,9 +134,12 @@ export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admi
  * /getFilterUsers | UserService.filterUsers
  *
  * - [ ] components/drawer/tasks/drawerTaskUpdate
- * - [ ] components/drawer/tickets/drawerTicketExports
+ *
+ * - [x] components/drawer/tickets/drawerTicketExports
  * - [ ] components/drawer/tickets/drawerTicketUpdate
+ *
  * - [ ] components/screen/form-aktivitas/DetailAktivitas/AktivitasUserListEditableCard
+ *
  * - [x] /admin/groups/update/agents/[groupId]
  * - [x] /admin/groups/create/agents
  */
@@ -145,7 +148,7 @@ export const USERS_GET = "USERS_GET";
  * /getFilterGroups
  *
  * - [ ] components/drawer/tasks/drawerTaskUpdate
- * - [ ] components/drawer/tickets/drawerTicketExports
+ * - [x] components/drawer/tickets/drawerTicketExports
  */
 export const GROUPS_GET = "GROUPS_GET";
 
@@ -892,3 +895,88 @@ export const RELATIONSHIP_INVENTORY_UPDATE = "RELATIONSHIP_INVENTORY_UPDATE";
  * - [x] pages/items/detail/[itemId]
  */
 export const RELATIONSHIP_INVENTORY_DELETE = "RELATIONSHIP_INVENTORY_DELETE";
+
+/**
+ * Daftar feature untuk Ticket management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67077022/Ticket+Management
+ */
+export const TICKET_TASK_STATUS_COUNTS_GET = "TICKET_TASK_STATUS_COUNTS_GET";
+/**
+ * /addTicket
+ *
+ * - [x] components/drawer/tickets/drawerTicketCreate
+ */
+export const TICKET_ADD = "TICKET_ADD";
+/**
+ * /getClientTickets
+ * /getClientTicketStatusCounts
+ *
+ * - [x] pages/tickets/index
+ *
+ * - [x] components/table/tableCustom
+ */
+export const TICKETS_CLIENT_GET = "TICKETS_CLIENT_GET";
+export const TICKETS_CLIENT_CLOSED_GET = "TICKETS_CLIENT_CLOSED_GET";
+/**
+ * /getClientTicketRelation
+ *
+ * - [x] pages/tickets/index
+ * - [ ] pages/tickets/histories/index
+ * - [ ] pages/tickets/detail/[ticketId]
+ *
+ * - [x] components/drawer/tickets/drawerTicketCreate
+ */
+export const TICKET_CLIENT_GET = "TICKET_CLIENT_GET";
+export const TICKET_CLIENT_LOG_GET = "TICKET_CLIENT_LOG_GET";
+export const TICKET_CLIENT_CANCEL = "TICKET_CLIENT_CANCEL";
+export const TICKET_CLIENT_NOTE_ADD = "TICKET_CLIENT_NOTE_ADD";
+export const TICKET_CLIENT_NOTE_UPDATE = "TICKET_CLIENT_NOTE_UPDATE";
+export const TICKET_CLIENT_NOTE_DELETE = "TICKET_CLIENT_NOTE_DELETE";
+export const TICKET_CLIENT_EXPORT = "TICKET_CLIENT_EXPORT";
+/**
+ * /getTickets
+ * /getTicketStatusCounts
+ *
+ * - [x] pages/tickets/index
+ *
+ * - [x] components/table/tableCustom
+ */
+export const TICKETS_GET = "TICKETS_GET";
+export const TICKETS_CLOSED_GET = "TICKETS_CLOSED_GET";
+/**
+ * /getTicketRelation
+ *
+ * - [x] pages/tickets/index
+ * - [ ] pages/tickets/detail/[ticketId]
+ * - [ ] pages/tickets/histories/index
+ *
+ * - [ ] pages/tasks/index
+ *
+ * - [ ] components/drawer/tickets/drawerTicketUpdate
+ * - [ ] components/drawer/tickets/drawerTicketTypeUpdate
+ * - [x] components/drawer/tickets/drawerTicketCreate
+ * - [ ] components/drawer/tickets/drawerTicketTypeCreate
+ */
+export const TICKET_GET = "TICKET_GET";
+export const TICKET_LOG_GET = "TICKET_LOG_GET";
+export const TICKET_CANCEL = "TICKET_CANCEL";
+export const TICKET_UPDATE = "TICKET_UPDATE";
+export const TICKET_ASSIGN = "TICKET_ASSIGN";
+export const TICKET_ITEM_SET = "TICKET_ITEM_SET";
+export const TICKET_DEADLINE_SET = "TICKET_DEADLINE_SET";
+export const TICKET_NOTE_ADD = "TICKET_NOTE_ADD";
+export const TICKET_NOTE_UPDATE = "TICKET_NOTE_UPDATE";
+export const TICKET_NOTE_DELETE = "TICKET_NOTE_DELETE";
+export const TICKET_EXPORT = "TICKET_EXPORT";
+/**
+ * /ticketsExport
+ *
+ * - [x] components/drawer/tickets/drawerTicketExports
+ */
+export const TICKETS_EXPORT = "TICKETS_EXPORT";
+
+export const TICKET_DETAIL_TYPES_GET = "TICKET_DETAIL_TYPES_GET";
+export const TICKET_DETAIL_TYPE_ADD = "TICKET_DETAIL_TYPE_ADD";
+export const TICKET_DETAIL_TYPE_UPDATE = "TICKET_DETAIL_TYPE_UPDATE";
+export const TICKET_DETAIL_TYPE_DELETE = "TICKET_DETAIL_TYPE_DELETE";
