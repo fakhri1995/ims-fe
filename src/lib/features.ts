@@ -922,7 +922,7 @@ export const TICKETS_CLIENT_CLOSED_GET = "TICKETS_CLIENT_CLOSED_GET";
  * /getClientTicketRelation
  *
  * - [x] pages/tickets/index
- * - [ ] pages/tickets/histories/index
+ * - [x] pages/tickets/histories/index
  * - [ ] pages/tickets/detail/[ticketId]
  *
  * - [x] components/drawer/tickets/drawerTicketCreate
@@ -943,13 +943,18 @@ export const TICKET_CLIENT_EXPORT = "TICKET_CLIENT_EXPORT";
  * - [x] components/table/tableCustom
  */
 export const TICKETS_GET = "TICKETS_GET";
+/**
+ * /getClosedTickets
+ *
+ * - [x] pages/tickets/histories/index
+ */
 export const TICKETS_CLOSED_GET = "TICKETS_CLOSED_GET";
 /**
  * /getTicketRelation
  *
  * - [x] pages/tickets/index
  * - [ ] pages/tickets/detail/[ticketId]
- * - [ ] pages/tickets/histories/index
+ * - [x] pages/tickets/histories/index
  *
  * - [ ] pages/tasks/index
  *
