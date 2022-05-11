@@ -76,7 +76,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   const isAllowedToAddTicket = hasPermission(TICKET_ADD);
-  const canCreateNewTicket = isAllowedToAddTicket && isAllowedToAddTicket;
+  const canCreateNewTicket = isAllowedToAddTicket && isAllowedGetTicket;
 
   const isAllowedToExportTickets = hasPermission(TICKETS_EXPORT);
 
