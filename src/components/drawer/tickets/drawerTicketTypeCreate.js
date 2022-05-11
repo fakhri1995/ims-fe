@@ -1,6 +1,10 @@
 import { Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { TICKET_DETAIL_TYPE_ADD, TICKET_GET } from "lib/features";
+
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
@@ -12,6 +16,15 @@ const DrawerTicketTypeCreate = ({
   initProps,
   setrefreshtickettypescreate,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddTicketType = hasPermission(TICKET_DETAIL_TYPE_ADD);
+  const isAllowedToGetTicket = hasPermission(TICKET_GET);
+
+  const canAddTicketType = isAllowedToAddTicketType && isAllowedToGetTicket;
+
   //useState
   const [datapayload, setdatapayload] = useState({
     name: "",
@@ -63,6 +76,10 @@ const DrawerTicketTypeCreate = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetTicket) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
       method: `GET`,
       headers: {
@@ -73,7 +90,8 @@ const DrawerTicketTypeCreate = ({
       .then((res2) => {
         setdatatickettypes(res2.data.ticket_types);
       });
-  }, []);
+  }, [isAllowedToGetTicket]);
+
   useEffect(() => {
     if (datapayload.ticket_type_id !== null && datapayload.name !== "") {
       setdisabledcreate(false);
@@ -81,6 +99,7 @@ const DrawerTicketTypeCreate = ({
       setdisabledcreate(true);
     }
   }, [disabledtrigger]);
+
   return (
     <DrawerCore
       title={title}
@@ -95,7 +114,7 @@ const DrawerTicketTypeCreate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleAddTicketType}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !canAddTicketType}
     >
       {loadingsave ? (
         <>
@@ -131,6 +150,7 @@ const DrawerTicketTypeCreate = ({
                   });
                   setdisabledtrigger((prev) => prev + 1);
                 }}
+                disabled={!isAllowedToGetTicket}
                 defaultValue={datapayload.ticket_type_id}
               >
                 {datatickettypes.map((doc, idx) => (

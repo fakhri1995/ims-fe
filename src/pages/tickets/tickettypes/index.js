@@ -1,18 +1,25 @@
-import { ExclamationCircleOutlined, SearchOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Input, Popover, notification } from "antd";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { useEffect, useState } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  TICKET_DETAIL_TYPES_GET, // "Tambah Pengaturan" button
+  TICKET_DETAIL_TYPE_ADD,
+  TICKET_DETAIL_TYPE_DELETE,
+  TICKET_DETAIL_TYPE_UPDATE,
+  TICKET_GET, // "Edit" button
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../components/button";
 import DrawerTicketTypeCreate from "../../../components/drawer/tickets/drawerTicketTypeCreate";
 import DrawerTicketTypeUpdate from "../../../components/drawer/tickets/drawerTicketTypeUpdate";
-import {
-  AlerttriangleIconSvg,
-  EditIconSvg,
-  MappinIconSvg,
-} from "../../../components/icon";
+import { EditIconSvg } from "../../../components/icon";
 import {
   BackIconSvg,
   FilePlusIconSvg,
@@ -22,30 +29,26 @@ import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
 import { ModalHapusTipeTiket } from "../../../components/modal/modalCustom";
 import { TableCustomTicketTypes } from "../../../components/table/tableCustom";
-import { H1, H2, Label, Text } from "../../../components/typography";
-import {
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  Chart,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Tooltip,
-} from "chart.js";
+import { H1, Label } from "../../../components/typography";
 import httpcookie from "cookie";
 
-Chart.register(
-  ArcElement,
-  Tooltip,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  BarElement,
-  PointElement
-);
-
 const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToAddTicketType = hasPermission(TICKET_DETAIL_TYPE_ADD);
+  const isAllowedToGetTicket = hasPermission(TICKET_GET);
+  const isAllowedToUpdateTicketType = hasPermission(TICKET_DETAIL_TYPE_UPDATE);
+  const isAllowedToDeleteTicketType = hasPermission(TICKET_DETAIL_TYPE_DELETE);
+  const isAllowedToGetTicketTypes = hasPermission(TICKET_DETAIL_TYPES_GET);
+
+  const canAddNewTicketType = isAllowedToAddTicketType && isAllowedToGetTicket;
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -77,16 +80,16 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     sort_type: "",
   });
   const [searcingtickettypes, setsearcingtickettypes] = useState("");
-  const [datafiltertiickettypes, setdatafiltertiickettypes] = useState([]);
+  // const [datafiltertiickettypes, setdatafiltertiickettypes] = useState([]);
   //create - ticket types
   const [drawertickettypescreate, setdrawertickettypescreate] = useState(false);
-  const [loadingtickettypescreate, setloadingtickettypescreate] =
-    useState(false);
+  // const [loadingtickettypescreate, setloadingtickettypescreate] =
+  //   useState(false);
   const [refreshtickettypescreate, setrefreshtickettypescreate] = useState(-1);
   //update - ticket types
   const [drawertickettypesupdate, setdrawertickettypesupdate] = useState(false);
-  const [loadingtickettypesupdate, setloadingtickettypesupdate] =
-    useState(false);
+  // const [loadingtickettypesupdate, setloadingtickettypesupdate] =
+  //   useState(false);
   const [refreshtickettypesupdate, setrefreshtickettypesupdate] = useState(-1);
   const [disabledupdate, setdisabledupdate] = useState(false);
   const [datapayloadtickettype, setdatapayloadtickettype] = useState({
@@ -106,7 +109,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     useState(false);
   const [refreshcreatetickettypesdelete, setrefreshcreatetickettypesdelete] =
     useState(-1);
-  const [coloricondeletehover, setcoloricondeletehover] = useState(0);
+  // const [coloricondeletehover, setcoloricondeletehover] = useState(0);
 
   //2. Column Table
   const columnsTicketTypes = [
@@ -127,7 +130,9 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.ticket_type_name}</>,
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTicketTypes
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title: "Nama",
@@ -137,7 +142,9 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.name}</>,
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTicketTypes
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     // {
     //   title: "Tipe Task",
@@ -177,6 +184,14 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                 <ButtonSys
                   type="default"
                   onClick={() => {
+                    if (!isAllowedToUpdateTicketType) {
+                      permissionWarningNotification(
+                        "Memperbarui",
+                        "Pengaturan Tiket"
+                      );
+                      return;
+                    }
+
                     setdatapayloadtickettype({
                       id: Number(record.id),
                       name: record.name,
@@ -195,6 +210,14 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                   type="default"
                   color="danger"
                   onClick={() => {
+                    if (!isAllowedToDeleteTicketType) {
+                      permissionWarningNotification(
+                        "Menghapus",
+                        "Pengaturan Tiket"
+                      );
+                      return;
+                    }
+
                     setdatatickettypesdelete({
                       id: record.id,
                       name: record.name,
@@ -246,6 +269,13 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
 
   //4.Use Effect
   useEffect(() => {
+    if (!isAllowedToGetTicketTypes) {
+      permissionWarningNotification("Mendapatkan", "Daftar Pengaturan Tiket");
+      setdisabledupdate(false);
+      setloadingtickettypes(false);
+      return;
+    }
+
     setloadingtickettypes(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketDetailTypes?page=${pagetickettypes}&rows=${rowstickettypes}&keyword=${searcingtickettypes}&sort_by=${sortingtickettypes.sort_by}&sort_type=${sortingtickettypes.sort_type}`,
@@ -260,7 +290,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdatarawtickettypes(res2.data);
         setdatatickettypes(res2.data.data);
-        setdatafiltertiickettypes(res2.data.data);
+        // setdatafiltertiickettypes(res2.data.data);
         setdisabledupdate(false);
         setloadingtickettypes(false);
       });
@@ -268,6 +298,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
     refreshtickettypescreate,
     refreshtickettypesupdate,
     refreshcreatetickettypesdelete,
+    isAllowedToGetTicketTypes,
   ]);
 
   return (
@@ -333,6 +364,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                   onClick={() => {
                     setdrawertickettypescreate(true);
                   }}
+                  disabled={!canAddNewTicketType}
                 >
                   <div className=" mr-1">
                     <FilePlusIconSvg size={15} color={`#ffffff`} />
@@ -345,6 +377,7 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
                   style={{ width: `20rem` }}
                   placeholder="Nama tipe task.."
                   allowClear
+                  disabled={!isAllowedToGetTicketTypes}
                   onChange={(e) => {
                     setsearcingtickettypes(e.target.value);
                     setloadingtickettypes(true);
@@ -388,45 +421,54 @@ const TicketTypes = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </div>
       </div>
-      <DrawerTicketTypeCreate
-        title={"Pengaturan Baru"}
-        visible={drawertickettypescreate}
-        onClose={() => {
-          setdrawertickettypescreate(false);
-        }}
-        buttonOkText={"Simpan Pengaturan"}
-        initProps={initProps}
-        onvisible={setdrawertickettypescreate}
-        refreshtickettypescreate={refreshtickettypescreate}
-        setrefreshtickettypescreate={setrefreshtickettypescreate}
-      />
-      <DrawerTicketTypeUpdate
-        title={"Ubah Pengaturan"}
-        visible={drawertickettypesupdate}
-        onClose={() => {
-          setdrawertickettypesupdate(false);
-        }}
-        buttonOkText={"Simpan Pengaturan"}
-        initProps={initProps}
-        onvisible={setdrawertickettypesupdate}
-        refresh={refreshtickettypesupdate}
-        setrefresh={setrefreshtickettypesupdate}
-        datapayload={datapayloadtickettype}
-        setdatapayload={setdatapayloadtickettype}
-        disabledsubmit={disabledupdate}
-        setdisabledsubmit={setdisabledupdate}
-      />
-      <ModalHapusTipeTiket
-        title={"Konfirmasi Hapus Pengaturan"}
-        visible={modaltickettypesdelete}
-        onvisible={setmodaltickettypesdelete}
-        onCancel={() => {
-          setmodaltickettypesdelete(false);
-        }}
-        loading={loadingtickettypesdelete}
-        datadelete={datatickettypesdelete}
-        onOk={handleDeleteTipeTiket}
-      />
+
+      {canAddNewTicketType && (
+        <DrawerTicketTypeCreate
+          title={"Pengaturan Baru"}
+          visible={drawertickettypescreate}
+          onClose={() => {
+            setdrawertickettypescreate(false);
+          }}
+          buttonOkText={"Simpan Pengaturan"}
+          initProps={initProps}
+          onvisible={setdrawertickettypescreate}
+          refreshtickettypescreate={refreshtickettypescreate}
+          setrefreshtickettypescreate={setrefreshtickettypescreate}
+        />
+      )}
+
+      <AccessControl hasPermission={TICKET_DETAIL_TYPE_UPDATE}>
+        <DrawerTicketTypeUpdate
+          title={"Ubah Pengaturan"}
+          visible={drawertickettypesupdate}
+          onClose={() => {
+            setdrawertickettypesupdate(false);
+          }}
+          buttonOkText={"Simpan Pengaturan"}
+          initProps={initProps}
+          onvisible={setdrawertickettypesupdate}
+          refresh={refreshtickettypesupdate}
+          setrefresh={setrefreshtickettypesupdate}
+          datapayload={datapayloadtickettype}
+          setdatapayload={setdatapayloadtickettype}
+          disabledsubmit={disabledupdate}
+          setdisabledsubmit={setdisabledupdate}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={TICKET_DETAIL_TYPE_DELETE}>
+        <ModalHapusTipeTiket
+          title={"Konfirmasi Hapus Pengaturan"}
+          visible={modaltickettypesdelete}
+          onvisible={setmodaltickettypesdelete}
+          onCancel={() => {
+            setmodaltickettypesdelete(false);
+          }}
+          loading={loadingtickettypesdelete}
+          datadelete={datatickettypesdelete}
+          onOk={handleDeleteTipeTiket}
+        />
+      </AccessControl>
     </Layout>
   );
 };
