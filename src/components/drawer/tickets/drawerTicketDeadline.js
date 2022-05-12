@@ -1,10 +1,11 @@
-import { SearchOutlined } from "@ant-design/icons";
 import { DatePicker, Radio, Spin, notification } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
-import { UserIconSvg } from "../../icon";
-import { H2, Label } from "../../typography";
+import { useAccessControl } from "contexts/access-control";
+
+import { TICKET_DEADLINE_SET } from "lib/features";
+
 import DrawerCore from "../drawerCore";
 
 const DrawerTicketDeadline = ({
@@ -26,6 +27,12 @@ const DrawerTicketDeadline = ({
   setdatevalue,
   ticketid,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToSetTicketDeadline = hasPermission(TICKET_DEADLINE_SET);
+
   //useState
   const [loadingsave, setloadingsave] = useState(false);
   const [disabledcreate, setdisabledcreate] = useState(true);
@@ -90,7 +97,7 @@ const DrawerTicketDeadline = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleSetDeadline}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !isAllowedToSetTicketDeadline}
     >
       {loadingsave ? (
         <>

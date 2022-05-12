@@ -1,5 +1,5 @@
 import { Empty, Input, Spin, notification } from "antd";
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 import moment from "moment";
 import { FC, useEffect, useMemo, useState } from "react";
 import React from "react";
@@ -11,7 +11,21 @@ import { PlusIconSvg } from "components/icon";
 import ModalCore from "components/modal/modalCore";
 import { H1, Label, Text } from "components/typography";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  TICKET_CLIENT_LOG_GET,
+  TICKET_CLIENT_NOTE_ADD,
+  TICKET_CLIENT_NOTE_DELETE,
+  TICKET_CLIENT_NOTE_UPDATE,
+  TICKET_LOG_GET,
+  TICKET_NOTE_ADD,
+  TICKET_NOTE_DELETE,
+  TICKET_NOTE_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import { TicketService, TicketServiceQueryKeys } from "apis/ticket";
 
@@ -38,6 +52,23 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
     return null;
   }
 
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetTicketLog = hasPermission(
+    fetchAsAdmin ? TICKET_LOG_GET : TICKET_CLIENT_LOG_GET
+  );
+  const isAllowedToDeleteNote = hasPermission(
+    fetchAsAdmin ? TICKET_NOTE_DELETE : TICKET_CLIENT_NOTE_DELETE
+  );
+  const isAllowedToAddNote = hasPermission(
+    fetchAsAdmin ? TICKET_NOTE_ADD : TICKET_CLIENT_NOTE_ADD
+  );
+  const isAllowedToUpdateNote = hasPermission(
+    fetchAsAdmin ? TICKET_NOTE_UPDATE : TICKET_CLIENT_NOTE_UPDATE
+  );
+
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
@@ -56,6 +87,7 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
     [TicketServiceQueryKeys.TICKET_LOG_GET, parsedTicketId, fetchAsAdmin],
     () => TicketService.findOneLog(axiosClient, parsedTicketId, fetchAsAdmin),
     {
+      enabled: isAllowedToGetTicketLog,
       select: (response) => response.data.data.special_logs,
     }
   );
@@ -142,6 +174,11 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
                 return;
               }
 
+              if (!isAllowedToAddNote) {
+                permissionWarningNotification("Menambahkan", "Catatan Tiket");
+                return;
+              }
+
               setUpsertNoteModal({
                 visible: true,
                 mode: "insert",
@@ -159,7 +196,7 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
           <>
             {isLoading && <Spin />}
 
-            {!isLoading && data.length === 0 && (
+            {!isLoading && (data === undefined || data.length === 0) && (
               <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
             )}
 
@@ -197,6 +234,14 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
                     <button
                       className="p-2 flex items-center justify-center bg-white"
                       onClick={() => {
+                        if (!isAllowedToDeleteNote) {
+                          permissionWarningNotification(
+                            "Menghapus",
+                            "Catatan Tiket"
+                          );
+                          return;
+                        }
+
                         setDeleteNoteModal({
                           visible: true,
                           noteLogId: note.id,
@@ -209,6 +254,14 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
                     <button
                       className="p-2 flex items-center justify-center bg-white"
                       onClick={() => {
+                        if (!isAllowedToUpdateNote) {
+                          permissionWarningNotification(
+                            "Memperbarui",
+                            "Catatan Tiket"
+                          );
+                          return;
+                        }
+
                         setUpsertNoteModal({
                           visible: true,
                           currentNotesValue: note.description,
@@ -228,39 +281,43 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
 
       {!isError && (
         <>
-          <DeleteCatatanModal
-            visible={deleteNoteModal.visible}
-            isLoading={deleteNoteLoading}
-            onCancel={resetDeleteNoteModal}
-            onOk={() => {
-              deleteNote({
-                ticketId: parsedTicketId,
-                log_id: deleteNoteModal.noteLogId,
-              });
-            }}
-          />
+          {isAllowedToDeleteNote && (
+            <DeleteCatatanModal
+              visible={deleteNoteModal.visible}
+              isLoading={deleteNoteLoading}
+              onCancel={resetDeleteNoteModal}
+              onOk={() => {
+                deleteNote({
+                  ticketId: parsedTicketId,
+                  log_id: deleteNoteModal.noteLogId,
+                });
+              }}
+            />
+          )}
 
-          <UpsertCatatanModal
-            visible={upsertNoteModal.visible}
-            mode={upsertNoteModal.mode}
-            currentNotesValue={upsertNoteModal.currentNotesValue}
-            isLoading={updateNoteLoading || addNoteLoading}
-            onCancel={resetUpsertNoteModal}
-            onOk={(newNote) => {
-              if (upsertNoteModal.mode === "insert") {
-                addNote({
-                  ticketId: parsedTicketId,
-                  notes: newNote,
-                });
-              } else {
-                updateNote({
-                  ticketId: parsedTicketId,
-                  log_id: upsertNoteModal.logId,
-                  notes: newNote,
-                });
-              }
-            }}
-          />
+          {(isAllowedToAddNote || isAllowedToUpdateNote) && (
+            <UpsertCatatanModal
+              visible={upsertNoteModal.visible}
+              mode={upsertNoteModal.mode}
+              currentNotesValue={upsertNoteModal.currentNotesValue}
+              isLoading={updateNoteLoading || addNoteLoading}
+              onCancel={resetUpsertNoteModal}
+              onOk={(newNote) => {
+                if (upsertNoteModal.mode === "insert") {
+                  addNote({
+                    ticketId: parsedTicketId,
+                    notes: newNote,
+                  });
+                } else {
+                  updateNote({
+                    ticketId: parsedTicketId,
+                    log_id: upsertNoteModal.logId,
+                    notes: newNote,
+                  });
+                }
+              }}
+            />
+          )}
         </>
       )}
     </>

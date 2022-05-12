@@ -10,20 +10,17 @@ import {
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { TICKET_GET, TICKET_UPDATE, USERS_GET } from "lib/features";
+
 import ButtonSys from "../../button";
 import {
   AssetIconSvg,
   CalendartimeIconSvg,
-  CircleXIconSvg,
   CloudUploadIconSvg,
   TrashIconSvg,
-  UserIconSvg,
 } from "../../icon";
-import {
-  InputRequired,
-  SelectRequired,
-  TextAreaNotRequired,
-} from "../../input";
 import { H1, H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
@@ -46,6 +43,22 @@ const DrawerTicketUpdate = ({
   disabledsubmit,
   setdisabledsubmit,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateTicket = hasPermission(TICKET_UPDATE);
+  /**
+   * Digunakan untuk:
+   * 1. Menampilkan "Tipe Tiket"
+   * 2. Jenis Aset input field (required)
+   * 3. Lokasi Kejadian input field(required)
+   */
+  const isAllowedToGetTicket = hasPermission(TICKET_GET);
+  const isAllowedToGetUsers = hasPermission(USERS_GET); // field "Nama Pembuat"
+
+  const canUpdateTicket = isAllowedToUpdateTicket && isAllowedToGetTicket;
+
   //useState
   const [loadingsave, setloadingsave] = useState(false);
   //data for each field
@@ -100,6 +113,7 @@ const DrawerTicketUpdate = ({
     setloadingfile(false);
     setdisabledsubmit(false);
   };
+
   const handleUpdateTicket = () => {
     if (
       /(^\d+$)/.test(datapayload.pic_contact) === false ||
@@ -205,6 +219,10 @@ const DrawerTicketUpdate = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetTicket) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
       method: `GET`,
       headers: {
@@ -224,8 +242,13 @@ const DrawerTicketUpdate = ({
           )[0]?.name || "-"
         );
       });
-  }, []);
+  }, [isAllowedToGetTicket]);
+
   useEffect(() => {
+    if (!isAllowedToGetUsers) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
       method: `GET`,
       headers: {
@@ -236,9 +259,10 @@ const DrawerTicketUpdate = ({
       .then((res2) => {
         setlistusers(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetUsers]);
+
   useEffect(() => {
-    console.log(datapayload);
+    // console.log(datapayload);
     if (
       datapayload.type_id !== null &&
       datapayload.name !== "" &&
@@ -247,13 +271,14 @@ const DrawerTicketUpdate = ({
       datapayload.incident_time !== null &&
       datapayload.location_id !== null
     ) {
-      console.log("tidak");
+      // console.log("tidak");
       setdisabledsubmit(false);
     } else {
-      console.log("ya");
+      // console.log("ya");
       setdisabledsubmit(true);
     }
   }, [disabledtrigger]);
+
   return (
     <DrawerCore
       title={title}
@@ -264,7 +289,7 @@ const DrawerTicketUpdate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleUpdateTicket}
-      disabled={disabledsubmit}
+      disabled={disabledsubmit || !canUpdateTicket}
     >
       {loadingsave ? (
         <>
