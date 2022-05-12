@@ -25,12 +25,21 @@ import {
 import { InputRequired, TextAreaNotRequired } from "components/input";
 import { H2, Label } from "components/typography";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { getClientToken } from "lib/auth";
+import {
+  COMPANY_LISTS_GET,
+  COMPANY_SUB_LOCATIONS_GET,
+  INVENTORIES_GET,
+  TASK_ADD,
+  TASK_TYPES_GET,
+  TICKET_ASSIGN,
+} from "lib/features";
 
-import type { AddTaskPayload } from "apis/task";
-import { TaskService } from "apis/task/task.service";
+import { AddTaskPayload, TaskService } from "apis/task";
 import { TicketServiceQueryKeys } from "apis/ticket";
 
 /**
@@ -55,6 +64,22 @@ export const TicketDetailTaskCreateDrawer: FC<
     /** Perlu check ini agar `reference_id` tidak null saat add new task. */
     return null;
   }
+
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddTask = hasPermission(TASK_ADD);
+  const isAllowedToGetTaskTypes = hasPermission(TASK_TYPES_GET);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetCompanySubLocations = hasPermission(
+    COMPANY_SUB_LOCATIONS_GET
+  );
+  const isAllowedToGetInventories = hasPermission(INVENTORIES_GET);
+  const isAllowedToAssignTicket = hasPermission(TICKET_ASSIGN);
+
+  const canAddNewTask =
+    isAllowedToAddTask && isAllowedToGetTaskTypes && isAllowedToGetCompanyList;
 
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
@@ -184,8 +209,12 @@ export const TicketDetailTaskCreateDrawer: FC<
   };
 
   //USEEFFECT
-  //Tipe task
+  //Tipe task (required)
   useEffect(() => {
+    if (!isAllowedToGetTaskTypes) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
       method: `GET`,
       headers: {
@@ -196,7 +225,8 @@ export const TicketDetailTaskCreateDrawer: FC<
       .then((res2) => {
         setdatatasktypes(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetTaskTypes]);
+
   //Referensi
   // useEffect(() => {
   //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTickets?id=`, {
@@ -210,8 +240,13 @@ export const TicketDetailTaskCreateDrawer: FC<
   //       setdatareferences(res2.data);
   //     });
   // }, []);
-  //Lokasi
+
+  //Lokasi (required)
   useEffect(() => {
+    if (!isAllowedToGetCompanyList) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
@@ -222,9 +257,14 @@ export const TicketDetailTaskCreateDrawer: FC<
       .then((res2) => {
         setdatalocations(res2.data.children);
       });
-  }, []);
+  }, [isAllowedToGetCompanyList]);
+
   //Sublokasi
   useEffect(() => {
+    if (!isAllowedToGetCompanySubLocations) {
+      return;
+    }
+
     if (triggersubloc !== -1) {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${triggersubloc}`,
@@ -240,9 +280,14 @@ export const TicketDetailTaskCreateDrawer: FC<
           setdatasublocs(res2.data.children);
         });
     }
-  }, [triggersubloc]);
-  //Items
+  }, [triggersubloc, isAllowedToGetCompanySubLocations]);
+
+  //Aset (Cari MIG ID)
   useEffect(() => {
+    if (!isAllowedToGetInventories) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
       method: `GET`,
       headers: {
@@ -253,9 +298,14 @@ export const TicketDetailTaskCreateDrawer: FC<
       .then((res2) => {
         setdataitems(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetInventories]);
+
   //Staff/group
   useEffect(() => {
+    if (!isAllowedToAssignTicket) {
+      return;
+    }
+
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
         fetch(
@@ -287,37 +337,8 @@ export const TicketDetailTaskCreateDrawer: FC<
           });
       }
     }
-  }, [switchstaffgroup]);
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: initProps,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatastaffgroup(res2.data);
-      });
-  }, []);
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: initProps,
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatastaffgroup(res2.data);
-      });
-  }, []);
+  }, [switchstaffgroup, isAllowedToAssignTicket]);
+
   useEffect(() => {
     if (
       datacreate.task_type_id !== null &&
@@ -366,7 +387,7 @@ export const TicketDetailTaskCreateDrawer: FC<
       }}
       buttonOkText="Simpan Task"
       onClick={handleAddTask}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !canAddNewTask}
     >
       <Spin spinning={addTaskLoading}>
         <div className="flex flex-col">
@@ -393,6 +414,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 style={{ width: `100%` }}
                 value={datacreate.task_type_id}
                 placeholder="Nama tipe task"
+                disabled={!isAllowedToGetTaskTypes}
                 showSearch
                 optionFilterProp="children"
                 notFoundContent={
@@ -494,6 +516,7 @@ export const TicketDetailTaskCreateDrawer: FC<
             <TreeSelect
               allowClear
               placeholder="Cari Lokasi"
+              disabled={!isAllowedToGetCompanyList}
               showSearch
               suffixIcon={<SearchOutlined />}
               showArrow
@@ -532,6 +555,7 @@ export const TicketDetailTaskCreateDrawer: FC<
               <TreeSelect
                 allowClear
                 placeholder="Cari Sublokasi"
+                disabled={!isAllowedToGetCompanySubLocations}
                 showSearch
                 suffixIcon={<SearchOutlined />}
                 showArrow
@@ -586,6 +610,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 showArrow
                 value={datacreate.inventory_ids}
                 placeholder="Cari MIG ID"
+                disabled={!isAllowedToGetInventories}
                 // name={`inventory_ids`}
                 onChange={(values, options) => {
                   setdatacreate({ ...datacreate, inventory_ids: values });
@@ -677,6 +702,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 <div className="mx-1">
                   <Switch
                     checked={datacreate.is_group}
+                    disabled={!isAllowedToAssignTicket}
                     onChange={(checked) => {
                       setswitchstaffgroup(checked ? 0 : 1);
                       setdatacreate({
@@ -703,6 +729,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
+                  disabled={!isAllowedToAssignTicket}
                   // name={`assign_ids`}
                   onChange={(values, options) => {
                     setdatacreate({ ...datacreate, assign_ids: values });

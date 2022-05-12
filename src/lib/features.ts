@@ -134,9 +134,12 @@ export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admi
  * /getFilterUsers | UserService.filterUsers
  *
  * - [ ] components/drawer/tasks/drawerTaskUpdate
- * - [ ] components/drawer/tickets/drawerTicketExports
- * - [ ] components/drawer/tickets/drawerTicketUpdate
+ *
+ * - [x] components/drawer/tickets/drawerTicketExports
+ * - [x] components/drawer/tickets/drawerTicketUpdate
+ *
  * - [ ] components/screen/form-aktivitas/DetailAktivitas/AktivitasUserListEditableCard
+ *
  * - [x] /admin/groups/update/agents/[groupId]
  * - [x] /admin/groups/create/agents
  */
@@ -145,7 +148,7 @@ export const USERS_GET = "USERS_GET";
  * /getFilterGroups
  *
  * - [ ] components/drawer/tasks/drawerTaskUpdate
- * - [ ] components/drawer/tickets/drawerTicketExports
+ * - [x] components/drawer/tickets/drawerTicketExports
  */
 export const GROUPS_GET = "GROUPS_GET";
 
@@ -319,7 +322,8 @@ export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
 /**
  * /getAllCompanyList
  *
- * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/screen/ticket/detail/TicketDetailTaskList
  * - [ ] components/drawer/tasks/drawerTaskUpdate
  * - [ ] components/drawer/tasks/drawerTaskCreate
  *
@@ -402,7 +406,7 @@ export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
  * - [x] pages/items/create
  * - [x] pages/items/update/[itemId]
  *
- * - [ ] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [ ] components/modal/modalCustom
  * - [ ] components/drawer/tasks/drawerTaskCreate
  * - [ ] components/drawer/tasks/drawerTaskUpdate
@@ -562,6 +566,8 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  * - [x] pages/items/detail/[itemId]
  * - [x] pages/items/createpart/[itemId]
  *
+ * - [x] pages/tickets/detail/[ticketId]
+ *
  * - [x] pages/admin/assets/index
  * - [x] pages/admin/assets/update/[assettypeId]
  * - [x] pages/admin/assets/detail/[assettypeId]
@@ -571,7 +577,7 @@ export const COMPANY_CLIENT_BANK_DELETE = "COMPANY_CLIENT_BANK_DELETE";
  * - [x] pages/admin/models/create/index
  * - [x] pages/admin/models/update2/[modelId]
  *
- * - [ ] components/drawer/tickets/drawerTicketConnectItem
+ * - [x] components/drawer/tickets/drawerTicketConnectItem
  */
 export const ASSETS_GET = "ASSETS_GET";
 /**
@@ -778,6 +784,11 @@ export const MODEL_DELETE = "MODEL_DELETE";
  * /getInventories
  *
  * - [x] pages/items/index
+ *
+ * - [x] pages/tickets/detail/[ticketId]
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/drawer/tickets/drawerTicketConnectItem
  */
 export const INVENTORIES_GET = "INVENTORIES_GET";
 /**
@@ -863,6 +874,11 @@ export const INVENTORY_PART_REPLACE = "INVENTORY_PART_REPLACE";
  */
 export const INVENTORY_LOG_GET = "INVENTORY_LOG_GET";
 export const INVENTORY_IMPORT = "INVENTORY_IMPORT";
+export const RELATIONSHIP_INVENTORY_GET = "RELATIONSHIP_INVENTORY_GET";
+export const AGENT_RELATIONSHIP_INVENTORY_GET =
+  "AGENT_RELATIONSHIP_INVENTORY_GET";
+export const REQUESTER_RELATIONSHIP_INVENTORY_GET =
+  "REQUESTER_RELATIONSHIP_INVENTORY_GET";
 /**
  * /getRelationshipInventory
  * /getRelationshipInventoryRelation
@@ -892,3 +908,257 @@ export const RELATIONSHIP_INVENTORY_UPDATE = "RELATIONSHIP_INVENTORY_UPDATE";
  * - [x] pages/items/detail/[itemId]
  */
 export const RELATIONSHIP_INVENTORY_DELETE = "RELATIONSHIP_INVENTORY_DELETE";
+
+/**
+ * Daftar feature untuk Ticket management.
+ *
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/67077022/Ticket+Management
+ */
+export const TICKET_TASK_STATUS_COUNTS_GET = "TICKET_TASK_STATUS_COUNTS_GET";
+/**
+ * /updateStatusTicket
+ *
+ * - [x] pages/tickets/detail/[ticketId]
+ * - [ ] components/screen/ticket/detail/TicketDetailUpdateStatusModal
+ */
+export const TICKET_STATUS_UPDATE = "TICKET_STATUS_UPDATE";
+/**
+ * /addTicket
+ *
+ * - [x] components/drawer/tickets/drawerTicketCreate
+ */
+export const TICKET_ADD = "TICKET_ADD";
+/**
+ * /getClientTickets
+ * /getClientTicketStatusCounts
+ *
+ * - [x] pages/tickets/index
+ *
+ * - [x] components/table/tableCustom
+ */
+export const TICKETS_CLIENT_GET = "TICKETS_CLIENT_GET";
+export const TICKETS_CLIENT_CLOSED_GET = "TICKETS_CLIENT_CLOSED_GET";
+/**
+ * /getClientTicketRelation
+ *
+ * - [x] pages/tickets/index
+ * - [x] pages/tickets/histories/index
+ * - [x] pages/tickets/detail/[ticketId]
+ *
+ * - [x] components/drawer/tickets/drawerTicketCreate
+ */
+export const TICKET_CLIENT_GET = "TICKET_CLIENT_GET";
+/**
+ * /getClientTicketLog
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ * - [x] pages/tickets/detail/[ticketId]
+ */
+export const TICKET_CLIENT_LOG_GET = "TICKET_CLIENT_LOG_GET";
+export const TICKET_CLIENT_CANCEL = "TICKET_CLIENT_CANCEL";
+/**
+ * /clientAddNoteTicket
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ */
+export const TICKET_CLIENT_NOTE_ADD = "TICKET_CLIENT_NOTE_ADD";
+/**
+ * /clientUpdateNoteTicket
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ */
+export const TICKET_CLIENT_NOTE_UPDATE = "TICKET_CLIENT_NOTE_UPDATE";
+/**
+ * /clientDeleteNoteTicket
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ */
+export const TICKET_CLIENT_NOTE_DELETE = "TICKET_CLIENT_NOTE_DELETE";
+/**
+ * /clientTicketExport
+ *
+ * - [x] pages/tickets/detail/[ticketId]
+ */
+export const TICKET_CLIENT_EXPORT = "TICKET_CLIENT_EXPORT";
+/**
+ * /getTickets
+ * /getTicketStatusCounts
+ *
+ * - [x] pages/tickets/index
+ *
+ * - [x] components/table/tableCustom
+ */
+export const TICKETS_GET = "TICKETS_GET";
+/**
+ * /getClosedTickets
+ *
+ * - [x] pages/tickets/histories/index
+ */
+export const TICKETS_CLOSED_GET = "TICKETS_CLOSED_GET";
+/**
+ * /getTicketRelation
+ *
+ * - [x] pages/tickets/index
+ * - [x] pages/tickets/detail/[ticketId]
+ * - [x] pages/tickets/histories/index
+ *
+ * - [ ] pages/tasks/index
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailTaskList
+ *
+ * - [x] components/drawer/tickets/drawerTicketUpdate
+ * - [x] components/drawer/tickets/drawerTicketTypeUpdate
+ * - [x] components/drawer/tickets/drawerTicketCreate
+ * - [x] components/drawer/tickets/drawerTicketTypeCreate
+ */
+export const TICKET_GET = "TICKET_GET";
+/**
+ * /getTicketLog
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ * - [x] pages/tickets/detail/[ticketId]
+ */
+export const TICKET_LOG_GET = "TICKET_LOG_GET";
+export const TICKET_CANCEL = "TICKET_CANCEL";
+/**
+ * /updateTicket
+ *
+ * - [] pages/tickets/tickettypes/index
+ * - [x] pages/tickets/detail/[ticketId]
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/drawer/tickets/drawerTicketUpdate
+ * - [] components/drawer/tickets/drawerTicketTypeUpdate
+ */
+export const TICKET_UPDATE = "TICKET_UPDATE";
+export const TICKET_ASSIGN = "TICKET_ASSIGN";
+/**
+ * /setItemTicket
+ *
+ * - [x] components/drawer/tickets/drawerTicketConectItem
+ * - [x] pages/tickets/detail/[ticketId]
+ */
+export const TICKET_ITEM_SET = "TICKET_ITEM_SET";
+/**
+ * /setDeadline
+ *
+ * - [x] src/components/drawer/tickets/drawerTicketDeadline
+ * - [x] pages/tickets/detail/[ticketId]
+ */
+export const TICKET_DEADLINE_SET = "TICKET_DEADLINE_SET";
+/**
+ * /addNoteTicket
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ */
+export const TICKET_NOTE_ADD = "TICKET_NOTE_ADD";
+/**
+ * /updateNoteTicket
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ */
+export const TICKET_NOTE_UPDATE = "TICKET_NOTE_UPDATE";
+/**
+ * /deleteNoteTicket
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailCatatanCard
+ */
+export const TICKET_NOTE_DELETE = "TICKET_NOTE_DELETE";
+/**
+ * /ticketExport
+ *
+ * - [x] pages/tickets/detail/[ticketId]
+ */
+export const TICKET_EXPORT = "TICKET_EXPORT";
+/**
+ * /ticketsExport
+ *
+ * - [x] components/drawer/tickets/drawerTicketExports
+ */
+export const TICKETS_EXPORT = "TICKETS_EXPORT";
+
+/**
+ * /getTicketDetailTypes
+ *
+ * - [x] pages/tickets/tickettypes/index
+ */
+export const TICKET_DETAIL_TYPES_GET = "TICKET_DETAIL_TYPES_GET";
+/**
+ * /addTicketDetailType
+ *
+ * - [x] components/drawer/tickets/drawerTicketTypeCreate
+ */
+export const TICKET_DETAIL_TYPE_ADD = "TICKET_DETAIL_TYPE_ADD";
+/**
+ * /updateTicketDetailType
+ *
+ * - [x] components/drawer/tickets/drawerTicketTypeUpdate
+ */
+export const TICKET_DETAIL_TYPE_UPDATE = "TICKET_DETAIL_TYPE_UPDATE";
+/**
+ * /deleteTicketDetailType
+ *
+ * - [x] pages/tickets/tickettypes/index
+ */
+export const TICKET_DETAIL_TYPE_DELETE = "TICKET_DETAIL_TYPE_DELETE";
+
+export const TASKS_GET = "TASKS_GET";
+export const TASK_PICK_LIST_GET = "TASK_PICK_LIST_GET";
+export const TASK_GET = "TASK_GET";
+/**
+ * /addTask
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/screen/ticket/detail/TicketDetailTaskList
+ *
+ * - [] components/drawer/tasks/drawerTaskCreate
+ * - [] components/drawer/tasks/drawerTaskTypesCreate
+ * - [] components/drawer/tasks/drawerTaskDetailCreate
+ */
+export const TASK_ADD = "TASK_ADD";
+export const TASK_UPDATE = "TASK_UPDATE";
+export const TASK_DELETE = "TASK_DELETE";
+export const TASK_FILES_SAVE = "TASK_FILES_SAVE";
+export const TASK_STATUS_TOGGLE = "TASK_STATUS_TOGGLE";
+export const TASK_ATTENDANCE_TOGGLE = "TASK_ATTENDANCE_TOGGLE";
+export const TASK_SUBMIT = "TASK_SUBMIT";
+export const TASK_DECLINE = "TASK_DECLINE";
+export const TASK_APPROVE = "TASK_APPROVE";
+export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
+/**
+ * /getFilterTaskTypes
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/screen/ticket/detail/TicketDetailTaskList
+ *
+ * - [] pages/tasks/mytask/index
+ * - [] pages/tasks/admin/index
+ * - [] pages/tasks/index
+ *
+ * - [] components/drawer/tasks/drawerTaskUpdate
+ * - [] components/drawer/tasks/drawerTaskCreate
+ * - [] components/drawer/tasks/drawerTaskTypesCreate
+ */
+export const TASK_TYPES_GET = "TASK_TYPES_GET";
+export const TASK_TYPE_GET = "TASK_TYPE_GET";
+export const TASK_TYPE_ADD = "TASK_TYPE_ADD";
+export const TASK_TYPE_UPDATE = "TASK_TYPE_UPDATE";
+export const TASK_TYPE_DELETE = "TASK_TYPE_DELETE";
+export const TASK_DETAIL_FILL = "TASK_DETAIL_FILL";
+export const TASK_DETAIL_ASSIGN = "TASK_DETAIL_ASSIGN";
+export const TASK_DETAIL_ADD = "TASK_DETAIL_ADD";
+export const TASK_DETAIL_UPDATE = "TASK_DETAIL_UPDATE";
+export const TASK_DETAIL_DELETE = "TASK_DETAIL_DELETE";
+export const TASK_STAFF_STATUSES_GET = "TASK_STAFF_STATUSES_GET";
+export const TASK_STATUS_LIST_GET = "TASK_STATUS_LIST_GET";
+export const TASK_TYPE_COUNTS_GET = "TASK_TYPE_COUNTS_GET";
+export const TASK_DEADLINE_GET = "TASK_DEADLINE_GET";
+export const TASK_STAFF_COUNTS_GET = "TASK_STAFF_COUNTS_GET";
+export const TASK_USER_STATUSES_GET = "TASK_USER_STATUSES_GET";
+export const TASKS_USER_LAST_TWO_GET = "TASKS_USER_LAST_TWO_GET";
+export const TASKS_USER_GET = "TASKS_USER_GET";
+export const TASK_TYPE_USER_COUNTS_GET = "TASK_TYPE_USER_COUNTS_GET";
+export const TASK_SPARE_PART_LIST_GET = "TASK_SPARE_PART_LIST_GET";
+export const TASK_SEND_INVENTORIES = "TASK_SEND_INVENTORIES";
+export const TASK_CANCEL_SEND_IN_INVENTORY = "TASK_CANCEL_SEND_IN_INVENTORY";
+export const TASK_CANCEL_SEND_OUT_INVENTORY = "TASK_CANCEL_SEND_OUT_INVENTORY";

@@ -4,14 +4,32 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
 import {
   TicketDetailCatatanCard,
   TicketDetailTaskList,
   TicketDetailUpdateStatusModal,
 } from "components/screen/ticket";
 
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  ASSETS_GET,
+  INVENTORIES_GET,
+  TICKET_CLIENT_EXPORT,
+  TICKET_CLIENT_GET,
+  TICKET_CLIENT_LOG_GET,
+  TICKET_DEADLINE_SET,
+  TICKET_EXPORT,
+  TICKET_GET,
+  TICKET_ITEM_SET,
+  TICKET_LOG_GET,
+  TICKET_STATUS_UPDATE,
+  TICKET_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import ButtonSys from "../../../components/button";
-import DrawerTicketAssign from "../../../components/drawer/tickets/drawerTicketAssign";
 import DrawerTicketConnectItem from "../../../components/drawer/tickets/drawerTicketConnectItem";
 import DrawerTicketDeadline from "../../../components/drawer/tickets/drawerTicketDeadline";
 import DrawerTicketUpdate from "../../../components/drawer/tickets/drawerTicketUpdate";
@@ -22,39 +40,47 @@ import {
   FileExportIconSvg,
   ForbidIconSvg,
   InfoCircleIconSvg,
-  PlusIconSvg,
   TicketIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
-import {
-  ModalNoteTiket,
-  ModalReleaseItemTiket,
-} from "../../../components/modal/modalCustom";
+import { ModalReleaseItemTiket } from "../../../components/modal/modalCustom";
 import { H1, Label, Text } from "../../../components/typography";
-import {
-  ArcElement,
-  BarElement,
-  CategoryScale,
-  Chart,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Tooltip,
-} from "chart.js";
 import httpcookie from "cookie";
 
-Chart.register(
-  ArcElement,
-  Tooltip,
-  CategoryScale,
-  LinearScale,
-  LineElement,
-  BarElement,
-  PointElement
-);
-
 const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isClient = dataProfile.data.role !== 1;
+
+  const isAllowedToSetItemTicket = hasPermission(TICKET_ITEM_SET); // "Pisah Aset" dari ticket (Detail Aset card)
+  const isAllowedToGetTicketDetail = hasPermission(
+    isClient ? TICKET_CLIENT_GET : TICKET_GET
+  ); // Data source untuk detail ticket (almost everything on the page) dan /getTicketRelation untuk fetch ticket type (e.g. Incident, etc)
+  const isAllowedToGetTicketActivitiesLog = hasPermission(
+    isClient ? TICKET_CLIENT_LOG_GET : TICKET_LOG_GET
+  );
+  const isAllowedToExportTicket = hasPermission(
+    isClient ? TICKET_CLIENT_EXPORT : TICKET_EXPORT
+  );
+  const isAllowedToUpdateTicket = hasPermission(TICKET_UPDATE); // "Ubah Tiket" button
+  const isAllowedToUpdateTicketStatus = hasPermission(TICKET_STATUS_UPDATE); // Status's dropdown
+  const isAllowedToSetTicketDeadline = hasPermission(TICKET_DEADLINE_SET);
+
+  const isAllowedToConnectAsset = hasPermission([
+    TICKET_ITEM_SET,
+    ASSETS_GET,
+    INVENTORIES_GET,
+  ]);
+
+  const canUpdateTicket = isAllowedToUpdateTicket && isAllowedToGetTicketDetail;
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -174,10 +200,10 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     assignable_type: true,
     assignable_id: null,
   });
-  const [drawerassignticket, setdrawerassignticket] = useState(false);
-  const [refreshclosedassignticket, setrefreshclosedassignticket] =
-    useState(-1);
-  const [refreshassignticket, setrefreshassignticket] = useState(-1);
+  // const [drawerassignticket, setdrawerassignticket] = useState(false);
+  // const [refreshclosedassignticket, setrefreshclosedassignticket] =
+  //   useState(-1);
+  // const [refreshassignticket, setrefreshassignticket] = useState(-1);
   //2.5.Deadline
   const [datapayloaddeadline, setdatapayloaddeadline] = useState({
     id: Number(ticketid),
@@ -196,14 +222,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   //   name: "",
   // });
   //2.7.Note
-  const [displaynoteticket, setdisplaynoteticket] = useState([]);
-  const [datanoteticket, setdatanoteticket] = useState({
-    id: Number(ticketid),
-    notes: "",
-  });
+  // const [displaynoteticket, setdisplaynoteticket] = useState([]);
+  // const [datanoteticket, setdatanoteticket] = useState({
+  //   id: Number(ticketid),
+  //   notes: "",
+  // });
   // const [modalnoteticket, setmodalnoteticket] = useState(false);
-  const [loadingnoteticket, setloadingnoteticket] = useState(false);
-  const [refreshnoteticket, setrefreshnoteticket] = useState(-1);
+  // const [loadingnoteticket, setloadingnoteticket] = useState(false);
+  // const [refreshnoteticket, setrefreshnoteticket] = useState(-1);
   //2.8.Activity Log
   const [displaylogticket, setdisplaylogticket] = useState([]);
   const [praloadinglogticket, setpraloadinglogticket] = useState(true);
@@ -232,6 +258,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
    */
   const handleOnChangeStatusClicked = (status) => {
     return () => {
+      if (!isAllowedToUpdateTicketStatus) {
+        permissionWarningNotification("Memperbarui", "Status Tiket");
+        return;
+      }
+
       setUpdateStatusTicketModal({
         visible: true,
         status,
@@ -239,40 +270,48 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     };
   };
 
-  const handleNoteTicket = () => {
-    setloadingnoteticket(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
-        dataProfile.data.role === 1 ? "addNoteTicket" : "clientAddNoteTicket"
-      }`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datanoteticket),
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setloadingnoteticket(false);
-        // setmodalnoteticket(false);
-        if (res2.success) {
-          setdatanoteticket({ id: Number(ticketid), notes: "" });
-          setrefreshnoteticket((prev) => prev + 1);
-          notification["success"]({
-            message: "Note berhasil ditambahkan",
-            duration: 3,
-          });
-        } else if (!res2.success) {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
-          });
-        }
-      });
-  };
+  // const handleNoteTicket = () => {
+  //   setloadingnoteticket(true);
+  //   fetch(
+  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
+  //       dataProfile.data.role === 1 ? "addNoteTicket" : "clientAddNoteTicket"
+  //     }`,
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: JSON.parse(initProps),
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(datanoteticket),
+  //     }
+  //   )
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setloadingnoteticket(false);
+  //       // setmodalnoteticket(false);
+  //       if (res2.success) {
+  //         setdatanoteticket({ id: Number(ticketid), notes: "" });
+  //         setrefreshnoteticket((prev) => prev + 1);
+  //         notification["success"]({
+  //           message: "Note berhasil ditambahkan",
+  //           duration: 3,
+  //         });
+  //       } else if (!res2.success) {
+  //         notification["error"]({
+  //           message: res2.message,
+  //           duration: 3,
+  //         });
+  //       }
+  //     });
+  // };
+
+  /**
+   * Handler ketika Aset dipisahkan dari Ticket.
+   * Flow:
+   * 1. Attach an asset (if there is no asset attached before)
+   * 2. Click on "..." button (Detail Aset Card)
+   * 3. Click "Pisah Aset" button
+   */
   const handleReleaseItemTicket = () => {
     setloadingreleaseitemticket(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/setItemTicket`, {
@@ -312,6 +351,17 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
 
   //4.useEffect
   useEffect(() => {
+    if (!isAllowedToGetTicketDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Tiket");
+    }
+  }, [isAllowedToGetTicketDetail]);
+
+  useEffect(() => {
+    if (!isAllowedToGetTicketDetail) {
+      setpraloading(false);
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1 ? "getTicket" : "getClientTicket"
@@ -368,7 +418,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   .format(),
           files: res2.data.ticketable.files || [],
           description: res2.data.ticketable.description,
-          ticket_detail_type_id: res2.data.ticketable.asset_type.id,
+          ticket_detail_type_id: res2.data.ticketable.asset_type?.id,
         });
         setdisabledupdate(false);
         res2.data.assignment_operator_id === 0
@@ -425,15 +475,23 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
       });
   }, [
     refreshconnectitemticket,
-    refreshassignticket,
+    // refreshassignticket,
     refreshdeadlineicket,
     refreshupdateticket,
     refreshclosedupdateticket,
     refreshclosedconnectitemticket,
-    refreshclosedassignticket,
+    // refreshclosedassignticket,
     refreshcloseddeadlineticket,
+    isAllowedToGetTicketDetail,
   ]);
+
+  /** Data fetching for "Aktivitas" card data source (Aktivitas Log) */
   useEffect(() => {
+    if (!isAllowedToGetTicketActivitiesLog) {
+      setpraloadinglogticket(false);
+      return;
+    }
+
     setpraloadinglogticket(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
@@ -449,19 +507,20 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
       .then((res) => res.json())
       .then((res2) => {
         setdisplaylogticket(res2.data.normal_logs);
-        setdisplaynoteticket(
-          res2.data.special_logs.filter(
-            (note) => note.log_name === "Note Khusus"
-          )
-        );
+        // setdisplaynoteticket(
+        //   res2.data.special_logs.filter(
+        //     (note) => note.log_name === "Note Khusus"
+        //   )
+        // );
         setpraloadinglogticket(false);
       });
   }, [
-    refreshnoteticket,
+    // refreshnoteticket,
     refreshupdateticket,
     refreshconnectitemticket,
-    refreshassignticket,
+    // refreshassignticket,
     refreshdeadlineicket,
+    isAllowedToGetTicketActivitiesLog,
   ]);
 
   return (
@@ -483,7 +542,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     <TicketIconSvg size={30} color={`#000000`} />
                   </div>
                   <div>
-                    <H1>{displaydata.name}</H1>
+                    <H1>{displaydata?.name}</H1>
                   </div>
                 </div>
                 <div className=" flex items-center justify-center mb-4">
@@ -493,7 +552,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         {
                           dataticketrelation.ticket_types.filter(
                             (type) =>
-                              type.id === displaydata.ticketable.product_type
+                              type.id === displaydata?.ticketable?.product_type
                           )[0]?.name
                         }
                       </Label>
@@ -504,7 +563,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   {dataProfile.data.role === 1 ? (
                     praloading ? null : (
                       <ButtonSys
-                        type={`default`}
+                        type={canUpdateTicket ? `default` : "primary"}
+                        disabled={!canUpdateTicket}
                         onClick={() => {
                           setdrawerupdateticket(true);
                         }}
@@ -527,21 +587,21 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <div className=" flex flex-col mb-5">
                     <Label>Diajukan Oleh:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.creator.name}
+                      {displaydata?.creator?.name}
                     </p>
                   </div>
                   <div className=" flex flex-col mb-5">
                     <Label>Lokasi:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.creator.location}
+                      {displaydata?.creator?.location}
                     </p>
                   </div>
                   <div className=" flex flex-col mb-5">
                     <Label>Tanggal Diajukan:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {!displaydata.raised_at
+                      {!displaydata?.raised_at
                         ? "-"
-                        : moment(displaydata.raised_at)
+                        : moment(displaydata?.raised_at)
                             .locale("id")
                             .format("LL")}
                     </p>
@@ -549,9 +609,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <div className=" flex flex-col mb-5">
                     <Label>Tanggal Selesai:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.closed_at === null
+                      {displaydata?.closed_at === null
                         ? `-`
-                        : moment(displaydata.closed_at)
+                        : moment(displaydata?.closed_at)
                             .locale("id")
                             .format("LL")}
                     </p>
@@ -559,7 +619,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <div className=" flex flex-col mb-5">
                     <Label>Durasi Penyelesaian:</Label>
                     <p className=" mb-0 text-gray-600">
-                      {displaydata.resolved_times}
+                      {displaydata?.resolved_times}
                     </p>
                   </div>
                 </div>
@@ -573,40 +633,40 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               <div className=" flex flex-col mb-5">
                 <Label>Tipe Aset:</Label>
                 <p className=" mb-0 text-gray-600">
-                  {displaydata.ticketable.asset_type_name}
+                  {displaydata?.ticketable.asset_type_name}
                 </p>
               </div>
               <div className=" flex flex-col mb-5">
                 <Label>Terminal ID:</Label>
                 <p className=" mb-0 text-gray-600">
-                  {displaydata.ticketable.product_id}
+                  {displaydata?.ticketable.product_id}
                 </p>
               </div>
               <div className=" flex flex-col mb-5">
                 <Label>PIC:</Label>
                 <p className=" mb-0 text-gray-600">
-                  {displaydata.ticketable.pic_name === ""
+                  {displaydata?.ticketable?.pic_name === ""
                     ? `-`
-                    : displaydata.ticketable.pic_name}{" "}
-                  / {displaydata.ticketable.pic_contact}
+                    : displaydata?.ticketable?.pic_name}{" "}
+                  / {displaydata?.ticketable?.pic_contact}
                 </p>
               </div>
               <div className=" flex flex-col mb-5">
                 <Label>Waktu Kejadian:</Label>
                 <p className=" mb-0 text-gray-600">
-                  {displaydata.ticketable.incident_time}
+                  {displaydata?.ticketable?.incident_time}
                 </p>
               </div>
               <div className=" flex flex-col mb-5">
                 <Label>Lokasi Masalah:</Label>
                 <p className=" mb-0 text-gray-600">
-                  {displaydata.ticketable.location.full_location}
+                  {displaydata?.ticketable?.location?.full_location}
                 </p>
               </div>
               <div className=" flex flex-col mb-5">
                 <Label>Deskripsi Kerusakan:</Label>
                 <p className=" mb-0 text-gray-600">
-                  {displaydata.ticketable.description}
+                  {displaydata?.ticketable?.description}
                 </p>
               </div>
             </div>
@@ -615,13 +675,13 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               <div className=" mb-7">
                 <H1>Bukti Kejadian</H1>
               </div>
-              {displaydata.ticketable.files?.length === 0 ? (
+              {displaydata?.ticketable?.files?.length === 0 ? (
                 <>
                   <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 </>
               ) : (
                 <div className=" grid grid-cols-2">
-                  {displaydata.ticketable.files?.map((doc, idx) => (
+                  {displaydata?.ticketable.files?.map((doc, idx) => (
                     <a key={idx} target={`_blank`} href={doc}>
                       <div className=" col-span-1 mx-1 flex flex-col items-center mb-2 cursor-pointer">
                         <img
@@ -644,7 +704,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               ) : (
                 <div>
                   <ButtonSys
-                    type={`default`}
+                    type={isAllowedToExportTicket ? "default" : "primary"}
+                    disabled={!isAllowedToExportTicket}
                     onClick={() => {
                       setloadingexportticket(true);
                       fetch(
@@ -699,12 +760,12 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                       <CheckIconSvg size={25} color={`#35763B`} />
                     </div>
                     <p className=" mb-0 text-base font-bold">
-                      {displaydata.status_name}
+                      {displaydata?.status_name}
                     </p>
                   </div>
                 </div>
                 {/* Status 7 === cancelled */}
-                {displaydata.status !== 7 && (
+                {displaydata?.status !== 7 && (
                   <Dropdown
                     arrow
                     trigger={["click"]}
@@ -735,21 +796,23 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   </Dropdown>
                 )}
 
-                <TicketDetailUpdateStatusModal
-                  visible={updateStatusTicketModal.visible}
-                  status={updateStatusTicketModal.status}
-                  ticketDisplayName={displaydata.name}
-                  ticketId={ticketid}
-                  onChangeVisible={(value) => {
-                    setUpdateStatusTicketModal((prev) => ({
-                      ...prev,
-                      visible: value,
-                    }));
-                  }}
-                  onMutateSucceed={() => {
-                    setrefreshupdateticket((prev) => prev + 1);
-                  }}
-                />
+                <AccessControl hasPermission={TICKET_STATUS_UPDATE}>
+                  <TicketDetailUpdateStatusModal
+                    visible={updateStatusTicketModal.visible}
+                    status={updateStatusTicketModal.status}
+                    ticketDisplayName={displaydata?.name}
+                    ticketId={ticketid}
+                    onChangeVisible={(value) => {
+                      setUpdateStatusTicketModal((prev) => ({
+                        ...prev,
+                        visible: value,
+                      }));
+                    }}
+                    onMutateSucceed={() => {
+                      setrefreshupdateticket((prev) => prev + 1);
+                    }}
+                  />
+                </AccessControl>
               </div>
               {/* <div className=" w-4/12 px-8 flex items-center justify-between mb-2 bg-red-400">
                 <div className=" flex flex-col">
@@ -835,11 +898,19 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     <>
                       <Spin />
                     </>
-                  ) : displaydata.deadline === "-" ? (
+                  ) : displaydata?.deadline === "-" ? (
                     dataProfile.data.role === 1 ? (
                       <button
                         className=" btn btn-sm text-white bg-state2 border-state2 hover:bg-onhold hover:border-onhold px-6 py-0"
                         onClick={() => {
+                          if (!isAllowedToSetTicketDeadline) {
+                            permissionWarningNotification(
+                              "Memperbarui",
+                              "Deadline Tiket"
+                            );
+                            return;
+                          }
+
                           setdrawedeadlineticket(true);
                         }}
                       >
@@ -859,17 +930,25 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   ) : (
                     <div className=" flex items-center">
                       <p className=" mb-0 text-base font-bold">
-                        {displaydata.deadline}
+                        {displaydata?.deadline}
                       </p>
                     </div>
                   )}
                 </div>
                 {dataProfile.data.role === 1 ? (
-                  praloading ? null : displaydata.status !== 7 ? (
-                    displaydata.deadline === "-" ? null : (
+                  praloading ? null : displaydata?.status !== 7 ? (
+                    displaydata?.deadline === "-" ? null : (
                       <div
                         className=" h-full flex justify-end items-start cursor-pointer"
                         onClick={() => {
+                          if (!isAllowedToSetTicketDeadline) {
+                            permissionWarningNotification(
+                              "Memperbarui",
+                              "Deadline Tiket"
+                            );
+                            return;
+                          }
+
                           setdrawedeadlineticket(true);
                         }}
                       >
@@ -886,8 +965,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 {dataProfile.data.role === 1 && (
                   <div className="my-2">
                     <TicketDetailTaskList
-                      ticketId={displaydata.id}
-                      ticketName={displaydata.name}
+                      ticketId={displaydata?.id}
+                      ticketName={displaydata?.name}
                     />
                   </div>
                 )}
@@ -897,7 +976,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <div className=" flex w-full flex-col mt-2 shadow-md rounded-md bg-white p-5">
                     <div className=" flex items-center justify-between mb-5">
                       <H1>Detail Aset</H1>
-                      {displaydata.ticketable.inventory === null ? null : (
+                      {displaydata?.ticketable?.inventory === null ? null : (
                         <div className="dropdown dropdown-end">
                           <div
                             tabIndex={`2`}
@@ -912,6 +991,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                             <div
                               className=" p-3 w-52 mb-4 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer"
                               onClick={() => {
+                                if (!isAllowedToConnectAsset) {
+                                  permissionWarningNotification(
+                                    "Menghubungkan",
+                                    "Ticket dengan Aset"
+                                  );
+                                  return;
+                                }
+
                                 setdrawerconnectitemticket(true);
                               }}
                             >
@@ -920,6 +1007,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                             <div
                               className=" p-3 w-52 flex items-center bg-white rounded shadow hover:bg-primary25 text-primary100 cursor-pointer"
                               onClick={() => {
+                                if (!isAllowedToSetItemTicket) {
+                                  permissionWarningNotification(
+                                    "Melakukan",
+                                    "Pisah Aset"
+                                  );
+                                  return;
+                                }
+
                                 setmodalreleaseitemticket(true);
                               }}
                             >
@@ -928,21 +1023,24 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                           </div>
                         </div>
                       )}
-                      <ModalReleaseItemTiket
-                        title={"Pemisahan Item dengan Tiket"}
-                        visible={modalreleaseitemticket}
-                        onvisible={setmodalreleaseitemticket}
-                        onCancel={() => {
-                          setmodalreleaseitemticket(false);
-                        }}
-                        loading={loadingreleaseitemticket}
-                        onOk={handleReleaseItemTicket}
-                        data={datapayloadconnectitem}
-                        setdata={setdatapayloadconnectitem}
-                        ticketid={ticketid}
-                      />
+
+                      <AccessControl hasPermission={TICKET_ITEM_SET}>
+                        <ModalReleaseItemTiket
+                          title={"Pemisahan Item dengan Tiket"}
+                          visible={modalreleaseitemticket}
+                          onvisible={setmodalreleaseitemticket}
+                          onCancel={() => {
+                            setmodalreleaseitemticket(false);
+                          }}
+                          loading={loadingreleaseitemticket}
+                          onOk={handleReleaseItemTicket}
+                          data={datapayloadconnectitem}
+                          setdata={setdatapayloadconnectitem}
+                          ticketid={ticketid}
+                        />
+                      </AccessControl>
                     </div>
-                    {displaydata.ticketable.inventory === null ? (
+                    {displaydata?.ticketable?.inventory === null ? (
                       <>
                         <div className=" flex flex-col justify-center items-center mb-5">
                           <div className="w-52 h-52 mb-2">
@@ -961,6 +1059,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <div className=" flex justify-center mb-5">
                           <ButtonSys
                             type={`primary`}
+                            disabled={!isAllowedToConnectAsset}
                             onClick={() => {
                               setdrawerconnectitemticket(true);
                             }}
@@ -971,7 +1070,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                       </>
                     ) : (
                       <div className=" flex flex-col">
-                        {displaydata.status === 6 && (
+                        {displaydata?.status === 6 && (
                           <div className=" flex bg-primary100 text-white rounded-md p-4 w-full mb-5">
                             <div className=" flex items-center justify-center h-full mr-2">
                               <InfoCircleIconSvg size={20} color={`#ffffff`} />
@@ -980,9 +1079,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                               Berikut tampilan detail item yang di-closed pada
                               tanggal{" "}
                               <strong>
-                                {displaydata.closed_at === null
+                                {displaydata?.closed_at === null
                                   ? `-`
-                                  : displaydata.closed_at}
+                                  : displaydata?.closed_at}
                               </strong>
                             </p>
                           </div>
@@ -990,49 +1089,49 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <div className="mb-8 flex flex-col items-center">
                           <H1>
                             {
-                              displaydata.ticketable?.inventory?.model_inventory
-                                ?.name
+                              displaydata?.ticketable?.inventory
+                                ?.model_inventory?.name
                             }
                           </H1>
                           <Label>
-                            {displaydata.ticketable?.inventory?.mig_id}
+                            {displaydata?.ticketable?.inventory?.mig_id}
                           </Label>
                         </div>
                         <div className=" flex flex-col mb-5">
                           <Label>Tipe Aset:</Label>
                           <p className=" mb-0 text-gray-600">
                             {
-                              displaydata.ticketable?.inventory?.model_inventory
-                                ?.asset?.full_name
+                              displaydata?.ticketable?.inventory
+                                ?.model_inventory?.asset?.full_name
                             }
                           </p>
                         </div>
                         <div className=" flex flex-col mb-5">
                           <Label>No Seri:</Label>
                           <p className=" mb-0 text-gray-600">
-                            {displaydata.ticketable?.inventory
+                            {displaydata?.ticketable?.inventory
                               ?.serial_number === null
                               ? `-`
-                              : displaydata.ticketable?.inventory
+                              : displaydata?.ticketable?.inventory
                                   ?.serial_number}
                           </p>
                         </div>
                         <div className=" flex flex-col mb-5">
                           <Label>Status Pemakaian:</Label>
                           <div>
-                            {displaydata.ticketable.inventory.status_usage
+                            {displaydata?.ticketable?.inventory?.status_usage
                               .id === 1 && (
                               <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">
                                 In Used
                               </div>
                             )}
-                            {displaydata.ticketable.inventory.status_usage
+                            {displaydata?.ticketable?.inventory?.status_usage
                               .id === 2 && (
                               <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">
                                 In Stock
                               </div>
                             )}
-                            {displaydata.ticketable.inventory.status_usage
+                            {displaydata?.ticketable?.inventory?.status_usage
                               .id === 3 && (
                               <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">
                                 Replacement
@@ -1043,20 +1142,20 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <div className=" flex flex-col mb-5">
                           <Label>Kondisi Aset:</Label>
                           <div>
-                            {displaydata.ticketable.inventory.status_condition
-                              .id === 1 && (
+                            {displaydata?.ticketable?.inventory
+                              ?.status_condition.id === 1 && (
                               <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">
                                 Good
                               </div>
                             )}
-                            {displaydata.ticketable.inventory.status_condition
-                              .id === 2 && (
+                            {displaydata?.ticketable?.inventory
+                              ?.status_condition.id === 2 && (
                               <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">
                                 Gray
                               </div>
                             )}
-                            {displaydata.ticketable.inventory.status_condition
-                              .id === 3 && (
+                            {displaydata?.ticketable?.inventory
+                              ?.status_condition.id === 3 && (
                               <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">
                                 Bad
                               </div>
@@ -1066,14 +1165,14 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <div className=" flex flex-col mb-5">
                           <Label>Lokasi Item:</Label>
                           <p className=" mb-0 text-gray-600">
-                            {displaydata.ticketable?.inventory?.location ===
+                            {displaydata?.ticketable?.inventory?.location ===
                             null
                               ? `-`
-                              : displaydata.ticketable?.inventory?.location}
+                              : displaydata?.ticketable?.inventory?.location}
                           </p>
                         </div>
                         <hr />
-                        {displaydata.ticketable.inventory.additional_attributes.map(
+                        {displaydata?.ticketable?.inventory?.additional_attributes?.map(
                           (doccolumns, idxcolumns) => {
                             return (
                               <div
@@ -1133,10 +1232,10 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <div className=" flex flex-col mb-5">
                           <Label>Deskripsi:</Label>
                           <p className=" mb-0 text-gray-600">
-                            {displaydata.ticketable?.inventory?.deskripsi ===
+                            {displaydata?.ticketable?.inventory?.deskripsi ===
                             null
                               ? `-`
-                              : displaydata.ticketable?.inventory?.deskripsi}
+                              : displaydata?.ticketable?.inventory?.deskripsi}
                           </p>
                         </div>
                       </div>
@@ -1342,25 +1441,29 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
       </div>
       {dataProfile.data.role === 1 && (
         <>
-          <DrawerTicketConnectItem
-            title={"Hubungkan Aset"}
-            visible={drawerconnectitemticket}
-            onClose={() => {
-              setdrawerconnectitemticket(false);
-            }}
-            buttonOkText={"Hubungkan Aset"}
-            initProps={initProps}
-            onvisible={setdrawerconnectitemticket}
-            refresh={refreshconnectitemticket}
-            setrefresh={setrefreshconnectitemticket}
-            setrefreshclosed={setrefreshclosedconnectitemticket}
-            ticketid={ticketid}
-            datapayload={datapayloadconnectitem}
-            setdatapayload={setdatapayloadconnectitem}
-            selectedassettype={selectedassettype}
-            setselectedassettype={setselectedassettype}
-          />
-          <DrawerTicketAssign
+          <AccessControl
+            hasPermission={[TICKET_ITEM_SET, ASSETS_GET, INVENTORIES_GET]}
+          >
+            <DrawerTicketConnectItem
+              title={"Hubungkan Aset"}
+              visible={drawerconnectitemticket}
+              onClose={() => {
+                setdrawerconnectitemticket(false);
+              }}
+              buttonOkText={"Hubungkan Aset"}
+              initProps={initProps}
+              onvisible={setdrawerconnectitemticket}
+              refresh={refreshconnectitemticket}
+              setrefresh={setrefreshconnectitemticket}
+              setrefreshclosed={setrefreshclosedconnectitemticket}
+              ticketid={ticketid}
+              datapayload={datapayloadconnectitem}
+              setdatapayload={setdatapayloadconnectitem}
+              selectedassettype={selectedassettype}
+              setselectedassettype={setselectedassettype}
+            />
+          </AccessControl>
+          {/* <DrawerTicketAssign
             visible={drawerassignticket}
             onClose={() => {
               setdrawerassignticket(false);
@@ -1374,47 +1477,52 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
             ticketid={ticketid}
             datapayload={datapayloadassign}
             setdatapayload={setdatapayloadassign}
-          />
-          <DrawerTicketDeadline
-            title={"Deadline"}
-            visible={drawerdeadlineicket}
-            onClose={() => {
-              setdrawedeadlineticket(false);
-            }}
-            buttonOkText={"Simpan"}
-            initProps={initProps}
-            onvisible={setdrawedeadlineticket}
-            refresh={refreshdeadlineicket}
-            setrefresh={setrefreshdeadlineicket}
-            setrefreshclosed={setrefreshcloseddeadlineticket}
-            ticketid={ticketid}
-            datapayload={datapayloaddeadline}
-            setdatapayload={setdatapayloaddeadline}
-            showdatetime={showdatepicker}
-            setshowdatetime={setshowdatepicker}
-            datevalue={datevalue}
-            setdatevalue={setdatevalue}
-          />
-          <DrawerTicketUpdate
-            title={"Ubah Tiket"}
-            visible={drawerupdateticket}
-            onClose={() => {
-              setdrawerupdateticket(false);
-            }}
-            buttonOkText={"Simpan Perubahan Tiket"}
-            initProps={initProps}
-            onvisible={setdrawerupdateticket}
-            refreshtickets={refreshupdateticket}
-            setrefreshtickets={setrefreshupdateticket}
-            setrefreshclosed={setrefreshclosedupdateticket}
-            dataprofile={dataProfile}
-            datapayload={datapayloadupdate}
-            setdatapayload={setdatapayloadupdate}
-            ticketid={ticketid}
-            displaydata={displaydata}
-            disabledsubmit={disabledupdate}
-            setdisabledsubmit={setdisabledupdate}
-          />
+          /> */}
+          <AccessControl hasPermission={TICKET_DEADLINE_SET}>
+            <DrawerTicketDeadline
+              title={"Deadline"}
+              visible={drawerdeadlineicket}
+              onClose={() => {
+                setdrawedeadlineticket(false);
+              }}
+              buttonOkText={"Simpan"}
+              initProps={initProps}
+              onvisible={setdrawedeadlineticket}
+              refresh={refreshdeadlineicket}
+              setrefresh={setrefreshdeadlineicket}
+              setrefreshclosed={setrefreshcloseddeadlineticket}
+              ticketid={ticketid}
+              datapayload={datapayloaddeadline}
+              setdatapayload={setdatapayloaddeadline}
+              showdatetime={showdatepicker}
+              setshowdatetime={setshowdatepicker}
+              datevalue={datevalue}
+              setdatevalue={setdatevalue}
+            />
+          </AccessControl>
+
+          {canUpdateTicket && (
+            <DrawerTicketUpdate
+              title={"Ubah Tiket"}
+              visible={drawerupdateticket}
+              onClose={() => {
+                setdrawerupdateticket(false);
+              }}
+              buttonOkText={"Simpan Perubahan Tiket"}
+              initProps={initProps}
+              onvisible={setdrawerupdateticket}
+              refreshtickets={refreshupdateticket}
+              setrefreshtickets={setrefreshupdateticket}
+              setrefreshclosed={setrefreshclosedupdateticket}
+              dataprofile={dataProfile}
+              datapayload={datapayloadupdate}
+              setdatapayload={setdatapayloadupdate}
+              ticketid={ticketid}
+              displaydata={displaydata || {}}
+              disabledsubmit={disabledupdate}
+              setdisabledsubmit={setdisabledupdate}
+            />
+          )}
         </>
       )}
     </Layout>

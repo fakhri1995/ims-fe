@@ -3,6 +3,10 @@ import { Checkbox, DatePicker, Select, Spin } from "antd";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { GROUPS_GET, TICKETS_EXPORT, USERS_GET } from "lib/features";
+
 import { UserIconSvg } from "../../icon";
 import { H2, Label, Text } from "../../typography";
 import DrawerCore from "../drawerCore";
@@ -14,6 +18,14 @@ const DrawerTicketExports = ({
   buttonOkText,
   initProps,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToExportTickets = hasPermission(TICKETS_EXPORT);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET); // input field "Grup"
+  const isAllowedToGetUsers = hasPermission(USERS_GET); // input field "Engineer"
+
   //useState
   const [datapayload, setdatapayload] = useState({
     group: null,
@@ -24,7 +36,7 @@ const DrawerTicketExports = ({
     core_attributes: [1, 1, 1, 1, 1, 1, 1, 1, 1],
     secondary_attributes: [1, 1, 1, 1, 1, 1, 1, 1],
   });
-  const [loadingsave, setloadingsave] = useState(false);
+  // const [loadingsave, setloadingsave] = useState(false);
   const [listengs, setlistengs] = useState([]);
   const [fecthingengs, setfecthingengs] = useState(false);
   const [listgroups, setlistgroups] = useState([]);
@@ -80,6 +92,10 @@ const DrawerTicketExports = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetGroups) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
       method: `GET`,
       headers: {
@@ -90,9 +106,13 @@ const DrawerTicketExports = ({
       .then((res2) => {
         setlistgroups(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetGroups]);
 
   useEffect(() => {
+    if (!isAllowedToGetUsers) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
       method: `GET`,
       headers: {
@@ -103,7 +123,7 @@ const DrawerTicketExports = ({
       .then((res2) => {
         setlistengs(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetUsers]);
 
   useEffect(() => {
     if (datapayload.core_attributes.every((val) => val === 0) === false) {
@@ -134,7 +154,7 @@ const DrawerTicketExports = ({
         console.log(datapayload);
         handleExports();
       }}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !isAllowedToExportTickets}
     >
       {false ? (
         <>
@@ -188,6 +208,7 @@ const DrawerTicketExports = ({
               <Select
                 style={{ width: `100%` }}
                 placeholder="Nama Grup..."
+                disabled={!isAllowedToGetGroups}
                 suffixIcon={<SearchOutlined />}
                 showArrow
                 allowClear
@@ -240,6 +261,7 @@ const DrawerTicketExports = ({
               <Select
                 style={{ width: `100%` }}
                 placeholder="Nama Engineer..."
+                disabled={!isAllowedToGetUsers}
                 suffixIcon={<SearchOutlined />}
                 showArrow
                 allowClear

@@ -1,20 +1,42 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { DatePicker, Input, Select, TreeSelect } from "antd";
 import moment from "moment";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  TICKETS_CLOSED_GET,
+  TICKET_CLIENT_GET,
+  TICKET_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../components/button";
-import { SearchIconSvg, UserIconSvg } from "../../../components/icon";
 import { BackIconSvg } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
 import { TableCustomTicketHistories } from "../../../components/table/tableCustom";
-import { H1, H2, Label, Text } from "../../../components/typography";
+import { H1 } from "../../../components/typography";
 import httpcookie from "cookie";
 
 const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isClient = dataProfile.data.role !== 1;
+
+  const isAllowedToGetTicket = hasPermission(
+    isClient ? TICKET_CLIENT_GET : TICKET_GET
+  );
+  const isAllowedToGetClosedTicket = hasPermission(TICKETS_CLOSED_GET);
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -61,7 +83,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
     resolved_times: [],
   });
   const [loadinghistories, setloadinghistories] = useState(false);
-  const [loadingfilterhistories, setloadingfilterhistories] = useState(false);
+  // const [loadingfilterhistories, setloadingfilterhistories] = useState(false);
   const [pagehistories, setpagehistories] = useState(1);
   const [rowshistories, setrowshistories] = useState(10);
   const [sortinghistories, setsortinghistories] = useState({
@@ -69,7 +91,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
     sort_type: "",
   });
   //Filter
-  const [datafilterthistories, setdatafilterthistories] = useState([]);
+  // const [datafilterthistories, setdatafilterthistories] = useState([]);
   const [searcingfilterhistories, setsearcingfilterhistories] = useState("");
   const [tickettypefilterhistories, settickettypefilterhistories] =
     useState("");
@@ -81,19 +103,19 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
     useState("");
   const [toresfilterhistories, settoresfilterhistories] = useState("");
   //create - ticket histories
-  const [drawerhistoriescreate, setdrawerhistoriescreate] = useState(false);
-  const [loadinghistoriescreate, setloadinghistoriescreate] = useState(false);
-  const [refreshcreatehistoriescreate, setrefreshcreatehistoriescreate] =
-    useState(-1);
+  // const [drawerhistoriescreate, setdrawerhistoriescreate] = useState(false);
+  // const [loadinghistoriescreate, setloadinghistoriescreate] = useState(false);
+  // const [refreshcreatehistoriescreate, setrefreshcreatehistoriescreate] =
+  //   useState(-1);
   //delete - ticket histories
-  const [datahistoriesdelete, setdatahistoriesdelete] = useState({
-    id: null,
-    name: "",
-  });
-  const [modalhistoriesdelete, setmodalhistoriesdelete] = useState(false);
-  const [loadinghistoriesdelete, setloadinghistoriesdelete] = useState(false);
-  const [refreshcreatehistoriesdelete, setrefreshcreatehistoriesdelete] =
-    useState(-1);
+  // const [datahistoriesdelete, setdatahistoriesdelete] = useState({
+  //   id: null,
+  //   name: "",
+  // });
+  // const [modalhistoriesdelete, setmodalhistoriesdelete] = useState(false);
+  // const [loadinghistoriesdelete, setloadinghistoriesdelete] = useState(false);
+  // const [refreshcreatehistoriesdelete, setrefreshcreatehistoriesdelete] =
+  //   useState(-1);
 
   //2. Column Table
   const columnsTicketHistories = [
@@ -114,7 +136,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.full_name}</>,
         };
       },
-      sorter: (a, b) => a.id > b.id,
+      sorter: isAllowedToGetClosedTicket ? (a, b) => a.id > b.id : false,
     },
     {
       title: "Tipe Tiket",
@@ -124,7 +146,9 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.type_name}</>,
         };
       },
-      sorter: (a, b) => a.type_name.localeCompare(b.type_name),
+      sorter: isAllowedToGetClosedTicket
+        ? (a, b) => a.type_name.localeCompare(b.type_name)
+        : false,
     },
     {
       title: "Diajukan Oleh",
@@ -153,7 +177,9 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.raised_at}</>,
         };
       },
-      sorter: (a, b) => a.raised_at.localeCompare(b.raised_at),
+      sorter: isAllowedToGetClosedTicket
+        ? (a, b) => a.raised_at.localeCompare(b.raised_at)
+        : false,
     },
     // {
     //   title: "Di-assign Ke",
@@ -186,7 +212,9 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.resolved_times}</>,
         };
       },
-      sorter: (a, b) => a.resolved_times.localeCompare(b.resolved_times),
+      sorter: isAllowedToGetClosedTicket
+        ? (a, b) => a.resolved_times.localeCompare(b.resolved_times)
+        : false,
     },
   ];
 
@@ -206,7 +234,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdatarawhistories(res2.data);
         setdatahistories(res2.data.data);
-        setdatafilterthistories(res2.data.data);
+        // setdatafilterthistories(res2.data.data);
         setloadinghistories(false);
       });
   };
@@ -244,6 +272,13 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
 
   //4.Use Effect
   useEffect(() => {
+    if (!isAllowedToGetClosedTicket) {
+      permissionWarningNotification("Mendapatkan", "Daftar Riwayat Tiket");
+
+      setloadinghistories(false);
+      return;
+    }
+
     setloadinghistories(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getClosedTickets?page=${pagehistories}&rows=${rowshistories}&ticket_id=${searcingfilterhistories}&from=${fromfilterhistories}&to=${tofilterhistories}&location_id=${locfilterhistories}&from_res=${fromresfilterhistories}&to_res=${toresfilterhistories}&sort_by=${sortinghistories.sort_by}&sort_type=${sortinghistories.sort_type}`,
@@ -258,11 +293,16 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdatarawhistories(res2.data);
         setdatahistories(res2.data.data);
-        setdatafilterthistories(res2.data.data);
+        // setdatafilterthistories(res2.data.data);
         setloadinghistories(false);
       });
-  }, []);
+  }, [isAllowedToGetClosedTicket]);
+
   useEffect(() => {
+    if (!isAllowedToGetTicket) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1
@@ -280,7 +320,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         setdatatickrelation(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetTicket]);
 
   return (
     <Layout
@@ -315,6 +355,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 }
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
+                disabled={!isAllowedToGetClosedTicket}
                 allowClear
                 onChange={(e) => {
                   if (e.target.value === "") {
@@ -333,6 +374,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                     : tickettypefilterhistories
                 }
                 placeholder="Semua Tipe Tiket"
+                disabled={!isAllowedToGetClosedTicket || !isAllowedToGetTicket}
                 style={{ width: `100%` }}
                 allowClear
                 name={`task_type`}
@@ -354,6 +396,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 allowEmpty
                 className="datepickerStatus"
+                disabled={!isAllowedToGetClosedTicket}
                 value={
                   fromfilterhistories === ""
                     ? [null, null]
@@ -370,6 +413,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 allowClear
                 placeholder="Semua Lokasi"
+                disabled={!isAllowedToGetClosedTicket || !isAllowedToGetTicket}
                 showSearch
                 suffixIcon={<SearchOutlined />}
                 showArrow
@@ -412,6 +456,7 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
                       settoresfilterhistories(option.to),
                       sethelperfromresfilterhistories(value));
                 }}
+                disabled={!isAllowedToGetClosedTicket || !isAllowedToGetTicket}
               >
                 {dataticketrelation.resolved_times.map((doc, idx) => {
                   if (doc.from === null)
@@ -468,7 +513,11 @@ const TicketHistories = ({ dataProfile, sidemenu, initProps }) => {
               </Select>
             </div>
             <div className="mx-1 w-1/12">
-              <ButtonSys type={`primary`} onClick={onFilterTicketHistories}>
+              <ButtonSys
+                type={`primary`}
+                onClick={onFilterTicketHistories}
+                disabled={!isAllowedToGetClosedTicket}
+              >
                 {/* <div className='mr-1'>
                                     <SearchIconSvg size={15} color={`#ffffff`} />
                                 </div> */}

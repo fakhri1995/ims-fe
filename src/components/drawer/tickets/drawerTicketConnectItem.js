@@ -2,6 +2,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Select, Spin, TreeSelect, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ASSETS_GET, INVENTORIES_GET, TICKET_ITEM_SET } from "lib/features";
+
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
@@ -33,6 +37,19 @@ const DrawerTicketConnectItem = ({
   setselectedassettype,
   ticketid,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToSetItemTicket = hasPermission(TICKET_ITEM_SET);
+  const isAllowedToGetAssets = hasPermission(ASSETS_GET);
+  const isAllowedToGetInventories = hasPermission(INVENTORIES_GET);
+
+  const canConenctToAsset =
+    isAllowedToSetItemTicket &&
+    isAllowedToGetAssets &&
+    isAllowedToGetInventories;
+
   //useState
   const [loadingsave, setloadingsave] = useState(false);
   const [loadinggetasset, setloadinggetasset] = useState(false);
@@ -80,6 +97,10 @@ const DrawerTicketConnectItem = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetAssets) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -91,8 +112,13 @@ const DrawerTicketConnectItem = ({
         var assettypemap = modifData(res2.data);
         setdataassettype(assettypemap);
       });
-  }, []);
+  }, [isAllowedToGetAssets]);
+
   useEffect(() => {
+    if (!isAllowedToGetInventories) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
       method: `GET`,
       headers: {
@@ -103,7 +129,8 @@ const DrawerTicketConnectItem = ({
       .then((res2) => {
         setdataasset(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetInventories]);
+
   useEffect(() => {
     if (datapayload.inventory_id !== null) {
       setdisabledcreate(false);
@@ -126,7 +153,7 @@ const DrawerTicketConnectItem = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleSetAsset}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !canConenctToAsset}
     >
       {loadingsave ? (
         <>
@@ -156,6 +183,7 @@ const DrawerTicketConnectItem = ({
               <TreeSelect
                 style={{ width: `100%` }}
                 showArrow
+                disabled={!isAllowedToGetAssets || !isAllowedToGetInventories}
                 name={`asset_type`}
                 onChange={(value, label, extra) => {
                   setselectedassettype(extra.allCheckedNodes[0].node.props.id);
@@ -196,6 +224,7 @@ const DrawerTicketConnectItem = ({
               <Select
                 style={{ width: `100%` }}
                 placeholder="Nama aset..."
+                disabled={!isAllowedToGetInventories}
                 suffixIcon={<SearchOutlined />}
                 showArrow
                 onChange={(value, option) => {

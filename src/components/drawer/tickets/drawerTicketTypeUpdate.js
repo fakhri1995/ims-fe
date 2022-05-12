@@ -1,6 +1,10 @@
 import { Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { TICKET_DETAIL_TYPE_UPDATE, TICKET_GET } from "lib/features";
+
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
@@ -16,6 +20,16 @@ const DrawerTicketTypeUpdate = ({
   disabledsubmit,
   setdisabledsubmit,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateTicketType = hasPermission(TICKET_DETAIL_TYPE_UPDATE);
+  const isAllowedToGetTicket = hasPermission(TICKET_GET);
+
+  const canUpdateTicketType =
+    isAllowedToUpdateTicketType && isAllowedToGetTicket;
+
   //useState
   const [loadingsave, setloadingsave] = useState(false);
   const [datatickettypes, setdatatickettypes] = useState([]);
@@ -61,6 +75,10 @@ const DrawerTicketTypeUpdate = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetTicket) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTicketRelation`, {
       method: `GET`,
       headers: {
@@ -71,7 +89,8 @@ const DrawerTicketTypeUpdate = ({
       .then((res2) => {
         setdatatickettypes(res2.data.ticket_types);
       });
-  }, []);
+  }, [isAllowedToGetTicket]);
+
   useEffect(() => {
     if (datapayload.ticket_type_id !== null && datapayload.name !== "") {
       setdisabledsubmit(false);
@@ -79,6 +98,7 @@ const DrawerTicketTypeUpdate = ({
       setdisabledsubmit(true);
     }
   }, [disabledtrigger]);
+
   return (
     <DrawerCore
       title={title}
@@ -94,7 +114,7 @@ const DrawerTicketTypeUpdate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleUpdateTicketType}
-      disabled={disabledsubmit}
+      disabled={disabledsubmit || !canUpdateTicketType}
     >
       {loadingsave ? (
         <>
@@ -131,6 +151,7 @@ const DrawerTicketTypeUpdate = ({
                   setdisabledtrigger((prev) => prev + 1);
                 }}
                 defaultValue={datapayload.ticket_type_id}
+                disabled={!isAllowedToGetTicket}
               >
                 {datatickettypes.map((doc, idx) => (
                   <Select.Option value={doc.id}>{doc.name}</Select.Option>
