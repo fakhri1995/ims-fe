@@ -1150,20 +1150,42 @@ export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
  *
  * - [] pages/tasks/mytask/index
  * - [x] pages/tasks/admin/index
+ * - [x] pages/tasks/tasktypes
  *
  * - [] components/drawer/tasks/drawerTaskUpdate
  * - [x] components/drawer/tasks/drawerTaskCreate
  * - [x] components/drawer/tasks/drawerTaskTypesCreate
  */
 export const TASK_TYPES_GET = "TASK_TYPES_GET";
+/**
+ * /getTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ *
+ * - [x] components/drawer/tasks/drawerTaskTypesUpdate
+ */
 export const TASK_TYPE_GET = "TASK_TYPE_GET";
 /**
  * /addTaskType
  *
+ * - [x] pages/tasks/tasktypes
+ *
  * - [x] components/drawer/tasks/drawerTaskTypesCreate
  */
 export const TASK_TYPE_ADD = "TASK_TYPE_ADD";
+/**
+ * /updateTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ *
+ * - [x] components/drawer/tasks/drawerTaskTypesUpdate
+ */
 export const TASK_TYPE_UPDATE = "TASK_TYPE_UPDATE";
+/**
+ * /deleteTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ */
 export const TASK_TYPE_DELETE = "TASK_TYPE_DELETE";
 export const TASK_DETAIL_FILL = "TASK_DETAIL_FILL";
 export const TASK_DETAIL_ASSIGN = "TASK_DETAIL_ASSIGN";
