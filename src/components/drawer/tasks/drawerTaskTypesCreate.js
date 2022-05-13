@@ -1,6 +1,10 @@
 import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { TASK_TYPES_GET, TASK_TYPE_ADD } from "lib/features";
+
 import {
   AlertIconSvg,
   AlignJustifiedIconSvg,
@@ -13,7 +17,7 @@ import {
   RulerIconSvg,
   TrashIconSvg,
 } from "../../icon";
-import { InputRequired, RadioNotRequired, TextAreaRequired } from "../../input";
+import { RadioNotRequired, TextAreaRequired } from "../../input";
 import { H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
@@ -26,6 +30,15 @@ const DrawerTaskTypesCreate = ({
   disabled,
   initProps,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddTaskType = hasPermission(TASK_TYPE_ADD);
+  const isAllowedToGetTaskTypes = hasPermission(TASK_TYPES_GET);
+
+  const canAddTaskType = isAllowedToAddTaskType && isAllowedToGetTaskTypes;
+
   //USESTATE
   const [datacreate, setdatacreate] = useState({
     name: "",
@@ -53,6 +66,7 @@ const DrawerTaskTypesCreate = ({
     });
     setdisabledtrigger((prev) => prev + 1);
   };
+
   const handleAddTipeTask = () => {
     setloadingcreate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTaskType`, {
@@ -116,7 +130,7 @@ const DrawerTaskTypesCreate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleAddTipeTask}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !canAddTaskType}
     >
       <Spin spinning={loadingcreate}>
         <div className="flex flex-col">
@@ -144,6 +158,7 @@ const DrawerTaskTypesCreate = ({
                   <Input
                     style={{ width: `100%` }}
                     name="name"
+                    disabled={!isAllowedToGetTaskTypes}
                     defaultValue={datacreate.name}
                     onChange={onChangeInput}
                     onBlur={(e) => {
