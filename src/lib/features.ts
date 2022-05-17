@@ -327,7 +327,7 @@ export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
  * - [ ] components/drawer/tasks/drawerTaskUpdate
  * - [x] components/drawer/tasks/drawerTaskCreate
  *
- * - [ ] pages/tasks/mytask
+ * - [x] pages/tasks/mytask
  * - [x] pages/tasks/admin
  */
 export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
@@ -1118,6 +1118,12 @@ export const TICKET_DETAIL_TYPE_DELETE = "TICKET_DETAIL_TYPE_DELETE";
  * - [ ] components/table/tableCustom
  */
 export const TASKS_GET = "TASKS_GET";
+/**
+ * /getTaskPickList
+ *
+ * - [x] pages/tasks/mytask/index
+ * - [] components/table/tableCustom
+ */
 export const TASK_PICK_LIST_GET = "TASK_PICK_LIST_GET";
 export const TASK_GET = "TASK_GET";
 /**
@@ -1141,6 +1147,11 @@ export const TASK_ATTENDANCE_TOGGLE = "TASK_ATTENDANCE_TOGGLE";
 export const TASK_SUBMIT = "TASK_SUBMIT";
 export const TASK_DECLINE = "TASK_DECLINE";
 export const TASK_APPROVE = "TASK_APPROVE";
+/**
+ * /assignSelfTask
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
 /**
  * /getFilterTaskTypes
@@ -1148,7 +1159,7 @@ export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
  * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [x] components/screen/ticket/detail/TicketDetailTaskList
  *
- * - [] pages/tasks/mytask/index
+ * - [x] pages/tasks/mytask/index
  * - [x] pages/tasks/admin/index
  * - [x] pages/tasks/tasktypes
  *
@@ -1224,9 +1235,30 @@ export const TASK_DEADLINE_GET = "TASK_DEADLINE_GET";
  * - [x] pages/tasks/admin/index
  */
 export const TASK_STAFF_COUNTS_GET = "TASK_STAFF_COUNTS_GET";
+/**
+ * /getUserTaskStatusList
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASK_USER_STATUSES_GET = "TASK_USER_STATUSES_GET";
+/**
+ * /getUserLastTwoTasks
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASKS_USER_LAST_TWO_GET = "TASKS_USER_LAST_TWO_GET";
+/**
+ * /getUserTasks
+ *
+ * - [x] pages/tasks/mytask/index
+ * - [] components/table/tableCustom
+ */
 export const TASKS_USER_GET = "TASKS_USER_GET";
+/**
+ * /getUserTaskTypeCounts
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASK_TYPE_USER_COUNTS_GET = "TASK_TYPE_USER_COUNTS_GET";
 export const TASK_SPARE_PART_LIST_GET = "TASK_SPARE_PART_LIST_GET";
 export const TASK_SEND_INVENTORIES = "TASK_SEND_INVENTORIES";
