@@ -1,6 +1,10 @@
 import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { TASK_TYPE_GET, TASK_TYPE_UPDATE } from "lib/features";
+
 import {
   AlignJustifiedIconSvg,
   BorderAllSvg,
@@ -28,6 +32,15 @@ const DrawerTaskTypesUpdate = ({
   initProps,
   trigger,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateTaskType = hasPermission(TASK_TYPE_UPDATE);
+  const isAllowedToGetTaskType = hasPermission(TASK_TYPE_GET); // "Judul Tipe Task" input field
+
+  const canUpdateTaskType = isAllowedToUpdateTaskType && isAllowedToGetTaskType;
+
   //USESTATE
   const [datadisplay, setdatadisplay] = useState({
     id: "",
@@ -100,6 +113,11 @@ const DrawerTaskTypesUpdate = ({
 
   //USEEFFECT
   useEffect(() => {
+    if (!isAllowedToGetTaskType) {
+      setloadingdetailtipetaskupdate(false);
+      return;
+    }
+
     if (trigger !== -1) {
       setloadingdetailtipetaskupdate(true);
       fetch(
@@ -142,12 +160,13 @@ const DrawerTaskTypesUpdate = ({
                 : false
               : 1
           );
-          console.log(tempisbarismatriks);
+          // console.log(tempisbarismatriks);
           setisbarismatriks(tempisbarismatriks);
           setloadingdetailtipetaskupdate(false);
         });
     }
-  }, [trigger]);
+  }, [trigger, isAllowedToGetTaskType]);
+
   useEffect(() => {
     if (disabledtrigger !== -1) {
       if (datadisplay.name !== "" && datadisplay.description !== "") {
@@ -175,7 +194,7 @@ const DrawerTaskTypesUpdate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleUpdateTipeTask}
-      disabled={disabledupdate}
+      disabled={disabledupdate || !canUpdateTaskType}
     >
       {loadingdetailtipetaskupdate ? (
         <>

@@ -11,6 +11,19 @@ import {
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_LISTS_GET,
+  COMPANY_SUB_LOCATIONS_GET,
+  GROUPS_GET,
+  INVENTORIES_GET,
+  TASK_TYPES_GET,
+  TASK_UPDATE,
+  TICKETS_GET,
+  USERS_GET,
+} from "lib/features";
+
 import ButtonSys from "../../button";
 import {
   AssetIconSvg,
@@ -70,6 +83,19 @@ const DrawerTaskUpdate = ({
   setidsubloc,
   setrefreshdefaultupdatetask,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateTask = hasPermission(TASK_UPDATE);
+  const isAllowedToGetTaskTypes = hasPermission(TASK_TYPES_GET);
+  const isAllowedToGetTickets = hasPermission(TICKETS_GET);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetSublocations = hasPermission(COMPANY_SUB_LOCATIONS_GET);
+  const isAllowedToGetInventories = hasPermission(INVENTORIES_GET);
+  const isAllowedToGetUsers = hasPermission(USERS_GET);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+
   //USESTATE
   const [loadingupdate, setloadingupdate] = useState(false);
   const [disabledupdate, setdisabledupdate] = useState(true);
@@ -156,6 +182,10 @@ const DrawerTaskUpdate = ({
   //USEEFFECT
   //Tipe task
   useEffect(() => {
+    if (!isAllowedToGetTaskTypes) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
       method: `GET`,
       headers: {
@@ -167,9 +197,14 @@ const DrawerTaskUpdate = ({
         const modif = recursiveModifData(res2.data);
         setdatatasktypes(modif);
       });
-  }, []);
+  }, [isAllowedToGetTaskTypes]);
+
   //Referensi
   useEffect(() => {
+    if (!isAllowedToGetTickets) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTickets`, {
       method: `GET`,
       headers: {
@@ -180,9 +215,14 @@ const DrawerTaskUpdate = ({
       .then((res2) => {
         setdatareferences(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetTickets]);
+
   //Lokasi
   useEffect(() => {
+    if (!isAllowedToGetCompanyList) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
@@ -193,9 +233,14 @@ const DrawerTaskUpdate = ({
       .then((res2) => {
         setdatalocations(res2.data.children);
       });
-  }, []);
+  }, [isAllowedToGetCompanyList]);
+
   //Sublokasi
   useEffect(() => {
+    if (!isAllowedToGetSublocations) {
+      return;
+    }
+
     if (triggersubloc !== -1) {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${idsubloc}`,
@@ -211,9 +256,14 @@ const DrawerTaskUpdate = ({
           setdatasublocs(res2.data.children);
         });
     }
-  }, [triggersubloc]);
+  }, [triggersubloc, isAllowedToGetSublocations]);
+
   //Items
   useEffect(() => {
+    if (!isAllowedToGetInventories) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
       method: `GET`,
       headers: {
@@ -224,11 +274,16 @@ const DrawerTaskUpdate = ({
       .then((res2) => {
         setdataitems(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetInventories]);
+
   //Staff/group
   useEffect(() => {
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
+        if (!isAllowedToGetGroups) {
+          return;
+        }
+
         fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
           method: `GET`,
           headers: {
@@ -240,6 +295,10 @@ const DrawerTaskUpdate = ({
             setdatastaffgroup(res2.data);
           });
       } else if (switchstaffgroup === 1) {
+        if (!isAllowedToGetUsers) {
+          return;
+        }
+
         fetch(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`,
           {
@@ -255,31 +314,33 @@ const DrawerTaskUpdate = ({
           });
       }
     }
-  }, [switchstaffgroup]);
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatastaffgroup(res2.data);
-      });
-  }, []);
-  useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatastaffgroup(res2.data);
-      });
-  }, []);
+  }, [switchstaffgroup, isAllowedToGetUsers, isAllowedToGetGroups]);
+
+  // useEffect(() => {
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setdatastaffgroup(res2.data);
+  //     });
+  // }, []);
+  // useEffect(() => {
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=${1}`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setdatastaffgroup(res2.data);
+  //     });
+  // }, []);
+
   useEffect(() => {
     if (
       dataupdate.task_type_id !== null &&
@@ -305,7 +366,7 @@ const DrawerTaskUpdate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleUpdateTask}
-      disabled={disabledupdate}
+      disabled={disabledupdate || !isAllowedToUpdateTask}
     >
       {loading ? (
         <>
@@ -382,6 +443,7 @@ const DrawerTaskUpdate = ({
                   showArrow
                   value={dataupdate.reference_id}
                   placeholder="Referensi"
+                  disabled={!isAllowedToGetTickets}
                   name={`reference_id`}
                   onChange={(value) => {
                     setdataupdate({ ...dataupdate, reference_id: value });
@@ -456,6 +518,7 @@ const DrawerTaskUpdate = ({
               <TreeSelect
                 allowClear
                 placeholder="Cari Lokasi"
+                disabled={!isAllowedToGetCompanyList}
                 showSearch
                 suffixIcon={<SearchOutlined />}
                 showArrow
@@ -493,6 +556,7 @@ const DrawerTaskUpdate = ({
                 <TreeSelect
                   allowClear
                   placeholder="Cari Sublokasi"
+                  disabled={!isAllowedToGetSublocations}
                   showSearch
                   suffixIcon={<SearchOutlined />}
                   showArrow
@@ -537,6 +601,7 @@ const DrawerTaskUpdate = ({
                   showArrow
                   value={dataupdate.inventory_ids}
                   placeholder="Cari MIG ID"
+                  disabled={!isAllowedToGetInventories}
                   name={`inventory_ids`}
                   onChange={(values, options) => {
                     setdataupdate({ ...dataupdate, inventory_ids: values });
@@ -652,6 +717,7 @@ const DrawerTaskUpdate = ({
                     showArrow
                     value={dataupdate.assign_ids}
                     placeholder="Cari Nama Staff, Group.."
+                    disabled={!isAllowedToGetUsers}
                     name={`assign_ids`}
                     onChange={(values, options) => {
                       setdataupdate({ ...dataupdate, assign_ids: values });
@@ -706,6 +772,7 @@ const DrawerTaskUpdate = ({
                     showArrow
                     value={[dataupdate.assign_ids]}
                     placeholder="Cari Nama Staff, Group.."
+                    disabled={!isAllowedToGetGroups}
                     name={`assign_ids`}
                     onChange={(value, option) => {
                       setdataupdate({ ...dataupdate, assign_ids: [value] });

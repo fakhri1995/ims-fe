@@ -11,6 +11,18 @@ import {
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_LISTS_GET,
+  COMPANY_SUB_LOCATIONS_GET,
+  INVENTORIES_GET,
+  TASK_ADD,
+  TASK_TYPES_GET,
+  TICKETS_GET,
+  TICKET_ASSIGN,
+} from "lib/features";
+
 import ButtonSys from "../../button";
 import {
   AssetIconSvg,
@@ -19,7 +31,7 @@ import {
   UserIconSvg,
 } from "../../icon";
 import { InputRequired, TextAreaNotRequired } from "../../input";
-import { H1, H2, Label } from "../../typography";
+import { H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 const DrawerTaskCreate = ({
@@ -33,6 +45,23 @@ const DrawerTaskCreate = ({
   loadingcreate,
   setloadingcreate,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddTask = hasPermission(TASK_ADD);
+  const isAllowedToGetTaskTypes = hasPermission(TASK_TYPES_GET);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetCompanySubLocations = hasPermission(
+    COMPANY_SUB_LOCATIONS_GET
+  );
+  const isAllowedToGetInventories = hasPermission(INVENTORIES_GET);
+  const isAllowedToAssignTicket = hasPermission(TICKET_ASSIGN);
+  const isAllowedToGetReferensi = hasPermission(TICKETS_GET);
+
+  const canAddNewTask =
+    isAllowedToAddTask && isAllowedToGetTaskTypes && isAllowedToGetCompanyList;
+
   //USESTATE
   const [datacreate, setdatacreate] = useState({
     name: "",
@@ -63,7 +92,7 @@ const DrawerTaskCreate = ({
   //locations
   const [datalocations, setdatalocations] = useState([]);
   const [datasublocs, setdatasublocs] = useState([]);
-  const [fetchinglocations, setfetchinglocations] = useState(false);
+  // const [fetchinglocations, setfetchinglocations] = useState(false);
   const [triggersubloc, settriggersubloc] = useState(-1);
   //items
   const [dataitems, setdataitems] = useState([]);
@@ -149,6 +178,10 @@ const DrawerTaskCreate = ({
   //USEEFFECT
   //Tipe task
   useEffect(() => {
+    if (!isAllowedToGetTaskTypes) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
       method: `GET`,
       headers: {
@@ -159,9 +192,14 @@ const DrawerTaskCreate = ({
       .then((res2) => {
         setdatatasktypes(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetTaskTypes]);
+
   //Referensi
   useEffect(() => {
+    if (!isAllowedToGetReferensi) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTickets?id=`, {
       method: `GET`,
       headers: {
@@ -172,9 +210,14 @@ const DrawerTaskCreate = ({
       .then((res2) => {
         setdatareferences(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetReferensi]);
+
   //Lokasi
   useEffect(() => {
+    if (!isAllowedToGetCompanyList) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
@@ -185,9 +228,14 @@ const DrawerTaskCreate = ({
       .then((res2) => {
         setdatalocations(res2.data.children);
       });
-  }, []);
+  }, [isAllowedToGetCompanyList]);
+
   //Sublokasi
   useEffect(() => {
+    if (!isAllowedToGetCompanySubLocations) {
+      return;
+    }
+
     if (triggersubloc !== -1) {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${triggersubloc}`,
@@ -203,9 +251,14 @@ const DrawerTaskCreate = ({
           setdatasublocs(res2.data.children);
         });
     }
-  }, [triggersubloc]);
+  }, [triggersubloc, isAllowedToGetCompanySubLocations]);
+
   //Items
   useEffect(() => {
+    if (!isAllowedToGetInventories) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories`, {
       method: `GET`,
       headers: {
@@ -216,9 +269,14 @@ const DrawerTaskCreate = ({
       .then((res2) => {
         setdataitems(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetInventories]);
+
   //Staff/group
   useEffect(() => {
+    if (!isAllowedToAssignTicket) {
+      return;
+    }
+
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
         fetch(
@@ -250,37 +308,8 @@ const DrawerTaskCreate = ({
           });
       }
     }
-  }, [switchstaffgroup]);
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatastaffgroup(res2.data);
-      });
-  }, []);
-  useEffect(() => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatastaffgroup(res2.data);
-      });
-  }, []);
+  }, [switchstaffgroup, isAllowedToAssignTicket]);
+
   useEffect(() => {
     if (
       datacreate.task_type_id !== null &&
@@ -329,7 +358,7 @@ const DrawerTaskCreate = ({
       }}
       buttonOkText={buttonOkText}
       onClick={handleAddTask}
-      disabled={disabledcreate}
+      disabled={disabledcreate || !canAddNewTask}
     >
       <Spin spinning={loadingcreate}>
         <div className="flex flex-col">
@@ -356,6 +385,7 @@ const DrawerTaskCreate = ({
                 style={{ width: `100%` }}
                 value={datacreate.task_type_id}
                 placeholder="Nama tipe task"
+                disabled={!isAllowedToGetTaskTypes}
                 showSearch
                 optionFilterProp="children"
                 notFoundContent={
@@ -415,6 +445,7 @@ const DrawerTaskCreate = ({
                 suffixIcon={<SearchOutlined />}
                 showArrow
                 placeholder="Referensi"
+                disabled={!isAllowedToGetReferensi}
                 name={`reference_id`}
                 onChange={(value) => {
                   setdatacreate({ ...datacreate, reference_id: value });
@@ -485,6 +516,7 @@ const DrawerTaskCreate = ({
             <TreeSelect
               allowClear
               placeholder="Cari Lokasi"
+              disabled={!isAllowedToGetCompanyList}
               showSearch
               suffixIcon={<SearchOutlined />}
               showArrow
@@ -521,6 +553,7 @@ const DrawerTaskCreate = ({
               <TreeSelect
                 allowClear
                 placeholder="Cari Sublokasi"
+                disabled={!isAllowedToGetCompanySubLocations}
                 showSearch
                 suffixIcon={<SearchOutlined />}
                 showArrow
@@ -573,6 +606,7 @@ const DrawerTaskCreate = ({
                 showArrow
                 value={datacreate.inventory_ids}
                 placeholder="Cari MIG ID"
+                disabled={!isAllowedToGetInventories}
                 name={`inventory_ids`}
                 onChange={(values, options) => {
                   setdatacreate({ ...datacreate, inventory_ids: values });
@@ -662,6 +696,7 @@ const DrawerTaskCreate = ({
                 <div className="mx-1">
                   <Switch
                     checked={datacreate.is_group}
+                    disabled={!isAllowedToAssignTicket}
                     onChange={(checked) => {
                       setswitchstaffgroup(checked ? 0 : 1);
                       setdatacreate({
@@ -688,6 +723,7 @@ const DrawerTaskCreate = ({
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
+                  disabled={!isAllowedToAssignTicket}
                   name={`assign_ids`}
                   onChange={(values, options) => {
                     setdatacreate({ ...datacreate, assign_ids: values });

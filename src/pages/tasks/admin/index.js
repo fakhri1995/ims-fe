@@ -12,39 +12,49 @@ import {
 } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_LISTS_GET,
+  TASKS_GET,
+  TASK_ADD, // Tambah Tipe Task
+  TASK_DEADLINE_GET,
+  TASK_STAFF_COUNTS_GET,
+  TASK_STAFF_STATUSES_GET,
+  TASK_STATUS_LIST_GET,
+  TASK_TYPES_GET, // Add new task button and drawer
+  TASK_TYPE_ADD,
+  TASK_TYPE_COUNTS_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Buttonsys from "../../../components/button";
 import DrawerTaskCreate from "../../../components/drawer/tasks/drawerTaskCreate";
 import DrawerTaskTypesCreate from "../../../components/drawer/tasks/drawerTaskTypesCreate";
-import DrawerTaskTypesUpdate from "../../../components/drawer/tasks/drawerTaskTypesUpdate";
 import {
   AlerttriangleIconSvg,
-  ArrowsSortIconSvg,
   BackIconSvg,
   CalendartimeIconSvg,
   CircleXIconSvg,
   ClipboardcheckIconSvg,
-  ClockIconSvg,
   EditIconSvg,
   ListcheckIconSvg,
   LocationIconSvg,
   MappinIconSvg,
   SearchIconSvg,
   SortAscendingIconSvg,
-  SortDescendingIconSvg,
-  TrashIconSvg,
   UserIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
-import { ModalHapusTipeTask } from "../../../components/modal/modalCustom";
 import {
   TableCustomAdminTask,
   TableCustomStaffTask,
-  TableCustomTask,
-  TableCustomTipeTask,
 } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import { createKeyPressHandler } from "../../../lib/helper";
@@ -71,6 +81,59 @@ Chart.register(
 );
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  // Task table data source and data filtering
+  const isAllowedToGetTaskList = hasPermission(TASKS_GET);
+  // Tree dropdown when the User clicking "Location" icon on each card (Status Task, Tipe Task, and Deadline Task)
+  const isAllowedToGetCompanyLocationList = hasPermission(COMPANY_LISTS_GET);
+
+  // "Status Task" chart's data source
+  const isAllowedToGetStatusTaskList = hasPermission(TASK_STATUS_LIST_GET);
+  // "Tipe Task Terbanyak" chart's data source
+  const isAllowedToGetTaskTypeCount = hasPermission(TASK_TYPE_COUNTS_GET);
+  // "Deadline Task" chart's data source
+  const isAllowedToGetTaskDeadlineList = hasPermission(TASK_DEADLINE_GET);
+  // "Staff" chart's data source
+  const isAllowedToGetTaskStaffCount = hasPermission(TASK_STAFF_COUNTS_GET);
+
+  // "Lihat Semua" (semua staff list table)
+  const isAllowedToGetTaskStaffList = hasPermission(TASK_STAFF_STATUSES_GET);
+
+  // "Semua Tipe Task" input field
+  const isAllowedToSearchTaskType = hasPermission(TASK_TYPES_GET);
+
+  const canAddNewTask = hasPermission([
+    TASK_ADD,
+    TASK_TYPES_GET,
+    COMPANY_LISTS_GET,
+  ]);
+  const canAddNewTaskType = hasPermission([TASK_TYPE_ADD, TASK_TYPES_GET]);
+
+  /**
+   * A conditional callback when User clicking "MappinIconSvg" button
+   *
+   * @example
+   * ```ts
+   * if (canOpenLocationTreeDropdown()) {
+   *   // show the dropdown tree
+   * }
+   * ```
+   */
+  const canOpenLocationTreeDropdown = useCallback(() => {
+    if (!isAllowedToGetCompanyLocationList) {
+      permissionWarningNotification("Memperbarui", "Lokasi Company");
+    }
+
+    return isAllowedToGetCompanyLocationList;
+  }, [isAllowedToGetCompanyLocationList]);
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -138,43 +201,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [loadingscdata, setloadingscdata] = useState(true);
   //TASK TYPES
-  const [datarawtipetask, setdatarawtipetask] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-  const [datatipetasks, setdatatipetasks] = useState([]);
-  const [loadingtipetasks, setloadingtipetasks] = useState(false);
-  const [viewdetailtipetask, setviewdetailtipetask] = useState(false);
-  const [pagetipetask, setpagetipetask] = useState(1);
-  const [rowstipetask, setrowstipetask] = useState(10);
-  const [sortingtipetask, setsortingtipetask] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
-  const [searcingtipetask, setsearcingtipetask] = useState("");
   //create - task type
   const [drawertasktypecreate, setdrawertasktypecreate] = useState(false);
-  //update - task type
-  const [triggertasktypupdate, settriggertasktypupdate] = useState(-1);
-  const [idtasktypupdate, setidtasktypupdate] = useState(-1);
-  const [drawertasktypupdate, setdrawertasktypupdate] = useState(false);
-  //delete - task type
-  const [datatipetaskdelete, setdatatipetaskdelete] = useState({
-    id: null,
-    name: "",
-  });
-  const [modaltipetaskdelete, setmodaltipetaskdelete] = useState(false);
-  const [loadingtipetaskdelete, setloadingtipetaskdelete] = useState(false);
   //TASKS
   const [datarawtask, setdatarawtask] = useState({
     current_page: "",
@@ -243,81 +271,6 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   //2. columns table
-  const columnsTipetask = [
-    {
-      title: "No",
-      dataIndex: "num",
-      render: (text, record, index) => {
-        return {
-          children: <>{datarawtipetask.from + index}</>,
-        };
-      },
-    },
-    {
-      title: "Tipe Task",
-      dataIndex: "name",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.name}</>,
-        };
-      },
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
-    {
-      title: "Deskripsi",
-      dataIndex: "description",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.description}</>,
-        };
-      },
-    },
-    {
-      title: "Jumlah Task",
-      dataIndex: "count",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.tasks_count}</>,
-        };
-      },
-      sorter: (a, b) => a.tasks_count < b.tasks_count,
-    },
-    {
-      title: "Opsi",
-      dataIndex: "option",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <div className="flex items-center">
-              <div className="mx-1">
-                <Buttonsys
-                  type="default"
-                  onClick={() => {
-                    settriggertasktypupdate(record.id);
-                    setdrawertasktypupdate(true);
-                  }}
-                >
-                  <EditIconSvg size={15} color={`#35763B`} />
-                </Buttonsys>
-              </div>
-              <div className="mx-1">
-                <Buttonsys
-                  type="default"
-                  color="danger"
-                  onClick={() => {
-                    setdatatipetaskdelete({ id: record.id, name: record.name });
-                    setmodaltipetaskdelete(true);
-                  }}
-                >
-                  <TrashIconSvg size={15} color={`#BF4A40`} />
-                </Buttonsys>
-              </div>
-            </div>
-          ),
-        };
-      },
-    },
-  ];
   const columnsTask = [
     {
       title: "No",
@@ -336,7 +289,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: <>T-000{record.id}</>,
         };
       },
-      sorter: (a, b) => a.id < b.id,
+      sorter: isAllowedToGetTaskList ? (a, b) => a.id < b.id : false,
     },
     {
       title: "Tipe Task",
@@ -360,7 +313,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTaskList
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title: "Deadline",
@@ -376,7 +331,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.deadline > b.deadline,
+      sorter: isAllowedToGetTaskList
+        ? (a, b) => a.deadline > b.deadline
+        : false,
     },
     {
       title: "Staff",
@@ -448,37 +405,40 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.status < b.status,
-      filters: [
-        {
-          text: "Overdue",
-          value: 1,
-        },
-        {
-          text: "Open",
-          value: 2,
-        },
-        {
-          text: "On Progress",
-          value: 3,
-        },
-        {
-          text: "On Hold",
-          value: 4,
-        },
-        {
-          text: "Completed",
-          value: 5,
-        },
-        {
-          text: "Closed",
-          value: 6,
-        },
-      ],
+      sorter: isAllowedToGetTaskList ? (a, b) => a.status < b.status : false,
+      filters: isAllowedToGetTaskList
+        ? [
+            {
+              text: "Overdue",
+              value: 1,
+            },
+            {
+              text: "Open",
+              value: 2,
+            },
+            {
+              text: "On Progress",
+              value: 3,
+            },
+            {
+              text: "On Hold",
+              value: 4,
+            },
+            {
+              text: "Completed",
+              value: 5,
+            },
+            {
+              text: "Closed",
+              value: 6,
+            },
+          ]
+        : undefined,
       onFilter: (value, record) => record.status === value,
       filterMultiple: false,
     },
   ];
+
   const columnsStaffTask = [
     {
       title: "No",
@@ -598,61 +558,22 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setloadingtasks(false);
       });
   };
-  const handleDeleteTipeTask = () => {
-    setloadingtipetaskdelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTaskType`, {
-      method: "DELETE",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: datatipetaskdelete.id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setloadingtipetaskdelete(false);
-        if (res2.success) {
-          setmodaltipetaskdelete(false);
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-        } else {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
-          });
-        }
-      });
-  };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterTask, "Enter");
 
   //USEEFFECT
   useEffect(() => {
-    if (viewdetailtipetask === true) {
-      setloadingtipetasks(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          setdatarawtipetask(res2.data);
-          setdatatipetasks(res2.data.data);
-          setdatafiltertipetasks(res2.data.data);
-          setloadingtipetasks(false);
-        });
+    if (!isAllowedToGetTaskList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
     }
-  }, [viewdetailtipetask, loadingcreate, modaltipetaskdelete]);
+  }, [isAllowedToGetTaskList]);
+
   useEffect(() => {
+    if (!isAllowedToGetTaskList) {
+      setloadingtasks(false);
+      return;
+    }
+
     setloadingtasks(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
@@ -665,12 +586,18 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        setdatarawtask(res2.data);
-        setdatatasks(res2.data.data);
+        setdatarawtask(res2.data); // table-related data source
+        setdatatasks(res2.data.data); // table main data source
         setloadingtasks(false);
       });
-  }, [loadingcreate]);
+  }, [loadingcreate, isAllowedToGetTaskList]);
+
   useEffect(() => {
+    if (!isAllowedToGetCompanyLocationList) {
+      setloadingstatustaskdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
@@ -679,14 +606,20 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setdatafilterlokasi(res2.data.children);
-        setstatustaskloc(res2.data.children);
-        setttcloc(res2.data.children);
-        setdtloc(res2.data.children);
+        setdatafilterlokasi(res2.data.children); // "Semua Lokasi" input field
+        setstatustaskloc(res2.data.children); // location tree dropdown on "Status Task" card
+        setttcloc(res2.data.children); // location tree dropdown on "Tipe Task" card
+        setdtloc(res2.data.children); // location tree dropdown on "Deadline Task" card
         setloadingstatustaskdata(false);
       });
-  }, []);
+  }, [isAllowedToGetCompanyLocationList]);
+
   useEffect(() => {
+    if (!isAllowedToGetStatusTaskList) {
+      setloadingstatustaskdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getStatusTaskList`, {
       method: `GET`,
       headers: {
@@ -695,11 +628,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setstatustaskdata(res2.data);
+        setstatustaskdata(res2.data); // "Status Task" chart's data source
         setloadingstatustaskdata(false);
       });
-  }, []);
+  }, [isAllowedToGetStatusTaskList]);
+
   useEffect(() => {
+    if (!isAllowedToGetTaskTypeCount) {
+      setloadingttcdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypeCounts`, {
       method: `GET`,
       headers: {
@@ -708,11 +647,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setttcdata(res2.data);
+        setttcdata(res2.data); // "Tipe Task Terbanyak" chart's data source
         setloadingttcdata(false);
       });
-  }, []);
+  }, [isAllowedToGetTaskTypeCount]);
+
   useEffect(() => {
+    if (!isAllowedToGetTaskDeadlineList) {
+      setloadingdtdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks`, {
       method: `GET`,
       headers: {
@@ -721,11 +666,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setdtdata(res2.data);
+        setdtdata(res2.data); // "Deadline Task" chart's data source
         setloadingdtdata(false);
       });
-  }, []);
+  }, [isAllowedToGetTaskDeadlineList]);
+
   useEffect(() => {
+    if (!isAllowedToGetTaskStaffCount) {
+      setloadingscdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskStaffCounts`, {
       method: `GET`,
       headers: {
@@ -734,11 +685,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setscdata(res2.data);
+        setscdata(res2.data); // "Staff" chart's data source
         setloadingscdata(false);
       });
-  }, []);
+  }, [isAllowedToGetTaskStaffCount]);
+
   useEffect(() => {
+    if (!isAllowedToGetTaskStaffList) {
+      setloadingstaff(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getStaffTaskStatuses`, {
       method: `GET`,
       headers: {
@@ -747,16 +704,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setdatarawstaff(res2.data);
-        setdatastaff(res2.data.data);
+        setdatarawstaff(res2.data); // "Lihat Semua" (semua staff list table)
+        setdatastaff(res2.data.data); // "Lihat Semua" (semua staff list table)
         setloadingstaff(false);
       });
-  }, []);
-  useEffect(() => {
-    if (triggertasktypupdate !== -1) {
-      setidtasktypupdate(triggertasktypupdate);
-    }
-  }, [triggertasktypupdate]);
+  }, [isAllowedToGetTaskStaffList]);
 
   return (
     <Layout
@@ -768,94 +720,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       prevpath={"admin"}
     >
       <div className="flex flex-col" id="mainWrapper">
-        {viewdetailtipetask || viewdetailstaff ? (
+        {viewdetailstaff ? (
           <>
-            {viewdetailtipetask && (
-              <div className="px-5">
-                <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3">
-                  <div className="flex justify-between items-center mb-5">
-                    <div className="flex">
-                      <div
-                        className="mr-2 cursor-pointer"
-                        onClick={() => {
-                          setviewdetailtipetask(false);
-                        }}
-                      >
-                        <BackIconSvg size={15} color={`#000000`} />
-                      </div>
-                      <H1>Semua Tipe Task</H1>
-                    </div>
-                    <div className="w-8/12 flex justify-end">
-                      <div className=" mx-2">
-                        <Buttonsys
-                          type="primary"
-                          onClick={() => {
-                            setdrawertasktypecreate(true);
-                          }}
-                        >
-                          + Tambah Tipe Task
-                        </Buttonsys>
-                      </div>
-                      <div className="mx-2">
-                        <Input
-                          style={{ width: `20rem` }}
-                          placeholder="Nama tipe task.."
-                          allowClear
-                          onChange={(e) => {
-                            setsearcingtipetask(e.target.value);
-                            setloadingtipetasks(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}&name=${e.target.value}&sort_by=${sortingtipetask.sort_by}&sort_type=${sortingtipetask.sort_type}`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                setdatarawtipetask(res2.data);
-                                setdatatipetasks(res2.data.data);
-                                setloadingtipetasks(false);
-                              });
-                          }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <TableCustomTipeTask
-                      dataSource={datatipetasks}
-                      setDataSource={setdatatipetasks}
-                      columns={columnsTipetask}
-                      loading={loadingtipetasks}
-                      setpraloading={setloadingtipetasks}
-                      pageSize={rowstipetask}
-                      total={datarawtipetask.total}
-                      initProps={initProps}
-                      setpage={setpagetipetask}
-                      pagefromsearch={pagetipetask}
-                      setdataraw={setdatarawtipetask}
-                      setsortingtipetask={setsortingtipetask}
-                      sortingtipetask={sortingtipetask}
-                      searcingtipetask={searcingtipetask}
-                    />
-                  </div>
-                </div>
-                <ModalHapusTipeTask
-                  title={"Konfirmasi Hapus Tipe Task"}
-                  visible={modaltipetaskdelete}
-                  onvisible={setmodaltipetaskdelete}
-                  onCancel={() => {
-                    setmodaltipetaskdelete(false);
-                  }}
-                  loading={loadingtipetaskdelete}
-                  datadelete={datatipetaskdelete}
-                  onOk={handleDeleteTipeTask}
-                />
-              </div>
-            )}
             {viewdetailstaff && (
               <div className="px-5">
                 <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3">
@@ -972,7 +838,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         ) : (
           <div className="grid grid-cols-10 px-5" id="wrapper1">
             {/* DEADLINE TASK */}
-            <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
+            <div className="col-span-3 flex flex-col shadow-md rounded-md p-5 mb-6 mr-3 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Deadline Task</H1>
                 <div className="flex items-center">
@@ -981,7 +847,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tabIndex={`2`}
                       className="mx-1 cursor-pointer"
                       onClick={() => {
-                        setdtloctoggle((prev) => !prev);
+                        if (!isAllowedToGetTaskDeadlineList) {
+                          permissionWarningNotification(
+                            "Mendapatkan",
+                            "Informasi Deadline Task"
+                          );
+                          return;
+                        }
+
+                        if (canOpenLocationTreeDropdown()) {
+                          setdtloctoggle((prev) => !prev);
+                        }
                       }}
                     >
                       <MappinIconSvg color={`#000000`} size={25} />
@@ -1078,6 +954,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     className="mx-1 cursor-pointer"
                     onClick={() => {
+                      if (!isAllowedToGetTaskDeadlineList) {
+                        permissionWarningNotification(
+                          "Mendapatkan",
+                          "Informasi Deadline Task"
+                        );
+                        return;
+                      }
                       setdtdatefilter((prev) => !prev);
                     }}
                   >
@@ -1252,13 +1135,21 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* STAFF TASK */}
-            <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
+            <div className="col-span-3 flex flex-col shadow-md rounded-md p-5 mb-6 mr-3 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Staff</H1>
                 <div className="flex items-center">
                   <div
                     className=" cursor-pointer"
                     onClick={() => {
+                      if (!isAllowedToGetTaskStaffList) {
+                        permissionWarningNotification(
+                          "Melihat",
+                          "Daftar Staff"
+                        );
+                        return;
+                      }
+
                       setviewdetailstaff(true);
                     }}
                   >
@@ -1346,6 +1237,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div
                   className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
                   onClick={() => {
+                    if (!canAddNewTask) {
+                      permissionWarningNotification("Menambahkan", "Task Baru");
+                      return;
+                    }
+
                     setdrawertaskcreate(true);
                   }}
                 >
@@ -1362,6 +1258,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div
                   className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
                   onClick={() => {
+                    if (!canAddNewTaskType) {
+                      permissionWarningNotification(
+                        "Menambahkan",
+                        "Tipe Task Baru"
+                      );
+                      return;
+                    }
+
                     setdrawertasktypecreate(true);
                   }}
                 >
@@ -1390,7 +1294,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
             </div>
             {/* STATUS TASK */}
-            <div className="col-span-5 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
+            <div className="col-span-5 flex flex-col shadow-md rounded-md p-5 mb-6 mx-3 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Status Task</H1>
                 <div className="flex items-center">
@@ -1399,7 +1303,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tabIndex={`0`}
                       className="mx-1 cursor-pointer"
                       onClick={() => {
-                        setstatusloctoggle((prev) => !prev);
+                        if (!isAllowedToGetStatusTaskList) {
+                          permissionWarningNotification(
+                            "Mendapatkan",
+                            "Informasi Status Task"
+                          );
+                          return;
+                        }
+
+                        if (canOpenLocationTreeDropdown()) {
+                          setstatusloctoggle((prev) => !prev);
+                        }
                       }}
                     >
                       <MappinIconSvg color={`#000000`} size={25} />
@@ -1488,6 +1402,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     className="mx-1 cursor-pointer"
                     onClick={() => {
+                      if (!isAllowedToGetStatusTaskList) {
+                        permissionWarningNotification(
+                          "Mendapatkan",
+                          "Informasi Status Task"
+                        );
+                        return;
+                      }
+
                       setstatustaskdatefilter((prev) => !prev);
                     }}
                   >
@@ -1658,7 +1580,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* TIPE TASK */}
-            <div className="col-span-5 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
+            <div className="col-span-5 flex flex-col shadow-md rounded-md p-5 mb-6 mx-3 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Tipe Task Terbanyak</H1>
                 <div className="flex items-center">
@@ -1667,7 +1589,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tabIndex={`1`}
                       className="mx-1 cursor-pointer"
                       onClick={() => {
-                        setttloctoggle((prev) => !prev);
+                        if (!isAllowedToGetTaskTypeCount) {
+                          permissionWarningNotification(
+                            "Mendapatkan",
+                            "Informasi Tipe Task Terbanyak"
+                          );
+                          return;
+                        }
+
+                        if (canOpenLocationTreeDropdown()) {
+                          setttloctoggle((prev) => !prev);
+                        }
                       }}
                     >
                       <MappinIconSvg color={`#000000`} size={25} />
@@ -1842,6 +1774,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     value={searchstate}
                     style={{ width: `100%` }}
                     placeholder="Judul atau ID.."
+                    disabled={!isAllowedToGetTaskList}
                     allowClear
                     onChange={(e) => {
                       if (e.target.value === "") {
@@ -1859,6 +1792,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tasktypefilterstate === "" ? null : tasktypefilterstate
                     }
                     placeholder="Semua Tipe Task"
+                    disabled={
+                      !isAllowedToGetTaskList || !isAllowedToSearchTaskType
+                    }
                     style={{ width: `100%` }}
                     allowClear
                     showSearch
@@ -1906,6 +1842,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     showTime
                     allowEmpty
                     className="datepickerStatus"
+                    disabled={!isAllowedToGetTaskList}
                     value={
                       fromdatefilterstate === ""
                         ? [null, null]
@@ -1926,6 +1863,10 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     style={{ width: `100%` }}
                     allowClear
                     placeholder="Semua Lokasi"
+                    disabled={
+                      !isAllowedToGetTaskList ||
+                      !isAllowedToGetCompanyLocationList
+                    }
                     showSearch
                     suffixIcon={<SearchOutlined />}
                     showArrow
@@ -1955,6 +1896,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     style={{ width: `100%` }}
                     value={statusfilterstate === "" ? null : statusfilterstate}
                     placeholder="Semua Status"
+                    disabled={!isAllowedToGetTaskList}
                     allowClear
                     name={`status`}
                     onChange={(value) => {
@@ -2002,7 +1944,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                   </Select>
                 </div>
                 <div className="mx-1 w-1/12">
-                  <Buttonsys type={`primary`} onClick={onFilterTask}>
+                  <Buttonsys
+                    type={`primary`}
+                    disabled={!isAllowedToGetTaskList}
+                    onClick={onFilterTask}
+                  >
                     <div className="mr-1">
                       <SearchIconSvg size={15} color={`#ffffff`} />
                     </div>
@@ -2038,38 +1984,36 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           </div>
         )}
       </div>
-      <DrawerTaskTypesCreate
-        title={"Tambah Tipe Task"}
-        visible={drawertasktypecreate}
-        onClose={() => {
-          setdrawertasktypecreate(false);
-        }}
-        buttonOkText={"Simpan Tipe Task"}
-        initProps={initProps}
-        onvisible={setdrawertasktypecreate}
-      />
-      {/* <DrawerTaskTypesUpdate
-                title={"Ubah Tipe Task"}
-                visible={drawertasktypupdate}
-                onClose={() => { setdrawertasktypupdate(false) }}
-                buttonOkText={"Simpan Tipe Task"}
-                initProps={initProps}
-                onvisible={setdrawertasktypupdate}
-                loading={loadingtipetasks}
-                id={idtasktypupdate}
-            /> */}
-      <DrawerTaskCreate
-        title={"Tambah Task"}
-        visible={drawertaskcreate}
-        onClose={() => {
-          setdrawertaskcreate(false);
-        }}
-        buttonOkText={"Simpan Task"}
-        initProps={initProps}
-        onvisible={setdrawertaskcreate}
-        loadingcreate={loadingcreate}
-        setloadingcreate={setloadingcreate}
-      />
+
+      <AccessControl hasPermission={[TASK_TYPE_ADD, TASK_TYPES_GET]}>
+        <DrawerTaskTypesCreate
+          title={"Tambah Tipe Task"}
+          visible={drawertasktypecreate}
+          onClose={() => {
+            setdrawertasktypecreate(false);
+          }}
+          buttonOkText={"Simpan Tipe Task"}
+          initProps={initProps}
+          onvisible={setdrawertasktypecreate}
+        />
+      </AccessControl>
+
+      <AccessControl
+        hasPermission={[TASK_ADD, TASK_TYPES_GET, COMPANY_LISTS_GET]}
+      >
+        <DrawerTaskCreate
+          title={"Tambah Task"}
+          visible={drawertaskcreate}
+          onClose={() => {
+            setdrawertaskcreate(false);
+          }}
+          buttonOkText={"Simpan Task"}
+          initProps={initProps}
+          onvisible={setdrawertaskcreate}
+          loadingcreate={loadingcreate}
+          setloadingcreate={setloadingcreate}
+        />
+      </AccessControl>
     </Layout>
   );
 };

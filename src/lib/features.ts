@@ -133,7 +133,7 @@ export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admi
 /**
  * /getFilterUsers | UserService.filterUsers
  *
- * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
  *
  * - [x] components/drawer/tickets/drawerTicketExports
  * - [x] components/drawer/tickets/drawerTicketUpdate
@@ -147,7 +147,7 @@ export const USERS_GET = "USERS_GET";
 /**
  * /getFilterGroups
  *
- * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
  * - [x] components/drawer/tickets/drawerTicketExports
  */
 export const GROUPS_GET = "GROUPS_GET";
@@ -324,12 +324,11 @@ export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
  *
  * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [x] components/screen/ticket/detail/TicketDetailTaskList
- * - [ ] components/drawer/tasks/drawerTaskUpdate
- * - [ ] components/drawer/tasks/drawerTaskCreate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
+ * - [x] components/drawer/tasks/drawerTaskCreate
  *
- * - [ ] pages/tasks/mytask
- * - [ ] pages/tasks/admin
- * - [ ] pages/tasks
+ * - [x] pages/tasks/mytask
+ * - [x] pages/tasks/admin
  */
 export const COMPANY_LISTS_GET = "COMPANY_LISTS_GET";
 /**
@@ -408,8 +407,8 @@ export const COMPANY_LOCATIONS_GET = "COMPANY_LOCATIONS_GET";
  *
  * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [ ] components/modal/modalCustom
- * - [ ] components/drawer/tasks/drawerTaskCreate
- * - [ ] components/drawer/tasks/drawerTaskUpdate
+ * - [x] components/drawer/tasks/drawerTaskCreate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
  */
 export const COMPANY_SUB_LOCATIONS_GET = "COMPANY_SUB_LOCATIONS_GET";
 
@@ -789,6 +788,8 @@ export const MODEL_DELETE = "MODEL_DELETE";
  *
  * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [x] components/drawer/tickets/drawerTicketConnectItem
+ * - [x] components/drawer/tasks/drawerTaskCreate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
  */
 export const INVENTORIES_GET = "INVENTORIES_GET";
 /**
@@ -987,6 +988,8 @@ export const TICKET_CLIENT_EXPORT = "TICKET_CLIENT_EXPORT";
  * - [x] pages/tickets/index
  *
  * - [x] components/table/tableCustom
+ * - [x] components/drawer/tasks/drawerTaskCreate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
  */
 export const TICKETS_GET = "TICKETS_GET";
 /**
@@ -1031,6 +1034,13 @@ export const TICKET_CANCEL = "TICKET_CANCEL";
  * - [] components/drawer/tickets/drawerTicketTypeUpdate
  */
 export const TICKET_UPDATE = "TICKET_UPDATE";
+/**
+ * /getAssignToList
+ *
+ * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
+ * - [x] components/drawer/tasks/drawerTaskCreate
+ * - [ ] components/drawer/tickets/drawerTicketAssign
+ */
 export const TICKET_ASSIGN = "TICKET_ASSIGN";
 /**
  * /setItemTicket
@@ -1102,28 +1112,95 @@ export const TICKET_DETAIL_TYPE_UPDATE = "TICKET_DETAIL_TYPE_UPDATE";
  */
 export const TICKET_DETAIL_TYPE_DELETE = "TICKET_DETAIL_TYPE_DELETE";
 
+/**
+ * /getTasks
+ *
+ * - [x] pages/tasks/admin
+ *
+ * - [ ] components/table/tableCustom
+ */
 export const TASKS_GET = "TASKS_GET";
+/**
+ * /getTaskPickList
+ *
+ * - [x] pages/tasks/mytask/index
+ * - [] components/table/tableCustom
+ */
 export const TASK_PICK_LIST_GET = "TASK_PICK_LIST_GET";
+/**
+ * /getTask
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_GET = "TASK_GET";
 /**
  * /addTask
  *
+ * - [x] pages/tasks/admin
+ *
  * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [x] components/screen/ticket/detail/TicketDetailTaskList
  *
- * - [] components/drawer/tasks/drawerTaskCreate
+ * - [x] components/drawer/tasks/drawerTaskCreate
  * - [] components/drawer/tasks/drawerTaskTypesCreate
  * - [] components/drawer/tasks/drawerTaskDetailCreate
  */
 export const TASK_ADD = "TASK_ADD";
+/**
+ * /updateTask
+ *
+ * - [x] components/drawer/tasks/drawerTaskUpdate
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_UPDATE = "TASK_UPDATE";
+/**
+ * /deleteTask
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DELETE = "TASK_DELETE";
+/**
+ * /saveFilesTask
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_FILES_SAVE = "TASK_FILES_SAVE";
+/**
+ * /changeStatusToggle
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_STATUS_TOGGLE = "TASK_STATUS_TOGGLE";
+/**
+ * /changeAttendanceToggle
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_ATTENDANCE_TOGGLE = "TASK_ATTENDANCE_TOGGLE";
+/**
+ * /submitTask
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_SUBMIT = "TASK_SUBMIT";
+/**
+ * /declineTask
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DECLINE = "TASK_DECLINE";
+/**
+ * /approveTask
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_APPROVE = "TASK_APPROVE";
+/**
+ * /assignSelfTask
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
 /**
  * /getFilterTaskTypes
@@ -1131,32 +1208,133 @@ export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
  * - [x] components/screen/ticket/detail/TicketDetailTaskCreateDrawer
  * - [x] components/screen/ticket/detail/TicketDetailTaskList
  *
- * - [] pages/tasks/mytask/index
- * - [] pages/tasks/admin/index
- * - [] pages/tasks/index
+ * - [x] pages/tasks/mytask/index
+ * - [x] pages/tasks/admin/index
+ * - [x] pages/tasks/tasktypes
  *
- * - [] components/drawer/tasks/drawerTaskUpdate
- * - [] components/drawer/tasks/drawerTaskCreate
- * - [] components/drawer/tasks/drawerTaskTypesCreate
+ * - [x] components/drawer/tasks/drawerTaskUpdate
+ * - [x] components/drawer/tasks/drawerTaskCreate
+ * - [x] components/drawer/tasks/drawerTaskTypesCreate
  */
 export const TASK_TYPES_GET = "TASK_TYPES_GET";
+/**
+ * /getTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ *
+ * - [x] components/drawer/tasks/drawerTaskTypesUpdate
+ */
 export const TASK_TYPE_GET = "TASK_TYPE_GET";
+/**
+ * /addTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ *
+ * - [x] components/drawer/tasks/drawerTaskTypesCreate
+ */
 export const TASK_TYPE_ADD = "TASK_TYPE_ADD";
+/**
+ * /updateTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ *
+ * - [x] components/drawer/tasks/drawerTaskTypesUpdate
+ */
 export const TASK_TYPE_UPDATE = "TASK_TYPE_UPDATE";
+/**
+ * /deleteTaskType
+ *
+ * - [x] pages/tasks/tasktypes
+ */
 export const TASK_TYPE_DELETE = "TASK_TYPE_DELETE";
+/**
+ * /fillTaskDetail
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DETAIL_FILL = "TASK_DETAIL_FILL";
+/**
+ * /assignTaskDetail
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DETAIL_ASSIGN = "TASK_DETAIL_ASSIGN";
+/**
+ * /addTaskDetail
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DETAIL_ADD = "TASK_DETAIL_ADD";
+/**
+ * /updateTaskDetail
+ *
+ * - [x] components/drawer/tasks/drawerTaskDetailUpdaate
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DETAIL_UPDATE = "TASK_DETAIL_UPDATE";
+/**
+ * /deleteTaskDetail
+ *
+ * - [x] pages/tasks/detail/[taskId]
+ */
 export const TASK_DETAIL_DELETE = "TASK_DETAIL_DELETE";
+/**
+ * /getStaffTaskStatuses
+ *
+ * - [x] pages/tasks/admin/index
+ *
+ * - [ ] components/table/tableCustom
+ */
 export const TASK_STAFF_STATUSES_GET = "TASK_STAFF_STATUSES_GET";
+/**
+ * /getStatusTaskList
+ *
+ * - [x] pages/tasks/admin/index
+ */
 export const TASK_STATUS_LIST_GET = "TASK_STATUS_LIST_GET";
+/**
+ * /getTaskTypeCounts
+ *
+ * - [x] pages/tasks/admin/index
+ */
 export const TASK_TYPE_COUNTS_GET = "TASK_TYPE_COUNTS_GET";
+/**
+ * /getDeadlineTasks
+ *
+ * - [x] pages/tasks/admin/index
+ */
 export const TASK_DEADLINE_GET = "TASK_DEADLINE_GET";
+/**
+ * /getTaskStaffCounts
+ *
+ * - [x] pages/tasks/admin/index
+ */
 export const TASK_STAFF_COUNTS_GET = "TASK_STAFF_COUNTS_GET";
+/**
+ * /getUserTaskStatusList
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASK_USER_STATUSES_GET = "TASK_USER_STATUSES_GET";
+/**
+ * /getUserLastTwoTasks
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASKS_USER_LAST_TWO_GET = "TASKS_USER_LAST_TWO_GET";
+/**
+ * /getUserTasks
+ *
+ * - [x] pages/tasks/mytask/index
+ * - [] components/table/tableCustom
+ */
 export const TASKS_USER_GET = "TASKS_USER_GET";
+/**
+ * /getUserTaskTypeCounts
+ *
+ * - [x] pages/tasks/mytask/index
+ */
 export const TASK_TYPE_USER_COUNTS_GET = "TASK_TYPE_USER_COUNTS_GET";
 export const TASK_SPARE_PART_LIST_GET = "TASK_SPARE_PART_LIST_GET";
 export const TASK_SEND_INVENTORIES = "TASK_SEND_INVENTORIES";

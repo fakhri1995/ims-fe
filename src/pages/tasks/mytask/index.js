@@ -12,8 +12,22 @@ import {
 } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { useCallback, useEffect, useState } from "react";
+import { Bar, Doughnut } from "react-chartjs-2";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  COMPANY_LISTS_GET,
+  TASKS_USER_GET,
+  TASKS_USER_LAST_TWO_GET,
+  TASK_ASSIGN_SELF,
+  TASK_PICK_LIST_GET,
+  TASK_TYPES_GET,
+  TASK_TYPE_USER_COUNTS_GET,
+  TASK_USER_STATUSES_GET,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Buttonsys from "../../../components/button";
 import {
@@ -23,12 +37,10 @@ import {
   CircleXIconSvg,
   ClipboardcheckIconSvg,
   ClockIconSvg,
-  EditIconSvg,
   LayoutGridAddSvg,
   LocationIconSvg,
   MappinIconSvg,
   SearchIconSvg,
-  TrashIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
@@ -61,6 +73,35 @@ Chart.register(
 );
 
 const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetUserTasks = hasPermission(TASKS_USER_GET);
+  const isAllowedToGetTaskPickList = hasPermission(TASK_PICK_LIST_GET);
+  const isAllowedToAssignSelfTask = hasPermission(TASK_ASSIGN_SELF);
+  const isAllowedToGetTaskTypes = hasPermission(TASK_TYPES_GET);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetLastTwoTasks = hasPermission(TASKS_USER_LAST_TWO_GET);
+  const isAllowedToGetTaskStatuses = hasPermission(TASK_USER_STATUSES_GET);
+  const isAllowedToGetTaskCount = hasPermission(TASK_TYPE_USER_COUNTS_GET);
+
+  const canViewOpenTaskSection =
+    isAllowedToAssignSelfTask && isAllowedToGetTaskPickList;
+
+  // conditional guard when the User clicking "MappinIconSvg" icon to change data source's comany location
+  const canOpenLocationTreeDropdown = useCallback(() => {
+    if (!isAllowedToGetCompanyList) {
+      permissionWarningNotification("Memperbarui", "Lokasi Company");
+    }
+
+    return isAllowedToGetCompanyList;
+  }, [isAllowedToGetCompanyList]);
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -96,11 +137,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [ttcloc, setttcloc] = useState([]);
   const [ttloctoggle, setttloctoggle] = useState(false);
   //update - task type
-  const [triggertasktypupdate, settriggertasktypupdate] = useState(-1);
-  const [idtasktypupdate, setidtasktypupdate] = useState(-1);
-  const [drawertasktypupdate, setdrawertasktypupdate] = useState(false);
+  // const [triggertasktypupdate, settriggertasktypupdate] = useState(-1);
+  // const [idtasktypupdate, setidtasktypupdate] = useState(-1);
+  // const [drawertasktypupdate, setdrawertasktypupdate] = useState(false);
   //TASK TYPES
-  const [searcingtipetask, setsearcingtipetask] = useState("");
+  // const [searcingtipetask, setsearcingtipetask] = useState("");
   //TASKS
   const [datarawtask, setdatarawtask] = useState({
     current_page: "",
@@ -135,7 +176,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [pagetask, setpagetask] = useState(1);
   const [rowstask, setrowstask] = useState(10);
   //create - tasks
-  const [drawertaskcreate, setdrawertaskcreate] = useState(false);
+  // const [drawertaskcreate, setdrawertaskcreate] = useState(false);
   //TASK PICK
   const [datarawtaskpick, setdatarawtaskpick] = useState({
     current_page: "",
@@ -196,7 +237,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: <>T-000{record.id}</>,
         };
       },
-      sorter: (a, b) => a.id < b.id,
+      sorter: isAllowedToGetUserTasks ? (a, b) => a.id < b.id : false,
     },
     {
       title: "Tipe Task",
@@ -220,7 +261,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetUserTasks
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title: "Deadline",
@@ -236,7 +279,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.deadline > b.deadline,
+      sorter: isAllowedToGetUserTasks
+        ? (a, b) => a.deadline > b.deadline
+        : false,
     },
     {
       title: "Staff",
@@ -308,37 +353,40 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.status < b.status,
-      filters: [
-        {
-          text: "Overdue",
-          value: 1,
-        },
-        {
-          text: "Open",
-          value: 2,
-        },
-        {
-          text: "On Progress",
-          value: 3,
-        },
-        {
-          text: "On Hold",
-          value: 4,
-        },
-        {
-          text: "Completed",
-          value: 5,
-        },
-        {
-          text: "Closed",
-          value: 6,
-        },
-      ],
+      sorter: isAllowedToGetUserTasks ? (a, b) => a.status < b.status : false,
+      filters: isAllowedToGetUserTasks
+        ? [
+            {
+              text: "Overdue",
+              value: 1,
+            },
+            {
+              text: "Open",
+              value: 2,
+            },
+            {
+              text: "On Progress",
+              value: 3,
+            },
+            {
+              text: "On Hold",
+              value: 4,
+            },
+            {
+              text: "Completed",
+              value: 5,
+            },
+            {
+              text: "Closed",
+              value: 6,
+            },
+          ]
+        : undefined,
       onFilter: (value, record) => record.status === value,
       filterMultiple: false,
     },
   ];
+
   const columnsTaskPick = [
     {
       title: "No",
@@ -357,7 +405,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: <>T-000{record.id}</>,
         };
       },
-      sorter: (a, b) => a.id > b.id,
+      sorter: isAllowedToGetTaskPickList ? (a, b) => a.id > b.id : false,
     },
     {
       title: "Tipe Task",
@@ -381,7 +429,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTaskPickList
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title: "Deadline",
@@ -397,7 +447,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTaskPickList
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title: "Lokasi",
@@ -426,7 +478,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
           ),
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTaskPickList
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title:
@@ -439,6 +493,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             <>
               <Buttonsys
                 type={`primary`}
+                disabled={!isAllowedToAssignSelfTask}
                 onClick={() => {
                   handlePickTask(record.id);
                 }}
@@ -526,6 +581,23 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //USEEFFECT
   useEffect(() => {
+    if (viewtaskpick && !isAllowedToGetTaskPickList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
+    }
+  }, [viewtaskpick, isAllowedToGetTaskPickList]);
+
+  useEffect(() => {
+    if (!isAllowedToGetUserTasks) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
+    }
+  }, [isAllowedToGetUserTasks]);
+
+  // Input field "Semua Tipe Task" data source
+  useEffect(() => {
+    if (!isAllowedToGetTaskTypes) {
+      return;
+    }
+
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${tasktypefilterstate}`,
       {
@@ -540,8 +612,15 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatafiltertipetasks(res2.data);
         setdatafiltertipetaskstaskpick(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetTaskTypes]);
+
+  // Table "Semua Task" data source
   useEffect(() => {
+    if (!isAllowedToGetUserTasks) {
+      setloadingtasks(false);
+      return;
+    }
+
     setloadingtasks(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
@@ -558,8 +637,16 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatatasks(res2.data.data);
         setloadingtasks(false);
       });
-  }, [drawertaskcreate, viewtaskpick]);
+  }, [/* drawertaskcreate, */ viewtaskpick, isAllowedToGetUserTasks]);
+
+  // Input "Semua Lokasi" in "Semua Task" and "Open Task" section
+  // Tree Dropdown "MappinIconSvg" icon click
   useEffect(() => {
+    if (!isAllowedToGetCompanyList) {
+      setloadingstatustaskdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAllCompanyList`, {
       method: `GET`,
       headers: {
@@ -572,11 +659,19 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatafilterlokasitaskpick(res2.data.children);
         setstatustaskloc(res2.data.children);
         setttcloc(res2.data.children);
+
         // setdtloc(res2.data.children)
         setloadingstatustaskdata(false);
       });
-  }, []);
+  }, [isAllowedToGetCompanyList]);
+
+  // Content "Segera Berakhir" card
   useEffect(() => {
+    if (!isAllowedToGetLastTwoTasks) {
+      setloadinguserlasttwo(false);
+      return;
+    }
+
     setloadingtasks(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserLastTwoTasks`, {
       method: `GET`,
@@ -589,8 +684,15 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setuserlasttwo(res2.data);
         setloadinguserlasttwo(false);
       });
-  }, []);
+  }, [isAllowedToGetLastTwoTasks]);
+
+  // Content "Status Task" card
   useEffect(() => {
+    if (!isAllowedToGetTaskStatuses) {
+      setloadingstatustaskdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTaskStatusList`, {
       method: `GET`,
       headers: {
@@ -602,8 +704,15 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setstatustaskdata(res2.data.status_list);
         setloadingstatustaskdata(false);
       });
-  }, []);
+  }, [isAllowedToGetTaskStatuses]);
+
+  // Content "Tipe Task Terbanyak" card
   useEffect(() => {
+    if (!isAllowedToGetTaskCount) {
+      setloadingttcdata(false);
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTaskTypeCounts`, {
       method: `GET`,
       headers: {
@@ -615,8 +724,15 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setttcdata(res2.data);
         setloadingttcdata(false);
       });
-  }, []);
+  }, [isAllowedToGetTaskCount]);
+
+  // Table "Open Task" data source
   useEffect(() => {
+    if (!isAllowedToGetTaskPickList) {
+      setloadingtaskpick(false);
+      return;
+    }
+
     setloadingtaskpick(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskPickList?rows=${rowstaskpick}&page=${pagetaskpick}&keyword=${searchfilterstatetaskpick}&task_type=${tasktypefilterstatetaskpick}&location=${lokasifilterstatetaskpick}&from=${fromdatefilterstatetaskpick}&to=${todatefilterstatetaskpick}&sort_by=${sortstatetaskpick.sort_by}&sort_type=${sortstatetaskpick.sort_type}`,
@@ -633,12 +749,18 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatataskpick(res2.data.data);
         setloadingtaskpick(false);
       });
-  }, [viewtaskpick, reloadpick, loadingfiltertaskpick]);
-  useEffect(() => {
-    if (triggertasktypupdate !== -1) {
-      setidtasktypupdate(triggertasktypupdate);
-    }
-  }, [triggertasktypupdate]);
+  }, [
+    viewtaskpick,
+    reloadpick,
+    loadingfiltertaskpick,
+    isAllowedToGetTaskPickList,
+  ]);
+
+  // useEffect(() => {
+  //   if (triggertasktypupdate !== -1) {
+  //     setidtasktypupdate(triggertasktypupdate);
+  //   }
+  // }, [triggertasktypupdate]);
 
   return (
     <Layout
@@ -674,6 +796,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         value={searchfilterstatetaskpick}
                         style={{ width: `100%` }}
                         placeholder="Judul Task.."
+                        disabled={!isAllowedToGetTaskPickList}
                         allowClear
                         onChange={(e) => {
                           if (e.target.value === "") {
@@ -692,6 +815,10 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                             : tasktypefilterstatetaskpick
                         }
                         placeholder="Semua Tipe Task"
+                        disabled={
+                          !isAllowedToGetTaskTypes ||
+                          !isAllowedToGetTaskPickList
+                        }
                         style={{ width: `100%` }}
                         allowClear
                         showSearch
@@ -740,6 +867,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         showTime
                         allowEmpty
                         className="datepickerStatus"
+                        disabled={!isAllowedToGetTaskPickList}
                         value={
                           fromdatefilterstatetaskpick === ""
                             ? [null, null]
@@ -759,6 +887,10 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         style={{ width: `100%` }}
                         allowClear
                         placeholder="Semua Lokasi"
+                        disabled={
+                          !isAllowedToGetCompanyList ||
+                          !isAllowedToGetTaskPickList
+                        }
                         showSearch
                         suffixIcon={<SearchOutlined />}
                         showArrow
@@ -788,7 +920,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       ></TreeSelect>
                     </div>
                     <div className="mx-1 w-1/12">
-                      <Buttonsys type={`primary`} onClick={onFilterTaskPick}>
+                      <Buttonsys
+                        type={`primary`}
+                        onClick={onFilterTaskPick}
+                        disabled={!isAllowedToGetTaskPickList}
+                      >
                         <div className="mr-1">
                           <SearchIconSvg size={15} color={`#ffffff`} />
                         </div>
@@ -995,7 +1131,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tabIndex={`0`}
                       className="mx-1 cursor-pointer"
                       onClick={() => {
-                        setstatusloctoggle((prev) => !prev);
+                        if (!isAllowedToGetTaskStatuses) {
+                          permissionWarningNotification(
+                            "Mendapatkan",
+                            "Informasi Status Task"
+                          );
+                          return;
+                        }
+
+                        if (canOpenLocationTreeDropdown()) {
+                          setstatusloctoggle((prev) => !prev);
+                        }
                       }}
                     >
                       <MappinIconSvg color={`#000000`} size={25} />
@@ -1084,6 +1230,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <div
                     className="mx-1 cursor-pointer"
                     onClick={() => {
+                      if (!isAllowedToGetTaskStatuses) {
+                        permissionWarningNotification(
+                          "Mendapatkan",
+                          "Informasi Status Task"
+                        );
+                        return;
+                      }
+
                       setstatustaskdatefilter((prev) => !prev);
                     }}
                   >
@@ -1263,7 +1417,17 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tabIndex={`1`}
                       className="mx-1 cursor-pointer"
                       onClick={() => {
-                        setttloctoggle((prev) => !prev);
+                        if (!isAllowedToGetTaskCount) {
+                          permissionWarningNotification(
+                            "Mendapatkan",
+                            "Informasi Tipe Task Terbanyak"
+                          );
+                          return;
+                        }
+
+                        if (canOpenLocationTreeDropdown()) {
+                          setttloctoggle((prev) => !prev);
+                        }
                       }}
                     >
                       <MappinIconSvg color={`#000000`} size={25} />
@@ -1437,6 +1601,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     value={searchstate}
                     style={{ width: `100%` }}
                     placeholder="Judul atau ID.."
+                    disabled={!isAllowedToGetUserTasks}
                     allowClear
                     onChange={(e) => {
                       if (e.target.value === "") {
@@ -1454,6 +1619,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       tasktypefilterstate === "" ? null : tasktypefilterstate
                     }
                     placeholder="Semua Tipe Task"
+                    disabled={
+                      !isAllowedToGetTaskTypes || !isAllowedToGetUserTasks
+                    }
                     style={{ width: `100%` }}
                     allowClear
                     showSearch
@@ -1501,6 +1669,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     showTime
                     allowEmpty
                     className="datepickerStatus"
+                    disabled={!isAllowedToGetUserTasks}
                     value={
                       fromdatefilterstate === ""
                         ? [null, null]
@@ -1520,6 +1689,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     style={{ width: `100%` }}
                     allowClear
                     placeholder="Semua Lokasi"
+                    disabled={
+                      !isAllowedToGetCompanyList || !isAllowedToGetUserTasks
+                    }
                     showSearch
                     suffixIcon={<SearchOutlined />}
                     showArrow
@@ -1549,6 +1721,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     style={{ width: `100%` }}
                     value={statusfilterstate === "" ? null : statusfilterstate}
                     placeholder="Semua Status"
+                    disabled={!isAllowedToGetUserTasks}
                     allowClear
                     name={`status`}
                     onChange={(value) => {
@@ -1596,7 +1769,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                   </Select>
                 </div>
                 <div className="mx-1 w-1/12">
-                  <Buttonsys type={`primary`} onClick={onFilterTask}>
+                  <Buttonsys
+                    type={`primary`}
+                    onClick={onFilterTask}
+                    disabled={!isAllowedToGetUserTasks}
+                  >
                     <div className="mr-1">
                       <SearchIconSvg size={15} color={`#ffffff`} />
                     </div>
@@ -1632,6 +1809,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div>
                   <Buttonsys
                     type={`primary`}
+                    disabled={!canViewOpenTaskSection}
                     onClick={() => {
                       setviewtaskpick(true);
                     }}

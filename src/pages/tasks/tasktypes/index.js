@@ -1,47 +1,50 @@
-import {
-  DatePicker,
-  Empty,
-  Input,
-  Progress,
-  Select,
-  Spin,
-  Tree,
-  TreeSelect,
-  notification,
-} from "antd";
-import moment from "moment";
+import { Input, notification } from "antd";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  TASK_TYPES_GET, // add new task type
+  TASK_TYPE_ADD, // update task type
+  TASK_TYPE_DELETE,
+  TASK_TYPE_GET,
+  TASK_TYPE_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Buttonsys from "../../../components/button";
 import DrawerTaskTypesCreate from "../../../components/drawer/tasks/drawerTaskTypesCreate";
 import DrawerTaskTypesUpdate from "../../../components/drawer/tasks/drawerTaskTypesUpdate";
 import {
-  AlerttriangleIconSvg,
-  ArrowsSortIconSvg,
   BackIconSvg,
-  CalendartimeIconSvg,
-  CircleXIconSvg,
-  ClipboardcheckIconSvg,
-  ClockIconSvg,
   EditIconSvg,
-  ListcheckIconSvg,
-  LocationIconSvg,
-  MappinIconSvg,
-  SearchIconSvg,
-  SortAscendingIconSvg,
-  SortDescendingIconSvg,
   TrashIconSvg,
-  UserIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
 import { ModalHapusTipeTask } from "../../../components/modal/modalCustom";
 import { TableCustomTipeTask } from "../../../components/table/tableCustom";
-import { H1, H2, Label, Text } from "../../../components/typography";
+import { H1 } from "../../../components/typography";
 import httpcookie from "cookie";
 
 const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToDeletTaskType = hasPermission(TASK_TYPE_DELETE);
+  const isAllowedToGetTaskTypeList = hasPermission(TASK_TYPES_GET);
+
+  const canAddNewTaskType = hasPermission([TASK_TYPE_ADD, TASK_TYPES_GET]);
+  const canUpdateTaskType = hasPermission([TASK_TYPE_UPDATE, TASK_TYPE_GET]);
+
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -64,7 +67,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
   });
   const [datatipetasks, setdatatipetasks] = useState([]);
   const [loadingtipetasks, setloadingtipetasks] = useState(false);
-  const [viewdetailtipetask, setviewdetailtipetask] = useState(false);
+  // const [viewdetailtipetask, setviewdetailtipetask] = useState(false);
   const [pagetipetask, setpagetipetask] = useState(1);
   const [rowstipetask, setrowstipetask] = useState(10);
   const [sortingtipetask, setsortingtipetask] = useState({
@@ -72,12 +75,12 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
     sort_type: "",
   });
   const [searcingtipetask, setsearcingtipetask] = useState("");
-  const [datafiltertipetasks, setdatafiltertipetasks] = useState([]);
+  // const [datafiltertipetasks, setdatafiltertipetasks] = useState([]);
   //create - task type
   const [drawertasktypecreate, setdrawertasktypecreate] = useState(false);
   //update - task type
   const [triggertasktypupdate, settriggertasktypupdate] = useState(-1);
-  const [idtasktypupdate, setidtasktypupdate] = useState(-1);
+  // const [idtasktypupdate, setidtasktypupdate] = useState(-1);
   // const [tempidtasktypeupdate, settempidtasktypeupdate] = useState(-1)
   const tempidtasktypeupdate = useRef(-1);
   const [drawertasktypupdate, setdrawertasktypupdate] = useState(false);
@@ -108,7 +111,9 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
           children: <>{record.name}</>,
         };
       },
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: isAllowedToGetTaskTypeList
+        ? (a, b) => a.name.localeCompare(b.name)
+        : false,
     },
     {
       title: "Deskripsi",
@@ -127,7 +132,9 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
           children: <>{record.tasks_count}</>,
         };
       },
-      sorter: (a, b) => a.tasks_count > b.tasks_count,
+      sorter: isAllowedToGetTaskTypeList
+        ? (a, b) => a.tasks_count > b.tasks_count
+        : false,
     },
     {
       title: "Opsi",
@@ -138,7 +145,8 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
             <div className="flex items-center">
               <div className="mx-1">
                 <Buttonsys
-                  type="default"
+                  type={canUpdateTaskType ? "default" : "primary"}
+                  disabled={!canUpdateTaskType}
                   onClick={() => {
                     // settempidtasktypeupdate(record.id)
                     tempidtasktypeupdate.current = record.id;
@@ -151,8 +159,9 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
               </div>
               <div className="mx-1">
                 <Buttonsys
-                  type="default"
+                  type={isAllowedToDeletTaskType ? "default" : "primary"}
                   color="danger"
+                  disabled={!isAllowedToDeletTaskType}
                   onClick={() => {
                     setdatatipetaskdelete({ id: record.id, name: record.name });
                     setmodaltipetaskdelete(true);
@@ -201,6 +210,17 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
 
   //4.Use Effect
   useEffect(() => {
+    if (!isAllowedToGetTaskTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Task");
+    }
+  }, [isAllowedToGetTaskTypeList]);
+
+  useEffect(() => {
+    if (!isAllowedToGetTaskTypeList) {
+      setloadingtipetasks(false);
+      return;
+    }
+
     setloadingtipetasks(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
@@ -215,10 +235,11 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
       .then((res2) => {
         setdatarawtipetask(res2.data);
         setdatatipetasks(res2.data.data);
-        setdatafiltertipetasks(res2.data.data);
+        // setdatafiltertipetasks(res2.data.data);
         setloadingtipetasks(false);
       });
-  }, [drawertasktypecreate, modaltipetaskdelete]);
+  }, [drawertasktypecreate, modaltipetaskdelete, isAllowedToGetTaskTypeList]);
+
   // useEffect(() => {
   //     if (triggertasktypupdate !== -1) {
   //         setidtasktypupdate(tempidtasktypeupdate.current)
@@ -253,6 +274,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                 <div className=" mx-2">
                   <Buttonsys
                     type="primary"
+                    disabled={!canAddNewTaskType}
                     onClick={() => {
                       setdrawertasktypecreate(true);
                     }}
@@ -264,6 +286,7 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
                   <Input
                     style={{ width: `20rem` }}
                     placeholder="Nama tipe task.."
+                    disabled={!isAllowedToGetTaskTypeList}
                     allowClear
                     onChange={(e) => {
                       setsearcingtipetask(e.target.value);
@@ -307,40 +330,49 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
               />
             </div>
           </div>
-          <ModalHapusTipeTask
-            title={"Konfirmasi Hapus Tipe Task"}
-            visible={modaltipetaskdelete}
-            onvisible={setmodaltipetaskdelete}
-            onCancel={() => {
-              setmodaltipetaskdelete(false);
-            }}
-            loading={loadingtipetaskdelete}
-            datadelete={datatipetaskdelete}
-            onOk={handleDeleteTipeTask}
-          />
-          <DrawerTaskTypesCreate
-            title={"Tambah Tipe Task"}
-            visible={drawertasktypecreate}
-            onClose={() => {
-              setdrawertasktypecreate(false);
-            }}
-            buttonOkText={"Simpan Tipe Task"}
-            initProps={initProps}
-            onvisible={setdrawertasktypecreate}
-          />
-          <DrawerTaskTypesUpdate
-            title={"Ubah Tipe Task"}
-            visible={drawertasktypupdate}
-            onClose={() => {
-              setdrawertasktypupdate(false);
-            }}
-            buttonOkText={"Simpan Tipe Task"}
-            initProps={initProps}
-            onvisible={setdrawertasktypupdate}
-            loading={loadingtipetasks}
-            id={tempidtasktypeupdate}
-            trigger={triggertasktypupdate}
-          />
+
+          <AccessControl hasPermission={TASK_TYPE_DELETE}>
+            <ModalHapusTipeTask
+              title={"Konfirmasi Hapus Tipe Task"}
+              visible={modaltipetaskdelete}
+              onvisible={setmodaltipetaskdelete}
+              onCancel={() => {
+                setmodaltipetaskdelete(false);
+              }}
+              loading={loadingtipetaskdelete}
+              datadelete={datatipetaskdelete}
+              onOk={handleDeleteTipeTask}
+            />
+          </AccessControl>
+
+          <AccessControl hasPermission={[TASK_TYPE_ADD, TASK_TYPES_GET]}>
+            <DrawerTaskTypesCreate
+              title={"Tambah Tipe Task"}
+              visible={drawertasktypecreate}
+              onClose={() => {
+                setdrawertasktypecreate(false);
+              }}
+              buttonOkText={"Simpan Tipe Task"}
+              initProps={initProps}
+              onvisible={setdrawertasktypecreate}
+            />
+          </AccessControl>
+
+          <AccessControl hasPermission={[TASK_TYPE_UPDATE, TASK_TYPE_GET]}>
+            <DrawerTaskTypesUpdate
+              title={"Ubah Tipe Task"}
+              visible={drawertasktypupdate}
+              onClose={() => {
+                setdrawertasktypupdate(false);
+              }}
+              buttonOkText={"Simpan Tipe Task"}
+              initProps={initProps}
+              onvisible={setdrawertasktypupdate}
+              loading={loadingtipetasks}
+              id={tempidtasktypeupdate}
+              trigger={triggertasktypupdate}
+            />
+          </AccessControl>
         </div>
       </div>
     </Layout>
