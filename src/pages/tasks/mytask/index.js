@@ -13,7 +13,7 @@ import {
 import moment from "moment";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { Bar, Doughnut } from "react-chartjs-2";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -37,12 +37,10 @@ import {
   CircleXIconSvg,
   ClipboardcheckIconSvg,
   ClockIconSvg,
-  EditIconSvg,
   LayoutGridAddSvg,
   LocationIconSvg,
   MappinIconSvg,
   SearchIconSvg,
-  TrashIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import Layout from "../../../components/layout-dashboardNew";
@@ -139,11 +137,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [ttcloc, setttcloc] = useState([]);
   const [ttloctoggle, setttloctoggle] = useState(false);
   //update - task type
-  const [triggertasktypupdate, settriggertasktypupdate] = useState(-1);
-  const [idtasktypupdate, setidtasktypupdate] = useState(-1);
-  const [drawertasktypupdate, setdrawertasktypupdate] = useState(false);
+  // const [triggertasktypupdate, settriggertasktypupdate] = useState(-1);
+  // const [idtasktypupdate, setidtasktypupdate] = useState(-1);
+  // const [drawertasktypupdate, setdrawertasktypupdate] = useState(false);
   //TASK TYPES
-  const [searcingtipetask, setsearcingtipetask] = useState("");
+  // const [searcingtipetask, setsearcingtipetask] = useState("");
   //TASKS
   const [datarawtask, setdatarawtask] = useState({
     current_page: "",
@@ -178,7 +176,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [pagetask, setpagetask] = useState(1);
   const [rowstask, setrowstask] = useState(10);
   //create - tasks
-  const [drawertaskcreate, setdrawertaskcreate] = useState(false);
+  // const [drawertaskcreate, setdrawertaskcreate] = useState(false);
   //TASK PICK
   const [datarawtaskpick, setdatarawtaskpick] = useState({
     current_page: "",
@@ -639,7 +637,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatatasks(res2.data.data);
         setloadingtasks(false);
       });
-  }, [drawertaskcreate, viewtaskpick, isAllowedToGetUserTasks]);
+  }, [/* drawertaskcreate, */ viewtaskpick, isAllowedToGetUserTasks]);
 
   // Input "Semua Lokasi" in "Semua Task" and "Open Task" section
   // Tree Dropdown "MappinIconSvg" icon click
@@ -758,11 +756,11 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     isAllowedToGetTaskPickList,
   ]);
 
-  useEffect(() => {
-    if (triggertasktypupdate !== -1) {
-      setidtasktypupdate(triggertasktypupdate);
-    }
-  }, [triggertasktypupdate]);
+  // useEffect(() => {
+  //   if (triggertasktypupdate !== -1) {
+  //     setidtasktypupdate(triggertasktypupdate);
+  //   }
+  // }, [triggertasktypupdate]);
 
   return (
     <Layout
