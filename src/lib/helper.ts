@@ -102,3 +102,20 @@ export const permissionWarningNotification = (
     message: `Anda tidak memiliki fitur untuk ${action} ${object}`,
   });
 };
+
+/**
+ * Generate a static URL of specific resource from the CDN.
+ *
+ * @example
+ * ```ts
+ * const profilePicture = "staging/Users/default_user.png";
+ * const staticAssetUrl = generateStaticAssetUrl(profilePicture);
+ *
+ * assert(staticAssetUrl, "https://cdn.mig.id/staging/Users/default_user.png");
+ * ```
+ *
+ * @param path Resource's asset / file path
+ */
+export const generateStaticAssetUrl = (path: string) => {
+  return `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}${path}`;
+};
