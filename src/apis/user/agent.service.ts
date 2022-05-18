@@ -15,7 +15,9 @@ export class AgentService {
   static async create(axiosClient: AxiosInstance, payload: CreateAgentPayload) {
     const formDataPayload = objectToFormData(payload);
 
-    return await axiosClient.post("/addAgentMember", formDataPayload, {
+    return await axiosClient.post<
+      HttpRequestBaseSucceedResponse & { id: number }
+    >("/addAgentMember", formDataPayload, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
