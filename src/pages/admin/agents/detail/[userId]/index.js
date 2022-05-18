@@ -16,7 +16,10 @@ import {
   AGENT_STATUS,
   AGENT_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -311,10 +314,11 @@ function AgentDetail({
           role: res2.data.roles,
           phone_number: res2.data.phone_number,
           nip: res2.data?.nip || "-",
-          profile_image:
-            res2.data.profile_image === "" || res2.data.profile_image === "-"
-              ? `/default-users.jpeg`
-              : res2.data.profile_image,
+          profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          // profile_image:
+          //   res2.data.profile_image === "" || res2.data.profile_image === "-"
+          //     ? `/default-users.jpeg`
+          //     : res2.data.profile_image,
           position: res2.data.position,
           attendance_forms: res2.data.attendance_forms,
         };

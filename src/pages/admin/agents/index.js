@@ -8,6 +8,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { AGENTS_GET, AGENT_ADD, COMPANY_BRANCHS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -97,7 +98,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
               <img
                 src={record.profile_image}
                 alt="imageProfile"
-                className=" object-cover w-10 h-10 rounded-full"
+                className="object-cover w-10 h-10 rounded-full"
               />
             </>
           ),
@@ -239,10 +240,11 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
             return {
               nomor: idx + 1,
               id: doc.id,
-              profile_image:
-                doc.profile_image === "-" || doc.profile_image === ""
-                  ? `/default-users.jpeg`
-                  : doc.profile_image,
+              profile_image: generateStaticAssetUrl(doc.profile_image?.link),
+              // profile_image:
+              //   doc.profile_image === "-" || doc.profile_image === ""
+              //     ? `/default-users.jpeg`
+              //     : doc.profile_image,
               name: doc.name,
               email: doc.email,
               phone_number: doc.phone_number,
@@ -428,11 +430,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                         setrawdata(res2.data);
                         var temppagination = res2.data.data.map((doc, idx) => ({
                           ...doc,
-                          profile_image:
-                            doc.profile_image === "-" ||
-                            doc.profile_image === ""
-                              ? `/default-users.jpeg`
-                              : doc.profile_image,
+                          profile_image: generateStaticAssetUrl(
+                            doc.profile_image?.link
+                          ),
+                          // profile_image:
+                          //   doc.profile_image === "-" ||
+                          //   doc.profile_image === ""
+                          //     ? `/default-users.jpeg`
+                          //     : doc.profile_image,
                         }));
                         setdataagents(temppagination);
                         setpraloading(false);

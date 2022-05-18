@@ -14,7 +14,10 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
 import { AGENT_GET, AGENT_UPDATE, ROLES_GET } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
 
@@ -212,10 +215,11 @@ function AgentUpdate({
           fullname: res2.data.name,
           role: res2.data.role,
           phone_number: res2.data.phone_number,
-          profile_image:
-            res2.data.profile_image === "" || res2.data.profile_image === "-"
-              ? `/default-users.jpeg`
-              : res2.data.profile_image,
+          profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          // profile_image:
+          //   res2.data.profile_image === "" || res2.data.profile_image === "-"
+          //     ? `/default-users.jpeg`
+          //     : res2.data.profile_image,
           email: res2.data.email,
           role_ids: res2.data.roles.map((docmap) => docmap.id),
           position: res2.data.position,
