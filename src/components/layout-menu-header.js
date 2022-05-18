@@ -1,13 +1,9 @@
 import ExportOutlined from "@ant-design/icons/ExportOutlined";
 import { Dropdown } from "antd";
-import Link from "next/link";
 
-import {
-  ContractIconSvg,
-  NotifIconSvg,
-  SearchIconSvg,
-  TicketIconSvg,
-} from "./icon";
+import { generateStaticAssetUrl } from "lib/helper";
+
+import { NotifIconSvg, SearchIconSvg } from "./icon";
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
   const menuProfile2 = () => {
@@ -16,13 +12,9 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
         <div className="flex justify-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
             <img
-              src={
-                dataProfile.data.profile_image === "-"
-                  ? "/default-users.jpeg"
-                  : dataProfile.data.profile_image
-              }
-              alt="imageProfile"
-              className=" object-cover w-full h-full"
+              src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
+              alt={dataProfile.data.profile_image?.description}
+              className="object-cover w-full h-full"
             />
           </div>
           <div className="flex flex-col">
@@ -46,52 +38,10 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
     );
   };
 
-  const addMenu = () => {
-    return (
-      <div
-        style={{ fontSize: "14px" }}
-        className="w-48 h-auto grid grid-cols-1 md:grid-cols-1 shadow-md rounded bg-white"
-      >
-        {/* yang awal*/}
-        <div className=" col-span-1 md:col-span-1 text-xs md:text-sm m-3 md:m-2 h-auto">
-          <Link href={`/incidents/create?originPath=Tickets`}>
-            <div className="flex justify-start pt-2 cursor-pointer hover:bg-gray-200">
-              <TicketIconSvg className={"pt-1"} /> &nbsp; &nbsp;{" "}
-              <p className="p-1">Incident</p>
-            </div>
-          </Link>
-          <Link href={`/admin/contracts/create`}>
-            <div className="flex justify-start pt-2 cursor-pointer hover:bg-gray-200">
-              <ContractIconSvg className={"pt-1"} /> &nbsp; &nbsp;{" "}
-              <p className="p-1">Contract</p>
-            </div>
-          </Link>
-        </div>
-      </div>
-    );
-  };
   return (
     <div
       className={`hidden md:flex md:w-auto w-full ${st.menu} md:justify-end`}
     >
-      {/* <div className="md:mr-12 mr-4 flex items-center">
-                <a target="_blank" href="/" >
-                    <Button type="primary">
-                        <SelectOutlined style={{ marginRight: `0.2rem`, marginTop: `0.1rem` }} /> Go To Website
-                    </Button>
-                </a>
-            </div>
-            <div className="md:mr-12 mr-5">
-                <Dropdown overlay={addMenu} placement="bottomCenter" trigger={['click']}>
-                    <PlusCircleTwoTone className="" style={{ fontSize: '20px', cursor: `pointer` }} />
-                </Dropdown>
-            </div>
-            <div className="md:mr-12 mr-4 cursor-pointer">
-                <Iconquestion width={20} height={20} />
-            </div>
-            <div className="md:mr-12 mr-4 cursor-pointer">
-                <IconBroadcast width={20} height={20} />
-            </div> */}
       <div className="md:mr-8 mr-4 cursor-pointer">
         <SearchIconSvg size={28} color={`#000000`} />
       </div>
@@ -100,19 +50,11 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
       </div>
       <div className=" md:mr-12 mr-4 mt-2 flex items-center">
         <Dropdown overlay={menuProfile2} trigger={["click"]}>
-          {dataProfile.data.profile_image !== "-" ? (
-            <img
-              src={dataProfile.data.profile_image}
-              alt="ava"
-              className="w-8 h-8 rounded-full object-cover cursor-pointer"
-            />
-          ) : (
-            <img
-              src="/default-users.jpeg"
-              alt="ava"
-              className="w-8 h-8 rounded-full object-cover cursor-pointer"
-            />
-          )}
+          <img
+            src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
+            alt={dataProfile.data.profile_image?.description}
+            className="w-8 h-8 rounded-full object-cover cursor-pointer"
+          />
         </Dropdown>
         <div className="flex flex-col ml-1">
           <h1 className="font-semibold text-sm mb-0">

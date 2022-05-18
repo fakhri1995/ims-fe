@@ -1,6 +1,5 @@
 import { EditOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, TreeSelect, notification } from "antd";
-// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -14,9 +13,14 @@ import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
 import { AGENT_GET, AGENT_UPDATE, ROLES_GET } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  getBase64,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
+import { AgentService } from "apis/user";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -90,6 +94,7 @@ function AgentUpdate({
     fullname: "",
     phone_number: "",
     profile_image: `/default-users.jpeg`,
+    profile_image_file: null, // File | null (hanya digunakan sebagai payload)
     role_ids: [],
     position: "",
     nip: "",
@@ -124,36 +129,30 @@ function AgentUpdate({
   };
   const onChangeEditFoto = async (e) => {
     setLoadingfoto(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
     setdataupdate({
       ...dataupdate,
-      profile_image: datajson.secure_url,
+      profile_image: base64Data,
+      profile_image_file: blobFile,
     });
     setLoadingfoto(false);
   };
   const handleSubmitEditAccount = () => {
     setLoadingupdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAgentDetail`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataupdate),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
+
+    const updatePayload = {
+      ...dataupdate,
+      profile_image: dataupdate.profile_image_file,
+    };
+    if ("profile_image_file" in updatePayload) {
+      delete updatePayload["profile_image_file"];
+    }
+
+    AgentService.update(axiosClient, updatePayload)
+      .then((response) => {
+        const res2 = response.data;
         setLoadingupdate(false);
         if (res2.success) {
           notification["success"]({
@@ -169,8 +168,13 @@ function AgentUpdate({
             duration: 3,
           });
         }
+      })
+      .catch(() => {
+        notification["error"]({
+          message: "Terjadi kesalahan saat memperbarui profil",
+          duration: 3,
+        });
       });
-    // }
   };
 
   //useEffect
@@ -212,10 +216,11 @@ function AgentUpdate({
           fullname: res2.data.name,
           role: res2.data.role,
           phone_number: res2.data.phone_number,
-          profile_image:
-            res2.data.profile_image === "" || res2.data.profile_image === "-"
-              ? `/default-users.jpeg`
-              : res2.data.profile_image,
+          profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          // profile_image:
+          //   res2.data.profile_image === "" || res2.data.profile_image === "-"
+          //     ? `/default-users.jpeg`
+          //     : res2.data.profile_image,
           email: res2.data.email,
           role_ids: res2.data.roles.map((docmap) => docmap.id),
           position: res2.data.position,

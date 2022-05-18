@@ -102,3 +102,50 @@ export const permissionWarningNotification = (
     message: `Anda tidak memiliki fitur untuk ${action} ${object}`,
   });
 };
+
+/**
+ * Generate a static URL of specific resource from the CDN.
+ *
+ * @example
+ * ```ts
+ * const profilePicture = "staging/Users/default_user.png";
+ * const staticAssetUrl = generateStaticAssetUrl(profilePicture);
+ *
+ * assert(staticAssetUrl, "https://cdn.mig.id/staging/Users/default_user.png");
+ * ```
+ *
+ * @param path Resource's asset / file path
+ */
+export const generateStaticAssetUrl = (path: string) => {
+  return `${process.env.NEXT_PUBLIC_STATIC_ASSETS_URL}${path}`;
+};
+
+/**
+ * Transforming an object into FormData. The idea is to craft a valid `FormData`
+ *  even the value of the given object has Array as its value.
+ *
+ * @example
+ * ```ts
+ * const payload = objectToFormData({ name: "Kennan", roles: [1, 2, 3] });
+ * // use the payload directly to an axios method with `Content-Type`: `multipart/form-data`
+ * ```
+ *
+ * @param entry Any JavaScript literal object
+ */
+export const objectToFormData = <T extends Object>(entry: T) => {
+  const formData = new FormData();
+
+  for (const [k, v] of Object.entries(entry)) {
+    if (v instanceof Array) {
+      for (let i = 0; i < v.length; ++i) {
+        formData.append(`${k}[]`, v[i]);
+      }
+
+      continue;
+    }
+
+    formData.append(k, v);
+  }
+
+  return formData;
+};

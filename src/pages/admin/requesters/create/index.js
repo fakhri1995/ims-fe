@@ -16,7 +16,12 @@ import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import { COMPANY_CLIENTS_GET, REQUESTER_ADD, ROLES_GET } from "lib/features";
+import { getBase64 } from "lib/helper";
+
+import { RequesterService } from "apis/user";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
@@ -48,6 +53,7 @@ function RequestersCreate({
   const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
   const isAllowedToGetClientCompanyList = hasPermission(COMPANY_CLIENTS_GET);
 
+  const axiosClient = useAxiosClient();
   const rt = useRouter();
   const tok = initProps;
   var pathArr = rt.pathname.split("/").slice(1);
@@ -62,6 +68,7 @@ function RequestersCreate({
     role_ids: [],
     phone_number: "",
     profile_image: "",
+    profile_image_file: null, // File | null
     company_id: 0,
     password: "",
     confirm_password: "",
@@ -76,16 +83,19 @@ function RequestersCreate({
   //handleCreateButton
   const handleCreateAgents = () => {
     setLoadingcreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRequesterMember`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newuserrequesters),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
+
+    const createPayload = {
+      ...newuserrequesters,
+      profile_image: newuserrequesters.profile_image_file,
+    };
+    if ("profile_image_file" in createPayload) {
+      delete createPayload["profile_image_file"];
+    }
+
+    RequesterService.create(axiosClient, createPayload)
+      .then((response) => {
+        const res2 = response.data;
+
         setLoadingcreate(false);
         if (res2.success) {
           notification["success"]({
@@ -101,9 +111,15 @@ function RequestersCreate({
             duration: 3,
           });
         }
+      })
+      .catch(() => {
+        notification["error"]({
+          message: "Terjadi kesalahan saat memperbarui profil",
+          duration: 3,
+        });
       });
-    console.log("isi new user: " + newuserrequesters.profile_image);
   };
+
   const onChangeCreateRequesters = (e) => {
     setNewuserrequesters({
       ...newuserrequesters,
@@ -125,27 +141,21 @@ function RequestersCreate({
     }
     return isJpgOrPng && isLt2M;
   };
+
   const onChangeProfileImage = async (info) => {
     if (info.file.status === "uploading") {
       setLoadingupload(true);
       return;
     }
     if (info.file.status === "done") {
-      console.log("isi upload: " + info.file.originFileObj.name);
-      const formData = new FormData();
-      formData.append("file", info.file.originFileObj);
-      formData.append("upload_preset", "migsys");
-      return fetch(`https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`, {
-        method: "POST",
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setNewuserrequesters({
-            ...newuserrequesters,
-            profile_image: res2.secure_url,
-          });
-        });
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+
+      setNewuserrequesters({
+        ...newuserrequesters,
+        profile_image: base64Data,
+        profile_image_file: blobFile,
+      });
     }
   };
   const uploadButton = (

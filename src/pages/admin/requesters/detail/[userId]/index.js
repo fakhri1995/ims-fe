@@ -16,7 +16,10 @@ import {
   REQUESTER_STATUS,
   REQUESTER_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -439,10 +442,11 @@ function RequestersDetail({
           name: res2.data.name,
           role: res2.data.roles,
           phone_number: res2.data.phone_number,
-          profile_image:
-            res2.data.profile_image === "" || res2.data.profile_image === "-"
-              ? `/default-users.jpeg`
-              : res2.data.profile_image,
+          profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          // profile_image:
+          //   res2.data.profile_image === "" || res2.data.profile_image === "-"
+          //     ? `/default-users.jpeg`
+          //     : res2.data.profile_image,
           position: res2.data.position,
         };
         setisenabled(res2.data.is_enabled);
