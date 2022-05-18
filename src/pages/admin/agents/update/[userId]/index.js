@@ -141,11 +141,17 @@ function AgentUpdate({
   };
   const handleSubmitEditAccount = () => {
     setLoadingupdate(true);
-    AgentService.update(axiosClient, {
+
+    const updatePayload = {
       ...dataupdate,
       profile_image: dataupdate.profile_image_file,
-    }).then((response) => {
-      try {
+    };
+    if ("profile_image_file" in updatePayload) {
+      delete updatePayload["profile_image_file"];
+    }
+
+    AgentService.update(axiosClient, updatePayload)
+      .then((response) => {
         const res2 = response.data;
         setLoadingupdate(false);
         if (res2.success) {
@@ -162,13 +168,13 @@ function AgentUpdate({
             duration: 3,
           });
         }
-      } catch {
+      })
+      .catch(() => {
         notification["error"]({
           message: "Terjadi kesalahan saat memperbarui profil",
           duration: 3,
         });
-      }
-    });
+      });
   };
 
   //useEffect
