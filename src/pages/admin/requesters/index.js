@@ -12,7 +12,10 @@ import {
   REQUESTERS_GET,
   REQUESTER_ADD,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -481,10 +484,11 @@ function Requesters({
           dataDD = res2.data.data.map((doc, idx) => {
             return {
               id: doc.id,
-              profile_image:
-                doc.profile_image === "" || doc.profile_image === "-"
-                  ? `/default-users.jpeg`
-                  : doc.profile_image,
+              profile_image: generateStaticAssetUrl(doc.profile_image?.link),
+              // profile_image:
+              //   doc.profile_image === "" || doc.profile_image === "-"
+              //     ? `/default-users.jpeg`
+              //     : doc.profile_image,
               name: doc.name,
               email: doc.email,
               phone_number: doc.phone_number,
@@ -782,11 +786,14 @@ function Requesters({
                         setrawdata(res2.data);
                         var temppagination = res2.data.data.map((doc, idx) => ({
                           ...doc,
-                          profile_image:
-                            doc.profile_image === "-" ||
-                            doc.profile_image === ""
-                              ? `/default-users.jpeg`
-                              : doc.profile_image,
+                          profile_image: generateStaticAssetUrl(
+                            doc.profile_image?.link
+                          ),
+                          // profile_image:
+                          //   doc.profile_image === "-" ||
+                          //   doc.profile_image === ""
+                          //     ? `/default-users.jpeg`
+                          //     : doc.profile_image,
                         }));
                         setDataSource(temppagination);
                         setpraloading(false);

@@ -15,7 +15,10 @@ import {
   REQUESTER_UPDATE,
   ROLES_GET,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
@@ -288,10 +291,11 @@ function RequestersUpdate({
           fullname: res2.data.name,
           role: res2.data.role,
           phone_number: res2.data.phone_number,
-          profile_image:
-            res2.data.profile_image === "" || res2.data.profile_image === "-"
-              ? `/default-users.jpeg`
-              : res2.data.profile_image,
+          profile_image: generateStaticAssetUrl(res2.data.profile_image?.link),
+          // profile_image:
+          //   res2.data.profile_image === "" || res2.data.profile_image === "-"
+          //     ? `/default-users.jpeg`
+          //     : res2.data.profile_image,
           company_id: res2.data.company_id,
           email: res2.data.email,
           role_ids: res2.data.roles.map((docmap) => docmap.id),
