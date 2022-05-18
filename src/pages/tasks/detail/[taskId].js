@@ -1102,14 +1102,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
           created_at: res2.data.created_at,
           deadline: res2.data.deadline,
           is_group: res2.data.group_id === null ? false : true,
-          is_replaceable: res2.data.is_replaceable,
+          is_replaceable: Boolean(res2.data.is_replaceable),
           assign_ids:
             res2.data.group_id === null
               ? res2.data.users.map((doc) => doc.id)
               : [res2.data.group.id],
           inventory_ids: res2.data.inventories.map((doc) => doc.id),
           group_id: res2.data.group_id,
-          is_uploadable: res2.data.is_uploadable,
+          is_uploadable: Boolean(res2.data.is_uploadable),
           repeat: res2.data.repeat,
           end_repeat_at: res2.data.end_repeat_at,
           files: res2.data.files,
@@ -1194,9 +1194,11 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         var tempin = [],
           tempout = [];
         res2.data.inventories
-          .filter((fil) => fil.is_from_task === false)
+          .filter((fil) => !Boolean(fil.is_from_task))
+          // .filter((fil) => fil.is_from_task === false)
           .map((doc, idx) => {
-            if (doc.is_in === true) {
+            // if (doc.is_in === true) {
+            if (Boolean(doc.is_in)) {
               tempin.push({
                 ...doc,
                 migid: doc.mig_id,
@@ -2672,7 +2674,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               </div>
               {displaytask.created_by !== dataProfile.data.id ? (
                 <>
-                  {displaytask.is_uploadable && (
+                  {Boolean(displaytask.is_uploadable) && (
                     <div className=" mb-7 flex flex-col">
                       <div className=" flex items-center justify-between mb-4">
                         <div>
@@ -3345,8 +3347,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               <div className="mb-3">
                 <H1>Aset</H1>
               </div>
+              {/* .filter((doc) => doc.is_from_task === true) */}
               {displaytask.inventories
-                .filter((doc) => doc.is_from_task === true)
+                .filter((doc) => Boolean(doc.is_from_task))
                 .map((doc, idx) => (
                   <div className="my-3 flex items-center">
                     <div className="mr-2 flex items-center">
@@ -3367,13 +3370,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                   </div>
                 ))}
               <p className="my-2 text-sm text-gray-500 ml-1">Masuk</p>
+              {/* (doc) => doc.is_in === true && doc.is_from_task === false */}
               {displaytask.inventories.filter(
-                (doc) => doc.is_in === true && doc.is_from_task === false
+                (doc) => Boolean(doc.is_in) && !Boolean(doc.is_from_task)
               ).length === 0
                 ? `-`
                 : displaytask.inventories
                     .filter(
-                      (doc) => doc.is_in === true && doc.is_from_task === false
+                      (doc) => Boolean(doc.is_in) && !Boolean(doc.is_from_task)
                     )
                     .map((doc, idx) => (
                       <div className="my-3 flex items-center">
@@ -3395,13 +3399,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                       </div>
                     ))}
               <p className="my-2 text-sm text-gray-500 ml-1">Keluar</p>
+              {/* (doc) => doc.is_in === false && doc.is_from_task === false */}
               {displaytask.inventories.filter(
-                (doc) => doc.is_in === false && doc.is_from_task === false
+                (doc) => !Boolean(doc.is_in) && !Boolean(doc.is_from_task)
               ).length === 0
                 ? `-`
                 : displaytask.inventories
                     .filter(
-                      (doc) => doc.is_in === false && doc.is_from_task === false
+                      (doc) => !Boolean(doc.is_in) && !Boolean(doc.is_from_task)
                     )
                     .map((doc, idx) => (
                       <div className="my-3 flex items-center">
@@ -3424,7 +3429,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     ))}
               {praloadingtask
                 ? null
-                : displaytask.created_by !== dataProfile.data.id && (
+                : displaytask.created_by !== dataProfile.data.id &&
+                  Boolean(displaytask.is_replaceable) && (
                     <>
                       {completeclose && isselfcheckout ? null : (
                         <div className="my-3 flex items-center justify-center">
@@ -3525,22 +3531,24 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
           />
         </AccessControl>
 
-        <DrawerTaskSpareParts
-          title={"Pergantian Suku Cadang"}
-          visible={drawerspart}
-          onClose={() => {
-            setdrawerspart(false);
-          }}
-          buttonOkText={"Simpan Suku Cadang"}
-          initProps={initProps}
-          onvisible={setdrawerspart}
-          idtask={taskid}
-          selectedforin={selectedforin}
-          setselectedforin={setselectedforin}
-          selectedforout={selectedforout}
-          setselectedforout={setselectedforout}
-          prevpath={prevpath}
-        />
+        {Boolean(displaytask.is_replaceable) && (
+          <DrawerTaskSpareParts
+            title={"Pergantian Suku Cadang"}
+            visible={drawerspart}
+            onClose={() => {
+              setdrawerspart(false);
+            }}
+            buttonOkText={"Simpan Suku Cadang"}
+            initProps={initProps}
+            onvisible={setdrawerspart}
+            idtask={taskid}
+            selectedforin={selectedforin}
+            setselectedforin={setselectedforin}
+            selectedforout={selectedforout}
+            setselectedforout={setselectedforout}
+            prevpath={prevpath}
+          />
+        )}
       </AccessControl>
     </Layout>
   );
