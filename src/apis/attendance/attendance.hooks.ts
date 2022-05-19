@@ -245,13 +245,15 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
  *  trigger query invalidation dengan key @see AttendanceServiceQueryKeys.ATTENDANCES_USER_GET .
  *
  * Hook ini digunakan ketika drawer check in or out dijalankan.
+ *
+ * @access — POST /setAttendanceTogle
  */
 export const useToggleCheckInCheckOut = () => {
   const axiosClient = useAxiosClient();
   const queryClient = useQueryClient();
 
   return useMutation(
-    (payload: ISetAttendanceTogglePayload) =>
+    (payload: ISetAttendanceTogglePayload<any>) =>
       AttendanceService.toggleCheckInCheckOut(axiosClient, payload),
     {
       onSuccess: () => {

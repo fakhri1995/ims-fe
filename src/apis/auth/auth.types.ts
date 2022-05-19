@@ -1,6 +1,9 @@
 import { FormAktivitasTypes } from "apis/attendance";
 
-import { HttpRequestWithDataSucceedResponse } from "types/common";
+import type {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
 
 export enum AuthServiceQueryKeys {
   DETAIL_PROFILE = "GET_DETAIL_PROFILE",
@@ -17,7 +20,7 @@ export interface DetailProfileData {
   email: string;
   name: string;
   nip: string;
-  profile_image: string;
+  profile_image: ProfileImageAttribute;
   phone_number: string;
   role: number;
   position: string;

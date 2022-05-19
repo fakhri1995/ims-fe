@@ -27,6 +27,7 @@ import {
   ATTENDANCES_USERS_GET,
   ATTENDANCE_ACTIVITY_USERS_EXPORT,
 } from "lib/features";
+import { generateStaticAssetUrl } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -210,11 +211,9 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
         sorter: (a: UsersAttendance, b: UsersAttendance) =>
           a.user.name < b.user.name ? -1 : 1,
         render: (value, record: UsersAttendance) => {
-          const profilePictureSrc =
-            record.user.profile_image === "-" ||
-            record.user.profile_image === ""
-              ? "/image/staffTask.png"
-              : record.user.profile_image;
+          const profilePictureSrc = generateStaticAssetUrl(
+            record.user.profile_image.link
+          );
 
           return (
             <div className="flex items-center space-x-3">
@@ -346,10 +345,9 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
         ellipsis: true,
         sorter: (a: AbsentUser, b: AbsentUser) => (a.name < b.name ? -1 : 1),
         render: (value, record: AbsentUser) => {
-          const profilePictureSrc =
-            record.profile_image === "-" || record.profile_image === ""
-              ? "/image/staffTask.png"
-              : record.profile_image;
+          const profilePictureSrc = generateStaticAssetUrl(
+            record.profile_image.link
+          );
 
           return (
             <div className="flex items-center space-x-3">

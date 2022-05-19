@@ -72,7 +72,6 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/form-aktivitas"
     >
-      {/* First Row */}
       <div className="px-5 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
         {/* First Column */}
         <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5">

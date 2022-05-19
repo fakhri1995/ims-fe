@@ -19,7 +19,10 @@ import {
   ATTENDANCE_FORM_USERS_ADD,
   ATTENDANCE_FORM_USERS_REMOVE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import {
   AttendanceFormAktivitasService,
@@ -644,7 +647,7 @@ const StaffSectionContainer: FC<IStaffSectionContainer> = ({
           id={id}
           name={name}
           position={position}
-          profileImageUrl={profile_image}
+          profileImageUrl={generateStaticAssetUrl(profile_image.link)}
           onClick={onItemClicked}
           isSelected={isSelectableSection}
           isSelectable={isItemHoverable}

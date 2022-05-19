@@ -1,4 +1,7 @@
-import { HttpRequestWithDataSucceedResponse } from "types/common";
+import type {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
 
 export enum UserServiceQueryKeys {
   FILTER_USERS = "USERS_GET",
@@ -32,7 +35,7 @@ export interface GetFilterUsersDatum {
   id: number;
   name: string;
   company_id: number;
-  profile_image: string;
+  profile_image: ProfileImageAttribute;
   position: null | string;
   company: Company;
   attendance_forms: AttendanceForm[];

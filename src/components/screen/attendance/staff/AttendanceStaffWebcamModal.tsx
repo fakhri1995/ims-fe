@@ -92,7 +92,7 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
     onOk(imageSrc);
 
     setImageSrc("");
-  }, [onOk]);
+  }, [onOk, imageSrc]);
 
   const onCaptureButtonClicked = useCallback(() => {
     /**
@@ -157,6 +157,8 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
       title="Ambil foto bukti kehadiran"
       centered
       closable
+      destroyOnClose
+      onCancel={onCancel}
       width="auto"
       footer={footerContent}
     >

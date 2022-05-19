@@ -16,6 +16,7 @@ import {
   ATTENDANCE_FORM_GET,
   ATTENDANCE_FORM_UPDATE,
 } from "lib/features";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import {
   AttendanceFormAktivitasService,
@@ -51,17 +52,14 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
             "dd MMMM yyyy"
           );
 
-          const mappedCreatorProfileImage =
-            response.data.data.creator.profile_image === "-"
-              ? null
-              : response.data.data.creator.profile_image;
-
           return {
             ...response.data.data,
             updated_at: formattedUpdatedDate,
             creator: {
               ...response.data.data.creator,
-              profile_image: mappedCreatorProfileImage,
+              profile_image: generateStaticAssetUrl(
+                response.data.data.creator.profile_image.link
+              ),
             },
           };
         },

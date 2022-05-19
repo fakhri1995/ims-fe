@@ -7,6 +7,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import { AttendanceService, AttendanceServiceQueryKeys } from "apis/attendance";
 
@@ -42,7 +43,28 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
         ),
       {
         enabled: !isAllowedToGet ? false : !!attendanceId,
-        select: (response) => response.data.data.user_attendance.evidence,
+        select: (response) => {
+          const mappedData = {
+            check_in_evidence: null,
+            check_out_evidence: null,
+          };
+
+          response.data.data.user_attendance.evidence.forEach(
+            ({ link, description }) => {
+              switch (description) {
+                case "check_in_evidence":
+                  mappedData.check_in_evidence = generateStaticAssetUrl(link);
+                  break;
+
+                case "check_out_evidence":
+                  mappedData.check_out_evidence = generateStaticAssetUrl(link);
+                  break;
+              }
+            }
+          );
+
+          return mappedData;
+        },
       }
     );
 
