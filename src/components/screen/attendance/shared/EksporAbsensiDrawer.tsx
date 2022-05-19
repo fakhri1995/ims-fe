@@ -10,7 +10,7 @@ import DrawerCore from "components/drawer/drawerCore";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { downloadFile } from "lib/helper";
+import { downloadFile, generateStaticAssetUrl } from "lib/helper";
 
 import {
   AttendanceExportExcelDataResult,
@@ -365,12 +365,9 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                               {/* Profile Picture */}
                               <div className="w-8 h-8 bg-mono80 rounded-full overflow-hidden">
                                 <img
-                                  src={
-                                    user.profile_image === "-" ||
-                                    user.profile_image === ""
-                                      ? "/image/staffTask.png"
-                                      : user.profile_image
-                                  }
+                                  src={generateStaticAssetUrl(
+                                    user.profile_image.link
+                                  )}
                                   alt={`${user.name}'s Avatar`}
                                   className="w-full h-full bg-cover"
                                 />
