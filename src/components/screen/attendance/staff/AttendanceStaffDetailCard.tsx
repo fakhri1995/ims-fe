@@ -1,11 +1,13 @@
 import { DownloadOutlined } from "@ant-design/icons";
-import { FC, memo, useCallback, useMemo, useState } from "react";
+import { FC, memo, useCallback, useMemo } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import { DetailCard } from "components/cards/DetailCard";
 
 import { useAxiosClient } from "hooks/use-axios-client";
+
+import { generateStaticAssetUrl } from "lib/helper";
 
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
@@ -29,7 +31,7 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
             response.data.data;
 
           return {
-            profile_image: profile_image === "-" ? undefined : profile_image,
+            profile_image: generateStaticAssetUrl(profile_image.link),
             name,
             nip,
             phone_number,
@@ -65,13 +67,10 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
           !isLoading && (
             <div className="flex flex-col items-center space-y-6">
               {/* Avatar */}
-              <div className="w-32 h-32 bg-mono80 rounded-full">
-                <img
-                  src={data?.profile_image || "/image/staffTask.png"}
-                  alt="User's Avatar"
-                  className="w-full h-full bg-cover pointer-events-none select-none"
-                />
-              </div>
+              <span
+                className="w-32 h-32 bg-mono80 rounded-full bg-cover bg-center block"
+                style={{ backgroundImage: `url(${data.profile_image})` }}
+              />
 
               {/* Name and NIP? */}
               <div className="text-center space-y-2">

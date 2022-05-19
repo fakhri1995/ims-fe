@@ -3,6 +3,7 @@ import { addDays } from "date-fns";
 import QueryString from "qs";
 
 import { formatDateToLocale } from "lib/date-utils";
+import { objectToFormData } from "lib/helper";
 
 import {
   AttendanceExportExcelDataCriteria,
@@ -72,11 +73,18 @@ export class AttendanceService {
    */
   static async toggleCheckInCheckOut(
     axiosClient: AxiosInstance,
-    payload: ISetAttendanceTogglePayload
+    payload: ISetAttendanceTogglePayload<any>
   ) {
+    const payloadFormData = objectToFormData(payload);
+
     return await axiosClient.post<HttpRequestBaseSucceedResponse>(
       "/setAttendanceToggle",
-      payload
+      payloadFormData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
   }
 

@@ -58,3 +58,15 @@ export interface HttpRequestBaseFailedResponse {
     };
   };
 }
+
+/**
+ * New DTO shape for every `profile_image` attribute.
+ *
+ * Note: Perubahan attribute `profile_image` dari string menjadi object berlaku sejak 2022-05-18
+ *  dikarenakan backend sudah terintegraasi dengan Digital Ocean Space (storage service).
+ */
+export interface ProfileImageAttribute {
+  id: number;
+  link: string;
+  description: string;
+}

@@ -24,12 +24,16 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
-  const router = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
   const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
   const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
 
+  const router = useRouter();
   const attendanceId = router.query.attendanceId as unknown as number;
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [

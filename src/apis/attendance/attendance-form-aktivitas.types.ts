@@ -1,6 +1,7 @@
-import {
+import type {
   HttpRequestBaseSucceedResponse,
   HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
 } from "types/common";
 
 /**
@@ -39,7 +40,7 @@ export interface GetAttendanceFormData {
 export interface Creator {
   id: number;
   name: string;
-  profile_image: string;
+  profile_image: ProfileImageAttribute;
   position: string;
 }
 
@@ -54,7 +55,7 @@ export interface Detail {
 export interface User {
   id: number;
   name: string;
-  profile_image: string;
+  profile_image: ProfileImageAttribute;
   position: string;
 }
 

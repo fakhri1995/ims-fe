@@ -1,4 +1,7 @@
-import { HttpRequestWithDataSucceedResponse } from "types/common";
+import type {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
 
 export enum AttendanceServiceQueryKeys {
   /** Informasi attendance staff (currently logged in User) */
@@ -47,14 +50,9 @@ export interface UserAttendance {
   lat_check_out: null | string;
   geo_loc_check_in: GeolocationCheckInOut | null;
   geo_loc_check_out: GeolocationCheckInOut | null;
-  evidence: Evidence;
+  evidence: Evidence[];
   is_wfo: number;
   is_late: boolean;
-}
-
-export interface Evidence {
-  check_in_evidence: string;
-  check_out_evidence: string;
 }
 
 export interface GeolocationCheckInOut {
@@ -84,11 +82,11 @@ export interface Address {
 /**
  * @access POST /setAttendanceToggle
  */
-export interface ISetAttendanceTogglePayload {
+export interface ISetAttendanceTogglePayload<T extends File> {
   long: string;
   lat: string;
   geo_loc: string | null;
-  evidence: string;
+  evidence: T;
   wfo: boolean;
 }
 
@@ -109,7 +107,7 @@ export interface AbsentUser {
   id: number;
   name: string;
   position: string;
-  profile_image: string;
+  profile_image: ProfileImageAttribute;
   attendance_forms: AttendanceForm[];
 }
 
@@ -129,21 +127,15 @@ export interface UsersAttendance {
   lat_check_out: string;
   geo_loc_check_in: GeolocationCheckInOut | null;
   geo_loc_check_out: GeolocationCheckInOut | null;
-  evidence: Evidence;
+  evidence: Evidence[];
   is_wfo: number;
   user: UsersAttendanceUser;
-}
-
-export interface Evidence {
-  /** Both string are URLs to the evidence image */
-  check_in_evidence: string;
-  check_out_evidence: string;
 }
 
 export interface UsersAttendanceUser {
   id: number;
   name: string;
-  profile_image: string;
+  profile_image: ProfileImageAttribute;
 }
 
 /**
@@ -186,6 +178,6 @@ export interface AttendanceActivityDetail {
 }
 
 export interface Evidence {
-  check_in_evidence: string;
-  check_out_evidence: string;
+  link: string;
+  description: "check_in_evidence" | "check_out_evidence";
 }
