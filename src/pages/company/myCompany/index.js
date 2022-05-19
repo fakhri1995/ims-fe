@@ -33,7 +33,10 @@ import {
   COMPANY_MAIN_UPDATE,
   COMPANY_RELATIONSHIP_INVENTORIES_GET,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Buttonsys from "../../../components/button";
 import DrawerBank from "../../../components/drawer/companies/mycompany/drawerMyCompanyBankCreate";
@@ -676,10 +679,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           name: res2.data.name,
           address: res2.data.address,
           phone_number: res2.data.phone_number,
-          image_logo:
-            res2.data.image_logo === "-" || res2.data.image_logo === ""
-              ? "/image/Company.png"
-              : res2.data.image_logo,
+          image_logo: generateStaticAssetUrl(res2.data.company_logo?.link),
+          // image_logo:
+          //   res2.data.image_logo === "-" || res2.data.image_logo === ""
+          //     ? "/image/Company.png"
+          //     : res2.data.image_logo,
           singkatan: res2.data.singkatan,
           tanggal_pkp:
             res2.data.tanggal_pkp === null

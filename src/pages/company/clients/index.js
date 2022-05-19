@@ -11,7 +11,10 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import { COMPANY_CLIENTS_GET, COMPANY_CLIENT_ADD } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -61,7 +64,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
   //   parent_id: 0,
   // });
   const [datatable, setdatatable] = useState([]);
-  const [datatable2, setdatatable2] = useState([]);
+  // const [datatable2, setdatatable2] = useState([]);
   const [loaddatatable, setloaddatatable] = useState(false);
   // var dataTable = []
   // if (!dataCompanyList.data) {
@@ -96,11 +99,12 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
               <Link href={`/company/clients/${record.id}`}>
                 <a>
                   <img
-                    src={
-                      record.image_logo === "-" || record.image_logo === ""
-                        ? `/image/Induk.png`
-                        : record.image_logo
-                    }
+                    src={generateStaticAssetUrl(record.company_logo?.link)}
+                    // src={
+                    //   record.image_logo === "-" || record.image_logo === ""
+                    //     ? `/image/Induk.png`
+                    //     : record.image_logo
+                    // }
                     alt="imageProfile"
                     className=" object-cover w-10 h-10 rounded-full"
                   />
@@ -386,7 +390,7 @@ function ClientsIndex({ initProps, dataProfile, sidemenu }) {
       .then((res) => res.json())
       .then((res2) => {
         setdatatable(res2.data);
-        setdatatable2(res2.data);
+        // setdatatable2(res2.data);
         setloaddatatable(false);
       });
   }, [

@@ -15,7 +15,10 @@ import {
   COMPANY_LOCATIONS_GET,
   COMPANY_SUB_PROFILE_GET,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import Buttonsys from "../../../../components/button";
 import DrawerLokasiClient from "../../../../components/drawer/companies/clients/drawerClientCompanyLokasiCreate";
@@ -415,10 +418,11 @@ const ClientLocationIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((res2) => {
           setselecteddata({
             ...res2.data,
-            image_logo:
-              res2.data.image_logo === "-" || res2.data.image_logo === ""
-                ? "/image/Induk.png"
-                : res2.data.image_logo,
+            image_logo: generateStaticAssetUrl(res2.data.company_logo?.link),
+            // image_logo:
+            //   res2.data.image_logo === "-" || res2.data.image_logo === ""
+            //     ? "/image/Induk.png"
+            //     : res2.data.image_logo,
           });
           setloadingselected(false);
         });

@@ -19,6 +19,8 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import {
   COMPANY_CLIENT_BANKS_GET,
   COMPANY_CLIENT_BANK_ADD,
@@ -30,7 +32,13 @@ import {
   COMPANY_STATUS,
   COMPANY_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  getBase64,
+  permissionWarningNotification,
+} from "lib/helper";
+
+import { CompanyService } from "apis/company";
 
 import Buttonsys from "../../../components/button";
 import DrawerBankClient from "../../../components/drawer/companies/clients/drawerClientCompanyBankCreate";
@@ -83,6 +91,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
   const isAllowedToGetListBank = hasPermission(COMPANY_CLIENT_BANKS_GET);
 
   const rt = useRouter();
+  const axiosClient = useAxiosClient();
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();
@@ -120,6 +129,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     address: "",
     phone_number: "",
     image_logo: "",
+    company_logo: null, // File | null
     singkatan: "",
     tanggal_pkp: moment(new Date()),
     penanggung_jawab: "",
@@ -280,19 +290,16 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
   };
   const onChangeGambar = async (e) => {
     setloadingfoto(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    setdisplaydata({ ...displaydata, image_logo: datajson.secure_url });
+
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
+    setdisplaydata({
+      ...displaydata,
+      image_logo: base64Data,
+      company_logo: blobFile,
+    });
+
     setloadingfoto(false);
   };
   const onChangeInputBankEdit = (e) => {
@@ -346,16 +353,16 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       });
     }
     seteditloading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateCompany`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(displaydata),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
+
+    const updatePayload = { ...displaydata };
+    if ("image_logo" in updatePayload) {
+      delete updatePayload["image_logo"];
+    }
+
+    CompanyService.update(axiosClient, updatePayload)
+      .then((response) => {
+        const res2 = response.data;
+
         setmodaledit(false);
         seteditloading(false);
         if (res2.success) {
@@ -373,6 +380,12 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
             duration: 3,
           });
         }
+      })
+      .catch(() => {
+        notification["error"]({
+          message: "Terjadi kesalahan saat memperbarui company",
+          duration: 3,
+        });
       });
   };
   const handleStatus = () => {
@@ -512,10 +525,11 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
           name: res2.data.name,
           address: res2.data.address,
           phone_number: res2.data.phone_number,
-          image_logo:
-            res2.data.image_logo === "-" || res2.data.image_logo === ""
-              ? "/image/Company.png"
-              : res2.data.image_logo,
+          image_logo: generateStaticAssetUrl(res2.data.company_logo?.link),
+          // image_logo:
+          //   res2.data.image_logo === "-" || res2.data.image_logo === ""
+          //     ? "/image/Company.png"
+          //     : res2.data.image_logo,
           singkatan: res2.data.singkatan,
           tanggal_pkp:
             res2.data.tanggal_pkp === null
