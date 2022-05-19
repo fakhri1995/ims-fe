@@ -4,6 +4,12 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { getBase64 } from "lib/helper";
+
+import { CompanyService } from "apis/company";
+
 import ButtonSys from "../../../button";
 import {
   CameraIconSvg,
@@ -35,12 +41,15 @@ const DrawerLokasi = ({
   initProps,
   onvisible,
 }) => {
+  const axiosClient = useAxiosClient();
   const rt = useRouter();
+
   const [createdata, setcreatedata] = useState({
     name: "",
     address: "",
     phone_number: "",
     image_logo: "",
+    company_logo: null, // File | null
     parent_id: null,
     singkatan: "",
     tanggal_pkp: null,
@@ -96,22 +105,25 @@ const DrawerLokasi = ({
   };
   const onChangeGambar = async (e) => {
     setloadingfoto(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    setcreatedata({ ...createdata, image_logo: datajson.secure_url });
+
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
+    setcreatedata({
+      ...createdata,
+      image_logo: base64Data,
+      company_logo: blobFile,
+    });
+
     setloadingfoto(false);
   };
+
   const handleCreateLokasi = () => {
+    const createPayload = { ...createdata };
+    if ("image_logo" in createPayload) {
+      delete createPayload["image_logo"];
+    }
+
     // console.log(/(^\d+$)/.test(createdata.phone_number), createdata.phone_number)
     if (
       /(^\d+$)/.test(createdata.phone_number) === false ||
@@ -122,16 +134,9 @@ const DrawerLokasi = ({
       // console.log(new RegExp(/(^\d+$)/).test(createdata.phone_number))
       if (createdata.email === "") {
         setlokasiloading(true);
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyBranch`, {
-          method: "POST",
-          headers: {
-            Authorization: JSON.parse(initProps),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(createdata),
-        })
-          .then((res) => res.json())
-          .then((res2) => {
+        CompanyService.addCompany(axiosClient, createPayload, "main")
+          .then((response) => {
+            const res2 = response.data;
             setlokasiloading(false);
             onvisible(false);
             if (res2.success) {
@@ -144,6 +149,7 @@ const DrawerLokasi = ({
                 address: "",
                 phone_number: "",
                 image_logo: "",
+                company_logo: null,
                 parent_id: null,
                 singkatan: "",
                 tanggal_pkp: null,
@@ -170,6 +176,12 @@ const DrawerLokasi = ({
                 duration: 3,
               });
             }
+          })
+          .catch(() => {
+            notification["error"]({
+              message: "Terjadi kesalahan saat menambahkan lokasi company",
+              duration: 3,
+            });
           });
       } else {
         new RegExp(/(^\d+$)/).test(createdata.phone_number) === false
@@ -186,16 +198,9 @@ const DrawerLokasi = ({
       }
     } else {
       setlokasiloading(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addCompanyBranch`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(createdata),
-      })
-        .then((res) => res.json())
-        .then((res2) => {
+      CompanyService.addCompany(axiosClient, createPayload, "main")
+        .then((response) => {
+          const res2 = response.data;
           setlokasiloading(false);
           onvisible(false);
           if (res2.success) {
@@ -208,6 +213,7 @@ const DrawerLokasi = ({
               address: "",
               phone_number: "",
               image_logo: "",
+              company_logo: null,
               parent_id: null,
               singkatan: "",
               tanggal_pkp: null,
@@ -234,6 +240,12 @@ const DrawerLokasi = ({
               duration: 3,
             });
           }
+        })
+        .catch(() => {
+          notification["error"]({
+            message: "Terjadi kesalahan saat menambahkan lokasi company",
+            duration: 3,
+          });
         });
     }
   };

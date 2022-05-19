@@ -8,6 +8,8 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import {
   COMPANY_DELETE,
   COMPANY_INVENTORIES_GET,
@@ -16,7 +18,13 @@ import {
   COMPANY_SUB_DETAIL_GET,
   COMPANY_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  getBase64,
+  permissionWarningNotification,
+} from "lib/helper";
+
+import { CompanyService } from "apis/company";
 
 import Buttonsys from "../../../../components/button";
 import DrawerSublokasi from "../../../../components/drawer/companies/drawerSubLokasi";
@@ -100,6 +108,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   const isAllowedToAddSubLocation = hasPermission(COMPANY_SUB_ADD);
 
   const rt = useRouter();
+  const axiosClient = useAxiosClient();
   const { locId } = rt.query;
 
   const [instanceForm] = Form.useForm();
@@ -138,6 +147,7 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
     address: "",
     phone_number: "",
     image_logo: "",
+    company_logo: null, // File | null
     singkatan: "",
     tanggal_pkp: null,
     penanggung_jawab: "",
@@ -296,19 +306,16 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   };
   const onChangeGambar = async (e) => {
     setloadingfoto(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    setdisplaydata({ ...displaydata, image_logo: datajson.secure_url });
+
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
+    setdisplaydata({
+      ...displaydata,
+      image_logo: base64Data,
+      company_logo: blobFile,
+    });
+
     setloadingfoto(false);
   };
   const onSortSubLoc = async (value) => {
@@ -370,16 +377,16 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
   };
   const handleEdit = () => {
     seteditloading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateCompany`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(displaydata),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
+
+    const updatePayload = { ...displaydata };
+    if ("image_logo" in updatePayload) {
+      delete updatePayload["image_logo"];
+    }
+
+    CompanyService.update(axiosClient, updatePayload)
+      .then((response) => {
+        const res2 = response.data;
+
         setmodaledit(false);
         seteditloading(false);
         if (res2.success) {
@@ -397,6 +404,12 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
             duration: 3,
           });
         }
+      })
+      .catch(() => {
+        notification["error"]({
+          message: "Terjadi kesalahan saat memperbarui company",
+          duration: 3,
+        });
       });
   };
   const handleDelete = () => {
@@ -662,12 +675,13 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
           name: res2.data.name,
           address: res2.data.address,
           phone_number: res2.data.phone_number,
-          image_logo:
-            res2.data.image_logo === "-" || res2.data.image_logo === ""
-              ? res2.data.level === 1
-                ? "/image/Induk.png"
-                : `/image/Sublokasi.png`
-              : res2.data.image_logo,
+          image_logo: generateStaticAssetUrl(res2.data.company_logo?.link),
+          // image_logo:
+          //   res2.data.image_logo === "-" || res2.data.image_logo === ""
+          //     ? res2.data.level === 1
+          //       ? "/image/Induk.png"
+          //       : `/image/Sublokasi.png`
+          //     : res2.data.image_logo,
           singkatan: res2.data.singkatan,
           tanggal_pkp:
             res2.data.tanggal_pkp === null
@@ -1633,7 +1647,10 @@ const ClientLocationDetail = ({ initProps, dataProfile, sidemenu, locid }) => {
                     //     </div>
                     //     :
                     <img
-                      src={selectedsublocdata.image_logo}
+                      src={generateStaticAssetUrl(
+                        selectedsublocdata.company_logo?.link
+                      )}
+                      // src={selectedsublocdata.image_logo}
                       className="object-contain w-20 h-20 rounded-full"
                       alt=""
                     />
