@@ -32,6 +32,33 @@ export enum TaskStatus {
 }
 
 /**
+ * @access POST /updateTicket
+ */
+export interface UpdateTicketPayload {
+  id: number;
+  requester_id: number;
+  raised_at: Date | string;
+  closed_at: Date | string;
+  ticket_detail_type_id: number;
+  product_id: number;
+  pic_name: string;
+  pic_contact: string;
+  location_id: number;
+  problem: string;
+  incident_time: Date | string;
+  attachments: File[] | File;
+  description: string;
+}
+
+/**
+ * @access DELETE /deleteFileTicket
+ */
+export interface DeleteFileTicketPayload {
+  id: number; // file uid
+  ticket_id: number;
+}
+
+/**
  * @access GET /getTicket?id={{ticketId}}
  */
 export type IGetTicketSucceedResponse =

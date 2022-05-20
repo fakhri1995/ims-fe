@@ -1,10 +1,14 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
+import { formatDatePayload, objectToFormData } from "lib/helper";
+
 import type {
+  DeleteFileTicketPayload,
   IGetTicketLogSucceedResponse,
   IGetTicketSucceedResponse,
   TicketUpdateStatusPayload,
+  UpdateTicketPayload,
 } from "./ticket.types";
 
 import { HttpRequestBaseSucceedResponse } from "types/common";
@@ -47,6 +51,47 @@ export class TicketService {
       : "/getClientTicketLog";
 
     return await axiosClient.get<IGetTicketLogSucceedResponse>(endpoint + qs);
+  }
+
+  /**
+   * Update existing ticket (primarily from UpdateTicket drawer component).
+   *
+   * @access /updateTicket
+   */
+  static async update(
+    axiosClient: AxiosInstance,
+    payload: UpdateTicketPayload
+  ) {
+    let payloadFormData: FormData = null;
+
+    try {
+      payloadFormData = objectToFormData({
+        ...payload,
+        raised_at: formatDatePayload(payload.raised_at),
+        closed_at: formatDatePayload(payload.closed_at),
+        incident_time: formatDatePayload(payload.incident_time),
+      });
+    } catch (e) {
+      console.error("e", e);
+    }
+
+    return await axiosClient.post("/updateTicket", payloadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
+
+  /**
+   * Delete an attachment from specific ticket.
+   *
+   * @access DELETE /deleteFileTicket
+   */
+  static async deleteFileTicket(
+    axiosClient: AxiosInstance,
+    payload: DeleteFileTicketPayload
+  ) {
+    return await axiosClient.delete("/deleteFileTicket", { data: payload });
   }
 
   /**

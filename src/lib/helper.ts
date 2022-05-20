@@ -1,5 +1,6 @@
 import { notification } from "antd";
 import type { RcFile } from "antd/lib/upload";
+import { format } from "date-fns";
 
 /**
  * A high order helper function to create `KeyboardEvent` handler.
@@ -148,4 +149,33 @@ export const objectToFormData = <T extends Object>(entry: T) => {
   }
 
   return formData;
+};
+
+/**
+ * Transform client side Date data to acceptable DTO.
+ *
+ * Sebenernya backend juga bisa terima nilai date dengan `Date.toString()`, tapi just in case suatu saat akan ada validasi
+ *  format tertentu yang hanya bisa diterima backend.
+ *
+ * @param rawDate Either `Date` instance or string from `Date.toString()`
+ * @param dateFormat Required date format that backend can accept
+ */
+export const formatDatePayload = (
+  rawDate: Date | string | null,
+  dateFormat: string = "yyyy-MM-dd HH:mm:ss"
+) => {
+  if (rawDate === null) {
+    return null;
+  }
+
+  let result = "";
+
+  try {
+    result = format(new Date(rawDate), dateFormat);
+  } catch (e) {
+    console.error(e);
+    return null;
+  }
+
+  return result;
 };
