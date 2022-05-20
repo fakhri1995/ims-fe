@@ -8,11 +8,16 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import { TICKET_GET, TICKET_UPDATE, USERS_GET } from "lib/features";
+import { generateStaticAssetUrl, getBase64 } from "lib/helper";
+
+import { TicketService } from "apis/ticket";
 
 import ButtonSys from "../../button";
 import {
@@ -59,6 +64,8 @@ const DrawerTicketUpdate = ({
 
   const canUpdateTicket = isAllowedToUpdateTicket && isAllowedToGetTicket;
 
+  const axiosClient = useAxiosClient();
+
   //useState
   const [loadingsave, setloadingsave] = useState(false);
   //data for each field
@@ -92,29 +99,94 @@ const DrawerTicketUpdate = ({
   }, [displaydata, datatypetickets]);
 
   //handler
+  /**
+   * Handler ketika User click "Trash" icon pada list file.
+   * Setiap file yang didelete akan segera di-sync dengan backend dengan mengirim data ke endpoint `/deleteFileTicket`.
+   *
+   * Handler ini berfungsi untuk manage file apa yang dihapus dan mengirim data tersebut ke backend.
+   */
+  const onSingleAttachmentRemoved = (idx) => {
+    var tempfiles = [...datapayload.files];
+    var tempattachments = [...datapayload.attachments];
+
+    tempfiles.splice(idx, 1);
+    const removedAttachment = tempattachments.splice(idx, 1)[0];
+    if (removedAttachment instanceof File) {
+      setdatapayload((prev) => ({
+        ...prev,
+        files: tempfiles,
+        attachments: tempattachments,
+      }));
+      return;
+    }
+
+    const deleteFilePayload = {
+      ticket_id: datapayload.id,
+      id: removedAttachment.id,
+    };
+
+    setloadingfile(true);
+    setdisabledsubmit(true);
+
+    TicketService.deleteFileTicket(axiosClient, deleteFilePayload).then(
+      (response) => {
+        setdatapayload((prev) => ({
+          ...prev,
+          files: tempfiles,
+          attachments: tempattachments,
+        }));
+        notification.success({ message: response.data.message });
+
+        setloadingfile(false);
+        setdisabledsubmit(false);
+      }
+    );
+  };
+
   const onChangeGambar = async (e) => {
     setloadingfile(true);
     setdisabledsubmit(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    var tempfile = [...datapayload.files];
-    tempfile.push(datajson.secure_url);
-    setdatapayload({ ...datapayload, files: tempfile });
+
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
+    const newFiles = [...datapayload.files, base64Data];
+    const newAttachments = [...datapayload.attachments, blobFile];
+
+    setdatapayload({
+      ...datapayload,
+      files: newFiles,
+      attachments: newAttachments,
+    });
+
     setloadingfile(false);
     setdisabledsubmit(false);
   };
 
+  const resetDataPayload = () => {
+    setdatapayload({
+      id: Number(ticketid),
+      requester_id: null,
+      raised_at: null,
+      closed_at: null,
+      product_id: "",
+      pic_name: "",
+      pic_contact: "",
+      location_id: null,
+      problem: "",
+      incident_time: null,
+      files: [],
+      attachments: [],
+      description: "",
+    });
+  };
+
   const handleUpdateTicket = () => {
+    const updatePayload = { ...datapayload };
+    if ("files" in updatePayload) {
+      delete updatePayload["files"];
+    }
+
     if (
       /(^\d+$)/.test(datapayload.pic_contact) === false ||
       /(^\d+$)/.test(datapayload.product_id) === false
@@ -122,34 +194,16 @@ const DrawerTicketUpdate = ({
       if (datapayload.pic_contact === "") {
         setloadingsave(true);
         setdisabledsubmit(true);
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTicket`, {
-          method: "PUT",
-          headers: {
-            Authorization: JSON.parse(initProps),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datapayload),
-        })
-          .then((res) => res.json())
-          .then((res2) => {
+
+        TicketService.update(axiosClient, updatePayload)
+          .then((response) => {
+            const res2 = response.data;
+
             setrefreshtickets((prev) => prev + 1);
             setloadingsave(false);
             setdisabledsubmit(false);
             if (res2.success) {
-              setdatapayload({
-                id: Number(ticketid),
-                requester_id: null,
-                raised_at: null,
-                closed_at: null,
-                product_id: "",
-                pic_name: "",
-                pic_contact: "",
-                location_id: null,
-                problem: "",
-                incident_time: null,
-                files: [],
-                description: "",
-              });
+              resetDataPayload();
               onvisible(false);
               notification["success"]({
                 message: res2.message,
@@ -161,6 +215,16 @@ const DrawerTicketUpdate = ({
                 duration: 3,
               });
             }
+          })
+          .catch(() => {
+            notification["error"]({
+              message: "Terjadi kesalahan saat memperbarui ticket",
+              duration: 3,
+            });
+
+            setloadingsave(false);
+            setdisabledsubmit(false);
+            onvisible(false);
           });
       } else {
         new RegExp(/(^\d+$)/).test(datapayload.pic_contact) === false
@@ -174,34 +238,16 @@ const DrawerTicketUpdate = ({
     } else {
       setloadingsave(true);
       setdisabledsubmit(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateTicket`, {
-        method: "PUT",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datapayload),
-      })
-        .then((res) => res.json())
-        .then((res2) => {
+
+      TicketService.update(axiosClient, updatePayload)
+        .then((response) => {
+          const res2 = response.data;
+
           setrefreshtickets((prev) => prev + 1);
           setloadingsave(false);
           setdisabledsubmit(false);
           if (res2.success) {
-            setdatapayload({
-              id: Number(ticketid),
-              requester_id: null,
-              raised_at: null,
-              closed_at: null,
-              product_id: "",
-              pic_name: "",
-              pic_contact: "",
-              location_id: null,
-              problem: "",
-              incident_time: null,
-              files: [],
-              description: "",
-            });
+            resetDataPayload();
             onvisible(false);
             notification["success"]({
               message: res2.message,
@@ -213,6 +259,16 @@ const DrawerTicketUpdate = ({
               duration: 3,
             });
           }
+        })
+        .catch(() => {
+          notification["error"]({
+            message: "Terjadi kesalahan saat memperbarui ticket",
+            duration: 3,
+          });
+
+          setloadingsave(false);
+          setdisabledsubmit(false);
+          onvisible(false);
         });
     }
   };
@@ -328,12 +384,7 @@ const DrawerTicketUpdate = ({
                     <div className=" flex items-center">
                       <div className="mr-1 w-7 h7 rounded-full">
                         <img
-                          src={
-                            doc.profile_image === "-" ||
-                            doc.profile_image === ""
-                              ? `/image/staffTask.png`
-                              : doc.profile_image
-                          }
+                          src={generateStaticAssetUrl(doc.profile_image?.link)}
                           className=" object-contain"
                           alt=""
                         />
@@ -606,12 +657,14 @@ const DrawerTicketUpdate = ({
             </div>
             <div className=" flex justify-between items-center mb-2">
               <div>
-                <Label>Unggah JPG/MP4 (Maks. 5 MB)</Label>
+                <Label>Unggah JPG (Maks. 5 MB)</Label>
               </div>
               <div>
                 <ButtonSys
                   type={`primaryInput`}
                   onChangeGambar={onChangeGambar}
+                  inputAccept="image/jpeg"
+                  disabled={loadingfile}
                 >
                   {loadingfile ? (
                     <LoadingOutlined style={{ marginRight: `0.5rem` }} />
@@ -637,14 +690,7 @@ const DrawerTicketUpdate = ({
                   />
                   <div
                     className=" cursor-pointer"
-                    onClick={() => {
-                      var tempfiles = [...datapayload.files];
-                      tempfiles.splice(idx, 1);
-                      setdatapayload((prev) => ({
-                        ...prev,
-                        files: tempfiles,
-                      }));
-                    }}
+                    onClick={() => onSingleAttachmentRemoved(idx)}
                   >
                     <TrashIconSvg size={15} color={`#BF4A40`} />
                   </div>

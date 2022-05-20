@@ -38,6 +38,7 @@ import {
   TASK_TYPES_GET,
   TICKET_ASSIGN,
 } from "lib/features";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import { AddTaskPayload, TaskService } from "apis/task";
 import { TicketServiceQueryKeys } from "apis/ticket";
@@ -769,7 +770,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                       key={idx}
                       value={doc.id}
                       position={doc.position}
-                      image={doc.profile_image}
+                      image={generateStaticAssetUrl(doc.profile_image?.link)}
                     >
                       {doc.name}
                     </Select.Option>

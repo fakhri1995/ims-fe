@@ -1,4 +1,7 @@
-import type { HttpRequestWithDataSucceedResponse } from "types/common";
+import type {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
 
 export enum TicketServiceQueryKeys {
   TICKET_GET = "TICKET_GET",
@@ -29,6 +32,33 @@ export enum TaskStatus {
   ON_HOLD,
   COMPLETED,
   CLOSED,
+}
+
+/**
+ * @access POST /updateTicket
+ */
+export interface UpdateTicketPayload {
+  id: number;
+  requester_id: number;
+  raised_at: Date | string;
+  closed_at: Date | string;
+  ticket_detail_type_id: number;
+  product_id: number;
+  pic_name: string;
+  pic_contact: string;
+  location_id: number;
+  problem: string;
+  incident_time: Date | string;
+  attachments: File[] | File;
+  description: string;
+}
+
+/**
+ * @access DELETE /deleteFileTicket
+ */
+export interface DeleteFileTicketPayload {
+  id: number; // file uid
+  ticket_id: number;
 }
 
 /**
@@ -67,7 +97,7 @@ export interface Creator {
 export interface User {
   id: number;
   name: string;
-  profile_image: /** "-" == empty */ string;
+  profile_image: /** "-" == empty */ ProfileImageAttribute;
 }
 
 export interface Task {
@@ -143,4 +173,6 @@ export interface AlLog {
 export interface LogCauser {
   id: number;
   name: string;
+  role: number;
+  profile_image: ProfileImageAttribute;
 }

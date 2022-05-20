@@ -25,7 +25,10 @@ import {
   TICKET_NOTE_DELETE,
   TICKET_NOTE_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import { TicketService, TicketServiceQueryKeys } from "apis/ticket";
 
@@ -212,8 +215,10 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
                       <div className=" flex">
                         <div className=" w-5 h-5 rounded-full mr-2">
                           <img
-                            src={"/image/staffTask.png"}
-                            className=" object-contain w-5 h-5"
+                            src={generateStaticAssetUrl(
+                              note.causer.profile_image.link
+                            )}
+                            className="object-contain w-5 h-5 rounded-full overflow-hidden"
                             alt=""
                           />
                         </div>
