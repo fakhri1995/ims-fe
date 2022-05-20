@@ -27,7 +27,10 @@ import {
   TICKET_STATUS_UPDATE,
   TICKET_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
 
 import ButtonSys from "../../../components/button";
 import DrawerTicketConnectItem from "../../../components/drawer/tickets/drawerTicketConnectItem";
@@ -171,10 +174,12 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
     location_id: null,
     problem: "",
     incident_time: null,
-    files: [],
+    files: [], // string[] -> /updateTicket. List of URLs
+    attachments: [], // File[] -> /updateTicket
     description: "",
     ticket_detail_type_id: -1,
   });
+
   const [drawerupdateticket, setdrawerupdateticket] = useState(false);
   const [refreshclosedupdateticket, setrefreshclosedupdateticket] =
     useState(-1);
@@ -396,7 +401,15 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
         }
         /** END: copy paste */
 
-        setdisplaydata(res2.data);
+        setdisplaydata({
+          ...res2.data,
+          ticketable: {
+            ...res2.data.ticketable,
+            files: res2.data.ticketable.attachments.map(({ link }) =>
+              generateStaticAssetUrl(link)
+            ),
+          },
+        });
         setdatapayloadupdate({
           ...datapayloadupdate,
           requester_id: res2.data.creator.id,
@@ -416,7 +429,12 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               : moment(res2.data.ticketable.original_incident_time)
                   .locale("id")
                   .format(),
-          files: res2.data.ticketable.files || [],
+          files:
+            res2.data.ticketable.attachments.map(({ link }) =>
+              generateStaticAssetUrl(link)
+            ) || [],
+          // files: res2.data.ticketable.files || [],
+          attachments: res2.data.ticketable.attachments || [],
           description: res2.data.ticketable.description,
           ticket_detail_type_id: res2.data.ticketable.asset_type?.id,
         });
@@ -681,7 +699,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 </>
               ) : (
                 <div className=" grid grid-cols-2">
-                  {displaydata?.ticketable.files?.map((doc, idx) => (
+                  {displaydata?.ticketable?.files?.map((doc, idx) => (
                     <a key={idx} target={`_blank`} href={doc}>
                       <div className=" col-span-1 mx-1 flex flex-col items-center mb-2 cursor-pointer">
                         <img
@@ -1406,13 +1424,16 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                           </p>
                           <div className="flex items-center justify-between">
                             <div className=" flex">
-                              <div className=" w-5 h-5 rounded-full mr-2">
+                              <div className=" w-5 h-5 rounded-full mr-2 overflow-hidden">
                                 <img
-                                  src={
-                                    log.causer.profile_image === "-"
-                                      ? "/image/staffTask.png"
-                                      : log.causer.profile_image
-                                  }
+                                  src={generateStaticAssetUrl(
+                                    log.causer.profile_image?.link
+                                  )}
+                                  // src={
+                                  //   log.causer.profile_image === "-"
+                                  //     ? "/image/staffTask.png"
+                                  //     : log.causer.profile_image
+                                  // }
                                   className=" object-contain w-5 h-5"
                                   alt=""
                                 />
