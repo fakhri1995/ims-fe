@@ -105,39 +105,43 @@ const DrawerTicketUpdate = ({
    *
    * Handler ini berfungsi untuk manage file apa yang dihapus dan mengirim data tersebut ke backend.
    */
-  const onSingleAttachmentRemoved = useCallback(
-    (idx) => {
-      var tempfiles = [...datapayload.files];
-      var tempattachments = [...datapayload.attachments];
+  const onSingleAttachmentRemoved = (idx) => {
+    var tempfiles = [...datapayload.files];
+    var tempattachments = [...datapayload.attachments];
 
-      const removedAttachment = tempattachments.splice(idx, 1);
+    tempfiles.splice(idx, 1);
+    const removedAttachment = tempattachments.splice(idx, 1)[0];
+    if (removedAttachment instanceof File) {
+      setdatapayload((prev) => ({
+        ...prev,
+        files: tempfiles,
+        attachments: tempattachments,
+      }));
+      return;
+    }
 
-      const deleteFilePayload = {
-        ticket_id: datapayload.id,
-        id: removedAttachment[0].id,
-      };
+    const deleteFilePayload = {
+      ticket_id: datapayload.id,
+      id: removedAttachment.id,
+    };
 
-      setloadingfile(true);
-      setdisabledsubmit(true);
+    setloadingfile(true);
+    setdisabledsubmit(true);
 
-      TicketService.deleteFileTicket(axiosClient, deleteFilePayload).then(
-        (response) => {
-          console.log("response", response);
+    TicketService.deleteFileTicket(axiosClient, deleteFilePayload).then(
+      (response) => {
+        setdatapayload((prev) => ({
+          ...prev,
+          files: tempfiles,
+          attachments: tempattachments,
+        }));
+        notification.success({ message: response.data.message });
 
-          setdatapayload((prev) => ({
-            ...prev,
-            files: tempfiles,
-            attachments: tempattachments,
-          }));
-          notification.success({ message: response.data.message });
-
-          setloadingfile(false);
-          setdisabledsubmit(false);
-        }
-      );
-    },
-    [setdatapayload, datapayload.id, datapayload.files, datapayload.attachments]
-  );
+        setloadingfile(false);
+        setdisabledsubmit(false);
+      }
+    );
+  };
 
   const onChangeGambar = async (e) => {
     setloadingfile(true);
@@ -660,6 +664,7 @@ const DrawerTicketUpdate = ({
                   type={`primaryInput`}
                   onChangeGambar={onChangeGambar}
                   inputAccept="image/jpeg"
+                  disabled={loadingfile}
                 >
                   {loadingfile ? (
                     <LoadingOutlined style={{ marginRight: `0.5rem` }} />

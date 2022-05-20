@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 import clsx from "clsx";
 
 const ButtonSys = ({
@@ -16,6 +18,10 @@ const ButtonSys = ({
   inputAccept, // only accept certain files type (`accept` <input>'s attribute)
   inputMultiple = false,
 }) => {
+  // Reference to <input> element
+  // we need to reset its value on each `onClick` event is fired up.
+  const inputRef = useRef(null);
+
   const commonButtonClassName = clsx(
     {
       "btn-sm": size !== "large",
@@ -104,13 +110,21 @@ const ButtonSys = ({
 
     case "primaryInput":
       buttonElement = (
-        <label onClick={onClick} className={primaryButtonClassName}>
+        <label
+          onClick={() => {
+            onClick?.call(null);
+
+            // reset the input's value attribute so we can choose the exact same file multiple times.
+            inputRef.current.value = null;
+          }}
+          className={primaryButtonClassName}
+        >
           <input
             type="file"
+            ref={inputRef}
             style={{ display: `none` }}
             name="urlgambarProduct"
             accept={inputAccept}
-            multiple={inputMultiple}
             onChange={onChangeGambar}
           />
           {children}
