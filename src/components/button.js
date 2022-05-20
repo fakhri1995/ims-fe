@@ -12,6 +12,9 @@ const ButtonSys = ({
   onChangeGambar,
   disabled,
   fullWidth,
+
+  inputAccept, // only accept certain files type (`accept` <input>'s attribute)
+  inputMultiple = false,
 }) => {
   const commonButtonClassName = clsx(
     {
@@ -106,6 +109,8 @@ const ButtonSys = ({
             type="file"
             style={{ display: `none` }}
             name="urlgambarProduct"
+            accept={inputAccept}
+            multiple={inputMultiple}
             onChange={onChangeGambar}
           />
           {children}
