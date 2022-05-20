@@ -15,7 +15,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { TICKET_GET, TICKET_UPDATE, USERS_GET } from "lib/features";
-import { getBase64 } from "lib/helper";
+import { generateStaticAssetUrl, getBase64 } from "lib/helper";
 
 import { TicketService } from "apis/ticket";
 
@@ -380,12 +380,7 @@ const DrawerTicketUpdate = ({
                     <div className=" flex items-center">
                       <div className="mr-1 w-7 h7 rounded-full">
                         <img
-                          src={
-                            doc.profile_image === "-" ||
-                            doc.profile_image === ""
-                              ? `/image/staffTask.png`
-                              : doc.profile_image
-                          }
+                          src={generateStaticAssetUrl(doc.profile_image?.link)}
                           className=" object-contain"
                           alt=""
                         />

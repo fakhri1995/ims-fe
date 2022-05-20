@@ -1,4 +1,7 @@
-import type { HttpRequestWithDataSucceedResponse } from "types/common";
+import type {
+  HttpRequestWithDataSucceedResponse,
+  ProfileImageAttribute,
+} from "types/common";
 
 export enum TicketServiceQueryKeys {
   TICKET_GET = "TICKET_GET",
@@ -94,7 +97,7 @@ export interface Creator {
 export interface User {
   id: number;
   name: string;
-  profile_image: /** "-" == empty */ string;
+  profile_image: /** "-" == empty */ ProfileImageAttribute;
 }
 
 export interface Task {
@@ -170,4 +173,6 @@ export interface AlLog {
 export interface LogCauser {
   id: number;
   name: string;
+  role: number;
+  profile_image: ProfileImageAttribute;
 }

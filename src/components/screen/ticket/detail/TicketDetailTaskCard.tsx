@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { FC } from "react";
 
 import { formatDateToLocale } from "lib/date-utils";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import { Task, TaskStatus } from "apis/ticket";
 
@@ -59,11 +60,6 @@ export const TicketDetailTaskCard: FC<Task> = ({
 
   // it can be either a User object or undefined.
   const tasksUser = isAssigned ? users[0] : undefined;
-  const hasValidUserAvatarUrl =
-    tasksUser &&
-    tasksUser.profile_image &&
-    tasksUser.profile_image !== "" &&
-    tasksUser.profile_image !== "-";
 
   const isGroup = group_id !== null;
   const groupName = group?.name;
@@ -80,11 +76,7 @@ export const TicketDetailTaskCard: FC<Task> = ({
         >
           {/* Profile Image */}
           <img
-            src={
-              user.profile_image !== "" && user.profile_image !== "-"
-                ? user.profile_image
-                : "/image/staffTask.png"
-            }
+            src={generateStaticAssetUrl(user.profile_image.link)}
             alt={`${user.name}'s Avatar`}
             className="w-5 h-5 rounded-full bg-cover"
           />
@@ -123,11 +115,7 @@ export const TicketDetailTaskCard: FC<Task> = ({
                 <>
                   <span className="mig-caption">{tasksUser.name}</span>
                   <img
-                    src={
-                      hasValidUserAvatarUrl
-                        ? tasksUser.profile_image
-                        : "/image/staffTask.png"
-                    }
+                    src={generateStaticAssetUrl(tasksUser.profile_image?.link)}
                     alt={`${tasksUser.name}'s Avatar`}
                     className="w-5 h-5 rounded-full"
                   />
