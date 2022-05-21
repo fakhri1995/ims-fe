@@ -35,6 +35,22 @@ export enum TaskStatus {
 }
 
 /**
+ * @access POST /addTicket
+ */
+export interface AddticketPayload {
+  type_id: number;
+  ticket_detail_type_id: number;
+  product_id: number;
+  pic_name: string;
+  pic_contact: string;
+  location_id: number;
+  problem: string;
+  incident_time: Date | string;
+  attachments: File[];
+  description: string;
+}
+
+/**
  * @access POST /updateTicket
  */
 export interface UpdateTicketPayload {

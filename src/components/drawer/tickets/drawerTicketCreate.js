@@ -40,7 +40,12 @@ import React, { useEffect, useState } from "react";
 // }
 import { useAccessControl } from "contexts/access-control";
 
+import { useAxiosClient } from "hooks/use-axios-client";
+
 import { TICKET_ADD, TICKET_CLIENT_GET, TICKET_GET } from "lib/features";
+import { getBase64 } from "lib/helper";
+
+import { TicketService } from "apis/ticket";
 
 import ButtonSys from "../../button";
 import { CloudUploadIconSvg, TrashIconSvg } from "../../icon";
@@ -72,6 +77,8 @@ const DrawerTicketCreate = ({
   ); // input field's data source: Tipe Tiket, Jenis Aset, and Lokasi Kejadian. All of them are required.
   const canCreateNewTicket = isAllowedToAddTicket && isAllowedToGetTicket;
 
+  const axiosClient = useAxiosClient();
+
   /** Payload `incident_time` harus sesuai dengan format berikut */
   const incidentTimePayoadFormat = "YYYY-MM-DD HH:mm:ss";
 
@@ -86,6 +93,7 @@ const DrawerTicketCreate = ({
     problem: "",
     incident_time: moment().format(incidentTimePayoadFormat),
     files: [],
+    attachments: [], // File[]
     description: "",
   });
   const [loadingsave, setloadingsave] = useState(false);
@@ -105,24 +113,27 @@ const DrawerTicketCreate = ({
   //handler
   const onChangeGambar = async (e) => {
     setloadingfile(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    var tempfile = [...datapayload.files];
-    tempfile.push(datajson.secure_url);
-    setdatapayload({ ...datapayload, files: tempfile });
+
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
+    const newFiles = [...datapayload.files, base64Data];
+    const newAttachments = [...datapayload.attachments, blobFile];
+
+    setdatapayload({
+      ...datapayload,
+      files: newFiles,
+      attachments: newAttachments,
+    });
+
     setloadingfile(false);
   };
   const handleAddTicket = () => {
+    const createPayload = { ...datapayload };
+    if ("files" in createPayload) {
+      delete createPayload["files"];
+    }
+
     if (
       /(^\d+$)/.test(datapayload.pic_contact) === false ||
       /(^\d+$)/.test(datapayload.product_id) === false
@@ -130,16 +141,11 @@ const DrawerTicketCreate = ({
       if (datapayload.pic_contact === "") {
         setloadingsave(true);
         setdisabledcreate(true);
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTicket`, {
-          method: "POST",
-          headers: {
-            Authorization: JSON.parse(initProps),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(datapayload),
-        })
-          .then((res) => res.json())
-          .then((res2) => {
+
+        TicketService.create(axiosClient, createPayload)
+          .then((response) => {
+            const res2 = response.data;
+
             setrefreshtickets((prev) => prev + 1);
             setloadingsave(false);
             setdisabledcreate(false);
@@ -167,6 +173,11 @@ const DrawerTicketCreate = ({
                 duration: 3,
               });
             }
+          })
+          .catch(() => {
+            notification.error({
+              message: "Terjadi kesalahan saat menambahkan Ticket",
+            });
           });
       } else {
         new RegExp(/(^\d+$)/).test(datapayload.pic_contact) === false
@@ -180,16 +191,11 @@ const DrawerTicketCreate = ({
     } else {
       setloadingsave(true);
       setdisabledcreate(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addTicket`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(datapayload),
-      })
-        .then((res) => res.json())
-        .then((res2) => {
+
+      TicketService.create(axiosClient, createPayload)
+        .then((response) => {
+          const res2 = response.data;
+
           setrefreshtickets((prev) => prev + 1);
           setloadingsave(false);
           setdisabledcreate(false);
@@ -217,6 +223,11 @@ const DrawerTicketCreate = ({
               duration: 3,
             });
           }
+        })
+        .catch(() => {
+          notification.error({
+            message: "Terjadi kesalahan saat menambahkan Ticket",
+          });
         });
     }
   };
@@ -517,12 +528,14 @@ const DrawerTicketCreate = ({
             </div>
             <div className=" flex justify-between items-center mb-2">
               <div>
-                <Label>Unggah JPG/MP4 (Maks. 5 MB)</Label>
+                <Label>Unggah JPG (Maks. 5 MB)</Label>
               </div>
               <div>
                 <ButtonSys
                   type={`primaryInput`}
                   onChangeGambar={onChangeGambar}
+                  inputAccept="image/jpeg"
+                  disabled={loadingfile}
                 >
                   {loadingfile ? (
                     <LoadingOutlined style={{ marginRight: `0.5rem` }} />
@@ -548,9 +561,14 @@ const DrawerTicketCreate = ({
                     onClick={() => {
                       var tempfiles = [...datapayload.files];
                       tempfiles.splice(idx, 1);
+
+                      var tempattachments = [...datapayload.attachments];
+                      tempattachments.splice(idx, 1);
+
                       setdatapayload((prev) => ({
                         ...prev,
                         files: tempfiles,
+                        attachments: tempattachments,
                       }));
                     }}
                   >
