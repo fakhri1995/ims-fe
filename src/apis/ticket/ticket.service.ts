@@ -4,6 +4,7 @@ import QueryString from "qs";
 import { formatDatePayload, objectToFormData } from "lib/helper";
 
 import type {
+  AddticketPayload,
   DeleteFileTicketPayload,
   IGetTicketLogSucceedResponse,
   IGetTicketSucceedResponse,
@@ -51,6 +52,21 @@ export class TicketService {
       : "/getClientTicketLog";
 
     return await axiosClient.get<IGetTicketLogSucceedResponse>(endpoint + qs);
+  }
+
+  /**
+   * Create new ticket.
+   *
+   * @access POST /addTicket
+   */
+  static async create(axiosClient: AxiosInstance, payload: AddticketPayload) {
+    const payloadFormData = objectToFormData(payload);
+
+    return await axiosClient.post("/addTicket", payloadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
 
   /**

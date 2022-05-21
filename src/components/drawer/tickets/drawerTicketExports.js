@@ -6,6 +6,7 @@ import React, { useEffect, useState } from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import { GROUPS_GET, TICKETS_EXPORT, USERS_GET } from "lib/features";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import { UserIconSvg } from "../../icon";
 import { H2, Label, Text } from "../../typography";
@@ -300,11 +301,12 @@ const DrawerTicketExports = ({
                     <div className=" flex items-center">
                       <div className="mr-1 w-7 h7 rounded-full">
                         <img
-                          src={
-                            doc.profile_image === "-"
-                              ? `/image/stafftask.png`
-                              : doc.profile_image
-                          }
+                          src={generateStaticAssetUrl(doc.profile_image?.link)}
+                          // src={
+                          //   doc.profile_image === "-"
+                          //     ? `/image/stafftask.png`
+                          //     : doc.profile_image
+                          // }
                           className=" object-contain"
                           alt=""
                         />
