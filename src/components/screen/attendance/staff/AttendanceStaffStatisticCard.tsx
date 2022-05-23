@@ -48,7 +48,7 @@ export const AttendanceStaffStatisticCard: FC<
           {/* Hadir */}
           <div className="text-center space-y-2">
             <h4 className="font-bold text-2xl text-primary100">
-              {data?.on_time_count || 0} hr
+              {data?.on_time_count || 0} hari
             </h4>
             <p className="text-mono50 text-2xs">Hadir</p>
           </div>
@@ -56,7 +56,7 @@ export const AttendanceStaffStatisticCard: FC<
           {/* Terlambat */}
           <div className="text-center space-y-2">
             <h4 className="font-bold text-2xl text-state1">
-              {data?.late_count || 0} hr
+              {data?.late_count || 0} hari
             </h4>
             <p className="text-mono50 text-2xs">Terlambat</p>
           </div>

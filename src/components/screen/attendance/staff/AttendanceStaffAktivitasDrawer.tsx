@@ -247,7 +247,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
           </div>
         )}
 
-        {!isLoading && !!userAttendanceForm && attendeeStatus !== "checkout" && (
+        {!isLoading && !!userAttendanceForm && (
           <>
             <em className="text-state1">* Informasi ini harus diisi</em>
 
@@ -263,7 +263,13 @@ export const AttendanceStaffAktivitasDrawer: FC<
               {userAttendanceForm.details.map(
                 ({ name, description, type, key, list, required }) => {
                   return (
-                    <Form.Item label={name} required={!!required} key={key}>
+                    <Form.Item
+                      label={
+                        <label className="font-bold text-mono30">{name}</label>
+                      }
+                      required={!!required}
+                      key={key}
+                    >
                       <p className="mb-4 mt-2">{description}</p>
 
                       <Form.Item name={key} rules={[{ required }]}>

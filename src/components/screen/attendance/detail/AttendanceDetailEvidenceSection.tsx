@@ -121,47 +121,51 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
       : "";
 
     return isAllowedToGet ? (
-      <section className="mig-platform space-y-4 flex flex-col">
+      <section className="mig-platform flex justify-between space-x-6">
         {/* Evidence: checkin */}
-        <span className="mig-caption text-gray-400">Bukti Check In</span>
-        <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
-          {shouldShowSpinner && <Spin size="large" />}
+        <div className="flex flex-col space-y-4">
+          <span className="mig-caption text-gray-400">Bukti Check In</span>
+          <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
+            {shouldShowSpinner && <Spin size="large" />}
 
-          {!shouldShowSpinner && data.check_in_evidence !== null && (
-            <>
-              <img
-                src={data.check_in_evidence}
-                alt="Evidence Check In Image"
-                className="w-full h-full bg-cover"
-              />
-              <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-                {checkInEvidenceFileName}
-              </span>
-            </>
-          )}
+            {!shouldShowSpinner && data.check_in_evidence !== null && (
+              <>
+                <img
+                  src={data.check_in_evidence}
+                  alt="Evidence Check In Image"
+                  className="w-full h-full bg-cover"
+                />
+                <span className="mig-caption mig-caption--medium text-center text-mono50 block">
+                  {checkInEvidenceFileName}
+                </span>
+              </>
+            )}
 
-          {shouldShowNotFoundCheckIn && imageErrorContent}
+            {shouldShowNotFoundCheckIn && imageErrorContent}
+          </div>
         </div>
 
         {/* Evidence: checkout */}
-        <span className="mig-caption text-gray-400">Bukti Check Out</span>
-        <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
-          {shouldShowSpinner && <Spin size="large" />}
+        <div className="flex flex-col space-y-4">
+          <span className="mig-caption text-gray-400">Bukti Check Out</span>
+          <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
+            {shouldShowSpinner && <Spin size="large" />}
 
-          {!shouldShowSpinner && data.check_out_evidence !== null && (
-            <>
-              <img
-                src={data.check_out_evidence}
-                alt="Evidence Check Out Image"
-                className="w-full h-full bg-cover"
-              />
-              <span className="mig-caption mig-caption--medium text-center text-mono50 block">
-                {checkOutEvidenceFileName}
-              </span>
-            </>
-          )}
+            {!shouldShowSpinner && data.check_out_evidence !== null && (
+              <>
+                <img
+                  src={data.check_out_evidence}
+                  alt="Evidence Check Out Image"
+                  className="w-full h-full bg-cover"
+                />
+                <span className="mig-caption mig-caption--medium text-center text-mono50 block">
+                  {checkOutEvidenceFileName}
+                </span>
+              </>
+            )}
 
-          {shouldShowNotFoundCheckOut && imageErrorContent}
+            {shouldShowNotFoundCheckOut && imageErrorContent}
+          </div>
         </div>
       </section>
     ) : null;
