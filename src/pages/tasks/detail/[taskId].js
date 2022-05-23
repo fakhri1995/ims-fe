@@ -2829,7 +2829,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               )} */}
               {displaytask.created_by === dataProfile.data.id ? (
                 displaytask.status === 5 ? (
-                  <div className=" mb-7 flex flex-col">
+                  <div className=" mb-7 flex flex-col mt-8">
                     <div className=" mb-4 flex items-center">
                       <p className=" mb-0 text-lg text-gray-500">
                         Setujui Task

@@ -12,6 +12,9 @@ import { beforeUploadFileMaxSize, generateStaticAssetUrl } from "lib/helper";
 
 import { TaskService } from "apis/task";
 
+import DownloadIcon from "assets/vectors/icon-download.svg";
+import RemoveIcon from "assets/vectors/icon-remove.svg";
+
 interface ITaskDetailLampiran {
   onNewFileChanged: (files: RcFile[]) => void;
   currentAttachments: { id: number; link: string; description: string }[];
@@ -131,9 +134,9 @@ export const TaskDetailLampiran: FC<ITaskDetailLampiran> = ({
         accept=".jpg,.jpeg,.png,.gif,.tiff,.svg,.pdf,.doc,.docx,.xls,.xlsx,.csv,.tsv"
         showUploadList={{
           showDownloadIcon: true,
-          downloadIcon: "Download",
+          downloadIcon: <DownloadIcon />,
           showRemoveIcon: canRemoveFile,
-          removeIcon: "Remove",
+          removeIcon: <RemoveIcon />,
         }}
         beforeUpload={beforeUploadFileMaxSize()}
         fileList={fileListBuffer}
