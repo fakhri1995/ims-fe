@@ -17,3 +17,19 @@ export interface AddTaskPayload {
   repeat: number;
   files: string[];
 }
+
+/**
+ * @access POST /saveFilesTask
+ */
+export interface SaveFilesTaskPayload {
+  id: number;
+  attachments: File[];
+}
+
+/**
+ * @access DELETE /deleteFileTask
+ */
+export interface DeleteFileTaskPayload {
+  task_id: number;
+  id: number; // file id
+}

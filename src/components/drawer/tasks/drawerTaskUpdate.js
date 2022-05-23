@@ -23,6 +23,7 @@ import {
   TICKETS_GET,
   USERS_GET,
 } from "lib/features";
+import { generateStaticAssetUrl } from "lib/helper";
 
 import ButtonSys from "../../button";
 import {
@@ -758,7 +759,7 @@ const DrawerTaskUpdate = ({
                         key={idx}
                         value={doc.id}
                         position={doc.position}
-                        image={doc.profile_image}
+                        image={generateStaticAssetUrl(doc.profile_image?.link)}
                       >
                         {doc.name}
                       </Select.Option>

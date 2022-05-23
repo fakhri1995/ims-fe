@@ -1,4 +1,5 @@
-import { notification } from "antd";
+import { Upload, notification } from "antd";
+import type { UploadProps } from "antd/es/upload/interface";
 import type { RcFile } from "antd/lib/upload";
 import { format } from "date-fns";
 
@@ -178,4 +179,37 @@ export const formatDatePayload = (
   }
 
   return result;
+};
+
+/**
+ * Generate `beforeUpload` props callback for Ant Design `<Upload>` component.
+ *
+ * @example
+ * ```ts
+ * // 2 MiB max
+ * <Upload beforeUpload={beforeUploadFileMaxSize(2)} />
+ * ```
+ *
+ * @param sizeInMiB File size dalam MiB
+ * @param errorMessage Custom notification error message
+ */
+export const beforeUploadFileMaxSize = (
+  sizeInMiB: number = 5,
+  errorMessage?: string
+): Pick<UploadProps, "beforeUpload">["beforeUpload"] => {
+  return (file) => {
+    const fileSizeInMb = Number.parseFloat(
+      (file.size / 1024 / 1024).toFixed(2)
+    );
+
+    if (fileSizeInMb > sizeInMiB) {
+      notification.error({
+        message:
+          errorMessage ||
+          `Ukuran File ${fileSizeInMb} MiB melebih batas persyaratan maksimum sebesar ${sizeInMiB} MiB`,
+      });
+
+      return Upload.LIST_IGNORE;
+    }
+  };
 };
