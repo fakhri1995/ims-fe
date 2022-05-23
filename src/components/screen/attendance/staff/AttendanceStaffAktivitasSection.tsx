@@ -131,20 +131,6 @@ export const AttendanceStaffAktivitasSection: FC<
         return;
       }
 
-      /** Prevent user membuka drawer ketika mereka belum check in */
-      if (attendeeStatus !== "checkin") {
-        Modal.error({
-          centered: true,
-          title: "Perhatian!",
-          content:
-            "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
-          okText: "Kembali",
-          closable: true,
-        });
-
-        return;
-      }
-
       /** datum.key adalah unique ID dari aktivitas tersebut. Hanya di map menjadi "key" */
       dispatch({
         type: "update",

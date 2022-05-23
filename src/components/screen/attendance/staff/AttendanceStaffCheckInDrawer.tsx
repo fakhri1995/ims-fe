@@ -265,39 +265,45 @@ export const AttendanceStaffCheckInDrawer: FC<
                   required
                 >
                   <div className="flex flex-col space-y-6">
-                    {/* Gunakan camera */}
-                    <Button
-                      className="mig-button mig-button--outlined-primary self-start"
-                      onClick={() => {
-                        setIsWebcamModalShown(true);
-                      }}
-                    >
-                      <CameraOutlined />
-                      Ambil Foto
-                    </Button>
+                    <div className="relative">
+                      {/* Gunakan camera */}
+                      <div className="flex items-center space-x-5">
+                        <Button
+                          className="mig-button mig-button--outlined-primary self-start"
+                          onClick={() => {
+                            setIsWebcamModalShown(true);
+                          }}
+                        >
+                          <CameraOutlined />
+                          Ambil Foto
+                        </Button>
 
-                    {/* Upload from file */}
-                    <Upload
-                      capture
-                      listType="picture"
-                      name="file"
-                      accept="image/png, image/jpeg"
-                      maxCount={1}
-                      beforeUpload={beforeUploadEvidencePicture}
-                      onRemove={onRemoveEvidencePicture}
-                      onPreview={onPreviewEvidencePicture}
-                      disabled={uploadPictureLoading}
-                      fileList={fileList}
-                      onChange={onUploadChange}
-                    >
-                      <Button
-                        className="mig-button mig-button--outlined-primary"
-                        loading={uploadPictureLoading}
+                        <span className="mig-caption--medium text-mono50">
+                          Atau
+                        </span>
+                      </div>
+
+                      {/* Upload from file */}
+                      <Upload
+                        capture
+                        listType="picture"
+                        name="file"
+                        accept="image/png, image/jpeg"
+                        maxCount={1}
+                        beforeUpload={beforeUploadEvidencePicture}
+                        onRemove={onRemoveEvidencePicture}
+                        onPreview={onPreviewEvidencePicture}
+                        disabled={uploadPictureLoading}
+                        fileList={fileList}
+                        onChange={onUploadChange}
                       >
-                        <UploadOutlined />
-                        Unggah File
-                      </Button>
-                    </Upload>
+                        <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
+                          <UploadOutlined />
+                          Unggah File
+                        </Button>
+                      </Upload>
+                    </div>
+
                     <em className="text-mono50">
                       Unggah File JPEG (Maksimal 5 MB)
                     </em>
