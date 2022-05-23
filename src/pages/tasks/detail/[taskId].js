@@ -15,8 +15,11 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
+import { TaskDetailLampiran } from "components/screen/task";
 
 import { useAccessControl } from "contexts/access-control";
+
+import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   TASK_APPROVE,
@@ -34,7 +37,12 @@ import {
   TASK_SUBMIT,
   TASK_UPDATE, // Button "Tambah Pekerjaan Baru" dan Drawer "DrawerTaskDetailCreate"
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "lib/helper";
+
+import { TaskService } from "apis/task";
 
 import Buttonsys from "../../../components/button";
 import DrawerTaskDetailCreate from "../../../components/drawer/tasks/drawerTaskDetailCreate";
@@ -293,11 +301,12 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
                     <View style={{ borderRadius: `9999px`, marginRight: 3 }}>
                       <Image
                         style={{ width: 15, height: 15 }}
-                        src={
-                          user.profile_image === "-"
-                            ? `/image/staffTask.png`
-                            : user.profile_image
-                        }
+                        src={generateStaticAssetUrl(user.profile_image?.link)}
+                        // src={
+                        //   user.profile_image === "-"
+                        //     ? `/image/staffTask.png`
+                        //     : user.profile_image
+                        // }
                       ></Image>
                     </View>
                     <Text style={styles.texter}>{user.name}</Text>
@@ -598,6 +607,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   const isAllowedToUpdateTaskDetail = hasPermission(TASK_DETAIL_UPDATE);
 
   //1.Init
+  const axiosClient = useAxiosClient();
   const rt = useRouter();
   const { prevpath } = rt.query;
   const pathArr = rt.pathname.split("/").slice(1);
@@ -639,7 +649,11 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     creator: {
       id: null,
       name: "",
-      profile_image: "",
+      profile_image: {
+        id: 0,
+        link: "",
+        description: "",
+      },
     },
     users: [],
     group: [],
@@ -663,9 +677,12 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     is_uploadable: false,
     repeat: 0,
     files: [],
+    attachments: [],
     end_repeat_at: null,
     subloc_id: null,
   });
+  const [attachments, setAttachments] = useState([]);
+
   const [triggersubloc, settriggersubloc] = useState(-1);
   const [users2, setusers2] = useState([]);
   const [praloadingtask, setpraloadingtask] = useState(true);
@@ -961,52 +978,55 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         }
       });
   };
+
   const handleSubmitTask = () => {
     setloadingsubmittask(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/saveFilesTask`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: Number(taskid),
-        files: dataupdate.files,
-      }),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-        } else {
-        }
-      });
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/submitTask`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
+    const hitSubmitTask = () => {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/submitTask`, {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id: Number(taskid),
+        }),
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setloadingsubmittask(false);
+          if (res2.success) {
+            notification["success"]({
+              message: res2.message,
+              duration: 3,
+            });
+            window.location.href = `/tasks/detail/${taskid}`;
+          } else {
+            notification["error"]({
+              message: res2.message,
+              duration: 3,
+            });
+          }
+        });
+    };
+
+    const newAttachments = attachments;
+    if (newAttachments.length > 0) {
+      TaskService.saveFilesTask(axiosClient, {
         id: Number(taskid),
-      }),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setloadingsubmittask(false);
-        if (res2.success) {
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          window.location.href = `/tasks/detail/${taskid}`;
-        } else {
-          notification["error"]({
-            message: res2.message,
-            duration: 3,
-          });
-        }
-      });
+        attachments,
+      })
+        .then(() => {
+          setAttachments([]);
+        })
+        .then(() => {
+          hitSubmitTask();
+        });
+      return;
+    }
+
+    hitSubmitTask();
   };
   const handleReviseTask = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/declineTask`, {
@@ -1112,7 +1132,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
           is_uploadable: Boolean(res2.data.is_uploadable),
           repeat: res2.data.repeat,
           end_repeat_at: res2.data.end_repeat_at,
-          files: res2.data.files,
+          files: res2.data.files || [],
+          attachments: res2.data.attachments || [],
         });
         var tempitems = res2.data.inventories.map((doc, idx) => ({
           ...doc,
@@ -1133,7 +1154,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               ...doc,
               children: doc.name,
               position: doc.position ?? "",
-              image: doc.profile_image,
+              image: generateStaticAssetUrl(doc.profile_image?.link),
             }))),
             setswitchstaffgroup(1))
           : ((tempstaffgroup = [
@@ -1359,12 +1380,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                           <div className=" col-span-5 flex items-center p-2">
                             <div className="mr-1 flex items-center w-10 h-10 rounded-full">
                               <img
-                                src={
-                                  docusers.profile_image === "-" ||
-                                  docusers.profile_image === ""
-                                    ? "/image/staffTask.png"
-                                    : docusers.profile_image
-                                }
+                                src={generateStaticAssetUrl(
+                                  docusers.profile_image?.link
+                                )}
+                                // src={
+                                //   docusers.profile_image === "-" ||
+                                //   docusers.profile_image === ""
+                                //     ? "/image/staffTask.png"
+                                //     : docusers.profile_image
+                                // }
                                 className=" object-contain"
                                 alt=""
                               />
@@ -1501,12 +1525,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                             <div className=" col-span-5 flex items-center p-2">
                               <div className="mr-1 flex items-center w-10 h-10 rounded-full">
                                 <img
-                                  src={
-                                    docusers.profile_image === "-" ||
-                                    docusers.profile_image === ""
-                                      ? "/image/staffTask.png"
-                                      : docusers.profile_image
-                                  }
+                                  src={generateStaticAssetUrl(
+                                    docusers.profile_image?.link
+                                  )}
+                                  // src={
+                                  //   docusers.profile_image === "-" ||
+                                  //   docusers.profile_image === ""
+                                  //     ? "/image/staffTask.png"
+                                  //     : docusers.profile_image
+                                  // }
                                   className=" object-contain"
                                   alt=""
                                 />
@@ -1630,11 +1657,14 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                     >
                                       <div className="w-6 h-6 rounded-full mr-1">
                                         <img
-                                          src={
-                                            doctaskuser.profile_image === "-"
-                                              ? "/image/staffTask.png"
-                                              : doctaskuser.profile_image
-                                          }
+                                          src={generateStaticAssetUrl(
+                                            doctaskuser.profile_image?.link
+                                          )}
+                                          // src={
+                                          //   doctaskuser.profile_image === "-"
+                                          //     ? "/image/staffTask.png"
+                                          //     : doctaskuser.profile_image
+                                          // }
                                           alt=""
                                           className=" object-contain"
                                         />
@@ -1701,13 +1731,16 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                             <div className=" mb-4 flex items-center">
                                               <div className=" w-10 h-10 rounded-full">
                                                 <img
-                                                  src={
-                                                    currentstafftask[idx]
-                                                      .profile_image === "" ||
-                                                    doc.profile_image === "-"
-                                                      ? "/image/staffTask.png"
-                                                      : `${doc.profile_image}`
-                                                  }
+                                                  src={generateStaticAssetUrl(
+                                                    doc.profile_image?.link
+                                                  )}
+                                                  // src={
+                                                  //   currentstafftask[idx]
+                                                  //     .profile_image === "" ||
+                                                  //   doc.profile_image === "-"
+                                                  //     ? "/image/staffTask.png"
+                                                  //     : `${doc.profile_image}`
+                                                  // }
                                                   className=" object-contain w-10 h-10"
                                                   alt=""
                                                 />
@@ -1813,12 +1846,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                           >
                                             <div className=" w-10 h-10 rounded-full">
                                               <img
-                                                src={
-                                                  doc.profile_image === "" ||
-                                                  doc.profile_image === "-"
-                                                    ? "/image/staffTask.png"
-                                                    : `${doc.profile_image}`
-                                                }
+                                                src={generateStaticAssetUrl(
+                                                  doc.profile_image?.link
+                                                )}
+                                                // src={
+                                                //   doc.profile_image === "" ||
+                                                //   doc.profile_image === "-"
+                                                //     ? "/image/staffTask.png"
+                                                //     : `${doc.profile_image}`
+                                                // }
                                                 className=" object-contain w-10 h-10"
                                                 alt=""
                                               />
@@ -2672,7 +2708,28 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     })
                 )}
               </div>
-              {displaytask.created_by !== dataProfile.data.id ? (
+
+              {Boolean(displaytask.is_uploadable) && (
+                <>
+                  <TaskDetailLampiran
+                    taskId={Number(taskid)}
+                    isSubmitting={loadingsubmittask}
+                    isTaskSubmitted={completeclose && isselfcheckout}
+                    isSeenAsCreator={
+                      displaytask.created_by === dataProfile.data.id
+                    }
+                    onNewFileChanged={setAttachments}
+                    currentAttachments={dataupdate.attachments}
+                  />
+                  {loadingsubmittask && (
+                    <div className="flex items-center space-x-3 mt-4">
+                      <Spin /> <em>Sedang mengupload file...</em>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* {displaytask.created_by !== dataProfile.data.id ? (
                 <>
                   {Boolean(displaytask.is_uploadable) && (
                     <div className=" mb-7 flex flex-col">
@@ -2769,7 +2826,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     )}
                   </div>
                 )
-              )}
+              )} */}
               {displaytask.created_by === dataProfile.data.id ? (
                 displaytask.status === 5 ? (
                   <div className=" mb-7 flex flex-col">
@@ -2879,7 +2936,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                   (docsome) => docsome.id === dataProfile.data.id
                 ) ? (
                 completeclose && isselfcheckout ? (
-                  <div className=" flex justify-center w-full text-center">
+                  <div className=" flex justify-center w-full text-center mt-8">
                     <div className=" mr-2">
                       <CheckIconSvg size={30} color={`#35763B`} />
                     </div>
@@ -2890,13 +2947,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                     </div>
                   </div>
                 ) : (
-                  <div className=" flex justify-center w-full">
+                  <div className=" flex justify-center w-full mt-8">
                     <Buttonsys
                       disabled={
+                        loadingsubmittask ||
                         disablededitable ||
                         (!isAllowedToSaveFiles && !isAllowedToSubmitTask)
                       }
                       type={`primary`}
+                      // loading={loadingsubmittask}
                       onClick={handleSubmitTask}
                     >
                       <div className="mr-1">
@@ -3169,12 +3228,15 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 <div className=" flex items-center">
                   <div className=" rounded-full w-8 h-8">
                     <img
-                      src={
-                        displaytask.creator.profile_image === "-" ||
-                        displaytask.creator.profile_image === ""
-                          ? `/image/staffTask.png`
-                          : displaytask.creator.profile_image
-                      }
+                      src={generateStaticAssetUrl(
+                        displaytask.creator.profile_image?.link
+                      )}
+                      // src={
+                      //   displaytask.creator.profile_image === "-" ||
+                      //   displaytask.creator.profile_image === ""
+                      //     ? `/image/staffTask.png`
+                      //     : displaytask.creator.profile_image
+                      // }
                       className=" object-contain"
                       alt=""
                     />

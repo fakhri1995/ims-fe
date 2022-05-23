@@ -272,6 +272,11 @@ body {
   @apply bg-primary100;
 }
 
+/** UPLOAD */
+.ant-upload-span a:hover {
+  color: #35763b;
+}
+
 /**
  * NOTE: this is a little bit tricky. We can not customize ant's Modal.confirm footer programmatically.
  *
