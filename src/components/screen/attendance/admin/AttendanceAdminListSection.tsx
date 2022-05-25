@@ -26,6 +26,8 @@ import { formatDateToLocale } from "lib/date-utils";
 import {
   ATTENDANCES_USERS_GET,
   ATTENDANCE_ACTIVITY_USERS_EXPORT,
+  ATTENDANCE_FORMS_GET,
+  ATTENDANCE_FORM_GET,
 } from "lib/features";
 import { generateStaticAssetUrl } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
@@ -53,9 +55,14 @@ export const AttendanceAdminListSection: FC<
   IAttendanceAdminListSection
 > = () => {
   const { hasPermission } = useAccessControl();
-  const isAllowedToExportTableData = hasPermission(
-    ATTENDANCE_ACTIVITY_USERS_EXPORT
-  );
+
+  const canExportTableData = hasPermission([
+    ATTENDANCE_ACTIVITY_USERS_EXPORT,
+    ATTENDANCE_FORMS_GET,
+    ATTENDANCE_FORM_GET,
+  ]);
+
+  const isAllowedToSearchData = hasPermission(ATTENDANCES_USERS_GET);
 
   /** 1 -> Hadir, 2 -> Absen */
   const [activeTab, setActiveTab] = useState<"1" | "2">("1");
@@ -81,9 +88,9 @@ export const AttendanceAdminListSection: FC<
           {/* Table's header */}
           <div className="flex space-x-4 w-2/3 justify-end items-center">
             <ButtonSys
-              type={isAllowedToExportTableData ? "default" : "primary"}
+              type={canExportTableData ? "default" : "primary"}
               onClick={() => setIsExportDrawerShown(true)}
-              disabled={!isAllowedToExportTableData}
+              disabled={!canExportTableData}
             >
               <DownloadOutlined className="mr-2" />
               Unduh Tabel
@@ -98,6 +105,7 @@ export const AttendanceAdminListSection: FC<
               <Form.Item name="search">
                 <Input
                   placeholder="Cari..."
+                  disabled={!isAllowedToSearchData}
                   allowClear
                   onChange={(event) => {
                     if (
@@ -113,6 +121,7 @@ export const AttendanceAdminListSection: FC<
               <Form.Item noStyle>
                 <Button
                   htmlType="submit"
+                  disabled={!isAllowedToSearchData}
                   className="mig-button mig-button--solid-primary"
                   icon={<SearchOutlined />}
                 >

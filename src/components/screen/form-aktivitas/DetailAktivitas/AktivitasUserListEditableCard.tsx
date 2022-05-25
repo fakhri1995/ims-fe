@@ -18,6 +18,7 @@ import {
   ATTENDANCE_FORM_GET,
   ATTENDANCE_FORM_USERS_ADD,
   ATTENDANCE_FORM_USERS_REMOVE,
+  USERS_GET,
 } from "lib/features";
 import {
   generateStaticAssetUrl,
@@ -27,7 +28,6 @@ import {
 import {
   AttendanceFormAktivitasService,
   AttendanceFormAktivitasServiceQueryKeys,
-  User,
   useAddFormAktivitasStaff,
   useDeleteFormAktivitasStaff,
 } from "apis/attendance";
@@ -60,6 +60,10 @@ export const AktivitasUserListEditableCard: FC<
   const { hasPermission } = useAccessControl();
   const isAllowedToAddUsers = hasPermission(ATTENDANCE_FORM_USERS_ADD);
   const isAllowedToDeleteUsers = hasPermission(ATTENDANCE_FORM_USERS_REMOVE);
+  const isAllowedToGetFilterUsers = hasPermission(USERS_GET);
+
+  const canAddNewStaffToFormActivity =
+    isAllowedToAddUsers && isAllowedToGetFilterUsers;
 
   const {
     data: currentFormAktivitasUsers,
@@ -102,7 +106,7 @@ export const AktivitasUserListEditableCard: FC<
   };
 
   const triggerChangePhase = (phase: CardPhaseType) => {
-    if (phase === "add" && !isAllowedToAddUsers) {
+    if (phase === "add" && !canAddNewStaffToFormActivity) {
       permissionWarningNotification("Menambahkan", "User Form Aktivitas");
       return;
     }
@@ -271,7 +275,9 @@ export const AktivitasUserListEditableCard: FC<
 
   const tambahStaffClassName = clsx(
     "flex flex-col items-center space-y-3 group",
-    isAllowedToAddUsers ? "hover:cursor-pointer" : "hover:cursor-not-allowed"
+    canAddNewStaffToFormActivity
+      ? "hover:cursor-pointer"
+      : "hover:cursor-not-allowed"
   );
 
   return (
@@ -303,7 +309,7 @@ export const AktivitasUserListEditableCard: FC<
               >
                 <Button
                   className="rounded-full bg-primary100/25 w-12 h-12 flex items-center justify-center group-hover:border-primary100 group-hover:bg-primary100/50 focus:border-primary100"
-                  disabled={!isAllowedToAddUsers}
+                  disabled={!canAddNewStaffToFormActivity}
                 >
                   <UserAddOutlined className="text-xl text-primary100" />
                 </Button>

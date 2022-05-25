@@ -1,5 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
@@ -12,7 +12,10 @@ import {
 } from "components/screen/attendance";
 import { AttendanceStaffCheckInDrawer } from "components/screen/attendance/staff/AttendanceStaffCheckInDrawer";
 
-import { ATTENDANCE_TOGGLE_SET } from "lib/features";
+import { useAccessControl } from "contexts/access-control";
+
+import { ATTENDANCES_USER_GET, ATTENDANCE_TOGGLE_SET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import httpcookie from "cookie";
 
@@ -22,6 +25,14 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToShowAttendanceData = hasPermission(ATTENDANCES_USER_GET);
+
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Absensi Saya",
@@ -37,6 +48,12 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
   const handleAttendanceButtonClicked = useCallback(() => {
     setIsCheckInDrawerShown(true);
   }, []);
+
+  useEffect(() => {
+    if (!isAllowedToShowAttendanceData) {
+      permissionWarningNotification("Mendapatkan", "Detail Absensi Saya");
+    }
+  }, [isAllowedToShowAttendanceData]);
 
   return (
     <LayoutDashboard

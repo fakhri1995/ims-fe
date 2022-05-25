@@ -1,4 +1,5 @@
 import { GetServerSideProps, NextPage } from "next";
+import { useEffect } from "react";
 
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
@@ -8,6 +9,11 @@ import {
 } from "components/screen/attendance";
 import { AttendanceAdminLeafletMapNoSSR } from "components/screen/attendance";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { ATTENDANCES_USERS_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
 import httpcookie from "cookie";
 
 import { PageBreadcrumbValue, ProtectedPageProps } from "types/common";
@@ -16,11 +22,25 @@ const AdminAttendancePage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToDisplayContent = hasPermission(ATTENDANCES_USERS_GET);
+
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
       name: "Absensi",
     },
   ];
+
+  useEffect(() => {
+    if (!isAllowedToDisplayContent) {
+      permissionWarningNotification("Mendapatkan", "Daftar Absensi");
+    }
+  }, [isAllowedToDisplayContent]);
 
   return (
     <LayoutDashboard
