@@ -20,3 +20,10 @@ export const ATTENDANCE_SAFE_TIME = {
  * @see {AccessControlProvider}
  */
 export const ROLE_SUPER_ADMIN = "Super Admin";
+
+/**
+ * Jumlah maximum upload file yang dapat dikirim ke backend.
+ *
+ * Terutama pada modul Task dan Ticket.
+ */
+export const MAX_FILE_UPLOAD_COUNT = 5;
