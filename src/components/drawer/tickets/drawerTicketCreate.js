@@ -42,6 +42,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { MAX_FILE_UPLOAD_COUNT } from "lib/constants";
 import { TICKET_ADD, TICKET_CLIENT_GET, TICKET_GET } from "lib/features";
 import { getBase64 } from "lib/helper";
 
@@ -112,6 +113,13 @@ const DrawerTicketCreate = ({
 
   //handler
   const onChangeGambar = async (e) => {
+    if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
+      notification.warning({
+        message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
+      });
+      return;
+    }
+
     setloadingfile(true);
 
     const blobFile = e.target.files[0];
@@ -128,6 +136,7 @@ const DrawerTicketCreate = ({
 
     setloadingfile(false);
   };
+
   const handleAddTicket = () => {
     const createPayload = { ...datapayload };
     if ("files" in createPayload) {
