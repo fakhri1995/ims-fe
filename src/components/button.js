@@ -1,4 +1,5 @@
-import { useRef } from "react";
+import { notification } from "antd";
+import { useCallback, useRef } from "react";
 
 import clsx from "clsx";
 
@@ -17,10 +18,40 @@ const ButtonSys = ({
 
   inputAccept, // only accept certain files type (`accept` <input>'s attribute)
   inputMultiple = false,
+  inputFileMaxSize = 5, // in MiB
 }) => {
   // Reference to <input> element
   // we need to reset its value on each `onClick` event is fired up.
   const inputRef = useRef(null);
+
+  /**
+   * Callback untuk membungkus `onChangeGambar` dengan tambahan logic,
+   *  misal filter file size.
+   */
+  const onInputChange = useCallback(
+    (e) => {
+      if (onChangeGambar === undefined) {
+        return undefined;
+      }
+
+      const file = e.target.files[0];
+
+      const fileSizeInMb = Number.parseFloat(
+        (file.size / 1024 / 1024).toFixed(2)
+      );
+
+      if (fileSizeInMb > inputFileMaxSize) {
+        notification.error({
+          message: `Ukuran File ${fileSizeInMb} MiB melebih batas persyaratan maksimum sebesar ${inputFileMaxSize} MiB`,
+        });
+
+        return;
+      }
+
+      onChangeGambar?.call(null, e);
+    },
+    [onChangeGambar]
+  );
 
   const commonButtonClassName = clsx(
     {
@@ -125,7 +156,7 @@ const ButtonSys = ({
             style={{ display: `none` }}
             name="urlgambarProduct"
             accept={inputAccept}
-            onChange={onChangeGambar}
+            onChange={onInputChange}
           />
           {children}
         </label>
@@ -139,7 +170,7 @@ const ButtonSys = ({
             type="file"
             style={{ display: `none` }}
             name="urlgambarProduct"
-            onChange={onChangeGambar}
+            onChange={onInputChange}
           />
           {children}
         </label>

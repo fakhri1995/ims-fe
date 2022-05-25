@@ -8,6 +8,7 @@ import { H2 } from "components/typography";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
+import { MAX_FILE_UPLOAD_COUNT } from "lib/constants";
 import { beforeUploadFileMaxSize, generateStaticAssetUrl } from "lib/helper";
 
 import { TaskService } from "apis/task";
@@ -126,10 +127,33 @@ export const TaskDetailLampiran: FC<ITaskDetailLampiran> = ({
     [taskId]
   );
 
+  /**
+   * Callback untuk props `beforeUpload` <Upload> component.
+   */
+  const onBeforeUploadFile = useCallback(
+    (file: RcFile, fileList: RcFile[]) => {
+      const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+      const isReachedMaxFileSize =
+        checkMaxFileSizeFilter(file, fileList) === Upload.LIST_IGNORE;
+
+      const currentFileCount = fileListBuffer.length;
+      const isReachedMaxFileCount = currentFileCount === MAX_FILE_UPLOAD_COUNT;
+      if (isReachedMaxFileCount) {
+        notification.warning({
+          message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
+        });
+      }
+
+      return isReachedMaxFileSize || isReachedMaxFileCount ? false : file;
+    },
+    [fileListBuffer.length]
+  );
+
   return (
     <div className="w-full relative">
       <H2>Lampiran</H2>
       <Upload
+        maxCount={MAX_FILE_UPLOAD_COUNT}
         className="w-full text-primary100"
         accept=".jpg,.jpeg,.png,.gif,.tiff,.svg,.pdf,.doc,.docx,.xls,.xlsx,.csv,.tsv"
         showUploadList={{
@@ -138,7 +162,7 @@ export const TaskDetailLampiran: FC<ITaskDetailLampiran> = ({
           showRemoveIcon: canRemoveFile,
           removeIcon: <RemoveIcon />,
         }}
-        beforeUpload={beforeUploadFileMaxSize()}
+        beforeUpload={onBeforeUploadFile}
         fileList={fileListBuffer}
         onChange={onUploadFileChange}
       >
