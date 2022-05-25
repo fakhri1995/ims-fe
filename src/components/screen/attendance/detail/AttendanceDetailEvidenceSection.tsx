@@ -123,7 +123,7 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
     return isAllowedToGet ? (
       <section className="mig-platform flex justify-between space-x-6">
         {/* Evidence: checkin */}
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 w-1/2">
           <span className="mig-caption text-gray-400">Bukti Check In</span>
           <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
             {shouldShowSpinner && <Spin size="large" />}
@@ -146,7 +146,7 @@ export const AttendanceDetailEvidenceSection: FC<IAttendanceDetailEvidenceSectio
         </div>
 
         {/* Evidence: checkout */}
-        <div className="flex flex-col space-y-4">
+        <div className="flex flex-col space-y-4 w-1/2">
           <span className="mig-caption text-gray-400">Bukti Check Out</span>
           <div className="max-w-lg w-full space-y-3 flex flex-col items-center">
             {shouldShowSpinner && <Spin size="large" />}
