@@ -288,6 +288,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       [e.target.name]: e.target.value,
     });
   };
+
   const onChangeGambar = async (e) => {
     setloadingfoto(true);
 
@@ -302,6 +303,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
 
     setloadingfoto(false);
   };
+
   const onChangeInputBankEdit = (e) => {
     seteditbankdata({
       ...editbankdata,

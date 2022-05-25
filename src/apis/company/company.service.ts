@@ -7,6 +7,7 @@ import type {
   AddCompanyPayload,
   GetCompanyClientListSucceedResponse,
   UpdateCompanyPayload,
+  UpdateMainCompany,
 } from "./company.types";
 
 export class CompanyService {
@@ -42,6 +43,24 @@ export class CompanyService {
     const payloadFormData = objectToFormData(payload);
 
     return await axiosClient.post("/updateCompany", payloadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+  }
+
+  /**
+   * Update main company.
+   *
+   * @access POST /updateMainCompany
+   */
+  static async updateMainCompany(
+    axiosClient: AxiosInstance,
+    payload: UpdateMainCompany
+  ) {
+    const payloadFormData = objectToFormData(payload);
+
+    return await axiosClient.post("/updateMainCompany", payloadFormData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

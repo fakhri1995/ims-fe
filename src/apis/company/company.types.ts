@@ -42,6 +42,23 @@ export interface UpdateCompanyPayload {
 }
 
 /**
+ * @access POST /updateMainCompany
+ */
+export interface UpdateMainCompany {
+  name: string;
+  address: string;
+  phone_number: string;
+  company_logo: File;
+  singkatan?: string;
+  tanggal_pkp?: Date | string;
+  penanggung_jawab?: string;
+  npwp?: string;
+  fax?: string;
+  email?: string;
+  website?: string;
+}
+
+/**
  * @access POST /addCompanyBranch
  * @access POST /addCompanyClient
  * @access POST /addCompanySub

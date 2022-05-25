@@ -1,4 +1,5 @@
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 import {
   DatePicker,
   Empty,
@@ -11,7 +12,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import Link from "next/link";
+// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import CountUp from "react-countup";
@@ -20,6 +21,8 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
+
+import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   COMPANY_DETAIL_GET,
@@ -35,8 +38,11 @@ import {
 } from "lib/features";
 import {
   generateStaticAssetUrl,
+  getBase64,
   permissionWarningNotification,
 } from "lib/helper";
+
+import { CompanyService } from "apis/company";
 
 import Buttonsys from "../../../components/button";
 import DrawerBank from "../../../components/drawer/companies/mycompany/drawerMyCompanyBankCreate";
@@ -49,6 +55,7 @@ import {
   EmailIconSvg,
   LocationIconSvg,
   PhoneIconSvg,
+  RefreshIconSvg,
   ShareIconSvg,
   SubLocationIconSvg,
   TrashIconSvg,
@@ -96,6 +103,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     isAllowedToGetMainLocations || isAllowedToGetLocations;
 
   const rt = useRouter();
+  const axiosClient = useAxiosClient();
 
   const tok = initProps;
   const [instanceForm] = Form.useForm();
@@ -132,6 +140,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     address: "",
     phone_number: "",
     image_logo: "",
+    company_logo: null, // File
     singkatan: "",
     tanggal_pkp: moment(new Date()),
     penanggung_jawab: "",
@@ -359,7 +368,24 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     },
   ];
 
+  const [loadingfoto, setloadingfoto] = useState(false);
+
   //handler
+  const onChangeGambar = async (e) => {
+    setloadingfoto(true);
+
+    const blobFile = e.target.files[0];
+    const base64Data = await getBase64(blobFile);
+
+    setdisplaydata({
+      ...displaydata,
+      image_logo: base64Data,
+      company_logo: blobFile,
+    });
+
+    setloadingfoto(false);
+  };
+
   const onChangeInput = (e) => {
     setdisplaydata({
       ...displaydata,
@@ -424,16 +450,16 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     }
 
     seteditloading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateMainCompany`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(displaydata),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
+
+    const updatePayload = { ...displaydata };
+    if ("image_logo" in updatePayload) {
+      delete updatePayload["image_logo"];
+    }
+
+    CompanyService.updateMainCompany(axiosClient, updatePayload)
+      .then((response) => {
+        const res2 = response.data;
+
         setmodaledit(false);
         seteditloading(false);
         if (res2.success) {
@@ -451,8 +477,15 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             duration: 3,
           });
         }
+      })
+      .catch(() => {
+        notification["error"]({
+          message: "Terjadi kesalahan saat memperbarui detail company",
+          duration: 3,
+        });
       });
   };
+
   const handleDeleteBank = () => {
     setbankloadinghapus(true);
     fetch(
@@ -653,6 +686,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         phone_number: "-",
         website: "-",
         image_logo: "/image/Company.png",
+        company_logo: null,
         fax: "-",
       });
       setpraloadingedit(false);
@@ -808,6 +842,21 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                   </div>
                 </div>
                 <div className="mt-14 flex flex-col justify-center text-center">
+                  {editable && (
+                    <div className=" flex mx-auto mb-5">
+                      <Buttonsys
+                        type="primaryInput"
+                        onChangeGambar={onChangeGambar}
+                      >
+                        {loadingfoto ? (
+                          <LoadingOutlined style={{ marginRight: `0.5rem` }} />
+                        ) : (
+                          <RefreshIconSvg size={15} color={`#ffffff`} />
+                        )}
+                        Atur Ulang
+                      </Buttonsys>
+                    </div>
+                  )}
                   {editable ? (
                     <div className={`flex flex-col px-5`}>
                       <div className="flex">
