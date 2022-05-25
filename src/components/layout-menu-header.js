@@ -24,9 +24,9 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             <h2 className="text-sm font-normal mb-1">
               {dataProfile.data.email}
             </h2>
-            <Linkheader href={`/profile`} ref="noreferrer">
+            {/* <Linkheader href={`/profile`} ref="noreferrer">
               Profile Settings
-            </Linkheader>
+            </Linkheader> */}
           </div>
         </div>
         <div>
