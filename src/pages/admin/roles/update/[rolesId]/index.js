@@ -27,12 +27,16 @@ function RolesUpdate({
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRole = hasPermission(ROLE_GET);
   const isAllowedToUpdateRole = hasPermission(ROLE_UPDATE);
   const isAllowedToGetModulesList = hasPermission(MODULES_GET);
 
+  const rt = useRouter();
   const tok = initProps;
 
   const { TextArea } = Input;

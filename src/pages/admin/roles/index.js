@@ -1,4 +1,4 @@
-import { Button, Table, notification } from "antd";
+import { Button, Table } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -8,6 +8,7 @@ import Sticky from "wil-react-sticky";
 import { useAccessControl } from "contexts/access-control";
 
 import { ROLES_GET, ROLE_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -17,11 +18,18 @@ function Roles({ initProps, dataProfile, dataRoles, sidemenu }) {
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToAddRole = hasPermission(ROLE_ADD);
 
+  useEffect(() => {
+    if (!isAllowedToGetRolesList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role");
+    }
+  }, [isAllowedToGetRolesList]);
+
+  const rt = useRouter();
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   const { originPath } = rt.query;
