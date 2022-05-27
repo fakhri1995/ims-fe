@@ -191,6 +191,7 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const filteredData = useMemo(() => {
     if (!data) {
@@ -212,7 +213,8 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
         key: "id",
         title: "No.",
         width: 64,
-        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
+        render: (_, __, index) =>
+          `${(currentPage - 1) * pageSize + index + 1}.`,
       },
       {
         title: "Nama",
@@ -269,12 +271,15 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
             : formatDateToLocale(check_out, "dd MMM yyyy, HH:mm"),
       },
     ];
-  }, [currentPage]);
+  }, [pageSize, currentPage]);
 
   const tablePaginationConf = useMemo(
     () =>
       getAntdTablePaginationConfig({
-        onChange: (pageNumber) => setCurrentPage(pageNumber),
+        onChange: (pageNumber, pageSize) => {
+          setCurrentPage(pageNumber);
+          setPageSize(pageSize);
+        },
       }),
     []
   );
@@ -326,6 +331,7 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
   );
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const filteredData = useMemo(() => {
     if (!data) {
@@ -346,7 +352,8 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
       {
         title: "No.",
         width: 64,
-        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
+        render: (_, __, index) =>
+          `${(currentPage - 1) * pageSize + index + 1}.`,
       },
       {
         title: "Nama",
@@ -400,12 +407,15 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
         },
       },
     ];
-  }, [currentPage]);
+  }, [pageSize, currentPage]);
 
   const tablePaginationConf = useMemo(
     () =>
       getAntdTablePaginationConfig({
-        onChange: (pageNumber) => setCurrentPage(pageNumber),
+        onChange: (pageNumber, pageSize) => {
+          setCurrentPage(pageNumber);
+          setPageSize(pageSize);
+        },
       }),
     []
   );

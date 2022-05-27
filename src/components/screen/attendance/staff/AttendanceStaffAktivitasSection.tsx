@@ -57,6 +57,7 @@ export const AttendanceStaffAktivitasSection: FC<
   const { attendeeStatus } = useGetAttendeeInfo();
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const [activityDrawerState, dispatch] = useReducer(
     _aktivitasDrawerToggleReducer,
@@ -76,7 +77,8 @@ export const AttendanceStaffAktivitasSection: FC<
       {
         key: "id",
         title: "No.",
-        render: (_, __, index) => `${(currentPage - 1) * 10 + index + 1}.`,
+        render: (_, __, index) =>
+          `${(currentPage - 1) * pageSize + index + 1}.`,
         width: 64,
       },
       {
@@ -109,12 +111,15 @@ export const AttendanceStaffAktivitasSection: FC<
     });
 
     return columns;
-  }, [tabActiveKey, dynamicNameFieldPairs]);
+  }, [pageSize, currentPage, tabActiveKey, dynamicNameFieldPairs]);
 
   const tablePaginationConf = useMemo(
     () =>
       getAntdTablePaginationConfig({
-        onChange: (pageNumber) => setCurrentPage(pageNumber),
+        onChange: (pageNumber, pageSize) => {
+          setCurrentPage(pageNumber);
+          setPageSize(pageSize);
+        },
       }),
     []
   );
