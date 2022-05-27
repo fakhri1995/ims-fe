@@ -87,7 +87,7 @@ export interface ISetAttendanceTogglePayload<T extends File> {
   lat: string;
   geo_loc: string | null;
   evidence: T;
-  wfo: boolean;
+  wfo: 1 | 0;
 }
 
 /**

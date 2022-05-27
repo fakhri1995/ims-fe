@@ -35,10 +35,11 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
   ({ onUbahButtonClicked, aktivitasId }) => {
     const axiosClient = useAxiosClient();
     const { hasPermission } = useAccessControl();
-    const isGrantedToUpdateDeleteForm = hasPermission([
-      ATTENDANCE_FORM_UPDATE,
-      ATTENDANCE_FORM_DELETE,
-    ]);
+    const isAllowedToUpdateFormDetail = hasPermission(ATTENDANCE_FORM_UPDATE);
+    const isAllowedToDeleteFormDetail = hasPermission(ATTENDANCE_FORM_DELETE);
+
+    const canOpenUpdateDrawer =
+      isAllowedToUpdateFormDetail || isAllowedToDeleteFormDetail;
 
     const { data, isLoading } = useQuery(
       [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, aktivitasId],
@@ -120,8 +121,8 @@ export const DetailFormAktivitasCard: FC<IDetailFormAktivitasCard> = memo(
         <div className="self-center">
           {!isLoading && (
             <ButtonSys
-              type={!isGrantedToUpdateDeleteForm ? "primary" : "default"}
-              disabled={isLoading || !isGrantedToUpdateDeleteForm}
+              type={!canOpenUpdateDrawer ? "primary" : "default"}
+              disabled={isLoading || !canOpenUpdateDrawer}
               onClick={onUbahButtonClicked}
             >
               <EditIcon className="mr-2 w-3 h-3" />

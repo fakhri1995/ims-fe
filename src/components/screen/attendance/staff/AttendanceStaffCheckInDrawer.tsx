@@ -120,7 +120,7 @@ export const AttendanceStaffCheckInDrawer: FC<
           geo_loc: locationDisplayName || "",
           lat: position?.coords.latitude.toString(),
           long: position?.coords.longitude.toString(),
-          wfo: value?.work_from === "WFO",
+          wfo: value?.work_from === "WFO" ? 1 : 0,
         },
         {
           onSuccess: (response) => {

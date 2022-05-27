@@ -5,8 +5,9 @@ import {
   useQueryParams,
   withDefault,
 } from "next-query-params";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
   AddNewAktivitasButton,
@@ -18,7 +19,8 @@ import {
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ATTENDANCE_FORM_ADD } from "lib/features";
+import { ATTENDANCE_FORMS_GET, ATTENDANCE_FORM_ADD } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import { IGetAttendanceFormsParams } from "apis/attendance";
 
@@ -30,7 +32,13 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
   token,
   dataProfile,
 }) => {
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToGetForms = hasPermission(ATTENDANCE_FORMS_GET);
 
   const pageBreadcrumb: PageBreadcrumbValue[] = [
     {
@@ -69,6 +77,12 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
       keyword: searchValue,
     });
   }, []);
+
+  useEffect(() => {
+    if (!isAllowedToGetForms) {
+      permissionWarningNotification("Mendapatkan", "Daftar Form Aktivitas");
+    }
+  }, [isAllowedToGetForms]);
 
   return (
     <LayoutDashboard
@@ -113,12 +127,14 @@ const ListFormAktivitasPage: NextPage<ProtectedPageProps> = ({
           </div>
         </div>
 
-        <FormAktivitasDrawer
-          title="Tambah Form Aktivitas Baru"
-          buttonOkText="Simpan Form"
-          onvisible={setCreateDrawerShown}
-          visible={isCreateDrawerShown}
-        />
+        <AccessControl hasPermission={ATTENDANCE_FORM_ADD}>
+          <FormAktivitasDrawer
+            title="Tambah Form Aktivitas Baru"
+            buttonOkText="Simpan Form"
+            onvisible={setCreateDrawerShown}
+            visible={isCreateDrawerShown}
+          />
+        </AccessControl>
       </div>
     </LayoutDashboard>
   );

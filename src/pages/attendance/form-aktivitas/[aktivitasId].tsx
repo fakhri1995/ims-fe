@@ -1,8 +1,9 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
+import { AccessControl } from "components/features/AccessControl";
 import LayoutDashboard from "components/layout-dashboardNew";
 import { FormAktivitasDrawer } from "components/screen/form-aktivitas";
 import {
@@ -15,7 +16,12 @@ import { useAccessControl } from "contexts/access-control";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
-import { ATTENDANCE_FORM_GET } from "lib/features";
+import {
+  ATTENDANCE_FORM_DELETE,
+  ATTENDANCE_FORM_GET,
+  ATTENDANCE_FORM_UPDATE,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import {
   AttendanceFormAktivitasService,
@@ -30,9 +36,21 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
   dataProfile,
   token,
 }) => {
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToShowFormAktivitasDetail = hasPermission(ATTENDANCE_FORM_GET);
+  const isAllowedToUpdateFormDetail = hasPermission(ATTENDANCE_FORM_UPDATE);
+  const isAllowedToDeleteFormDetail = hasPermission(ATTENDANCE_FORM_DELETE);
+
+  const canOpenUpdateDrawer =
+    isAllowedToUpdateFormDetail || isAllowedToDeleteFormDetail;
+
   const router = useRouter();
   const axiosClient = useAxiosClient();
-  const { hasPermission } = useAccessControl();
 
   const { aktivitasId } = router.query;
 
@@ -40,7 +58,7 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
     [AttendanceFormAktivitasServiceQueryKeys.FIND_ONE, +aktivitasId],
     () => AttendanceFormAktivitasService.findOne(axiosClient, +aktivitasId),
     {
-      enabled: hasPermission(ATTENDANCE_FORM_GET),
+      enabled: isAllowedToShowFormAktivitasDetail,
     }
   );
 
@@ -65,6 +83,12 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
     setIsDrawerShown(true);
   }, []);
 
+  useEffect(() => {
+    if (!isAllowedToShowFormAktivitasDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Form Aktivitas");
+    }
+  }, [isAllowedToShowFormAktivitasDetail]);
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -72,33 +96,37 @@ const FormAktivitasDetailPage: NextPage<ProtectedPageProps> = ({
       fixedBreadcrumbValues={pageBreadcrumb}
       sidemenu="attendance/form-aktivitas"
     >
-      <div className="px-5 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
-        {/* First Column */}
-        <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5">
-          {/* Project detail card */}
-          <DetailFormAktivitasCard
-            aktivitasId={+aktivitasId}
-            onUbahButtonClicked={onUbahButtonClicked}
+      <AccessControl hasPermission={ATTENDANCE_FORM_GET}>
+        <div className="px-5 flex flex-wrap lg:flex-nowrap lg:space-x-6 space-y-6 lg:space-y-0">
+          {/* First Column */}
+          <div className="w-full lg:w-2/5 xl:w-1/3 2xl:w-1/5">
+            {/* Project detail card */}
+            <DetailFormAktivitasCard
+              aktivitasId={+aktivitasId}
+              onUbahButtonClicked={onUbahButtonClicked}
+            />
+          </div>
+
+          {/* Second Column */}
+          <div className="w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5 space-y-6">
+            {/* Staff (editable) card */}
+            <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
+
+            {/* Aktivitas info card */}
+            <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
+          </div>
+        </div>
+
+        {canOpenUpdateDrawer && (
+          <FormAktivitasDrawer
+            title="Perbarui Form Aktivitas"
+            buttonOkText="Simpan Form"
+            onvisible={setIsDrawerShown}
+            visible={isDrawerShown}
+            formAktivitasId={+aktivitasId}
           />
-        </div>
-
-        {/* Second Column */}
-        <div className="w-full lg:w-3/5 xl:w-2/3 2xl:w-4/5 space-y-6">
-          {/* Staff (editable) card */}
-          <AktivitasUserListEditableCard aktivitasId={+aktivitasId} />
-
-          {/* Aktivitas info card */}
-          <AktivitasTableInfoCard aktivitasId={+aktivitasId} />
-        </div>
-      </div>
-
-      <FormAktivitasDrawer
-        title="Perbarui Form Aktivitas"
-        buttonOkText="Simpan Form"
-        onvisible={setIsDrawerShown}
-        visible={isDrawerShown}
-        formAktivitasId={+aktivitasId}
-      />
+        )}
+      </AccessControl>
     </LayoutDashboard>
   );
 };

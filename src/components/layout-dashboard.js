@@ -42,7 +42,7 @@ function LayoutDashboard({
   // if (childBreacrumbDD[1] === "Update") {
   //     childBreacrumbDD.splice(2, 1)
   // }
-  const [coll, setColl] = useState(true);
+  const [coll, setColl] = useState(false);
   const [collsmall, setCollsmall] = useState(true);
   const [tinggi, setTinggi] = useState(90);
   const [loadingspin, setloadingspin] = useState(false);

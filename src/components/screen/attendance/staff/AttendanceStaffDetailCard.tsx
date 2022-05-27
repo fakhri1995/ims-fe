@@ -82,16 +82,16 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
             </div>
           )
         }
-        footer={
-          !isLoading && (
-            <div className="flex justify-center">
-              <ButtonSys type="default" onClick={onUnduhIdCardButtonClicked}>
-                <DownloadOutlined className="mr-2" />
-                Unduh ID Card
-              </ButtonSys>
-            </div>
-          )
-        }
+        // footer={
+        //   !isLoading && (
+        //     <div className="flex justify-center">
+        //       <ButtonSys type="default" onClick={onUnduhIdCardButtonClicked}>
+        //         <DownloadOutlined className="mr-2" />
+        //         Unduh ID Card
+        //       </ButtonSys>
+        //     </div>
+        //   )
+        // }
       />
     );
   }

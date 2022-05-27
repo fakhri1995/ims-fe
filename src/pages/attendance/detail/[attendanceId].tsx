@@ -1,6 +1,7 @@
 import { Spin } from "antd";
 import { GetServerSideProps, NextPage } from "next";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 import LayoutDashboard from "components/layout-dashboardNew";
 import {
@@ -13,6 +14,7 @@ import {
 import { useAccessControl } from "contexts/access-control";
 
 import { ATTENDANCE_USER_ADMIN_GET, ATTENDANCE_USER_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 
 import { useAttendanceDetailSelector } from "apis/attendance";
 
@@ -55,6 +57,12 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
   } = useAttendanceDetailSelector(attendanceId);
 
   const shouldShowAktivitasSpinner = data === undefined || isLoading;
+
+  useEffect(() => {
+    if (!isAllowedToGet) {
+      permissionWarningNotification("Mendapatkan", "Detail Absensi");
+    }
+  }, [isAllowedToGet]);
 
   return (
     <LayoutDashboard
