@@ -168,10 +168,20 @@ const AssetUpdate = ({ sidemenu, dataProfile, initProps, assettypeid }) => {
       if (prop === "parent") {
         t[prop] = idparentstate;
       } else {
-        t[prop] = updatedata[prop];
+        t[prop] =
+          typeof updatedata[prop] === "boolean"
+            ? updatedata[prop]
+              ? 1
+              : 0
+            : updatedata[prop];
       }
     }
+
+    // HACK: workaround for 400 error from backend because of `is_deleted` is not attached within the payload
+    t = { ...t, is_deleted: Number(Boolean(updatedata.is_deleted)) };
+
     setloadingupdate(true);
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAsset`, {
       method: "PUT",
       headers: {
