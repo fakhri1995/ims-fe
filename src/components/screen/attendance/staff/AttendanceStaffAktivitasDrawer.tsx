@@ -29,7 +29,6 @@ import {
   FormAktivitasTypes,
   IAddAttendanceActivityPayload,
   IUpdateAttendanceActivityPayload,
-  useGetAttendeeInfo,
   useGetUserAttendanceTodayActivities,
   useMutateAttendanceActivity,
 } from "apis/attendance";
@@ -59,7 +58,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
 > = ({ action = "create", visible, onClose, activityFormId }) => {
   const [form] = Form.useForm();
   const axiosClient = useAxiosClient();
-  const { attendeeStatus } = useGetAttendeeInfo();
   const { todayActivities, findTodayActivity } =
     useGetUserAttendanceTodayActivities();
   const { hasPermission } = useAccessControl();
@@ -68,10 +66,22 @@ export const AttendanceStaffAktivitasDrawer: FC<
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
 
   const {
-    addMutation: { mutate: addAttendanceActivity },
-    updateMutation: { mutate: updateAttendanceActivity },
-    deleteMutation: { mutate: deleteAttendanceActivity },
+    addMutation: {
+      mutate: addAttendanceActivity,
+      isLoading: addMutationLoading,
+    },
+    updateMutation: {
+      mutate: updateAttendanceActivity,
+      isLoading: updateMutationLoading,
+    },
+    deleteMutation: {
+      mutate: deleteAttendanceActivity,
+      isLoading: deleteMutationLoading,
+    },
   } = useMutateAttendanceActivity();
+
+  const isOnMutationLoading =
+    addMutationLoading || updateMutationLoading || deleteMutationLoading;
 
   const { data: userAttendanceForm, isLoading } = useQuery(
     AuthServiceQueryKeys.DETAIL_PROFILE,
@@ -237,6 +247,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
       onClick={() => form.submit()}
       buttonCancelText={action === "update" ? "Hapus Aktivitas" : undefined}
       onButtonCancelClicked={handleOnDeleteAktivitas}
+      disabled={isOnMutationLoading}
     >
       <div className="space-y-6">
         {isLoading && (
