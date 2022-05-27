@@ -127,8 +127,9 @@ export interface UsersAttendance {
   lat_check_out: string;
   geo_loc_check_in: GeolocationCheckInOut | null;
   geo_loc_check_out: GeolocationCheckInOut | null;
+  is_wfo: 0 | 1;
+  checked_out_by_system: 0 | 1;
   evidence: Evidence[];
-  is_wfo: number;
   user: UsersAttendanceUser;
 }
 
@@ -145,8 +146,24 @@ export type IGetAttendanceUserSucceedResponse =
   HttpRequestWithDataSucceedResponse<GetAttendanceUserData>;
 
 export interface GetAttendanceUserData {
-  user_attendance: UserAttendance;
+  user_attendance: UserAttendanceDetailData;
   attendance_activities: AttendanceActivity[];
+}
+
+export interface UserAttendanceDetailData {
+  id: number;
+  user_id: number;
+  check_in: Date;
+  check_out: Date;
+  long_check_in: string;
+  lat_check_in: string;
+  long_check_out: string;
+  lat_check_out: string;
+  geo_loc_check_in: GeolocationCheckInOut | null;
+  geo_loc_check_out: GeolocationCheckInOut | null;
+  is_wfo: number;
+  checked_out_by_system: number;
+  evidence: Evidence[];
 }
 
 export interface AttendanceActivity {
@@ -164,17 +181,17 @@ export interface AttendanceForm {
 }
 
 export interface AttendanceFormDetail {
-  required: boolean;
-  name: string;
-  description: string;
-  type: number;
   key: string;
-  list?: string[];
+  name: string;
+  type: number;
+  required: boolean;
+  description: string;
+  list?: any[];
 }
 
 export interface AttendanceActivityDetail {
-  value: number[] | string;
   key: string;
+  value: number[] | string;
 }
 
 export interface Evidence {

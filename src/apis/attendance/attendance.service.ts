@@ -59,7 +59,7 @@ export class AttendanceService {
 
     const endpoint = withAdminEndpoint
       ? "/getAttendanceUserAdmin"
-      : "/getAttendancesUser";
+      : "/getAttendanceUser";
 
     return await axiosClient.get<IGetAttendanceUserSucceedResponse>(
       endpoint + querySearch

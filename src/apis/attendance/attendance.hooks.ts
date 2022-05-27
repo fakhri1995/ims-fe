@@ -542,27 +542,43 @@ export const useMutateAttendanceActivity = () => {
 };
 
 /**
- * Custom hook digunakan untuk dan hanya pada halaman detail attendance.
- * Hook akan mempersiapkan data yang akan ditampilkan oleh UI component sehingga tidak ada lagi manipulasi pada consumer hook ini.
+ * Custom hook ini sama seperti custom hook `useGetUserAttendanceActivities` yaitu mapping dynamic data
+ *  menjadi column beserta data source untuk component <Table>.
  *
- * Hook ini melakukan:
- * 1. Handle ketika aktivitas diganti (aktivitas jam X diganti dengan aktivitas jam Y).
- * 2. Merge data dari backend sehingga bisa ditampilkan pada UI.
- *
- * NOTE: arg `attendanceId` sangat mungkin memiliki nilai `undefined`. Oleh karena itu hanya jalankan query ketika `attendanceId !== undefined`.
+ * Hook ini hanya digunakan pada halaman `/attendance/detail/[aktivitasId]` dan digunakan untuk menggantikan logic sebelumnya.
  */
-export const useAttendanceDetailSelector = (attendanceId: number) => {
+export const useGetAttendanceDetailDataSource = (attendanceId: number) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToGetAsAdmin = hasPermission(ATTENDANCE_USER_ADMIN_GET);
   const isAllowedToGetAsUser = hasPermission(ATTENDANCE_USER_GET);
   const isAllowedToGet = isAllowedToGetAsAdmin || isAllowedToGetAsUser;
 
-  const [selectedActivityIndex, setSelectedActivityIndex] = useState<
-    number | undefined
-  >(undefined);
+  const { data: userAttendanceForm } = useQuery(
+    [
+      AttendanceServiceQueryKeys.ATTENDANCE_USER_GET,
+      attendanceId,
+      isAllowedToGetAsAdmin,
+    ],
+    () =>
+      AttendanceService.findOne(
+        axiosClient,
+        attendanceId,
+        isAllowedToGetAsAdmin
+      ),
+    {
+      enabled: !isAllowedToGet ? false : !!attendanceId,
+      select: (response) => [
+        response.data.data.attendance_activities[0].attendance_form,
+      ],
+    }
+  );
 
-  const { data, isLoading } = useQuery(
+  const {
+    data: rawDataSource,
+    isLoading: isDataSourceLoading,
+    isRefetching: isDataSourceRefetching,
+  } = useQuery(
     [
       AttendanceServiceQueryKeys.ATTENDANCE_USER_GET,
       attendanceId,
@@ -577,105 +593,130 @@ export const useAttendanceDetailSelector = (attendanceId: number) => {
     {
       enabled: !isAllowedToGet ? false : !!attendanceId,
       select: (response) => {
-        const data: Data = [];
-        response.data.data.attendance_activities.forEach(
-          (attendanceActivity) => {
-            const attendanceForm = attendanceActivity.attendance_form;
-
-            /** Record object (Map-like) untuk mempermudah manipulasi berikutnya */
-            const attendanceFormShape: AttendanceFormShapeType = {};
-            attendanceForm.details.forEach((detail) => {
-              attendanceFormShape[detail.key] = {
-                name: detail.name,
-                list: detail.list || undefined,
-              };
-            });
-
-            const datum: Datum = {
-              timestamp: attendanceActivity.updated_at,
-              activities: {},
-            };
-
-            attendanceActivity.details.forEach((detail) => {
-              const activityName = attendanceFormShape[detail.key].name;
-
-              // normal activity
-              if (typeof detail.value === "string") {
-                datum.activities[activityName] = detail.value;
-              } else {
-                const checkboxActivityDetail: CheckboxActivityType = {};
-
-                attendanceFormShape[detail.key].list.forEach(
-                  (checkboxValue, index) => {
-                    let isSelected = false;
-                    (detail.value as number[]).forEach((selectedIndex) => {
-                      if (isSelected) {
-                        return;
-                      }
-
-                      isSelected = selectedIndex === index;
-                    });
-
-                    checkboxActivityDetail[checkboxValue] = isSelected;
-                  }
-                );
-
-                datum.activities[activityName] = checkboxActivityDetail;
-              }
-            });
-
-            data.push(datum);
-          }
-        );
-
-        return data;
+        return response.data.data.attendance_activities;
       },
     }
   );
 
-  /**
-   * Seleksi satu data yang saat ini sedang ditampilkan.
-   * Data yang terpilih akan berubah ketika timestamp yang dipilih oleh User berbeda.
-   *
-   * Data yang dihasilkan akan ditampilkan pada komponen @see {AttendanceDetailFormAttendanceSection}
-   */
-  const currentActivityData = useMemo(() => {
-    if (!data) {
+  const { dynamic, keyValuePairs } = useMemo<{
+    dynamic: {
+      columnNames: string[];
+      fieldKeys: string[];
+    };
+    keyValuePairs: { [key: string]: string[] };
+  }>(() => {
+    if (!userAttendanceForm || userAttendanceForm.length === 0) {
+      return {
+        dynamic: { columnNames: [], fieldKeys: [] },
+        keyValuePairs: {},
+      };
+    }
+
+    const dynamic = userAttendanceForm[0].details.reduce(
+      (prevValue, currValue) => {
+        return {
+          ...prevValue,
+          columnNames: [...prevValue.columnNames, currValue.name],
+          fieldKeys: [...prevValue.fieldKeys, currValue.key],
+        };
+      },
+      {
+        columnNames: [],
+        fieldKeys: [],
+      } as {
+        columnNames: string[];
+        fieldKeys: string[];
+      }
+    );
+
+    const keyValuePairs = userAttendanceForm[0].details.reduce(
+      (previousValue, curr) => {
+        const newValue = { ...previousValue };
+        if (curr.list && curr.type === FormAktivitasTypes.CHECKLIST) {
+          newValue[curr.key] = curr.list;
+          return newValue;
+        }
+
+        return newValue;
+      },
+      {} as { [key: string]: string[] }
+    );
+
+    return { dynamic, keyValuePairs };
+  }, [userAttendanceForm]);
+
+  /** Menghasilkan dataSource untuk table. */
+  const mappedDataSource = useMemo(() => {
+    if (
+      !rawDataSource ||
+      rawDataSource.length === 0 ||
+      !userAttendanceForm ||
+      userAttendanceForm.length === 0
+    ) {
       return undefined;
     }
 
-    if (selectedActivityIndex === undefined) {
-      setSelectedActivityIndex(0);
-      return undefined;
-    }
+    const result: DynamicTableTypes[] = [];
 
-    return data.find((_, index) => index === selectedActivityIndex);
-  }, [data, selectedActivityIndex]);
+    /** NOTE: iterasi di bawah ini cukup berat. Sangat mungkin menjadi performance issue. */
+    rawDataSource.forEach((activity) => {
+      const buffer: DynamicTableTypes = {
+        key: activity.id,
+        updated_at: activity.updated_at.toString(),
+      };
+
+      activity.details.forEach((activityDetail) => {
+        if (!dynamic.fieldKeys.includes(activityDetail.key)) {
+          return;
+        }
+
+        if (activityDetail.value instanceof Array) {
+          const actualListValues = keyValuePairs[activityDetail.key];
+
+          const actualValues = [];
+          activityDetail.value.forEach((valueIndex) => {
+            actualValues.push(actualListValues[valueIndex]);
+          });
+
+          buffer[activityDetail.key] = actualValues.join(", ");
+        } else {
+          buffer[activityDetail.key] = activityDetail.value;
+        }
+      });
+
+      result.push(buffer);
+    });
+
+    return result;
+  }, [rawDataSource, userAttendanceForm]);
 
   return {
-    data,
-    isLoading,
-    currentActivityData,
-    selectedActivityIndex,
-    setSelectedActivityIndex,
+    /**
+     * Murni data yang akan ditampilkan ke component <Table> tidak perlu mapping lagi pada consumer component.
+     *
+     *
+     * @example
+     * ```tsx
+     * <Table dataSource={dataSource} />
+     * ```
+     */
+    dataSource: mappedDataSource,
+
+    /** An indicator when there is data loading (refer to `dataSource` property above) */
+    isDataSourceLoading: isDataSourceLoading || isDataSourceRefetching,
+
+    /**
+     * Object yang berisi pasangan column name beserta keynya.
+     *
+     * Object ini digunakan untuk mapping dynamic table column header dengan assign dataIndex sesuai
+     *  key dari column namenya.
+     *
+     *
+     * @example
+     * ```ts
+     * dynamicNameFieldPairs.columnNames[0]: dynamicNameFieldPairs.fieldKey[0]
+     * ```
+     */
+    dynamicNameFieldPairs: dynamic,
   };
 };
-
-/**
- * Type helpers for `useAttendanceDetailSelector` hook.
- *
- * @private
- */
-type AttendanceFormShapeType = Record<
-  string,
-  { name: string; list?: string[] }
->;
-type Data = Datum[];
-interface Datum {
-  timestamp: Date | string;
-  activities: Record<ActivityName, ActivityDetail>;
-}
-type ActivityName = string;
-type ActivityDetail = ActivityExplanation | CheckboxActivityType;
-type ActivityExplanation = string;
-type CheckboxActivityType = Record<string, boolean>;
