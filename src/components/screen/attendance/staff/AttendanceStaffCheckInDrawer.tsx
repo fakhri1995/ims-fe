@@ -34,7 +34,8 @@ export const AttendanceStaffCheckInDrawer: FC<
   const [form] = Form.useForm();
 
   const { attendeeStatus } = useGetAttendeeInfo();
-  const { mutate: toggleCheckInCheckOut } = useToggleCheckInCheckOut();
+  const { mutate: toggleCheckInCheckOut, isLoading: checkInOutLoading } =
+    useToggleCheckInCheckOut();
 
   const { position, isPermissionBlocked } = useGeolocationAPI();
 
@@ -217,7 +218,11 @@ export const AttendanceStaffCheckInDrawer: FC<
         visible={visible}
         onClose={onClose}
         onClick={() => form.submit()}
-        disabled={uploadPictureLoading || uploadedEvidencePicture === null}
+        disabled={
+          uploadPictureLoading ||
+          uploadedEvidencePicture === null ||
+          checkInOutLoading
+        }
       >
         <div className="space-y-6">
           {!isPermissionBlocked && (
