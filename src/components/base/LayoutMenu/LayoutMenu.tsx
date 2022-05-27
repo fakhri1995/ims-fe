@@ -29,6 +29,9 @@ import {
   SIDEBAR_ATTENDANCE_ADMIN,
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
+  SIDEBAR_CMS,
+  SIDEBAR_CMS_CAREER,
+  SIDEBAR_CMS_MESSAGE,
   SIDEBAR_COMPANY,
   SIDEBAR_COMPANY_PROFILE,
   SIDEBAR_DASHBOARD,
@@ -45,6 +48,8 @@ import {
   SIDEBAR_USER_GROUP,
   SIDEBAR_USER_REQUESTER,
 } from "lib/features";
+
+import CmsNavIcon from "assets/vectors/icon-cms-nav.svg";
 
 import layoutMenuStyles from "./LayoutMenu.module.scss";
 import clsx from "clsx";
@@ -264,6 +269,27 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_ASSET_RELATIONSHIP_TYPE) && (
             <Menu.Item key="85">
               <Link href="/admin/relationships">Relationship Type</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* CMS: Career. Messages */}
+      {hasPermission(SIDEBAR_CMS) && (
+        <SubMenu
+          title="CMS"
+          key="9"
+          icon={<CmsNavIcon className="text-[#597e8d]" />}
+        >
+          {hasPermission(SIDEBAR_CMS_CAREER) && (
+            <Menu.Item key="91">
+              <Link href="/admin/careers">Career</Link>
+            </Menu.Item>
+          )}
+
+          {hasPermission(SIDEBAR_CMS_MESSAGE) && (
+            <Menu.Item key="92">
+              <Link href="/admin/messages">Message</Link>
             </Menu.Item>
           )}
         </SubMenu>
