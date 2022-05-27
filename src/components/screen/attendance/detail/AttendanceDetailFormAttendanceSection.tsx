@@ -1,19 +1,21 @@
-import { Skeleton } from "antd";
-import type { FC } from "react";
+import { ConfigProvider, Table } from "antd";
+import { ColumnsType } from "antd/lib/table";
+import { isBefore } from "date-fns";
+import { FC, useMemo, useState } from "react";
 import React from "react";
 
 import { DataEmptyState } from "components/states/DataEmptyState";
 
-import CheckedIcon from "assets/vectors/icon-checked.svg";
-import UncheckedIcon from "assets/vectors/icon-unchecked.svg";
+import { formatDateToLocale } from "lib/date-utils";
+import { getAntdTablePaginationConfig } from "lib/standard-config";
+
+import { useGetAttendanceDetailDataSource } from "apis/attendance";
 
 /**
  * Component AttendanceDetailFormAttendanceSection's props.
  */
 export interface IAttendanceDetailFormAttendanceSection {
-  activities?: Record<string, string | Record<string, boolean>>;
-
-  isLoading?: boolean;
+  attendanceId?: number;
 }
 
 /**
@@ -21,79 +23,77 @@ export interface IAttendanceDetailFormAttendanceSection {
  */
 export const AttendanceDetailFormAttendanceSection: FC<
   IAttendanceDetailFormAttendanceSection
-> = ({ activities, isLoading }) => {
+> = ({ attendanceId }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
+    useGetAttendanceDetailDataSource(attendanceId);
+  const tableColums = useMemo<ColumnsType>(() => {
+    const columns: ColumnsType = [
+      {
+        key: "id",
+        title: "No.",
+        render: (_, __, index) =>
+          `${(currentPage - 1) * pageSize + index + 1}.`,
+        width: 64,
+      },
+      {
+        key: "id",
+        title: "Waktu Pengisian",
+        dataIndex: "updated_at",
+        sorter: (a: string, b: string) => {
+          const lhsDate = new Date(a);
+          const rhsDate = new Date(b);
+
+          return isBefore(rhsDate, lhsDate) ? -1 : 1;
+        },
+        render: (value) => {
+          const formattedDate = formatDateToLocale(new Date(value), "HH:mm");
+
+          return <>{formattedDate}</>;
+        },
+      },
+    ];
+
+    dynamicNameFieldPairs.columnNames.forEach((column, index) => {
+      columns.push({
+        key: dynamicNameFieldPairs.fieldKeys[index],
+        title: column,
+        dataIndex: dynamicNameFieldPairs.fieldKeys[index],
+      });
+    });
+
+    return columns;
+  }, [pageSize, currentPage, dynamicNameFieldPairs]);
+
+  const tablePaginationConf = useMemo(
+    () =>
+      getAntdTablePaginationConfig({
+        onChange: (pageNumber, pageSize) => {
+          setCurrentPage(pageNumber);
+          setPageSize(pageSize);
+        },
+      }),
+    []
+  );
+
   return (
     <section className="mig-platform space-y-6 text-gray-500">
-      {isLoading && (
-        <>
-          <Skeleton round active paragraph={{ rows: 2 }} />
-          <Skeleton round active paragraph={{ rows: 1 }} />
-          <Skeleton round active paragraph={{ rows: 3 }} />
-        </>
-      )}
-
-      {!isLoading && !activities && (
-        <DataEmptyState caption="Belum memiliki aktivitas." />
-      )}
-
-      {!isLoading &&
-        activities &&
-        Object.entries(activities).map(
-          ([activityName, activityValue], index) => {
-            return typeof activityValue === "string" ? (
-              <div key={index} className="space-y-2">
-                <p className="mig-caption mig-caption--medium text-gray-400">
-                  {activityName}
-                </p>
-                <p>{activityValue}</p>
-              </div>
-            ) : (
-              <React.Fragment key={index}>
-                <p className="mig-caption mig-caption--medium text-gray-400">
-                  {activityName}
-                </p>
-
-                <div className="border rounded-sm">
-                  <CheckboxItem items={activityValue} />
-                </div>
-              </React.Fragment>
-            );
-          }
+      <ConfigProvider
+        renderEmpty={() => (
+          <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
         )}
+      >
+        <Table<typeof dataSource[0]>
+          columns={tableColums}
+          dataSource={dataSource}
+          pagination={tablePaginationConf}
+          loading={isDataSourceLoading}
+          scroll={{ x: "max-content" }}
+          className="tableTypeTask"
+        />
+      </ConfigProvider>
     </section>
-  );
-};
-
-interface ICheckboxItem {
-  items: Record<string, boolean>;
-}
-const CheckboxItem: FC<ICheckboxItem> = ({ items }) => {
-  return (
-    <>
-      {Object.entries(items).map(([key, value], index) => (
-        <div key={index} className="w-full flex p-3 flex-wrap">
-          <div className="w-full lg:w-1/3 text-center py-1 lg:py-0 lg:text-left">
-            <p>{key}</p>
-          </div>
-          <div className="w-full lg:w-2/3 flex items-center space-x-3 py-1 lg:py-0 justify-center lg:justify-start">
-            {value ? (
-              <>
-                <span>
-                  <CheckedIcon />
-                </span>
-                <p>Telah diceklis</p>
-              </>
-            ) : (
-              <>
-                <span>
-                  <UncheckedIcon />
-                </span>
-                <p>Tidak diceklis</p>
-              </>
-            )}
-          </div>
-        </div>
-      ))}
-    </>
   );
 };

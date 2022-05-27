@@ -20,11 +20,15 @@ function RolesCreate({ initProps, dataProfile, dataListModules, sidemenu }) {
   /**
    * Dependencies
    */
-  const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToAddRole = hasPermission(ROLE_ADD);
   const isAllowedToGetModulesList = hasPermission(MODULES_GET);
 
+  const rt = useRouter();
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr[pathArr.length - 1] = "Buat Role";

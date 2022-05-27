@@ -49,6 +49,7 @@ export const AttendanceStaffKehadiranSection: FC<
 
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
 
   const {
     data: kehadiranData,
@@ -82,7 +83,7 @@ export const AttendanceStaffKehadiranSection: FC<
 
           return (
             <span className={spanClassName}>
-              {(currentPage - 1) * 10 + index + 1}.
+              {(currentPage - 1) * pageSize + index + 1}.
             </span>
           );
         },
@@ -144,12 +145,15 @@ export const AttendanceStaffKehadiranSection: FC<
         dataIndex: ["geo_loc_check_out", "display_name"],
       },
     ];
-  }, [currentPage]);
+  }, [pageSize, currentPage]);
 
   const tablePaginationConf = useMemo(
     () =>
       getAntdTablePaginationConfig({
-        onChange: (pageNumber) => setCurrentPage(pageNumber),
+        onChange: (pageNumber, pageSize) => {
+          setCurrentPage(pageNumber);
+          setPageSize(pageSize);
+        },
       }),
     []
   );

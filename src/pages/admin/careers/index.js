@@ -346,7 +346,7 @@ export const Careers = ({ initProps, dataProfile, dataCareers, sidemenu }) => {
       tok={initProps}
       dataProfile={dataProfile}
       pathArr={pathArr}
-      sidemenu={sidemenu}
+      sidemenu={"91"}
       st={st}
     >
       <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">

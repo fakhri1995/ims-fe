@@ -90,25 +90,29 @@ function Groups({
   //-------------------------------------------
 
   //------------get agents groups------------------
-  const groupsAgents = dataGroupsAgents.data.map((doc, idx) => {
-    return {
-      idx: idx,
-      key: doc.id,
-      name: doc.name,
-      description: doc.description,
-    };
-  });
+  const groupsAgents = isAllowedToShowAgentGroups
+    ? dataGroupsAgents.data.map((doc, idx) => {
+        return {
+          idx: idx,
+          key: doc.id,
+          name: doc.name,
+          description: doc.description,
+        };
+      })
+    : [];
   //----------------------------------------------
 
   //----------------get requesters groups---------------
-  const groupsRequesters = dataGroupsRequesters.data.map((doc, idx) => {
-    return {
-      idx: idx,
-      key: doc.id,
-      name: doc.name,
-      description: doc.description,
-    };
-  });
+  const groupsRequesters = isAllowedToShowRequesterGroups
+    ? dataGroupsRequesters.data.map((doc, idx) => {
+        return {
+          idx: idx,
+          key: doc.id,
+          name: doc.name,
+          description: doc.description,
+        };
+      })
+    : [];
   //-----------------------------------------------------
 
   //------------------handle delete groups-------------------
