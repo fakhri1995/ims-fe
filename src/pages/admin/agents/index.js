@@ -1,7 +1,13 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Table, TreeSelect, notification } from "antd";
-import Link from "next/link";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -30,19 +36,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
 
   const rt = useRouter();
 
-  var location_id1 = "",
-    name1 = "",
-    is_enabled1 = "";
-  const { location_id, name, is_enabled } = rt.query;
-  if (location_id) {
-    location_id1 = location_id;
-  }
-  if (name) {
-    name1 = name;
-  }
-  if (is_enabled) {
-    is_enabled1 = is_enabled;
-  }
+  const [queryParams, setQueryParams] = useQueryParams({
+    name: withDefault(StringParam, undefined),
+    company_id: withDefault(NumberParam, undefined),
+    is_enabled: withDefault(NumberParam, undefined),
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+  });
+
   //data payload
   const [rawdata, setrawdata] = useState({
     current_page: "",
@@ -69,20 +70,9 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
   //state row table
   const [rowstate, setrowstate] = useState(0);
   //FILTER
-  const [namasearchact, setnamasearchact] = useState(
-    name1 === "" ? false : true
-  );
-  const [asallokasifilteract, setasallokasifilteract] = useState(
-    location_id1 === "" ? false : true
-  );
-  const [statusfilteract, setstatusfilteract] = useState(
-    is_enabled1 === "" ? false : true
-  );
-  const [namavalue, setnamavalue] = useState(null);
-  const [asallokasivalue, setasallokasivalue] = useState(null);
-  const [statusvalue, setstatusvalue] = useState(null);
-  const [namaasset, setnamaasset] = useState(location_id1);
-  const [defasset, setdefasset] = useState(null);
+  const [namaasset, setnamaasset] = useState(queryParams.company_id);
+  const [triggerRefetchAgentList, setTriggerRefetchAgentList] = useState(0);
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   const { originPath } = rt.query;
@@ -150,50 +140,22 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
 
   //filtering
   const onChangeSearch = (e) => {
-    if (e.target.value === "") {
-      window.location.href = `/admin/agents?name=&location_id=${
-        asallokasifilteract ? location_id1 : ""
-      }&is_enabled=${statusfilteract ? is_enabled1 : ""}`;
-      setnamasearchact(false);
-    } else {
-      setnamasearchact(true);
-      setnamavalue(e.target.value);
-    }
+    setQueryParams({
+      name: e.target.value === "" ? undefined : e.target.value,
+    });
   };
   const onChangeAsalLokasi = (value) => {
-    if (typeof value === "undefined") {
-      window.location.href = `/admin/agents?name=${
-        namasearchact ? name1 : ""
-      }&location_id=&is_enabled=${statusfilteract ? is_enabled1 : ""}`;
-      setasallokasifilteract(false);
-    } else {
-      setasallokasifilteract(true);
-      setasallokasivalue(value);
-    }
+    setQueryParams({
+      company_id: value,
+    });
   };
   const onChangeStatus = (value) => {
-    if (typeof value === "undefined") {
-      window.location.href = `/admin/agents?name=${
-        namasearchact ? name1 : ""
-      }&location_id=${asallokasifilteract ? location_id1 : ""}&is_enabled=`;
-      setstatusfilteract(false);
-    } else {
-      setstatusfilteract(true);
-      setstatusvalue(value);
-    }
+    setQueryParams({
+      is_enabled: value === undefined ? undefined : Number(Boolean(value)),
+    });
   };
   const onFinalClick = () => {
-    window.location.href = `/admin/agents?name=${
-      namasearchact ? (namavalue === null ? name1 : namavalue) : ""
-    }&location_id=${
-      asallokasifilteract
-        ? asallokasivalue === null
-          ? location_id1
-          : asallokasivalue
-        : ""
-    }&is_enabled=${
-      statusfilteract ? (statusvalue === "" ? is_enabled1 : statusvalue) : ""
-    }`;
+    setTriggerRefetchAgentList((prev) => ++prev);
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
@@ -208,14 +170,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
       return;
     }
 
+    const queryPayload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
     setpraloading(true);
     setdatarawloading(true);
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getAgentList?name=${name1}&company_id=${location_id1}${
-        is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`
-      }`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentList${queryPayload}`,
       {
         method: `GET`,
         headers: {
@@ -257,8 +219,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
         }
         setdataagents(dataDD);
         setpraloading(false);
+        setdatarawloading(false);
       });
-  }, [isAllowedToGetAgentList]);
+  }, [
+    isAllowedToGetAgentList,
+    triggerRefetchAgentList,
+    queryParams.page,
+    queryParams.rows,
+  ]);
 
   useEffect(() => {
     if (!isAllowedToGetBranchCompanyList) {
@@ -287,7 +255,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
           }
         };
         recursiveSearchBranchCompany([res2.data], Number(namaasset));
-        setdefasset(selectedBranchCompany.key);
+        // setdefasset(selectedBranchCompany.key);
         setdatalokasi([res2.data]);
         setdatarawloading(false);
       });
@@ -338,7 +306,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     <div className="col-span-3 mr-1">
                       <Input
                         disabled={!isAllowedToGetAgentList}
-                        defaultValue={name1}
+                        defaultValue={queryParams.name}
+                        // defaultValue={name1}
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         placeholder="Cari nama agent"
                         onChange={onChangeSearch}
@@ -349,9 +318,10 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                     <div className="col-span-2 mr-1">
                       <TreeSelect
                         disabled={!isAllowedToGetBranchCompanyList}
-                        defaultValue={
-                          location_id1 === "" ? null : Number(defasset)
-                        }
+                        defaultValue={queryParams.company_id}
+                        // defaultValue={
+                        //   location_id1 === "" ? null : Number(defasset)
+                        // }
                         allowClear
                         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                         treeData={datalokasi}
@@ -376,12 +346,17 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                       <Select
                         disabled={!isAllowedToGetAgentList}
                         defaultValue={
-                          is_enabled1 === ""
-                            ? null
-                            : is_enabled1 === "true"
-                            ? true
-                            : false
+                          queryParams.is_enabled !== undefined
+                            ? Boolean(queryParams.is_enabled)
+                            : undefined
                         }
+                        // defaultValue={
+                        //   is_enabled1 === ""
+                        //     ? null
+                        //     : is_enabled1 === "true"
+                        //     ? true
+                        //     : false
+                        // }
                         placeholder="Pilih status agent"
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeStatus}
@@ -408,40 +383,14 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
               <Table
                 pagination={{
                   disabled: !isAllowedToGetAgentList,
-                  pageSize: 10,
+                  pageSize: queryParams.rows,
+                  current: queryParams.page,
                   total: rawdata.total,
                   onChange: (page, pageSize) => {
-                    setpraloading(true);
-                    fetch(
-                      `${
-                        process.env.NEXT_PUBLIC_BACKEND_URL
-                      }/getAgentList?page=${page}&rows=10&name=${name1}&company_id=${location_id1}${
-                        is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`
-                      }`,
-                      {
-                        method: `GET`,
-                        headers: {
-                          Authorization: JSON.parse(initProps),
-                        },
-                      }
-                    )
-                      .then((res) => res.json())
-                      .then((res2) => {
-                        setrawdata(res2.data);
-                        var temppagination = res2.data.data.map((doc, idx) => ({
-                          ...doc,
-                          profile_image: generateStaticAssetUrl(
-                            doc.profile_image?.link
-                          ),
-                          // profile_image:
-                          //   doc.profile_image === "-" ||
-                          //   doc.profile_image === ""
-                          //     ? `/default-users.jpeg`
-                          //     : doc.profile_image,
-                        }));
-                        setdataagents(temppagination);
-                        setpraloading(false);
-                      });
+                    setQueryParams({
+                      page,
+                      rows: pageSize,
+                    });
                   },
                 }}
                 scroll={{ x: 200 }}

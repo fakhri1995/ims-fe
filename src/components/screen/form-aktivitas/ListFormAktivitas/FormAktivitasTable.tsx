@@ -68,7 +68,8 @@ export const FormAktivitasTable: FC<IFormAktivitasTable> = memo(
               key: datum.id,
               updated_at: formatDateToLocale(
                 new Date(datum.updated_at),
-                "dd MMM yyyy, hh:mm"
+                "dd MMM yyyy, hh:mm",
+                datum.updated_at as string
               ),
             } as GetAttendanceFormsDatum;
           });

@@ -1,7 +1,14 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Table, TreeSelect, notification } from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -58,26 +65,18 @@ function Requesters({
 
   const rt = useRouter();
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    name: withDefault(StringParam, undefined),
+    company_id: withDefault(NumberParam, undefined),
+    location_id: withDefault(NumberParam, undefined),
+    is_enabled: withDefault(NumberParam, undefined),
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+  });
+
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   const { originPath } = rt.query;
-  var location_id1 = "",
-    name1 = "",
-    is_enabled1 = "",
-    company_id1 = "";
-  const { location_id, name, is_enabled, company_id } = rt.query;
-  if (location_id) {
-    location_id1 = location_id;
-  }
-  if (name) {
-    name1 = name;
-  }
-  if (is_enabled) {
-    is_enabled1 = is_enabled;
-  }
-  if (company_id) {
-    company_id1 = company_id;
-  }
   const [rawdata, setrawdata] = useState({
     current_page: "",
     data: [],
@@ -94,7 +93,6 @@ function Requesters({
   });
 
   //useState
-  const [dataraw, setdataraw] = useState([]);
   const [praloading, setpraloading] = useState(true);
   const [datarawloading, setdatarawloading] = useState(false);
   const [datarawloading2, setdatarawloading2] = useState(false);
@@ -103,172 +101,41 @@ function Requesters({
   const [datacompany, setdatacompany] = useState([]);
   const [datalokasi, setdatalokasi] = useState([]);
   //state order
-  const [namasearchact, setnamasearchact] = useState(
-    name1 === "" ? false : true
-  );
-  const [asalcompanyfilteract, setasalcompanyfilteract] = useState(
-    company_id1 === "" ? false : true
-  );
-  const [asallokasifilteract, setasallokasifilteract] = useState(
-    location_id1 === "" ? false : true
-  );
-  const [asallokasitrigger, setasallokasitrigger] = useState(-1);
-  const [statusfilteract, setstatusfilteract] = useState(
-    is_enabled1 === "" ? false : true
-  );
   //state value
-  const [namavalue, setnamavalue] = useState(null);
-  const [asallokasivalue, setasallokasivalue] = useState(null);
-  const [asalcompanyvalue, setasalcompanyvalue] = useState(null);
-  const [statusvalue, setstatusvalue] = useState(null);
   const [loadinglokasi, setloadinglokasi] = useState(true);
-  // const [namaasset, setnamaasset] = useState(location_id1);
-  // const [defasset, setdefasset] = useState(null);
-  const [defasset2, setdefasset2] = useState(null);
-
-  //function
-  var temp = [];
-  function getidData(dataa) {
-    for (var i = 0; i < dataa.length; i++) {
-      temp.push(dataa[i]["id"]);
-      if (dataa[i]["children"]) {
-        getidData(dataa[i]["children"]);
-      }
-    }
-  }
 
   //filtering
   const onChangeSearch = (e) => {
-    if (e.target.value === "") {
-      // setDataSource(dataraw)
-      window.location.href = `/admin/requesters?name=&location_id=${
-        asallokasifilteract ? location_id1 : ""
-      }&is_enabled=${statusfilteract ? is_enabled1 : ""}&company_id=${
-        asalcompanyfilteract ? company_id1 : ""
-      }`;
-      setnamasearchact(false);
-    } else {
-      setnamasearchact(true);
-      setnamavalue(e.target.value);
-    }
+    setQueryParams({
+      name: e.target.value === "" ? undefined : e.target.value,
+    });
   };
+
   const onChangeAsalCompany = (value) => {
-    if (typeof value === "undefined") {
-      // setDataSource(dataraw)
-      window.location.href = `/admin/requesters?name=${
-        namasearchact ? name1 : ""
-      }&location_id=&is_enabled=${
-        statusfilteract ? is_enabled1 : ""
-      }&company_id=`;
-      // setasalcompanyfilteract(false)
-      // setasalcompanyvalue(null)
-      // setdatalokasi([])
-      // setloadinglokasi(true)
-    } else {
-      setasalcompanyfilteract(true);
-      setasalcompanyvalue(value);
-      setasallokasitrigger((prev) => prev + 1);
-    }
+    setQueryParams({
+      company_id: value,
+      location_id: undefined,
+    });
+
+    /** Always reset the datalokasi state */
+    setdatalokasi([]);
   };
   const onChangeAsalLokasi = (value) => {
-    if (typeof value === "undefined") {
-      // setDataSource(dataraw)
-      window.location.href = `/admin/requesters?name=${
-        namasearchact ? name1 : ""
-      }&location_id=&is_enabled=${
-        statusfilteract ? is_enabled1 : ""
-      }&company_id=${asalcompanyfilteract ? company_id1 : ""}`;
-      // setasallokasifilteract(false)
-      // setasalcompanyfilteract(true)
-      // setasallokasivalue(null)
-    } else {
-      setasallokasifilteract(true);
-      setasalcompanyfilteract(true);
-      setasallokasivalue(value);
-    }
+    setQueryParams({
+      location_id: value,
+    });
   };
   const onChangeStatus = (value) => {
-    if (typeof value === "undefined") {
-      // setDataSource(dataraw)
-      window.location.href = `/admin/requesters?name=${
-        namasearchact ? name1 : ""
-      }&location_id=&is_enabled=&company_id=${
-        asalcompanyfilteract ? company_id1 : ""
-      }`;
-      setstatusfilteract(false);
-    } else {
-      setstatusfilteract(true);
-      setstatusvalue(value);
-    }
+    setQueryParams({
+      is_enabled: value === undefined ? undefined : Number(Boolean(value)),
+    });
   };
+  const [triggerRefetchAgentList, setTriggerRefetchAgentList] = useState(0);
   const onFinalClick = () => {
-    // var datatemp = dataraw
-    // if (asalcompanyfilteract) {
-    //     datatemp = datatemp.filter(flt => {
-    //         return flt.company_id === asalcompanyvalue
-    //     })
-    // }
-    // if (asallokasifilteract) {
-    //     datatemp = datatemp.filter(flt => {
-    //         return flt.company_id === asallokasivalue
-    //     })
-    // }
-    // if (namasearchact) {
-    //     datatemp = datatemp.filter(flt => {
-    //         return flt.fullname.toLowerCase().includes(namavalue.toLowerCase())
-    //     })
-    // }
-    // if (statusfilteract) {
-    //     datatemp = datatemp.filter(flt => {
-    //         return flt.status === statusvalue
-    //     })
-    // }
-    // setDataSource(datatemp)
-    window.location.href = `/admin/requesters?name=${
-      namasearchact ? (namavalue === null ? name1 : namavalue) : ""
-    }&location_id=${
-      asallokasifilteract
-        ? asallokasivalue === null
-          ? location_id1
-          : asallokasivalue
-        : ""
-    }&is_enabled=${
-      statusfilteract ? (statusvalue === null ? is_enabled1 : statusvalue) : ""
-    }&company_id=${
-      asalcompanyfilteract
-        ? asalcompanyvalue === null
-          ? company_id1
-          : asalcompanyvalue
-        : ""
-    }`;
+    setTriggerRefetchAgentList((prev) => ++prev);
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
-
-  const FilterAll = () => {
-    setDataSource(dataraw);
-  };
-  const FilterByWord = (word) => {
-    const currValue = word;
-    const filteredData = dataraw.filter((entry) => {
-      if (entry.fullname.toLowerCase()[0] === word) {
-        return entry.fullname.toLowerCase().includes(currValue);
-      }
-    });
-    setDataSource(filteredData);
-  };
-  const onFilterByCompany = (val) => {
-    setDataSource(dataraw);
-    if (val === "all") {
-      setDataSource(dataraw);
-    } else {
-      setDataSource((prev) => {
-        return prev.filter((dataa) => {
-          return dataa.company_id === val;
-        });
-      });
-    }
-  };
 
   const columnsDD = [
     {
@@ -448,19 +315,40 @@ function Requesters({
       return;
     }
 
+    const isCompanyAndLocationUndefined =
+      queryParams.location_id === undefined &&
+      queryParams.company_id === undefined;
+    const companyIdValue = isCompanyAndLocationUndefined
+      ? undefined
+      : [queryParams.location_id, queryParams.company_id].filter(
+          (el) => el !== undefined
+        )[0];
+
+    const queryPayload = QueryString.stringify(
+      {
+        name: queryParams.name,
+        is_enabled: queryParams.is_enabled,
+        company_id: companyIdValue,
+        page: queryParams.page,
+        rows: queryParams.rows,
+      },
+      { addQueryPrefix: true }
+    );
+
     setpraloading(true);
     setdatarawloading(true);
     setdatarawloading2(true);
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getRequesterList?name=${name1}&company_id=${
-        location_id1 === "" && company_id1 === "null"
-          ? ""
-          : location_id1 === ""
-          ? company_id1
-          : location_id1
-      }${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`,
+      // `${
+      //   process.env.NEXT_PUBLIC_BACKEND_URL
+      // }/getRequesterList?name=${name1}&company_id=${
+      //   location_id1 === "" && company_id1 === "null"
+      //     ? ""
+      //     : location_id1 === ""
+      //     ? company_id1
+      //     : location_id1
+      // }${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterList${queryPayload}`,
       {
         method: `GET`,
         headers: {
@@ -472,6 +360,9 @@ function Requesters({
       .then((res) => res.json())
       .then((res2) => {
         setrawdata(res2.data);
+        setdatarawloading(false);
+        setdatarawloading2(false);
+
         var dataDD = [];
         if (!res2) {
           dataDD = [];
@@ -499,11 +390,16 @@ function Requesters({
             };
           });
         }
-        setdataraw(res2.data);
+        // setdataraw(res2.data);
         setDataSource(dataDD);
         setpraloading(false);
       });
-  }, [isAllowedToGetRequesterList]);
+  }, [
+    isAllowedToGetRequesterList,
+    triggerRefetchAgentList,
+    queryParams.rows,
+    queryParams.page,
+  ]);
 
   useEffect(() => {
     if (!isAllowedToGetCompanyClientList) {
@@ -530,11 +426,19 @@ function Requesters({
       return;
     }
 
+    const queryPayload = QueryString.stringify(
+      {
+        company_id: queryParams.company_id,
+      },
+      { addQueryPrefix: true }
+    );
+
     setloadinglokasi(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
-        location_id1 !== "" ? `?company_id=${company_id1}` : ``
-      }`,
+      // `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
+      //   location_id1 !== "" ? `?company_id=${company_id1}` : ``
+      // }`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${queryPayload}`,
       {
         method: `GET`,
         headers: {
@@ -544,7 +448,7 @@ function Requesters({
     )
       .then((res) => res.json())
       .then((res2) => {
-        if (location_id1 !== "") {
+        if (queryParams.company_id !== undefined) {
           res2.data.children
             ? setdatalokasi(res2.data.children)
             : setdatalokasi([]);
@@ -564,52 +468,25 @@ function Requesters({
           res2.data.children
             ? recursiveSearchBranchClient(
                 res2.data.children,
-                Number(location_id1)
+                queryParams.company_id
               )
             : (selectedBranchClient = null);
-          res2.data.children
-            ? setdefasset2(selectedBranchClient.key)
-            : setdefasset2(null);
+          // res2.data.children
+          //   ? setdefasset2(selectedBranchClient.key)
+          //   : setdefasset2(null);
         } else {
           setdatalokasi([]);
-          company_id1 === "" ? setloadinglokasi(true) : setloadinglokasi(false);
+          queryParams.company_id === undefined
+            ? setloadinglokasi(true)
+            : setloadinglokasi(false);
         }
         setdatarawloading2(false);
       });
-  }, [isAllowedToGetLocations]);
-
-  useEffect(() => {
-    if (asallokasitrigger !== -1) {
-      if (!isAllowedToGetLocations) {
-        return;
-      }
-
-      setloadinglokasi(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getLocations${
-          asalcompanyvalue !== null ? `?company_id=${asalcompanyvalue}` : ``
-        }`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (asalcompanyvalue !== null) {
-            res2.data.children
-              ? setdatalokasi(res2.data.children)
-              : setdatalokasi([]);
-            setloadinglokasi(false);
-          } else {
-            setdatalokasi([]);
-            setloadinglokasi(false);
-          }
-        });
-    }
-  }, [asallokasitrigger, isAllowedToGetLocations]);
+  }, [
+    isAllowedToGetLocations,
+    queryParams.company_id,
+    queryParams.location_id,
+  ]);
 
   return (
     <Layout
@@ -653,7 +530,8 @@ function Requesters({
                   {datarawloading ? null : (
                     <div className="col-span-3 mr-1">
                       <Input
-                        defaultValue={name1}
+                        defaultValue={queryParams.name}
+                        // defaultValue={name1}
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         placeholder="Cari nama requester"
                         onChange={onChangeSearch}
@@ -666,8 +544,13 @@ function Requesters({
                     <div className="col-span-2 mr-1">
                       <Select
                         defaultValue={
-                          company_id1 === "" ? null : Number(company_id1)
+                          queryParams.company_id !== undefined
+                            ? Number(queryParams.company_id)
+                            : undefined
                         }
+                        // defaultValue={
+                        //   company_id1 === "" ? null : Number(company_id1)
+                        // }
                         placeholder="Pilih asal perusahaan requester"
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeAsalCompany}
@@ -695,13 +578,7 @@ function Requesters({
                   {datarawloading2 ? null : (
                     <div className="col-span-2 mr-1">
                       <TreeSelect
-                        defaultValue={
-                          location_id1 === ""
-                            ? null
-                            : defasset2 === null
-                            ? defasset2
-                            : Number(defasset2)
-                        }
+                        defaultValue={queryParams.location_id}
                         allowClear
                         dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
                         treeData={datalokasi}
@@ -728,12 +605,17 @@ function Requesters({
                     <div className="col-span-2 mr-1">
                       <Select
                         defaultValue={
-                          is_enabled1 === ""
-                            ? null
-                            : is_enabled1 === "true"
-                            ? true
-                            : false
+                          queryParams.is_enabled !== undefined
+                            ? Boolean(queryParams.is_enabled)
+                            : undefined
                         }
+                        // defaultValue={
+                        //   is_enabled1 === ""
+                        //     ? null
+                        //     : is_enabled1 === "true"
+                        //     ? true
+                        //     : false
+                        // }
                         placeholder="Pilih status requester"
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeStatus}
@@ -761,43 +643,14 @@ function Requesters({
               <Table
                 pagination={{
                   disabled: !isAllowedToGetRequesterList,
-                  pageSize: 10,
+                  pageSize: queryParams.rows,
+                  current: queryParams.page,
                   total: rawdata.total,
                   onChange: (page, pageSize) => {
-                    setpraloading(true);
-                    fetch(
-                      `${
-                        process.env.NEXT_PUBLIC_BACKEND_URL
-                      }/getRequesterList?page=${page}&rows=10&name=${name1}&company_id=${
-                        location_id1 === "" ? company_id1 : location_id1
-                      }${
-                        is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`
-                      }`,
-                      {
-                        // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterList`, {
-                        method: `GET`,
-                        headers: {
-                          Authorization: JSON.parse(initProps),
-                        },
-                      }
-                    )
-                      .then((res) => res.json())
-                      .then((res2) => {
-                        setrawdata(res2.data);
-                        var temppagination = res2.data.data.map((doc, idx) => ({
-                          ...doc,
-                          profile_image: generateStaticAssetUrl(
-                            doc.profile_image?.link
-                          ),
-                          // profile_image:
-                          //   doc.profile_image === "-" ||
-                          //   doc.profile_image === ""
-                          //     ? `/default-users.jpeg`
-                          //     : doc.profile_image,
-                        }));
-                        setDataSource(temppagination);
-                        setpraloading(false);
-                      });
+                    setQueryParams({
+                      page: page,
+                      rows: pageSize,
+                    });
                   },
                 }}
                 scroll={{ x: 200 }}

@@ -264,11 +264,12 @@ const DrawerTicketCreate = ({
       .then((res2) => {
         setdatatypetickets(res2.data.ticket_types); // input field "Tipe Tiket"
         setdatatasktickets(res2.data.ticket_detail_types); // input field "Jenis Aset"
-        setdataloctickets([
-          dataprofile.data.role === 1
-            ? res2.data.companies
-            : res2.data.companies.data,
-        ]); // input field "Lokasi Kejadian"
+        setdataloctickets([res2.data.companies]); // input field "Lokasi Kejadian"
+        // setdataloctickets([
+        //   dataprofile.data.role === 1
+        //     ? res2.data.companies
+        //     : res2.data.companies.data,
+        // ]); // input field "Lokasi Kejadian"
       });
   }, [isAllowedToGetTicket]);
 
