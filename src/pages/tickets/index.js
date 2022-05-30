@@ -926,11 +926,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       ? setlocfiltertickets("")
                       : setlocfiltertickets(value);
                   }}
-                  treeData={[
-                    dataProfile.data.role === 1
-                      ? dataticketrelation.companies
-                      : dataticketrelation.companies.data,
-                  ]}
+                  treeData={[dataticketrelation.companies]}
+                  // treeData={[
+                  //   dataProfile.data.role === 1
+                  //     ? dataticketrelation.companies
+                  //     : dataticketrelation.companies,
+                  // ]}
                   treeDefaultExpandAll
                   value={locfiltertickets === "" ? null : locfiltertickets}
                   treeNodeFilterProp="title"
