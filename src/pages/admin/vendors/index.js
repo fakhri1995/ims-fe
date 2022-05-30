@@ -755,10 +755,10 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                       required: true,
                       message: "No Telepon harus diisi",
                     },
-                    {
-                      type: `number`,
-                      message: "Nomor Telepon harus berupa angka",
-                    },
+                    // {
+                    //   type: `number`,
+                    //   message: "Nomor Telepon harus berupa angka",
+                    // },
                   ]}
                 >
                   <InputNumber
@@ -1075,10 +1075,10 @@ function Vendor({ initProps, dataProfile, sidemenu, dataVendors }) {
                       required: true,
                       message: "No Telepon harus diisi",
                     },
-                    {
-                      type: `number`,
-                      message: "Telepon harus berupa angka",
-                    },
+                    // {
+                    //   type: "number",
+                    //   message: "Telepon harus berupa angka",
+                    // },
                   ]}
                   initialValue={editvendor.telepon}
                 >
