@@ -247,11 +247,11 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
   });
 
   const possibleTicketStatus = [
-    "Open",
-    "On Hold",
-    "On Progress",
-    "Canceled",
-    "Closed",
+    { name: "Open", isForClient: false },
+    { name: "On Hold", isForClient: false },
+    { name: "On Progress", isForClient: false },
+    { name: "Canceled", isForClient: true },
+    { name: "Closed", isForClient: false },
   ];
 
   //3.Handler
@@ -790,23 +790,30 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     placement="bottomRight"
                     overlay={
                       <div className="bg-white rounded-md shadow-md p-2 flex flex-col">
-                        {possibleTicketStatus.map((status, idx) => {
-                          const formattedStatus = status
-                            .toLocaleLowerCase()
-                            .split(" ")
-                            .join("-");
-                          return (
-                            <button
-                              key={idx}
-                              onClick={handleOnChangeStatusClicked(
-                                formattedStatus
-                              )}
-                              className="text-left bg-white font-medium text-mono30 px-4 py-2 hover:bg-primary10 rounded-md transition-colors"
-                            >
-                              {status}
-                            </button>
-                          );
-                        })}
+                        {possibleTicketStatus.map(
+                          ({ name, isForClient }, idx) => {
+                            if (isClient && !isForClient) {
+                              return;
+                            }
+
+                            const formattedStatus = name
+                              .toLocaleLowerCase()
+                              .split(" ")
+                              .join("-");
+
+                            return (
+                              <button
+                                key={idx}
+                                onClick={handleOnChangeStatusClicked(
+                                  formattedStatus
+                                )}
+                                className="text-left bg-white font-medium text-mono30 px-4 py-2 hover:bg-primary10 rounded-md transition-colors"
+                              >
+                                {name}
+                              </button>
+                            );
+                          }
+                        )}
                       </div>
                     }
                   >
@@ -910,7 +917,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               <div className=" w-1/2 pl-8 flex items-center justify-between mb-2">
                 <div className=" flex flex-col">
                   <div className=" mb-2">
-                    <Label>Deadline</Label>
+                    <Label>
+                      {!isClient ? "Deadline" : "Perkiraan Selesai"}
+                    </Label>
                   </div>
                   {praloading ? (
                     <>
@@ -1260,68 +1269,22 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                     )}
                   </div>
                 ) : (
-                  <div className="shadow-md rounded-md bg-white p-5 my-2 ml-2">
-                    {/* Berdasarkan codingan, component catatan juga ditampilkan di sini ketika role bukan super admin (1) */}
-                    {/* Props `fetchAsAdmin` disini seharusnya _akan_ selalu false */}
+                  <>
                     <TicketDetailCatatanCard
                       ticketId={ticketid}
                       fetchAsAdmin={dataProfile.data.role === 1}
                     />
-                    {/* <div className=" flex items-center justify-between mb-5">
-                      <H1>Catatan</H1>
-                      <div
-                        className=" h-full flex justify-end items-start cursor-pointer"
-                        onClick={() => {
-                          setmodalnoteticket(true);
-                        }}>
-                        <PlusIconSvg size={25} color={`#35763B`} />
-                      </div>
-                    </div>
-                    {loadingnoteticket ? (
-                      <>
-                        <Spin />
-                      </>
-                    ) : displaynoteticket.length === 0 ? (
-                      <>
-                        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                      </>
-                    ) : (
-                      displaynoteticket.map((note, idx) => (
-                        <div key={idx} className=" flex flex-col mb-5">
-                          <p className=" mb-3 line-clamp-6 font-light">
-                            {note.description}
-                          </p>
-                          <div className="flex items-center justify-between">
-                            <div className=" flex">
-                              <div className=" w-5 h-5 rounded-full mr-2">
-                                <img
-                                  src={"/image/staffTask.png"}
-                                  className=" object-contain w-5 h-5"
-                                  alt=""
-                                />
-                              </div>
-                              <Text color={`green`}>{note.causer.name}</Text>
-                            </div>
-                            <div>
-                              <Label>
-                                {moment(note.created_at)
-                                  .locale("id")
-                                  .format("LL, LT")}
-                              </Label>
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )} */}
-                  </div>
+                  </>
                 )}
               </div>
               <div className="flex flex-col w-6/12">
                 {/* CATATAN TIKET */}
-                <TicketDetailCatatanCard
-                  ticketId={ticketid}
-                  fetchAsAdmin={dataProfile.data.role === 1}
-                />
+                {!isClient && (
+                  <TicketDetailCatatanCard
+                    ticketId={ticketid}
+                    fetchAsAdmin={dataProfile.data.role === 1}
+                  />
+                )}
                 {/* {dataProfile.data.role === 1 && (
                   <div className=" shadow-md rounded-md bg-white p-5 my-2 ml-2">
                     <div className=" flex items-center justify-between mb-5">
