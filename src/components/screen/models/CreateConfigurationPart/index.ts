@@ -38,31 +38,31 @@ export const useBulkConfigurationModelParts = (initialValue?: IModelParts) => {
    * A function to update current (selected) model part ID and Quantity.
    * Call this function to handle `onChange` event on a Select component.
    */
-  const updateCurrentModelPart = (
-    modelId: number,
-    quantityFallback: number = 0
-  ) => {
-    /**
-     * Read if there is existing data from `modelParts`.
-     *  - YES -> load from that data.
-     *  - NO -> use the `quantityFallback` parameter.
-     */
-    const _currentModelPartQuantity = modelParts[modelId] || quantityFallback;
+  const updateCurrentModelPart = useCallback(
+    (modelId: number, quantityFallback: number = 0) => {
+      /**
+       * Read if there is existing data from `modelParts`.
+       *  - YES -> load from that data.
+       *  - NO -> use the `quantityFallback` parameter.
+       */
+      const _currentModelPartQuantity = modelParts[modelId] || quantityFallback;
 
-    setCurrentModelPartId(modelId);
-    setCurrentModelPartQuantity(_currentModelPartQuantity);
-  };
+      setCurrentModelPartId(modelId);
+      setCurrentModelPartQuantity(_currentModelPartQuantity);
+    },
+    [modelParts]
+  );
 
   /**
    * Store current model part stat (id and quantity) into `moodelParts` state.
    * Call this function only when the User click "Tambah" button.
    */
-  const updateModelParts = () => {
+  const updateModelParts = useCallback(() => {
     setModelParts((prev) => ({
       ...prev,
       [currentModelPartId]: currentModelPartQuantity,
     }));
-  };
+  }, [currentModelPartId, currentModelPartQuantity]);
 
   /**
    * Do not forget to clean up current model when the Input form is being closed.
