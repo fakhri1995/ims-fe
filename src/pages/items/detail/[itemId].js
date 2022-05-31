@@ -1175,6 +1175,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
   //delete
   const [dataApidelete, setdataApidelete] = useState({
     id: "",
+    notes: "",
   });
   const [modaldelete, setmodaldelete] = useState(false);
   const [loadingdelete, setloadingdelete] = useState(false);
@@ -1243,7 +1244,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                         return;
                       }
 
-                      setdataApidelete({ id: record.id });
+                      setdataApidelete((prev) => ({ ...prev, id: record.id }));
                       setrelationdatadelete({
                         name: record.relationship_name,
                         tipe: record.type,
@@ -1574,7 +1575,15 @@ const Relationship = ({ initProps, maindata, itemid }) => {
           </div>
           <div className="flex flex-col">
             <p className="mb-0">Notes</p>
-            <Input placeholder="Masukkan Notes" onChange={(e) => {}}></Input>
+            <Input
+              placeholder="Masukkan Notes"
+              onChange={(e) => {
+                setdataApidelete((prev) => ({
+                  ...prev,
+                  notes: e.target.value,
+                }));
+              }}
+            ></Input>
           </div>
         </div>
       </Modal>
