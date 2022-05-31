@@ -152,11 +152,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   const renderChildPartModel = (item) => {
     return item.map((doc, idx) => {
       return (
-        <ModelPartTimelineItem
-          doc={doc}
-          renderChildPartComponent={renderChildPartModel}
-          idx={idx}
-        ></ModelPartTimelineItem>
+        <ModelPartTimelineItem doc={doc} idx={idx}></ModelPartTimelineItem>
       );
     });
   };
