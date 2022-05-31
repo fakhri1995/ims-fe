@@ -12,9 +12,6 @@ export interface ICreateConfigurationPart {
   /** Provide an existing model data (primarily for Update page) */
   existingModelParts?: GetModelData[];
 
-  /** Set this to true when the component is mounted in Update page */
-  isUpdateMode: boolean;
-
   /** State to control whether the "Tambah Part Button" is enabled or disabled */
   isAllowedToEditPart?: boolean;
 
@@ -35,11 +32,11 @@ export interface ICreateConfigurationPart {
 export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   existingModelParts,
   isAllowedToEditPart = false,
-  isUpdateMode = false,
   toggleModalCreateModel,
   onUpdateModelPartsPayload,
 }) => {
   const {
+    modelParts,
     setModelParts,
     currentModelPartId,
     currentModelPartQuantity,
@@ -155,11 +152,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
   const renderChildPartModel = (item) => {
     return item.map((doc, idx) => {
       return (
-        <ModelPartTimelineItem
-          doc={doc}
-          renderChildPartComponent={renderChildPartModel}
-          idx={idx}
-        ></ModelPartTimelineItem>
+        <ModelPartTimelineItem doc={doc} idx={idx}></ModelPartTimelineItem>
       );
     });
   };
@@ -172,6 +165,7 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
 
       <ModelPartAccordionList
         modelPartData={modelPartData}
+        modelPartQuantityRecord={modelParts}
         onDeleteModelPartItem={onCloseAccordionItemButtonClicked}
         renderChildPartModel={renderChildPartModel}
       />

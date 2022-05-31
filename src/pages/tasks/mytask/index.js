@@ -233,8 +233,19 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Nomor Task",
       dataIndex: "id",
       render: (text, record, index) => {
+        const hasTicket = record.reference !== null;
+        let ticketIdContent = null;
+        if (hasTicket) {
+          ticketIdContent = ` / ${record.reference?.type?.code}-${record.reference?.ticketable_id}`;
+        }
+
         return {
-          children: <>T-000{record.id}</>,
+          children: (
+            <>
+              T-000{record.id}
+              {ticketIdContent}
+            </>
+          ),
         };
       },
       sorter: isAllowedToGetUserTasks ? (a, b) => a.id < b.id : false,

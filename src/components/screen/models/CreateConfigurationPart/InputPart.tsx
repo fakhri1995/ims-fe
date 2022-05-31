@@ -63,11 +63,11 @@ export const InputPart: FC<IInputPart> = ({
           <div className="w-2/3">
             <Form.Item
               name="id"
-              label="Nama Model"
+              label="Nama Modul"
               rules={[
                 {
                   required: true,
-                  message: "Nama Model wajib diisi",
+                  message: "Nama Modul wajib diisi",
                 },
               ]}
             >
