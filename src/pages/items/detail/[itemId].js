@@ -2086,9 +2086,9 @@ const Acitivty = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        var daylogsmap = _activityLogMapFn(res2.data.day_logs);
-        var weeklogsmap = _activityLogMapFn(res2.data.week_logs);
-        var morelogsmap = _activityLogMapFn(res2.data.else_logs);
+        var daylogsmap = _activityLogMapFn(res2.data.day_logs, maindata);
+        var weeklogsmap = _activityLogMapFn(res2.data.week_logs, maindata);
+        var morelogsmap = _activityLogMapFn(res2.data.else_logs, maindata);
 
         setdaylogs(daylogsmap);
         setweeklogs(weeklogsmap);
@@ -3331,7 +3331,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
  * @param {*} idxlogs
  * @returns {object}
  */
-const _activityLogMapFn = (logs) => {
+const _activityLogMapFn = (logs, maindata) => {
   const result = [];
 
   logs.forEach((doclogs) => {
