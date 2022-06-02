@@ -950,7 +950,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
           if (doc.data_type === "dropdown" || doc.data_type === "checkbox") {
             return {
               ...doc,
-              value: JSON.stringify(doc.value),
+              value: doc.value === null ? "-" : JSON.stringify(doc.value),
               default: JSON.stringify(doc.default),
             };
           } else {
@@ -1344,11 +1344,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         ...doc,
                                         data_type: doc.data_type,
                                         model_inventory_column_id: doc.id,
-                                        value: doc.default,
+                                        value:
+                                          doc.default === null
+                                            ? "-"
+                                            : doc.default,
                                       };
                                     }
                                   }
                                 );
+
                                 temp11.push({
                                   model_name: item[i].name,
                                   asset_name: item[i].asset.name,
@@ -1356,6 +1360,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   disable_part: level > 0 ? true : false,
                                   id: item[i].id,
                                   model_id: item[i].id,
+                                  quantity: item[i].quantity || 0,
                                   vendor_id: null,
                                   inventory_name: "",
                                   status_condition: null,
@@ -1389,7 +1394,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                 temploc.inventory_values.push({
                                   data_type: doc.data_type,
                                   model_inventory_column_id: doc.id,
-                                  value: doc.default,
+                                  value:
+                                    doc.default === null ? "-" : doc.default,
                                 });
                               });
                               temploc.inventory_parts = yo;
@@ -2325,11 +2331,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">Asset Type</p>
                                       <style jsx>
                                         {`
-                                                                                          .judulField::before{
-                                                                                              content: '*';
-                                                                                              color: red;
-                                                                                          }
-                                                                                      `}
+                                                                                                .judulField::before{
+                                                                                                    content: '*';
+                                                                                                    color: red;
+                                                                                                }
+                                                                                            `}
                                       </style>
                                     </div>
                                   }
@@ -2339,31 +2345,31 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   </div>
                                 </Form.Item>
                                 {/* <Form.Item name="inventory_name" label={
-                                                                              <div className="flex">
-                                                                                  <span className="namaItem"></span>
-                                                                                  <p className="mb-0 ml-1">Nama Item</p>
-                                                                                  <style jsx>
-                                                                                      {`
-                                                                                      .namaItem::before{
-                                                                                          content: '*';
-                                                                                          color: red;
-                                                                                      }
-                                                                                  `}
-                                                                                  </style>
-                                                                              </div>
-                                                                          }>
-                                                                              <Input name="inventory_name" onChange={(e) => {
-                                                                                  var temp = newdata.inventory_parts
-                                                                                  const selectedpart = changeDataPart(temp, docpart.model_id, "inventory_name", e.target.value)
-                                                                                  setnewdata(prev => {
-                                                                                      var temp2 = prev
-                                                                                      temp2.inventory_parts = selectedpart
-                                                                                      return temp2
-                                                                                  })
-                                                                                  setemptyfieldpartmodel(docpart)
-                                                                                  setemptyfieldparttrigger(prev => prev + 1)
-                                                                              }} />
-                                                                          </Form.Item> */}
+                                                                                    <div className="flex">
+                                                                                        <span className="namaItem"></span>
+                                                                                        <p className="mb-0 ml-1">Nama Item</p>
+                                                                                        <style jsx>
+                                                                                            {`
+                                                                                            .namaItem::before{
+                                                                                                content: '*';
+                                                                                                color: red;
+                                                                                            }
+                                                                                        `}
+                                                                                        </style>
+                                                                                    </div>
+                                                                                }>
+                                                                                    <Input name="inventory_name" onChange={(e) => {
+                                                                                        var temp = newdata.inventory_parts
+                                                                                        const selectedpart = changeDataPart(temp, docpart.model_id, "inventory_name", e.target.value)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp2 = prev
+                                                                                            temp2.inventory_parts = selectedpart
+                                                                                            return temp2
+                                                                                        })
+                                                                                        setemptyfieldpartmodel(docpart)
+                                                                                        setemptyfieldparttrigger(prev => prev + 1)
+                                                                                    }} />
+                                                                                </Form.Item> */}
                                 <Form.Item
                                   name="mig_id"
                                   label={
@@ -2372,11 +2378,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">MIG ID</p>
                                       <style jsx>
                                         {`
-                                                                                      .migId::before{
-                                                                                          content: '*';
-                                                                                          color: red;
-                                                                                      }
-                                                                                  `}
+                                                                                            .migId::before{
+                                                                                                content: '*';
+                                                                                                color: red;
+                                                                                            }
+                                                                                        `}
                                       </style>
                                     </div>
                                   }
@@ -2411,11 +2417,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">Kondisi</p>
                                       <style jsx>
                                         {`
-                                                                                      .kondisi::before{
-                                                                                          content: '*';
-                                                                                          color: red;
-                                                                                      }
-                                                                                  `}
+                                                                                            .kondisi::before{
+                                                                                                content: '*';
+                                                                                                color: red;
+                                                                                            }
+                                                                                        `}
                                       </style>
                                     </div>
                                   }
@@ -2471,11 +2477,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       </p>
                                       <style jsx>
                                         {`
-                                                                                  .pemakaian::before{
-                                                                                      content: '*';
-                                                                                      color: red;
-                                                                                  }
-                                                                              `}
+                                                                                        .pemakaian::before{
+                                                                                            content: '*';
+                                                                                            color: red;
+                                                                                        }
+                                                                                    `}
                                       </style>
                                     </div>
                                   }
@@ -2520,11 +2526,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">Serial Number</p>
                                       <style jsx>
                                         {`
-                                                                                  .sn::before{
-                                                                                      content: '*';
-                                                                                      color: red;
-                                                                                  }
-                                                                              `}
+                                                                                        .sn::before{
+                                                                                            content: '*';
+                                                                                            color: red;
+                                                                                        }
+                                                                                    `}
                                       </style>
                                     </div>
                                   }
@@ -2664,14 +2670,14 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                             </p>
                                             <style jsx>
                                               {`
-                                                                                                      .${docvalue.name.replace(
-                                                                                                        /\s+/g,
-                                                                                                        ""
-                                                                                                      )}::before{
-                                                                                                          content: '*';
-                                                                                                          color: red;
-                                                                                                      }
-                                                                                                  `}
+                                                                                                            .${docvalue.name.replace(
+                                                                                                              /\s+/g,
+                                                                                                              ""
+                                                                                                            )}::before{
+                                                                                                                content: '*';
+                                                                                                                color: red;
+                                                                                                            }
+                                                                                                        `}
                                             </style>
                                           </div>
                                         }
