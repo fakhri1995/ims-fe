@@ -380,6 +380,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
     return arr;
   };
+
   const renderChildPartModel = (item) => {
     return item.map((doc, idx) => {
       return <Children doc={doc} idx={idx}></Children>;
@@ -1382,10 +1383,35 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                               }
                               return temp11;
                             };
-                            const yo = recursivePartModel(
-                              res2.data.model_parts,
-                              level
+
+                            /**
+                             * Clone each element dari `value` menjadi N dimana N = `value[i].quantity`
+                             *
+                             * Function ini digunakan untuk fitur render dan edit multiple konfigurasi part items.
+                             */
+                            const flattenQuantity = (value) => {
+                              const result = [];
+
+                              for (let i = 0; i < value.length; ++i) {
+                                const multiplier = value[i].quantity || 1;
+
+                                for (let j = 0; j < multiplier; ++j) {
+                                  result.push(value[i]);
+                                }
+                              }
+
+                              return result;
+                            };
+
+                            // const yo = recursivePartModel(
+                            //   res2.data.model_parts,
+                            //   level
+                            // );
+
+                            const yo = flattenQuantity(
+                              recursivePartModel(res2.data.model_parts, level)
                             );
+
                             setpartmodeldata(yo);
                             setnewdata((prev) => {
                               var temploc = prev;
