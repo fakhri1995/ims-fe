@@ -626,7 +626,11 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                       />
                     </Form.Item>
                   )}
-                  <Form.Item name="location" label="Location">
+                  <Form.Item
+                    name="location"
+                    label="Location"
+                    rules={[{ required: true, message: "Lokasi wajib diisi!" }]}
+                  >
                     <TreeSelect
                       treeDefaultExpandedKeys={[
                         invrelations.tree_companies.key,
@@ -766,7 +770,16 @@ const ItemUpdate = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     />
                   </Form.Item>
                   {updatedata.is_consumable && (
-                    <Form.Item name="quantity" label="Jumlah Barang">
+                    <Form.Item
+                      name="quantity"
+                      label="Jumlah Barang"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Jumlah Barang wajib diisi!",
+                        },
+                      ]}
+                    >
                       <InputNumber
                         defaultValue={updatedata.quantities[0]?.quantity || 0}
                         style={{ width: `100%` }}

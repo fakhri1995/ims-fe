@@ -1417,6 +1417,9 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                               var temploc = prev;
                               temploc.inventory_values = [];
                               temp.forEach((doc) => {
+                                // TODO: replace doc.default yang empty string menjadi "-" karena
+                                // kalau kirim payload sebagai empty string, backend akan tolak.
+
                                 temploc.inventory_values.push({
                                   data_type: doc.data_type,
                                   model_inventory_column_id: doc.id,
@@ -1599,7 +1602,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     />
                   </Form.Item>
                 )}
-                <Form.Item name="location" label="Lokasi">
+                <Form.Item
+                  name="location"
+                  label="Lokasi"
+                  rules={[{ required: true, message: "Lokasi wajib diisi!" }]}
+                >
                   <TreeSelect
                     disabled={disabledfielditem}
                     treeDefaultExpandedKeys={[invrelations.tree_companies.key]}
@@ -1734,7 +1741,13 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   />
                 </Form.Item>
                 {newdata.is_consumable && (
-                  <Form.Item name="quantity" label="Jumlah Barang">
+                  <Form.Item
+                    name="quantity"
+                    label="Jumlah Barang"
+                    rules={[
+                      { required: true, message: "Jumlah Barang wajib diisi!" },
+                    ]}
+                  >
                     <InputNumber
                       style={{ width: `100%` }}
                       disabled={disabledfielditem}
