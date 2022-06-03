@@ -140,14 +140,17 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
             duration: 3,
           });
         }
-
-        setLoadingsave(false);
       })
-      .catch(() => {
+      .catch((error) => {
+        const errorMessage = error?.response?.data?.message;
+
         notification["error"]({
-          message: "Terjadi kesalahan saat memperbarui profil",
+          message: errorMessage || "Terjadi kesalahan saat memperbarui profil",
           duration: 3,
         });
+      })
+      .finally(() => {
+        setLoadingsave(false);
       });
   };
 

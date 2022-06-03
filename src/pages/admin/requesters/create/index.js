@@ -96,7 +96,6 @@ function RequestersCreate({
       .then((response) => {
         const res2 = response.data;
 
-        setLoadingcreate(false);
         if (res2.success) {
           notification["success"]({
             message: res2.message,
@@ -112,11 +111,16 @@ function RequestersCreate({
           });
         }
       })
-      .catch(() => {
+      .catch((error) => {
+        const errorMessage = error?.response?.data?.message;
+
         notification["error"]({
-          message: "Terjadi kesalahan saat memperbarui profil",
+          message: errorMessage || "Terjadi kesalahan saat memperbarui profil",
           duration: 3,
         });
+      })
+      .finally(() => {
+        setLoadingcreate(false);
       });
   };
 

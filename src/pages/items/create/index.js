@@ -380,6 +380,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
     return arr;
   };
+
   const renderChildPartModel = (item) => {
     return item.map((doc, idx) => {
       return <Children doc={doc} idx={idx}></Children>;
@@ -950,7 +951,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
           if (doc.data_type === "dropdown" || doc.data_type === "checkbox") {
             return {
               ...doc,
-              value: JSON.stringify(doc.value),
+              value: doc.value === null ? "-" : JSON.stringify(doc.value),
               default: JSON.stringify(doc.default),
             };
           } else {
@@ -1344,11 +1345,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         ...doc,
                                         data_type: doc.data_type,
                                         model_inventory_column_id: doc.id,
-                                        value: doc.default,
+                                        value:
+                                          doc.default === null
+                                            ? "-"
+                                            : doc.default,
                                       };
                                     }
                                   }
                                 );
+
                                 temp11.push({
                                   model_name: item[i].name,
                                   asset_name: item[i].asset.name,
@@ -1356,6 +1361,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   disable_part: level > 0 ? true : false,
                                   id: item[i].id,
                                   model_id: item[i].id,
+                                  quantity: item[i].quantity || 0,
                                   vendor_id: null,
                                   inventory_name: "",
                                   status_condition: null,
@@ -1377,19 +1383,48 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                               }
                               return temp11;
                             };
-                            const yo = recursivePartModel(
-                              res2.data.model_parts,
-                              level
+
+                            /**
+                             * Clone each element dari `value` menjadi N dimana N = `value[i].quantity`
+                             *
+                             * Function ini digunakan untuk fitur render dan edit multiple konfigurasi part items.
+                             */
+                            const flattenQuantity = (value) => {
+                              const result = [];
+
+                              for (let i = 0; i < value.length; ++i) {
+                                const multiplier = value[i].quantity || 1;
+
+                                for (let j = 0; j < multiplier; ++j) {
+                                  result.push(value[i]);
+                                }
+                              }
+
+                              return result;
+                            };
+
+                            // const yo = recursivePartModel(
+                            //   res2.data.model_parts,
+                            //   level
+                            // );
+
+                            const yo = flattenQuantity(
+                              recursivePartModel(res2.data.model_parts, level)
                             );
+
                             setpartmodeldata(yo);
                             setnewdata((prev) => {
                               var temploc = prev;
                               temploc.inventory_values = [];
                               temp.forEach((doc) => {
+                                // TODO: replace doc.default yang empty string menjadi "-" karena
+                                // kalau kirim payload sebagai empty string, backend akan tolak.
+
                                 temploc.inventory_values.push({
                                   data_type: doc.data_type,
                                   model_inventory_column_id: doc.id,
-                                  value: doc.default,
+                                  value:
+                                    doc.default === null ? "-" : doc.default,
                                 });
                               });
                               temploc.inventory_parts = yo;
@@ -1567,7 +1602,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     />
                   </Form.Item>
                 )}
-                <Form.Item name="location" label="Lokasi">
+                <Form.Item
+                  name="location"
+                  label="Lokasi"
+                  rules={[{ required: true, message: "Lokasi wajib diisi!" }]}
+                >
                   <TreeSelect
                     disabled={disabledfielditem}
                     treeDefaultExpandedKeys={[invrelations.tree_companies.key]}
@@ -1702,7 +1741,13 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   />
                 </Form.Item>
                 {newdata.is_consumable && (
-                  <Form.Item name="quantity" label="Jumlah Barang">
+                  <Form.Item
+                    name="quantity"
+                    label="Jumlah Barang"
+                    rules={[
+                      { required: true, message: "Jumlah Barang wajib diisi!" },
+                    ]}
+                  >
                     <InputNumber
                       style={{ width: `100%` }}
                       disabled={disabledfielditem}
@@ -2325,11 +2370,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">Asset Type</p>
                                       <style jsx>
                                         {`
-                                                                                          .judulField::before{
-                                                                                              content: '*';
-                                                                                              color: red;
-                                                                                          }
-                                                                                      `}
+                                                                                                .judulField::before{
+                                                                                                    content: '*';
+                                                                                                    color: red;
+                                                                                                }
+                                                                                            `}
                                       </style>
                                     </div>
                                   }
@@ -2339,31 +2384,31 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   </div>
                                 </Form.Item>
                                 {/* <Form.Item name="inventory_name" label={
-                                                                              <div className="flex">
-                                                                                  <span className="namaItem"></span>
-                                                                                  <p className="mb-0 ml-1">Nama Item</p>
-                                                                                  <style jsx>
-                                                                                      {`
-                                                                                      .namaItem::before{
-                                                                                          content: '*';
-                                                                                          color: red;
-                                                                                      }
-                                                                                  `}
-                                                                                  </style>
-                                                                              </div>
-                                                                          }>
-                                                                              <Input name="inventory_name" onChange={(e) => {
-                                                                                  var temp = newdata.inventory_parts
-                                                                                  const selectedpart = changeDataPart(temp, docpart.model_id, "inventory_name", e.target.value)
-                                                                                  setnewdata(prev => {
-                                                                                      var temp2 = prev
-                                                                                      temp2.inventory_parts = selectedpart
-                                                                                      return temp2
-                                                                                  })
-                                                                                  setemptyfieldpartmodel(docpart)
-                                                                                  setemptyfieldparttrigger(prev => prev + 1)
-                                                                              }} />
-                                                                          </Form.Item> */}
+                                                                                    <div className="flex">
+                                                                                        <span className="namaItem"></span>
+                                                                                        <p className="mb-0 ml-1">Nama Item</p>
+                                                                                        <style jsx>
+                                                                                            {`
+                                                                                            .namaItem::before{
+                                                                                                content: '*';
+                                                                                                color: red;
+                                                                                            }
+                                                                                        `}
+                                                                                        </style>
+                                                                                    </div>
+                                                                                }>
+                                                                                    <Input name="inventory_name" onChange={(e) => {
+                                                                                        var temp = newdata.inventory_parts
+                                                                                        const selectedpart = changeDataPart(temp, docpart.model_id, "inventory_name", e.target.value)
+                                                                                        setnewdata(prev => {
+                                                                                            var temp2 = prev
+                                                                                            temp2.inventory_parts = selectedpart
+                                                                                            return temp2
+                                                                                        })
+                                                                                        setemptyfieldpartmodel(docpart)
+                                                                                        setemptyfieldparttrigger(prev => prev + 1)
+                                                                                    }} />
+                                                                                </Form.Item> */}
                                 <Form.Item
                                   name="mig_id"
                                   label={
@@ -2372,11 +2417,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">MIG ID</p>
                                       <style jsx>
                                         {`
-                                                                                      .migId::before{
-                                                                                          content: '*';
-                                                                                          color: red;
-                                                                                      }
-                                                                                  `}
+                                                                                            .migId::before{
+                                                                                                content: '*';
+                                                                                                color: red;
+                                                                                            }
+                                                                                        `}
                                       </style>
                                     </div>
                                   }
@@ -2411,11 +2456,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">Kondisi</p>
                                       <style jsx>
                                         {`
-                                                                                      .kondisi::before{
-                                                                                          content: '*';
-                                                                                          color: red;
-                                                                                      }
-                                                                                  `}
+                                                                                            .kondisi::before{
+                                                                                                content: '*';
+                                                                                                color: red;
+                                                                                            }
+                                                                                        `}
                                       </style>
                                     </div>
                                   }
@@ -2471,11 +2516,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       </p>
                                       <style jsx>
                                         {`
-                                                                                  .pemakaian::before{
-                                                                                      content: '*';
-                                                                                      color: red;
-                                                                                  }
-                                                                              `}
+                                                                                        .pemakaian::before{
+                                                                                            content: '*';
+                                                                                            color: red;
+                                                                                        }
+                                                                                    `}
                                       </style>
                                     </div>
                                   }
@@ -2520,11 +2565,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                       <p className="mb-0 ml-1">Serial Number</p>
                                       <style jsx>
                                         {`
-                                                                                  .sn::before{
-                                                                                      content: '*';
-                                                                                      color: red;
-                                                                                  }
-                                                                              `}
+                                                                                        .sn::before{
+                                                                                            content: '*';
+                                                                                            color: red;
+                                                                                        }
+                                                                                    `}
                                       </style>
                                     </div>
                                   }
@@ -2664,14 +2709,14 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                             </p>
                                             <style jsx>
                                               {`
-                                                                                                      .${docvalue.name.replace(
-                                                                                                        /\s+/g,
-                                                                                                        ""
-                                                                                                      )}::before{
-                                                                                                          content: '*';
-                                                                                                          color: red;
-                                                                                                      }
-                                                                                                  `}
+                                                                                                            .${docvalue.name.replace(
+                                                                                                              /\s+/g,
+                                                                                                              ""
+                                                                                                            )}::before{
+                                                                                                                content: '*';
+                                                                                                                color: red;
+                                                                                                            }
+                                                                                                        `}
                                             </style>
                                           </div>
                                         }
