@@ -34,7 +34,6 @@ export default function Home({ initProps }) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setLoadinglogin(false);
         if (res2.data) {
           notification["success"]({
             message: "Selamat datang di MIGSYS",
@@ -44,7 +43,7 @@ export default function Home({ initProps }) {
           /** Token will be expired in 1 day */
           Cookies.set("token", JSON.stringify(res2.data.token), { expires: 1 });
           // console.log("token di session: " + JSON.parse(jscookie.get('token')))
-          rt.push("/dashboard/home");
+          rt.push("/dashboard/home").then(() => setLoadinglogin(false));
         } else if (!res2.success) {
           // console.log("masuk ke error login")
           message.error(
@@ -58,6 +57,17 @@ export default function Home({ initProps }) {
           );
           setAlerterror(true);
         }
+      })
+      .catch(() => {
+        message.error({
+          content: "Terjadi kesalahan saat melakukan login.",
+          style: {
+            marginTop: "1rem",
+          },
+        });
+
+        setAlerterror(true);
+        setLoadinglogin(false);
       });
   };
   return (
