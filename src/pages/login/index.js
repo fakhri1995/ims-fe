@@ -56,6 +56,7 @@ export default function Home({ initProps }) {
             5
           );
           setAlerterror(true);
+          setLoadinglogin(false);
         }
       })
       .catch(() => {
