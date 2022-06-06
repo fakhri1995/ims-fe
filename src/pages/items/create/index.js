@@ -19,7 +19,7 @@ import {
 import moment from "moment";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -202,10 +202,13 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
       }
     }
   };
-  const changeEnablePart = (doq, partid, checked) => {
+  const changeEnablePart = (doq, partid, checked, _key) => {
+    // console.log("changeEnablePart", { doq, partid, checked, _key });
     var arr = [];
+
     for (var i = 0; i < doq.length; i++) {
-      if (doq[i].model_id === Number(partid)) {
+      // if (doq[i].model_id === Number(partid)) {
+      if (doq[i]._key === _key) {
         if (doq[i].inventory_parts.length > 0) {
           for (var j = 0; j < doq[i].inventory_parts.length; j++) {
             doq[i].inventory_parts[j].disable_part = checked ? false : true;
@@ -222,7 +225,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
             inventory_parts: changeEnablePart(
               doq[i].inventory_parts,
               partid,
-              checked
+              checked,
+              _key
             ),
           });
         } else {
@@ -232,12 +236,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
         }
       }
     }
+
     return arr;
   };
-  const changeDataPart = (doq, partid, attr, value) => {
+  const changeDataPart = (doq, partid, attr, value, _key) => {
+    // console.log("changeDataPart", {doq, partid, attr, value, _key});
     var arr = [];
     for (var i = 0; i < doq.length; i++) {
-      if (doq[i].model_id === Number(partid)) {
+      // if (doq[i].model_id === Number(partid)) {
+      if (doq[i]._key === _key) {
         arr.push({
           ...doq[i],
           [attr]: value,
@@ -250,7 +257,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
               doq[i].inventory_parts,
               partid,
               attr,
-              value
+              value,
+              _key
             ),
           });
         } else {
@@ -262,10 +270,13 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
     return arr;
   };
-  const changeInventoryValuesPart = (doq, partid, idcolumn, value) => {
+  const changeInventoryValuesPart = (doq, partid, idcolumn, value, _key) => {
+    // console.log("changeInventoryValuesPart", { doq, partid, idcolumn, value, _key });
+
     var arr = [];
     for (var i = 0; i < doq.length; i++) {
-      if (doq[i].model_id === Number(partid)) {
+      // if (doq[i].model_id === Number(partid)) {
+      if (doq[i]._key === _key) {
         const idxfield = doq[i].inventory_values
           .map((docname) => docname.model_inventory_column_id)
           .indexOf(idcolumn);
@@ -282,7 +293,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
               doq[i].inventory_parts,
               partid,
               idcolumn,
-              value
+              value,
+              _key
             ),
           });
         } else {
@@ -294,10 +306,19 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     }
     return arr;
   };
-  const changeInventoryValuesDropdownPart = (doq, partid, idcolumn, value) => {
+  const changeInventoryValuesDropdownPart = (
+    doq,
+    partid,
+    idcolumn,
+    value,
+    _key
+  ) => {
+    // console.log("changeInventoryValuesDropdownPart", { doq, partid, idcolumn, value, _key });
+
     var arr = [];
     for (var i = 0; i < doq.length; i++) {
-      if (doq[i].model_id === Number(partid)) {
+      // if (doq[i].model_id === Number(partid)) {
+      if (doq[i]._key === _key) {
         const idxfield = doq[i].inventory_values
           .map((docname) => docname.model_inventory_column_id)
           .indexOf(idcolumn);
@@ -314,7 +335,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
               doq[i].inventory_parts,
               partid,
               idcolumn,
-              value
+              value,
+              _key
             ),
           });
         } else {
@@ -332,11 +354,15 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     idcolumn,
     checked,
     idx,
-    value
+    value,
+    _key
   ) => {
+    // console.log("changeInventoryValuesCheckboxPart", { doq, partid, idcolumn, checked, idx, value, _key });
+
     var arr = [];
     for (var i = 0; i < doq.length; i++) {
-      if (doq[i].model_id === Number(partid)) {
+      // if (doq[i].model_id === Number(partid)) {
+      if (doq[i]._key === _key) {
         const idxfield = doq[i].inventory_values
           .map((docname) => docname.model_inventory_column_id)
           .indexOf(idcolumn);
@@ -368,7 +394,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
               idcolumn,
               checked,
               idx,
-              value
+              value,
+              _key
             ),
           });
         } else {
@@ -387,6 +414,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
     });
   };
   const Children = ({ doc, idx }) => {
+    const _key = doc._key;
+
     return (
       <Timeline.Item>
         <Collapse>
@@ -403,11 +432,14 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     style={{ marginRight: `0.5rem` }}
                     onChange={(e) => {
                       var temp = newdata.inventory_parts;
+                      // console.log("temp (children)", { temp });
                       const selectedpart = changeEnablePart(
                         temp,
                         doc.model_id,
-                        e.target.checked
+                        e.target.checked,
+                        _key
                       );
+                      // console.log("selectedpart (children)", { selectedpart });
                       setpartmodeldata(selectedpart);
                       setnewdata((prev) => {
                         var temp = prev;
@@ -435,11 +467,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <p className="mb-0 ml-1">Asset Type</p>
                         <style jsx>
                           {`
-                                                        .judulField::before{
-                                                            content: '*';
-                                                            color: red;
-                                                        }
-                                                    `}
+                                                                .judulField::before{
+                                                                    content: '*';
+                                                                    color: red;
+                                                                }
+                                                            `}
                         </style>
                       </div>
                     }
@@ -449,29 +481,29 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                     </div>
                   </Form.Item>
                   {/* <Form.Item name="inventory_name" label={
-                                        <div className="flex">
-                                            <span className="namaItem"></span>
-                                            <p className="mb-0 ml-1">Nama Item</p>
-                                            <style jsx>
-                                                {`
-                                                    .namaItem::before{
-                                                        content: '*';
-                                                        color: red;
-                                                    }
-                                                `}
-                                            </style>
-                                        </div>
-                                    }>
-                                        <Input name="inventory_name" onChange={(e) => {
-                                            var temp = newdata.inventory_parts
-                                            const selectedpart = changeDataPart(temp, doc.model_id, "inventory_name", e.target.value)
-                                            setnewdata(prev => {
-                                                var temp2 = prev
-                                                temp2.inventory_parts = selectedpart
-                                                return temp2
-                                            })
-                                        }} />
-                                    </Form.Item> */}
+                                                <div className="flex">
+                                                    <span className="namaItem"></span>
+                                                    <p className="mb-0 ml-1">Nama Item</p>
+                                                    <style jsx>
+                                                        {`
+                                                            .namaItem::before{
+                                                                content: '*';
+                                                                color: red;
+                                                            }
+                                                        `}
+                                                    </style>
+                                                </div>
+                                            }>
+                                                <Input name="inventory_name" onChange={(e) => {
+                                                    var temp = newdata.inventory_parts
+                                                    const selectedpart = changeDataPart(temp, doc.model_id, "inventory_name", e.target.value)
+                                                    setnewdata(prev => {
+                                                        var temp2 = prev
+                                                        temp2.inventory_parts = selectedpart
+                                                        return temp2
+                                                    })
+                                                }} />
+                                            </Form.Item> */}
                   <Form.Item
                     name="mig_id"
                     label={
@@ -480,11 +512,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <p className="mb-0 ml-1">MIG ID</p>
                         <style jsx>
                           {`
-                                                    .migId::before{
-                                                        content: '*';
-                                                        color: red;
-                                                    }
-                                                `}
+                                                            .migId::before{
+                                                                content: '*';
+                                                                color: red;
+                                                            }
+                                                        `}
                         </style>
                       </div>
                     }
@@ -497,7 +529,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "mig_id",
-                          e.target.value
+                          e.target.value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -515,11 +548,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <p className="mb-0 ml-1">Kondisi</p>
                         <style jsx>
                           {`
-                                                    .kondisi::before{
-                                                        content: '*';
-                                                        color: red;
-                                                    }
-                                                `}
+                                                            .kondisi::before{
+                                                                content: '*';
+                                                                color: red;
+                                                            }
+                                                        `}
                         </style>
                       </div>
                     }
@@ -532,7 +565,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "status_condition",
-                          value
+                          value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -569,11 +603,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <p className="mb-0 ml-1">Status Pemakaian</p>
                         <style jsx>
                           {`
-                                                .pemakaian::before{
-                                                    content: '*';
-                                                    color: red;
-                                                }
-                                            `}
+                                                        .pemakaian::before{
+                                                            content: '*';
+                                                            color: red;
+                                                        }
+                                                    `}
                         </style>
                       </div>
                     }
@@ -586,7 +620,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "status_usage",
-                          value
+                          value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -608,11 +643,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         <p className="mb-0 ml-1">Serial Number</p>
                         <style jsx>
                           {`
-                                                .sn::before{
-                                                    content: '*';
-                                                    color: red;
-                                                }
-                                            `}
+                                                        .sn::before{
+                                                            content: '*';
+                                                            color: red;
+                                                        }
+                                                    `}
                         </style>
                       </div>
                     }
@@ -625,7 +660,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "serial_number",
-                          e.target.value
+                          e.target.value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -644,7 +680,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "vendor_id",
-                          value
+                          value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -653,7 +690,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                         });
                       }}
                     >
-                      {invrelations.vendors.map((doc, idx) => {
+                      {invrelations.vendors.map((doc, _key) => {
                         return (
                           <Select.Option value={doc.id}>
                             {doc.name}
@@ -675,7 +712,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "manufacturer_id",
-                          value
+                          value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -703,7 +741,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                           temp,
                           doc.model_id,
                           "deskripsi",
-                          e.target.value
+                          e.target.value,
+                          _key
                         );
                         setnewdata((prev) => {
                           var temp2 = prev;
@@ -724,11 +763,11 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                             <p className="mb-0 ml-1">{docvalue.name}</p>
                             <style jsx>
                               {`
-                                                                    .${docvalue.name}::before{
-                                                                        content: '*';
-                                                                        color: red;
-                                                                    }
-                                                                `}
+                                                                            .${docvalue.name}::before{
+                                                                                content: '*';
+                                                                                color: red;
+                                                                            }
+                                                                        `}
                             </style>
                           </div>
                         }
@@ -745,7 +784,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     temp,
                                     doc.model_id,
                                     docvalue.id,
-                                    value
+                                    value,
+                                    _key
                                   );
                                 setnewdata((prev) => {
                                   var temp2 = prev;
@@ -780,7 +820,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                             docvalue.id,
                                             e.target.checked,
                                             idx3,
-                                            doc3
+                                            doc3,
+                                            _key
                                           );
                                         setnewdata((prev) => {
                                           var temp2 = prev;
@@ -808,7 +849,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   temp,
                                   doc.model_id,
                                   docvalue.id,
-                                  datestring
+                                  datestring,
+                                  _key
                                 );
                                 setnewdata((prev) => {
                                   var temp2 = prev;
@@ -828,7 +870,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   temp,
                                   doc.model_id,
                                   docvalue.id,
-                                  e.target.value
+                                  e.target.value,
+                                  _key
                                 );
                                 setnewdata((prev) => {
                                   var temp2 = prev;
@@ -847,7 +890,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   temp,
                                   doc.model_id,
                                   docvalue.id,
-                                  `${value}`
+                                  `${value}`,
+                                  _key
                                 );
                                 setnewdata((prev) => {
                                   var temp2 = prev;
@@ -866,7 +910,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   temp,
                                   doc.model_id,
                                   docvalue.id,
-                                  e.target.value
+                                  e.target.value,
+                                  _key
                                 );
                                 setnewdata((prev) => {
                                   var temp2 = prev;
@@ -885,7 +930,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   temp,
                                   doc.model_id,
                                   docvalue.id,
-                                  e.target.value
+                                  e.target.value,
+                                  _key
                                 );
                                 setnewdata((prev) => {
                                   var temp2 = prev;
@@ -1300,6 +1346,7 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                               var temp11 = [];
                               for (var i = 0; i < item.length; i++) {
                                 var temp1 = {};
+
                                 temp1 = item[i].model_columns.map(
                                   (doc, idx) => {
                                     if (
@@ -1354,32 +1401,36 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                   }
                                 );
 
-                                temp11.push({
-                                  model_name: item[i].name,
-                                  asset_name: item[i].asset.name,
-                                  enable_part: false,
-                                  disable_part: level > 0 ? true : false,
-                                  id: item[i].id,
-                                  model_id: item[i].id,
-                                  quantity: item[i].quantity || 0,
-                                  vendor_id: null,
-                                  inventory_name: "",
-                                  status_condition: null,
-                                  status_usage: null,
-                                  serial_number: "",
-                                  is_exist: true,
-                                  deskripsi: "",
-                                  manufacturer_id: null,
-                                  mig_id: "",
-                                  inventory_values: temp1,
-                                  inventory_parts:
-                                    item[i].model_parts.length > 0
-                                      ? recursivePartModel(
-                                          item[i].model_parts,
-                                          level
-                                        )
-                                      : [],
-                                });
+                                const quantity = item[i].quantity || 1;
+                                for (let j = 0; j < quantity; ++j) {
+                                  temp11.push({
+                                    _key: `M${item[i].id}L${level}-${i}-${j}`,
+                                    model_name: item[i].name,
+                                    asset_name: item[i].asset.name,
+                                    enable_part: false,
+                                    disable_part: level > 0 ? true : false,
+                                    id: item[i].id,
+                                    model_id: item[i].id,
+                                    quantity: quantity,
+                                    vendor_id: null,
+                                    inventory_name: "",
+                                    status_condition: null,
+                                    status_usage: null,
+                                    serial_number: "",
+                                    is_exist: true,
+                                    deskripsi: "",
+                                    manufacturer_id: null,
+                                    mig_id: "",
+                                    inventory_values: temp1,
+                                    inventory_parts:
+                                      item[i].model_parts.length > 0
+                                        ? recursivePartModel(
+                                            item[i].model_parts,
+                                            level
+                                          )
+                                        : [],
+                                  });
+                                }
                               }
                               return temp11;
                             };
@@ -1389,28 +1440,29 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                              *
                              * Function ini digunakan untuk fitur render dan edit multiple konfigurasi part items.
                              */
-                            const flattenQuantity = (value) => {
-                              const result = [];
+                            // const flattenQuantity = (value) => {
+                            //   const result = [];
 
-                              for (let i = 0; i < value.length; ++i) {
-                                const multiplier = value[i].quantity || 1;
+                            //   for (let i = 0; i < value.length; ++i) {
+                            //     const multiplier = value[i].quantity || 1;
 
-                                for (let j = 0; j < multiplier; ++j) {
-                                  result.push(value[i]);
-                                }
-                              }
+                            //     for (let j = 0; j < multiplier; ++j) {
+                            //       result.push(value[i]);
+                            //     }
+                            //   }
 
-                              return result;
-                            };
+                            //   return result;
+                            // };
 
-                            // const yo = recursivePartModel(
-                            //   res2.data.model_parts,
-                            //   level
-                            // );
-
-                            const yo = flattenQuantity(
-                              recursivePartModel(res2.data.model_parts, level)
+                            const yo = recursivePartModel(
+                              res2.data.model_parts,
+                              level
                             );
+                            // console.log({yo});
+
+                            // const yo = flattenQuantity(
+                            //   recursivePartModel(res2.data.model_parts, level)
+                            // );
 
                             setpartmodeldata(yo);
                             setnewdata((prev) => {
@@ -2323,6 +2375,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                   ) : (
                     <Collapse>
                       {partmodeldata.map((docpart, idxpart) => {
+                        const _key = docpart._key;
+
                         return (
                           <Panel
                             id={`panel${idxpart}`}
@@ -2339,8 +2393,10 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                     const selectedpart = changeEnablePart(
                                       temp,
                                       docpart.model_id,
-                                      e.target.checked
+                                      e.target.checked,
+                                      _key
                                     );
+                                    // console.log({ selectedpart });
                                     setpartmodeldata(selectedpart);
                                     setnewdata((prev) => {
                                       var temp = prev;
@@ -2434,7 +2490,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "mig_id",
-                                        e.target.value
+                                        e.target.value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2473,7 +2530,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "status_condition",
-                                        value
+                                        value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2533,7 +2591,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "status_usage",
-                                        value
+                                        value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2582,7 +2641,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "serial_number",
-                                        e.target.value
+                                        e.target.value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2605,7 +2665,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "vendor_id",
-                                        value
+                                        value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2640,7 +2701,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "manufacturer_id",
-                                        value
+                                        value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2674,7 +2736,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                         temp,
                                         docpart.model_id,
                                         "deskripsi",
-                                        e.target.value
+                                        e.target.value,
+                                        _key
                                       );
                                       setnewdata((prev) => {
                                         var temp2 = prev;
@@ -2737,7 +2800,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     temp,
                                                     docpart.model_id,
                                                     docvalue.id,
-                                                    value
+                                                    value,
+                                                    _key
                                                   );
                                                 setnewdata((prev) => {
                                                   var temp2 = prev;
@@ -2787,7 +2851,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                               docvalue.id,
                                                               e.target.checked,
                                                               idx3,
-                                                              doc3
+                                                              doc3,
+                                                              _key
                                                             );
                                                           setnewdata((prev) => {
                                                             var temp2 = prev;
@@ -2827,7 +2892,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     temp,
                                                     docpart.model_id,
                                                     docvalue.id,
-                                                    datestring
+                                                    datestring,
+                                                    _key
                                                   );
                                                 setnewdata((prev) => {
                                                   var temp2 = prev;
@@ -2855,7 +2921,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     temp,
                                                     docpart.model_id,
                                                     docvalue.id,
-                                                    e.target.value
+                                                    e.target.value,
+                                                    _key
                                                   );
                                                 setnewdata((prev) => {
                                                   var temp2 = prev;
@@ -2881,7 +2948,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     temp,
                                                     docpart.model_id,
                                                     docvalue.id,
-                                                    `${value}`
+                                                    `${value}`,
+                                                    _key
                                                   );
                                                 setnewdata((prev) => {
                                                   var temp2 = prev;
@@ -2907,7 +2975,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     temp,
                                                     docpart.model_id,
                                                     docvalue.id,
-                                                    e.target.value
+                                                    e.target.value,
+                                                    _key
                                                   );
                                                 setnewdata((prev) => {
                                                   var temp2 = prev;
@@ -2933,7 +3002,8 @@ const ItemCreate = ({ initProps, sidemenu, dataProfile }) => {
                                                     temp,
                                                     docpart.model_id,
                                                     docvalue.id,
-                                                    e.target.value
+                                                    e.target.value,
+                                                    _key
                                                   );
                                                 setnewdata((prev) => {
                                                   var temp2 = prev;
