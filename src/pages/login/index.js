@@ -14,7 +14,7 @@ export default function Home({ initProps }) {
     email: "",
     password: "",
   });
-  const [alerterror, setAlerterror] = useState(false);
+  // const [alerterror, setAlerterror] = useState(false);
   const [loadinglogin, setLoadinglogin] = useState(false);
   const onChangeLogin = (e) => {
     setFormdata({
@@ -46,16 +46,20 @@ export default function Home({ initProps }) {
           rt.push("/dashboard/home").then(() => setLoadinglogin(false));
         } else if (!res2.success) {
           // console.log("masuk ke error login")
+          const errorMessage =
+            res2.message?.errorInfo?.status_detail ||
+            res2.message ||
+            "Terjadi kesalahan saat melakukan login.";
+
           message.error(
             {
-              content: res2.message.errorInfo.status_detail,
+              content: errorMessage,
               style: {
                 marginTop: `1rem`,
               },
             },
             5
           );
-          setAlerterror(true);
           setLoadinglogin(false);
         }
       })
@@ -67,7 +71,6 @@ export default function Home({ initProps }) {
           },
         });
 
-        setAlerterror(true);
         setLoadinglogin(false);
       });
   };

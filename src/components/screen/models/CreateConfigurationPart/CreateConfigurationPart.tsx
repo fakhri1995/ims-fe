@@ -1,5 +1,5 @@
 import { Button, notification } from "antd";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 
 import { GetModelData, useGetModel } from "apis/asset";
 
@@ -151,8 +151,19 @@ export const CreateConfigurationPart: FC<ICreateConfigurationPart> = ({
 
   const renderChildPartModel = (item) => {
     return item.map((doc, idx) => {
+      const renderCount = doc.quantity || 1;
+
       return (
-        <ModelPartTimelineItem doc={doc} idx={idx}></ModelPartTimelineItem>
+        <React.Fragment key={idx}>
+          {Array(renderCount)
+            .fill(null)
+            .map((_, idx2) => (
+              <ModelPartTimelineItem
+                doc={doc}
+                idx={idx2}
+              ></ModelPartTimelineItem>
+            ))}
+        </React.Fragment>
       );
     });
   };
