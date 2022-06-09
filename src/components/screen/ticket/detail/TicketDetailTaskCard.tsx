@@ -1,6 +1,7 @@
 import { UserOutlined } from "@ant-design/icons";
 import { Dropdown } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import type { FC } from "react";
 
 import { formatDateToLocale } from "lib/date-utils";
@@ -27,6 +28,8 @@ export const TicketDetailTaskCard: FC<Task> = ({
   users,
   status,
 }) => {
+  const router = useRouter();
+
   const deadlineDateContent = formatDateToLocale(
     deadline !== null ? new Date(deadline) : null,
     "iiii, dd LLL yy",
@@ -88,8 +91,11 @@ export const TicketDetailTaskCard: FC<Task> = ({
     </div>
   ) : null;
 
+  const destinationUrl = `/tasks/detail/${id}`;
+  const originUrl = encodeURIComponent(router?.asPath);
+
   return (
-    <Link href={`/tasks/detail/${id}`}>
+    <Link href={`${destinationUrl}?prevpath=${originUrl}`}>
       <a className="mig-platform--p-0 p-4 space-y-4 text-gray-400 hover:text-gray-400 hover:cursor-pointer hover:bg-gray-50 transition-colors">
         {/* Name, Deadlie, and No Task */}
         <div>

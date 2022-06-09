@@ -1,4 +1,4 @@
-import { LoadingOutlined } from "@ant-design/icons";
+// import { LoadingOutlined } from "@ant-design/icons";
 import {
   Document,
   Image,
@@ -12,7 +12,7 @@ import {
 import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 import { TaskDetailLampiran } from "components/screen/task";
@@ -692,11 +692,11 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     m: 0,
     s: 0,
   });
-  const [colorstatus, setcolorstatus] = useState({
-    text: "",
-    bg: "",
-    border: "",
-  });
+  // const [colorstatus, setcolorstatus] = useState({
+  //   text: "",
+  //   bg: "",
+  //   border: "",
+  // });
   const [drawertaskupdate, setdrawertaskupdate] = useState(false);
   const [drawertaskdetailcreate, setdrawertaskdetailcreate] = useState(false);
   const [drawertaskdetailupdate, setdrawertaskdetailupdate] = useState(false);
@@ -781,30 +781,60 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   const [selectedforin, setselectedforin] = useState([]);
   const [selectedforout, setselectedforout] = useState([]);
   //UPLOAD FILE
-  const [loadingfile, setloadingfile] = useState(false);
+  // const [loadingfile, setloadingfile] = useState(false);
 
   //HANDLER
-  const onChangeGambar = async (e) => {
-    setloadingfile(true);
-    const foto = e.target.files;
-    const formdata = new FormData();
-    formdata.append("file", foto[0]);
-    formdata.append("upload_preset", "migsys");
-    const fetching = await fetch(
-      `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
-      {
-        method: "POST",
-        body: formdata,
-      }
-    );
-    const datajson = await fetching.json();
-    var tempfile = [...dataupdate.files];
-    tempfile.push(datajson.secure_url);
-    setdataupdate({ ...dataupdate, files: tempfile });
-    setloadingfile(false);
-  };
+  const handlePushRouterBack = useCallback(() => {
+    // A function to push the User back to their previous page.
+    //
+    // User can access this page from various pages (e.g. admin task, my task, and Ticket Detail).
+    //
+    // We use 'prevpath' as query string to decide where we should push them back.
+
+    if (!rt.isReady) {
+      return;
+    }
+
+    switch (prevpath) {
+      case "admin":
+        rt.push(`/tasks/admin`);
+        return;
+      case "mytask":
+        rt.push(`/tasks/mytask`);
+        return;
+      default:
+        if (prevpath !== undefined && typeof prevpath === "string") {
+          rt.push(decodeURIComponent(prevpath));
+          return;
+        }
+
+        // just in case ?
+        rt.back();
+        return;
+    }
+  }, [rt, prevpath]);
+  // const onChangeGambar = async (e) => {
+  //   setloadingfile(true);
+  //   const foto = e.target.files;
+  //   const formdata = new FormData();
+  //   formdata.append("file", foto[0]);
+  //   formdata.append("upload_preset", "migsys");
+  //   const fetching = await fetch(
+  //     `https://api.Cloudinary.com/v1_1/aqlpeduli/image/upload`,
+  //     {
+  //       method: "POST",
+  //       body: formdata,
+  //     }
+  //   );
+  //   const datajson = await fetching.json();
+  //   var tempfile = [...dataupdate.files];
+  //   tempfile.push(datajson.secure_url);
+  //   setdataupdate({ ...dataupdate, files: tempfile });
+  //   setloadingfile(false);
+  // };
+
   const handleDeleteTask = () => {
-    setloadingtaskdelete(true);
+    // setloadingtaskdelete(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteTask`, {
       method: "DELETE",
       headers: {
@@ -817,14 +847,16 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setloadingtaskdelete(false);
+        // setloadingtaskdelete(false);
         if (res2.success) {
-          setmodaltaskdelete(false);
+          // setmodaltaskdelete(false);
           notification["success"]({
             message: res2.message,
             duration: 3,
           });
-          prevpath ? rt.push(`/tasks/${prevpath}`) : rt.push(`/tasks`);
+
+          handlePushRouterBack();
+          // prevpath ? rt.push(`/tasks/${prevpath}`) : rt.push(`/tasks`);
         } else {
           notification["error"]({
             message: res2.message,
@@ -1044,7 +1076,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             message: res2.message,
             duration: 3,
           });
-          window.location.href = `/tasks/${prevpath}`;
+          // window.location.href = `/tasks/${prevpath}`;
+          handlePushRouterBack();
         } else {
           notification["error"]({
             message: res2.message,
@@ -1071,7 +1104,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             message: res2.message,
             duration: 3,
           });
-          window.location.href = `/tasks/${prevpath}`;
+          // window.location.href = `/tasks/${prevpath}`;
+          handlePushRouterBack();
         } else {
           notification["error"]({
             message: res2.message,
@@ -1277,10 +1311,12 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                   <div
                     className="mr-3 cursor-pointer"
                     onClick={() => {
-                      if (prevpath) {
-                        prevpath === "admin" && rt.push(`/tasks/admin`);
-                        prevpath === "mytask" && rt.push(`/tasks/mytask`);
-                      }
+                      handlePushRouterBack();
+
+                      // if (prevpath) {
+                      //   prevpath === "admin" && rt.push(`/tasks/admin`);
+                      //   prevpath === "mytask" && rt.push(`/tasks/mytask`);
+                      // }
                     }}
                   >
                     <BackIconSvg size={20} color={`#000000`} />
