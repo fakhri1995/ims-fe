@@ -154,6 +154,35 @@ export const TicketDetailTaskCreateDrawer: FC<
   );
 
   //HANDLER
+  const resetDrawerStates = () => {
+    setdatacreate({
+      name: "",
+      description: "",
+      task_type_id: null,
+      location_id: null,
+      reference_id: parsedTicketId,
+      created_at: null,
+      deadline: null,
+      is_group: null,
+      is_replaceable: false,
+      assign_ids: [],
+      inventory_ids: [],
+      is_uploadable: false,
+      repeat: 0,
+      files: [],
+      end_repeat_at: null,
+      subloc_id: null,
+    });
+    setselecteditems([]);
+    setselectedstaffgroup([]);
+    setswitchstaffgroup(1);
+    setnow(null);
+    setnowend(null);
+    // setrepeatable(false);
+    onvisible(false);
+    setdisabledcreate(true);
+  };
+
   const handleAddTask = () => {
     var finaldata = {
       ...datacreate,
@@ -169,31 +198,6 @@ export const TicketDetailTaskCreateDrawer: FC<
       },
       {
         onSuccess: (response) => {
-          setdatacreate({
-            name: "",
-            description: "",
-            task_type_id: null,
-            location_id: null,
-            reference_id: parsedTicketId,
-            created_at: null,
-            deadline: null,
-            is_group: null,
-            is_replaceable: false,
-            assign_ids: [],
-            inventory_ids: [],
-            is_uploadable: false,
-            repeat: 0,
-            files: [],
-            end_repeat_at: null,
-            subloc_id: null,
-          });
-          setselecteditems([]);
-          setselectedstaffgroup([]);
-          setswitchstaffgroup(1);
-          setnow(null);
-          setnowend(null);
-          // setrepeatable(false);
-          onvisible(false);
           notification["success"]({
             message: response.data.message,
             duration: 3,
@@ -204,6 +208,9 @@ export const TicketDetailTaskCreateDrawer: FC<
             message: error.response.data.message,
             duration: 3,
           });
+        },
+        onSettled: () => {
+          resetDrawerStates();
         },
       }
     );
@@ -360,31 +367,7 @@ export const TicketDetailTaskCreateDrawer: FC<
       title="Tambah Task"
       visible={visible}
       onClose={() => {
-        setdatacreate({
-          name: "",
-          description: "",
-          task_type_id: null,
-          location_id: null,
-          reference_id: parsedTicketId,
-          created_at: null,
-          deadline: null,
-          is_group: null,
-          is_replaceable: false,
-          assign_ids: [],
-          inventory_ids: [],
-          is_uploadable: false,
-          repeat: 0,
-          files: [],
-          end_repeat_at: null,
-          subloc_id: null,
-        });
-        setselecteditems([]);
-        setselectedstaffgroup([]);
-        setswitchstaffgroup(1);
-        setnow(null);
-        setnowend(null);
-        // setrepeatable(false);
-        onvisible(false);
+        resetDrawerStates();
       }}
       buttonOkText="Simpan Task"
       onClick={handleAddTask}
@@ -953,27 +936,31 @@ export const TicketDetailTaskCreateDrawer: FC<
                     placeholder="Jadwal Mulai"
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
+                      console.log({ date, datestring });
+                      const deadline =
+                        datacreate.deadline === null
+                          ? null
+                          : moment(datacreate.deadline)
+                              .add(
+                                Math.floor(
+                                  moment
+                                    .duration(
+                                      moment(datestring).diff(moment(tempdate))
+                                    )
+                                    .asHours()
+                                ),
+                                "h"
+                              )
+                              .locale("id")
+                              .format("YYYY-MM-DD HH:mm:ss"); // -> 2021-11-30 20:49:53
+                      // .format();
+
+                      console.log({ deadline });
+
                       setdatacreate({
                         ...datacreate,
                         created_at: datestring,
-                        deadline:
-                          datacreate.deadline === null
-                            ? null
-                            : moment(datacreate.deadline)
-                                .add(
-                                  Math.floor(
-                                    moment
-                                      .duration(
-                                        moment(datestring).diff(
-                                          moment(tempdate)
-                                        )
-                                      )
-                                      .asHours()
-                                  ),
-                                  "h"
-                                )
-                                .locale("id")
-                                .format(),
+                        deadline,
                       });
                       setdisabledtrigger((prev) => prev + 1);
                     }}
@@ -1042,6 +1029,10 @@ export const TicketDetailTaskCreateDrawer: FC<
                           .locale("id")
                           .format());
                   }
+                  console.log({
+                    value: e.target.value,
+                    choisedate,
+                  });
                   setdatacreate({
                     ...datacreate,
                     deadline: e.target.value !== -10 ? choisedate : null,
