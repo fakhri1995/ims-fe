@@ -12,7 +12,7 @@ import {
 import { Checkbox, Empty, Input, Select, Spin, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 import { TaskDetailLampiran } from "components/screen/task";
@@ -1293,6 +1293,19 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     document.getElementById(`card${scrollidupdate}`)?.scrollIntoView(true);
   }, [scrolltriggerupdate, isOnClient]);
 
+  const pageBreadcrumbValue = useMemo(() => {
+    const isFromAdminPage = prevpath.toLowerCase() === "admin";
+    return [
+      {
+        name: isFromAdminPage ? "Task" : "My Task",
+        hrefValue: isFromAdminPage ? "/tasks/admin" : "/tasks/mytask",
+      },
+      {
+        name: "Detail Task",
+      },
+    ];
+  }, [prevpath]);
+
   return (
     <Layout
       tok={initProps}
@@ -1300,7 +1313,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
       sidemenu={prevpath === "admin" ? "201" : "202"}
       pathArr={pathArr}
       st={st}
-      prevpath={prevpath}
+      // prevpath={prevpath}
+      fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <AccessControl hasPermission={TASK_GET}>
         <div className="grid grid-cols-12 px-5">
