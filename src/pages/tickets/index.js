@@ -265,7 +265,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 </>
               ) : (
                 <>
-                  {record.status === 1 && (
+                  {(record.status === 1 ||
+                    record.status === 3 ||
+                    record.status === 4) && (
                     <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">
                       Dalam Proses
                     </div>
