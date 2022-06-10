@@ -48,7 +48,11 @@ const ModulesIndex = ({
    * Dependencies
    */
   const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetFeaturesList = hasPermission(FEATURES_GET);
   const isAllowedToGetModulesList = hasPermission(MODULES_GET);
   const isAllowedToUpdateModule = hasPermission(MODULE_UPDATE);
