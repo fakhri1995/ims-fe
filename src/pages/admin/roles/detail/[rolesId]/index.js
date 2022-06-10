@@ -19,7 +19,11 @@ const AnggotaSide = ({ initProps, rolesid }) => {
   /**
    * Dependencies
    */
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRoleUserFeatures = hasPermission(ROLE_USER_FEATURES_GET);
 
   const [roleanggota, setroleanggota] = useState([]);
@@ -158,7 +162,11 @@ const FiturSide = ({ initProps, rolesid }) => {
   /**
    * Dependencies
    */
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRoleUserFeatures = hasPermission(ROLE_USER_FEATURES_GET);
 
   const [rolefitur, setrolefitur] = useState([]);
@@ -330,7 +338,11 @@ const RolesDetail = ({ initProps, dataProfile, sidemenu, rolesid }) => {
    * Dependencies
    */
   const rt = useRouter();
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRole = hasPermission(ROLE_GET);
   const isAllowedToGetRoleUserFeatures = hasPermission(ROLE_USER_FEATURES_GET);
   const isAllowedToDeleteRole = hasPermission(ROLE_DELETE);

@@ -44,6 +44,11 @@ import { AddTaskPayload, TaskService } from "apis/task";
 import { TicketServiceQueryKeys } from "apis/ticket";
 
 /**
+ * @private
+ */
+const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
+
+/**
  * Component TicketDetailTaskCreateDrawer's props.
  */
 export interface ITicketDetailTaskCreateDrawer {
@@ -217,6 +222,43 @@ export const TicketDetailTaskCreateDrawer: FC<
   };
 
   //USEEFFECT
+  useEffect(() => {
+    //
+    // Effect ini akan produce value untuk state `datacreate.deadline`.
+    // Ketika terjadi perubahan input saat Use memilih "Jadwal Mulai"
+    //  dan "Jadwal Berakhir".
+    //
+    // Nilai deadline yang dihasilkan akan menyesuaikan dengan `datacreate.created_at`.
+    //
+    if (datacreate.deadline !== null) {
+      // Do not run this effect if deadline was defined.
+      return;
+    }
+
+    const deadlineRelativeHour = nowend;
+    const startDate = datacreate.created_at;
+
+    const isInitialRender = deadlineRelativeHour === null; // Initial render
+    const deadlineHasNotChoosen = deadlineRelativeHour === -10; // Corner case: Jadwal Berakhir has not choosen (and User uses date picker instead)
+    const startDateHasNotChoosen = startDate === null; // Jadwal Mulai has not choosen
+
+    if (isInitialRender || deadlineHasNotChoosen || startDateHasNotChoosen) {
+      return;
+    }
+
+    const startDateMomentInstance = moment(startDate, DATE_FORMAT);
+
+    const deadlineRelativeValue = moment(startDateMomentInstance)
+      .add(deadlineRelativeHour, "hour")
+      .format(DATE_FORMAT);
+
+    // Flush state changes
+    setdatacreate((prev) => ({
+      ...prev,
+      deadline: deadlineRelativeValue,
+    }));
+  }, [nowend, datacreate.deadline, datacreate.created_at]);
+
   //Tipe task (required)
   useEffect(() => {
     if (!isAllowedToGetTaskTypes) {
@@ -599,7 +641,6 @@ export const TicketDetailTaskCreateDrawer: FC<
                 onChange={(values, options) => {
                   setdatacreate({ ...datacreate, inventory_ids: values });
                   setselecteditems(options as any);
-                  console.log(options);
                 }}
                 showSearch
                 optionFilterProp="children"
@@ -718,7 +759,6 @@ export const TicketDetailTaskCreateDrawer: FC<
                   onChange={(values, options) => {
                     setdatacreate({ ...datacreate, assign_ids: values });
                     setselectedstaffgroup(options as any);
-                    console.log(options);
                   }}
                   showSearch
                   optionFilterProp="children"
@@ -771,7 +811,6 @@ export const TicketDetailTaskCreateDrawer: FC<
                   onChange={(value, option) => {
                     setdatacreate({ ...datacreate, assign_ids: [value] });
                     setselectedstaffgroup([option]);
-                    console.log(option);
                   }}
                   showSearch
                   optionFilterProp="children"
@@ -880,27 +919,34 @@ export const TicketDetailTaskCreateDrawer: FC<
                     ...datacreate,
                     created_at:
                       e.target.value === true
-                        ? moment(new Date()).locale("id").format()
+                        ? moment(new Date()).locale("id").format(DATE_FORMAT)
                         : null,
-                    deadline:
-                      datacreate.deadline === null
-                        ? null
-                        : moment(datacreate.deadline)
-                            .add(
-                              Math.floor(
-                                moment
-                                  .duration(
-                                    moment(new Date()).diff(
-                                      moment(datacreate.created_at)
-                                    )
-                                  )
-                                  .asHours()
-                              ),
-                              "h"
-                            )
-                            .locale("id")
-                            .format(),
                   });
+                  // setdatacreate({
+                  //   ...datacreate,
+                  //   created_at:
+                  //     e.target.value === true
+                  //       ? moment(new Date()).locale("id").format()
+                  //       : null,
+                  //   deadline:
+                  //     datacreate.deadline === null
+                  //       ? null
+                  //       : moment(datacreate.deadline)
+                  //           .add(
+                  //             Math.floor(
+                  //               moment
+                  //                 .duration(
+                  //                   moment(new Date()).diff(
+                  //                     moment(datacreate.created_at)
+                  //                   )
+                  //                 )
+                  //                 .asHours()
+                  //             ),
+                  //             "h"
+                  //           )
+                  //           .locale("id")
+                  //           .format(),
+                  // });
                   e.target.value === true ? setchoosedate(false) : null;
                   setdisabledtrigger((prev) => prev + 1);
                 }}
@@ -934,34 +980,36 @@ export const TicketDetailTaskCreateDrawer: FC<
                   <DatePicker
                     showTime
                     placeholder="Jadwal Mulai"
+                    format={DATE_FORMAT}
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
-                      console.log({ date, datestring });
-                      const deadline =
-                        datacreate.deadline === null
-                          ? null
-                          : moment(datacreate.deadline)
-                              .add(
-                                Math.floor(
-                                  moment
-                                    .duration(
-                                      moment(datestring).diff(moment(tempdate))
-                                    )
-                                    .asHours()
-                                ),
-                                "h"
-                              )
-                              .locale("id")
-                              .format("YYYY-MM-DD HH:mm:ss"); // -> 2021-11-30 20:49:53
+                      // const deadline =
+                      //   datacreate.deadline === null
+                      //     ? null
+                      //     : moment(datacreate.deadline)
+                      //         .add(
+                      //           Math.floor(
+                      //             moment
+                      //               .duration(
+                      //                 moment(datestring).diff(moment(tempdate))
+                      //               )
+                      //               .asHours()
+                      //           ),
+                      //           "h"
+                      //         )
+                      //         .locale("id")
+                      //         .format(); // -> 2021-11-30 20:49:53
                       // .format();
-
-                      console.log({ deadline });
 
                       setdatacreate({
                         ...datacreate,
                         created_at: datestring,
-                        deadline,
                       });
+                      // setdatacreate({
+                      //   ...datacreate,
+                      //   created_at: datestring,
+                      //   deadline,
+                      // });
                       setdisabledtrigger((prev) => prev + 1);
                     }}
                   ></DatePicker>
@@ -987,55 +1035,61 @@ export const TicketDetailTaskCreateDrawer: FC<
                 name={`deadline`}
                 onChange={(e) => {
                   setnowend(e.target.value);
-                  var choisedate = "";
-                  if (e.target.value === 3) {
-                    now === false
-                      ? (choisedate = moment(datacreate.created_at)
-                          .add(3, "h")
-                          .locale("id")
-                          .format())
-                      : (choisedate = moment()
-                          .add(3, "h")
-                          .locale("id")
-                          .format());
-                  } else if (e.target.value === 30) {
-                    now === false
-                      ? (choisedate = moment(datacreate.created_at)
-                          .add(30, "h")
-                          .locale("id")
-                          .format())
-                      : (choisedate = moment()
-                          .add(30, "h")
-                          .locale("id")
-                          .format());
-                  } else if (e.target.value === 24) {
-                    now === false
-                      ? (choisedate = moment(datacreate.created_at)
-                          .add(1, "d")
-                          .locale("id")
-                          .format())
-                      : (choisedate = moment()
-                          .add(1, "d")
-                          .locale("id")
-                          .format());
-                  } else if (e.target.value === 168) {
-                    now === false
-                      ? (choisedate = moment(datacreate.created_at)
-                          .add(1, "w")
-                          .locale("id")
-                          .format())
-                      : (choisedate = moment()
-                          .add(1, "w")
-                          .locale("id")
-                          .format());
-                  }
-                  console.log({
-                    value: e.target.value,
-                    choisedate,
-                  });
+                  // var choisedate = "";
+                  // if (e.target.value === 3) {
+                  //   now === false
+                  //     ? (choisedate = moment(datacreate.created_at)
+                  //         .add(3, "h")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT))
+                  //     : (choisedate = moment()
+                  //         .add(3, "h")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT));
+                  // } else if (e.target.value === 30) {
+                  //   now === false
+                  //     ? (choisedate = moment(datacreate.created_at)
+                  //         .add(30, "h")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT))
+                  //     : (choisedate = moment()
+                  //         .add(30, "h")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT));
+                  // } else if (e.target.value === 24) {
+                  //   now === false
+                  //     ? (choisedate = moment(datacreate.created_at)
+                  //         .add(1, "d")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT))
+                  //     : (choisedate = moment()
+                  //         .add(1, "d")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT));
+                  // } else if (e.target.value === 168) {
+                  //   now === false
+                  //     ? (choisedate = moment(datacreate.created_at)
+                  //         .add(1, "w")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT))
+                  //     : (choisedate = moment()
+                  //         .add(1, "w")
+                  //         .locale("id")
+                  //         .format(DATE_FORMAT));
+                  // }
+                  // console.log({
+                  //   value: e.target.value,
+                  //   choisedate,
+                  // });
+                  // setdatacreate({
+                  //   ...datacreate,
+                  //   deadline: e.target.value !== -10 ? choisedate : null,
+                  // });
+
+                  // Always reset deadline to null
                   setdatacreate({
                     ...datacreate,
-                    deadline: e.target.value !== -10 ? choisedate : null,
+                    deadline: null,
                   });
                   e.target.value !== -10 ? setchoosedateend(false) : null;
                   setdisabledtrigger((prev) => prev + 1);
@@ -1078,7 +1132,8 @@ export const TicketDetailTaskCreateDrawer: FC<
                 <div>
                   <DatePicker
                     showTime
-                    placeholder="Jadwal Mulai"
+                    placeholder="Jadwal Berakhir"
+                    format={DATE_FORMAT}
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
                       setdatacreate({ ...datacreate, deadline: datestring });
