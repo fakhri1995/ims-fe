@@ -540,7 +540,6 @@ const ModalUbahOnHoldTask = ({
               Batalkan
             </ButtonSys>
             <ButtonSys type="primary" onClick={onOk}>
-              <TrashIconSvg size={15} color={`#ffffff`} />
               Ubah
             </ButtonSys>
           </div>
