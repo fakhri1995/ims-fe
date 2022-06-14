@@ -934,7 +934,7 @@ const DrawerTaskUpdate = ({
                       created_at:
                         e.target.value === true
                           ? moment(new Date()).locale("id").format(DATE_FORMAT)
-                          : immutableCreatedAt,
+                          : immutableCreatedAt || undefined,
                     });
                     e.target.value === true ? setchoosedate(false) : null;
                     setdisabledtrigger((prev) => prev + 1);
@@ -1071,7 +1071,9 @@ const DrawerTaskUpdate = ({
                       value={
                         dataupdate.deadline !== null
                           ? moment(dataupdate.deadline)
-                          : moment(immutableDeadline)
+                          : immutableDeadline !== null
+                          ? moment(immutableDeadline)
+                          : undefined
                       }
                       onChange={(date, datestring) => {
                         setdataupdate({ ...dataupdate, deadline: datestring });
