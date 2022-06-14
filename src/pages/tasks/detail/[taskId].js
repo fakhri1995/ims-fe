@@ -609,7 +609,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   //1.Init
   const axiosClient = useAxiosClient();
   const rt = useRouter();
-  const { prevpath } = rt.query;
+  // const { prevpath } = rt.query;
+  const prevpath = rt.query?.prevpath || "mytask"; // force fallback prevpath to "mytask"
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(1, 2);
   pathArr.push(`Detail Task`);
@@ -1033,7 +1034,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               message: res2.message,
               duration: 3,
             });
-            window.location.href = `/tasks/detail/${taskid}`;
+            rt?.reload();
+            // window.location.href = `/tasks/detail/${taskid}`;
           } else {
             notification["error"]({
               message: res2.message,
@@ -1294,11 +1296,27 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
   }, [scrolltriggerupdate, isOnClient]);
 
   const pageBreadcrumbValue = useMemo(() => {
-    const isFromAdminPage = prevpath.toLowerCase() === "admin";
+    const prevpathValue = prevpath?.toLowerCase() || undefined;
+
+    let breadcrumbFirstItemName = "";
+    let breadcrumbFirstItemHref = "";
+
+    if (prevpathValue === undefined) {
+      breadcrumbFirstItemName = "My Task";
+      breadcrumbFirstItemHref = "/tasks/mytask";
+    } else {
+      const isFromAdminPage = prevpathValue === "admin";
+
+      breadcrumbFirstItemName = isFromAdminPage ? "Task" : "My Task";
+      breadcrumbFirstItemHref = isFromAdminPage
+        ? "/tasks/admin"
+        : "/tasks/mytask";
+    }
+
     return [
       {
-        name: isFromAdminPage ? "Task" : "My Task",
-        hrefValue: isFromAdminPage ? "/tasks/admin" : "/tasks/mytask",
+        name: breadcrumbFirstItemName,
+        hrefValue: breadcrumbFirstItemHref,
       },
       {
         name: "Detail Task",

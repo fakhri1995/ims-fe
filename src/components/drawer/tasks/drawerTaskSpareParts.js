@@ -9,6 +9,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import ButtonSys from "../../button";
@@ -71,6 +72,11 @@ const DrawerTaskSpareParts = ({
   setselectedforout,
   prevpath,
 }) => {
+  /**
+   * Dependencies
+   */
+  const router = useRouter();
+
   //useState
   const [datapayload, setdatapayload] = useState({
     id: Number(idtask),
@@ -109,7 +115,8 @@ const DrawerTaskSpareParts = ({
             message: res2.message,
             duration: 3,
           });
-          window.location.href = `/tasks/detail/${idtask}`;
+          // window.location.href = `/tasks/detail/${idtask}`;
+          router?.reload();
         } else {
           notification["error"]({
             message: res2.message,

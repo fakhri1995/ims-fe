@@ -9,6 +9,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -102,6 +103,8 @@ const DrawerTaskUpdate = ({
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
 
+  const router = useRouter();
+
   //USESTATE
   const [loadingupdate, setloadingupdate] = useState(false);
   const [disabledupdate, setdisabledupdate] = useState(true);
@@ -178,9 +181,10 @@ const DrawerTaskUpdate = ({
           });
           setdataitems([]);
           setdatastaffgroup([]);
-          window.location.href = `/tasks/detail/${dataupdate.id}${
-            prevpath && `?prevpath=${prevpath}`
-          }`;
+          // window.location.href = `/tasks/detail/${dataupdate.id}${
+          //   prevpath && `?prevpath=${prevpath}`
+          // }`;
+          router?.reload();
         } else {
           notification["error"]({
             message: res2.message,
