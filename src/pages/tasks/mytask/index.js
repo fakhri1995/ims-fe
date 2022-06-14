@@ -1012,7 +1012,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                           <div
                             className="rounded bg-state1 hover:bg-state12 transition duration-300 shadow text-white p-5 flex justify-between mb-2 cursor-pointer h-3/6"
                             onClick={() => {
-                              rt.push(`/tasks/detail/${userlasttwo[0].id}`);
+                              rt.push(
+                                `/tasks/detail/${userlasttwo[0].id}?prevpath=mytask`
+                              );
                             }}
                           >
                             <div className="flex flex-col">
@@ -1073,7 +1075,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                           <div
                             className="rounded bg-white hover:bg-mono90 transition duration-300 shadow p-5 flex justify-between cursor-pointer h-3/6"
                             onClick={() => {
-                              rt.push(`/tasks/detail/${userlasttwo[1].id}`);
+                              rt.push(
+                                `/tasks/detail/${userlasttwo[1].id}?prevpath=mytask`
+                              );
                             }}
                           >
                             <div className="flex flex-col">

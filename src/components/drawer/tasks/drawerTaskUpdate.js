@@ -9,6 +9,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -35,6 +36,11 @@ import {
 import { InputRequired, TextAreaNotRequired } from "../../input";
 import { H1, H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
+
+/**
+ * @private
+ */
+const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 function recursiveModifData(dataa) {
   for (var i = 0; i < dataa.length; i++) {
@@ -97,29 +103,33 @@ const DrawerTaskUpdate = ({
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
 
+  const router = useRouter();
+
   //USESTATE
   const [loadingupdate, setloadingupdate] = useState(false);
   const [disabledupdate, setdisabledupdate] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
   //task types
   const [datatasktypes, setdatatasktypes] = useState([]);
-  const [fetchingtasktypes, setfetchingtasktypes] = useState(false);
+  // const [fetchingtasktypes, setfetchingtasktypes] = useState(false);
   //references
   const [datareferences, setdatareferences] = useState([]);
   const [fetchingreferences, setfetchingreferences] = useState(false);
   //locations
   const [datalocations, setdatalocations] = useState([]);
   const [datasublocs, setdatasublocs] = useState([]);
-  const [fetchinglocations, setfetchinglocations] = useState(false);
+  // const [fetchinglocations, setfetchinglocations] = useState(false);
   const [triggersubloc, settriggersubloc] = useState(-1);
-  const [selectedsubloc, setselectedsubloc] = useState(null);
+  // const [selectedsubloc, setselectedsubloc] = useState(null);
   //items
   const [dataitems, setdataitems] = useState([]);
   const [fetchingitems, setfetchingitems] = useState(false);
   //staff/group
   const [datastaffgroup, setdatastaffgroup] = useState([]);
   const [fetchingstaffgroup, setfetchingstaffgroup] = useState(false);
-  //end date
+  //original date (immutable) - fallback value untuk input field Jadwal Mulai dan Jadwal Berakhir
+  const [immutableCreatedAt, _] = useState(dataupdate.created_at);
+  const [immutableDeadline, __] = useState(dataupdate.deadline);
 
   //HANDLER
   const handleUpdateTask = () => {
@@ -154,8 +164,11 @@ const DrawerTaskUpdate = ({
             description: "",
             location_id: null,
             reference_id: null,
-            created_at: moment(new Date()).locale("id").format(),
-            deadline: moment(new Date()).add(3, "h").locale("id").format(),
+            created_at: moment(new Date()).locale("id").format(DATE_FORMAT),
+            deadline: moment(new Date())
+              .add(3, "h")
+              .locale("id")
+              .format(DATE_FORMAT),
             is_group: null,
             is_replaceable: false,
             assign_ids: [],
@@ -168,9 +181,10 @@ const DrawerTaskUpdate = ({
           });
           setdataitems([]);
           setdatastaffgroup([]);
-          window.location.href = `/tasks/detail/${dataupdate.id}${
-            prevpath && `?prevpath=${prevpath}`
-          }`;
+          // window.location.href = `/tasks/detail/${dataupdate.id}${
+          //   prevpath && `?prevpath=${prevpath}`
+          // }`;
+          router?.reload();
         } else {
           notification["error"]({
             message: res2.message,
@@ -181,6 +195,43 @@ const DrawerTaskUpdate = ({
   };
 
   //USEEFFECT
+  useEffect(() => {
+    //
+    // Effect ini akan produce value untuk state `dataupdate.deadline`.
+    // Ketika terjadi perubahan input saat Use memilih "Jadwal Mulai"
+    //  dan "Jadwal Berakhir".
+    //
+    // Nilai deadline yang dihasilkan akan menyesuaikan dengan `dataupdate.created_at`.
+    //
+    if (dataupdate.deadline !== null) {
+      // Do not run this effect if deadline was defined.
+      return;
+    }
+
+    const deadlineRelativeHour = nowend;
+    const startDate = dataupdate.created_at;
+
+    const isInitialRender = deadlineRelativeHour === null; // Initial render
+    const deadlineHasNotChoosen = deadlineRelativeHour === -10; // Corner case: Jadwal Berakhir has not choosen (and User uses date picker instead)
+    const startDateHasNotChoosen = startDate === null; // Jadwal Mulai has not choosen
+
+    if (isInitialRender || deadlineHasNotChoosen || startDateHasNotChoosen) {
+      return;
+    }
+
+    const startDateMomentInstance = moment(startDate, DATE_FORMAT);
+
+    const deadlineRelativeValue = moment(startDateMomentInstance)
+      .add(deadlineRelativeHour, "hour")
+      .format(DATE_FORMAT);
+
+    // Flush state changes
+    setdataupdate((prev) => ({
+      ...prev,
+      deadline: deadlineRelativeValue,
+    }));
+  }, [nowend, dataupdate.deadline, dataupdate.created_at]);
+
   //Tipe task
   useEffect(() => {
     if (!isAllowedToGetTaskTypes) {
@@ -355,7 +406,7 @@ const DrawerTaskUpdate = ({
     } else {
       setdisabledupdate(true);
     }
-  }, [disabledtrigger]);
+  }, [disabledtrigger, dataupdate.deadline]);
 
   return (
     <DrawerCore
@@ -607,7 +658,6 @@ const DrawerTaskUpdate = ({
                   onChange={(values, options) => {
                     setdataupdate({ ...dataupdate, inventory_ids: values });
                     setselecteditems(options);
-                    console.log(options);
                   }}
                   showSearch
                   optionFilterProp="children"
@@ -723,7 +773,6 @@ const DrawerTaskUpdate = ({
                     onChange={(values, options) => {
                       setdataupdate({ ...dataupdate, assign_ids: values });
                       setselectedstaffgroup(options);
-                      console.log(options);
                     }}
                     showSearch
                     optionFilterProp="children"
@@ -778,7 +827,6 @@ const DrawerTaskUpdate = ({
                     onChange={(value, option) => {
                       setdataupdate({ ...dataupdate, assign_ids: [value] });
                       setselectedstaffgroup([option]);
-                      console.log(option);
                     }}
                     showSearch
                     optionFilterProp="children"
@@ -885,8 +933,8 @@ const DrawerTaskUpdate = ({
                       ...dataupdate,
                       created_at:
                         e.target.value === true
-                          ? moment(new Date()).locale("id").format()
-                          : null,
+                          ? moment(new Date()).locale("id").format(DATE_FORMAT)
+                          : immutableCreatedAt || undefined,
                     });
                     e.target.value === true ? setchoosedate(false) : null;
                     setdisabledtrigger((prev) => prev + 1);
@@ -920,9 +968,14 @@ const DrawerTaskUpdate = ({
                   <div>
                     <DatePicker
                       showTime
+                      format={DATE_FORMAT}
                       placeholder="Jadwal Mulai"
                       style={{ width: `100%` }}
-                      value={moment(dataupdate.created_at)}
+                      value={
+                        dataupdate.created_at !== null
+                          ? moment(dataupdate.created_at)
+                          : moment(immutableCreatedAt)
+                      }
                       onChange={(date, datestring) => {
                         setdataupdate({
                           ...dataupdate,
@@ -953,19 +1006,23 @@ const DrawerTaskUpdate = ({
                   name={`deadline`}
                   onChange={(e) => {
                     setnowend(e.target.value);
-                    var choisedate = "";
-                    if (e.target.value === 3) {
-                      choisedate = moment().add(3, "h").locale("id").format();
-                    } else if (e.target.value === 30) {
-                      choisedate = moment().add(30, "h").locale("id").format();
-                    } else if (e.target.value === 24) {
-                      choisedate = moment().add(1, "d").locale("id").format();
-                    } else if (e.target.value === 168) {
-                      choisedate = moment().add(1, "w").locale("id").format();
-                    }
+                    // var choisedate = "";
+                    // if (e.target.value === 3) {
+                    //   choisedate = moment().add(3, "h").locale("id").format();
+                    // } else if (e.target.value === 30) {
+                    //   choisedate = moment().add(30, "h").locale("id").format();
+                    // } else if (e.target.value === 24) {
+                    //   choisedate = moment().add(1, "d").locale("id").format();
+                    // } else if (e.target.value === 168) {
+                    //   choisedate = moment().add(1, "w").locale("id").format();
+                    // }
+                    // setdataupdate({
+                    //   ...dataupdate,
+                    //   deadline: e.target.value !== -10 ? choisedate : null,
+                    // });
                     setdataupdate({
                       ...dataupdate,
-                      deadline: e.target.value !== -10 ? choisedate : null,
+                      deadline: immutableDeadline,
                     });
                     e.target.value !== -10 ? setchoosedateend(false) : null;
                     setdisabledtrigger((prev) => prev + 1);
@@ -1008,9 +1065,16 @@ const DrawerTaskUpdate = ({
                   <div>
                     <DatePicker
                       showTime
-                      placeholder="Jadwal Mulai"
+                      format={DATE_FORMAT}
+                      placeholder="Jadwal Berakhir"
                       style={{ width: `100%` }}
-                      value={moment(dataupdate.deadline)}
+                      value={
+                        dataupdate.deadline !== null
+                          ? moment(dataupdate.deadline)
+                          : immutableDeadline !== null
+                          ? moment(immutableDeadline)
+                          : undefined
+                      }
                       onChange={(date, datestring) => {
                         setdataupdate({ ...dataupdate, deadline: datestring });
                         setdisabledtrigger((prev) => prev + 1);

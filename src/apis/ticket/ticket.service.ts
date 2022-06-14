@@ -81,12 +81,20 @@ export class TicketService {
     let payloadFormData: FormData = null;
 
     try {
-      payloadFormData = objectToFormData({
+      const enhancedPayload = {
         ...payload,
         raised_at: formatDatePayload(payload.raised_at),
         closed_at: formatDatePayload(payload.closed_at),
         incident_time: formatDatePayload(payload.incident_time),
-      });
+      };
+
+      // Kalau null lebih baik tidak perlu diattach ke payload
+      // Otherwise backend akan tolak karena kena validator.
+      if (enhancedPayload.closed_at === null) {
+        delete enhancedPayload["closed_at"];
+      }
+
+      payloadFormData = objectToFormData(enhancedPayload);
     } catch (e) {
       console.error("e", e);
     }

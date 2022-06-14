@@ -16,11 +16,12 @@ import { useAccessControl } from "contexts/access-control";
 import {
   COMPANY_LISTS_GET,
   COMPANY_SUB_LOCATIONS_GET,
+  GROUPS_GET,
   INVENTORIES_GET,
   TASK_ADD,
   TASK_TYPES_GET,
   TICKETS_GET,
-  TICKET_ASSIGN,
+  USERS_GET,
 } from "lib/features";
 import { generateStaticAssetUrl } from "lib/helper";
 
@@ -62,8 +63,11 @@ const DrawerTaskCreate = ({
     COMPANY_SUB_LOCATIONS_GET
   );
   const isAllowedToGetInventories = hasPermission(INVENTORIES_GET);
-  const isAllowedToAssignTicket = hasPermission(TICKET_ASSIGN);
+  const isAllowedToGetStaffList = hasPermission(USERS_GET);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const isAllowedToGetReferensi = hasPermission(TICKETS_GET);
+
+  const canFindStaffOrGroup = isAllowedToGetStaffList || isAllowedToGetGroups;
 
   const canAddNewTask =
     isAllowedToAddTask && isAllowedToGetTaskTypes && isAllowedToGetCompanyList;
@@ -316,14 +320,15 @@ const DrawerTaskCreate = ({
 
   //Staff/group
   useEffect(() => {
-    if (!isAllowedToAssignTicket) {
-      return;
-    }
-
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
+        if (!isAllowedToGetGroups) {
+          return;
+        }
+
         fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+          // `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`,
           {
             method: `GET`,
             headers: {
@@ -336,8 +341,13 @@ const DrawerTaskCreate = ({
             setdatastaffgroup(res2.data);
           });
       } else if (switchstaffgroup === 1) {
+        if (!isAllowedToGetStaffList) {
+          return;
+        }
+
         fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+          // `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1`,
           {
             method: `GET`,
             headers: {
@@ -351,7 +361,7 @@ const DrawerTaskCreate = ({
           });
       }
     }
-  }, [switchstaffgroup, isAllowedToAssignTicket]);
+  }, [switchstaffgroup, isAllowedToGetGroups, isAllowedToGetStaffList]);
 
   useEffect(() => {
     if (
@@ -366,7 +376,7 @@ const DrawerTaskCreate = ({
     } else {
       setdisabledcreate(true);
     }
-  }, [disabledtrigger]);
+  }, [disabledtrigger, datacreate.deadline]);
 
   return (
     <DrawerCore
@@ -738,7 +748,7 @@ const DrawerTaskCreate = ({
                 <div className="mx-1">
                   <Switch
                     checked={datacreate.is_group}
-                    disabled={!isAllowedToAssignTicket}
+                    disabled={!canFindStaffOrGroup}
                     onChange={(checked) => {
                       setswitchstaffgroup(checked ? 0 : 1);
                       setdatacreate({
@@ -765,7 +775,7 @@ const DrawerTaskCreate = ({
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
-                  disabled={!isAllowedToAssignTicket}
+                  disabled={!isAllowedToGetStaffList}
                   name={`assign_ids`}
                   onChange={(values, options) => {
                     setdatacreate({ ...datacreate, assign_ids: values });
@@ -779,7 +789,8 @@ const DrawerTaskCreate = ({
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${value}`,
+                      // `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
@@ -827,10 +838,11 @@ const DrawerTaskCreate = ({
                   notFoundContent={
                     fetchingstaffgroup ? <Spin size="small" /> : null
                   }
+                  disabled={!isAllowedToGetGroups}
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0&name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${value}`,
                       {
                         method: `GET`,
                         headers: {

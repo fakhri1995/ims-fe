@@ -33,10 +33,11 @@ import { getClientToken } from "lib/auth";
 import {
   COMPANY_LISTS_GET,
   COMPANY_SUB_LOCATIONS_GET,
+  GROUPS_GET,
   INVENTORIES_GET,
   TASK_ADD,
   TASK_TYPES_GET,
-  TICKET_ASSIGN,
+  USERS_GET,
 } from "lib/features";
 import { generateStaticAssetUrl } from "lib/helper";
 
@@ -82,7 +83,10 @@ export const TicketDetailTaskCreateDrawer: FC<
     COMPANY_SUB_LOCATIONS_GET
   );
   const isAllowedToGetInventories = hasPermission(INVENTORIES_GET);
-  const isAllowedToAssignTicket = hasPermission(TICKET_ASSIGN);
+  const isAllowedToGetAgentList = hasPermission(USERS_GET);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+
+  const canFindStaffOrGroup = isAllowedToGetAgentList || isAllowedToGetGroups;
 
   const canAddNewTask =
     isAllowedToAddTask && isAllowedToGetTaskTypes && isAllowedToGetCompanyList;
@@ -352,28 +356,30 @@ export const TicketDetailTaskCreateDrawer: FC<
 
   //Staff/group
   useEffect(() => {
-    if (!isAllowedToAssignTicket) {
-      return;
-    }
-
     if (switchstaffgroup !== -1) {
       if (switchstaffgroup === 0) {
-        fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0`,
-          {
-            method: `GET`,
-            headers: {
-              Authorization: initProps,
-            },
-          }
-        )
+        if (!isAllowedToGetGroups) {
+          return;
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+          method: `GET`,
+          headers: {
+            Authorization: initProps,
+          },
+        })
           .then((res) => res.json())
           .then((res2) => {
             setdatastaffgroup(res2.data);
           });
       } else if (switchstaffgroup === 1) {
+        if (!isAllowedToGetAgentList) {
+          return;
+        }
+
         fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+          // `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1`,
           {
             method: `GET`,
             headers: {
@@ -387,7 +393,7 @@ export const TicketDetailTaskCreateDrawer: FC<
           });
       }
     }
-  }, [switchstaffgroup, isAllowedToAssignTicket]);
+  }, [switchstaffgroup, isAllowedToGetGroups, isAllowedToGetAgentList]);
 
   useEffect(() => {
     if (
@@ -402,7 +408,7 @@ export const TicketDetailTaskCreateDrawer: FC<
     } else {
       setdisabledcreate(true);
     }
-  }, [disabledtrigger]);
+  }, [disabledtrigger, datacreate.deadline]);
 
   return (
     <DrawerCore
@@ -727,7 +733,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 <div className="mx-1">
                   <Switch
                     checked={datacreate.is_group}
-                    disabled={!isAllowedToAssignTicket}
+                    disabled={!canFindStaffOrGroup}
                     onChange={(checked) => {
                       setswitchstaffgroup(checked ? 0 : 1);
                       setdatacreate({
@@ -754,7 +760,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   showArrow
                   value={datacreate.assign_ids}
                   placeholder="Cari Nama Staff, Group.."
-                  disabled={!isAllowedToAssignTicket}
+                  disabled={!isAllowedToGetAgentList}
                   // name={`assign_ids`}
                   onChange={(values, options) => {
                     setdatacreate({ ...datacreate, assign_ids: values });
@@ -768,7 +774,8 @@ export const TicketDetailTaskCreateDrawer: FC<
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${value}`,
+                      // `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=1&name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${value}`,
                       {
                         method: `GET`,
                         headers: {
@@ -817,10 +824,11 @@ export const TicketDetailTaskCreateDrawer: FC<
                   notFoundContent={
                     fetchingstaffgroup ? <Spin size="small" /> : null
                   }
+                  disabled={!isAllowedToGetGroups}
                   onSearch={(value) => {
                     setfetchingstaffgroup(true);
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssignToList?assignable_type=0&name=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups?name=${value}`,
                       {
                         method: `GET`,
                         headers: {
