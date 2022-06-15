@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { DATE_MOMENT_FORMAT_PAYLOAD } from "lib/constants";
 import {
   COMPANY_LISTS_GET,
   COMPANY_SUB_LOCATIONS_GET,
@@ -35,11 +36,6 @@ import {
 import { InputRequired, TextAreaNotRequired } from "../../input";
 import { H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
-
-/**
- * @private
- */
-const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 const DrawerTaskCreate = ({
   title,
@@ -210,11 +206,14 @@ const DrawerTaskCreate = ({
       return;
     }
 
-    const startDateMomentInstance = moment(startDate, DATE_FORMAT);
+    const startDateMomentInstance = moment(
+      startDate,
+      DATE_MOMENT_FORMAT_PAYLOAD
+    );
 
     const deadlineRelativeValue = moment(startDateMomentInstance)
       .add(deadlineRelativeHour, "hour")
-      .format(DATE_FORMAT);
+      .format(DATE_MOMENT_FORMAT_PAYLOAD);
 
     // Flush state changes
     setdatacreate((prev) => ({
@@ -939,7 +938,9 @@ const DrawerTaskCreate = ({
                     ...datacreate,
                     created_at:
                       e.target.value === true
-                        ? moment(new Date()).locale("id").format(DATE_FORMAT)
+                        ? moment(new Date())
+                            .locale("id")
+                            .format(DATE_MOMENT_FORMAT_PAYLOAD)
                         : null,
                   });
                   // setdatacreate({
@@ -1000,7 +1001,7 @@ const DrawerTaskCreate = ({
                   <DatePicker
                     showTime
                     placeholder="Jadwal Mulai"
-                    format={DATE_FORMAT}
+                    format={DATE_MOMENT_FORMAT_PAYLOAD}
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
                       setdatacreate({
@@ -1143,7 +1144,7 @@ const DrawerTaskCreate = ({
                   <DatePicker
                     showTime
                     placeholder="Jadwal Berakhir"
-                    format={DATE_FORMAT}
+                    format={DATE_MOMENT_FORMAT_PAYLOAD}
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
                       setdatacreate({ ...datacreate, deadline: datestring });

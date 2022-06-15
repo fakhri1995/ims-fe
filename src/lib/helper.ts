@@ -213,3 +213,15 @@ export const beforeUploadFileMaxSize = (
     }
   };
 };
+
+/**
+ * Client-side validator for date-like value given from the backend.
+ *
+ * @param dateValue Received value from backend
+ */
+export const isValidDate = (dateValue: any) => {
+  return (
+    (dateValue !== null || dateValue !== undefined) &&
+    new Date(dateValue).toString().toLowerCase() !== "invalid date"
+  );
+};

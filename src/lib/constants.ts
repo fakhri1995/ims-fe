@@ -27,3 +27,8 @@ export const ROLE_SUPER_ADMIN = "Super Admin";
  * Terutama pada modul Task dan Ticket.
  */
 export const MAX_FILE_UPLOAD_COUNT = 5;
+
+/**
+ * Moment.js date format yang dapat diterima oleh backend.
+ */
+export const DATE_MOMENT_FORMAT_PAYLOAD = "YYYY-MM-DD HH:mm:ss";
