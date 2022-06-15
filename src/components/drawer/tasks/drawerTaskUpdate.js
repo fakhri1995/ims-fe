@@ -896,7 +896,9 @@ const DrawerTaskUpdate = ({
                           setselectedstaffgroup(temp);
                           setdataupdate((prev) => ({
                             ...prev,
-                            assign_ids: temp.map((docmap) => docmap.value),
+                            assign_ids: temp.map(
+                              (docmap) => docmap.value || docmap.id
+                            ), // shape dari docmap bisa berubah. .value dan .id adalah nilai yang sama
                           }));
                         }}
                       >
