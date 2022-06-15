@@ -94,6 +94,12 @@ export class TicketService {
         delete enhancedPayload["closed_at"];
       }
 
+      // Only send File instances and strip out all other JS object.
+      const fileOnlyAttachments = enhancedPayload.attachments.filter(
+        (attachment) => attachment instanceof File
+      );
+      enhancedPayload.attachments = fileOnlyAttachments;
+
       payloadFormData = objectToFormData(enhancedPayload);
     } catch (e) {
       console.error("e", e);

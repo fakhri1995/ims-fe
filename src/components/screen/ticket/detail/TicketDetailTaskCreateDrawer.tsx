@@ -30,6 +30,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 
 import { getClientToken } from "lib/auth";
+import { DATE_MOMENT_FORMAT_PAYLOAD } from "lib/constants";
 import {
   COMPANY_LISTS_GET,
   COMPANY_SUB_LOCATIONS_GET,
@@ -43,11 +44,6 @@ import { generateStaticAssetUrl } from "lib/helper";
 
 import { AddTaskPayload, TaskService } from "apis/task";
 import { TicketServiceQueryKeys } from "apis/ticket";
-
-/**
- * @private
- */
-const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 /**
  * Component TicketDetailTaskCreateDrawer's props.
@@ -250,11 +246,14 @@ export const TicketDetailTaskCreateDrawer: FC<
       return;
     }
 
-    const startDateMomentInstance = moment(startDate, DATE_FORMAT);
+    const startDateMomentInstance = moment(
+      startDate,
+      DATE_MOMENT_FORMAT_PAYLOAD
+    );
 
     const deadlineRelativeValue = moment(startDateMomentInstance)
       .add(deadlineRelativeHour, "hour")
-      .format(DATE_FORMAT);
+      .format(DATE_MOMENT_FORMAT_PAYLOAD);
 
     // Flush state changes
     setdatacreate((prev) => ({
@@ -927,7 +926,9 @@ export const TicketDetailTaskCreateDrawer: FC<
                     ...datacreate,
                     created_at:
                       e.target.value === true
-                        ? moment(new Date()).locale("id").format(DATE_FORMAT)
+                        ? moment(new Date())
+                            .locale("id")
+                            .format(DATE_MOMENT_FORMAT_PAYLOAD)
                         : null,
                   });
                   // setdatacreate({
@@ -988,7 +989,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   <DatePicker
                     showTime
                     placeholder="Jadwal Mulai"
-                    format={DATE_FORMAT}
+                    format={DATE_MOMENT_FORMAT_PAYLOAD}
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
                       // const deadline =
@@ -1141,7 +1142,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                   <DatePicker
                     showTime
                     placeholder="Jadwal Berakhir"
-                    format={DATE_FORMAT}
+                    format={DATE_MOMENT_FORMAT_PAYLOAD}
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
                       setdatacreate({ ...datacreate, deadline: datestring });

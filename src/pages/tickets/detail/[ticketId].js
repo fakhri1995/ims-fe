@@ -1192,11 +1192,15 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                         <div className=" flex flex-col mb-5">
                           <Label>Lokasi Item:</Label>
                           <p className=" mb-0 text-gray-600">
+                            {displaydata?.ticketable?.inventory
+                              ?.location_inventory?.name || "-"}
+                          </p>
+                          {/* <p className=" mb-0 text-gray-600">
                             {displaydata?.ticketable?.inventory?.location ===
                             null
                               ? `-`
                               : displaydata?.ticketable?.inventory?.location}
-                          </p>
+                          </p> */}
                         </div>
                         <hr />
                         {displaydata?.ticketable?.inventory?.additional_attributes?.map(

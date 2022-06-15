@@ -579,6 +579,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             message: res2.message,
             duration: 3,
           });
+
+          rt.push(`/tasks/detail/${idtask}?prevpath=mytask`);
         } else {
           notification["error"]({
             message: res2.message,

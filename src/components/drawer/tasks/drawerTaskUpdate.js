@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { DATE_MOMENT_FORMAT_PAYLOAD } from "lib/constants";
 import {
   COMPANY_LISTS_GET,
   COMPANY_SUB_LOCATIONS_GET,
@@ -24,7 +25,7 @@ import {
   TICKETS_GET,
   USERS_GET,
 } from "lib/features";
-import { generateStaticAssetUrl } from "lib/helper";
+import { generateStaticAssetUrl, isValidDate } from "lib/helper";
 
 import ButtonSys from "../../button";
 import {
@@ -36,11 +37,6 @@ import {
 import { InputRequired, TextAreaNotRequired } from "../../input";
 import { H1, H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
-
-/**
- * @private
- */
-const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 function recursiveModifData(dataa) {
   for (var i = 0; i < dataa.length; i++) {
@@ -164,11 +160,13 @@ const DrawerTaskUpdate = ({
             description: "",
             location_id: null,
             reference_id: null,
-            created_at: moment(new Date()).locale("id").format(DATE_FORMAT),
+            created_at: moment(new Date())
+              .locale("id")
+              .format(DATE_MOMENT_FORMAT_PAYLOAD),
             deadline: moment(new Date())
               .add(3, "h")
               .locale("id")
-              .format(DATE_FORMAT),
+              .format(DATE_MOMENT_FORMAT_PAYLOAD),
             is_group: null,
             is_replaceable: false,
             assign_ids: [],
@@ -219,11 +217,14 @@ const DrawerTaskUpdate = ({
       return;
     }
 
-    const startDateMomentInstance = moment(startDate, DATE_FORMAT);
+    const startDateMomentInstance = moment(
+      startDate,
+      DATE_MOMENT_FORMAT_PAYLOAD
+    );
 
     const deadlineRelativeValue = moment(startDateMomentInstance)
       .add(deadlineRelativeHour, "hour")
-      .format(DATE_FORMAT);
+      .format(DATE_MOMENT_FORMAT_PAYLOAD);
 
     // Flush state changes
     setdataupdate((prev) => ({
@@ -895,7 +896,9 @@ const DrawerTaskUpdate = ({
                           setselectedstaffgroup(temp);
                           setdataupdate((prev) => ({
                             ...prev,
-                            assign_ids: temp.map((docmap) => docmap.value),
+                            assign_ids: temp.map(
+                              (docmap) => docmap.value || docmap.id
+                            ), // shape dari docmap bisa berubah. .value dan .id adalah nilai yang sama
                           }));
                         }}
                       >
@@ -933,7 +936,9 @@ const DrawerTaskUpdate = ({
                       ...dataupdate,
                       created_at:
                         e.target.value === true
-                          ? moment(new Date()).locale("id").format(DATE_FORMAT)
+                          ? moment(new Date())
+                              .locale("id")
+                              .format(DATE_MOMENT_FORMAT_PAYLOAD)
                           : immutableCreatedAt || undefined,
                     });
                     e.target.value === true ? setchoosedate(false) : null;
@@ -968,7 +973,7 @@ const DrawerTaskUpdate = ({
                   <div>
                     <DatePicker
                       showTime
-                      format={DATE_FORMAT}
+                      format={DATE_MOMENT_FORMAT_PAYLOAD}
                       placeholder="Jadwal Mulai"
                       style={{ width: `100%` }}
                       value={
@@ -1065,16 +1070,23 @@ const DrawerTaskUpdate = ({
                   <div>
                     <DatePicker
                       showTime
-                      format={DATE_FORMAT}
+                      format={DATE_MOMENT_FORMAT_PAYLOAD}
                       placeholder="Jadwal Berakhir"
                       style={{ width: `100%` }}
                       value={
-                        dataupdate.deadline !== null
+                        isValidDate(dataupdate.deadline)
                           ? moment(dataupdate.deadline)
-                          : immutableDeadline !== null
+                          : isValidDate(immutableDeadline)
                           ? moment(immutableDeadline)
                           : undefined
                       }
+                      // value={
+                      //   dataupdate.deadline !== null
+                      //     ? moment(dataupdate.deadline)
+                      //     : immutableDeadline !== null
+                      //     ? moment(immutableDeadline)
+                      //     : undefined
+                      // }
                       onChange={(date, datestring) => {
                         setdataupdate({ ...dataupdate, deadline: datestring });
                         setdisabledtrigger((prev) => prev + 1);

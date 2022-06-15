@@ -65,7 +65,7 @@ export interface UpdateTicketPayload {
   location_id: number;
   problem: string;
   incident_time: Date | string;
-  attachments: File[] | File;
+  attachments: File[];
   description: string;
 }
 

@@ -221,6 +221,11 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
+    // Only fetch after drawers or modals were closed
+    if (drawertasktypecreate || modaltipetaskdelete || drawertasktypupdate) {
+      return;
+    }
+
     setloadingtipetasks(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskTypes?page=${pagetipetask}&rows=${rowstipetask}`,
@@ -238,7 +243,12 @@ const TaskTypes = ({ initProps, dataProfile, sidemenu }) => {
         // setdatafiltertipetasks(res2.data.data);
         setloadingtipetasks(false);
       });
-  }, [drawertasktypecreate, modaltipetaskdelete, isAllowedToGetTaskTypeList]);
+  }, [
+    drawertasktypecreate,
+    modaltipetaskdelete,
+    drawertasktypupdate,
+    isAllowedToGetTaskTypeList,
+  ]);
 
   // useEffect(() => {
   //     if (triggertasktypupdate !== -1) {
