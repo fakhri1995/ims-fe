@@ -711,6 +711,44 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     m: 0,
     s: 0,
   });
+
+  /**
+   * Clone dari state `timeleft` dengan tambahan logic
+   *  untuk status task Overdue, Completed, dan Closed.
+   *
+   * @type {{ d: number; h: number; m: number; s: number }}
+   */
+  const enhancedTimeLeft = useMemo(() => {
+    if (
+      ![1 /** Overdue */, 5 /** Completed */, 6 /** Closed */].includes(
+        displaytask.status
+      )
+    ) {
+      return timeleft;
+    }
+
+    const isTaskCompletedOrClosed =
+      displaytask.status === 5 || displaytask.status === 6;
+    if (isTaskCompletedOrClosed) {
+      return {
+        d: 0,
+        h: 0,
+        m: 0,
+        s: 0,
+      };
+    }
+
+    const isTaskOverdue = displaytask.status === 1;
+    if (isTaskOverdue) {
+      return {
+        ...timeleft,
+        d: -timeleft.d,
+      };
+    }
+
+    return timeleft;
+  }, [timeleft, displaytask.status]);
+
   // const [colorstatus, setcolorstatus] = useState({
   //   text: "",
   //   bg: "",
@@ -3090,26 +3128,26 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 </div>
                 <div className="my-4 flex flex-col items-center">
                   <p className="mb-1 text-4xl font-bold text-white">
-                    {timeleft.d}
+                    {enhancedTimeLeft.d}
                   </p>
                   <p className="text-sm mb-0 text-white">Hari</p>
                 </div>
                 <div className=" my-2 flex justify-around">
                   <div className="flex flex-col mx-3 items-center">
                     <p className="mb-1 text-xl font-bold text-white">
-                      {timeleft.h}
+                      {enhancedTimeLeft.h}
                     </p>
                     <p className="text-sm mb-0 text-white">Jam</p>
                   </div>
                   <div className="flex flex-col mx-3 items-center">
                     <p className="mb-1 text-xl font-bold text-white">
-                      {timeleft.m}
+                      {enhancedTimeLeft.m}
                     </p>
                     <p className="text-sm mb-0 text-white">Menit</p>
                   </div>
                   <div className="flex flex-col mx-3 items-center">
                     <p className="mb-1 text-xl font-bold text-white">
-                      {timeleft.s}
+                      {enhancedTimeLeft.s}
                     </p>
                     <p className="text-sm mb-0 text-white">Detik</p>
                   </div>
