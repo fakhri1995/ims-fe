@@ -39,6 +39,7 @@ import {
 } from "lib/features";
 import {
   generateStaticAssetUrl,
+  isValidDate,
   permissionWarningNotification,
 } from "lib/helper";
 
@@ -210,31 +211,48 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
             style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}
           >
             <Text style={styles.label}>Tipe Task</Text>
-            <Text style={styles.texter}>PM 2</Text>
+            <Text style={styles.texter}>{detail.task_type.name}</Text>
+            {/* <Text style={styles.texter}>PM 2</Text> */}
           </View>
           <View
             style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}
           >
             <Text style={styles.label}>Nomor Task</Text>
-            <Text style={styles.texter}>T-000089</Text>
+            <Text style={styles.texter}>T-000{detail.id}</Text>
+            {/* <Text style={styles.texter}>T-000089</Text> */}
           </View>
           <View
             style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}
           >
             <Text style={styles.label}>Lokasi</Text>
-            <Text style={styles.texter}>KCP Tebet 2</Text>
+            <Text style={styles.texter}>
+              {detail.location?.full_location || "-"}
+            </Text>
+            {/* <Text style={styles.texter}>KCP Tebet 2</Text> */}
           </View>
           <View style={{ width: `33%`, flexDirection: `column` }}>
             <Text style={styles.label}>Referensi (Jika ada)</Text>
-            <Text style={styles.texter}>Tiket INC-7</Text>
+            <Text style={styles.texter}>
+              Tiket{" "}
+              {detail.reference_id === null
+                ? "-"
+                : `${detail.reference.type.code}-${detail.reference.id}`}
+            </Text>
+            {/* <Text style={styles.texter}>Tiket INC-7</Text> */}
           </View>
           <View style={{ width: `33%`, flexDirection: `column` }}>
             <Text style={styles.label}>Pembuat Task</Text>
-            <Text style={styles.texter}>John Doe</Text>
+            <Text style={styles.texter}>{detail.creator.name}</Text>
+            {/* <Text style={styles.texter}>John Doe</Text> */}
           </View>
           <View style={{ width: `33%`, flexDirection: `column` }}>
             <Text style={styles.label}>Tanggal Pembuatan</Text>
-            <Text style={styles.texter}>08 Nov 2021, 12:00</Text>
+            <Text style={styles.texter}>
+              {isValidDate(detail.created_at)
+                ? moment(detail.created_at).locale("id").format("lll")
+                : "-"}
+            </Text>
+            {/* <Text style={styles.texter}>08 Nov 2021, 12:00</Text> */}
           </View>
         </View>
         {/* Informasi Detail */}
