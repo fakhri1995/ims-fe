@@ -640,7 +640,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 suffixIcon={<SearchOutlined />}
                 showArrow
                 value={datacreate.inventory_ids}
-                placeholder="Cari MIG ID"
+                placeholder="Cari MIG ID, Nama Model, Nama Aset"
                 disabled={!isAllowedToGetInventories}
                 // name={`inventory_ids`}
                 onChange={(values, options) => {
@@ -667,11 +667,16 @@ export const TicketDetailTaskCreateDrawer: FC<
                       setfetchingitems(false);
                     });
                 }}
-                filterOption={(input, opt) =>
-                  (opt.children as unknown as string)
-                    .toLowerCase()
-                    .indexOf(input.toLowerCase()) >= 0
-                }
+                filterOption={(input, opt) => {
+                  const { migid, modelname, assetname } = opt;
+                  const searchableString = `${migid}${modelname}${assetname}`;
+
+                  return (
+                    searchableString
+                      .toLowerCase()
+                      .indexOf(input.toLowerCase()) >= 0
+                  );
+                }}
               >
                 {dataitems.map((doc, idx) => (
                   <Select.Option
@@ -681,7 +686,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                     assetname={doc.asset_name}
                     value={doc.id}
                   >
-                    {doc.mig_id}
+                    {doc.mig_id} - {doc.model_name} - {doc.asset_name}
                   </Select.Option>
                 ))}
               </Select>
