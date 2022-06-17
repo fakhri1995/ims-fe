@@ -39,6 +39,7 @@ import {
 } from "lib/features";
 import {
   generateStaticAssetUrl,
+  isValidDate,
   permissionWarningNotification,
 } from "lib/helper";
 
@@ -210,31 +211,48 @@ const TaskPDFTemplate = ({ detail, datatype4 }) => {
             style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}
           >
             <Text style={styles.label}>Tipe Task</Text>
-            <Text style={styles.texter}>PM 2</Text>
+            <Text style={styles.texter}>{detail.task_type.name}</Text>
+            {/* <Text style={styles.texter}>PM 2</Text> */}
           </View>
           <View
             style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}
           >
             <Text style={styles.label}>Nomor Task</Text>
-            <Text style={styles.texter}>T-000089</Text>
+            <Text style={styles.texter}>T-000{detail.id}</Text>
+            {/* <Text style={styles.texter}>T-000089</Text> */}
           </View>
           <View
             style={{ width: `33%`, flexDirection: `column`, marginBottom: 10 }}
           >
             <Text style={styles.label}>Lokasi</Text>
-            <Text style={styles.texter}>KCP Tebet 2</Text>
+            <Text style={styles.texter}>
+              {detail.location?.full_location || "-"}
+            </Text>
+            {/* <Text style={styles.texter}>KCP Tebet 2</Text> */}
           </View>
           <View style={{ width: `33%`, flexDirection: `column` }}>
             <Text style={styles.label}>Referensi (Jika ada)</Text>
-            <Text style={styles.texter}>Tiket INC-7</Text>
+            <Text style={styles.texter}>
+              Tiket{" "}
+              {detail.reference_id === null
+                ? "-"
+                : `${detail.reference.type.code}-${detail.reference.id}`}
+            </Text>
+            {/* <Text style={styles.texter}>Tiket INC-7</Text> */}
           </View>
           <View style={{ width: `33%`, flexDirection: `column` }}>
             <Text style={styles.label}>Pembuat Task</Text>
-            <Text style={styles.texter}>John Doe</Text>
+            <Text style={styles.texter}>{detail.creator.name}</Text>
+            {/* <Text style={styles.texter}>John Doe</Text> */}
           </View>
           <View style={{ width: `33%`, flexDirection: `column` }}>
             <Text style={styles.label}>Tanggal Pembuatan</Text>
-            <Text style={styles.texter}>08 Nov 2021, 12:00</Text>
+            <Text style={styles.texter}>
+              {isValidDate(detail.created_at)
+                ? moment(detail.created_at).locale("id").format("lll")
+                : "-"}
+            </Text>
+            {/* <Text style={styles.texter}>08 Nov 2021, 12:00</Text> */}
           </View>
         </View>
         {/* Informasi Detail */}
@@ -693,6 +711,44 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     m: 0,
     s: 0,
   });
+
+  /**
+   * Clone dari state `timeleft` dengan tambahan logic
+   *  untuk status task Overdue, Completed, dan Closed.
+   *
+   * @type {{ d: number; h: number; m: number; s: number }}
+   */
+  const enhancedTimeLeft = useMemo(() => {
+    if (
+      ![1 /** Overdue */, 5 /** Completed */, 6 /** Closed */].includes(
+        displaytask.status
+      )
+    ) {
+      return timeleft;
+    }
+
+    const isTaskCompletedOrClosed =
+      displaytask.status === 5 || displaytask.status === 6;
+    if (isTaskCompletedOrClosed) {
+      return {
+        d: 0,
+        h: 0,
+        m: 0,
+        s: 0,
+      };
+    }
+
+    const isTaskOverdue = displaytask.status === 1;
+    if (isTaskOverdue) {
+      return {
+        ...timeleft,
+        d: -timeleft.d,
+      };
+    }
+
+    return timeleft;
+  }, [timeleft, displaytask.status]);
+
   // const [colorstatus, setcolorstatus] = useState({
   //   text: "",
   //   bg: "",
@@ -3072,26 +3128,26 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 </div>
                 <div className="my-4 flex flex-col items-center">
                   <p className="mb-1 text-4xl font-bold text-white">
-                    {timeleft.d}
+                    {enhancedTimeLeft.d}
                   </p>
                   <p className="text-sm mb-0 text-white">Hari</p>
                 </div>
                 <div className=" my-2 flex justify-around">
                   <div className="flex flex-col mx-3 items-center">
                     <p className="mb-1 text-xl font-bold text-white">
-                      {timeleft.h}
+                      {enhancedTimeLeft.h}
                     </p>
                     <p className="text-sm mb-0 text-white">Jam</p>
                   </div>
                   <div className="flex flex-col mx-3 items-center">
                     <p className="mb-1 text-xl font-bold text-white">
-                      {timeleft.m}
+                      {enhancedTimeLeft.m}
                     </p>
                     <p className="text-sm mb-0 text-white">Menit</p>
                   </div>
                   <div className="flex flex-col mx-3 items-center">
                     <p className="mb-1 text-xl font-bold text-white">
-                      {timeleft.s}
+                      {enhancedTimeLeft.s}
                     </p>
                     <p className="text-sm mb-0 text-white">Detik</p>
                   </div>
