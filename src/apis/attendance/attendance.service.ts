@@ -24,8 +24,13 @@ export class AttendanceService {
    * @access GET /getAttendancesUser
    */
   static async find(axiosClient: AxiosInstance) {
+    const additionalFlags = QueryString.stringify(
+      { is_all: true },
+      { addQueryPrefix: true }
+    );
+
     return await axiosClient.get<IGetAttendancesUserSucceedResponse>(
-      "/getAttendancesUser"
+      "/getAttendancesUser" + additionalFlags
     );
   }
 
