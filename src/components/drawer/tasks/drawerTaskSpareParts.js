@@ -29,6 +29,8 @@ import { H1, H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 function modifData1(dataa) {
+  console.log("modifData1", { dataa });
+
   for (var i = 0; i < dataa.length; i++) {
     dataa[i]["key"] = dataa[i].id;
     dataa[i]["value"] = dataa[i].id;
@@ -41,7 +43,10 @@ function modifData1(dataa) {
   }
   return dataa;
 }
+
 function modifData2(dataa) {
+  console.log("modifData2", { dataa });
+
   for (var i = 0; i < dataa.length; i++) {
     dataa[i]["key"] = dataa[i].id;
     dataa[i]["value"] = dataa[i].id;
@@ -158,10 +163,10 @@ const DrawerTaskSpareParts = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        var modif1 = modifData1(res2.data);
-        setdatainduk(modif1);
-        var modif2 = modifData2(res2.data);
-        setdataselectforout(modif2);
+        // var modif1 = modifData1(res2.data);
+        // setdatainduk(modif1);
+        // var modif2 = modifData2(res2.data);
+        // setdataselectforout(modif2);
         setpraloadingout(false);
       });
   }, []);
@@ -313,8 +318,6 @@ const DrawerTaskSpareParts = ({
                           treeDefaultExpandAll
                           treeNodeFilterProp="title"
                           filterTreeNode={(search, item) => {
-                            /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                            /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
                             return (
                               item.title
                                 .toLowerCase()

@@ -11,7 +11,6 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Bar, Doughnut } from "react-chartjs-2";
@@ -28,7 +27,7 @@ import {
   TASK_TYPE_USER_COUNTS_GET,
   TASK_USER_STATUSES_GET,
 } from "lib/features";
-import { isValidDate, permissionWarningNotification } from "lib/helper";
+import { permissionWarningNotification } from "lib/helper";
 
 import Buttonsys from "../../../components/button";
 import {
@@ -61,7 +60,6 @@ import {
   PointElement,
   Tooltip,
 } from "chart.js";
-import clsx from "clsx";
 import httpcookie from "cookie";
 
 Chart.register(
@@ -1006,132 +1004,133 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     )}
                   </div>
                   <div className=" h-full">
-                    {userlasttwo.length === 0 ? (
+                    {userlasttwo.length < 1 ? (
                       <div className=" flex w-full h-full items-center justify-center">
                         <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                       </div>
                     ) : (
                       <>
-                        {userlasttwo.map(
-                          (
-                            {
-                              id,
-                              deadline,
-                              time_limit_percentage,
-                              name,
-                              time_left,
-                              status,
-                            },
-                            index
-                          ) => {
-                            const isOverdue = status === 1;
-
-                            const cardContainerClassName = clsx(
-                              {
-                                "bg-white hover:bg-mono90": !isOverdue,
-                                "bg-state1 hover:bg-state12 text-white mb-2":
-                                  isOverdue,
-                              },
-                              "rounded transition duration-300 shadow p-5 flex justify-between cursor-pointer h-3/6 block mb-2"
-                            );
-
-                            // Saat ini: 100 <= time_limit_percentage <= 0
-                            // Menjadi: 0 <= progressPrecentage <= 100
-                            const progressPrecentage = Math.max(
-                              0,
-                              Math.min(Math.round(time_limit_percentage), 100)
-                            );
-
-                            let berakhirSentence = "Berakhir %s";
-                            if (isValidDate(deadline)) {
-                              // Delta hari ini dengan deadline (day) (24 hour inclusive)
-                              const isEndedToday =
-                                moment(new Date(deadline)).diff(
-                                  moment(),
-                                  "d"
-                                ) === 0;
-                              const dueDate = moment(deadline)
-                                .locale("id")
-                                .format("Do MMM");
-
-                              const replaceWith = isEndedToday
-                                ? "Hari Ini"
-                                : dueDate;
-
-                              berakhirSentence = berakhirSentence.replace(
-                                /%s/g,
-                                replaceWith
+                        {userlasttwo.length >= 1 && (
+                          <div
+                            className="rounded bg-state1 hover:bg-state12 transition duration-300 shadow text-white p-5 flex justify-between mb-2 cursor-pointer h-3/6"
+                            onClick={() => {
+                              rt.push(
+                                `/tasks/detail/${userlasttwo[0].id}?prevpath=mytask`
                               );
-                            } else {
-                              berakhirSentence = "-";
-                            }
-
-                            let timeLeftSentence = `${
-                              isOverdue ? "Terlambat" : "Sisa"
-                            } ${time_left}`;
-
-                            return (
-                              <Link
-                                key={index}
-                                href={`/tasks/detail/${id}?prevpath=mytask`}
-                              >
-                                <a className={cardContainerClassName}>
-                                  <div className="flex flex-col">
-                                    <div>
-                                      <ClipboardcheckIconSvg
-                                        size={50}
-                                        color={
-                                          isOverdue ? "#ffffff" : "#35763B"
-                                        }
-                                      />
-                                    </div>
-                                    <div className="flex flex-col mt-2">
-                                      <Text
-                                        color={isOverdue ? "white" : undefined}
-                                      >
-                                        {berakhirSentence}
-                                      </Text>
-                                      <Progress
-                                        trailColor={
-                                          isOverdue ? "#4D4D4D" : "#d8e8da"
-                                        }
-                                        strokeColor={
-                                          isOverdue ? "#ffffff" : "#35763B"
-                                        }
-                                        percent={progressPrecentage}
-                                        showInfo={false}
-                                      />
-                                    </div>
-                                  </div>
-                                  <div className="flex flex-col">
-                                    <div className="flex flex-col text-right text-black">
-                                      {isOverdue ? (
-                                        <p
-                                          className={`font-bold text-xl mb-0 text-white`}
-                                        >
-                                          {name}
-                                        </p>
-                                      ) : (
-                                        <H1>{name}</H1>
-                                      )}
-                                      <Label
-                                        color={isOverdue ? "white" : undefined}
-                                      >
-                                        T-000{id}
-                                      </Label>
-                                    </div>
-                                    <div className="flex flex-col mt-4 text-right">
-                                      <H2
-                                        color={isOverdue ? "white" : "primary"}
-                                      >
-                                        {timeLeftSentence}
-                                      </H2>
-                                    </div>
-                                  </div>
-                                </a>
-                              </Link>
-                            );
-                          }
+                            }}
+                          >
+                            <div className="flex flex-col">
+                              <div>
+                                <ClipboardcheckIconSvg
+                                  size={50}
+                                  color={`#ffffff`}
+                                />
+                              </div>
+                              <div className="flex flex-col mt-2">
+                                <Text color={`white`}>
+                                  Berakhir{" "}
+                                  {userlasttwo[0]?.deadline
+                                    ? (new Date() -
+                                        new Date(userlasttwo[0].deadline)) /
+                                        (1000 * 60 * 60 * 24) <
+                                      1
+                                      ? `Hari Ini`
+                                      : `${moment(userlasttwo[0].deadline)
+                                          .locale("id")
+                                          .format("Do MMM")}`
+                                    : "-"}
+                                  {/* {(new Date() -
+                                    new Date(userlasttwo[0].deadline)) /
+                                    (1000 * 60 * 60 * 24) <
+                                  1
+                                    ? `Hari Ini`
+                                    : `${moment(userlasttwo[0].deadline)
+                                        .locale("id")
+                                        .format("Do MMM")}`} */}
+                                </Text>
+                                <Progress
+                                  trailColor={`#4D4D4D`}
+                                  strokeColor={`#ffffff`}
+                                  percent={userlasttwo[0].time_limit_percentage}
+                                  showInfo={false}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex flex-col">
+                              <div className="flex flex-col text-right">
+                                <p
+                                  className={`font-bold text-xl mb-0 text-white`}
+                                >
+                                  {userlasttwo[0].name}
+                                </p>
+                                <Label>T-000{userlasttwo[0].id}</Label>
+                              </div>
+                              <div className="flex flex-col mt-4 text-right">
+                                <H2 color={`white`}>
+                                  Sisa {userlasttwo[0].time_left}
+                                </H2>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                        {userlasttwo.length >= 2 && (
+                          <div
+                            className="rounded bg-white hover:bg-mono90 transition duration-300 shadow p-5 flex justify-between cursor-pointer h-3/6"
+                            onClick={() => {
+                              rt.push(
+                                `/tasks/detail/${userlasttwo[1].id}?prevpath=mytask`
+                              );
+                            }}
+                          >
+                            <div className="flex flex-col">
+                              <div>
+                                <ClipboardcheckIconSvg
+                                  size={50}
+                                  color={`#35763B`}
+                                />
+                              </div>
+                              <div className="flex flex-col mt-2">
+                                <Text>
+                                  Berakhir{" "}
+                                  {userlasttwo[1].deadline
+                                    ? (new Date() -
+                                        new Date(userlasttwo[1].deadline)) /
+                                        (1000 * 60 * 60 * 24) <
+                                      1
+                                      ? `Hari Ini`
+                                      : `${moment(userlasttwo[1].deadline)
+                                          .locale("id")
+                                          .format("Do MMM")}`
+                                    : "-"}
+                                  {/* {(new Date() -
+                                    new Date(userlasttwo[1].deadline)) /
+                                    (1000 * 60 * 60 * 24) <
+                                  1
+                                    ? `Hari Ini`
+                                    : `${moment(userlasttwo[1].deadline)
+                                        .locale("id")
+                                        .format("Do MMM")}`} */}
+                                </Text>
+                                <Progress
+                                  trailColor={`#d8e8da`}
+                                  strokeColor={`#35763B`}
+                                  percent={userlasttwo[1].time_limit_percentage}
+                                  showInfo={false}
+                                />
+                              </div>
+                            </div>
+                            <div className="flex flex-col">
+                              <div className="flex flex-col text-right">
+                                <H1>{userlasttwo[1].name}</H1>
+                                <Label>T-000{userlasttwo[1].id}</Label>
+                              </div>
+                              <div className="flex flex-col mt-4 text-right">
+                                <H2 color={`primary`}>
+                                  Sisa {userlasttwo[1].time_left}
+                                </H2>
+                              </div>
+                            </div>
+                          </div>
                         )}
                       </>
                     )}
