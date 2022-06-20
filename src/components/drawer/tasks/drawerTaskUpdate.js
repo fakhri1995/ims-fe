@@ -653,7 +653,7 @@ const DrawerTaskUpdate = ({
                   suffixIcon={<SearchOutlined />}
                   showArrow
                   value={dataupdate.inventory_ids}
-                  placeholder="Cari MIG ID"
+                  placeholder="Cari MIG ID, Nama Model, Nama Aset"
                   disabled={!isAllowedToGetInventories}
                   name={`inventory_ids`}
                   onChange={(values, options) => {
@@ -665,8 +665,9 @@ const DrawerTaskUpdate = ({
                   notFoundContent={fetchingitems ? <Spin size="small" /> : null}
                   onSearch={(value) => {
                     setfetchingitems(true);
+                    Z;
                     fetch(
-                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories?mig_id=${value}`,
+                      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories?keyword=${value}`,
                       {
                         method: `GET`,
                         headers: {
@@ -680,9 +681,16 @@ const DrawerTaskUpdate = ({
                         setfetchingitems(false);
                       });
                   }}
-                  filterOption={(input, opt) =>
-                    opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-                  }
+                  filterOption={(input, opt) => {
+                    const { migid, modelname, assetname } = opt;
+                    const searchableString = `${migid}${modelname}${assetname}`;
+
+                    return (
+                      searchableString
+                        .toLowerCase()
+                        .indexOf(input.toLowerCase()) >= 0
+                    );
+                  }}
                 >
                   {dataitems.map((doc, idx) => (
                     <Select.Option
@@ -692,7 +700,7 @@ const DrawerTaskUpdate = ({
                       assetname={doc.asset_name}
                       value={doc.id}
                     >
-                      {doc.mig_id}
+                      {doc.mig_id} - {doc.model_name} - {doc.asset_name}
                     </Select.Option>
                   ))}
                 </Select>
