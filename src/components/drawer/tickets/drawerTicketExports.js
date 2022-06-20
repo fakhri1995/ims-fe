@@ -132,7 +132,7 @@ const DrawerTicketExports = ({
     } else {
       setdisabledcreate(true);
     }
-  }, [disabledtrigger]);
+  }, [disabledtrigger, valuecoreopt]);
 
   return (
     <DrawerCore
