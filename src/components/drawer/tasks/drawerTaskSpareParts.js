@@ -170,6 +170,8 @@ const DrawerTaskSpareParts = ({
     var tempin = [],
       tempout = [];
 
+    let existingAddInInventories = [];
+
     inventories
       .filter((fil) => !Boolean(fil.is_from_task))
       // .filter((fil) => fil.is_from_task === false)
@@ -182,6 +184,11 @@ const DrawerTaskSpareParts = ({
             modelname: doc.model_name,
             assetname: doc.asset_name,
           });
+
+          existingAddInInventories.push({
+            inventory_id: doc.id,
+            connect_id: doc.connect_id,
+          });
         } else {
           tempout.push({
             ...doc,
@@ -191,6 +198,18 @@ const DrawerTaskSpareParts = ({
           });
         }
       });
+
+    // reset the payload right after opening up the drawer
+    // it's necessary to keep the `add_in_inventories` persistent based on current inventories data.
+    //
+    // TODO: persistent for `remove_in_inventory_ids` (?)
+    setdatapayload((prev) => ({
+      ...prev,
+      add_in_inventories: existingAddInInventories,
+      add_out_inventory_ids: [],
+      remove_in_inventory_ids: [],
+      remove_out_inventory_ids: [],
+    }));
 
     console.log("[Effect] getTask", { tempin, tempout });
 
@@ -384,7 +403,10 @@ const DrawerTaskSpareParts = ({
                           }
                           name={`parent`}
                           onChange={(value) => {
-                            console.log("[On Change] Pilih Induk", { value });
+                            console.log("[On Change] Pilih Induk", {
+                              value,
+                              idx,
+                            });
                             if (typeof value === "undefined") {
                               var temp = [...datapayload.add_in_inventories];
                               temp[idx].connect_id = 0;
@@ -425,24 +447,40 @@ const DrawerTaskSpareParts = ({
                         <div
                           className=" cursor-pointer flex justify-center items-center"
                           onClick={() => {
+                            console.log("[On Click] Remove Spare Part In", {
+                              doc,
+                            });
+
                             var temp = [...selectedforin];
                             temp.splice(idx, 1);
                             setselectedforin(temp);
-                            doc.id
-                              ? setdatapayload((prev) => ({
-                                  ...prev,
-                                  remove_in_inventory_ids: [
-                                    ...prev.remove_in_inventory_ids,
-                                    doc.id,
-                                  ],
-                                }))
-                              : setdatapayload((prev) => ({
-                                  ...prev,
-                                  add_in_inventories:
-                                    prev.add_in_inventories.filter(
-                                      (fil) => fil.inventory_id !== doc.value
-                                    ),
-                                }));
+                            setdatapayload((prev) => ({
+                              ...prev,
+                              remove_in_inventory_ids: [
+                                ...prev.remove_in_inventory_ids,
+                                doc.id,
+                              ],
+                              add_in_inventories:
+                                prev.add_in_inventories.filter(
+                                  (fil) => fil.inventory_id !== doc.id
+                                ),
+                            }));
+
+                            // doc.id
+                            //   ? setdatapayload((prev) => ({
+                            //       ...prev,
+                            //       remove_in_inventory_ids: [
+                            //         ...prev.remove_in_inventory_ids,
+                            //         doc.id,
+                            //       ],
+                            //     }))
+                            //   : setdatapayload((prev) => ({
+                            //       ...prev,
+                            //       add_in_inventories:
+                            //         prev.add_in_inventories.filter(
+                            //           (fil) => fil.inventory_id !== doc.value
+                            //         ),
+                            //     }));
                           }}
                         >
                           <TrashIconSvg size={20} color={`#BF4A40`} />
