@@ -63,6 +63,61 @@ function modifData2(dataa) {
   return dataa;
 }
 
+function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
+  console.log("[Function-Param] recursiveInventoryList", {
+    dataa,
+    checkListIds,
+    isRecursive,
+  });
+
+  for (var i = 0; i < dataa.length; i++) {
+    // MIG_ID - MODEL_NAME - ASSET_NAME
+    const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+    const inventoryId = dataa[i].id;
+
+    if (checkListIds.includes(inventoryId)) {
+      console.log("[If-Logic] Check List Ids Includes", { inventoryId });
+      dataa.splice(i, 1);
+      recursiveInventoryList(dataa, checkListIds, true);
+      continue;
+    }
+
+    console.log("[Debug] Recursive Current Inventory Id", {
+      inventoryId,
+      checkListIds,
+      isRecursive,
+    });
+
+    dataa[i]["key"] = inventoryId;
+    dataa[i]["value"] = inventoryId;
+    dataa[i]["title"] = displayFormat;
+
+    const hasChildrenAttr = "children" in dataa[i];
+    const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
+    console.log("[Debug] Children and Inventory Parts attr", {
+      hasChildrenAttr,
+      hasInventoryPartsAttr,
+    });
+
+    if (dataa[i].inventory_parts) {
+      console.log("[If-Logic] Has Inventory Parts", { inventoryId });
+      dataa[i]["children"] = dataa[i].inventory_parts;
+      delete dataa[i].inventory_parts;
+      recursiveInventoryList(dataa[i].children, checkListIds);
+
+      // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
+      //   const isIdIncluded = checkListIds.includes(id);
+      //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
+
+      //   return !isIdIncluded;
+      // });
+      // delete dataa[i].inventory_parts;
+      // recursiveInventoryList(dataa[i].children, checkListIds, true);
+    }
+  }
+  return dataa;
+}
+
 const DrawerTaskSpareParts = ({
   title,
   visible,
@@ -85,6 +140,8 @@ const DrawerTaskSpareParts = ({
   const router = useRouter();
 
   //useState
+  const [rawInventoryList, setRawInventoryList] = useState([]);
+
   const [datapayload, setdatapayload] = useState({
     id: Number(idtask),
     add_in_inventories: [],
@@ -99,6 +156,14 @@ const DrawerTaskSpareParts = ({
   const [loadingspart, setloadingspart] = useState(false);
   //DATA IN
   const [selectedforin, setselectedforin] = useState([]);
+  useEffect(() => {
+    const connectIds = datapayload.add_in_inventories
+      .map(({ connect_id }) => connect_id)
+      .filter((id) => id !== 0);
+    console.log("[Effect] Connect Ids", { connectIds });
+
+    setOutCheckListIds([...new Set(connectIds)]);
+  }, [datapayload.add_in_inventories]);
 
   const [praloadingin, setpraloadingin] = useState(true);
   const [dataselectforin, setdataselectforin] = useState([]); // display
@@ -111,14 +176,83 @@ const DrawerTaskSpareParts = ({
     console.log("[Effect] Data Induk", { datainduk });
   }, [datainduk]);
 
+  const [dataIndukCheckListIds, setDataIndukCheckListIds] = useState([]);
+  useEffect(() => {
+    if (!visible || rawInventoryList.length === 0) {
+      return;
+    }
+
+    console.log("------- START Expensive Call -------");
+
+    console.log("[Effect] Data Induk Check List", {
+      rawInventoryList,
+      dataIndukCheckListIds,
+    });
+
+    const filteredDataInduk = recursiveInventoryList(
+      JSON.parse(JSON.stringify(rawInventoryList)),
+      dataIndukCheckListIds
+    );
+
+    console.log("[Effect] Data Induk Check List", {
+      dataIndukCheckListIds,
+      filtered: filteredDataInduk,
+    });
+    setdatainduk(filteredDataInduk);
+
+    console.log("------- END Expensive Call -------");
+  }, [visible, rawInventoryList, dataIndukCheckListIds]);
+
+  // const filteredDataInduk = useMemo(() => {
+  //   return recursiveInventoryList(
+  //     rawInventoryList, dataIndukCheckListIds
+  //   )
+  // }, [rawInventoryList, dataIndukCheckListIds]);
+  // useEffect(() => {
+  //   console.log("[Effect] Filtered Data Induk", { filteredDataInduk });
+  // }, [filteredDataInduk]);
+
   //DATA OUT
+  const [outCheckListIds, setOutCheckListIds] = useState([]);
   const [selectedforout, setselectedforout] = useState([]);
+  useEffect(() => {
+    console.log("[Effect] Selected For Out", { selectedforout });
+    setDataIndukCheckListIds([
+      ...new Set(selectedforout.map(({ id, value }) => id || value)),
+    ]);
+  }, [selectedforout]);
 
   const [praloadingout, setpraloadingout] = useState(true);
   const [dataselectforout, setdataselectforout] = useState([]); // display
   useEffect(() => {
     console.log("[Effect] Data Out", { dataselectforout });
   }, [dataselectforout]);
+
+  useEffect(() => {
+    if (!visible || rawInventoryList.length === 0) {
+      return;
+    }
+
+    console.log("-+-+-+- START Expensive Call -+-+-+-");
+
+    console.log("[Effect] Data Out Check List", {
+      rawInventoryList,
+      outCheckListIds,
+    });
+
+    const filteredDataInduk = recursiveInventoryList(
+      JSON.parse(JSON.stringify(rawInventoryList)),
+      outCheckListIds
+    );
+
+    console.log("[Effect] Data Induk Check List", {
+      outCheckListIds,
+      filtered: filteredDataInduk,
+    });
+    setdataselectforout(filteredDataInduk);
+
+    console.log("-+-+-+- END Expensive Call -+-+-+-");
+  }, [visible, rawInventoryList, outCheckListIds]);
 
   const [fetchingstate, setfetchingstate] = useState(false);
 
@@ -235,6 +369,7 @@ const DrawerTaskSpareParts = ({
       .then((res) => res.json())
       .then((res2) => {
         setdataselectforin(res2.data.inventory_list);
+        setOutCheckListIds(res2.data.check_list?.map(({ id }) => id) || []);
 
         setpraloadingin(false);
       });
@@ -258,14 +393,18 @@ const DrawerTaskSpareParts = ({
       .then((res) => res.json())
       .then((res2) => {
         // var modif1 = modifData1(res2.data.inventory_list);
-        var modif1 = modifData2(res2.data.inventory_list);
-        setdatainduk(modif1);
+        // var modif1 = modifData2([...resClone.data.inventory_list]);
+        // setdatainduk(modif1);
         // setdatainduk(res2.data.inventory_list)
         // var modif2 = modifData2(res2.data);
-        var modif2 = modifData2(res2.data.inventory_list);
-        setdataselectforout(modif2);
+        // var modif2 = modifData2([...resClone.data.inventory_list]);
+        // setdataselectforout(modif2);
         // setpraloadingout(false);
         // setdataselectforout(res2.data.inventory_list);
+
+        setRawInventoryList(res2.data.inventory_list);
+        // setDataIndukCheckListIds(res2.data.check_list?.map(({ id }) => id) || []);
+
         setpraloadingout(false);
       });
   }, [visible]);
@@ -522,6 +661,16 @@ const DrawerTaskSpareParts = ({
                     name={`part_out`}
                     onChange={(value, label, extra) => {
                       console.log("[On Change] Data Out", { value });
+                      if (
+                        typeof value === "number" &&
+                        selectedforout
+                          .map(({ id, value }) => id || value)
+                          .includes(value)
+                      ) {
+                        console.log("[If-Logic] Already in selected for out");
+                        return;
+                      }
+
                       setselectedforout([
                         ...selectedforout,
                         {
@@ -581,6 +730,10 @@ const DrawerTaskSpareParts = ({
                         <div
                           className=" cursor-pointer flex justify-center items-center"
                           onClick={() => {
+                            console.log("[On Click] Remove Spare Part Out", {
+                              doc,
+                            });
+
                             var temp = [...selectedforout];
                             temp.splice(idx, 1);
                             setselectedforout(temp);
