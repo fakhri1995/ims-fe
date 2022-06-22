@@ -29,12 +29,13 @@ import { H1, H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 function modifData1(dataa) {
-  console.log("modifData1", { dataa });
-
-  for (var i = 0; i < dataa.length; i++) {
+  for (var i = 0; i < dataa?.length; i++) {
     dataa[i]["key"] = dataa[i].id;
     dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = dataa[i].mig_id;
+    dataa[i][
+      "title"
+    ] = `${dataa[i].mig_id} - ${dataa[i].model_inventory.name} - ${dataa[i].model_inventory.asset.name}`;
+
     if (dataa[i].inventory_parts) {
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
@@ -45,18 +46,73 @@ function modifData1(dataa) {
 }
 
 function modifData2(dataa) {
-  console.log("modifData2", { dataa });
-
   for (var i = 0; i < dataa.length; i++) {
+    // MIG_ID - MODEL_NAME - ASSET_NAME
+    const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+
     dataa[i]["key"] = dataa[i].id;
     dataa[i]["value"] = dataa[i].id;
-    dataa[i][
-      "title"
-    ] = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+    dataa[i]["title"] = displayFormat;
+
     if (dataa[i].inventory_parts) {
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
       modifData2(dataa[i].children);
+    }
+  }
+  return dataa;
+}
+
+function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
+  console.log("[Function-Param] recursiveInventoryList", {
+    dataa,
+    checkListIds,
+    isRecursive,
+  });
+
+  for (var i = 0; i < dataa.length; i++) {
+    // MIG_ID - MODEL_NAME - ASSET_NAME
+    const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+    const inventoryId = dataa[i].id;
+
+    if (checkListIds.includes(inventoryId)) {
+      console.log("[If-Logic] Check List Ids Includes", { inventoryId });
+      dataa.splice(i, 1);
+      recursiveInventoryList(dataa, checkListIds, true);
+      continue;
+    }
+
+    console.log("[Debug] Recursive Current Inventory Id", {
+      inventoryId,
+      checkListIds,
+      isRecursive,
+    });
+
+    dataa[i]["key"] = inventoryId;
+    dataa[i]["value"] = inventoryId;
+    dataa[i]["title"] = displayFormat;
+
+    const hasChildrenAttr = "children" in dataa[i];
+    const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
+    console.log("[Debug] Children and Inventory Parts attr", {
+      hasChildrenAttr,
+      hasInventoryPartsAttr,
+    });
+
+    if (dataa[i].inventory_parts) {
+      console.log("[If-Logic] Has Inventory Parts", { inventoryId });
+      dataa[i]["children"] = dataa[i].inventory_parts;
+      delete dataa[i].inventory_parts;
+      recursiveInventoryList(dataa[i].children, checkListIds);
+
+      // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
+      //   const isIdIncluded = checkListIds.includes(id);
+      //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
+
+      //   return !isIdIncluded;
+      // });
+      // delete dataa[i].inventory_parts;
+      // recursiveInventoryList(dataa[i].children, checkListIds, true);
     }
   }
   return dataa;
@@ -71,11 +127,12 @@ const DrawerTaskSpareParts = ({
   disabled,
   initProps,
   idtask,
-  selectedforin,
-  setselectedforin,
-  selectedforout,
-  setselectedforout,
+  // selectedforin,
+  // setselectedforin,
+  // selectedforout,
+  // setselectedforout,
   prevpath,
+  inventories,
 }) => {
   /**
    * Dependencies
@@ -83,6 +140,8 @@ const DrawerTaskSpareParts = ({
   const router = useRouter();
 
   //useState
+  const [rawInventoryList, setRawInventoryList] = useState([]);
+
   const [datapayload, setdatapayload] = useState({
     id: Number(idtask),
     add_in_inventories: [],
@@ -90,14 +149,111 @@ const DrawerTaskSpareParts = ({
     add_out_inventory_ids: [],
     remove_out_inventory_ids: [],
   });
+  useEffect(() => {
+    console.log("[Effect] Data Payload", { datapayload });
+  }, [datapayload]);
+
   const [loadingspart, setloadingspart] = useState(false);
   //DATA IN
+  const [selectedforin, setselectedforin] = useState([]);
+  useEffect(() => {
+    const connectIds = datapayload.add_in_inventories
+      .map(({ connect_id }) => connect_id)
+      .filter((id) => id !== 0);
+    console.log("[Effect] Connect Ids", { connectIds });
+
+    setOutCheckListIds([...new Set(connectIds)]);
+  }, [datapayload.add_in_inventories]);
+
   const [praloadingin, setpraloadingin] = useState(true);
-  const [dataselectforin, setdataselectforin] = useState([]);
-  const [datainduk, setdatainduk] = useState([]);
+  const [dataselectforin, setdataselectforin] = useState([]); // display
+  useEffect(() => {
+    console.log("[Effect] Data In", { dataselectforin });
+  }, [dataselectforin]);
+
+  const [datainduk, setdatainduk] = useState([]); // display
+  useEffect(() => {
+    console.log("[Effect] Data Induk", { datainduk });
+  }, [datainduk]);
+
+  const [dataIndukCheckListIds, setDataIndukCheckListIds] = useState([]);
+  useEffect(() => {
+    if (!visible || rawInventoryList.length === 0) {
+      return;
+    }
+
+    console.log("------- START Expensive Call -------");
+
+    console.log("[Effect] Data Induk Check List", {
+      rawInventoryList,
+      dataIndukCheckListIds,
+    });
+
+    const filteredDataInduk = recursiveInventoryList(
+      JSON.parse(JSON.stringify(rawInventoryList)),
+      dataIndukCheckListIds
+    );
+
+    console.log("[Effect] Data Induk Check List", {
+      dataIndukCheckListIds,
+      filtered: filteredDataInduk,
+    });
+    setdatainduk(filteredDataInduk);
+
+    console.log("------- END Expensive Call -------");
+  }, [visible, rawInventoryList, dataIndukCheckListIds]);
+
+  // const filteredDataInduk = useMemo(() => {
+  //   return recursiveInventoryList(
+  //     rawInventoryList, dataIndukCheckListIds
+  //   )
+  // }, [rawInventoryList, dataIndukCheckListIds]);
+  // useEffect(() => {
+  //   console.log("[Effect] Filtered Data Induk", { filteredDataInduk });
+  // }, [filteredDataInduk]);
+
   //DATA OUT
+  const [outCheckListIds, setOutCheckListIds] = useState([]);
+  const [selectedforout, setselectedforout] = useState([]);
+  useEffect(() => {
+    console.log("[Effect] Selected For Out", { selectedforout });
+    setDataIndukCheckListIds([
+      ...new Set(selectedforout.map(({ id, value }) => id || value)),
+    ]);
+  }, [selectedforout]);
+
   const [praloadingout, setpraloadingout] = useState(true);
-  const [dataselectforout, setdataselectforout] = useState([]);
+  const [dataselectforout, setdataselectforout] = useState([]); // display
+  useEffect(() => {
+    console.log("[Effect] Data Out", { dataselectforout });
+  }, [dataselectforout]);
+
+  useEffect(() => {
+    if (!visible || rawInventoryList.length === 0) {
+      return;
+    }
+
+    console.log("-+-+-+- START Expensive Call -+-+-+-");
+
+    console.log("[Effect] Data Out Check List", {
+      rawInventoryList,
+      outCheckListIds,
+    });
+
+    const filteredDataInduk = recursiveInventoryList(
+      JSON.parse(JSON.stringify(rawInventoryList)),
+      outCheckListIds
+    );
+
+    console.log("[Effect] Data Induk Check List", {
+      outCheckListIds,
+      filtered: filteredDataInduk,
+    });
+    setdataselectforout(filteredDataInduk);
+
+    console.log("-+-+-+- END Expensive Call -+-+-+-");
+  }, [visible, rawInventoryList, outCheckListIds]);
+
   const [fetchingstate, setfetchingstate] = useState(false);
 
   //handler
@@ -133,6 +289,73 @@ const DrawerTaskSpareParts = ({
 
   //useEffect
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
+    if (
+      inventories !== undefined &&
+      inventories instanceof Array &&
+      inventories.length === 0
+    ) {
+      return;
+    }
+
+    var tempin = [],
+      tempout = [];
+
+    let existingAddInInventories = [];
+
+    inventories
+      .filter((fil) => !Boolean(fil.is_from_task))
+      // .filter((fil) => fil.is_from_task === false)
+      .map((doc, idx) => {
+        // if (doc.is_in === true) {
+        if (Boolean(doc.is_in)) {
+          tempin.push({
+            ...doc,
+            migid: doc.mig_id,
+            modelname: doc.model_name,
+            assetname: doc.asset_name,
+          });
+
+          existingAddInInventories.push({
+            inventory_id: doc.id,
+            connect_id: doc.connect_id,
+          });
+        } else {
+          tempout.push({
+            ...doc,
+            migid: doc.mig_id,
+            modelname: doc.model_name,
+            assetname: doc.asset_name,
+          });
+        }
+      });
+
+    // reset the payload right after opening up the drawer
+    // it's necessary to keep the `add_in_inventories` persistent based on current inventories data.
+    //
+    // TODO: persistent for `remove_in_inventory_ids` (?)
+    setdatapayload((prev) => ({
+      ...prev,
+      add_in_inventories: existingAddInInventories,
+      add_out_inventory_ids: [],
+      remove_in_inventory_ids: [],
+      remove_out_inventory_ids: [],
+    }));
+
+    console.log("[Effect] getTask", { tempin, tempout });
+
+    setselectedforin(tempin);
+    setselectedforout(tempout);
+  }, [inventories, visible]);
+
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
     setpraloadingin(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&id=${idtask}`,
@@ -146,11 +369,17 @@ const DrawerTaskSpareParts = ({
       .then((res) => res.json())
       .then((res2) => {
         setdataselectforin(res2.data.inventory_list);
+        setOutCheckListIds(res2.data.check_list?.map(({ id }) => id) || []);
 
         setpraloadingin(false);
       });
-  }, []);
+  }, [visible]);
+
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
+
     setpraloadingout(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=keluar&id=${idtask}`,
@@ -163,13 +392,23 @@ const DrawerTaskSpareParts = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        // var modif1 = modifData1(res2.data);
+        // var modif1 = modifData1(res2.data.inventory_list);
+        // var modif1 = modifData2([...resClone.data.inventory_list]);
         // setdatainduk(modif1);
+        // setdatainduk(res2.data.inventory_list)
         // var modif2 = modifData2(res2.data);
+        // var modif2 = modifData2([...resClone.data.inventory_list]);
         // setdataselectforout(modif2);
+        // setpraloadingout(false);
+        // setdataselectforout(res2.data.inventory_list);
+
+        setRawInventoryList(res2.data.inventory_list);
+        // setDataIndukCheckListIds(res2.data.check_list?.map(({ id }) => id) || []);
+
         setpraloadingout(false);
       });
-  }, []);
+  }, [visible]);
+
   return (
     <DrawerCore
       title={title}
@@ -177,7 +416,7 @@ const DrawerTaskSpareParts = ({
       onClose={onClose}
       buttonOkText={buttonOkText}
       onClick={() => {
-        console.log(datapayload, selectedforin);
+        console.log("[On Click] Drawer Button", datapayload, selectedforin);
         handleSendSpareParts();
       }}
       // disabled={disabledcreate}
@@ -221,6 +460,7 @@ const DrawerTaskSpareParts = ({
                     placeholder="MIG ID, Model"
                     name={`part_in`}
                     onChange={(value, option) => {
+                      console.log("[On Change] Suku Cadang Masuk", { value });
                       setdatapayload({
                         ...datapayload,
                         add_in_inventories: [
@@ -239,7 +479,7 @@ const DrawerTaskSpareParts = ({
                     onSearch={(value) => {
                       setfetchingstate(true);
                       fetch(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&keyword=${value}`,
+                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&keyword=${value}&id=${idtask}`,
                         {
                           method: `GET`,
                           headers: {
@@ -249,14 +489,20 @@ const DrawerTaskSpareParts = ({
                       )
                         .then((res) => res.json())
                         .then((res2) => {
-                          setdataselectforin(res2.data);
+                          setdataselectforin(res2.data.inventory_list);
                           setfetchingstate(false);
                         });
                     }}
-                    filterOption={(input, opt) =>
-                      opt.children.toLowerCase().indexOf(input.toLowerCase()) >=
-                      0
-                    }
+                    filterOption={(input, opt) => {
+                      const { migid, modelname, assetname } = opt;
+                      const searchableString = `${migid}${modelname}${assetname}`;
+
+                      return (
+                        searchableString
+                          .toLowerCase()
+                          .indexOf(input.toLowerCase()) >= 0
+                      );
+                    }}
                   >
                     {dataselectforin.map((doc, idx) => (
                       <Select.Option
@@ -271,25 +517,23 @@ const DrawerTaskSpareParts = ({
                     ))}
                   </Select>
                 </div>
-                <div className=" mb-2 flex flex-col">
+
+                <div className="mb-2 flex flex-col space-y-2">
                   {selectedforin.map((doc, idx) => (
                     <div className=" mb-2 flex items-center justify-between">
-                      <div className=" flex items-center">
-                        <div className=" mr-2">
-                          <AssetIconSvg size={50} />
-                        </div>
-                        <div className=" flex flex-col">
-                          <H2>{doc.modelname}</H2>
-                          <Label>
-                            {doc.migid}/{doc.assetname}
-                          </Label>
-                        </div>
+                      <div>
+                        <AssetIconSvg size={50} />
                       </div>
-                      <div className=" flex items-center">
+
+                      <div className="flex flex-col flex-grow-0 w-2/3">
+                        <H2>{doc.modelname}</H2>
+                        <Label>
+                          {doc.migid}/{doc.assetname}
+                        </Label>
                         <TreeSelect
                           allowClear
                           placeholder="Pilih Induk"
-                          style={{ width: `10rem`, marginRight: `0.5rem` }}
+                          className="mt-2"
                           showSearch
                           suffixIcon={<SearchOutlined />}
                           showArrow
@@ -298,6 +542,10 @@ const DrawerTaskSpareParts = ({
                           }
                           name={`parent`}
                           onChange={(value) => {
+                            console.log("[On Change] Pilih Induk", {
+                              value,
+                              idx,
+                            });
                             if (typeof value === "undefined") {
                               var temp = [...datapayload.add_in_inventories];
                               temp[idx].connect_id = 0;
@@ -314,38 +562,64 @@ const DrawerTaskSpareParts = ({
                               }));
                             }
                           }}
+                          // treeData={[]}
                           treeData={datainduk}
+                          // fieldNames={{
+                          //   children: "inventory_parts",
+                          //   value: "id",
+                          //   label: "mig_id"
+                          // }}
+                          // treeDataSimpleMode={{
+                          //   id: "id",
+                          // }}
                           treeDefaultExpandAll
                           treeNodeFilterProp="title"
-                          filterTreeNode={(search, item) => {
-                            return (
-                              item.title
-                                .toLowerCase()
-                                .indexOf(search.toLowerCase()) >= 0
-                            );
-                          }}
+                          filterTreeNode={(search, item) =>
+                            item.title
+                              .toLowerCase()
+                              .indexOf(search.toLowerCase()) >= 0
+                          }
                         ></TreeSelect>
+                      </div>
+
+                      <div className="flex items-center">
                         <div
                           className=" cursor-pointer flex justify-center items-center"
                           onClick={() => {
+                            console.log("[On Click] Remove Spare Part In", {
+                              doc,
+                            });
+
                             var temp = [...selectedforin];
                             temp.splice(idx, 1);
                             setselectedforin(temp);
-                            doc.id
-                              ? setdatapayload((prev) => ({
-                                  ...prev,
-                                  remove_in_inventory_ids: [
-                                    ...prev.remove_in_inventory_ids,
-                                    doc.id,
-                                  ],
-                                }))
-                              : setdatapayload((prev) => ({
-                                  ...prev,
-                                  add_in_inventories:
-                                    prev.add_in_inventories.filter(
-                                      (fil) => fil.inventory_id !== doc.value
-                                    ),
-                                }));
+                            setdatapayload((prev) => ({
+                              ...prev,
+                              remove_in_inventory_ids: [
+                                ...prev.remove_in_inventory_ids,
+                                doc.id,
+                              ],
+                              add_in_inventories:
+                                prev.add_in_inventories.filter(
+                                  (fil) => fil.inventory_id !== doc.id
+                                ),
+                            }));
+
+                            // doc.id
+                            //   ? setdatapayload((prev) => ({
+                            //       ...prev,
+                            //       remove_in_inventory_ids: [
+                            //         ...prev.remove_in_inventory_ids,
+                            //         doc.id,
+                            //       ],
+                            //     }))
+                            //   : setdatapayload((prev) => ({
+                            //       ...prev,
+                            //       add_in_inventories:
+                            //         prev.add_in_inventories.filter(
+                            //           (fil) => fil.inventory_id !== doc.value
+                            //         ),
+                            //     }));
                           }}
                         >
                           <TrashIconSvg size={20} color={`#BF4A40`} />
@@ -386,6 +660,17 @@ const DrawerTaskSpareParts = ({
                     showArrow
                     name={`part_out`}
                     onChange={(value, label, extra) => {
+                      console.log("[On Change] Data Out", { value });
+                      if (
+                        typeof value === "number" &&
+                        selectedforout
+                          .map(({ id, value }) => id || value)
+                          .includes(value)
+                      ) {
+                        console.log("[If-Logic] Already in selected for out");
+                        return;
+                      }
+
                       setselectedforout([
                         ...selectedforout,
                         {
@@ -407,7 +692,13 @@ const DrawerTaskSpareParts = ({
                         ],
                       }));
                     }}
+                    // treeData={[]}
                     treeData={dataselectforout}
+                    // fieldNames={{
+                    //   children: "inventory_parts",
+                    //   value: "id",
+                    //   label: "mig_id"
+                    // }}
                     treeDefaultExpandAll
                     treeNodeFilterProp="title"
                     filterTreeNode={(search, item) => {
@@ -439,6 +730,10 @@ const DrawerTaskSpareParts = ({
                         <div
                           className=" cursor-pointer flex justify-center items-center"
                           onClick={() => {
+                            console.log("[On Click] Remove Spare Part Out", {
+                              doc,
+                            });
+
                             var temp = [...selectedforout];
                             temp.splice(idx, 1);
                             setselectedforout(temp);
