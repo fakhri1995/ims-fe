@@ -1304,31 +1304,33 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
         )[0]?.check_out !== null
           ? setisselfcheckout(true)
           : setisselfcheckout(false);
-        var tempin = [],
-          tempout = [];
-        res2.data.inventories
-          .filter((fil) => !Boolean(fil.is_from_task))
-          // .filter((fil) => fil.is_from_task === false)
-          .map((doc, idx) => {
-            // if (doc.is_in === true) {
-            if (Boolean(doc.is_in)) {
-              tempin.push({
-                ...doc,
-                migid: doc.mig_id,
-                modelname: doc.model_name,
-                assetname: doc.asset_name,
-              });
-            } else {
-              tempout.push({
-                ...doc,
-                migid: doc.mig_id,
-                modelname: doc.model_name,
-                assetname: doc.asset_name,
-              });
-            }
-          });
-        setselectedforin(tempin);
-        setselectedforout(tempout);
+
+        // var tempin = [],
+        //   tempout = [];
+
+        // res2.data.inventories
+        //   .filter((fil) => !Boolean(fil.is_from_task))
+        //   // .filter((fil) => fil.is_from_task === false)
+        //   .map((doc, idx) => {
+        //     // if (doc.is_in === true) {
+        //     if (Boolean(doc.is_in)) {
+        //       tempin.push({
+        //         ...doc,
+        //         migid: doc.mig_id,
+        //         modelname: doc.model_name,
+        //         assetname: doc.asset_name,
+        //       });
+        //     } else {
+        //       tempout.push({
+        //         ...doc,
+        //         migid: doc.mig_id,
+        //         modelname: doc.model_name,
+        //         assetname: doc.asset_name,
+        //       });
+        //     }
+        //   });
+        // setselectedforin(tempin);
+        // setselectedforout(tempout);
         setpraloadingtask(false);
       });
   }, [
@@ -3733,6 +3735,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             selectedforout={selectedforout}
             setselectedforout={setselectedforout}
             prevpath={prevpath}
+            inventories={displaytask.inventories}
           />
         )}
       </AccessControl>
