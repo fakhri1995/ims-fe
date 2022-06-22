@@ -665,7 +665,6 @@ const DrawerTaskUpdate = ({
                   notFoundContent={fetchingitems ? <Spin size="small" /> : null}
                   onSearch={(value) => {
                     setfetchingitems(true);
-                    Z;
                     fetch(
                       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterInventories?keyword=${value}`,
                       {
