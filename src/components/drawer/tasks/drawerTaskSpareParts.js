@@ -63,7 +63,12 @@ function modifData2(dataa) {
   return dataa;
 }
 
-function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
+function recursiveInventoryList(
+  dataa,
+  checkListIds,
+  isRecursive = false,
+  parentId = null
+) {
   console.log("[Function-Param] recursiveInventoryList", {
     dataa,
     checkListIds,
@@ -91,6 +96,7 @@ function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
     dataa[i]["key"] = inventoryId;
     dataa[i]["value"] = inventoryId;
     dataa[i]["title"] = displayFormat;
+    dataa[i]["parent_id"] = parentId;
 
     const hasChildrenAttr = "children" in dataa[i];
     const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
@@ -103,7 +109,12 @@ function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
       console.log("[If-Logic] Has Inventory Parts", { inventoryId });
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
-      recursiveInventoryList(dataa[i].children, checkListIds);
+      recursiveInventoryList(
+        dataa[i].children,
+        checkListIds,
+        true,
+        inventoryId
+      );
 
       // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
       //   const isIdIncluded = checkListIds.includes(id);
@@ -156,6 +167,10 @@ const DrawerTaskSpareParts = ({
   const [loadingspart, setloadingspart] = useState(false);
   //DATA IN
   const [selectedforin, setselectedforin] = useState([]);
+  useEffect(() => {
+    console.log("[Effect] Selected For In", { selectedforin });
+  }, [selectedforin]);
+
   useEffect(() => {
     const connectIds = datapayload.add_in_inventories
       .map(({ connect_id }) => connect_id)
@@ -301,6 +316,8 @@ const DrawerTaskSpareParts = ({
       return;
     }
 
+    console.log("[Effect] Inventories from getTask", { inventories });
+
     var tempin = [],
       tempout = [];
 
@@ -335,8 +352,6 @@ const DrawerTaskSpareParts = ({
 
     // reset the payload right after opening up the drawer
     // it's necessary to keep the `add_in_inventories` persistent based on current inventories data.
-    //
-    // TODO: persistent for `remove_in_inventory_ids` (?)
     setdatapayload((prev) => ({
       ...prev,
       add_in_inventories: existingAddInInventories,
@@ -460,7 +475,20 @@ const DrawerTaskSpareParts = ({
                     placeholder="MIG ID, Model"
                     name={`part_in`}
                     onChange={(value, option) => {
-                      console.log("[On Change] Suku Cadang Masuk", { value });
+                      console.log("[On Change] Suku Cadang Masuk", {
+                        value,
+                        option,
+                      });
+
+                      const isValueInserted = datapayload.add_in_inventories
+                        .map(({ inventory_id }) => inventory_id)
+                        .includes(value);
+
+                      if (isValueInserted) {
+                        console.log("[If-Logic] Already in selected for in");
+                        return;
+                      }
+
                       setdatapayload({
                         ...datapayload,
                         add_in_inventories: [
@@ -469,7 +497,7 @@ const DrawerTaskSpareParts = ({
                         ],
                       });
                       setselectedforin([...selectedforin, option]);
-                      console.log(option);
+                      // console.log(option);
                     }}
                     showSearch
                     optionFilterProp="children"
@@ -520,7 +548,10 @@ const DrawerTaskSpareParts = ({
 
                 <div className="mb-2 flex flex-col space-y-2">
                   {selectedforin.map((doc, idx) => (
-                    <div className=" mb-2 flex items-center justify-between">
+                    <div
+                      className=" mb-2 flex items-center justify-between"
+                      key={doc.id}
+                    >
                       <div>
                         <AssetIconSvg size={50} />
                       </div>
@@ -545,6 +576,7 @@ const DrawerTaskSpareParts = ({
                             console.log("[On Change] Pilih Induk", {
                               value,
                               idx,
+                              doc,
                             });
                             if (typeof value === "undefined") {
                               var temp = [...datapayload.add_in_inventories];
@@ -660,13 +692,13 @@ const DrawerTaskSpareParts = ({
                     showArrow
                     name={`part_out`}
                     onChange={(value, label, extra) => {
-                      console.log("[On Change] Data Out", { value });
-                      if (
-                        typeof value === "number" &&
-                        selectedforout
-                          .map(({ id, value }) => id || value)
-                          .includes(value)
-                      ) {
+                      console.log("[On Change] Suku Cadang Keluar", { value });
+
+                      const isValueInserted = selectedforout
+                        .map(({ id, value }) => id || value)
+                        .includes(value);
+
+                      if (isValueInserted) {
                         console.log("[If-Logic] Already in selected for out");
                         return;
                       }
@@ -714,7 +746,10 @@ const DrawerTaskSpareParts = ({
                 </div>
                 <div className=" mb-2 flex flex-col">
                   {selectedforout.map((doc, idx) => (
-                    <div className=" mb-2 flex items-center justify-between">
+                    <div
+                      className=" mb-2 flex items-center justify-between"
+                      key={doc.id}
+                    >
                       <div className=" flex items-center">
                         <div className=" mr-2">
                           <AssetIconSvg size={50} />
