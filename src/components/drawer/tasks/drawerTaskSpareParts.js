@@ -475,7 +475,10 @@ const DrawerTaskSpareParts = ({
                     placeholder="MIG ID, Model"
                     name={`part_in`}
                     onChange={(value, option) => {
-                      console.log("[On Change] Suku Cadang Masuk", { value });
+                      console.log("[On Change] Suku Cadang Masuk", {
+                        value,
+                        option,
+                      });
 
                       const isValueInserted = datapayload.add_in_inventories
                         .map(({ inventory_id }) => inventory_id)
@@ -494,7 +497,7 @@ const DrawerTaskSpareParts = ({
                         ],
                       });
                       setselectedforin([...selectedforin, option]);
-                      console.log(option);
+                      // console.log(option);
                     }}
                     showSearch
                     optionFilterProp="children"
@@ -573,6 +576,7 @@ const DrawerTaskSpareParts = ({
                             console.log("[On Change] Pilih Induk", {
                               value,
                               idx,
+                              doc,
                             });
                             if (typeof value === "undefined") {
                               var temp = [...datapayload.add_in_inventories];
