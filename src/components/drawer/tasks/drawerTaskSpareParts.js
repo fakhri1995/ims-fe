@@ -63,7 +63,12 @@ function modifData2(dataa) {
   return dataa;
 }
 
-function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
+function recursiveInventoryList(
+  dataa,
+  checkListIds,
+  isRecursive = false,
+  parentId = null
+) {
   console.log("[Function-Param] recursiveInventoryList", {
     dataa,
     checkListIds,
@@ -91,6 +96,7 @@ function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
     dataa[i]["key"] = inventoryId;
     dataa[i]["value"] = inventoryId;
     dataa[i]["title"] = displayFormat;
+    dataa[i]["parent_id"] = parentId;
 
     const hasChildrenAttr = "children" in dataa[i];
     const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
@@ -103,7 +109,12 @@ function recursiveInventoryList(dataa, checkListIds, isRecursive = false) {
       console.log("[If-Logic] Has Inventory Parts", { inventoryId });
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
-      recursiveInventoryList(dataa[i].children, checkListIds);
+      recursiveInventoryList(
+        dataa[i].children,
+        checkListIds,
+        true,
+        inventoryId
+      );
 
       // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
       //   const isIdIncluded = checkListIds.includes(id);
