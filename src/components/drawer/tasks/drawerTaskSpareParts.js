@@ -472,6 +472,16 @@ const DrawerTaskSpareParts = ({
                     name={`part_in`}
                     onChange={(value, option) => {
                       console.log("[On Change] Suku Cadang Masuk", { value });
+
+                      const isValueInserted = datapayload.add_in_inventories
+                        .map(({ inventory_id }) => inventory_id)
+                        .includes(value);
+
+                      if (isValueInserted) {
+                        console.log("[If-Logic] Already in selected for in");
+                        return;
+                      }
+
                       setdatapayload({
                         ...datapayload,
                         add_in_inventories: [
@@ -671,13 +681,13 @@ const DrawerTaskSpareParts = ({
                     showArrow
                     name={`part_out`}
                     onChange={(value, label, extra) => {
-                      console.log("[On Change] Data Out", { value });
-                      if (
-                        typeof value === "number" &&
-                        selectedforout
-                          .map(({ id, value }) => id || value)
-                          .includes(value)
-                      ) {
+                      console.log("[On Change] Suku Cadang Keluar", { value });
+
+                      const isValueInserted = selectedforout
+                        .map(({ id, value }) => id || value)
+                        .includes(value);
+
+                      if (isValueInserted) {
                         console.log("[If-Logic] Already in selected for out");
                         return;
                       }
