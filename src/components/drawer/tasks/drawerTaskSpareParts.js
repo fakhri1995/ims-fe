@@ -168,6 +168,10 @@ const DrawerTaskSpareParts = ({
   //DATA IN
   const [selectedforin, setselectedforin] = useState([]);
   useEffect(() => {
+    console.log("[Effect] Selected For In", { selectedforin });
+  }, [selectedforin]);
+
+  useEffect(() => {
     const connectIds = datapayload.add_in_inventories
       .map(({ connect_id }) => connect_id)
       .filter((id) => id !== 0);
@@ -312,6 +316,8 @@ const DrawerTaskSpareParts = ({
       return;
     }
 
+    console.log("[Effect] Inventories from getTask", { inventories });
+
     var tempin = [],
       tempout = [];
 
@@ -346,8 +352,6 @@ const DrawerTaskSpareParts = ({
 
     // reset the payload right after opening up the drawer
     // it's necessary to keep the `add_in_inventories` persistent based on current inventories data.
-    //
-    // TODO: persistent for `remove_in_inventory_ids` (?)
     setdatapayload((prev) => ({
       ...prev,
       add_in_inventories: existingAddInInventories,
@@ -541,7 +545,10 @@ const DrawerTaskSpareParts = ({
 
                 <div className="mb-2 flex flex-col space-y-2">
                   {selectedforin.map((doc, idx) => (
-                    <div className=" mb-2 flex items-center justify-between">
+                    <div
+                      className=" mb-2 flex items-center justify-between"
+                      key={doc.id}
+                    >
                       <div>
                         <AssetIconSvg size={50} />
                       </div>
@@ -735,7 +742,10 @@ const DrawerTaskSpareParts = ({
                 </div>
                 <div className=" mb-2 flex flex-col">
                   {selectedforout.map((doc, idx) => (
-                    <div className=" mb-2 flex items-center justify-between">
+                    <div
+                      className=" mb-2 flex items-center justify-between"
+                      key={doc.id}
+                    >
                       <div className=" flex items-center">
                         <div className=" mr-2">
                           <AssetIconSvg size={50} />
