@@ -67,13 +67,14 @@ function recursiveInventoryList(
   dataa,
   checkListIds,
   isRecursive = false,
-  parentId = null
+  parentId = null,
+  parentIds = {}
 ) {
-  console.log("[Function-Param] recursiveInventoryList", {
-    dataa,
-    checkListIds,
-    isRecursive,
-  });
+  // console.log("[Function-Param] recursiveInventoryList", {
+  //   dataa,
+  //   checkListIds,
+  //   isRecursive,
+  // });
 
   for (var i = 0; i < dataa.length; i++) {
     // MIG_ID - MODEL_NAME - ASSET_NAME
@@ -81,40 +82,34 @@ function recursiveInventoryList(
     const inventoryId = dataa[i].id;
 
     if (checkListIds.includes(inventoryId)) {
-      console.log("[If-Logic] Check List Ids Includes", { inventoryId });
+      // console.log("[If-Logic] Check List Ids Includes", { inventoryId });
       dataa.splice(i, 1);
-      recursiveInventoryList(dataa, checkListIds, true);
+      recursiveInventoryList(dataa, checkListIds);
       continue;
     }
 
-    console.log("[Debug] Recursive Current Inventory Id", {
-      inventoryId,
-      checkListIds,
-      isRecursive,
-    });
+    // console.log("[Debug] Recursive Current Inventory Id", {
+    //   inventoryId,
+    //   checkListIds,
+    //   isRecursive,
+    // });
 
     dataa[i]["key"] = inventoryId;
     dataa[i]["value"] = inventoryId;
     dataa[i]["title"] = displayFormat;
-    dataa[i]["parent_id"] = parentId;
 
-    const hasChildrenAttr = "children" in dataa[i];
-    const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
-    console.log("[Debug] Children and Inventory Parts attr", {
-      hasChildrenAttr,
-      hasInventoryPartsAttr,
-    });
+    // const hasChildrenAttr = "children" in dataa[i];
+    // const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
+    // console.log("[Debug] Children and Inventory Parts attr", {
+    //   hasChildrenAttr,
+    //   hasInventoryPartsAttr,
+    // });
 
     if (dataa[i].inventory_parts) {
-      console.log("[If-Logic] Has Inventory Parts", { inventoryId });
+      // console.log("[If-Logic] Has Inventory Parts", { inventoryId });
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
-      recursiveInventoryList(
-        dataa[i].children,
-        checkListIds,
-        true,
-        inventoryId
-      );
+      recursiveInventoryList(dataa[i].children, checkListIds);
 
       // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
       //   const isIdIncluded = checkListIds.includes(id);
@@ -127,6 +122,176 @@ function recursiveInventoryList(
     }
   }
   return dataa;
+}
+
+function parentIdsToMap(dataa, parentId = null, parentIds = {}) {
+  // console.log("[Function-Param] recursiveInventoryList", {
+  //   dataa,
+  //   checkListIds,
+  //   isRecursive,
+  // });
+
+  for (var i = 0; i < dataa.length; i++) {
+    // MIG_ID - MODEL_NAME - ASSET_NAME
+    // const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+    const inventoryId = dataa[i].id;
+
+    // console.log("[Debug] Recursive Current Inventory Id", {
+    //   inventoryId,
+    //   checkListIds,
+    //   isRecursive,
+    // });
+
+    // dataa[i]["key"] = inventoryId;
+    // dataa[i]["value"] = inventoryId;
+    // dataa[i]["title"] = displayFormat;
+    // dataa[i]["parent_id"] = parentId;
+    if (parentId) {
+      // console.log("[If-Logic] Parent Id", { parentId })
+      // parentIds.push(parentId);
+      parentIds[inventoryId] = parentId;
+    }
+
+    // const hasChildrenAttr = "children" in dataa[i];
+    // const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
+    // console.log("[Debug] Children and Inventory Parts attr", {
+    //   hasChildrenAttr,
+    //   hasInventoryPartsAttr,
+    // });
+
+    if (dataa[i].inventory_parts) {
+      // console.log("[If-Logic] Has Inventory Parts", { inventoryId });
+      dataa[i]["children"] = dataa[i].inventory_parts;
+      delete dataa[i].inventory_parts;
+      parentIdsToMap(dataa[i].children, inventoryId, parentIds);
+
+      // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
+      //   const isIdIncluded = checkListIds.includes(id);
+      //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
+
+      //   return !isIdIncluded;
+      // });
+      // delete dataa[i].inventory_parts;
+      // recursiveInventoryList(dataa[i].children, checkListIds, true);
+    }
+  }
+  return dataa;
+}
+
+// function recursiveInventoryList(
+//   dataa,
+//   checkListIds,
+//   isRecursive = false,
+//   parentId = null
+// ) {
+//   // console.log("[Function-Param] recursiveInventoryList", {
+//   //   dataa,
+//   //   checkListIds,
+//   //   isRecursive,
+//   // });
+
+//   for (var i = 0; i < dataa.length; i++) {
+//     // MIG_ID - MODEL_NAME - ASSET_NAME
+//     const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
+//     const inventoryId = dataa[i].id;
+
+//     if (checkListIds.includes(inventoryId)) {
+//       // console.log("[If-Logic] Check List Ids Includes", { inventoryId });
+//       dataa.splice(i, 1);
+//       recursiveInventoryList(dataa, checkListIds, true);
+//       continue;
+//     }
+
+//     // console.log("[Debug] Recursive Current Inventory Id", {
+//     //   inventoryId,
+//     //   checkListIds,
+//     //   isRecursive,
+//     // });
+
+//     dataa[i]["key"] = inventoryId;
+//     dataa[i]["value"] = inventoryId;
+//     dataa[i]["title"] = displayFormat;
+//     dataa[i]["parent_id"] = parentId;
+
+//     // const hasChildrenAttr = "children" in dataa[i];
+//     // const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
+//     // console.log("[Debug] Children and Inventory Parts attr", {
+//     //   hasChildrenAttr,
+//     //   hasInventoryPartsAttr,
+//     // });
+
+//     if (dataa[i].inventory_parts) {
+//       // console.log("[If-Logic] Has Inventory Parts", { inventoryId });
+//       dataa[i]["children"] = dataa[i].inventory_parts;
+//       delete dataa[i].inventory_parts;
+//       recursiveInventoryList(
+//         dataa[i].children,
+//         checkListIds,
+//         true,
+//         inventoryId
+//       );
+
+//       // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
+//       //   const isIdIncluded = checkListIds.includes(id);
+//       //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
+
+//       //   return !isIdIncluded;
+//       // });
+//       // delete dataa[i].inventory_parts;
+//       // recursiveInventoryList(dataa[i].children, checkListIds, true);
+//     }
+//   }
+//   return dataa;
+// }
+
+/**
+ * Function to check and find conflicted inventories (out with in).
+ *
+ * It returns an array where its element shape follows `selectedForIn`'s element shape.
+ *
+ * The object may contain `id` or `value` attribute.
+ * - `id` -> existing inventory, thus you need to update payload `remove_in_inventory_ids` and `add_in_inventories`
+ * - `value` -> new inventory, only `add_in_inventories` since the mutation happens in client-side.
+ *
+ *
+ * @see https://gist.github.com/kennfatt-mig/fe4afe7fa83bc04a794d8f8c51f1320e To test the function with Node
+ *
+ * @param {number} removedInventoryId
+ * @param {*} selectedForIn
+ * @param {Map<number, number>} parentIdsMap
+ * @param {{ inventory_id: number, connect_id: number }[]} payloadIn
+ *
+ * @returns {any[]}
+ */
+function checkForConflictedInventories(
+  removedInventoryId = null,
+  selectedForIn = [],
+  parentIdsMap = {},
+  payloadIn = []
+) {
+  if (removedInventoryId === null) {
+    return [];
+  }
+
+  return payloadIn
+    .filter(({ connect_id }) => {
+      const itsParentId = parentIdsMap[connect_id];
+
+      const isConflicted =
+        itsParentId !== undefined && itsParentId === removedInventoryId;
+
+      return isConflicted;
+    })
+    .map(({ inventory_id }) =>
+      selectedForIn.find(({ id, value }) => {
+        const itsId = id || value;
+
+        const isMatched = itsId === inventory_id;
+
+        return isMatched;
+      })
+    )
+    .filter((model) => !!model);
 }
 
 const DrawerTaskSpareParts = ({
@@ -151,6 +316,21 @@ const DrawerTaskSpareParts = ({
   const router = useRouter();
 
   //useState
+
+  // Kapan state ini harus rollback?
+  // State untuk trigger apakah ada conflict antara spare part out dengan spare part in (atau induknya).
+  //
+  // Properties
+  //  id:         id inventory yang akan dikeluarkan (setelah User klik item pada "Suku Cadang Keluar Tree")
+  //  model:      bentuk dari inventory tersebut (bentuk model sama seperti salah satu element pada state `dataselectforout`)
+  const [removedInventoryCandidate, setRemovedInventoryCandidate] = useState({
+    id: null,
+    model: {},
+  });
+  // const [conflictedInventories, setConflictedInventories] = useState([]);
+
+  /** @type {[Map<number, number>, Function]} parentIdsMap Key adalah children Id dan Value adalah parent Id-nya */
+  const [parentIdsMap, setParentIdsMap] = useState({});
   const [rawInventoryList, setRawInventoryList] = useState([]);
 
   const [datapayload, setdatapayload] = useState({
@@ -302,7 +482,46 @@ const DrawerTaskSpareParts = ({
       });
   };
 
+  const resetRemovedInventoryCandidate = () => {
+    setRemovedInventoryCandidate({
+      id: null,
+      model: {},
+    });
+  };
+
   //useEffect
+  useEffect(() => {
+    const inventoryId = removedInventoryCandidate.id;
+    if (typeof inventoryId !== "number") {
+      return;
+    }
+
+    const possibleConflictedInventories = checkForConflictedInventories(
+      inventoryId,
+      selectedforin,
+      parentIdsMap,
+      datapayload.add_in_inventories
+    );
+
+    if (possibleConflictedInventories.length === 0) {
+      resetRemovedInventoryCandidate();
+      return;
+    }
+
+    console.log("[Effect] Removed Inventory Candidate", {
+      removedInventoryCandidate,
+      possibleConflictedInventories,
+    });
+    // TODO: trigger prompt to let user decide next action
+
+    resetRemovedInventoryCandidate();
+  }, [
+    removedInventoryCandidate.id,
+    selectedforin,
+    parentIdsMap,
+    datapayload.add_in_inventories,
+  ]);
+
   useEffect(() => {
     if (!visible) {
       return;
@@ -419,6 +638,14 @@ const DrawerTaskSpareParts = ({
 
         setRawInventoryList(res2.data.inventory_list);
         // setDataIndukCheckListIds(res2.data.check_list?.map(({ id }) => id) || []);
+        const parentIdsMap = {};
+        parentIdsToMap(
+          JSON.parse(JSON.stringify(res2.data.inventory_list)),
+          null,
+          parentIdsMap
+        ); // mutation by reference
+        setParentIdsMap(parentIdsMap);
+        console.log("[Effect-Fetch] ParentIds Map", { parentIdsMap });
 
         setpraloadingout(false);
       });
@@ -625,33 +852,37 @@ const DrawerTaskSpareParts = ({
                             var temp = [...selectedforin];
                             temp.splice(idx, 1);
                             setselectedforin(temp);
-                            setdatapayload((prev) => ({
-                              ...prev,
-                              remove_in_inventory_ids: [
-                                ...prev.remove_in_inventory_ids,
-                                doc.id,
-                              ],
-                              add_in_inventories:
-                                prev.add_in_inventories.filter(
-                                  (fil) => fil.inventory_id !== doc.id
-                                ),
-                            }));
+                            // setdatapayload((prev) => ({
+                            //   ...prev,
+                            //   remove_in_inventory_ids: [
+                            //     ...prev.remove_in_inventory_ids,
+                            //     doc.id,
+                            //   ],
+                            //   add_in_inventories:
+                            //     prev.add_in_inventories.filter(
+                            //       (fil) => fil.inventory_id !== doc.id
+                            //     ),
+                            // }));
 
-                            // doc.id
-                            //   ? setdatapayload((prev) => ({
-                            //       ...prev,
-                            //       remove_in_inventory_ids: [
-                            //         ...prev.remove_in_inventory_ids,
-                            //         doc.id,
-                            //       ],
-                            //     }))
-                            //   : setdatapayload((prev) => ({
-                            //       ...prev,
-                            //       add_in_inventories:
-                            //         prev.add_in_inventories.filter(
-                            //           (fil) => fil.inventory_id !== doc.value
-                            //         ),
-                            //     }));
+                            doc.id
+                              ? setdatapayload((prev) => ({
+                                  ...prev,
+                                  remove_in_inventory_ids: [
+                                    ...prev.remove_in_inventory_ids,
+                                    doc.id,
+                                  ],
+                                  add_in_inventories:
+                                    prev.add_in_inventories.filter(
+                                      (fil) => fil.inventory_id !== doc.id
+                                    ),
+                                }))
+                              : setdatapayload((prev) => ({
+                                  ...prev,
+                                  add_in_inventories:
+                                    prev.add_in_inventories.filter(
+                                      (fil) => fil.inventory_id !== doc.value
+                                    ),
+                                }));
                           }}
                         >
                           <TrashIconSvg size={20} color={`#BF4A40`} />
@@ -692,7 +923,15 @@ const DrawerTaskSpareParts = ({
                     showArrow
                     name={`part_out`}
                     onChange={(value, label, extra) => {
-                      console.log("[On Change] Suku Cadang Keluar", { value });
+                      console.log("[On Change] Suku Cadang Keluar", {
+                        value,
+                        extra,
+                      });
+
+                      setRemovedInventoryCandidate({
+                        id: value,
+                        model: extra.triggerNode.props,
+                      });
 
                       const isValueInserted = selectedforout
                         .map(({ id, value }) => id || value)
