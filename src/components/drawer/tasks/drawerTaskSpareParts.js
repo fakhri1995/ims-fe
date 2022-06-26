@@ -29,41 +29,6 @@ import {
 import { H1, H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
-function modifData1(dataa) {
-  for (var i = 0; i < dataa?.length; i++) {
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i][
-      "title"
-    ] = `${dataa[i].mig_id} - ${dataa[i].model_inventory.name} - ${dataa[i].model_inventory.asset.name}`;
-
-    if (dataa[i].inventory_parts) {
-      dataa[i]["children"] = dataa[i].inventory_parts;
-      delete dataa[i].inventory_parts;
-      modifData1(dataa[i].children);
-    }
-  }
-  return dataa;
-}
-
-function modifData2(dataa) {
-  for (var i = 0; i < dataa.length; i++) {
-    // MIG_ID - MODEL_NAME - ASSET_NAME
-    const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
-
-    dataa[i]["key"] = dataa[i].id;
-    dataa[i]["value"] = dataa[i].id;
-    dataa[i]["title"] = displayFormat;
-
-    if (dataa[i].inventory_parts) {
-      dataa[i]["children"] = dataa[i].inventory_parts;
-      delete dataa[i].inventory_parts;
-      modifData2(dataa[i].children);
-    }
-  }
-  return dataa;
-}
-
 function recursiveInventoryList(
   dataa,
   checkListIds,
@@ -178,72 +143,6 @@ function parentIdsToMap(dataa, parentId = null, parentIds = {}) {
   }
   return dataa;
 }
-
-// function recursiveInventoryList(
-//   dataa,
-//   checkListIds,
-//   isRecursive = false,
-//   parentId = null
-// ) {
-//   // console.log("[Function-Param] recursiveInventoryList", {
-//   //   dataa,
-//   //   checkListIds,
-//   //   isRecursive,
-//   // });
-
-//   for (var i = 0; i < dataa.length; i++) {
-//     // MIG_ID - MODEL_NAME - ASSET_NAME
-//     const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
-//     const inventoryId = dataa[i].id;
-
-//     if (checkListIds.includes(inventoryId)) {
-//       // console.log("[If-Logic] Check List Ids Includes", { inventoryId });
-//       dataa.splice(i, 1);
-//       recursiveInventoryList(dataa, checkListIds, true);
-//       continue;
-//     }
-
-//     // console.log("[Debug] Recursive Current Inventory Id", {
-//     //   inventoryId,
-//     //   checkListIds,
-//     //   isRecursive,
-//     // });
-
-//     dataa[i]["key"] = inventoryId;
-//     dataa[i]["value"] = inventoryId;
-//     dataa[i]["title"] = displayFormat;
-//     dataa[i]["parent_id"] = parentId;
-
-//     // const hasChildrenAttr = "children" in dataa[i];
-//     // const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
-//     // console.log("[Debug] Children and Inventory Parts attr", {
-//     //   hasChildrenAttr,
-//     //   hasInventoryPartsAttr,
-//     // });
-
-//     if (dataa[i].inventory_parts) {
-//       // console.log("[If-Logic] Has Inventory Parts", { inventoryId });
-//       dataa[i]["children"] = dataa[i].inventory_parts;
-//       delete dataa[i].inventory_parts;
-//       recursiveInventoryList(
-//         dataa[i].children,
-//         checkListIds,
-//         true,
-//         inventoryId
-//       );
-
-//       // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
-//       //   const isIdIncluded = checkListIds.includes(id);
-//       //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
-
-//       //   return !isIdIncluded;
-//       // });
-//       // delete dataa[i].inventory_parts;
-//       // recursiveInventoryList(dataa[i].children, checkListIds, true);
-//     }
-//   }
-//   return dataa;
-// }
 
 /**
  * Function to check and find conflicted inventories (out with in).
