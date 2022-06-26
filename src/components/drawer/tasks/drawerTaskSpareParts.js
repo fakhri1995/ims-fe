@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import {
   DatePicker,
+  Modal,
   Radio,
   Select,
   Spin,
@@ -327,7 +328,8 @@ const DrawerTaskSpareParts = ({
     id: null,
     model: {},
   });
-  // const [conflictedInventories, setConflictedInventories] = useState([]);
+  const [conflictedInventories, setConflictedInventories] = useState([]);
+  const [isConflictPromptShown, setIsConflictPromptShown] = useState(false);
 
   /** @type {[Map<number, number>, Function]} parentIdsMap Key adalah children Id dan Value adalah parent Id-nya */
   const [parentIdsMap, setParentIdsMap] = useState({});
@@ -489,6 +491,10 @@ const DrawerTaskSpareParts = ({
     });
   };
 
+  const resetConflictedInventoriesQueue = () => {
+    setConflictedInventories([]);
+  };
+
   //useEffect
   useEffect(() => {
     const inventoryId = removedInventoryCandidate.id;
@@ -512,15 +518,101 @@ const DrawerTaskSpareParts = ({
       removedInventoryCandidate,
       possibleConflictedInventories,
     });
-    // TODO: trigger prompt to let user decide next action
 
-    resetRemovedInventoryCandidate();
+    setConflictedInventories(possibleConflictedInventories);
+    setIsConflictPromptShown(true);
   }, [
     removedInventoryCandidate.id,
     selectedforin,
     parentIdsMap,
     datapayload.add_in_inventories,
   ]);
+
+  // Conflict ketika prompt (modal) conflict suku cadang keluar di-close / batalkan
+  const discardConflictedInventoriesPrompt = () => {
+    // Flow:
+    // 1. Remove candidate's id from `dataIndukCheckListIds` state
+    // 2. Remove candidate's id from `selectedforout` state
+    // 3. Remove candidate's id from `datapayload.add_out_inventory_ids`
+    // 4. Reset conflicted inventories queue
+    // 5. Reset removed inventory candidate state
+    // 6. Close the modal
+    const candidateId = removedInventoryCandidate.id;
+
+    setDataIndukCheckListIds((prev) => prev.filter((id) => id !== candidateId));
+
+    setselectedforout((prev) => {
+      return prev.filter(({ id, value }) => {
+        const itsId = id || value;
+
+        return itsId !== candidateId;
+      });
+    });
+
+    setdatapayload((prev) => ({
+      ...prev,
+      add_out_inventory_ids: prev.add_out_inventory_ids.filter(
+        (id) => id !== candidateId
+      ),
+    }));
+
+    resetConflictedInventoriesQueue();
+    resetRemovedInventoryCandidate();
+
+    setIsConflictPromptShown(false);
+  };
+
+  // Callback setelah user click prompt untuk mengeluarkan suku cadang yang conflict
+  const commitConflictedInventoriesPrompt = () => {
+    // Flow:
+    // 1. Remove all conflicted inventory ids from `selectedforin` state
+    //      AND flag id yang sudah sync dengan backend sehingga perlu di kirim ke dalam payload
+    //          cara membedakannya: "id" in `selectedforin[n]` || id !== undefined
+    // 2. Remove all conflicted ids from `datapayload.add_in_inventories`
+    //      AND add flagged ids to `datapayload.remove_in_inventory_ids` (make sure no duplicate id)
+    // 3. Reset conflicted inventories queue
+    // 4. Reset removed inventory candidate state
+    // 5. Close the modal
+    const { conflictedInventoryIds, removeFromInIds } =
+      conflictedInventories.reduce(
+        (prev, { id, value }) => {
+          const itsId = id || value;
+          const shouldSync = id !== undefined;
+
+          prev.conflictedInventoryIds.push(itsId);
+
+          if (shouldSync) {
+            prev.removeFromInIds.push(itsId);
+          }
+
+          return prev;
+        },
+        { conflictedInventoryIds: [], removeFromInIds: [] }
+      );
+
+    setselectedforin((prev) =>
+      prev.filter(({ id, value }) => {
+        const itsId = id || value;
+
+        return !conflictedInventoryIds.includes(itsId);
+      })
+    );
+
+    setdatapayload((prev) => ({
+      ...prev,
+      add_in_inventories: prev.add_in_inventories.filter(
+        ({ inventory_id }) => !conflictedInventoryIds.includes(inventory_id)
+      ),
+      remove_in_inventory_ids: [
+        ...new Set([...prev.remove_in_inventory_ids, ...removeFromInIds]),
+      ],
+    }));
+
+    resetConflictedInventoriesQueue();
+    resetRemovedInventoryCandidate();
+
+    setIsConflictPromptShown(false);
+  };
 
   useEffect(() => {
     if (!visible) {
@@ -652,394 +744,462 @@ const DrawerTaskSpareParts = ({
   }, [visible]);
 
   return (
-    <DrawerCore
-      title={title}
-      visible={visible}
-      onClose={onClose}
-      buttonOkText={buttonOkText}
-      onClick={() => {
-        console.log("[On Click] Drawer Button", datapayload, selectedforin);
-        handleSendSpareParts();
-      }}
-      // disabled={disabledcreate}
-    >
-      {loadingspart ? (
-        <div className=" flex w-full items-center justify-center">
-          <Spin />
-        </div>
-      ) : (
-        <div className="flex flex-col">
-          <div className="mb-6">
-            <p className="mb-0 text-red-500 text-xs italic">
-              *Informasi ini harus diisi
-            </p>
+    <>
+      <DrawerCore
+        title={title}
+        visible={visible}
+        onClose={onClose}
+        buttonOkText={buttonOkText}
+        onClick={() => {
+          console.log("[On Click] Drawer Button", datapayload, selectedforin);
+          handleSendSpareParts();
+        }}
+        // disabled={disabledcreate}
+      >
+        {loadingspart ? (
+          <div className=" flex w-full items-center justify-center">
+            <Spin />
           </div>
-          <div className="flex flex-col mb-6">
-            <div className="flex mb-2">
-              <Label>Suku Cadang Masuk</Label>
-              <span className="spartsin"></span>
-              <style jsx>
-                {`
-                                .spartsin::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-              </style>
+        ) : (
+          <div className="flex flex-col">
+            <div className="mb-6">
+              <p className="mb-0 text-red-500 text-xs italic">
+                *Informasi ini harus diisi
+              </p>
             </div>
-            {praloadingin ? (
-              <>
-                <Spin />
-              </>
-            ) : (
-              <>
-                <div className=" mb-2 flex">
-                  <Select
-                    style={{ width: `100%` }}
-                    className="dontShow"
-                    suffixIcon={<SearchOutlined />}
-                    showArrow
-                    placeholder="MIG ID, Model"
-                    name={`part_in`}
-                    onChange={(value, option) => {
-                      console.log("[On Change] Suku Cadang Masuk", {
-                        value,
-                        option,
-                      });
-
-                      const isValueInserted = datapayload.add_in_inventories
-                        .map(({ inventory_id }) => inventory_id)
-                        .includes(value);
-
-                      if (isValueInserted) {
-                        console.log("[If-Logic] Already in selected for in");
-                        return;
-                      }
-
-                      setdatapayload({
-                        ...datapayload,
-                        add_in_inventories: [
-                          ...datapayload.add_in_inventories,
-                          { inventory_id: value, connect_id: 0 },
-                        ],
-                      });
-                      setselectedforin([...selectedforin, option]);
-                      // console.log(option);
-                    }}
-                    showSearch
-                    optionFilterProp="children"
-                    notFoundContent={
-                      fetchingstate ? <Spin size="small" /> : null
-                    }
-                    onSearch={(value) => {
-                      setfetchingstate(true);
-                      fetch(
-                        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&keyword=${value}&id=${idtask}`,
-                        {
-                          method: `GET`,
-                          headers: {
-                            Authorization: JSON.parse(initProps),
-                          },
-                        }
-                      )
-                        .then((res) => res.json())
-                        .then((res2) => {
-                          setdataselectforin(res2.data.inventory_list);
-                          setfetchingstate(false);
-                        });
-                    }}
-                    filterOption={(input, opt) => {
-                      const { migid, modelname, assetname } = opt;
-                      const searchableString = `${migid}${modelname}${assetname}`;
-
-                      return (
-                        searchableString
-                          .toLowerCase()
-                          .indexOf(input.toLowerCase()) >= 0
-                      );
-                    }}
-                  >
-                    {dataselectforin.map((doc, idx) => (
-                      <Select.Option
-                        key={idx}
-                        value={doc.id}
-                        migid={doc.mig_id}
-                        modelname={doc.model_name}
-                        assetname={doc.asset_name}
-                      >
-                        {doc.mig_id} - {doc.model_name} - {doc.asset_name}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-
-                <div className="mb-2 flex flex-col space-y-2">
-                  {selectedforin.map((doc, idx) => (
-                    <div
-                      className=" mb-2 flex items-center justify-between"
-                      key={doc.id}
-                    >
-                      <div>
-                        <AssetIconSvg size={50} />
-                      </div>
-
-                      <div className="flex flex-col flex-grow-0 w-2/3">
-                        <H2>{doc.modelname}</H2>
-                        <Label>
-                          {doc.migid}/{doc.assetname}
-                        </Label>
-                        <TreeSelect
-                          allowClear
-                          placeholder="Pilih Induk"
-                          className="mt-2"
-                          showSearch
-                          suffixIcon={<SearchOutlined />}
-                          showArrow
-                          defaultValue={
-                            doc.connect_id === 0 ? null : doc.connect_id
-                          }
-                          name={`parent`}
-                          onChange={(value) => {
-                            console.log("[On Change] Pilih Induk", {
-                              value,
-                              idx,
-                              doc,
-                            });
-                            if (typeof value === "undefined") {
-                              var temp = [...datapayload.add_in_inventories];
-                              temp[idx].connect_id = 0;
-                              setdatapayload((prev) => ({
-                                ...prev,
-                                add_in_inventories: temp,
-                              }));
-                            } else {
-                              var temp = [...datapayload.add_in_inventories];
-                              temp[idx].connect_id = value;
-                              setdatapayload((prev) => ({
-                                ...prev,
-                                add_in_inventories: temp,
-                              }));
-                            }
-                          }}
-                          // treeData={[]}
-                          treeData={datainduk}
-                          // fieldNames={{
-                          //   children: "inventory_parts",
-                          //   value: "id",
-                          //   label: "mig_id"
-                          // }}
-                          // treeDataSimpleMode={{
-                          //   id: "id",
-                          // }}
-                          treeDefaultExpandAll
-                          treeNodeFilterProp="title"
-                          filterTreeNode={(search, item) =>
-                            item.title
-                              .toLowerCase()
-                              .indexOf(search.toLowerCase()) >= 0
-                          }
-                        ></TreeSelect>
-                      </div>
-
-                      <div className="flex items-center">
-                        <div
-                          className=" cursor-pointer flex justify-center items-center"
-                          onClick={() => {
-                            console.log("[On Click] Remove Spare Part In", {
-                              doc,
-                            });
-
-                            var temp = [...selectedforin];
-                            temp.splice(idx, 1);
-                            setselectedforin(temp);
-                            // setdatapayload((prev) => ({
-                            //   ...prev,
-                            //   remove_in_inventory_ids: [
-                            //     ...prev.remove_in_inventory_ids,
-                            //     doc.id,
-                            //   ],
-                            //   add_in_inventories:
-                            //     prev.add_in_inventories.filter(
-                            //       (fil) => fil.inventory_id !== doc.id
-                            //     ),
-                            // }));
-
-                            doc.id
-                              ? setdatapayload((prev) => ({
-                                  ...prev,
-                                  remove_in_inventory_ids: [
-                                    ...prev.remove_in_inventory_ids,
-                                    doc.id,
-                                  ],
-                                  add_in_inventories:
-                                    prev.add_in_inventories.filter(
-                                      (fil) => fil.inventory_id !== doc.id
-                                    ),
-                                }))
-                              : setdatapayload((prev) => ({
-                                  ...prev,
-                                  add_in_inventories:
-                                    prev.add_in_inventories.filter(
-                                      (fil) => fil.inventory_id !== doc.value
-                                    ),
-                                }));
-                          }}
-                        >
-                          <TrashIconSvg size={20} color={`#BF4A40`} />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-          <div className="flex flex-col mb-6">
-            <div className="flex mb-2">
-              <Label>Suku Cadang Keluar</Label>
-              <span className="spartsout"></span>
-              <style jsx>
-                {`
-                                .spartsout::before{
-                                    content: '*';
-                                    color: red;
-                                }
-                            `}
-              </style>
-            </div>
-            {praloadingout ? (
-              <>
-                <Spin />
-              </>
-            ) : (
-              <>
-                <div className=" mb-2 flex">
-                  <TreeSelect
-                    placeholder="MIG ID, Model"
-                    style={{ width: `100%` }}
-                    showSearch
-                    className="dontShow"
-                    suffixIcon={<SearchOutlined />}
-                    showArrow
-                    name={`part_out`}
-                    onChange={(value, label, extra) => {
-                      console.log("[On Change] Suku Cadang Keluar", {
-                        value,
-                        extra,
-                      });
-
-                      setRemovedInventoryCandidate({
-                        id: value,
-                        model: extra.triggerNode.props,
-                      });
-
-                      const isValueInserted = selectedforout
-                        .map(({ id, value }) => id || value)
-                        .includes(value);
-
-                      if (isValueInserted) {
-                        console.log("[If-Logic] Already in selected for out");
-                        return;
-                      }
-
-                      setselectedforout([
-                        ...selectedforout,
-                        {
-                          value: extra.allCheckedNodes[0].node.props.value,
-                          migid: extra.allCheckedNodes[0].node.props.mig_id,
-                          modelname:
-                            extra.allCheckedNodes[0].node.props.model_inventory
-                              ?.name,
-                          assetname:
-                            extra.allCheckedNodes[0].node.props.model_inventory
-                              ?.asset?.name,
-                        },
-                      ]);
-                      setdatapayload((prev) => ({
-                        ...prev,
-                        add_out_inventory_ids: [
-                          ...prev.add_out_inventory_ids,
+            <div className="flex flex-col mb-6">
+              <div className="flex mb-2">
+                <Label>Suku Cadang Masuk</Label>
+                <span className="spartsin"></span>
+                <style jsx>
+                  {`
+                                  .spartsin::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+                </style>
+              </div>
+              {praloadingin ? (
+                <>
+                  <Spin />
+                </>
+              ) : (
+                <>
+                  <div className=" mb-2 flex">
+                    <Select
+                      style={{ width: `100%` }}
+                      className="dontShow"
+                      suffixIcon={<SearchOutlined />}
+                      showArrow
+                      placeholder="MIG ID, Model"
+                      name={`part_in`}
+                      onChange={(value, option) => {
+                        console.log("[On Change] Suku Cadang Masuk", {
                           value,
-                        ],
-                      }));
-                    }}
-                    // treeData={[]}
-                    treeData={dataselectforout}
-                    // fieldNames={{
-                    //   children: "inventory_parts",
-                    //   value: "id",
-                    //   label: "mig_id"
-                    // }}
-                    treeDefaultExpandAll
-                    treeNodeFilterProp="title"
-                    filterTreeNode={(search, item) => {
-                      /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                      /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                      return (
-                        item.title
-                          .toLowerCase()
-                          .indexOf(search.toLowerCase()) >= 0
-                      );
-                    }}
-                  ></TreeSelect>
-                </div>
-                <div className=" mb-2 flex flex-col">
-                  {selectedforout.map((doc, idx) => (
-                    <div
-                      className=" mb-2 flex items-center justify-between"
-                      key={doc.id}
+                          option,
+                        });
+
+                        const isValueInserted = datapayload.add_in_inventories
+                          .map(({ inventory_id }) => inventory_id)
+                          .includes(value);
+
+                        if (isValueInserted) {
+                          console.log("[If-Logic] Already in selected for in");
+                          return;
+                        }
+
+                        setdatapayload({
+                          ...datapayload,
+                          add_in_inventories: [
+                            ...datapayload.add_in_inventories,
+                            { inventory_id: value, connect_id: 0 },
+                          ],
+                        });
+                        setselectedforin([...selectedforin, option]);
+                        // console.log(option);
+                      }}
+                      showSearch
+                      optionFilterProp="children"
+                      notFoundContent={
+                        fetchingstate ? <Spin size="small" /> : null
+                      }
+                      onSearch={(value) => {
+                        setfetchingstate(true);
+                        fetch(
+                          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskSparePartList?type=masuk&keyword=${value}&id=${idtask}`,
+                          {
+                            method: `GET`,
+                            headers: {
+                              Authorization: JSON.parse(initProps),
+                            },
+                          }
+                        )
+                          .then((res) => res.json())
+                          .then((res2) => {
+                            setdataselectforin(res2.data.inventory_list);
+                            setfetchingstate(false);
+                          });
+                      }}
+                      filterOption={(input, opt) => {
+                        const { migid, modelname, assetname } = opt;
+                        const searchableString = `${migid}${modelname}${assetname}`;
+
+                        return (
+                          searchableString
+                            .toLowerCase()
+                            .indexOf(input.toLowerCase()) >= 0
+                        );
+                      }}
                     >
-                      <div className=" flex items-center">
-                        <div className=" mr-2">
+                      {dataselectforin.map((doc, idx) => (
+                        <Select.Option
+                          key={idx}
+                          value={doc.id}
+                          migid={doc.mig_id}
+                          modelname={doc.model_name}
+                          assetname={doc.asset_name}
+                        >
+                          {doc.mig_id} - {doc.model_name} - {doc.asset_name}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+
+                  <div className="mb-2 flex flex-col space-y-2">
+                    {selectedforin.map((doc, idx) => (
+                      <div
+                        className=" mb-2 flex items-center justify-between"
+                        key={doc.id}
+                      >
+                        <div>
                           <AssetIconSvg size={50} />
                         </div>
-                        <div className=" flex flex-col">
+
+                        <div className="flex flex-col flex-grow-0 w-2/3">
                           <H2>{doc.modelname}</H2>
                           <Label>
                             {doc.migid}/{doc.assetname}
                           </Label>
-                        </div>
-                      </div>
-                      <div className=" flex items-center">
-                        <div
-                          className=" cursor-pointer flex justify-center items-center"
-                          onClick={() => {
-                            console.log("[On Click] Remove Spare Part Out", {
-                              doc,
-                            });
-
-                            var temp = [...selectedforout];
-                            temp.splice(idx, 1);
-                            setselectedforout(temp);
-                            doc.id
-                              ? setdatapayload((prev) => ({
+                          <TreeSelect
+                            allowClear
+                            placeholder="Pilih Induk"
+                            className="mt-2"
+                            showSearch
+                            suffixIcon={<SearchOutlined />}
+                            showArrow
+                            defaultValue={
+                              doc.connect_id === 0 ? null : doc.connect_id
+                            }
+                            name={`parent`}
+                            onChange={(value) => {
+                              console.log("[On Change] Pilih Induk", {
+                                value,
+                                idx,
+                                doc,
+                              });
+                              if (typeof value === "undefined") {
+                                var temp = [...datapayload.add_in_inventories];
+                                temp[idx].connect_id = 0;
+                                setdatapayload((prev) => ({
                                   ...prev,
-                                  remove_out_inventory_ids: [
-                                    ...prev.remove_out_inventory_ids,
-                                    doc.id,
-                                  ],
-                                }))
-                              : setdatapayload((prev) => ({
-                                  ...prev,
-                                  add_out_inventory_ids:
-                                    prev.add_out_inventory_ids.filter(
-                                      (fil) => fil !== doc.value
-                                    ),
+                                  add_in_inventories: temp,
                                 }));
-                          }}
-                        >
-                          <TrashIconSvg size={20} color={`#BF4A40`} />
+                              } else {
+                                var temp = [...datapayload.add_in_inventories];
+                                temp[idx].connect_id = value;
+                                setdatapayload((prev) => ({
+                                  ...prev,
+                                  add_in_inventories: temp,
+                                }));
+                              }
+                            }}
+                            // treeData={[]}
+                            treeData={datainduk}
+                            // fieldNames={{
+                            //   children: "inventory_parts",
+                            //   value: "id",
+                            //   label: "mig_id"
+                            // }}
+                            // treeDataSimpleMode={{
+                            //   id: "id",
+                            // }}
+                            treeDefaultExpandAll
+                            treeNodeFilterProp="title"
+                            filterTreeNode={(search, item) =>
+                              item.title
+                                .toLowerCase()
+                                .indexOf(search.toLowerCase()) >= 0
+                            }
+                          ></TreeSelect>
+                        </div>
+
+                        <div className="flex items-center">
+                          <div
+                            className=" cursor-pointer flex justify-center items-center"
+                            onClick={() => {
+                              console.log("[On Click] Remove Spare Part In", {
+                                doc,
+                              });
+
+                              var temp = [...selectedforin];
+                              temp.splice(idx, 1);
+                              setselectedforin(temp);
+                              // setdatapayload((prev) => ({
+                              //   ...prev,
+                              //   remove_in_inventory_ids: [
+                              //     ...prev.remove_in_inventory_ids,
+                              //     doc.id,
+                              //   ],
+                              //   add_in_inventories:
+                              //     prev.add_in_inventories.filter(
+                              //       (fil) => fil.inventory_id !== doc.id
+                              //     ),
+                              // }));
+
+                              doc.id
+                                ? setdatapayload((prev) => ({
+                                    ...prev,
+                                    remove_in_inventory_ids: [
+                                      ...prev.remove_in_inventory_ids,
+                                      doc.id,
+                                    ],
+                                    add_in_inventories:
+                                      prev.add_in_inventories.filter(
+                                        (fil) => fil.inventory_id !== doc.id
+                                      ),
+                                  }))
+                                : setdatapayload((prev) => ({
+                                    ...prev,
+                                    add_in_inventories:
+                                      prev.add_in_inventories.filter(
+                                        (fil) => fil.inventory_id !== doc.value
+                                      ),
+                                  }));
+                            }}
+                          >
+                            <TrashIconSvg size={20} color={`#BF4A40`} />
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+            <div className="flex flex-col mb-6">
+              <div className="flex mb-2">
+                <Label>Suku Cadang Keluar</Label>
+                <span className="spartsout"></span>
+                <style jsx>
+                  {`
+                                  .spartsout::before{
+                                      content: '*';
+                                      color: red;
+                                  }
+                              `}
+                </style>
+              </div>
+              {praloadingout ? (
+                <>
+                  <Spin />
+                </>
+              ) : (
+                <>
+                  <div className=" mb-2 flex">
+                    <TreeSelect
+                      placeholder="MIG ID, Model"
+                      style={{ width: `100%` }}
+                      showSearch
+                      className="dontShow"
+                      suffixIcon={<SearchOutlined />}
+                      showArrow
+                      name={`part_out`}
+                      onChange={(value, label, extra) => {
+                        console.log("[On Change] Suku Cadang Keluar", {
+                          value,
+                          extra,
+                        });
+
+                        setRemovedInventoryCandidate({
+                          id: value,
+                          model: extra.triggerNode.props,
+                        });
+
+                        const isValueInserted = selectedforout
+                          .map(({ id, value }) => id || value)
+                          .includes(value);
+
+                        if (isValueInserted) {
+                          console.log("[If-Logic] Already in selected for out");
+                          return;
+                        }
+
+                        setselectedforout([
+                          ...selectedforout,
+                          {
+                            value: extra.allCheckedNodes[0].node.props.value,
+                            migid: extra.allCheckedNodes[0].node.props.mig_id,
+                            modelname:
+                              extra.allCheckedNodes[0].node.props
+                                .model_inventory?.name,
+                            assetname:
+                              extra.allCheckedNodes[0].node.props
+                                .model_inventory?.asset?.name,
+                          },
+                        ]);
+                        setdatapayload((prev) => ({
+                          ...prev,
+                          add_out_inventory_ids: [
+                            ...prev.add_out_inventory_ids,
+                            value,
+                          ],
+                        }));
+                      }}
+                      // treeData={[]}
+                      treeData={dataselectforout}
+                      // fieldNames={{
+                      //   children: "inventory_parts",
+                      //   value: "id",
+                      //   label: "mig_id"
+                      // }}
+                      treeDefaultExpandAll
+                      treeNodeFilterProp="title"
+                      filterTreeNode={(search, item) => {
+                        /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
+                        /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
+                        return (
+                          item.title
+                            .toLowerCase()
+                            .indexOf(search.toLowerCase()) >= 0
+                        );
+                      }}
+                    ></TreeSelect>
+                  </div>
+                  <div className=" mb-2 flex flex-col">
+                    {selectedforout.map((doc, idx) => (
+                      <div
+                        className=" mb-2 flex items-center justify-between"
+                        key={doc.id}
+                      >
+                        <div className=" flex items-center">
+                          <div className=" mr-2">
+                            <AssetIconSvg size={50} />
+                          </div>
+                          <div className=" flex flex-col">
+                            <H2>{doc.modelname}</H2>
+                            <Label>
+                              {doc.migid}/{doc.assetname}
+                            </Label>
+                          </div>
+                        </div>
+                        <div className=" flex items-center">
+                          <div
+                            className=" cursor-pointer flex justify-center items-center"
+                            onClick={() => {
+                              console.log("[On Click] Remove Spare Part Out", {
+                                doc,
+                              });
+
+                              var temp = [...selectedforout];
+                              temp.splice(idx, 1);
+                              setselectedforout(temp);
+                              doc.id
+                                ? setdatapayload((prev) => ({
+                                    ...prev,
+                                    remove_out_inventory_ids: [
+                                      ...prev.remove_out_inventory_ids,
+                                      doc.id,
+                                    ],
+                                  }))
+                                : setdatapayload((prev) => ({
+                                    ...prev,
+                                    add_out_inventory_ids:
+                                      prev.add_out_inventory_ids.filter(
+                                        (fil) => fil !== doc.value
+                                      ),
+                                  }));
+                            }}
+                          >
+                            <TrashIconSvg size={20} color={`#BF4A40`} />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
+        )}
+      </DrawerCore>
+
+      <Modal
+        visible={isConflictPromptShown}
+        title="Pergantian Suku Cadang Keluar"
+        closable
+        destroyOnClose
+        onCancel={discardConflictedInventoriesPrompt}
+        footer={
+          <Spin spinning={false}>
+            <div className="flex justify-between items-center">
+              <ButtonSys
+                type="default"
+                onClick={() => {
+                  discardConflictedInventoriesPrompt();
+                }}
+              >
+                Batalkan
+              </ButtonSys>
+              <ButtonSys
+                type="primary"
+                color="danger"
+                onClick={() => {
+                  // updateTicketStatus({
+                  //   id: parsedTicketId,
+                  //   notes: payloadNoteRaw,
+                  //   status: payloadStatusNumbered,
+                  // });
+                  commitConflictedInventoriesPrompt();
+                }}
+              >
+                Ya, saya yakin dan keluarkan suku cadang
+              </ButtonSys>
+            </div>
+          </Spin>
+        }
+      >
+        <div className="flex flex-col space-y-6">
+          <p>
+            Anda akan mengeluarkan suku cadang{" "}
+            <strong>
+              {removedInventoryCandidate.model?.model_inventory?.name ||
+                "Unknown"}
+            </strong>{" "}
+            dan beberapa suku cadang di bawah ini:
+          </p>
+
+          <ul>
+            {conflictedInventories.map(({ model_name, modelname }, index) => (
+              <li key={index}>
+                <strong>
+                  {++index}. {model_name || modelname || "Uknown"}
+                </strong>
+              </li>
+            ))}
+          </ul>
+
+          <p>
+            Apakah Anda yakin untuk mengeluarkan suku cadang{" "}
+            <strong>
+              {removedInventoryCandidate.model?.model_inventory?.name ||
+                "Unknown"}
+            </strong>
+            ?
+          </p>
         </div>
-      )}
-    </DrawerCore>
+      </Modal>
+    </>
   );
 };
 
