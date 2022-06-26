@@ -1,144 +1,51 @@
 import { SearchOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Modal,
-  Radio,
-  Select,
-  Spin,
-  Switch,
-  TreeSelect,
-  notification,
-} from "antd";
-import moment from "moment";
+import { Modal, Select, Spin, TreeSelect, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import ButtonSys from "../../button";
-import {
-  AssetIconSvg,
-  CalendartimeIconSvg,
-  CircleXIconSvg,
-  TrashIconSvg,
-  UserIconSvg,
-} from "../../icon";
-import {
-  InputRequired,
-  SelectRequired,
-  TextAreaNotRequired,
-} from "../../input";
-import { H1, H2, Label } from "../../typography";
+import { AssetIconSvg, TrashIconSvg } from "../../icon";
+import { H2, Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
-function recursiveInventoryList(
-  dataa,
-  checkListIds,
-  isRecursive = false,
-  parentId = null,
-  parentIds = {}
-) {
-  // console.log("[Function-Param] recursiveInventoryList", {
-  //   dataa,
-  //   checkListIds,
-  //   isRecursive,
-  // });
-
+function recursiveInventoryList(dataa, checkListIds) {
   for (var i = 0; i < dataa.length; i++) {
     // MIG_ID - MODEL_NAME - ASSET_NAME
     const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
     const inventoryId = dataa[i].id;
 
     if (checkListIds.includes(inventoryId)) {
-      // console.log("[If-Logic] Check List Ids Includes", { inventoryId });
       dataa.splice(i, 1);
       recursiveInventoryList(dataa, checkListIds);
       continue;
     }
 
-    // console.log("[Debug] Recursive Current Inventory Id", {
-    //   inventoryId,
-    //   checkListIds,
-    //   isRecursive,
-    // });
-
     dataa[i]["key"] = inventoryId;
     dataa[i]["value"] = inventoryId;
     dataa[i]["title"] = displayFormat;
 
-    // const hasChildrenAttr = "children" in dataa[i];
-    // const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
-    // console.log("[Debug] Children and Inventory Parts attr", {
-    //   hasChildrenAttr,
-    //   hasInventoryPartsAttr,
-    // });
-
     if (dataa[i].inventory_parts) {
-      // console.log("[If-Logic] Has Inventory Parts", { inventoryId });
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
       recursiveInventoryList(dataa[i].children, checkListIds);
-
-      // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
-      //   const isIdIncluded = checkListIds.includes(id);
-      //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
-
-      //   return !isIdIncluded;
-      // });
-      // delete dataa[i].inventory_parts;
-      // recursiveInventoryList(dataa[i].children, checkListIds, true);
     }
   }
   return dataa;
 }
 
 function parentIdsToMap(dataa, parentId = null, parentIds = {}) {
-  // console.log("[Function-Param] recursiveInventoryList", {
-  //   dataa,
-  //   checkListIds,
-  //   isRecursive,
-  // });
-
   for (var i = 0; i < dataa.length; i++) {
     // MIG_ID - MODEL_NAME - ASSET_NAME
-    // const displayFormat = `${dataa[i].mig_id} - ${dataa[i].model_inventory?.name} - ${dataa[i].model_inventory?.asset?.name}`;
     const inventoryId = dataa[i].id;
 
-    // console.log("[Debug] Recursive Current Inventory Id", {
-    //   inventoryId,
-    //   checkListIds,
-    //   isRecursive,
-    // });
-
-    // dataa[i]["key"] = inventoryId;
-    // dataa[i]["value"] = inventoryId;
-    // dataa[i]["title"] = displayFormat;
-    // dataa[i]["parent_id"] = parentId;
     if (parentId) {
-      // console.log("[If-Logic] Parent Id", { parentId })
-      // parentIds.push(parentId);
       parentIds[inventoryId] = parentId;
     }
 
-    // const hasChildrenAttr = "children" in dataa[i];
-    // const hasInventoryPartsAttr = "inventory_parts" in dataa[i];
-    // console.log("[Debug] Children and Inventory Parts attr", {
-    //   hasChildrenAttr,
-    //   hasInventoryPartsAttr,
-    // });
-
     if (dataa[i].inventory_parts) {
-      // console.log("[If-Logic] Has Inventory Parts", { inventoryId });
       dataa[i]["children"] = dataa[i].inventory_parts;
       delete dataa[i].inventory_parts;
       parentIdsToMap(dataa[i].children, inventoryId, parentIds);
-
-      // dataa[i]["children"] = dataa[i].inventory_parts.filter(({ id }) => {
-      //   const isIdIncluded = checkListIds.includes(id);
-      //   console.log("[For-Each] Children Inventory Id", { id, isIdIncluded })
-
-      //   return !isIdIncluded;
-      // });
-      // delete dataa[i].inventory_parts;
-      // recursiveInventoryList(dataa[i].children, checkListIds, true);
     }
   }
   return dataa;
@@ -200,14 +107,8 @@ const DrawerTaskSpareParts = ({
   onvisible,
   onClose,
   buttonOkText,
-  disabled,
   initProps,
   idtask,
-  // selectedforin,
-  // setselectedforin,
-  // selectedforout,
-  // setselectedforout,
-  prevpath,
   inventories,
 }) => {
   /**
@@ -217,7 +118,6 @@ const DrawerTaskSpareParts = ({
 
   //useState
 
-  // Kapan state ini harus rollback?
   // State untuk trigger apakah ada conflict antara spare part out dengan spare part in (atau induknya).
   //
   // Properties
@@ -241,113 +141,59 @@ const DrawerTaskSpareParts = ({
     add_out_inventory_ids: [],
     remove_out_inventory_ids: [],
   });
-  useEffect(() => {
-    console.log("[Effect] Data Payload", { datapayload });
-  }, [datapayload]);
 
   const [loadingspart, setloadingspart] = useState(false);
   //DATA IN
   const [selectedforin, setselectedforin] = useState([]);
-  useEffect(() => {
-    console.log("[Effect] Selected For In", { selectedforin });
-  }, [selectedforin]);
+  const [praloadingin, setpraloadingin] = useState(true);
+  const [dataselectforin, setdataselectforin] = useState([]); // display
+  const [datainduk, setdatainduk] = useState([]); // display
+
+  const [dataIndukCheckListIds, setDataIndukCheckListIds] = useState([]);
 
   useEffect(() => {
     const connectIds = datapayload.add_in_inventories
       .map(({ connect_id }) => connect_id)
       .filter((id) => id !== 0);
-    console.log("[Effect] Connect Ids", { connectIds });
 
     setOutCheckListIds([...new Set(connectIds)]);
   }, [datapayload.add_in_inventories]);
 
-  const [praloadingin, setpraloadingin] = useState(true);
-  const [dataselectforin, setdataselectforin] = useState([]); // display
-  useEffect(() => {
-    console.log("[Effect] Data In", { dataselectforin });
-  }, [dataselectforin]);
-
-  const [datainduk, setdatainduk] = useState([]); // display
-  useEffect(() => {
-    console.log("[Effect] Data Induk", { datainduk });
-  }, [datainduk]);
-
-  const [dataIndukCheckListIds, setDataIndukCheckListIds] = useState([]);
   useEffect(() => {
     if (!visible || rawInventoryList.length === 0) {
       return;
     }
-
-    console.log("------- START Expensive Call -------");
-
-    console.log("[Effect] Data Induk Check List", {
-      rawInventoryList,
-      dataIndukCheckListIds,
-    });
 
     const filteredDataInduk = recursiveInventoryList(
       JSON.parse(JSON.stringify(rawInventoryList)),
       dataIndukCheckListIds
     );
 
-    console.log("[Effect] Data Induk Check List", {
-      dataIndukCheckListIds,
-      filtered: filteredDataInduk,
-    });
     setdatainduk(filteredDataInduk);
-
-    console.log("------- END Expensive Call -------");
   }, [visible, rawInventoryList, dataIndukCheckListIds]);
-
-  // const filteredDataInduk = useMemo(() => {
-  //   return recursiveInventoryList(
-  //     rawInventoryList, dataIndukCheckListIds
-  //   )
-  // }, [rawInventoryList, dataIndukCheckListIds]);
-  // useEffect(() => {
-  //   console.log("[Effect] Filtered Data Induk", { filteredDataInduk });
-  // }, [filteredDataInduk]);
 
   //DATA OUT
   const [outCheckListIds, setOutCheckListIds] = useState([]);
   const [selectedforout, setselectedforout] = useState([]);
+  const [praloadingout, setpraloadingout] = useState(true);
+  const [dataselectforout, setdataselectforout] = useState([]); // display
+
   useEffect(() => {
-    console.log("[Effect] Selected For Out", { selectedforout });
     setDataIndukCheckListIds([
       ...new Set(selectedforout.map(({ id, value }) => id || value)),
     ]);
   }, [selectedforout]);
-
-  const [praloadingout, setpraloadingout] = useState(true);
-  const [dataselectforout, setdataselectforout] = useState([]); // display
-  useEffect(() => {
-    console.log("[Effect] Data Out", { dataselectforout });
-  }, [dataselectforout]);
 
   useEffect(() => {
     if (!visible || rawInventoryList.length === 0) {
       return;
     }
 
-    console.log("-+-+-+- START Expensive Call -+-+-+-");
-
-    console.log("[Effect] Data Out Check List", {
-      rawInventoryList,
-      outCheckListIds,
-    });
-
     const filteredDataInduk = recursiveInventoryList(
       JSON.parse(JSON.stringify(rawInventoryList)),
       outCheckListIds
     );
-
-    console.log("[Effect] Data Induk Check List", {
-      outCheckListIds,
-      filtered: filteredDataInduk,
-    });
     setdataselectforout(filteredDataInduk);
-
-    console.log("-+-+-+- END Expensive Call -+-+-+-");
   }, [visible, rawInventoryList, outCheckListIds]);
 
   const [fetchingstate, setfetchingstate] = useState(false);
@@ -393,39 +239,6 @@ const DrawerTaskSpareParts = ({
   const resetConflictedInventoriesQueue = () => {
     setConflictedInventories([]);
   };
-
-  //useEffect
-  useEffect(() => {
-    const inventoryId = removedInventoryCandidate.id;
-    if (typeof inventoryId !== "number") {
-      return;
-    }
-
-    const possibleConflictedInventories = checkForConflictedInventories(
-      inventoryId,
-      selectedforin,
-      parentIdsMap,
-      datapayload.add_in_inventories
-    );
-
-    if (possibleConflictedInventories.length === 0) {
-      resetRemovedInventoryCandidate();
-      return;
-    }
-
-    console.log("[Effect] Removed Inventory Candidate", {
-      removedInventoryCandidate,
-      possibleConflictedInventories,
-    });
-
-    setConflictedInventories(possibleConflictedInventories);
-    setIsConflictPromptShown(true);
-  }, [
-    removedInventoryCandidate.id,
-    selectedforin,
-    parentIdsMap,
-    datapayload.add_in_inventories,
-  ]);
 
   // Conflict ketika prompt (modal) conflict suku cadang keluar di-close / batalkan
   const discardConflictedInventoriesPrompt = () => {
@@ -513,7 +326,40 @@ const DrawerTaskSpareParts = ({
     setIsConflictPromptShown(false);
   };
 
+  //useEffect
   useEffect(() => {
+    // Effect untuk scan apakah ada conflict antara suku cadang keluar dengan suku cadang masuk saat ini
+    // terjadi setiapkali User memilih "Suku Cadang Keluar" tree node.
+    const inventoryId = removedInventoryCandidate.id;
+    if (typeof inventoryId !== "number") {
+      return;
+    }
+
+    const possibleConflictedInventories = checkForConflictedInventories(
+      inventoryId,
+      selectedforin,
+      parentIdsMap,
+      datapayload.add_in_inventories
+    );
+
+    if (possibleConflictedInventories.length === 0) {
+      resetRemovedInventoryCandidate();
+      return;
+    }
+
+    setConflictedInventories(possibleConflictedInventories);
+    setIsConflictPromptShown(true);
+  }, [
+    removedInventoryCandidate.id,
+    selectedforin,
+    parentIdsMap,
+    datapayload.add_in_inventories,
+  ]);
+
+  useEffect(() => {
+    // Effect untuk mapping `inventory_list` dari parent component
+    //  menjadi state `selectedforin` dan `selectedforout` pada component ini.
+    //  DAN persist setiap `selectedforin` dengan payload.
     if (!visible) {
       return;
     }
@@ -525,8 +371,6 @@ const DrawerTaskSpareParts = ({
     ) {
       return;
     }
-
-    console.log("[Effect] Inventories from getTask", { inventories });
 
     var tempin = [],
       tempout = [];
@@ -570,13 +414,12 @@ const DrawerTaskSpareParts = ({
       remove_out_inventory_ids: [],
     }));
 
-    console.log("[Effect] getTask", { tempin, tempout });
-
     setselectedforin(tempin);
     setselectedforout(tempout);
   }, [inventories, visible]);
 
   useEffect(() => {
+    // Effect untuk check list suku cadang keluar
     if (!visible) {
       return;
     }
@@ -601,6 +444,8 @@ const DrawerTaskSpareParts = ({
   }, [visible]);
 
   useEffect(() => {
+    // Effect untuk fetch data dan store them sebagai data source untuk "Pilih Induk" dan "Suku Cadang Keluar" tree select component.
+    //  DAN scan (recursively) tree data untuk map children-parent id
     if (!visible) {
       return;
     }
@@ -617,18 +462,8 @@ const DrawerTaskSpareParts = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        // var modif1 = modifData1(res2.data.inventory_list);
-        // var modif1 = modifData2([...resClone.data.inventory_list]);
-        // setdatainduk(modif1);
-        // setdatainduk(res2.data.inventory_list)
-        // var modif2 = modifData2(res2.data);
-        // var modif2 = modifData2([...resClone.data.inventory_list]);
-        // setdataselectforout(modif2);
-        // setpraloadingout(false);
-        // setdataselectforout(res2.data.inventory_list);
-
         setRawInventoryList(res2.data.inventory_list);
-        // setDataIndukCheckListIds(res2.data.check_list?.map(({ id }) => id) || []);
+
         const parentIdsMap = {};
         parentIdsToMap(
           JSON.parse(JSON.stringify(res2.data.inventory_list)),
@@ -636,7 +471,6 @@ const DrawerTaskSpareParts = ({
           parentIdsMap
         ); // mutation by reference
         setParentIdsMap(parentIdsMap);
-        console.log("[Effect-Fetch] ParentIds Map", { parentIdsMap });
 
         setpraloadingout(false);
       });
@@ -650,7 +484,6 @@ const DrawerTaskSpareParts = ({
         onClose={onClose}
         buttonOkText={buttonOkText}
         onClick={() => {
-          console.log("[On Click] Drawer Button", datapayload, selectedforin);
           handleSendSpareParts();
         }}
         // disabled={disabledcreate}
@@ -694,17 +527,11 @@ const DrawerTaskSpareParts = ({
                       placeholder="MIG ID, Model"
                       name={`part_in`}
                       onChange={(value, option) => {
-                        console.log("[On Change] Suku Cadang Masuk", {
-                          value,
-                          option,
-                        });
-
                         const isValueInserted = datapayload.add_in_inventories
                           .map(({ inventory_id }) => inventory_id)
                           .includes(value);
 
                         if (isValueInserted) {
-                          console.log("[If-Logic] Already in selected for in");
                           return;
                         }
 
@@ -716,7 +543,6 @@ const DrawerTaskSpareParts = ({
                           ],
                         });
                         setselectedforin([...selectedforin, option]);
-                        // console.log(option);
                       }}
                       showSearch
                       optionFilterProp="children"
@@ -769,7 +595,7 @@ const DrawerTaskSpareParts = ({
                     {selectedforin.map((doc, idx) => (
                       <div
                         className=" mb-2 flex items-center justify-between"
-                        key={doc.id}
+                        key={doc.id || doc.value || idx}
                       >
                         <div>
                           <AssetIconSvg size={50} />
@@ -792,11 +618,6 @@ const DrawerTaskSpareParts = ({
                             }
                             name={`parent`}
                             onChange={(value) => {
-                              console.log("[On Change] Pilih Induk", {
-                                value,
-                                idx,
-                                doc,
-                              });
                               if (typeof value === "undefined") {
                                 var temp = [...datapayload.add_in_inventories];
                                 temp[idx].connect_id = 0;
@@ -837,10 +658,6 @@ const DrawerTaskSpareParts = ({
                           <div
                             className=" cursor-pointer flex justify-center items-center"
                             onClick={() => {
-                              console.log("[On Click] Remove Spare Part In", {
-                                doc,
-                              });
-
                               var temp = [...selectedforin];
                               temp.splice(idx, 1);
                               setselectedforin(temp);
@@ -915,11 +732,6 @@ const DrawerTaskSpareParts = ({
                       showArrow
                       name={`part_out`}
                       onChange={(value, label, extra) => {
-                        console.log("[On Change] Suku Cadang Keluar", {
-                          value,
-                          extra,
-                        });
-
                         setRemovedInventoryCandidate({
                           id: value,
                           model: extra.triggerNode.props,
@@ -930,7 +742,6 @@ const DrawerTaskSpareParts = ({
                           .includes(value);
 
                         if (isValueInserted) {
-                          console.log("[If-Logic] Already in selected for out");
                           return;
                         }
 
@@ -979,7 +790,7 @@ const DrawerTaskSpareParts = ({
                     {selectedforout.map((doc, idx) => (
                       <div
                         className=" mb-2 flex items-center justify-between"
-                        key={doc.id}
+                        key={doc.id || doc.value || idx}
                       >
                         <div className=" flex items-center">
                           <div className=" mr-2">
@@ -996,10 +807,6 @@ const DrawerTaskSpareParts = ({
                           <div
                             className=" cursor-pointer flex justify-center items-center"
                             onClick={() => {
-                              console.log("[On Click] Remove Spare Part Out", {
-                                doc,
-                              });
-
                               var temp = [...selectedforout];
                               temp.splice(idx, 1);
                               setselectedforout(temp);
@@ -1040,32 +847,21 @@ const DrawerTaskSpareParts = ({
         destroyOnClose
         onCancel={discardConflictedInventoriesPrompt}
         footer={
-          <Spin spinning={false}>
-            <div className="flex justify-between items-center">
-              <ButtonSys
-                type="default"
-                onClick={() => {
-                  discardConflictedInventoriesPrompt();
-                }}
-              >
-                Batalkan
-              </ButtonSys>
-              <ButtonSys
-                type="primary"
-                color="danger"
-                onClick={() => {
-                  // updateTicketStatus({
-                  //   id: parsedTicketId,
-                  //   notes: payloadNoteRaw,
-                  //   status: payloadStatusNumbered,
-                  // });
-                  commitConflictedInventoriesPrompt();
-                }}
-              >
-                Ya, saya yakin dan keluarkan suku cadang
-              </ButtonSys>
-            </div>
-          </Spin>
+          <div className="flex justify-between items-center">
+            <ButtonSys
+              type="default"
+              onClick={discardConflictedInventoriesPrompt}
+            >
+              Batalkan
+            </ButtonSys>
+            <ButtonSys
+              type="primary"
+              color="danger"
+              onClick={commitConflictedInventoriesPrompt}
+            >
+              Ya, saya yakin dan keluarkan suku cadang
+            </ButtonSys>
+          </div>
         }
       >
         <div className="flex flex-col space-y-6">
