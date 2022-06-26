@@ -1336,7 +1336,17 @@ export const TASKS_USER_GET = "TASKS_USER_GET";
  * - [x] pages/tasks/mytask/index
  */
 export const TASK_TYPE_USER_COUNTS_GET = "TASK_TYPE_USER_COUNTS_GET";
+/**
+ * /getTaskSparePartList
+ *
+ * - [x] components/drawer/tasks/drawerTaskSpareParts
+ */
 export const TASK_SPARE_PART_LIST_GET = "TASK_SPARE_PART_LIST_GET";
+/**
+ * /sendInventoriesTask
+ *
+ * - [x] components/drawer/tasks/drawerTaskSpareParts
+ */
 export const TASK_SEND_INVENTORIES = "TASK_SEND_INVENTORIES";
 export const TASK_CANCEL_SEND_IN_INVENTORY = "TASK_CANCEL_SEND_IN_INVENTORY";
 export const TASK_CANCEL_SEND_OUT_INVENTORY = "TASK_CANCEL_SEND_OUT_INVENTORY";

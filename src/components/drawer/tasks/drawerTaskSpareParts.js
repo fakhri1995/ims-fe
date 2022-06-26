@@ -3,6 +3,10 @@ import { Modal, Select, Spin, TreeSelect, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { TASK_SEND_INVENTORIES, TASK_SPARE_PART_LIST_GET } from "lib/features";
+
 import ButtonSys from "../../button";
 import { AssetIconSvg, TrashIconSvg } from "../../icon";
 import { H2, Label } from "../../typography";
@@ -114,6 +118,12 @@ const DrawerTaskSpareParts = ({
   /**
    * Dependencies
    */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToSendInventories = hasPermission(TASK_SEND_INVENTORIES);
+  const isAllowedToGetTaskSparePartList = hasPermission(
+    TASK_SPARE_PART_LIST_GET
+  );
+
   const router = useRouter();
 
   //useState
@@ -420,7 +430,7 @@ const DrawerTaskSpareParts = ({
 
   useEffect(() => {
     // Effect untuk check list suku cadang keluar
-    if (!visible) {
+    if (!visible || !isAllowedToGetTaskSparePartList) {
       return;
     }
 
@@ -441,12 +451,12 @@ const DrawerTaskSpareParts = ({
 
         setpraloadingin(false);
       });
-  }, [visible]);
+  }, [visible, isAllowedToGetTaskSparePartList]);
 
   useEffect(() => {
     // Effect untuk fetch data dan store them sebagai data source untuk "Pilih Induk" dan "Suku Cadang Keluar" tree select component.
     //  DAN scan (recursively) tree data untuk map children-parent id
-    if (!visible) {
+    if (!visible || !isAllowedToGetTaskSparePartList) {
       return;
     }
 
@@ -474,7 +484,7 @@ const DrawerTaskSpareParts = ({
 
         setpraloadingout(false);
       });
-  }, [visible]);
+  }, [visible, isAllowedToGetTaskSparePartList]);
 
   return (
     <>
@@ -482,6 +492,7 @@ const DrawerTaskSpareParts = ({
         title={title}
         visible={visible}
         onClose={onClose}
+        disabled={!isAllowedToSendInventories}
         buttonOkText={buttonOkText}
         onClick={() => {
           handleSendSpareParts();
@@ -525,6 +536,7 @@ const DrawerTaskSpareParts = ({
                       suffixIcon={<SearchOutlined />}
                       showArrow
                       placeholder="MIG ID, Model"
+                      disabled={!isAllowedToGetTaskSparePartList}
                       name={`part_in`}
                       onChange={(value, option) => {
                         const isValueInserted = datapayload.add_in_inventories
