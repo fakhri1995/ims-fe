@@ -1,0 +1,20 @@
+.frameless-panel-header {
+  :global(.ant-collapse-item > .ant-collapse-header) {
+    @apply p-0;
+  }
+}
+
+.collapse-content-wrapper {
+  :global(.ant-collapse-content > .ant-collapse-content-box) {
+    @apply p-0;
+  }
+
+  :global(.ant-collapse-content.ant-collapse-content-active
+      .ant-collapse-content-box) {
+    @apply p-0;
+  }
+
+  :global(.ant-collapse-content-box) {
+    @apply mt-8;
+  }
+}

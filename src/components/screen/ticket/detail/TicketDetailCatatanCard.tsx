@@ -208,11 +208,11 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
               data.map((note, idx) => (
                 <React.Fragment key={idx}>
                   <div className="flex flex-col">
-                    <p className=" mb-3 line-clamp-6 font-light">
+                    <p className=" mb-3 line-clamp-6 text-mono30">
                       {note.description}
                     </p>
                     <div className="flex items-center justify-between">
-                      <div className=" flex">
+                      <div className="flex items-center">
                         <div className=" w-5 h-5 rounded-full mr-2">
                           <img
                             src={generateStaticAssetUrl(

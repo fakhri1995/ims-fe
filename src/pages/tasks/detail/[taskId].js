@@ -14,6 +14,7 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+import { DrawerTaskReference } from "components/drawer/tasks/drawerTaskReference";
 import { AccessControl } from "components/features/AccessControl";
 import { TaskDetailLampiran } from "components/screen/task";
 
@@ -748,6 +749,8 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
 
     return timeleft;
   }, [timeleft, displaytask.status]);
+
+  const [isReferenceDrawerShown, setIsReferenceDrawerShown] = useState(false);
 
   // const [colorstatus, setcolorstatus] = useState({
   //   text: "",
@@ -3341,7 +3344,12 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 {displaytask.reference_id === null ? (
                   `-`
                 ) : (
-                  <p className=" mb-0 text-sm text-gray-500">
+                  <p
+                    className="mb-0 text-sm text-gray-500 cursor-pointer hover:text-mono30"
+                    onClick={() => {
+                      setIsReferenceDrawerShown(true);
+                    }}
+                  >
                     Tiket {displaytask.reference.type.code}-
                     {displaytask.reference.id}
                   </p>
@@ -3738,6 +3746,13 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             inventories={displaytask.inventories}
           />
         )}
+
+        <DrawerTaskReference
+          visible={isReferenceDrawerShown}
+          onClose={() => {
+            setIsReferenceDrawerShown(false);
+          }}
+        />
       </AccessControl>
     </Layout>
   );
