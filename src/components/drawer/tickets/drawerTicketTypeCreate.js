@@ -1,3 +1,4 @@
+import { SearchOutlined } from "@ant-design/icons";
 import { Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
@@ -30,11 +31,14 @@ const DrawerTicketTypeCreate = ({
     name: "",
     description: "",
     ticket_type_id: 1,
+    task_type_id: null,
   });
   const [loadingsave, setloadingsave] = useState(false);
   const [datatickettypes, setdatatickettypes] = useState([]);
   const [disabledcreate, setdisabledcreate] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
+  const [datatasktypes, setdatatasktypes] = useState([]);
+  const [fecthingtasktypes, setfecthingtasktypes] = useState(false);
 
   //handler
   const handleAddTicketType = () => {
@@ -58,7 +62,7 @@ const DrawerTicketTypeCreate = ({
             name: "",
             description: "",
             ticket_type_id: null,
-            // task_type_id: null,
+            task_type_id: null,
           });
           onvisible(false);
           notification["success"]({
@@ -75,6 +79,19 @@ const DrawerTicketTypeCreate = ({
   };
 
   //useEffect
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setdatatasktypes(res2.data);
+      });
+  }, []);
+
   useEffect(() => {
     if (!isAllowedToGetTicket) {
       return;
@@ -93,7 +110,11 @@ const DrawerTicketTypeCreate = ({
   }, [isAllowedToGetTicket]);
 
   useEffect(() => {
-    if (datapayload.ticket_type_id !== null && datapayload.name !== "") {
+    if (
+      datapayload.ticket_type_id !== null &&
+      datapayload.name !== "" &&
+      datapayload.task_type_id !== null
+    ) {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
@@ -109,6 +130,7 @@ const DrawerTicketTypeCreate = ({
           name: "",
           description: "",
           ticket_type_id: null,
+          task_type_id: null,
         });
         onvisible(false);
       }}
@@ -179,6 +201,67 @@ const DrawerTicketTypeCreate = ({
                 setdisabledtrigger((prev) => prev + 1);
               }}
             ></Input>
+          </div>
+          <div className="flex flex-col mb-6">
+            <div className="flex mb-2">
+              <Label>Tipe Task</Label>
+              <span className="tasktypes"></span>
+              <style jsx>
+                {`
+                                .tasktypes::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+              </style>
+            </div>
+            <div className=" mb-2 flex">
+              <Select
+                style={{ width: `100%` }}
+                suffixIcon={<SearchOutlined />}
+                showArrow
+                placeholder="Nama.."
+                onChange={(value, option) => {
+                  setdatapayload({
+                    ...datapayload,
+                    task_type_id: value,
+                  });
+                  setdisabledtrigger((prev) => prev + 1);
+                }}
+                showSearch
+                optionFilterProp="children"
+                notFoundContent={
+                  fecthingtasktypes ? <Spin size="small" /> : null
+                }
+                onSearch={(value) => {
+                  setfecthingtasktypes(true);
+                  fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
+                    {
+                      method: `GET`,
+                      headers: {
+                        Authorization: JSON.parse(initProps),
+                      },
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((res2) => {
+                      setdatatasktypes(res2.data);
+                      setfecthingtasktypes(false);
+                    });
+                }}
+                filterOption={(input, opt) =>
+                  opt.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                }
+                value={datapayload.task_type_id}
+              >
+                {datatasktypes.map((doc, idx) => (
+                  <Select.Option key={idx} value={doc.id}>
+                    {doc.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
           </div>
           <div className=" mb-6 flex flex-col">
             <div className="flex mb-2">
