@@ -4,7 +4,11 @@ import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { TICKET_DETAIL_TYPE_ADD, TICKET_GET } from "lib/features";
+import {
+  TASK_TYPES_GET,
+  TICKET_DETAIL_TYPE_ADD,
+  TICKET_GET,
+} from "lib/features";
 
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
@@ -23,6 +27,7 @@ const DrawerTicketTypeCreate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToAddTicketType = hasPermission(TICKET_DETAIL_TYPE_ADD);
   const isAllowedToGetTicket = hasPermission(TICKET_GET);
+  const isAllowedToGetTaskTypes = hasPermission(TASK_TYPES_GET);
 
   const canAddTicketType = isAllowedToAddTicketType && isAllowedToGetTicket;
 
@@ -80,6 +85,10 @@ const DrawerTicketTypeCreate = ({
 
   //useEffect
   useEffect(() => {
+    if (!isAllowedToGetTaskTypes) {
+      return;
+    }
+
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
       method: `GET`,
       headers: {
@@ -90,7 +99,7 @@ const DrawerTicketTypeCreate = ({
       .then((res2) => {
         setdatatasktypes(res2.data);
       });
-  }, []);
+  }, [isAllowedToGetTaskTypes]);
 
   useEffect(() => {
     if (!isAllowedToGetTicket) {
@@ -221,6 +230,7 @@ const DrawerTicketTypeCreate = ({
                 suffixIcon={<SearchOutlined />}
                 showArrow
                 placeholder="Nama.."
+                disabled={!isAllowedToGetTaskTypes}
                 onChange={(value, option) => {
                   setdatapayload({
                     ...datapayload,

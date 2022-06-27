@@ -1215,6 +1215,9 @@ export const TASK_ASSIGN_SELF = "TASK_ASSIGN_SELF";
  * - [x] components/drawer/tasks/drawerTaskUpdate
  * - [x] components/drawer/tasks/drawerTaskCreate
  * - [x] components/drawer/tasks/drawerTaskTypesCreate
+ *
+ * - [x] components/drawer/tickets/drawerTicketTypeCreate
+ * - [x] components/drawer/tickets/drawerTicketTypeUpdate
  */
 export const TASK_TYPES_GET = "TASK_TYPES_GET";
 /**
