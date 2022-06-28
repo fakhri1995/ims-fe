@@ -1,51 +1,81 @@
-import { Collapse, Drawer } from "antd";
-import moment from "moment";
+import { Collapse, Drawer, Typography } from "antd";
+import Link from "next/link";
 import type { FC, ReactNode } from "react";
 import React from "react";
 
 import { H1, H2, Label, Text } from "components/typography";
 
-import { generateStaticAssetUrl } from "lib/helper";
+import { useAccessControl } from "contexts/access-control";
+
+import { formatDateToLocale } from "lib/date-utils";
+import { TICKET_CLIENT_GET, TICKET_GET } from "lib/features";
+import { generateStaticAssetUrl, isValidDate } from "lib/helper";
 
 import ChecklistIcon from "assets/vectors/icon-checked.svg";
+import ExternalLinkIcon from "assets/vectors/icon-external_link.svg";
 
 import styles from "./drawerTaskReference.module.scss";
+import clsx from "clsx";
 
 interface IDrawerTaskReference {
   visible?: boolean;
   onClose?: () => void;
+
+  reference?: ReferenceModel;
 }
 
 export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
   visible = false,
   onClose = undefined,
+  reference = undefined,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToSeeTicketDetail =
+    hasPermission(TICKET_GET) || hasPermission(TICKET_CLIENT_GET);
+
+  const titleContent = `Tiket ${reference?.name}`;
+
+  const title = isAllowedToSeeTicketDetail ? (
+    <>
+      <Link href={`/tickets/detail/${reference.id}`}>
+        <a className="flex space-x-2 text-mono30 hover:text-mono30">
+          <H1>{titleContent}</H1>
+          <ExternalLinkIcon className="w-6 h-6 stroke-2" />
+        </a>
+      </Link>
+    </>
+  ) : (
+    <H1>{titleContent}</H1>
+  );
+
   return (
     <Drawer
       visible={visible}
       closable
       destroyOnClose
       onClose={onClose}
-      title={<H1>Tiket INC-7</H1>}
+      title={title}
     >
       <div className="flex flex-col space-y-8">
         {/* Status and Deadline */}
         <div className="grid grid-cols-2">
           <DetailContent
-            label="Deadline"
+            label="Status"
             content={
               <span className="flex items-center space-x-2">
-                {/* TODO: dynamic icon? */}
                 <ChecklistIcon />
 
-                <H2>Open</H2>
+                <H2>{reference?.status_name}</H2>
               </span>
             }
           />
 
           <DetailContent
             label="Deadline"
-            content={<H2>16 Jan 2021, 10:00</H2>}
+            content={<H2>{reference?.deadline}</H2>}
           />
         </div>
 
@@ -54,23 +84,44 @@ export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
         {/* Panel: Informasi Ticket */}
         <CollapsePanel name="Informasi Tiket">
           <div className="grid grid-cols-2 gap-y-8 gap-x-2">
-            <DetailContent label="Diajukan oleh" content="Andi Gunawan" />
+            <DetailContent
+              label="Diajukan oleh"
+              content={reference?.creator?.name}
+            />
 
-            <DetailContent label="Lokasi Pengaju" content="KCP Tebet 2" />
+            <DetailContent
+              label="Lokasi Pengaju"
+              content={reference?.creator?.location}
+            />
 
             <DetailContent
               label="Tanggal Diajukan"
-              content="12 Januari 2021 - 10:00:00"
+              content={
+                isValidDate(reference?.raised_at)
+                  ? formatDateToLocale(
+                      reference?.raised_at as unknown as Date,
+                      "dd MMMM yyyy - HH:mm:ss"
+                    )
+                  : "-"
+              }
             />
 
             <DetailContent
               label="Tanggal Selesai"
-              content="14 Januari 2021 - 10:00:00"
+              content={
+                isValidDate(reference?.closed_at)
+                  ? formatDateToLocale(
+                      reference?.closed_at as unknown as Date,
+                      "dd MMMM yyyy - HH:mm:ss"
+                    )
+                  : "-"
+              }
             />
 
             <DetailContent
               label="Durasi Penyelesaian"
-              content="3 jam 10 menit"
+              content={reference?.resolved_times}
+              // content="3 jam 10 menit"
             />
           </div>
         </CollapsePanel>
@@ -80,26 +131,45 @@ export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
         {/* Panel: Detail Masalah */}
         <CollapsePanel name="Detail Masalah">
           <div className="grid grid-cols-2 gap-y-8 gap-x-2">
-            <DetailContent label="Tipe Aset" content="ATM" />
+            <DetailContent
+              label="Tipe Aset"
+              content={reference?.ticketable?.asset_type_name}
+            />
 
-            <DetailContent label="ID Produk" content="223080" />
+            <DetailContent
+              label="ID Produk"
+              content={reference?.ticketable?.product_id}
+            />
 
             <div className="col-span-2">
-              <DetailContent label="PIC" content="Kejar / 085815123123" />
+              <DetailContent
+                label="PIC"
+                content={`${reference?.ticketable?.pic_name} / ${reference?.ticketable?.pic_contact}`}
+              />
             </div>
 
             <div className="col-span-2">
-              <DetailContent label="Waktu Kejadian" content="13 Januari 2021" />
+              <DetailContent
+                label="Waktu Kejadian"
+                content={formatDateToLocale(
+                  reference?.raised_at as unknown as Date,
+                  "dd MMMM yyyy"
+                )}
+                // content="13 Januari 2021"
+              />
             </div>
 
             <div className="col-span-2">
-              <DetailContent label="Lokasi Masalah" content="KCP Tebet" />
+              <DetailContent
+                label="Lokasi Masalah"
+                content={reference?.ticketable?.location?.name}
+              />
             </div>
 
             <div className="col-span-2">
               <DetailContent
                 label="Deskripsi Kerusakan"
-                content="kartu tidak terbaca dan tertolak keluar. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+                content={reference?.ticketable?.description}
               />
             </div>
 
@@ -108,9 +178,17 @@ export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
                 label="Bukti Kejadian"
                 content={
                   <div className="grid grid-cols-2 gap-y-8 gap-x-2">
-                    <DetailMedia src="/tes.jpg" fileName="DSC000078.jpg" />
+                    {reference?.ticketable?.attachments?.map(({ link }) => {
+                      const attachmentSrc = generateStaticAssetUrl(link);
+                      const attachmentFileName = attachmentSrc.split("/").pop();
 
-                    <DetailMedia src="/tes.jpg" fileName="DSC000079.jpg" />
+                      return (
+                        <DetailMedia
+                          src={attachmentSrc}
+                          fileName={attachmentFileName}
+                        />
+                      );
+                    })}
                   </div>
                 }
               />
@@ -121,93 +199,127 @@ export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
         <hr className="border-mono90" />
 
         {/* Panel: Catatan */}
-        <CollapsePanel name="Catatan">
-          <div className="grid grid-cols-1 gap-y-8">
-            <CatatanItem
-              content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              userName="Herman"
-            />
+        {reference?.logs?.special_logs?.length > 0 && (
+          <>
+            <CollapsePanel name="Catatan">
+              <div className="grid grid-cols-1 gap-y-8">
+                {reference?.logs?.special_logs?.map(
+                  ({ id, description, created_at, causer }) => {
+                    return (
+                      <CatatanItem
+                        key={id}
+                        content={description}
+                        userName={causer.name}
+                        date={created_at}
+                        userProfilePicture={generateStaticAssetUrl(
+                          causer.profile_image.link
+                        )}
+                      />
+                    );
+                  }
+                )}
+              </div>
+            </CollapsePanel>
 
-            <CatatanItem
-              content="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-              userName="Kennan"
-            />
-          </div>
-        </CollapsePanel>
-
-        <hr className="border-mono90" />
+            <hr className="border-mono90" />
+          </>
+        )}
 
         {/* Panel: Detail Aset */}
-        <CollapsePanel name="Detail Aset">
-          <div className="grid grid-cols-2 gap-y-8 gap-x-2">
-            <div className="col-span-2">
-              <H2>Nama Model</H2>
-            </div>
+        {reference?.ticketable?.inventory !== null && (
+          <>
+            <CollapsePanel name="Detail Aset">
+              <div className="grid grid-cols-2 gap-y-8 gap-x-2">
+                <div className="col-span-2">
+                  <H2>
+                    {reference?.ticketable?.inventory?.model_inventory?.name}
+                  </H2>
+                </div>
 
-            <DetailContent label="Tipe Aset" content="IT Asset / ATM" />
+                <DetailContent
+                  label="Tipe Aset"
+                  content={
+                    reference?.ticketable?.inventory?.model_inventory?.asset
+                      ?.full_name
+                  }
+                />
 
-            <DetailContent label="MIG ID" content="122021" />
+                <DetailContent
+                  label="MIG ID"
+                  content={reference?.ticketable?.inventory?.mig_id}
+                />
 
-            <DetailContent
-              label="Status Pemakaian"
-              content={
-                <>
-                  {false && (
-                    <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">
-                      In Used
-                    </div>
-                  )}
-                  {2 === 2 && (
-                    <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">
-                      In Stock
-                    </div>
-                  )}
-                  {false && (
-                    <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">
-                      Replacement
-                    </div>
-                  )}
-                </>
-              }
-            />
+                <DetailContent
+                  label="Status Pemakaian"
+                  content={
+                    <DetailBadge
+                      statusId={
+                        reference?.ticketable?.inventory?.status_usage?.id
+                      }
+                      statusName={
+                        reference?.ticketable?.inventory?.status_usage?.name
+                      }
+                      type="usage"
+                    />
+                  }
+                />
 
-            <DetailContent
-              label="Kondisi Aset"
-              content={
-                <div>
-                  {false && (
-                    <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">
-                      Good
-                    </div>
-                  )}
-                  {false && (
-                    <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">
-                      Gray
-                    </div>
-                  )}
-                  {3 === 3 && (
-                    <div className="inline-block rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">
-                      Bad
-                    </div>
+                <DetailContent
+                  label="Kondisi Aset"
+                  content={
+                    <DetailBadge
+                      statusId={
+                        reference?.ticketable?.inventory?.status_condition?.id
+                      }
+                      statusName={
+                        reference?.ticketable?.inventory?.status_condition?.name
+                      }
+                      type="condition"
+                    />
+                  }
+                />
+
+                <div className="col-span-2">
+                  <DetailContent
+                    label="Lokasi"
+                    content={
+                      reference?.ticketable?.inventory?.location_inventory?.name
+                    }
+                  />
+                </div>
+
+                <div className="col-span-2 flex flex-col space-y-8">
+                  {reference?.ticketable?.inventory?.additional_attributes?.map(
+                    ({ name, value, data_type }, index) => {
+                      let _value = value;
+
+                      switch (data_type) {
+                        case "dropdown":
+                          _value = JSON.parse(value as string)?.default;
+                          break;
+                        case "checkbox":
+                          _value = JSON.parse(value as string)?.default?.join(
+                            ", "
+                          );
+                          break;
+                      }
+
+                      return (
+                        <DetailContent
+                          key={index}
+                          label={name}
+                          content={_value || "-"}
+                        />
+                      );
+                    }
                   )}
                 </div>
-              }
-            />
+              </div>
+            </CollapsePanel>
 
-            <div className="col-span-2">
-              <DetailContent label="Lokasi" content="KCP Tebet" />
-            </div>
-
-            <div className="col-span-2">
-              <DetailContent
-                label="Field Dinamis Spesifikasi Item"
-                content="Value Field Dinamis"
-              />
-            </div>
-          </div>
-        </CollapsePanel>
-
-        <hr className="border-mono90" />
+            <hr className="border-mono90" />
+          </>
+        )}
       </div>
     </Drawer>
   );
@@ -235,7 +347,7 @@ const DetailContent: FC<IDetailContent> = ({ label, content }) => {
     );
 
   return (
-    <div className="w-full flex flex-col items-start justify-center space-y-2">
+    <div className="w-full flex flex-col items-start justify-start space-y-2">
       {/* Label */}
       <Label>{label}</Label>
 
@@ -244,6 +356,78 @@ const DetailContent: FC<IDetailContent> = ({ label, content }) => {
     </div>
   );
 };
+
+/**
+ * @private
+ */
+interface ReferenceModel {
+  id: number;
+  name: string;
+  status_name: string;
+  deadline: string;
+
+  raised_at: string;
+  closed_at: string;
+  resolved_times: string;
+
+  // Informasi Tiket
+  creator: {
+    name: string;
+    location: string;
+    raised_at: string;
+    closed_at: string;
+    resolved_times: string;
+  };
+
+  // Catatan
+  logs: {
+    special_logs: {
+      id: number;
+      description: string;
+      created_at: string;
+      causer: {
+        name: string;
+        profile_image: {
+          link: string;
+        };
+      };
+    }[];
+  };
+
+  // Detail Masalah
+  ticketable: {
+    asset_type_name: string;
+    product_id: string;
+    pic_name: string;
+    pic_contact: string;
+    location: { name: string };
+    description: string;
+    attachments: { link: string }[];
+
+    // Detail Aset
+    inventory: {
+      model_inventory: {
+        name: string;
+        asset: { full_name: string };
+      };
+      mig_id: string;
+      status_usage: { id: number; name: string };
+      status_condition: { id: number; name: string };
+      location_inventory: { name: string };
+      additional_attributes: {
+        name: string;
+        value: string | number;
+        data_type:
+          | "dropdown"
+          | "number"
+          | "paragraph"
+          | "checkbox"
+          | "single"
+          | "date";
+      }[];
+    };
+  };
+}
 
 /**
  * @private
@@ -258,16 +442,16 @@ interface IDetailMedia {
  */
 const DetailMedia: FC<IDetailMedia> = ({ src, fileName = undefined }) => {
   return (
-    <div className="flex flex-col justify-center items-center space-y-2">
+    <div className="flex flex-col justify-start items-center space-y-2">
       {/* Image */}
       <a href={src} target="_blank" className="block">
         <img src={src} alt={fileName || src} />
       </a>
 
       {/* File name */}
-      <span className="mig-caption--medium text-mono50">
+      <Typography.Text ellipsis className="mig-caption--medium text-mono50">
         {fileName || "File name"}
-      </span>
+      </Typography.Text>
     </div>
   );
 };
@@ -351,10 +535,47 @@ export const CatatanItem: FC<ICatatanItem> = ({
         <div>
           <Label>
             {/* 2 Jan 2022, 16:00 */}
-            {moment(date).locale("id").format("D MMM YYYY, HH:mm")}
+            {formatDateToLocale(date as unknown as Date, "dd MMM yyyy, HH:mm")}
           </Label>
         </div>
       </div>
     </div>
   );
+};
+
+/**
+ * @private
+ */
+interface IDetailBadge {
+  statusId?: number;
+  statusName?: string;
+
+  type: "usage" | "condition";
+}
+
+/**
+ * @private
+ */ const DetailBadge: FC<IDetailBadge> = ({ statusId, statusName, type }) => {
+  const usageBadgeClassName = clsx(
+    {
+      "bg-open bg-opacity-10 text-open": statusId === 1,
+      "bg-completed bg-opacity-10 text-completed": statusId === 2,
+      "bg-overdue bg-opacity-10 text-overdue": statusId === 3,
+    },
+    "inline-block rounded-md h-auto px-3 text-center py-1"
+  );
+
+  const conditionBadgeClassName = clsx(
+    {
+      "bg-completed bg-opacity-10 text-completed": 1,
+      "bg-closed bg-opacity-10 text-closed": 2,
+      "bg-overdue bg-opacity-10 text-overdue": 3,
+    },
+    "inline-block rounded-md h-auto px-3 text-center py-1"
+  );
+
+  const badgeClassName =
+    type === "usage" ? usageBadgeClassName : conditionBadgeClassName;
+
+  return <div className={badgeClassName}>{statusName}</div>;
 };

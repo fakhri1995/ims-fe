@@ -679,7 +679,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
     group: [],
     inventories: [],
     task_details: [],
-    reference: [],
+    reference: {},
     files: [],
   });
   const [dataupdate, setdataupdate] = useState({
@@ -3350,8 +3350,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                       setIsReferenceDrawerShown(true);
                     }}
                   >
-                    Tiket {displaytask.reference.type.code}-
-                    {displaytask.reference.id}
+                    Tiket {displaytask.reference.name}
+                    {/* Tiket {displaytask.reference.type.code}-
+                    {displaytask.reference.id} */}
                   </p>
                 )}
               </div>
@@ -3752,6 +3753,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
           onClose={() => {
             setIsReferenceDrawerShown(false);
           }}
+          reference={displaytask.reference}
         />
       </AccessControl>
     </Layout>
