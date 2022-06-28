@@ -220,8 +220,9 @@ export const beforeUploadFileMaxSize = (
  * @param dateValue Received value from backend
  */
 export const isValidDate = (dateValue: any) => {
-  return (
-    (dateValue !== null || dateValue !== undefined) &&
-    new Date(dateValue).toString().toLowerCase() !== "invalid date"
-  );
+  if (dateValue === null || dateValue === undefined) {
+    return false;
+  }
+
+  return new Date(dateValue).toString().toLowerCase() !== "invalid date";
 };
