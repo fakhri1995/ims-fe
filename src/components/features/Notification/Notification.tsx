@@ -71,9 +71,9 @@ const NotificationOverlayContainer: FC = () => {
     (data as GrouppedRecentNotifications) || { today: [], past: [] };
 
   return (
-    <div className="mig-platform w-96 flex flex-col space-y-4 max-h-224 overflow-y-auto">
+    <div className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between p-4">
         <H2>Notifikasi</H2>
 
         <span className="cursor-pointer text-primary100 hover:opacity-75">
@@ -81,17 +81,27 @@ const NotificationOverlayContainer: FC = () => {
         </span>
       </div>
 
-      <NotificationList
-        label="Hari ini"
-        items={todayNotificationItems}
-        loading={isFetching}
-      />
+      {/* List container */}
+      <div className="max-h-224 overflow-y-auto scrollbar-hide pb-16 px-4">
+        <NotificationList
+          label="Hari ini"
+          items={todayNotificationItems}
+          loading={isFetching}
+        />
 
-      <NotificationList
-        label="Lebih lama"
-        items={pastNotificationItems}
-        loading={isFetching}
-      />
+        <NotificationList
+          label="Lebih lama"
+          items={pastNotificationItems}
+          loading={isFetching}
+        />
+      </div>
+
+      {/* Footer */}
+      <div className="w-full absolute bottom-0 left-0 p-4 bg-white">
+        <span className="cursor-pointer text-primary100 hover:opacity-75">
+          Lihat Semua
+        </span>
+      </div>
     </div>
   );
 };
@@ -134,7 +144,7 @@ const NotificationList: FC<INotificationList> = ({
             },
             index
           ) => (
-            <List.Item key={index}>
+            <List.Item key={index} className="p-0">
               <NotificationItem
                 content={description}
                 colorType={color_type as any}
@@ -201,7 +211,7 @@ const NotificationItem: FC<INotificationItem> = ({
   );
 
   return (
-    <div className="mig-platform--p-0 p-2 cursor-pointer flex items-start justify-between space-x-4 hover:bg-gray-50 transition-colors duration-300 w-full">
+    <div className="mig-platform--p-0 p-2 my-4 cursor-pointer flex items-start justify-between space-x-4 hover:bg-primary100/10 transition-colors duration-300 w-full">
       {/* Icon */}
       <div className="flex space-x-4">
         <div>
