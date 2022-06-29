@@ -10,6 +10,7 @@ import { formatDateToLocale } from "lib/date-utils";
 import {
   NotificationData,
   useGetRecentNotifications,
+  useReadAllNotifications,
   useReadNotification,
 } from "apis/notification";
 
@@ -21,6 +22,9 @@ import TicketIcon from "assets/vectors/icon-ticket.svg";
 import clsx from "clsx";
 
 export const Notification: FC = () => {
+  /**
+   * Queries
+   */
   const { data: hasUnreadNotifications } = useGetRecentNotifications({
     select: (response) => response.data.data.is_unread_exist,
   });
@@ -33,7 +37,7 @@ export const Notification: FC = () => {
       overlay={<NotificationOverlayContainer />}
     >
       <div className="relative">
-        <button className="bg-white/0" onClick={() => {}}>
+        <button className="bg-white/0">
           <BellIcon className="text-mono30 w-8 h-8 stroke-2" />
 
           {hasUnreadNotifications && (
@@ -51,29 +55,57 @@ type GrouppedRecentNotifications = {
 };
 
 const NotificationOverlayContainer: FC = () => {
-  const { data, isFetching } = useGetRecentNotifications({
+  /**
+   * Queries
+   */
+  const {
+    data: {
+      hasUnreadNotifications,
+      past: pastNotificationItems,
+      today: todayNotificationItems,
+    },
+    isFetching,
+  } = useGetRecentNotifications({
     select: (data) => {
-      const result: GrouppedRecentNotifications = {
-        today: [],
-        past: [],
+      const hasUnreadNotifications = data.data.data.is_unread_exist;
+
+      const { today, past } = data.data.data.notifications.reduce(
+        (prev, curr) => {
+          const isNotifiedToday = isToday(new Date(curr.created_at));
+
+          if (isNotifiedToday) {
+            prev.today.push(curr);
+          } else {
+            prev.past.push(curr);
+          }
+
+          return prev;
+        },
+        {
+          today: [],
+          past: [],
+        } as GrouppedRecentNotifications
+      );
+
+      return {
+        hasUnreadNotifications,
+        today,
+        past,
       };
-
-      return data.data.data.notifications.reduce((prev, curr) => {
-        const isNotifiedToday = isToday(new Date(curr.created_at));
-
-        if (isNotifiedToday) {
-          prev.today.push(curr);
-        } else {
-          prev.past.push(curr);
-        }
-
-        return prev;
-      }, result);
     },
   });
+  const { mutate: readAllNotifications } = useReadAllNotifications();
 
-  const { today: todayNotificationItems, past: pastNotificationItems } =
-    (data as GrouppedRecentNotifications) || { today: [], past: [] };
+  /**
+   * Callbacks
+   */
+  const onReadAllNotificationClicked: MouseEventHandler<
+    HTMLButtonElement
+  > = () => {
+    if (hasUnreadNotifications) {
+      readAllNotifications();
+    }
+  };
 
   return (
     <div className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden">
@@ -81,7 +113,10 @@ const NotificationOverlayContainer: FC = () => {
       <div className="flex items-center justify-between p-4">
         <H2>Notifikasi</H2>
 
-        <span className="cursor-pointer text-primary100 hover:opacity-75">
+        <span
+          className="cursor-pointer text-primary100 hover:opacity-75"
+          onClick={onReadAllNotificationClicked}
+        >
           Tandai semua telah dibaca
         </span>
       </div>

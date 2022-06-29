@@ -42,7 +42,7 @@ export const useGetRecentNotifications = <
   const { refetchInvervalSeconds, staleTimeSeconds, select } = options;
 
   const POLL_INTERVAL_SECONDS = 300; // 5 minutes
-  const STALE_TIME_SECONDS = 30; // 30 seconds
+  const STALE_TIME_SECONDS = 0; // (disabled)
 
   const axiosClient = useAxiosClient();
 
@@ -79,4 +79,22 @@ export const useReadNotification = () => {
       },
     }
   );
+};
+
+/**
+ * Mark all notifications that had read. E.g. by clicking "Tandai semua telah dibaca".
+ *
+ * @access — POST /readAllNotifications
+ */
+export const useReadAllNotifications = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
+  return useMutation(() => NotificationService.readAll(axiosClient), {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries(
+        NotificationServiceQueryKeys.getLastTen
+      );
+    },
+  });
 };
