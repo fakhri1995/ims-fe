@@ -1,12 +1,17 @@
 import { Dropdown, List, Skeleton } from "antd";
 import { isToday } from "date-fns";
-import { FC } from "react";
+import { useRouter } from "next/router";
+import type { FC, MouseEventHandler } from "react";
 
 import { H2 } from "components/typography";
 
 import { formatDateToLocale } from "lib/date-utils";
 
-import { NotificationData, useGetRecentNotifications } from "apis/notification";
+import {
+  NotificationData,
+  useGetRecentNotifications,
+  useReadNotification,
+} from "apis/notification";
 
 import BellIcon from "assets/vectors/icon-bell.svg";
 import ClipboardCheckedIcon from "assets/vectors/icon-clipboard-checked.svg";
@@ -130,32 +135,33 @@ const NotificationList: FC<INotificationList> = ({
   return (
     <>
       <span className="mig-caption text-mono50">{label}</span>
-      <List loading={loading}>
-        {items.map(
-          (
-            {
-              description,
-              color_type,
-              image_type,
-              created_at,
-              notification_id,
-              notificationable_type,
-              is_read,
-            },
-            index
-          ) => (
-            <List.Item key={index} className="p-0">
-              <NotificationItem
-                content={description}
-                colorType={color_type as any}
-                imageType={image_type as any}
-                createdAt={created_at}
-                isRead={is_read as 0 | 1}
-              />
-            </List.Item>
-          )
+      <List
+        loading={loading}
+        dataSource={items}
+        renderItem={({
+          id,
+          description,
+          color_type,
+          image_type,
+          created_at,
+          notificationable_id,
+          notificationable_type,
+          is_read,
+        }) => (
+          <List.Item key={id} className="p-0">
+            <NotificationItem
+              notificationId={id}
+              content={description}
+              colorType={color_type as any}
+              imageType={image_type as any}
+              createdAt={created_at}
+              notificationableId={notificationable_id}
+              notificationableType={notificationable_type}
+              isRead={is_read as 0 | 1}
+            />
+          </List.Item>
         )}
-      </List>
+      ></List>
     </>
   );
 };
@@ -164,6 +170,8 @@ const NotificationList: FC<INotificationList> = ({
  * @private
  */
 interface INotificationItem {
+  notificationId: number;
+
   content: string;
 
   colorType: "red" | "green";
@@ -171,23 +179,70 @@ interface INotificationItem {
   createdAt: Date | string;
 
   notificationableId?: number;
-  notificationalbeType?: string;
+  notificationableType?: string;
 
   isRead: 0 | 1;
 }
 
 /**
+ * Generate notification redirection URL from given data (id and module type (e.g. task, ticket, etc)).
+ *
+ * @private
+ */
+const generateNotificationRedirectUrl = (
+  notificationableId: number,
+  notificationableType: "task" | "ticket"
+) => {
+  switch (notificationableType) {
+    case "task":
+      return `/tasks/detail/${notificationableId}?prevpath=mytask`;
+    case "ticket":
+      return `/tickets/detail/${notificationableId}`;
+  }
+};
+
+/**
  * @private
  */
 const NotificationItem: FC<INotificationItem> = ({
+  notificationId,
   content,
   colorType,
   imageType,
   createdAt,
   notificationableId,
-  notificationalbeType,
+  notificationableType,
   isRead,
 }) => {
+  /**
+   * Dependencies
+   */
+  const router = useRouter();
+
+  /**
+   * Queries
+   */
+  const { mutate: readNotification } = useReadNotification();
+
+  /**
+   * Callbacks
+   */
+  const onItemClicked: MouseEventHandler<HTMLAnchorElement> = (e) => {
+    e.preventDefault();
+
+    const hardRedirect = () => {
+      router.push(hrefValue).then(() => router.reload());
+    };
+
+    if (!Boolean(isRead)) {
+      readNotification(notificationId, {
+        onSuccess: hardRedirect,
+      });
+    } else {
+      hardRedirect();
+    }
+  };
+
   const iconBackgroundClassName = clsx(
     {
       "bg-primary100/25": colorType === "green",
@@ -210,8 +265,26 @@ const NotificationItem: FC<INotificationItem> = ({
     "dd MMM yyyy - HH:mm"
   );
 
+  // Transform 'App\\Task' -> 'Task' (or 'Ticket')
+  const notificationableTypeValue = notificationableType.split("\\").pop();
+
+  const hrefValue = generateNotificationRedirectUrl(
+    notificationableId,
+    notificationableTypeValue.toLowerCase() as "task" | "ticket"
+  );
+
+  const notificationContent = (
+    <strong>
+      {notificationableTypeValue} {notificationableId}
+    </strong>
+  );
+
   return (
-    <div className="mig-platform--p-0 p-2 my-4 cursor-pointer flex items-start justify-between space-x-4 hover:bg-primary100/10 transition-colors duration-300 w-full">
+    <a
+      href={hrefValue}
+      className="mig-platform--p-0 p-2 my-4 cursor-pointer flex items-start justify-between space-x-4 hover:bg-primary100/10 transition-colors duration-300 w-full"
+      onClick={onItemClicked}
+    >
       {/* Icon */}
       <div className="flex space-x-4">
         <div>
@@ -228,7 +301,9 @@ const NotificationItem: FC<INotificationItem> = ({
 
         {/* Content and Date */}
         <div className="flex flex-col space-y-2">
-          <p className="text-mono30">{content}</p>
+          <p className="text-mono30">
+            {content} {notificationContent}
+          </p>
           <span className="mig-caption text-mono80">{formattedCreatedAt}</span>
         </div>
       </div>
@@ -238,7 +313,7 @@ const NotificationItem: FC<INotificationItem> = ({
           <span className="block w-3 h-3 rounded-full bg-state1" />
         </div>
       )}
-    </div>
+    </a>
   );
 };
 

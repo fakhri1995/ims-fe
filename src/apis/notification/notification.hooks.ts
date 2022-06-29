@@ -1,5 +1,5 @@
 import type { AxiosResponse } from "axios";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 
 import { useAxiosClient } from "hooks/use-axios-client";
 
@@ -55,6 +55,28 @@ export const useGetRecentNotifications = <
       staleTime: (staleTimeSeconds || STALE_TIME_SECONDS) * 1000,
       refetchOnReconnect: true,
       refetchOnWindowFocus: true,
+    }
+  );
+};
+
+/**
+ * Mark one notification if the User had read it.
+ *
+ * @access — POST /readNotification
+ */
+export const useReadNotification = () => {
+  const axiosClient = useAxiosClient();
+  const queryClient = useQueryClient();
+
+  return useMutation(
+    (notificationId: number) =>
+      NotificationService.readOne(axiosClient, notificationId),
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          NotificationServiceQueryKeys.getLastTen
+        );
+      },
     }
   );
 };
