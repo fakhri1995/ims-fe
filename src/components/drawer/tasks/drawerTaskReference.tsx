@@ -199,127 +199,138 @@ export const DrawerTaskReference: FC<IDrawerTaskReference> = ({
         <hr className="border-mono90" />
 
         {/* Panel: Catatan */}
-        {reference?.logs?.special_logs?.length > 0 && (
-          <>
-            <CollapsePanel name="Catatan">
-              <div className="grid grid-cols-1 gap-y-8">
-                {reference?.logs?.special_logs?.map(
-                  ({ id, description, created_at, causer }) => {
+        <CollapsePanel name="Catatan">
+          <div className="grid grid-cols-1 gap-y-8">
+            {reference?.logs?.special_logs?.length > 0 &&
+              reference?.logs?.special_logs?.map(
+                ({ id, description, created_at, causer }) => {
+                  return (
+                    <CatatanItem
+                      key={id}
+                      content={description}
+                      userName={causer.name}
+                      date={created_at}
+                      userProfilePicture={generateStaticAssetUrl(
+                        causer.profile_image.link
+                      )}
+                    />
+                  );
+                }
+              )}
+
+            {reference?.logs?.special_logs?.length === 0 && (
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <img src="/404-illustration.png" alt="Not Found" />
+                <span className="text-mono50 mig-caption">
+                  Tidak ada Catatan
+                </span>
+              </div>
+            )}
+          </div>
+        </CollapsePanel>
+
+        <hr className="border-mono90" />
+
+        {/* Panel: Detail Aset */}
+        <CollapsePanel name="Detail Aset">
+          {reference?.ticketable?.inventory !== null && (
+            <div className="grid grid-cols-2 gap-y-8 gap-x-2">
+              <div className="col-span-2">
+                <H2>
+                  {reference?.ticketable?.inventory?.model_inventory?.name}
+                </H2>
+              </div>
+
+              <DetailContent
+                label="Tipe Aset"
+                content={
+                  reference?.ticketable?.inventory?.model_inventory?.asset
+                    ?.full_name
+                }
+              />
+
+              <DetailContent
+                label="MIG ID"
+                content={reference?.ticketable?.inventory?.mig_id}
+              />
+
+              <DetailContent
+                label="Status Pemakaian"
+                content={
+                  <DetailBadge
+                    statusId={
+                      reference?.ticketable?.inventory?.status_usage?.id
+                    }
+                    statusName={
+                      reference?.ticketable?.inventory?.status_usage?.name
+                    }
+                    type="usage"
+                  />
+                }
+              />
+
+              <DetailContent
+                label="Kondisi Aset"
+                content={
+                  <DetailBadge
+                    statusId={
+                      reference?.ticketable?.inventory?.status_condition?.id
+                    }
+                    statusName={
+                      reference?.ticketable?.inventory?.status_condition?.name
+                    }
+                    type="condition"
+                  />
+                }
+              />
+
+              <div className="col-span-2">
+                <DetailContent
+                  label="Lokasi"
+                  content={
+                    reference?.ticketable?.inventory?.location_inventory?.name
+                  }
+                />
+              </div>
+
+              <div className="col-span-2 flex flex-col space-y-8">
+                {reference?.ticketable?.inventory?.additional_attributes?.map(
+                  ({ name, value, data_type }, index) => {
+                    let _value = value;
+
+                    switch (data_type) {
+                      case "dropdown":
+                        _value = JSON.parse(value as string)?.default;
+                        break;
+                      case "checkbox":
+                        _value = JSON.parse(value as string)?.default?.join(
+                          ", "
+                        );
+                        break;
+                    }
+
                     return (
-                      <CatatanItem
-                        key={id}
-                        content={description}
-                        userName={causer.name}
-                        date={created_at}
-                        userProfilePicture={generateStaticAssetUrl(
-                          causer.profile_image.link
-                        )}
+                      <DetailContent
+                        key={index}
+                        label={name}
+                        content={_value || "-"}
                       />
                     );
                   }
                 )}
               </div>
-            </CollapsePanel>
+            </div>
+          )}
 
-            <hr className="border-mono90" />
-          </>
-        )}
+          {reference?.ticketable?.inventory === null && (
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <img src="/404-illustration.png" alt="Not Found" />
+              <span className="text-mono50 mig-caption">Tidak ada Aset</span>
+            </div>
+          )}
+        </CollapsePanel>
 
-        {/* Panel: Detail Aset */}
-        {reference?.ticketable?.inventory !== null && (
-          <>
-            <CollapsePanel name="Detail Aset">
-              <div className="grid grid-cols-2 gap-y-8 gap-x-2">
-                <div className="col-span-2">
-                  <H2>
-                    {reference?.ticketable?.inventory?.model_inventory?.name}
-                  </H2>
-                </div>
-
-                <DetailContent
-                  label="Tipe Aset"
-                  content={
-                    reference?.ticketable?.inventory?.model_inventory?.asset
-                      ?.full_name
-                  }
-                />
-
-                <DetailContent
-                  label="MIG ID"
-                  content={reference?.ticketable?.inventory?.mig_id}
-                />
-
-                <DetailContent
-                  label="Status Pemakaian"
-                  content={
-                    <DetailBadge
-                      statusId={
-                        reference?.ticketable?.inventory?.status_usage?.id
-                      }
-                      statusName={
-                        reference?.ticketable?.inventory?.status_usage?.name
-                      }
-                      type="usage"
-                    />
-                  }
-                />
-
-                <DetailContent
-                  label="Kondisi Aset"
-                  content={
-                    <DetailBadge
-                      statusId={
-                        reference?.ticketable?.inventory?.status_condition?.id
-                      }
-                      statusName={
-                        reference?.ticketable?.inventory?.status_condition?.name
-                      }
-                      type="condition"
-                    />
-                  }
-                />
-
-                <div className="col-span-2">
-                  <DetailContent
-                    label="Lokasi"
-                    content={
-                      reference?.ticketable?.inventory?.location_inventory?.name
-                    }
-                  />
-                </div>
-
-                <div className="col-span-2 flex flex-col space-y-8">
-                  {reference?.ticketable?.inventory?.additional_attributes?.map(
-                    ({ name, value, data_type }, index) => {
-                      let _value = value;
-
-                      switch (data_type) {
-                        case "dropdown":
-                          _value = JSON.parse(value as string)?.default;
-                          break;
-                        case "checkbox":
-                          _value = JSON.parse(value as string)?.default?.join(
-                            ", "
-                          );
-                          break;
-                      }
-
-                      return (
-                        <DetailContent
-                          key={index}
-                          label={name}
-                          content={_value || "-"}
-                        />
-                      );
-                    }
-                  )}
-                </div>
-              </div>
-            </CollapsePanel>
-
-            <hr className="border-mono90" />
-          </>
-        )}
+        <hr className="border-mono90" />
       </div>
     </Drawer>
   );
