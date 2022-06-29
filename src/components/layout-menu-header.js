@@ -1,6 +1,8 @@
 import ExportOutlined from "@ant-design/icons/ExportOutlined";
 import { Dropdown } from "antd";
 
+import { Notification } from "components/features/Notification";
+
 import { generateStaticAssetUrl } from "lib/helper";
 
 import { NotifIconSvg, SearchIconSvg } from "./icon";
@@ -45,8 +47,9 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
       <div className="md:mr-8 mr-4 cursor-pointer">
         <SearchIconSvg size={28} color={`#000000`} />
       </div>
-      <div className="md:mr-8 mr-4 cursor-pointer">
-        <NotifIconSvg />
+      <div className="md:mr-8 mr-4 flex items-center">
+        {/* <NotifIconSvg /> */}
+        <Notification />
       </div>
       <div className=" md:mr-12 mr-4 mt-2 flex items-center">
         <Dropdown overlay={menuProfile2} trigger={["click"]}>

@@ -45,7 +45,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-leaflet": "^3.2.5",
     "react-leaflet-markercluster": "^3.0.0-rc1",
-    "react-query": "^3.34.15",
+    "react-query": "^3.39.1",
     "react-reveal": "^1.2.2",
     "react-scroll": "^1.8.3",
     "react-scroll-into-view": "^1.9.4",
