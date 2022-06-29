@@ -12,7 +12,7 @@ export interface GetNotificationsPayload {
  * @access GET /getNotification
  */
 export type GetLastTenNotificationSucceedResponse =
-  HttpRequestWithDataSucceedResponse<NotificationData[]>;
+  HttpRequestWithDataSucceedResponse<GetNotificationData>;
 
 /**
  * @access GET /getNotifications
@@ -33,6 +33,11 @@ export interface GetNotificationsPaginationData {
   prev_page_url: null;
   to: number;
   total: number;
+}
+
+export interface GetNotificationData {
+  is_unread_exist: boolean;
+  notifications: NotificationData[];
 }
 
 export interface NotificationData {

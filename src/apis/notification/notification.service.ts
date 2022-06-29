@@ -9,6 +9,11 @@ import type {
 
 import type { HttpRequestBaseSucceedResponse } from "types/common";
 
+export enum NotificationServiceQueryKeys {
+  getAll = "GET_ALL_NOTIFICATIONS",
+  getLastTen = "GET_RECENT_NOTIFICATIONS",
+}
+
 export class NotificationService {
   /**
    * Retrieve up to recent-most 10 notifications.
