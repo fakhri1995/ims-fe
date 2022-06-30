@@ -38,7 +38,14 @@ export class NotificationService {
       rows: 10,
     }
   ) {
-    const qs = QueryString.stringify(payload, { addQueryPrefix: true });
+    const qs = QueryString.stringify(
+      {
+        ...payload,
+        is_read:
+          payload?.is_read !== undefined ? Number(payload.is_read) : undefined,
+      },
+      { addQueryPrefix: true }
+    );
 
     return await axiosClient.get<GetNotificationsSucceedResponse>(
       "/getNotifications" + qs

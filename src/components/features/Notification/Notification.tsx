@@ -1,11 +1,13 @@
 import { Dropdown, List, Skeleton } from "antd";
 import { isToday } from "date-fns";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import type { FC, MouseEventHandler } from "react";
 
 import { H2 } from "components/typography";
 
 import { formatDateToLocale } from "lib/date-utils";
+import { generateNotificationRedirectUrl } from "lib/helper";
 
 import {
   NotificationData,
@@ -138,9 +140,11 @@ const NotificationOverlayContainer: FC = () => {
 
       {/* Footer */}
       <div className="w-full absolute bottom-0 left-0 p-4 bg-white">
-        <span className="cursor-pointer text-primary100 hover:opacity-75">
-          Lihat Semua
-        </span>
+        <Link href="/notifications">
+          <a className="cursor-pointer text-primary100 hover:text-primary100/75">
+            Lihat Semua
+          </a>
+        </Link>
       </div>
     </div>
   );
@@ -218,23 +222,6 @@ interface INotificationItem {
 
   isRead: 0 | 1;
 }
-
-/**
- * Generate notification redirection URL from given data (id and module type (e.g. task, ticket, etc)).
- *
- * @private
- */
-const generateNotificationRedirectUrl = (
-  notificationableId: number,
-  notificationableType: "task" | "ticket"
-) => {
-  switch (notificationableType) {
-    case "task":
-      return `/tasks/detail/${notificationableId}?prevpath=mytask`;
-    case "ticket":
-      return `/tickets/detail/${notificationableId}`;
-  }
-};
 
 /**
  * @private

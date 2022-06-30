@@ -7,7 +7,10 @@ import {
   NotificationService,
   NotificationServiceQueryKeys,
 } from "./notification.service";
-import type { GetLastTenNotificationSucceedResponse } from "./notification.types";
+import type {
+  GetLastTenNotificationSucceedResponse,
+  GetNotificationsPayload,
+} from "./notification.types";
 
 // Types
 type GetRecentNotificationsParam<T> = {
@@ -54,6 +57,23 @@ export const useGetRecentNotifications = <
       refetchInterval: (refetchInvervalSeconds || POLL_INTERVAL_SECONDS) * 1000,
       staleTime: (staleTimeSeconds || STALE_TIME_SECONDS) * 1000,
       refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
+    }
+  );
+};
+
+/**
+ * Retrieve many notifications with page and rows options.
+ *
+ * @access — GET /getNotifications
+ */
+export const usePaginatedNotifications = (payload: GetNotificationsPayload) => {
+  const axiosClient = useAxiosClient();
+
+  return useQuery(
+    [NotificationServiceQueryKeys.getAll, payload],
+    () => NotificationService.getAll(axiosClient, payload),
+    {
       refetchOnWindowFocus: true,
     }
   );

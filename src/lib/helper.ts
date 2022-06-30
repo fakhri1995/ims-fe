@@ -123,6 +123,27 @@ export const generateStaticAssetUrl = (path: string) => {
 };
 
 /**
+ * Generate notification redirection URL from given data (id and module type (e.g. task, ticket, etc)).
+ *
+ * @example
+ * ```typescript
+ * const redirectTaskUrl = generateNotificationRedirectUrl(570, "task");
+ * assert(redirectTaskUrl, "/tasks/detail/570?prevpath=mytask");
+ * ```
+ */
+export const generateNotificationRedirectUrl = (
+  notificationableId: number,
+  notificationableType: "task" | "ticket"
+) => {
+  switch (notificationableType) {
+    case "task":
+      return `/tasks/detail/${notificationableId}?prevpath=mytask`;
+    case "ticket":
+      return `/tickets/detail/${notificationableId}`;
+  }
+};
+
+/**
  * Transforming an object into FormData. The idea is to craft a valid `FormData`
  *  even the value of the given object has Array as its value.
  *
