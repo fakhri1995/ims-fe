@@ -6,6 +6,8 @@ import { HttpRequestWithDataSucceedResponse } from "types/common";
 export interface GetNotificationsPayload {
   page: number;
   rows: number;
+  keyword?: string;
+  is_read?: boolean;
 }
 
 /**
