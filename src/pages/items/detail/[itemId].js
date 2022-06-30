@@ -2000,7 +2000,7 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
                 <div
                   className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer"
                   onClick={() => {
-                    rt.push(`/tickets/detail/${doc.id}?active=detailItem`);
+                    rt.push(`/tickets/detail/${doc.id}`);
                   }}
                 >
                   <div className="flex flex-col">
