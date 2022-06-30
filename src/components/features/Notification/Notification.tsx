@@ -109,6 +109,9 @@ const NotificationOverlayContainer: FC = () => {
     }
   };
 
+  const isNotificationListEmpty =
+    pastNotificationItems.length === 0 && todayNotificationItems.length === 0;
+
   return (
     <div className="mig-platform--p-0 relative w-96 flex flex-col space-y-4 overflow-hidden">
       {/* Header */}
@@ -125,17 +128,30 @@ const NotificationOverlayContainer: FC = () => {
 
       {/* List container */}
       <div className="max-h-224 overflow-y-auto scrollbar-hide pb-16 px-4">
-        <NotificationList
-          label="Hari ini"
-          items={todayNotificationItems}
-          loading={isFetching}
-        />
+        {isNotificationListEmpty && (
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <img src="/404-illustration.png" alt="Not Found" />
+            <span className="mig-caption text-mono50">
+              Tidak ada Notifikasi
+            </span>
+          </div>
+        )}
 
-        <NotificationList
-          label="Lebih lama"
-          items={pastNotificationItems}
-          loading={isFetching}
-        />
+        {!isNotificationListEmpty && (
+          <>
+            <NotificationList
+              label="Hari ini"
+              items={todayNotificationItems}
+              loading={isFetching}
+            />
+
+            <NotificationList
+              label="Lebih lama"
+              items={pastNotificationItems}
+              loading={isFetching}
+            />
+          </>
+        )}
       </div>
 
       {/* Footer */}
