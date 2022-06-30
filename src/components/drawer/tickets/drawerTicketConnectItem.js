@@ -1,5 +1,6 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Select, Spin, TreeSelect, notification } from "antd";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -40,6 +41,7 @@ const DrawerTicketConnectItem = ({
   /**
    * Dependencies
    */
+  const router = useRouter();
   const { hasPermission } = useAccessControl();
   const isAllowedToSetItemTicket = hasPermission(TICKET_ITEM_SET);
   const isAllowedToGetAssets = hasPermission(ASSETS_GET);
@@ -76,16 +78,18 @@ const DrawerTicketConnectItem = ({
         setloadingsave(false);
         setdisabledcreate(false);
         if (res2.success) {
-          setrefresh((prev) => prev + 1);
-          onvisible(false);
-          setdatapayload({
-            id: Number(ticketid),
-            inventory_id: null,
-          });
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
+          router.reload();
+
+          // setrefresh((prev) => prev + 1);
+          // onvisible(false);
+          // setdatapayload({
+          //   id: Number(ticketid),
+          //   inventory_id: null,
+          // });
+          // notification["success"]({
+          //   message: res2.message,
+          //   duration: 3,
+          // });
         } else {
           notification["error"]({
             message: res2.message,

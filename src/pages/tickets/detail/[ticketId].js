@@ -13,6 +13,7 @@ import {
 
 import { useAccessControl } from "contexts/access-control";
 
+import { DATE_MOMENT_FORMAT_PAYLOAD } from "lib/constants";
 import {
   ASSETS_GET,
   INVENTORIES_GET,
@@ -463,7 +464,12 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
             ));
         setdatapayloaddeadline({
           id: Number(ticketid),
-          deadline: res2.data.deadline === "-" ? null : res2.data.deadline,
+          deadline:
+            res2.data.deadline === "-"
+              ? null
+              : moment(new Date(res2.data.deadline)).format(
+                  DATE_MOMENT_FORMAT_PAYLOAD
+                ),
         });
         res2.data.deadline === "-"
           ? setshowdatepicker(false)
