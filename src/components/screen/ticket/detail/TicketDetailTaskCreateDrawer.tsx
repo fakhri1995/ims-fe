@@ -10,6 +10,7 @@ import {
 } from "antd";
 import type { AxiosError } from "axios";
 import moment from "moment";
+import QueryString from "qs";
 import type { FC } from "react";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
@@ -40,7 +41,7 @@ import {
   TASK_TYPES_GET,
   USERS_GET,
 } from "lib/features";
-import { generateStaticAssetUrl } from "lib/helper";
+import { generateStaticAssetUrl, isValidDate } from "lib/helper";
 
 import { AddTaskPayload, TaskService } from "apis/task";
 import { TicketServiceQueryKeys } from "apis/ticket";
@@ -54,6 +55,8 @@ export interface ITicketDetailTaskCreateDrawer {
 
   ticketId: number | string;
   ticketName: string;
+
+  model?: ModelType;
 }
 
 /**
@@ -61,7 +64,7 @@ export interface ITicketDetailTaskCreateDrawer {
  */
 export const TicketDetailTaskCreateDrawer: FC<
   ITicketDetailTaskCreateDrawer
-> = ({ visible, onvisible, ticketId, ticketName }) => {
+> = ({ visible, onvisible, ticketId, ticketName, model = undefined }) => {
   const parsedTicketId = parseInt(ticketId as string);
   if (Object.is(parsedTicketId, NaN)) {
     /** Perlu check ini agar `reference_id` tidak null saat add new task. */
@@ -101,15 +104,96 @@ export const TicketDetailTaskCreateDrawer: FC<
     created_at: null,
     deadline: null,
     is_group: null,
-    is_replaceable: false,
+    is_replaceable: true,
     assign_ids: [],
     inventory_ids: [],
-    is_uploadable: false,
+    is_uploadable: true,
     repeat: 0,
     files: [],
     end_repeat_at: null,
     subloc_id: null,
   });
+
+  useEffect(() => {
+    //
+    // Effect ini akan apply default value pada input field untuk mempersingkat
+    //  user mengisi form pembuatan task.
+    //
+    // Untuk saat ini, effect (peraturan ini) hanya berlaku jika tipe task Incident.
+    //
+    if (model === undefined || !visible) {
+      return;
+    }
+
+    if (model.type?.name?.toLowerCase() !== "incident") {
+      return;
+    }
+
+    const hasValidDeadline = isValidDate(model.deadline);
+    if (hasValidDeadline) {
+      setnow(true);
+      setnowend(-10);
+      setchoosedateend(true);
+      setHadDeadline(true);
+    }
+
+    const hasAssetId = model.ticketable?.inventory?.id !== undefined;
+    if (hasAssetId) {
+      setselecteditems((prev) => [
+        ...prev,
+        {
+          modelname: model.ticketable?.inventory?.model_inventory?.name,
+          assetname: model.ticketable?.inventory?.model_inventory?.asset?.name,
+          migid: model.ticketable?.inventory?.mig_id,
+        },
+      ]);
+    }
+
+    const hasTipeTask =
+      model.ticketable?.asset_type?.task_type?.id !== undefined;
+    if (hasTipeTask && isAllowedToGetTaskTypes) {
+      fetchTaskTypes(model.ticketable?.asset_type?.task_type?.name)
+        .then((response) => response.json())
+        .then((response) => {
+          setdatatasktypes(response.data);
+        });
+    }
+
+    const itsASubLoc =
+      model.ticketable?.location?.role === 4 &&
+      !!model.ticketable?.location?.parent_id;
+    if (itsASubLoc) {
+      fetchSubLocation(model.ticketable?.location?.parent_id)
+        .then((res) => res.json())
+        .then((res2) => {
+          setdatasublocs(res2.data.children);
+        });
+    }
+
+    setdatacreate((prev) => ({
+      ...prev,
+      description: model.ticketable?.description,
+      is_replaceable: true,
+      is_uploadable: true,
+      deadline: hasValidDeadline
+        ? moment(new Date(model.deadline)).format(DATE_MOMENT_FORMAT_PAYLOAD)
+        : null,
+      created_at: hasValidDeadline
+        ? moment().format(DATE_MOMENT_FORMAT_PAYLOAD)
+        : null,
+      inventory_ids: hasAssetId ? [model.ticketable?.inventory?.id] : [],
+      task_type_id: isAllowedToGetTaskTypes
+        ? hasTipeTask
+          ? model.ticketable?.asset_type?.task_type?.id
+          : null
+        : null,
+      subloc_id: itsASubLoc ? model?.ticketable?.location?.id : null,
+      location_id: itsASubLoc
+        ? model?.ticketable?.location?.parent_id
+        : model?.ticketable?.location?.id,
+    }));
+  }, [model, visible, isAllowedToGetTaskTypes]);
+
   const [disabledcreate, setdisabledcreate] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
   //task types
@@ -221,6 +305,8 @@ export const TicketDetailTaskCreateDrawer: FC<
     );
   };
 
+  const [hadDeadline, setHadDeadline] = useState(false);
+
   //USEEFFECT
   useEffect(() => {
     //
@@ -230,6 +316,12 @@ export const TicketDetailTaskCreateDrawer: FC<
     //
     // Nilai deadline yang dihasilkan akan menyesuaikan dengan `datacreate.created_at`.
     //
+    if (hadDeadline) {
+      // setnowend(null);
+      setHadDeadline(false);
+      return;
+    }
+
     if (datacreate.deadline !== null) {
       // Do not run this effect if deadline was defined.
       return;
@@ -260,7 +352,21 @@ export const TicketDetailTaskCreateDrawer: FC<
       ...prev,
       deadline: deadlineRelativeValue,
     }));
-  }, [nowend, datacreate.deadline, datacreate.created_at]);
+  }, [nowend, datacreate.deadline, datacreate.created_at, hadDeadline]);
+
+  const fetchTaskTypes = (name?: string) => {
+    const qs = QueryString.stringify({ name }, { addQueryPrefix: true });
+
+    return fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes${qs}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: initProps,
+        },
+      }
+    );
+  };
 
   //Tipe task (required)
   useEffect(() => {
@@ -268,12 +374,7 @@ export const TicketDetailTaskCreateDrawer: FC<
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes`, {
-      method: `GET`,
-      headers: {
-        Authorization: initProps,
-      },
-    })
+    fetchTaskTypes()
       .then((res) => res.json())
       .then((res2) => {
         setdatatasktypes(res2.data);
@@ -312,6 +413,18 @@ export const TicketDetailTaskCreateDrawer: FC<
       });
   }, [isAllowedToGetCompanyList]);
 
+  const fetchSubLocation = (parentCompanyId?: number) => {
+    return fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${parentCompanyId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: initProps,
+        },
+      }
+    );
+  };
+
   //Sublokasi
   useEffect(() => {
     if (!isAllowedToGetCompanySubLocations) {
@@ -319,15 +432,7 @@ export const TicketDetailTaskCreateDrawer: FC<
     }
 
     if (triggersubloc !== -1) {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSubLocations?company_id=${triggersubloc}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: initProps,
-          },
-        }
-      )
+      fetchSubLocation(triggersubloc)
         .then((res) => res.json())
         .then((res2) => {
           setdatasublocs(res2.data.children);
@@ -453,15 +558,7 @@ export const TicketDetailTaskCreateDrawer: FC<
                 }
                 onSearch={(value) => {
                   setfetchingtasktypes(true);
-                  fetch(
-                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterTaskTypes?name=${value}`,
-                    {
-                      method: `GET`,
-                      headers: {
-                        Authorization: initProps,
-                      },
-                    }
-                  )
+                  fetchTaskTypes(value)
                     .then((res) => res.json())
                     .then((res2) => {
                       setdatatasktypes(res2.data);
@@ -1148,6 +1245,11 @@ export const TicketDetailTaskCreateDrawer: FC<
                     showTime
                     placeholder="Jadwal Berakhir"
                     format={DATE_MOMENT_FORMAT_PAYLOAD}
+                    value={
+                      isValidDate(datacreate.deadline)
+                        ? moment(datacreate.deadline)
+                        : undefined
+                    }
                     style={{ width: `100%` }}
                     onChange={(date, datestring) => {
                       setdatacreate({ ...datacreate, deadline: datestring });
@@ -1288,4 +1390,43 @@ export const TicketDetailTaskCreateDrawer: FC<
       </Spin>
     </DrawerCore>
   );
+};
+
+type ModelType = {
+  type: {
+    id: number;
+    name: string;
+  };
+
+  deadline?: string;
+
+  ticketable: {
+    asset_type: {
+      task_type: {
+        id: number;
+        name: string;
+      };
+    };
+
+    description: string;
+
+    location: {
+      id: number;
+      parent_id: number | null;
+      role: number;
+    };
+
+    inventory: {
+      id: number;
+      mig_id: string;
+
+      model_inventory: {
+        name: string;
+
+        asset: {
+          name: string;
+        };
+      };
+    };
+  };
 };

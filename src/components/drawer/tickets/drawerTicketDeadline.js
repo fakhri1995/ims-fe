@@ -1,9 +1,11 @@
 import { DatePicker, Radio, Spin, notification } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { DATE_MOMENT_FORMAT_PAYLOAD } from "lib/constants";
 import { TICKET_DEADLINE_SET } from "lib/features";
 
 import DrawerCore from "../drawerCore";
@@ -32,6 +34,7 @@ const DrawerTicketDeadline = ({
    */
   const { hasPermission } = useAccessControl();
   const isAllowedToSetTicketDeadline = hasPermission(TICKET_DEADLINE_SET);
+  const router = useRouter();
 
   //useState
   const [loadingsave, setloadingsave] = useState(false);
@@ -55,16 +58,17 @@ const DrawerTicketDeadline = ({
         setloadingsave(false);
         setdisabledcreate(false);
         if (res2.success) {
-          setdatapayload({
-            id: Number(ticketid),
-            deadline: null,
-          });
-          setrefresh((prev) => prev + 1);
-          onvisible(false);
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
+          router.reload();
+          // setdatapayload({
+          //   id: Number(ticketid),
+          //   deadline: null,
+          // });
+          // setrefresh((prev) => prev + 1);
+          // onvisible(false);
+          // notification["success"]({
+          //   message: res2.message,
+          //   duration: 3,
+          // });
         } else {
           notification["error"]({
             message: res2.message,
@@ -173,6 +177,7 @@ const DrawerTicketDeadline = ({
             <div className="mb-2 flex flex-col">
               {showdatetime ? (
                 <DatePicker
+                  format={DATE_MOMENT_FORMAT_PAYLOAD}
                   value={
                     datapayload.deadline === null
                       ? null

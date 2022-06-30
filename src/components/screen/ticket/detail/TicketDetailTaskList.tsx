@@ -51,14 +51,15 @@ export const TicketDetailTaskList: FC<ITicketDetailTaskList> = memo(
     ]);
 
     const axiosClient = useAxiosClient();
-    const { data: tasksData, isLoading } = useQuery(
+    const { data, isLoading } = useQuery(
       [TicketServiceQueryKeys.TICKET_GET, parsedTicketId],
       () => TicketService.findOne(axiosClient, parsedTicketId),
       {
         enabled: isAllowedToGetTicket ? hasValidTicketId : false,
-        select: (response) => response.data.data.tasks,
+        select: (response) => response.data.data,
       }
     );
+    const tasksData = data?.tasks || [];
 
     const [isCreateTaskDrawerShown, setIsCreateTaskDrawerShown] =
       useState(false);
@@ -104,6 +105,7 @@ export const TicketDetailTaskList: FC<ITicketDetailTaskList> = memo(
               onvisible={setIsCreateTaskDrawerShown}
               ticketId={parsedTicketId}
               ticketName={ticketName}
+              model={data as any}
             />
           </AccessControl>
         )}

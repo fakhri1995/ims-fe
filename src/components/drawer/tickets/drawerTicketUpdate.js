@@ -8,6 +8,7 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React, { useCallback, useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
@@ -52,6 +53,7 @@ const DrawerTicketUpdate = ({
   /**
    * Dependencies
    */
+  const router = useRouter();
   const { hasPermission } = useAccessControl();
   const isAllowedToUpdateTicket = hasPermission(TICKET_UPDATE);
   /**
@@ -171,23 +173,23 @@ const DrawerTicketUpdate = ({
     setdisabledsubmit(false);
   };
 
-  const resetDataPayload = () => {
-    setdatapayload({
-      id: Number(ticketid),
-      requester_id: null,
-      raised_at: null,
-      closed_at: null,
-      product_id: "",
-      pic_name: "",
-      pic_contact: "",
-      location_id: null,
-      problem: "",
-      incident_time: null,
-      files: [],
-      attachments: [],
-      description: "",
-    });
-  };
+  // const resetDataPayload = () => {
+  //   setdatapayload({
+  //     id: Number(ticketid),
+  //     requester_id: null,
+  //     raised_at: null,
+  //     closed_at: null,
+  //     product_id: "",
+  //     pic_name: "",
+  //     pic_contact: "",
+  //     location_id: null,
+  //     problem: "",
+  //     incident_time: null,
+  //     files: [],
+  //     attachments: [],
+  //     description: "",
+  //   });
+  // };
 
   const handleUpdateTicket = () => {
     const updatePayload = { ...datapayload };
@@ -211,12 +213,14 @@ const DrawerTicketUpdate = ({
             setloadingsave(false);
             setdisabledsubmit(false);
             if (res2.success) {
-              resetDataPayload();
-              onvisible(false);
-              notification["success"]({
-                message: res2.message,
-                duration: 3,
-              });
+              router.reload();
+
+              // resetDataPayload();
+              // onvisible(false);
+              // notification["success"]({
+              //   message: res2.message,
+              //   duration: 3,
+              // });
             } else {
               notification["error"]({
                 message: res2.message,
@@ -255,12 +259,14 @@ const DrawerTicketUpdate = ({
           setloadingsave(false);
           setdisabledsubmit(false);
           if (res2.success) {
-            resetDataPayload();
-            onvisible(false);
-            notification["success"]({
-              message: res2.message,
-              duration: 3,
-            });
+            router.reload();
+
+            // resetDataPayload();
+            // onvisible(false);
+            // notification["success"]({
+            //   message: res2.message,
+            //   duration: 3,
+            // });
           } else {
             notification["error"]({
               message: res2.message,
