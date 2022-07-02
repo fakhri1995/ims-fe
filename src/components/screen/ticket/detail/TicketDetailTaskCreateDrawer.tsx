@@ -187,10 +187,11 @@ export const TicketDetailTaskCreateDrawer: FC<
           ? model.ticketable?.asset_type?.task_type?.id
           : null
         : null,
-      subloc_id: itsASubLoc ? model?.ticketable?.location?.id : null,
+      subloc_id: itsASubLoc ? model.ticketable?.location?.id : null,
       location_id: itsASubLoc
-        ? model?.ticketable?.location?.parent_id
-        : model?.ticketable?.location?.id,
+        ? model.ticketable?.location?.parent_id
+        : model.ticketable?.location?.id,
+      name: `${model.type?.name} ${model.ticketable?.asset_type?.name}`,
     }));
   }, [model, visible, isAllowedToGetTaskTypes]);
 
@@ -1402,6 +1403,8 @@ type ModelType = {
 
   ticketable: {
     asset_type: {
+      name: string;
+
       task_type: {
         id: number;
         name: string;
