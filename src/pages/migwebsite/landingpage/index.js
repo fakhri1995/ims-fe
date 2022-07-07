@@ -143,7 +143,9 @@ function LandingPage({}) {
             offset={-120}
             duration={500}
           >
-            <p className={"text-black text-xl text-center"}>
+            <p
+              className={"text-black text-xl text-center hover:text-green-500"}
+            >
               See how it works!
             </p>
             <img
@@ -271,7 +273,9 @@ function LandingPage({}) {
             offset={-70}
             duration={500}
           >
-            <p className={"text-center text-black"}>See how it works!</p>
+            <p className={"text-center text-black hover:text-green-500"}>
+              See how it works!
+            </p>
             <img
               className={"pt-3 mt-2 mx-auto"}
               style={{ width: "60px" }}
