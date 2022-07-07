@@ -411,7 +411,7 @@ function LandingPage({}) {
             giving you flexible headcounts and talents working period.
           </p>
           <br></br>
-          <Linkk href="/people">
+          <Linkk href="/talents">
             <button
               className={
                 "text-lg text-black border-2 border-black px-3 py-2 md:px-4 md:py-3 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
