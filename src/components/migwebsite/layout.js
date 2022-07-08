@@ -347,7 +347,7 @@ function layout({ children }) {
                             </SubMenu> */}
             </Menu>
             <div
-              className="text-lg gilroy-medium mx-6"
+              className="text-lg gilroy-medium mx-6 my-10"
               style={{
                 position: "absolute",
                 bottom: 10,
@@ -495,36 +495,38 @@ function layout({ children }) {
                 </div>
                 <div className={"flex-col my-2 lg:my-0 lg:px-16"}>
                   <p className={"gilroy-bold py-1 text-lg"}>Follow</p>
-                  <Link href="https://instagram.com/mitramasglobal?utm_medium=copy_link">
-                    <div className={"flex"}>
-                      <img
-                        className={"w-5 h-5 relative top-1 mr-2"}
-                        src="/image/footer/instagram.png"
-                      />
-                      <p
-                        className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
-                        }
-                      >
-                        Instagram
-                      </p>
-                    </div>
-                  </Link>
-                  <Link href="https://www.linkedin.com/company/pt-mitramas-infosys-global">
-                    <div className={"flex"}>
-                      <img
-                        className={"w-5 h-5 relative top-1 mr-2"}
-                        src="/image/footer/linkedin.png"
-                      />
-                      <p
-                        className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
-                        }
-                      >
-                        LinkedIn
-                      </p>
-                    </div>
-                  </Link>
+                  <div className={"flex"}>
+                    <img
+                      className={"w-5 h-5 relative top-1 mr-2"}
+                      src="/image/footer/instagram.png"
+                    />
+                    <a
+                      className={
+                        "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      href="https://instagram.com/mitramasglobal?utm_medium=copy_link"
+                    >
+                      Instagram
+                    </a>
+                  </div>
+                  <div className={"flex"}>
+                    <img
+                      className={"w-5 h-5 relative top-1 mr-2"}
+                      src="/image/footer/linkedin.png"
+                    />
+                    <a
+                      className={
+                        "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
+                      }
+                      href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      LinkedIn
+                    </a>
+                  </div>
                 </div>
               </div>
               <div className={"block md:hidden"}>

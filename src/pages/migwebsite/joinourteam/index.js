@@ -424,6 +424,8 @@ function JoinOurTeam({ dataCareers, empData }) {
                       <a
                         className={"text-base hover:text-green-500"}
                         href={item.register_link}
+                        target="_blank"
+                        rel="noopener noreferrer"
                       >
                         Apply Now
                         <ArrowRightOutlined
