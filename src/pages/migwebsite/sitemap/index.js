@@ -21,7 +21,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-bold menu-underlined w-min mb-8 text-base"
+                      "cursor-pointer gilroy-bold menu-underlined w-min mb-8 text-base hover:text-green-500"
                     }
                   >
                     Home
@@ -34,7 +34,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/hardware" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Hardware
@@ -43,7 +43,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/software" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Software
@@ -52,7 +52,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/talents" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Talents
@@ -66,7 +66,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/aboutus" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-regular pb-1 menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     About&nbsp;Us
@@ -75,7 +75,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/joinourteam" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-regular menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-regular menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Join&nbsp;Our&nbsp;Team
@@ -86,7 +86,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/contactus" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-bold menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-bold menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Contact&nbsp;Us
@@ -97,7 +97,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/privacy" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-bold menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-bold menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Privacy
@@ -106,7 +106,7 @@ function Sitemap({}) {
                 <Link href={{ pathname: "/term" }}>
                   <p
                     className={
-                      "cursor-pointer gilroy-bold menu-underlined w-min text-base"
+                      "cursor-pointer gilroy-bold menu-underlined w-min text-base hover:text-green-500"
                     }
                   >
                     Term&nbsp;of&nbsp;Use

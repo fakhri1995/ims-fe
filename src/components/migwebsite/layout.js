@@ -217,7 +217,11 @@ function layout({ children }) {
                 }
                 onClick={(e) => e.preventDefault()}
               >
-                <p className={"text-lg gilroy-medium menu-underlined"}>
+                <p
+                  className={
+                    "text-lg gilroy-medium menu-underlined hover:text-green-500"
+                  }
+                >
                   Solutions{" "}
                   <CaretDownOutlined
                     style={{ display: "inline-block", verticalAlign: "middle" }}
@@ -226,17 +230,17 @@ function layout({ children }) {
               </Button>
             </Dropdown>
             <Link href="/aboutus">
-              <a className="text-lg gilroy-medium menu-underlined mx-4">
+              <a className="text-lg gilroy-medium menu-underlined mx-4 hover:text-green-500">
                 About Us
               </a>
             </Link>
             <Link href="/joinourteam">
-              <a className="text-lg gilroy-medium menu-underlined mx-4">
+              <a className="text-lg gilroy-medium menu-underlined mx-4 hover:text-green-500">
                 Join Our Team
               </a>
             </Link>
             <Link href="/contactus">
-              <a className="text-lg gilroy-medium menu-underlined mx-4">
+              <a className="text-lg gilroy-medium menu-underlined mx-4 hover:text-green-500">
                 Contact Us
               </a>
             </Link>
@@ -343,8 +347,7 @@ function layout({ children }) {
                             </SubMenu> */}
             </Menu>
             <div
-              className="text-lg gilroy-medium"
-              className="mx-6"
+              className="text-lg gilroy-medium mx-6"
               style={{
                 position: "absolute",
                 bottom: 10,
@@ -432,7 +435,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/hardware" }}>
                     <p
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Hardware
@@ -441,7 +444,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/software" }}>
                     <p
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Software
@@ -450,7 +453,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/talents" }}>
                     <p
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Talents
@@ -462,7 +465,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/aboutus" }}>
                     <p
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       About&nbsp;Us
@@ -471,7 +474,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/joinourteam" }}>
                     <p
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Join&nbsp;Our&nbsp;Team
@@ -483,7 +486,7 @@ function layout({ children }) {
                   <Link href="/contactus">
                     <p
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Contact&nbsp;Us
@@ -500,7 +503,7 @@ function layout({ children }) {
                       />
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
                         }
                       >
                         Instagram
@@ -515,7 +518,7 @@ function layout({ children }) {
                       />
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
                         }
                       >
                         LinkedIn
@@ -531,7 +534,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/hardware" }}>
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Hardware
@@ -540,7 +543,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/software" }}>
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Software
@@ -549,7 +552,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/talents" }}>
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Talents
@@ -561,7 +564,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/aboutus" }}>
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         About&nbsp;Us
@@ -570,7 +573,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/joinourteam" }}>
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Join&nbsp;Our&nbsp;Team
@@ -584,7 +587,7 @@ function layout({ children }) {
                     <Link href="/contactus">
                       <p
                         className={
-                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min"
+                          "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Contact&nbsp;Us
@@ -601,7 +604,7 @@ function layout({ children }) {
                         />
                         <p
                           className={
-                            "gilroy-regular cursor-pointer menu-underlined py-1"
+                            "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
                           }
                         >
                           Instagram
@@ -616,7 +619,7 @@ function layout({ children }) {
                         />
                         <p
                           className={
-                            "gilroy-regular cursor-pointer menu-underlined py-1"
+                            "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
                           }
                         >
                           LinkedIn
@@ -636,7 +639,7 @@ function layout({ children }) {
                 <Link href={{ pathname: "/privacy" }}>
                   <p
                     className={
-                      "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32"
+                      "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 hover:text-green-500"
                     }
                   >
                     Privacy
@@ -645,7 +648,7 @@ function layout({ children }) {
                 <Link href={{ pathname: "/term" }}>
                   <p
                     className={
-                      "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32"
+                      "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 hover:text-green-500"
                     }
                   >
                     Term
@@ -654,7 +657,7 @@ function layout({ children }) {
                 <Link href={{ pathname: "/sitemap" }}>
                   <p
                     className={
-                      "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32"
+                      "menu-underlined text-xs cursor-pointer ml-4 sm:ml-10 md:ml-20 lg:ml-32 hover:text-green-500"
                     }
                   >
                     Sitemap

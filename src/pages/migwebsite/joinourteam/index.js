@@ -2,7 +2,7 @@ import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Collapse } from "antd";
 import Head from "next/head";
 import React from "react";
-import { Link as Linkk } from "react-scroll";
+import { Link } from "react-scroll";
 import Slider from "react-slick";
 
 import Layout from "../../../components/migwebsite/layout.js";
@@ -54,15 +54,17 @@ function JoinOurTeam({ dataCareers, empData }) {
               </p>
               <div className={"text-center md:text-left"}>
                 <div className={"md:center w-max m-auto md:mx-0"}>
-                  <Linkk
-                    className={"flex-col md:center"}
+                  <Link
+                    className={"flex-col md:center hover:text-black"}
                     activeClass="active"
                     to="section7careers"
                     smooth={true}
                     offset={-150}
                     duration={500}
                   >
-                    <p className={"text-xl gilroy-regular"}>
+                    <p
+                      className={"text-xl gilroy-regular hover:text-green-500"}
+                    >
                       See open position!
                     </p>
                     <div className="grid justify-items-center">
@@ -72,7 +74,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                         style={{ width: 60 }}
                       />
                     </div>
-                  </Linkk>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -93,7 +95,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       >
         <div className={"block md:flex"}>
           <div className={"flex py-4"}>
-            <Linkk
+            <Link
               activeClass="active"
               to="section3careers"
               spy={true}
@@ -110,8 +112,8 @@ function JoinOurTeam({ dataCareers, empData }) {
               >
                 Our Values
               </button>
-            </Linkk>
-            <Linkk
+            </Link>
+            <Link
               activeClass="active"
               to="section8careers"
               spy={true}
@@ -128,8 +130,8 @@ function JoinOurTeam({ dataCareers, empData }) {
               >
                 Employee Stories
               </button>
-            </Linkk>
-            <Linkk
+            </Link>
+            <Link
               activeClass="active"
               to="section6careers"
               spy={true}
@@ -146,8 +148,8 @@ function JoinOurTeam({ dataCareers, empData }) {
               >
                 Benefits
               </button>
-            </Linkk>
-            <Linkk
+            </Link>
+            <Link
               activeClass="active"
               to="section7careers"
               spy={true}
@@ -164,7 +166,7 @@ function JoinOurTeam({ dataCareers, empData }) {
               >
                 Careers
               </button>
-            </Linkk>
+            </Link>
           </div>
         </div>
       </section>
