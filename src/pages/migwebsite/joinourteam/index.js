@@ -5,6 +5,8 @@ import React from "react";
 import { Link } from "react-scroll";
 import Slider from "react-slick";
 
+import { CareersAtMig } from "components/screen/joinourteam";
+
 import Layout from "../../../components/migwebsite/layout.js";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -374,16 +376,15 @@ function JoinOurTeam({ dataCareers, empData }) {
           </div>
         </div>
       </section>
-      <section
+
+      {/* <section
         className={
-          "section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto"
-        }
-      >
+          "section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto bg-red-400"
+        }>
         <span
           className={"relative"}
           style={{ top: "-150px" }}
-          id="vacancies"
-        ></span>
+          id="vacancies"></span>
         <div className={"block md:flex justify-between"}>
           <div className={"flex-row left-column-section7careers pr-0 md:pr-8"}>
             <p className={"text-3xl gilroy-bold pb-8"}>Careers at MIG</p>
@@ -405,15 +406,13 @@ function JoinOurTeam({ dataCareers, empData }) {
             <Collapse
               accordion
               defaultActiveKey={["0"]}
-              expandIconPosition={"right"}
-            >
+              expandIconPosition={"right"}>
               {careers.map((item, idx) => {
                 return (
                   <Panel
                     className={"text-base"}
                     header={item.position_name}
-                    key={idx}
-                  >
+                    key={idx}>
                     <div>
                       <div className={"text-base pb-4"}>
                         <p className={"gilroy-bold text-base"}>
@@ -425,8 +424,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                         className={"text-base hover:text-green-500"}
                         href={item.register_link}
                         target="_blank"
-                        rel="noopener noreferrer"
-                      >
+                        rel="noopener noreferrer">
                         Apply Now
                         <ArrowRightOutlined
                           className={"pl-2 relative -top-0.5"}
@@ -439,7 +437,9 @@ function JoinOurTeam({ dataCareers, empData }) {
             </Collapse>
           </div>
         </div>
-      </section>
+      </section> */}
+
+      <CareersAtMig />
     </Layout>
   );
 }
