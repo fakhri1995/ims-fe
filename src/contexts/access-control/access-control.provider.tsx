@@ -35,7 +35,7 @@ export const AccessControlProvider: FC = ({ children }) => {
    * Queries
    */
   const { refetch } = useQuery(
-    AuthServiceQueryKeys.DETAIL_PROFILE,
+    [AuthServiceQueryKeys.DETAIL_PROFILE],
     () => AuthService.whoAmI(axiosClient),
     {
       enabled: false,

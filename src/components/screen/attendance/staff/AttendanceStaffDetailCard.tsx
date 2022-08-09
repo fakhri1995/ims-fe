@@ -23,7 +23,7 @@ export const AttendanceStaffDetailCard: FC<IAttendanceStaffDetailCard> = memo(
   () => {
     const axiosClient = useAxiosClient();
     const { data, isLoading } = useQuery(
-      AuthServiceQueryKeys.DETAIL_PROFILE,
+      [AuthServiceQueryKeys.DETAIL_PROFILE],
       () => AuthService.whoAmI(axiosClient),
       {
         select: (response) => {

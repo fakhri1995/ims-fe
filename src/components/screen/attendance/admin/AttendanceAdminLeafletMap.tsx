@@ -75,7 +75,7 @@ const AttendanceMarkers: FC = () => {
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
 
   const { data } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       enabled: isAllowedToGetAttendancesUsers,

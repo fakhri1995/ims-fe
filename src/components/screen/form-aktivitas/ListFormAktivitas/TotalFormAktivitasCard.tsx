@@ -20,7 +20,7 @@ export const TotalFormAktivitasCard: FC<ITotalFormAktivitasCard> = memo(() => {
   const { hasPermission } = useAccessControl();
 
   const { data, isLoading } = useQuery(
-    AttendanceFormAktivitasServiceQueryKeys.FIND,
+    [AttendanceFormAktivitasServiceQueryKeys.FIND],
     () => AttendanceFormAktivitasService.find(axiosClient),
     {
       enabled: hasPermission(ATTENDANCE_FORMS_GET),

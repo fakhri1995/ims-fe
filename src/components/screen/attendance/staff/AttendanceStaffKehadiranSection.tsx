@@ -56,7 +56,7 @@ export const AttendanceStaffKehadiranSection: FC<
     isLoading,
     isRefetching,
   } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCES_USER_GET],
     () => AttendanceService.find(axiosClient),
     {
       enabled: isAllowedToGetKehadiranData,

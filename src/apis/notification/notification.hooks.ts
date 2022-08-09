@@ -50,7 +50,7 @@ export const useGetRecentNotifications = <
   const axiosClient = useAxiosClient();
 
   return useQuery(
-    NotificationServiceQueryKeys.getLastTen,
+    [NotificationServiceQueryKeys.getLastTen],
     () => NotificationService.getLastTen(axiosClient),
     {
       select,

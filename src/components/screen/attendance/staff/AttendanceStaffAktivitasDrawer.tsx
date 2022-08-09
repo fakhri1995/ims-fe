@@ -84,7 +84,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
     addMutationLoading || updateMutationLoading || deleteMutationLoading;
 
   const { data: userAttendanceForm, isLoading } = useQuery(
-    AuthServiceQueryKeys.DETAIL_PROFILE,
+    [AuthServiceQueryKeys.DETAIL_PROFILE],
     () => AuthService.whoAmI(axiosClient),
     {
       select: (response) => response.data.data.attendance_forms[0],
