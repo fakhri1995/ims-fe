@@ -171,7 +171,7 @@ const HadirTable: FC<ITable> = ({ searchValue }) => {
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
 
   const { data, isLoading } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       enabled: isAllowedToGetAttendancesUsers,
@@ -317,7 +317,7 @@ const AbsenTable: FC<ITable> = ({ searchValue }) => {
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
 
   const { data, isLoading } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       enabled: isAllowedToGetAttendancesUsers,

@@ -1,19 +1,11 @@
 import { createContext, useContext } from "react";
 
-export type AccessControlValidateOpt = {
-  yes?: () => void;
-  no?: () => void;
-};
-
 export interface IAccessControlCtx {
   roles: string[];
   permissions: string[];
 
-  hasRole: (role: string | string[], opt?: AccessControlValidateOpt) => boolean;
-  hasPermission: (
-    permission: string | string[],
-    opt?: AccessControlValidateOpt
-  ) => boolean;
+  hasRole: (role: string | string[]) => boolean;
+  hasPermission: (permission: string | string[]) => boolean;
 
   updateAccessControl: () => void;
 

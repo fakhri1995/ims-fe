@@ -27,7 +27,7 @@ export const AttendanceAdminTodayStatCard: FC<
   const isAllowedToGetAttendancesUsers = hasPermission(ATTENDANCES_USERS_GET);
 
   const { data, isLoading } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCE_USERS_GET],
     () => AttendanceService.findAsAdmin(axiosClient),
     {
       enabled: isAllowedToGetAttendancesUsers,

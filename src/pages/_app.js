@@ -3,7 +3,6 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
-import { useRef } from "react";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
@@ -15,17 +14,15 @@ Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
 
-function MyApp({ Component, pageProps }) {
-  const queryClient = useRef(
-    new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchOnWindowFocus: false,
-        },
-      },
-    })
-  );
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
+function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
@@ -40,7 +37,7 @@ function MyApp({ Component, pageProps }) {
         <title>MIGSys</title>
       </Head>
 
-      <QueryClientProvider client={queryClient.current}>
+      <QueryClientProvider client={queryClient}>
         <NextQueryParamProvider>
           <AccessControlProvider>
             <Component {...pageProps} />

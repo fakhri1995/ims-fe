@@ -159,7 +159,7 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   const [isItSafeToCheckOut, setIsItSafeToCheckOut] = useState(false);
 
   const { data: userAttendanceForm } = useQuery(
-    AuthServiceQueryKeys.DETAIL_PROFILE,
+    [AuthServiceQueryKeys.DETAIL_PROFILE],
     () => AuthService.whoAmI(axiosClient),
     {
       enabled: isEnabled,
@@ -168,7 +168,7 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   );
 
   const { data: todayActivitiesLength } = useQuery(
-    AttendanceActivityQueryKeys.FIND,
+    [AttendanceActivityQueryKeys.FIND],
     () => AttendanceActivityService.find(axiosClient),
     {
       enabled: !isAllowedToGetAttendanceActivities
@@ -190,7 +190,7 @@ export const useGetAttendeeInfo = (isEnabled: boolean = true) => {
   );
 
   const { data: attendancesLog } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCES_USER_GET],
     () => AttendanceService.find(axiosClient),
     {
       enabled: !isAllowedToGetUserAttendancesLog ? false : isEnabled,
@@ -300,7 +300,7 @@ export const useGetUserAttendanceActivities = (
   );
 
   const { data: userAttendanceForm } = useQuery(
-    AuthServiceQueryKeys.DETAIL_PROFILE,
+    [AuthServiceQueryKeys.DETAIL_PROFILE],
     () => AuthService.whoAmI(axiosClient),
     {
       select: (response) => response.data.data.attendance_forms,
@@ -312,7 +312,7 @@ export const useGetUserAttendanceActivities = (
     isLoading: isDataSourceLoading,
     isRefetching: isDataSourceRefetching,
   } = useQuery(
-    AttendanceActivityQueryKeys.FIND,
+    [AttendanceActivityQueryKeys.FIND],
     () => AttendanceActivityService.find(axiosClient),
     {
       enabled: !isAllowedToGetAttendanceActivities
@@ -476,7 +476,7 @@ export const useGetUserAttendanceTodayActivities = () => {
   const axiosClient = useAxiosClient();
 
   const { data } = useQuery(
-    AttendanceActivityQueryKeys.FIND,
+    [AttendanceActivityQueryKeys.FIND],
     () => AttendanceActivityService.find(axiosClient),
     {
       select: (response) => response.data.data.today_activities,

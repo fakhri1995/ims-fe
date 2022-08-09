@@ -26,7 +26,7 @@ export const AttendanceStaffStatisticCard: FC<
   const isAllowedToGetAttendanceStatistic = hasPermission(ATTENDANCES_USER_GET);
 
   const { data, isLoading } = useQuery(
-    AttendanceServiceQueryKeys.ATTENDANCES_USER_GET,
+    [AttendanceServiceQueryKeys.ATTENDANCES_USER_GET],
     () => AttendanceService.find(axiosClient),
     {
       enabled: isAllowedToGetAttendanceStatistic,

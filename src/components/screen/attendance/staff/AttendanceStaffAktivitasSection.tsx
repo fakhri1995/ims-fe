@@ -65,7 +65,7 @@ export const AttendanceStaffAktivitasSection: FC<
   );
 
   const { data: userAttendanceForm } = useQuery(
-    AuthServiceQueryKeys.DETAIL_PROFILE,
+    [AuthServiceQueryKeys.DETAIL_PROFILE],
     () => AuthService.whoAmI(axiosClient),
     {
       select: (response) => response.data.data.attendance_forms[0],
