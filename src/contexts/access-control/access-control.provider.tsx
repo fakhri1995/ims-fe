@@ -64,7 +64,7 @@ export const AccessControlProvider: FC = ({ children }) => {
    * Callbacks
    */
   const hasRole = useCallback<IAccessControlCtx["hasRole"]>(
-    (role, opt) => {
+    (role) => {
       if (shouldBypass) {
         return true;
       }
@@ -93,10 +93,8 @@ export const AccessControlProvider: FC = ({ children }) => {
 
       if (!isPending) {
         if (isRolesSatisfied) {
-          opt?.yes?.call(null);
           return true;
         } else {
-          opt?.no?.call(null);
           return false;
         }
       }
@@ -107,7 +105,7 @@ export const AccessControlProvider: FC = ({ children }) => {
   );
 
   const hasPermission = useCallback<IAccessControlCtx["hasPermission"]>(
-    (permission, opt) => {
+    (permission) => {
       if (shouldBypass) {
         return true;
       }
@@ -136,10 +134,8 @@ export const AccessControlProvider: FC = ({ children }) => {
 
       if (!isPending) {
         if (isPermissionsSatisfied) {
-          opt?.yes?.call(null);
           return true;
         } else {
-          opt?.no?.call(null);
           return false;
         }
       }
