@@ -1,11 +1,14 @@
-import { Button, Form, Input } from "antd";
+import { Button, Table } from "antd";
 import type { FC } from "react";
 
-import { FilterDropdown } from "../FilterDropdown";
+import { SearchAndFilter } from "./SearchAndFilterSection";
+import { getSearchResultMessage } from "stores/career/joinourteam.store";
 
 export const CareersAtMig: FC = () => {
+  const searchMessage = getSearchResultMessage();
+
   return (
-    <section className="section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20">
+    <section className="section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 space-y-8">
       {/* Section Heading */}
       <div>
         <h3 className="text-center gilroy-bold text-3xl md:text-4xl pb-8">
@@ -17,45 +20,48 @@ export const CareersAtMig: FC = () => {
         </p>
       </div>
 
-      {/* Search and filter */}
-      <Form
-        className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6"
-        onFinish={() => {
-          console.log("form finish!");
-        }}
-      >
-        {/* Search */}
-        <Form.Item noStyle>
-          <Input placeholder="Search jobs..." />
-        </Form.Item>
+      {/* Input data: Search and Filter */}
+      <SearchAndFilter />
 
-        {/* Filter: Employment type */}
-        <div className="flex flex-col space-y-4 md:flex-row md:space-x-6 md:space-y-0">
-          <FilterDropdown
-            label="Employment type"
-            data={[
-              { label: "Full Time", value: "full-time" },
-              { label: "Part Time", value: "part-time" },
-              { label: "Internship", value: "internship" },
-              { label: "Contract", value: "contract" },
-            ]}
-          />
+      {/* Display data: Table */}
+      <div className="space-y-12">
+        <p
+          dangerouslySetInnerHTML={{
+            __html: searchMessage,
+          }}
+        />
 
-          {/* Filter: Experience range */}
-          <FilterDropdown
-            label="Experience range"
-            data={[
-              { label: "0-1 years", value: "0,1" },
-              { label: "1-3 years", value: "1,3" },
-              { label: "3-5 years", value: "3,5" },
-              { label: "> 5 years", value: "5+" },
-            ]}
-          />
+        <Table
+          columns={[
+            { title: "Job Title" },
+            { title: "Employment Type" },
+            { title: "Experience Range" },
+          ]}
+          dataSource={[]}
+          bordered={false}
+        ></Table>
+
+        <div className="flex flex-col justify-center items-center space-y-8">
+          <p>
+            Showing <strong>5</strong> out of <strong>32 jobs</strong>
+          </p>
+
+          <Button type="ghost">Load More</Button>
         </div>
+      </div>
 
-        {/* Button search */}
-        <Button htmlType="submit">Search</Button>
-      </Form>
+      {/* Notes */}
+      <div className="flex flex-col justify-center items-center space-y-8">
+        <span className="h-2 bg-primary100 w-60 block" />
+
+        <p className="pb-8 text-xl text-center">
+          Didn't find the role that best describes your skills ? Send your CV to{" "}
+          <a href="mailto:recruitment@mitrasolusi.group" className="font-bold">
+            recruitment@mitrasolusi.group
+          </a>{" "}
+          for potential opportunities.
+        </p>
+      </div>
     </section>
   );
 };

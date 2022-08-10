@@ -10,10 +10,12 @@ type FilterItemType = {
   value: any;
 };
 
+type CheckableFilterItemType = { checked: boolean } & FilterItemType;
+
 interface FilterDropdownProps {
   label: string;
   data?: FilterItemType[];
-  onOptionChecked?: (optionValue: FilterItemType["value"]) => void;
+  onOptionChecked?: (checkedItems: CheckableFilterItemType[]) => void;
 }
 
 export const FilterDropdown: FC<FilterDropdownProps> = memo(
@@ -21,9 +23,7 @@ export const FilterDropdown: FC<FilterDropdownProps> = memo(
     /**
      * States
      */
-    const [_data, _setData] = useState<
-      ({ checked: boolean } & FilterItemType)[]
-    >([]);
+    const [_data, _setData] = useState<CheckableFilterItemType[]>([]);
     const [countSelectedOptions, setCountSelectedOptions] = useState(0);
 
     /**
@@ -42,24 +42,29 @@ export const FilterDropdown: FC<FilterDropdownProps> = memo(
         return;
       }
 
-      setCountSelectedOptions(_data.filter(({ checked }) => checked).length);
-    }, [_data]);
+      const checkedItems = _data.filter(({ checked }) => checked);
+      onOptionChecked?.call(null, checkedItems);
+
+      setCountSelectedOptions(checkedItems.length);
+    }, [_data, onOptionChecked]);
 
     /**
      * Callbacks
      */
     const onOptionSelected = useCallback(
-      (optionValue: FilterItemType["value"], index: number) => {
-        onOptionChecked?.call(null, optionValue);
-
-        _setData((data) => {
-          const mutatedData = [...data];
-          mutatedData[index].checked = !mutatedData[index].checked;
-
-          return mutatedData;
-        });
+      (index: number) => {
+        _setData((data) =>
+          data.map((datum, _index) =>
+            _index !== index
+              ? datum
+              : {
+                  ...datum,
+                  checked: !datum.checked,
+                }
+          )
+        );
       },
-      [onOptionChecked, _setData, _data]
+      [_setData, _data]
     );
 
     /**
@@ -79,11 +84,11 @@ export const FilterDropdown: FC<FilterDropdownProps> = memo(
         }}
         overlay={
           <div className="px-4 py-2 w-full bg-[#F4F4F4]">
-            {_data.map(({ label, value, checked }, index) => (
+            {_data.map(({ label, checked }, index) => (
               <div
                 key={index}
                 onClick={(e) => {
-                  onOptionSelected(value, index);
+                  onOptionSelected(index);
                 }}
                 className="flex items-center space-x-4 py-2 hover:bg-[#e4e4e4] hover:cursor-pointer transition-colors duration-300"
               >
