@@ -29,6 +29,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       <Head>
         <title>Join Our Team</title>
       </Head>
+
       <section
         className={
           "section1careers py-4 md:py-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
@@ -89,6 +90,7 @@ function JoinOurTeam({ dataCareers, empData }) {
           </div>
         </div>
       </section>
+
       <section
         className={
           "section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50"
@@ -115,7 +117,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 Our Values
               </button>
             </Link>
-            <Link
+            {/* <Link
               activeClass="active"
               to="section8careers"
               spy={true}
@@ -132,7 +134,7 @@ function JoinOurTeam({ dataCareers, empData }) {
               >
                 Employee Stories
               </button>
-            </Link>
+            </Link> */}
             <Link
               activeClass="active"
               to="section6careers"
@@ -172,7 +174,9 @@ function JoinOurTeam({ dataCareers, empData }) {
           </div>
         </div>
       </section>
+
       <section className={"h-8 hidden md:block"}></section>
+
       <section
         className={
           "section3careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
@@ -236,7 +240,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
 
-      <section
+      {/* <section
         className={
           "section8careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto"
         }
@@ -272,7 +276,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             })}
           </Slider>
         </div>
-      </section>
+      </section> */}
 
       <section
         className={
