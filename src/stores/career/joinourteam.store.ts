@@ -35,7 +35,8 @@ export const useJoinOurTeamStore = create(
 );
 
 /**
- * Getters
+ * Shows a search result message if there is some applied filters.
+ * E.g. "Showing results for “<keyword>” with job types <employmentTypeFilter> and experience ranges <experienceRangeFilter>."
  */
 export const getSearchResultMessage = () => {
   const { keyword, employmentTypeFilter, experienceRangeFilter } =
@@ -47,11 +48,9 @@ export const getSearchResultMessage = () => {
     experienceRangeFilter,
   ].every((value) => value.length === 0);
   if (noFilterApplied) {
-    return "";
+    return "&zwnj;"; // invisible character (for better UX)
   }
 
-  // Showing results for “Software” with job types Internship, Full Time and experience ranges 0-1 years, > 5 years.
-  // Showing results for “<keyword>” with job types <employmentTypeFilter> and experience ranges <experienceRangeFilter>.
   let searchResultMessage = "Showing results ";
   if (keyword.length > 0) {
     searchResultMessage += `for <strong>${keyword}</strong> `;

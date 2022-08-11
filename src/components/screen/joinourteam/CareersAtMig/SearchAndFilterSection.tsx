@@ -1,20 +1,22 @@
 import { Button, Form, Input } from "antd";
-import { FC, useCallback } from "react";
+import { FC, MouseEventHandler, useCallback } from "react";
 
-import { FilterDropdown } from "../FilterDropdown";
 import {
   onFilterChanged,
   onSearchKeywordChanged,
 } from "stores/career/joinourteam.store";
 
-const dummyEmploymentTypeData = [
+import { FilterDropdown } from "../FilterDropdown";
+import styles from "./CareersAtMig.module.scss";
+
+const hardcodedEmploymentTypeData = [
   { label: "Full Time", value: 1 },
   { label: "Part Time", value: 4 },
   { label: "Internship", value: 2 },
   { label: "Contract", value: 3 },
 ];
 
-const dummyExperienceRangeData = [
+const hardcodedExperienceRangeData = [
   { label: "0-1 years", value: 1 },
   { label: "1-3 years", value: 2 },
   { label: "3-5 years", value: 3 },
@@ -25,6 +27,11 @@ const dummyExperienceRangeData = [
  * @private
  */
 export const SearchAndFilter: FC = () => {
+  /**
+   * Dependencies
+   */
+  const [form] = Form.useForm();
+
   /**
    * Callbacks
    */
@@ -40,10 +47,29 @@ export const SearchAndFilter: FC = () => {
     onFilterChanged("experience-range", value);
   }, []);
 
+  const onSearchButtonClicked = useCallback<MouseEventHandler<HTMLElement>>(
+    (e) => {
+      form?.submit();
+      e.preventDefault();
+    },
+    [form]
+  );
+
+  const onFormValueChanged = useCallback(
+    (changedValues: { keyword: string }) => {
+      if (changedValues.keyword === "") {
+        onSearchKeywordChanged("");
+      }
+    },
+    []
+  );
+
   return (
     <Form
+      form={form}
       className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6"
       onFinish={onFormSubmitted}
+      onValuesChange={onFormValueChanged}
     >
       {/* Search */}
       <Form.Item noStyle name="keyword">
@@ -54,20 +80,22 @@ export const SearchAndFilter: FC = () => {
       <div className="flex flex-col space-y-4 md:flex-row md:space-x-6 md:space-y-0">
         <FilterDropdown
           label="Employment type"
-          data={dummyEmploymentTypeData}
+          data={hardcodedEmploymentTypeData}
           onOptionChecked={onFilterEmploymentTypeChanged}
         />
 
         {/* Filter: Experience range */}
         <FilterDropdown
           label="Experience range"
-          data={dummyExperienceRangeData}
+          data={hardcodedExperienceRangeData}
           onOptionChecked={onFilterExperienceRangeChanged}
         />
       </div>
 
       {/* Button search */}
-      <Button htmlType="submit">Search</Button>
+      <Button className={styles.ctaButton} onClick={onSearchButtonClicked}>
+        Search
+      </Button>
     </Form>
   );
 };
