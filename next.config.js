@@ -13,6 +13,7 @@ const nextConfig = {
     { source: "/talents", destination: "/migwebsite/talents" },
     { source: "/aboutus", destination: "/migwebsite/aboutus" },
     { source: "/joinourteam", destination: "/migwebsite/joinourteam" },
+    { source: "/joinourteam/:job_slug", destination: "/migwebsite/joinourteam/[job_slug]" },
     { source: "/sitemap", destination: "/migwebsite/sitemap" },
     { source: "/term", destination: "/migwebsite/termofuse" },
     { source: "/privacy", destination: "/migwebsite/privacy" },
