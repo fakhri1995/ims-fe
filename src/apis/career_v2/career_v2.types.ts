@@ -10,12 +10,13 @@ export type GetCareersParams = {
   experience?: string | number;
   sort?: 1 | 2 | 3 | 4 | 5 | 6;
   order?: "asc" | "dsc";
+  search?: string;
 };
 
 /**
  * @access GET /v2/getCareers
  */
-export type GetCareersSucceedResponse =
+export type GetPostedCareersSucceedResponse =
   HttpRequestWithDataSucceedResponse<GetCareersData>;
 
 interface GetCareersData {

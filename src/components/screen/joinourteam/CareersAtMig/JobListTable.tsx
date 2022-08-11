@@ -7,7 +7,7 @@ import {
   useJoinOurTeamStore,
 } from "stores/career/joinourteam.store";
 
-import { useGetCareers } from "apis/career_v2/career_v2.hooks";
+import { useGetPostedCareers } from "apis/career_v2/career_v2.hooks";
 import type { Career } from "apis/career_v2/career_v2.types";
 
 export const JobListTable: FC = () => {
@@ -27,11 +27,14 @@ export const JobListTable: FC = () => {
     state.experienceRangeFilter.map(({ value }) => value).join(",")
   );
 
-  const { data, isLoading } = useGetCareers(
+  const searchJobValue = useJoinOurTeamStore((state) => state.keyword);
+
+  const { data, isLoading } = useGetPostedCareers(
     {
       role: employmentTypeFilterValues,
       experience: experienceRangeFilterValues,
       limit: jobLimit,
+      search: searchJobValue,
     },
     (data) => data.data.data
   );
@@ -44,8 +47,8 @@ export const JobListTable: FC = () => {
   const tableColumns = useMemo<ColumnsType<Career>>(
     () => [
       { title: "Job Title", dataIndex: "name" },
-      { title: "Employment Type", dataIndex: "role_type.name" },
-      { title: "Experience Range", dataIndex: "experience.str" },
+      { title: "Employment Type", dataIndex: ["role_type", "name"] },
+      { title: "Experience Range", dataIndex: ["experience", "str"] },
     ],
     []
   );
@@ -67,10 +70,11 @@ export const JobListTable: FC = () => {
 
       <Table<Career>
         columns={tableColumns}
-        dataSource={[]}
+        dataSource={data?.data || []}
         bordered={false}
         loading={isLoading}
-      ></Table>
+        pagination={false}
+      />
 
       {data && (
         <div className="flex flex-col justify-center items-center space-y-8">

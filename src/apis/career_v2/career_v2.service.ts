@@ -3,27 +3,28 @@ import QueryString from "qs";
 
 import type {
   GetCareersParams,
-  GetCareersSucceedResponse,
+  GetPostedCareersSucceedResponse,
 } from "./career_v2.types";
 
 export enum CareerV2QueryKeys {
-  getCareers = "CAREERS_V2_GET",
+  getPostedCareers = "getPostedCareers",
 }
 
 export class CareerV2Service {
   /**
    * Retrieve all available careers.
+   * No Authorization required.
    *
-   * @access GET /v2/getCareer
+   * @access GET /v2/getPostedCareers
    */
-  static async getCareers(
+  static async getPostedCareers(
     axiosClient: AxiosInstance,
     params: GetCareersParams
   ) {
     const qs = QueryString.stringify(params, { addQueryPrefix: true });
 
-    return await axiosClient.get<GetCareersSucceedResponse>(
-      "/v2/getCareers" + qs
+    return await axiosClient.get<GetPostedCareersSucceedResponse>(
+      "/v2/getPostedCareers" + qs
     );
   }
 }
