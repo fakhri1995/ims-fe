@@ -25,7 +25,7 @@ export const CareersAtMig: FC = () => {
 
       {/* Notes */}
       <div className="flex flex-col justify-center items-center space-y-8">
-        <span className="h-2 bg-primary100 w-60 block" />
+        <span className="h-[3px] bg-primary100 w-60 block" />
 
         <p className="pb-8 text-xl text-center">
           Didn't find the role that best describes your skills ? Send your CV to{" "}

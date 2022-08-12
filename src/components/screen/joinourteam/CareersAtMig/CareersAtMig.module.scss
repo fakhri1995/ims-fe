@@ -12,7 +12,11 @@
   }
 
   :global(.ant-table-container table) {
-    border-spacing: 0 0.75rem;
+    border-spacing: 0 1rem;
+  }
+
+  :global(.ant-table-row .ant-table-cell) {
+    border: 0;
   }
 }
 

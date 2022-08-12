@@ -93,7 +93,7 @@ export const getSearchResultMessage = () => {
  */
 export const onSearchKeywordChanged = (newKeywordValue: string) =>
   useJoinOurTeamStore.setState((state) => {
-    state.keyword = newKeywordValue;
+    state.keyword = newKeywordValue || "";
   });
 
 export const onFilterChanged = (

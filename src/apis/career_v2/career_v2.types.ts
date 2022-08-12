@@ -3,6 +3,7 @@ import type { HttpRequestWithDataSucceedResponse } from "types/common";
 export type GetCareersParams = {
   limit?: number;
   page?: number;
+  rows?: number;
   date_from?: string;
   date_to?: string;
   is_posted?: boolean;

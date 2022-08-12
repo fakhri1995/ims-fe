@@ -45,6 +45,7 @@ export const JobListTable: FC = () => {
       experience: experienceRangeFilterValues,
       limit: jobLimit,
       search: searchJobValue,
+      rows: jobLimit,
     },
     (data) => data.data.data
   );
@@ -84,24 +85,32 @@ export const JobListTable: FC = () => {
     []
   );
 
-  /**
-   * Callbacks
-   */
-  const onLoadMoreClicked = useCallback(() => {
+  const hasLoadedAllJobs = useMemo(() => {
     const totalJobs = Number(data?.total);
     if (isNaN(totalJobs)) {
-      return;
+      return false;
     }
 
     const nextLimit = jobLimit + JOB_LIMIT_ADDER;
     const diffLimit = nextLimit - totalJobs;
 
     if (diffLimit > JOB_LIMIT_ADDER) {
+      return true;
+    }
+
+    return false;
+  }, [data?.total, jobLimit]);
+
+  /**
+   * Callbacks
+   */
+  const onLoadMoreClicked = useCallback(() => {
+    if (hasLoadedAllJobs) {
       return;
     }
 
-    setJobLimit(nextLimit);
-  }, [data?.total, jobLimit]);
+    setJobLimit((currentLimit) => currentLimit + JOB_LIMIT_ADDER);
+  }, [hasLoadedAllJobs]);
 
   const onRowClicked = (career: Career) => {
     router?.push(`/joinourteam/${career.slug}`);
@@ -123,12 +132,11 @@ export const JobListTable: FC = () => {
         loading={isLoading}
         pagination={false}
         scroll={{ x: "max-content" }}
-        rowClassName="shadow-lg py-4 hover:cursor-pointer hover:opacity-75 transition-opacity duration-300"
+        rowClassName="hover:cursor-pointer hover:opacity-75 transition-opacity duration-300 shadow-md"
         onRow={(career) => ({
           onClick: () => onRowClicked(career),
         })}
       />
-
       {data && (
         <div className="flex flex-col justify-center items-center space-y-8">
           <p>
@@ -138,6 +146,8 @@ export const JobListTable: FC = () => {
 
           <Button
             type="ghost"
+            disabled={hasLoadedAllJobs}
+            loading={isLoading}
             className={styles.ctaButton}
             onClick={onLoadMoreClicked}
           >
