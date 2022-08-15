@@ -2,12 +2,15 @@ import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
 import type {
-  GetCareersParams,
+  GetPostedCareerParam,
+  GetPostedCareerSucceedResponse,
+  GetPostedCareersParams,
   GetPostedCareersSucceedResponse,
 } from "./career_v2.types";
 
 export enum CareerV2QueryKeys {
-  getPostedCareers = "getPostedCareers",
+  getPostedCareers = "CAREERS_V2_POSTED_GET",
+  getPostedCareer = "CAREER_V2_POSTED_GET",
 }
 
 export class CareerV2Service {
@@ -19,12 +22,34 @@ export class CareerV2Service {
    */
   static async getPostedCareers(
     axiosClient: AxiosInstance,
-    params: GetCareersParams
+    params: GetPostedCareersParams
   ) {
     const qs = QueryString.stringify(params, { addQueryPrefix: true });
 
     return await axiosClient.get<GetPostedCareersSucceedResponse>(
       "/v2/getPostedCareers" + qs
+    );
+  }
+
+  /**
+   * Retrieve a specific career.
+   *
+   * @access GET /v2/getPostedCareer
+   */
+  static async getPostedCareer(
+    axiosClient: AxiosInstance,
+    params: GetPostedCareerParam
+  ) {
+    if (!("id" in params) || !("slug" in params)) {
+      throw new Error(
+        "getPostedCareer method requires one param, none are given."
+      );
+    }
+
+    const qs = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<GetPostedCareerSucceedResponse>(
+      "/v2/getPostedCareer" + qs
     );
   }
 }

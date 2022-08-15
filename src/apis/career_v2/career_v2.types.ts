@@ -23,7 +23,7 @@ export enum SortBy {
   ROLE_TYPE,
 }
 
-export type GetCareersParams = {
+export type GetPostedCareersParams = {
   limit?: number;
   page?: number;
   rows?: number;
@@ -37,11 +37,19 @@ export type GetCareersParams = {
   search?: string;
 };
 
+export type GetPostedCareerParam = { id: number } | { slug: string };
+
 /**
- * @access GET /v2/getCareers
+ * @access GET /v2/getPostedCareers
  */
 export type GetPostedCareersSucceedResponse =
   HttpRequestWithDataSucceedResponse<GetCareersData>;
+
+/**
+ * @access GET /v2/getPostedCareer
+ */
+export type GetPostedCareerSucceedResponse =
+  HttpRequestWithDataSucceedResponse<Career>;
 
 interface GetCareersData {
   current_page: number;
