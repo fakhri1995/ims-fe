@@ -1,0 +1,28 @@
+.jobListTable {
+  :global(.ant-table-thead tr th) {
+    @apply border-b border-black;
+  }
+
+  :global(.ant-table-thead .ant-table-cell) {
+    @apply font-semibold;
+
+    &::before {
+      @apply hidden;
+    }
+  }
+
+  :global(.ant-table-container table) {
+    border-spacing: 0 1rem;
+  }
+
+  :global(.ant-table-row .ant-table-cell) {
+    border: 0;
+  }
+}
+
+.ctaButton {
+  &:hover,
+  &:focus {
+    @apply text-black border-black;
+  }
+}

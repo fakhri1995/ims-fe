@@ -1,0 +1,6 @@
+.ctaButton {
+  &:hover,
+  &:focus {
+    @apply text-black border-black;
+  }
+}
