@@ -1,16 +1,50 @@
-import { Button, Checkbox, Form, Input, Upload } from "antd";
+import { Button, Checkbox, Form, Input, Upload, notification } from "antd";
+import { useForm } from "antd/lib/form/Form";
+import type { RcFile } from "antd/lib/upload";
+import type { AxiosError } from "axios";
+import { useRouter } from "next/router";
 import { FC, useCallback, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 
-import { beforeUploadFileMaxSize } from "lib/helper";
+import { useApplyCareer, useGetPostedCareer } from "apis/career_v2";
 
 import styles from "./CareersDetail.module.scss";
 
+type FormType = {
+  agreement: boolean;
+  email: string;
+  name: string;
+  phone_number: string;
+  resume: {
+    file: RcFile;
+    fileList: RcFile[];
+  };
+};
+
 export const Apply: FC = () => {
+  /**
+   * Dependencies
+   */
+  const router = useRouter();
+  const slug = router.query?.job_slug as string;
+
+  const [form] = useForm<FormType>();
+
+  const { data } = useGetPostedCareer(
+    { slug },
+    (response) => response.data.data
+  );
+  const { mutate: applyJob, isLoading: isApplying } = useApplyCareer();
+
   /**
    * States
    */
-  const [isCaptchaPassed, setIsCaptchaPassed] = useState(false);
+  const [captchaVerifyValue, setCaptchaVerifyValue] = useState<string | null>(
+    null
+  );
+  const [resumeFileBlob, setResumeFileBlob] = useState<RcFile | Blob | File>(
+    null
+  );
   const [isAgreementPassed, setIsAgreementPassed] = useState(false);
 
   /**
@@ -25,14 +59,59 @@ export const Apply: FC = () => {
     []
   );
 
-  const onCaptchaChanged = useCallback(() => {
-    setIsCaptchaPassed(true);
+  const onBeforeResumeUploaded = useCallback((uploadedFile) => {
+    const fileSizeInMb = Number.parseFloat(
+      (uploadedFile.size / 1024 / 1024).toFixed(4)
+    );
+    if (fileSizeInMb > 5) {
+      notification.error({
+        message: "Ukuran file melebih batas persyaratan!",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    setResumeFileBlob(uploadedFile);
   }, []);
+
+  const onCaptchaChanged = useCallback((verifyValue) => {
+    setCaptchaVerifyValue(verifyValue);
+  }, []);
+
+  const onFormSubmitted = useCallback(
+    (values: FormType) => {
+      if (resumeFileBlob === null) {
+        form?.setFields([{ name: "resume", errors: ["Resume wajib diisi!"] }]);
+        return;
+      }
+
+      applyJob(
+        {
+          name: values.name,
+          email: values.email,
+          phone: values.phone_number,
+          career_id: data.id,
+          "g-recaptcha-response": captchaVerifyValue,
+          resume: resumeFileBlob,
+        },
+        {
+          onSuccess: () => {
+            // TODO: handle on succeed
+          },
+          onError: (error: AxiosError) => {
+            notification.error({
+              message: error.response.data?.message?.errorInfo?.reason,
+            });
+          },
+        }
+      );
+    },
+    [form, data, captchaVerifyValue, resumeFileBlob]
+  );
 
   /**
    * Values
    */
-  const isAllowedToSubmit = isCaptchaPassed && isAgreementPassed;
+  const isAllowedToSubmit = captchaVerifyValue !== null && isAgreementPassed;
 
   return (
     <section
@@ -50,11 +129,10 @@ export const Apply: FC = () => {
       </div>
 
       <Form
+        form={form}
         layout="vertical"
         className="w-full max-w-full"
-        onFinish={(values) => {
-          console.log("Form.onFinish", { values });
-        }}
+        onFinish={onFormSubmitted}
         onValuesChange={onFormValuesChanged}
       >
         <Form.Item
@@ -92,7 +170,7 @@ export const Apply: FC = () => {
                 className="w-1/3"
                 accept=".pdf"
                 maxCount={1}
-                beforeUpload={beforeUploadFileMaxSize(5)}
+                beforeUpload={onBeforeResumeUploaded}
               >
                 <Button className={styles.ctaButton}>Upload File</Button>
               </Upload>
@@ -116,7 +194,7 @@ export const Apply: FC = () => {
 
         <ReCAPTCHA
           className="mt-8"
-          sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+          sitekey={process.env.NEXT_PUBLIC_G_RECAPTCHA_CID || ""}
           onChange={onCaptchaChanged}
         />
 
@@ -125,6 +203,7 @@ export const Apply: FC = () => {
             className={`${styles.ctaButton} mt-8`}
             htmlType="submit"
             disabled={!isAllowedToSubmit}
+            loading={isApplying}
           >
             Submit
           </Button>

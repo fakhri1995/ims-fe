@@ -1,7 +1,10 @@
 import type { AxiosInstance } from "axios";
 import QueryString from "qs";
 
+import { objectToFormData } from "lib/helper";
+
 import type {
+  AddCareerPayload,
   GetPostedCareerParam,
   GetPostedCareerSucceedResponse,
   GetPostedCareersParams,
@@ -40,10 +43,17 @@ export class CareerV2Service {
     axiosClient: AxiosInstance,
     params: GetPostedCareerParam
   ) {
-    if (!("id" in params) || !("slug" in params)) {
+    if (!("id" in params) && !("slug" in params)) {
       throw new Error(
-        "getPostedCareer method requires one param, none are given."
+        "getPostedCareer method requires one param, none are given. "
       );
+    }
+
+    if (
+      ("id" in params && params.id === undefined) ||
+      ("slug" in params && params.slug === undefined)
+    ) {
+      return;
     }
 
     const qs = QueryString.stringify(params, { addQueryPrefix: true });
@@ -51,5 +61,23 @@ export class CareerV2Service {
     return await axiosClient.get<GetPostedCareerSucceedResponse>(
       "/v2/getPostedCareer" + qs
     );
+  }
+
+  /**
+   * Apply a job.
+   *
+   * @access POST /v2/addCareer
+   */
+  static async addCareer(
+    axiosClient: AxiosInstance,
+    payload: AddCareerPayload
+  ) {
+    const payloadFormData = objectToFormData(payload);
+
+    return await axiosClient.post("/v2/addCareer", payloadFormData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
   }
 }

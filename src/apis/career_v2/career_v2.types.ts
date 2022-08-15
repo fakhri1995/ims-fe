@@ -39,6 +39,15 @@ export type GetPostedCareersParams = {
 
 export type GetPostedCareerParam = { id: number } | { slug: string };
 
+export type AddCareerPayload = {
+  name: string;
+  email: string;
+  phone: string;
+  career_id: number;
+  resume: Blob | File;
+  "g-recaptcha-response": string;
+};
+
 /**
  * @access GET /v2/getPostedCareers
  */

@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useRouter } from "next/router";
 import { Link } from "react-scroll";
 
 import Layout from "components/migwebsite/layout";
@@ -11,12 +10,6 @@ import {
 } from "components/screen/joinourteam";
 
 const JobDetail: NextPage = () => {
-  /**
-   * Dependencies
-   */
-  const router = useRouter();
-  const jobSlug = router.query.job_slug;
-
   return (
     <Layout>
       <Head>

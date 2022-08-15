@@ -1,8 +1,9 @@
 import axios, { AxiosResponse } from "axios";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 
 import { CareerV2QueryKeys, CareerV2Service } from "./career_v2.service";
 import type {
+  AddCareerPayload,
   GetPostedCareerParam,
   GetPostedCareerSucceedResponse,
   GetPostedCareersParams,
@@ -51,5 +52,20 @@ export const useGetPostedCareer = <
     [CareerV2QueryKeys.getPostedCareer, params],
     () => CareerV2Service.getPostedCareer(axiosClient, params),
     { select }
+  );
+};
+
+/**
+ * Apply a job.
+ *
+ * @access POST /v2/addCareer
+ */
+export const useApplyCareer = () => {
+  const axiosClient = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BACKEND_URL,
+  });
+
+  return useMutation((payload: AddCareerPayload) =>
+    CareerV2Service.addCareer(axiosClient, payload)
   );
 };

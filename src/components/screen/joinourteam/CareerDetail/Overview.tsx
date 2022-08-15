@@ -1,6 +1,21 @@
+import { Skeleton } from "antd";
+import { useRouter } from "next/router";
 import type { FC } from "react";
 
+import { useGetPostedCareer } from "apis/career_v2";
+
 export const Overview: FC = () => {
+  /**
+   * Dependencies
+   */
+  const router = useRouter();
+  const slug = router.query?.job_slug as string;
+
+  const { data, isLoading } = useGetPostedCareer(
+    { slug },
+    (response) => response.data.data
+  );
+
   return (
     <section
       className="flex flex-col
@@ -12,44 +27,38 @@ export const Overview: FC = () => {
           Overview
         </h3>
 
-        <p>
-          Veniam officia adipisicing qui commodo occaecat. Dolore consectetur
-          consequat ex enim do consequat laboris deserunt. Labore fugiat
-          consectetur enim reprehenderit est dolor qui amet incididunt. Dolor ex
-          proident qui deserunt duis pariatur. Sunt ad reprehenderit non Lorem
-          consequat incididunt cillum anim dolore laboris voluptate. Cillum
-          voluptate dolore occaecat nulla sunt cupidatat sit ea laboris
-          consequat enim duis.
-        </p>
+        {/* TODO: parse markdown / whatever the actual content is */}
+        {isLoading ? (
+          <Skeleton title={false} active />
+        ) : (
+          <p>{data?.overview}</p>
+        )}
       </article>
 
       {/* Job Desc & Min. Req */}
       <div className="flex flex-col space-y-8 md:space-y-0 md:space-x-12 md:flex-row">
-        <article>
+        <article className="w-full">
           <h3 className="text-3xl md:text-4xl font-bold mb-4">
             Job Description
           </h3>
 
-          <p>
-            Eiusmod deserunt fugiat aliqua fugiat duis aliquip. Consequat
-            exercitation reprehenderit duis pariatur culpa irure magna fugiat
-            esse pariatur consectetur esse nulla. Ad est fugiat consequat
-            incididunt veniam magna nostrud mollit est do magna.
-          </p>
+          {isLoading ? (
+            <Skeleton title={false} active />
+          ) : (
+            <p>{data?.description}</p>
+          )}
         </article>
 
-        <article>
+        <article className="w-full">
           <h3 className="text-3xl md:text-4xl font-bold mb-4">
             Minimum Requirement
           </h3>
 
-          <p>
-            Veniam exercitation nisi culpa esse cillum deserunt. Id minim labore
-            quis dolore deserunt id anim reprehenderit culpa cillum sunt
-            voluptate. Id dolore proident deserunt id enim ad ad adipisicing
-            proident consequat fugiat veniam quis. Esse aute culpa occaecat id
-            anim dolor incididunt esse.
-          </p>
+          {isLoading ? (
+            <Skeleton title={false} active />
+          ) : (
+            <p>{data?.qualification}</p>
+          )}
         </article>
       </div>
     </section>
