@@ -1,5 +1,28 @@
 import type { HttpRequestWithDataSucceedResponse } from "types/common";
 
+export enum RoleTypeId {
+  FULL_TIME = 1,
+  INTERNSHIP,
+  CONTRACT,
+  PART_TIME,
+}
+
+export enum ExperienceId {
+  ZERO_TO_ONE_YEAR = 1,
+  ONE_TO_THREE_YEAR,
+  THREE_TO_FIVE_YEAR,
+  FIVE_AND_MORE_YEAR,
+}
+
+export enum SortBy {
+  NAME = 1,
+  CREATED_AT,
+  IS_POSTED,
+  TOTAL,
+  EXPERIENCE,
+  ROLE_TYPE,
+}
+
 export type GetCareersParams = {
   limit?: number;
   page?: number;
@@ -7,10 +30,10 @@ export type GetCareersParams = {
   date_from?: string;
   date_to?: string;
   is_posted?: boolean;
-  role?: string | number;
-  experience?: string | number;
-  sort?: 1 | 2 | 3 | 4 | 5 | 6;
-  order?: "asc" | "dsc";
+  role_type_id?: string; // string of concatenated `RoleTypeId` (e.g. 1,2,3)
+  experience_id?: string; // string of concatenated `ExperienceId` (e.g. 1,2,3)
+  sort?: SortBy;
+  order?: "asc" | "desc";
   search?: string;
 };
 

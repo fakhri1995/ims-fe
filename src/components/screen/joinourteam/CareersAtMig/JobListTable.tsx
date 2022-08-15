@@ -41,8 +41,8 @@ export const JobListTable: FC = () => {
 
   const { data, isLoading } = useGetPostedCareers(
     {
-      role: employmentTypeFilterValues,
-      experience: experienceRangeFilterValues,
+      role_type_id: employmentTypeFilterValues,
+      experience_id: experienceRangeFilterValues,
       limit: jobLimit,
       search: searchJobValue,
       rows: jobLimit,

@@ -6,21 +6,23 @@ import {
   onSearchKeywordChanged,
 } from "stores/career/joinourteam.store";
 
+import { ExperienceId, RoleTypeId } from "apis/career_v2/career_v2.types";
+
 import { FilterDropdown } from "../FilterDropdown";
 import styles from "./CareersAtMig.module.scss";
 
 const hardcodedEmploymentTypeData = [
-  { label: "Full Time", value: 1 },
-  { label: "Part Time", value: 4 },
-  { label: "Internship", value: 2 },
-  { label: "Contract", value: 3 },
+  { label: "Full Time", value: RoleTypeId.FULL_TIME },
+  { label: "Part Time", value: RoleTypeId.PART_TIME },
+  { label: "Internship", value: RoleTypeId.INTERNSHIP },
+  { label: "Contract", value: RoleTypeId.CONTRACT },
 ];
 
 const hardcodedExperienceRangeData = [
-  { label: "0-1 years", value: 1 },
-  { label: "1-3 years", value: 2 },
-  { label: "3-5 years", value: 3 },
-  { label: "> 5 years", value: 4 },
+  { label: "0-1 years", value: ExperienceId.ZERO_TO_ONE_YEAR },
+  { label: "1-3 years", value: ExperienceId.ONE_TO_THREE_YEAR },
+  { label: "3-5 years", value: ExperienceId.THREE_TO_FIVE_YEAR },
+  { label: "> 5 years", value: ExperienceId.FIVE_AND_MORE_YEAR },
 ];
 
 /**
