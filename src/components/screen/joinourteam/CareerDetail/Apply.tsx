@@ -94,8 +94,9 @@ export const Apply: FC = () => {
           resume: resumeFileBlob,
         },
         {
-          onSuccess: () => {
+          onSuccess: (response) => {
             // TODO: handle on succeed
+            notification.success({ message: response.data.message });
           },
           onError: (error: AxiosError) => {
             notification.error({
