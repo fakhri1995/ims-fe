@@ -24,7 +24,6 @@ export enum SortBy {
 }
 
 export type GetPostedCareersParams = {
-  limit?: number;
   page?: number;
   rows?: number;
   date_from?: string;
@@ -34,7 +33,7 @@ export type GetPostedCareersParams = {
   experience_id?: string; // string of concatenated `ExperienceId` (e.g. 1,2,3)
   sort?: SortBy;
   order?: "asc" | "desc";
-  search?: string;
+  keyword?: string;
 };
 
 export type GetPostedCareerParam = { id: number } | { slug: string };

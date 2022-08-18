@@ -43,8 +43,7 @@ export const JobListTable: FC = () => {
     {
       role_type_id: employmentTypeFilterValues,
       experience_id: experienceRangeFilterValues,
-      limit: jobLimit,
-      search: searchJobValue,
+      keyword: searchJobValue,
       rows: jobLimit,
     },
     (data) => data.data.data
