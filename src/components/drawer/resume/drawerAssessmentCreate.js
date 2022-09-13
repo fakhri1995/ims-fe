@@ -64,10 +64,17 @@ const DrawerAssessmentCreate = ({
     })
       .then((response) => response.json())
       .then((response2) => {
-        notification.success({
-          message: `Form berhasil ditambahkan.`,
-          duration: 3,
-        });
+        if (response2.success) {
+          notification.success({
+            message: `Form berhasil ditambahkan.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal menambahkan form assessment. ${response2.message}`,
+            duration: 3,
+          });
+        }
         setTimeout(() => {
           setLoadingCreate(false);
           onvisible(false);
@@ -80,6 +87,9 @@ const DrawerAssessmentCreate = ({
           message: `Gagal menambahkan form assessment. ${err.response}`,
           duration: 3,
         });
+        setLoadingCreate(false);
+        onvisible(false);
+        setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
       });
   };
 
