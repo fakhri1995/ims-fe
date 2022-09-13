@@ -9,6 +9,11 @@ body {
   @apply font-sans;
 }
 
+ul {
+  list-style-type: circle;
+  margin-left: 15px;
+}
+
 /* Button */
 .btn {
   text-transform: none !important;

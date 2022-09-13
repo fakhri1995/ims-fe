@@ -1838,8 +1838,6 @@ const ResumeIconSvg = () => {
       stroke-width="1.5"
       stroke="#597e8d"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M14 3v4a1 1 0 0 0 1 1h4" />
