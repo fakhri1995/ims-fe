@@ -1077,7 +1077,7 @@ const TableCustomRoleAssessment = ({
   const rt = useRouter();
   return (
     <Table
-      className="tableTypeTask"
+      className="tableRoleAssessment"
       dataSource={dataSource}
       columns={columns}
       loading={loading}
