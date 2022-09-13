@@ -1073,12 +1073,8 @@ const TableCustomRoleAssessment = ({
   setsorting,
   sorting,
   searching,
-  criteriaCount,
-  candidateCount,
-  dataprofile,
 }) => {
   const rt = useRouter();
-  const [rowstate, setrowstate] = useState(0);
   return (
     <Table
       className="tableTypeTask"

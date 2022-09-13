@@ -1,0 +1,399 @@
+import { Input, Spin, notification } from "antd";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { ROLE_ASSESSMENT_GET, ROLE_ASSESSMENT_UPDATE } from "lib/features";
+
+import { TrashIconSvg } from "../../icon";
+import { InputRequired } from "../../input";
+import { Label } from "../../typography";
+import DrawerCore from "../drawerCore";
+
+const DrawerAssessmentUpdate = ({
+  title,
+  id,
+  visible,
+  onvisible,
+  buttonOkText,
+  initProps,
+  trigger,
+}) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToUpdateRoleAssessment = hasPermission(ROLE_ASSESSMENT_UPDATE);
+  const isAllowedToGetRoleAssessment = hasPermission(ROLE_ASSESSMENT_GET);
+  const canUpdateRoleAssessment =
+    isAllowedToUpdateRoleAssessment && isAllowedToGetRoleAssessment;
+
+  const rt = useRouter();
+
+  //USESTATE
+  const [datadisplay, setdatadisplay] = useState({
+    id: 0,
+    name: "",
+    resumes_count: 0,
+    details: [],
+  });
+  const [dataupdate, setdataupdate] = useState({
+    id: 0,
+    name: "",
+    add: [],
+    update: [],
+    delete: [],
+  });
+  const [loadingDataRoleAssessment, setLoadingDataRoleAssessment] =
+    useState(false);
+  const [loadingupdate, setloadingupdate] = useState(false);
+  const [disabledupdate, setdisabledupdate] = useState(true);
+  const [disabledtrigger, setdisabledtrigger] = useState(-1);
+  const [deletestate, setdeletestate] = useState(false);
+  const [criteriaLen, setCriteriaLen] = useState(0);
+
+  //HANDLER
+  const onChangeInput = (e) => {
+    setdatadisplay({
+      ...datadisplay,
+      [e.target.name]: e.target.value,
+    });
+    setdataupdate({
+      ...dataupdate,
+      [e.target.name]: e.target.value,
+    });
+    setdisabledtrigger((prev) => prev + 1);
+  };
+
+  const handleUpdateRoleAssessment = () => {
+    // console.log(datadisplay, dataupdate, workslen)
+    // console.log(dataupdate)
+    setloadingupdate(true);
+    // console.log(JSON.stringify(dataupdate))
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAssessment`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataupdate),
+    })
+      .then((res) => {
+        // console.log(res)
+        return res.json();
+      })
+      .then((res2) => {
+        if (res2.success) {
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setloadingupdate(false);
+            onvisible(false);
+            rt.push(`/admin/role-assessment`);
+          }, 500);
+        }
+      })
+      .catch((err) => {
+        notification["error"]({
+          message: `Gagal mengubah form. ${err.message}`,
+          duration: 3,
+        });
+        setloadingupdate(false);
+        onvisible(false);
+      });
+  };
+
+  //USEEFFECT
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessment) {
+      setLoadingDataRoleAssessment(false);
+      return;
+    }
+
+    if (trigger !== -1) {
+      setLoadingDataRoleAssessment(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessment?id=${id.current}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          //   const criteriaMap = res2.data.details.map((doc, idx) => {
+          //     var temp = {
+          //       ...doc,
+          //       ...doc.details,
+          //     };
+          //     delete temp.details;
+          //     return temp;
+          //   });
+          setCriteriaLen(res2.data.details.length);
+          setdatadisplay({
+            id: res2.data.id,
+            name: res2.data.name,
+            resumes_count: res2.data.resumes_count,
+            details: res2.data.details,
+          });
+          setdataupdate((prev) => ({
+            ...prev,
+            id: res2.data.id,
+            name: res2.data.name,
+          }));
+          res2.data.name !== ""
+            ? setdisabledupdate(false)
+            : setdisabledupdate(true);
+
+          setLoadingDataRoleAssessment(false);
+        });
+    }
+  }, [trigger, isAllowedToGetRoleAssessment]);
+
+  useEffect(() => {
+    if (disabledtrigger !== -1) {
+      if (datadisplay.name !== "") {
+        setdisabledupdate(false);
+      } else {
+        setdisabledupdate(true);
+      }
+    }
+  }, [disabledtrigger]);
+
+  // console.log(datadisplay)
+  // console.log(dataupdate)
+  return (
+    <DrawerCore
+      title={title}
+      visible={visible}
+      onClose={() => {
+        setdataupdate({
+          id: "",
+          name: "",
+          add: [],
+          update: [],
+          delete: [],
+        });
+        onvisible(false);
+      }}
+      buttonOkText={buttonOkText}
+      onClick={handleUpdateRoleAssessment}
+      disabled={disabledupdate || !canUpdateRoleAssessment}
+    >
+      {loadingDataRoleAssessment ? (
+        <>
+          <Spin />
+        </>
+      ) : (
+        <Spin spinning={loadingupdate}>
+          <div className="flex flex-col">
+            <p className="mb-8 mx-3 text-red-500 text-xs italic">
+              *Informasi ini harus diisi
+            </p>
+
+            <InputRequired
+              name="name"
+              defaultValue={datadisplay.name}
+              onChangeInput={onChangeInput}
+              label="Nama Form"
+            ></InputRequired>
+
+            <div className="flex flex-col mb-5 px-3">
+              <div className="flex mb-1">
+                <Label>Kriteria</Label>
+                <span className="kriteria"></span>
+                <style jsx>
+                  {`
+                    .kriteria::before{
+                        content: '*';
+                        color: red;
+                    }
+                `}
+                </style>
+              </div>
+              {datadisplay.details.length === 1 ? (
+                <>
+                  {/* <Empty
+                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                    description="Kriteria masih kosong"
+                  /> */}
+                  {datadisplay.details.map((doc, idx) => {
+                    return (
+                      <div
+                        key={idx}
+                        className="flex flex-row mb-4 justify-between"
+                      >
+                        <Input
+                          value={doc.criteria}
+                          placeholder="Nama Kriteria"
+                          onChange={(e) => {
+                            const tempdisplay = [...datadisplay.details];
+                            tempdisplay[idx].criteria = e.target.value;
+                            setdatadisplay((prev) => ({
+                              ...prev,
+                              criteria: tempdisplay,
+                            }));
+                            if (doc.id) {
+                              var idxdataupdate = dataupdate.update
+                                .map((docmap) => docmap.id)
+                                .indexOf(doc.id);
+                              if (idxdataupdate === -1) {
+                                setdataupdate((prev) => ({
+                                  ...prev,
+                                  update: [
+                                    ...prev.update,
+                                    { ...doc, criteria: e.target.value },
+                                  ],
+                                }));
+                              } else {
+                                var temp = [...dataupdate.update];
+                                temp[idxdataupdate].criteria = e.target.value;
+                                setdataupdate((prev) => ({
+                                  ...prev,
+                                  update: temp,
+                                }));
+                              }
+                            } else {
+                              var temp = [...dataupdate.add];
+                              temp[idx - criteriaLen].criteria = e.target.value;
+                              setdataupdate((prev) => ({
+                                ...prev,
+                                add: temp,
+                              }));
+                            }
+                          }}
+                        ></Input>
+                        <div className="mx-1">
+                          <TrashIconSvg size={18} color={`#CCCCCC`} />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </>
+              ) : (
+                <>
+                  {deletestate
+                    ? null
+                    : datadisplay.details.map((doc, idx) => {
+                        return (
+                          <div
+                            key={idx}
+                            className="flex flex-row mb-4 justify-between"
+                          >
+                            <Input
+                              value={doc.criteria}
+                              placeholder="Nama Kriteria"
+                              onChange={(e) => {
+                                const tempdisplay = [...datadisplay.details];
+                                tempdisplay[idx].criteria = e.target.value;
+                                setdatadisplay((prev) => ({
+                                  ...prev,
+                                  details: tempdisplay,
+                                }));
+                                if (doc.id) {
+                                  var idxdataupdate = dataupdate.update
+                                    .map((docmap) => docmap.id)
+                                    .indexOf(doc.id);
+                                  // console.log(dataupdate.update
+                                  //     .map((docmap) => docmap.id))
+
+                                  if (idxdataupdate === -1) {
+                                    setdataupdate((prev) => ({
+                                      ...prev,
+                                      update: [
+                                        ...prev.update,
+                                        {
+                                          id: doc.id,
+                                          criteria: e.target.value,
+                                        },
+                                      ],
+                                    }));
+                                    // console.log(e.target.value)
+                                  } else {
+                                    var temp = [...dataupdate.update];
+                                    temp[idxdataupdate].criteria =
+                                      e.target.value;
+                                    setdataupdate((prev) => ({
+                                      ...prev,
+                                      update: temp,
+                                    }));
+                                  }
+                                } else {
+                                  var temp = [...dataupdate.add];
+                                  temp[idx - criteriaLen].criteria =
+                                    e.target.value;
+                                  setdataupdate((prev) => ({
+                                    ...prev,
+                                    add: temp,
+                                  }));
+                                }
+                              }}
+                            ></Input>
+                            <div
+                              className="mx-1 cursor-pointer"
+                              onClick={async () => {
+                                setdeletestate(true);
+                                const temp = [...datadisplay.details];
+                                const temp2 = [...datadisplay.details];
+                                var tempp = temp.filter((dfil) => {
+                                  return dfil.id !== doc.id;
+                                });
+                                setdatadisplay((prev) => ({
+                                  ...prev,
+                                  details: [...tempp],
+                                }));
+                                temp2[idx].id
+                                  ? (setdataupdate((prev) => ({
+                                      ...prev,
+                                      delete: [...prev.delete, temp2[idx].id],
+                                    })),
+                                    setCriteriaLen((prev) => prev - 1))
+                                  : setdataupdate((prev) => ({
+                                      ...prev,
+                                      add: temp2.filter(
+                                        (dfil) =>
+                                          typeof dfil.id === "undefined" &&
+                                          dfil.criteria !== temp2[idx].criteria
+                                      ),
+                                    }));
+                                setdeletestate(false);
+                              }}
+                            >
+                              <TrashIconSvg size={18} color={`#BF4A40`} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                </>
+              )}
+            </div>
+            <div
+              className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 mx-3 flex justify-center rounded-md cursor-pointer"
+              onClick={() => {
+                setdatadisplay((prev) => ({
+                  ...prev,
+                  details: [...prev.details, { criteria: "" }],
+                }));
+                setdataupdate((prev) => ({
+                  ...prev,
+                  add: [...prev.add, { criteria: "" }],
+                }));
+              }}
+            >
+              <div className="text-primary100 hover:text-primary75">
+                + Tambah Pekerjaan Baru
+              </div>
+            </div>
+          </div>
+        </Spin>
+      )}
+    </DrawerCore>
+  );
+};
+
+export default DrawerAssessmentUpdate;
