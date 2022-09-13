@@ -1,20 +1,4 @@
-import {
-  DeleteOutlined,
-  EditOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  Drawer,
-  Form,
-  Input,
-  Modal,
-  Spin,
-  Table,
-  message,
-  notification,
-} from "antd";
-import Link from "next/link";
+import { Input, Modal, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRef } from "react";
@@ -38,9 +22,14 @@ import ButtonSys from "../../../components/button";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerAssessmentCreate from "../../../components/drawer/resume/drawerAssessmentCreate";
 import DrawerAssessmentUpdate from "../../../components/drawer/resume/drawerAssessmentUpdate";
-import { EditIconSvg, TrashIconSvg } from "../../../components/icon";
+import {
+  ClipboardIconSvg,
+  EditIconSvg,
+  TrashIconSvg,
+  UsersIconSvg,
+} from "../../../components/icon";
+import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import Layout from "../../../components/layout-dashboardNew";
 import { TableCustomRoleAssessment } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
@@ -81,6 +70,9 @@ const RoleAssessmentIndex = ({
    */
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRoleAssessmentList = hasPermission(ROLE_ASSESSMENTS_GET);
+  const isAllowedToGetRoleAssessmentCount = hasPermission(
+    ROLE_ASSESSMENT_COUNT_GET
+  );
   const isAllowedToDeleteRoleAssessment = hasPermission(ROLE_ASSESSMENT_DELETE);
   const canUpdateRoleAssessment = hasPermission([
     ROLE_ASSESSMENT_UPDATE,
@@ -101,6 +93,8 @@ const RoleAssessmentIndex = ({
     "#BF4A40",
     "#6AAA70",
   ]);
+  const top4AssessmentsCount =
+    dataCountAssessments.resume_assessments_count.slice(0, 4);
 
   // 2.3. CREATE FORM
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
@@ -112,17 +106,9 @@ const RoleAssessmentIndex = ({
   const [drawread, setdrawread] = useState(false);
 
   // 2.5. UPDATE FORM
-  const [drawedit, setdrawedit] = useState(false);
-  const [loadingedit, setloadingedit] = useState(false);
+  const [drawUpdate, setDrawUpdate] = useState(false);
   const [triggerAssessmentUpdate, setTriggerAssessmentUpdate] = useState(-1);
   const tempIdAssessmentUpdate = useRef(-1);
-  const [dataedit, setdataedit] = useState({
-    id: 0,
-    name: "",
-    add: [],
-    update: [],
-    delete: [],
-  });
   const [assessmentData, setAssessmentData] = useState({
     id: 0,
     name: "",
@@ -155,7 +141,7 @@ const RoleAssessmentIndex = ({
     to: null,
     total: null,
   });
-  const [loadingRoleAssesment, setLoadingRoleAssessment] = useState(false);
+  const [loadingRoleAssesment, setLoadingRoleAssessment] = useState(true);
   const [pageRoleAssessment, setPageRoleAssessment] = useState(1);
   const [rowsRoleAssessment, setRowsRoleAssessment] = useState(10);
   const [sortingRoleAssessment, setSortingRoleAssessment] = useState({
@@ -171,13 +157,12 @@ const RoleAssessmentIndex = ({
   const columnsRoleAssessment = [
     {
       title: "No.",
-      dataIndex: "number",
-      key: "number",
+      dataIndex: "num",
       render: (text, record, index) => {
         return {
           children: (
             <>
-              <h1 className="font-semibold hover:text-gray-500">
+              <h1 className="text-center">
                 {dataRawRoleAssessment?.from + index}
               </h1>
             </>
@@ -257,10 +242,9 @@ const RoleAssessmentIndex = ({
                 type={canUpdateRoleAssessment ? "default" : "primary"}
                 disabled={!canUpdateRoleAssessment}
                 onClick={() => {
-                  // onOpenUpdateDrawer(record)
                   tempIdAssessmentUpdate.current = record.id;
                   setTriggerAssessmentUpdate((prev) => prev + 1);
-                  setdrawedit(true);
+                  setDrawUpdate(true);
                 }}
               >
                 <EditIconSvg size={15} color={`#35763B`} />
@@ -272,7 +256,6 @@ const RoleAssessmentIndex = ({
                 onClick={() => {
                   onOpenDeleteModal(record);
                 }}
-                // loading={loadingdelete}
               >
                 <TrashIconSvg size={15} color={`#BF4A40`} />
               </ButtonSys>
@@ -287,10 +270,14 @@ const RoleAssessmentIndex = ({
 
   // 3.1. Stop loading if dataCountAssessments are available
   useEffect(() => {
+    if (!isAllowedToGetRoleAssessmentCount) {
+      return;
+    }
+
     if (dataCountAssessments !== undefined) {
       setLoadingAssessmentsCountData(false);
     }
-  }, [dataCountAssessments]);
+  }, [isAllowedToGetRoleAssessmentCount, dataCountAssessments]);
 
   // 3.2. GET TABEL SEMUA ROLE ASSESSMENT
   useEffect(() => {
@@ -298,13 +285,16 @@ const RoleAssessmentIndex = ({
       return;
     }
 
-    const mappedData = dataListRoleAssessments.data.data.map((doc, idx) => {
-      return {
-        ...doc,
-      };
-    });
-
-    setDataTable(mappedData);
+    if (dataListRoleAssessments !== undefined) {
+      setDataRawRoleAssessment(dataListRoleAssessments.data);
+      const mappedData = dataListRoleAssessments.data.data.map((doc, idx) => {
+        return {
+          ...doc,
+        };
+      });
+      setDataTable(mappedData);
+      setLoadingRoleAssessment(false);
+    }
   }, [isAllowedToGetRoleAssessmentList, dataListRoleAssessments]);
 
   // 4. Event
@@ -323,7 +313,6 @@ const RoleAssessmentIndex = ({
       .then((res2) => {
         setDataRawRoleAssessment(res2.data);
         setDataTable(res2.data.data);
-        setdatafilterttickets(res2.data.data);
         setLoadingRoleAssessment(false);
       });
   };
@@ -384,15 +373,17 @@ const RoleAssessmentIndex = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        notification.success({
-          message: res2.message,
-          duration: 3,
-        });
-        setTimeout(() => {
-          setloadingdelete(false);
-          setmodaldelete(false);
-          rt.push(`/admin/role-assessment`);
-        }, 500);
+        if (res2.success) {
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setloadingdelete(false);
+            setmodaldelete(false);
+            rt.push(`/admin/role-assessment`);
+          }, 500);
+        }
       })
       .catch((err) => {
         notification.error({
@@ -404,11 +395,6 @@ const RoleAssessmentIndex = ({
       });
   };
 
-  // DEBUG
-  // console.log(assessmentData);
-  // console.log(dataedit);
-  // console.log(dataedit)
-
   return (
     <Layout
       tok={initProps}
@@ -418,12 +404,12 @@ const RoleAssessmentIndex = ({
       pathArr={pathArr}
     >
       <div className="flex flex-col lg:flex-row">
-        <div className="flex flex-col lg:px-5">
+        <div className="flex flex-col px-5 lg:w-1/3">
           <AddNewFormButton
             disabled={!hasPermission(ROLE_ASSESSMENT_ADD)}
             onButtonClicked={onAddNewFormButtonClicked}
           />
-          {/* PENGGUNAAN TERBANYAK */}
+          {/* CHART PENGGUNAAN TERBANYAK */}
           {loadingAssessmentsCountData ? (
             <>
               <Spin />
@@ -436,24 +422,22 @@ const RoleAssessmentIndex = ({
               <div className=" w-full flex justify-center">
                 <Bar
                   data={{
-                    labels: dataCountAssessments.resume_assessments_count.map(
-                      (doc) => doc.name.split(" ")
+                    labels: top4AssessmentsCount.map((doc) =>
+                      doc.name.split(" ")
                     ),
                     datasets: [
                       {
-                        data: dataCountAssessments.resume_assessments_count.map(
+                        data: top4AssessmentsCount.map(
                           (doc) => doc.resumes_count
                         ),
-                        backgroundColor:
-                          dataCountAssessments.resume_assessments_count.map(
-                            (doc, idx) =>
-                              dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                          ),
-                        borderColor:
-                          dataCountAssessments.resume_assessments_count.map(
-                            (doc, idx) =>
-                              dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                          ),
+                        backgroundColor: top4AssessmentsCount.map(
+                          (doc, idx) =>
+                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                        ),
+                        borderColor: top4AssessmentsCount.map(
+                          (doc, idx) =>
+                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                        ),
                         barPercentage: 1.0,
                         barThickness: 32,
                         maxBarThickness: 32,
@@ -475,6 +459,12 @@ const RoleAssessmentIndex = ({
                         grid: {
                           display: false,
                           drawBorder: false,
+                        },
+                        ticks: {
+                          font: {
+                            family: "Montserrat, sans-serif",
+                            size: 10,
+                          },
                         },
                       },
                       y: {
@@ -501,32 +491,32 @@ const RoleAssessmentIndex = ({
               </div>
 
               <div className="flex flex-col w-full">
-                {dataCountAssessments.resume_assessments_count.map(
-                  (doc, idx) => (
-                    <div
-                      key={idx}
-                      className="flex justify-between items-center mb-1"
-                    >
-                      <div className="flex">
-                        <div
-                          className=" w-1 mr-2"
-                          style={{
-                            backgroundColor: `${
-                              dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                            }`,
-                          }}
-                        ></div>
-                        <Text>{doc.name}</Text>
-                      </div>
-                      <div className="flex">
-                        <H2>{doc.resumes_count}</H2>
-                      </div>
+                {top4AssessmentsCount.map((doc, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center mb-1"
+                  >
+                    <div className="flex">
+                      <div
+                        className=" w-1 mr-2"
+                        style={{
+                          backgroundColor: `${
+                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                          }`,
+                        }}
+                      ></div>
+                      <Text>{doc.name}</Text>
                     </div>
-                  )
-                )}
+                    <div className="flex">
+                      <H2>{doc.resumes_count}</H2>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           )}
+
+          {/* CARD TOTAL FORM */}
           <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
             <H1>Total Form</H1>
             <p className="font-semibold text-4xl">
@@ -535,7 +525,8 @@ const RoleAssessmentIndex = ({
           </div>
         </div>
 
-        <div className="xl:w-full shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+        {/* TABEL SEMUA ROLE ASSESSMENT */}
+        <div className="lg:w-2/3 shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
           <H1 className="font-bold">Semua Role Assesment</H1>
           <div className="mt-5 flex flex-col">
             <div className="flex flex-row w-full mb-5 space-x-4">
@@ -608,7 +599,9 @@ const RoleAssessmentIndex = ({
           width={380}
           buttonOkText={"Ubah Form"}
           onClick={() => {
-            setdrawedit(true);
+            tempIdAssessmentUpdate.current = assessmentData.id;
+            setTriggerAssessmentUpdate((prev) => prev + 1);
+            setDrawUpdate(true);
             setdrawread(false);
           }}
           buttonCancelText={"Hapus Form"}
@@ -621,11 +614,17 @@ const RoleAssessmentIndex = ({
             <div className="flex flex-row justify-between mb-5">
               <div>
                 <p className="text-gray-400 mb-2">Jumlah Kriteria</p>
-                <p>{assessmentData.details.length}</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <ClipboardIconSvg size={16} color={`#333333`} />
+                  <p>{assessmentData.details.length}</p>
+                </div>
               </div>
               <div>
                 <p className="text-gray-400 mb-2">Jumlah Kandidat</p>
-                <p>{assessmentData.resumes_count}</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <UsersIconSvg size={16} color={`#333333`} />
+                  <p>{assessmentData.resumes_count}</p>
+                </div>
               </div>
             </div>
             <div>
@@ -643,163 +642,13 @@ const RoleAssessmentIndex = ({
       <AccessControl hasPermission={ROLE_ASSESSMENT_UPDATE}>
         <DrawerAssessmentUpdate
           title={"Ubah Form"}
-          visible={drawedit}
+          visible={drawUpdate}
           buttonOkText={"Simpan Form"}
           initProps={initProps}
-          onvisible={setdrawedit}
+          onvisible={setDrawUpdate}
           id={tempIdAssessmentUpdate}
           trigger={triggerAssessmentUpdate}
         />
-        {/* <DrawerCore
-          title={`Ubah Form`}
-          visible={drawedit}
-          onClose={() => {
-            setdrawedit(false);
-          }}
-          width={380}
-          // destroyOnClose={true}
-          buttonOkText={"Tambah Form"}
-          onClick={handleUpdate}
-          // disabled={disabledcreate}
-        >
-          <div className="flex flex-col">
-            <Form
-              layout="vertical"
-              // initialValues={dataedit}
-              // onFinish={handleUpdate}
-            >
-              <Form.Item
-                label="Nama Form"
-                name="nama_form"
-                rules={[
-                  {
-                    required: true,
-                    message: "Nama form wajib diisi",
-                  },
-                ]}
-              >
-                <Input
-                  defaultValue={assessmentData.name}
-                  onChange={(e) => {
-                    setdataedit({ ...dataedit, name: e.target.value });
-                  }}
-                />
-              </Form.Item>
-              <Form.Item
-                label="Kriteria"
-                name="kriteria"
-                rules={[
-                  {
-                    required: true,
-                    message: "Kriteria wajib diisi",
-                  },
-                ]}
-              >
-                {assessmentData.details.map((detail, idx) => {
-                  return (
-                    <div key={detail.id} className="flex flex-row mb-3">
-                      <Input
-                        value={detail.criteria}
-                        placeholder="Nama kriteria"
-                        onChange={(e) => {
-                          var temp = [...assessmentData.details];
-                          temp[idx].criteria = e.target.value;
-                          
-                          
-                          // console.log(temp[idx].criteria)
-                          if(detail.id) {
-                            // if(detail.id === prev.detail.id){
-                              
-                            // }
-                            
-                            setdataedit((prev) => ({
-                              ...prev,
-                              update: [
-                                ...prev.update,
-                                {
-                                  id: detail.id,
-                                  criteria: temp[idx].criteria
-                                }
-                              ],
-                            }));
-                          } else {
-                            setdataedit((prev) => ({
-                              ...prev,
-                              update: [
-                                ...prev.add,
-                                {
-                                  criteria: temp[idx].criteria
-                                }
-                              ],
-                            }));
-
-                          }
-                          
-                          
-                        }}
-                      ></Input>
-                      <div
-                        className="ml-2 cursor-pointer"
-                        onClick={() => {
-                          if (assessmentData.details.length > 1) {
-                            const temp = [...assessmentData.details];
-                            const deleted = temp.splice(idx, 1);
-                            if(deleted[0].id){
-                              // console.log(deleted);
-                              setdataedit((prev) => ({
-                                ...prev,
-                                delete: [...prev.delete, deleted[0].id],
-                              }));
-                            }
-                            // console.log(temp);
-                            
-                            setAssessmentData((prev) => ({
-                              ...prev,
-                              details: temp,
-                            }));
-                            
-                          }
-                        }}
-                      >
-                        <TrashIconSvg
-                          size={15}
-                          color={
-                            assessmentData.details.length == 1
-                              ? `#CCCCCC`
-                              : `#BF4A40`
-                          }
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </Form.Item>
-              <div
-                className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
-                onClick={() => {
-                  setdataedit((prev) => ({
-                    ...prev,
-                    add: [
-                      ...prev.add,
-                      {
-                        criteria: "",
-                      },
-                    ],
-                  }));
-                  
-                  setAssessmentData((prev) => ({
-                    ...prev,
-                    details: [...prev.details, { criteria: "" }],
-                  }));
-                }}
-              >
-                <div className="text-primary100 hover:text-primary75">
-                  + Tambah Kriteria
-                </div>
-              </div>
-            </Form>
-          </div>
-        </DrawerCore> */}
       </AccessControl>
 
       <AccessControl hasPermission={ROLE_ASSESSMENT_DELETE}>
@@ -869,7 +718,7 @@ export async function getServerSideProps({ req, res }) {
   const dataCountAssessments = resjsonGCA.data;
 
   const resourcesGA = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=11`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`,
     {
       method: `GET`,
       headers: {
@@ -886,7 +735,7 @@ export async function getServerSideProps({ req, res }) {
       dataProfile,
       dataCountAssessments,
       dataListRoleAssessments,
-      sidemenu: "4",
+      sidemenu: "11",
     },
   };
 }
