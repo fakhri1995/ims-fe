@@ -56,6 +56,11 @@ export const SIDEBAR_CMS = "SIDEBAR_CMS";
 export const SIDEBAR_CMS_CAREER = "SIDEBAR_CMS_CAREER";
 export const SIDEBAR_CMS_MESSAGE = "SIDEBAR_CMS_MESSAGE";
 
+/** Resume */
+export const SIDEBAR_RESUME = "SIDEBAR_RESUME";
+export const SIDEBAR_RESUME_ROLE_ASSESSMENT = "SIDEBAR_RESUME_ROLE_ASSESSMENT";
+export const SIDEBAR_RESUME_DAFTAR_KANDIDAT = "SIDEBAR_RESUME_DAFTAR_KANDIDAT";
+
 /**
  * Daftar feature untuk halaman Attendance.
  *
@@ -124,6 +129,17 @@ export const MODULE_UPDATE = "MODULE_UPDATE"; // route: `/admin/modules/update/m
 export const MODULE_DELETE = "MODULE_DELETE"; // route: `/admin/modules`
 export const MODULE_FEATURES_ADD = "MODULE_FEATURES_ADD"; // route: `/admin/modules`
 export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admin/modules`
+
+/**
+ * Daftar feature untuk Resume management.
+ *
+ */
+export const ROLE_ASSESSMENTS_GET = "ROLE_ASSESSMENTS_GET";
+export const ROLE_ASSESSMENT_COUNT_GET = "ROLE_ASSESSMENT_COUNT_GET";
+export const ROLE_ASSESSMENT_ADD = "ROLE_ASSESSMENT_ADD";
+export const ROLE_ASSESSMENT_UPDATE = "ROLE_ASSESSMENT_UPDATE";
+export const ROLE_ASSESSMENT_DELETE = "ROLE_ASSESSMENT_DELETE";
+export const ROLE_ASSESSMENT_GET = "ROLE_ASSESSMENT_GET";
 
 /**
  * Daftar feature untuk User Management.

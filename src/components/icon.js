@@ -1827,6 +1827,71 @@ const Iconquestion = (props) => {
   return <Icon component={svgquestion} style={{ marginRight: `0.5rem` }} />;
 };
 
+const ResumeIconSvg = () => {
+  const resumeIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-file-text"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke="#597e8d"
+      fill="none"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M14 3v4a1 1 0 0 0 1 1h4" />
+      <path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" />
+      <line x1="9" y1="9" x2="10" y2="9" />
+      <line x1="9" y1="13" x2="15" y2="13" />
+      <line x1="9" y1="17" x2="15" y2="17" />
+    </svg>
+  );
+  return <Icon component={resumeIconSvg}></Icon>;
+};
+
+const ClipboardIconSvg = ({ size, color }) => {
+  const clipboardIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-clipboard"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color}
+      fill="none"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="2" />
+    </svg>
+  );
+  return <Icon component={clipboardIconSvg}></Icon>;
+};
+
+const UsersIconSvg = ({ size, color }) => {
+  const usersIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-users"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color}
+      fill="none"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <circle cx="9" cy="7" r="4" />
+      <path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+      <path d="M21 21v-2a4 4 0 0 0 -3 -3.85" />
+    </svg>
+  );
+  return <Icon component={usersIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -1901,4 +1966,7 @@ export {
   PlusIconSvg,
   XIconSvg,
   ArmChairlIconSvg,
+  ResumeIconSvg,
+  ClipboardIconSvg,
+  UsersIconSvg,
 };

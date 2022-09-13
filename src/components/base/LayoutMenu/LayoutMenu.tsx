@@ -9,6 +9,7 @@ import {
   DashboardIconSvg,
   FiturIconSvg,
   ItemIconSvg,
+  ResumeIconSvg,
   TaskIconSvg,
   TicketIconSvg,
   UserIconSvg,
@@ -39,6 +40,9 @@ import {
   SIDEBAR_FEATURE_MODULE,
   SIDEBAR_FEATURE_ROLE,
   SIDEBAR_ITEMS,
+  SIDEBAR_RESUME,
+  SIDEBAR_RESUME_DAFTAR_KANDIDAT,
+  SIDEBAR_RESUME_ROLE_ASSESSMENT,
   SIDEBAR_TASK,
   SIDEBAR_TASK_ADMIN,
   SIDEBAR_TASK_MY,
@@ -290,6 +294,27 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_CMS_MESSAGE) && (
             <Menu.Item key="92">
               <Link href="/admin/messages">Message</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Resume: Role Assessment, Daftar Kandidat */}
+      {hasPermission(SIDEBAR_RESUME) && (
+        <SubMenu
+          title="Resume"
+          key="10"
+          icon={<ResumeIconSvg className="text-[#597e8d]" />}
+        >
+          {hasPermission(SIDEBAR_RESUME_ROLE_ASSESSMENT) && (
+            <Menu.Item key="101">
+              <Link href="/admin/role-assessment">Role Assessment</Link>
+            </Menu.Item>
+          )}
+
+          {hasPermission(SIDEBAR_RESUME_DAFTAR_KANDIDAT) && (
+            <Menu.Item key="102">
+              <Link href="/admin/daftar-kandidat">Daftar Kandidat</Link>
             </Menu.Item>
           )}
         </SubMenu>

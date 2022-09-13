@@ -1058,6 +1058,108 @@ const TableCustomTickets = ({
   );
 };
 
+const TableCustomRoleAssessment = ({
+  dataSource,
+  setDataSource,
+  columns,
+  loading,
+  pageSize,
+  total,
+  setpraloading,
+  initProps,
+  setpage,
+  pagefromsearch,
+  setdataraw,
+  setsorting,
+  sorting,
+  searching,
+}) => {
+  const rt = useRouter();
+  return (
+    <Table
+      className="tableRoleAssessment"
+      dataSource={dataSource}
+      columns={columns}
+      loading={loading}
+      scroll={{ x: 200 }}
+      pagination={{
+        current: pagefromsearch,
+        pageSize: pageSize,
+        total: total,
+        onChange: (page, pageSize) => {
+          setpraloading(true);
+          setpage(page);
+          fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            {
+              method: `GET`,
+              headers: {
+                Authorization: JSON.parse(initProps),
+              },
+            }
+          )
+            .then((res) => res.json())
+            .then((res2) => {
+              setdataraw(res2.data);
+              setDataSource(res2.data.data);
+              setpraloading(false);
+            });
+        },
+      }}
+      onChange={(pagination, filters, sorter, extra) => {
+        if (extra.action === "sort") {
+          if (sorter.column) {
+            setpraloading(true);
+            setsorting({
+              sort_by: sorter.column.dataIndex,
+              sort_type: sorter.order === "ascend" ? "asc" : "desc",
+            });
+            fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=${
+                sorter.column.dataIndex
+              }&sort_type=${
+                sorter.order === "ascend" ? "asc" : "desc"
+              }&keyword=${searching}&page=${pagination.current}&rows=${
+                pagination.pageSize
+              }`,
+              {
+                method: `GET`,
+                headers: {
+                  Authorization: JSON.parse(initProps),
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then((res2) => {
+                setdataraw(res2.data);
+                setDataSource(res2.data.data);
+                setpraloading(false);
+              });
+          } else {
+            setpraloading(true);
+            setsorting({ sort_by: "", sort_type: "" });
+            fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              {
+                method: `GET`,
+                headers: {
+                  Authorization: JSON.parse(initProps),
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then((res2) => {
+                setdataraw(res2.data);
+                setDataSource(res2.data.data);
+                setpraloading(false);
+              });
+          }
+        }
+      }}
+    />
+  );
+};
+
 export {
   TableCustom,
   TableCustomRelasi,
@@ -1069,4 +1171,5 @@ export {
   TableCustomTicketTypes,
   TableCustomTicketHistories,
   TableCustomTickets,
+  TableCustomRoleAssessment,
 };
