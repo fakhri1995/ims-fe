@@ -82,6 +82,7 @@ const RoleAssessmentIndex = ({
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  pathArr[pathArr.length - 1] = "Role Assessment";
 
   // 2. State
   // 2.1. PENGGUNAAN TERBANYAK CARD
@@ -406,6 +407,7 @@ const RoleAssessmentIndex = ({
       <div className="flex flex-col lg:flex-row">
         <div className="flex flex-col px-5 lg:w-1/3">
           <AddNewFormButton
+            title="Tambah Form"
             disabled={!hasPermission(ROLE_ASSESSMENT_ADD)}
             onButtonClicked={onAddNewFormButtonClicked}
           />
@@ -526,55 +528,53 @@ const RoleAssessmentIndex = ({
         </div>
 
         {/* TABEL SEMUA ROLE ASSESSMENT */}
-        <div className="lg:w-2/3 shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
           <H1 className="font-bold">Semua Role Assesment</H1>
-          <div className="mt-5 flex flex-col">
-            <div className="flex flex-row w-full mb-5 space-x-4">
-              <Input
-                value={
-                  searchingFilterRoleAssessment === ""
-                    ? null
-                    : searchingFilterRoleAssessment
+          <div className="flex flex-row w-full mb-5 space-x-4">
+            <Input
+              value={
+                searchingFilterRoleAssessment === ""
+                  ? null
+                  : searchingFilterRoleAssessment
+              }
+              style={{ width: `100%` }}
+              placeholder="Kata Kunci.."
+              allowClear
+              onChange={(e) => {
+                if (e.target.value === "") {
+                  setSearchingFilterRoleAssessment("");
+                } else {
+                  setSearchingFilterRoleAssessment(e.target.value);
                 }
-                style={{ width: `100%` }}
-                placeholder="Kata Kunci.."
-                allowClear
-                onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterRoleAssessment("");
-                  } else {
-                    setSearchingFilterRoleAssessment(e.target.value);
-                  }
-                }}
-                onKeyPress={onKeyPressHandler}
-                disabled={!isAllowedToGetRoleAssessmentList}
-              />
-
-              <ButtonSys
-                type={"primary"}
-                onClick={onFilterRoleAssessment}
-                disabled={!isAllowedToGetRoleAssessmentList}
-              >
-                Cari
-              </ButtonSys>
-            </div>
-            <TableCustomRoleAssessment
-              dataSource={dataTable}
-              setDataSource={setDataTable}
-              columns={columnsRoleAssessment}
-              loading={loadingRoleAssesment}
-              setpraloading={setLoadingRoleAssessment}
-              pageSize={rowsRoleAssessment}
-              total={dataRawRoleAssessment?.total}
-              initProps={initProps}
-              setpage={setPageRoleAssessment}
-              pagefromsearch={pageRoleAssessment}
-              setdataraw={setDataRawRoleAssessment}
-              setsorting={setSortingRoleAssessment}
-              sorting={sortingRoleAssessment}
-              searching={searchingFilterRoleAssessment}
+              }}
+              onKeyPress={onKeyPressHandler}
+              disabled={!isAllowedToGetRoleAssessmentList}
             />
+
+            <ButtonSys
+              type={"primary"}
+              onClick={onFilterRoleAssessment}
+              disabled={!isAllowedToGetRoleAssessmentList}
+            >
+              Cari
+            </ButtonSys>
           </div>
+          <TableCustomRoleAssessment
+            dataSource={dataTable}
+            setDataSource={setDataTable}
+            columns={columnsRoleAssessment}
+            loading={loadingRoleAssesment}
+            setpraloading={setLoadingRoleAssessment}
+            pageSize={rowsRoleAssessment}
+            total={dataRawRoleAssessment?.total}
+            initProps={initProps}
+            setpage={setPageRoleAssessment}
+            pagefromsearch={pageRoleAssessment}
+            setdataraw={setDataRawRoleAssessment}
+            setsorting={setSortingRoleAssessment}
+            sorting={sortingRoleAssessment}
+            searching={searchingFilterRoleAssessment}
+          />
         </div>
       </div>
 

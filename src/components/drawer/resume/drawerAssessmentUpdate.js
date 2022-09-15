@@ -65,6 +65,7 @@ const DrawerAssessmentUpdate = ({
     });
     setdisabledtrigger((prev) => prev + 1);
   };
+
   const handleUpdateRoleAssessment = () => {
     setloadingupdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAssessment`, {
@@ -150,11 +151,12 @@ const DrawerAssessmentUpdate = ({
             id: res2.data.id,
             name: res2.data.name,
           }));
-          res2.data.name !== ""
+          res2.data.name !== "" && res2.data.details[0].criteria !== null
             ? setdisabledupdate(false)
             : setdisabledupdate(true);
 
           setLoadingDataRoleAssessment(false);
+          // console.log(datadisplay)
         });
     }
   }, [trigger, isAllowedToGetRoleAssessment]);
@@ -220,10 +222,6 @@ const DrawerAssessmentUpdate = ({
               </div>
               {datadisplay.details.length === 1 ? (
                 <>
-                  {/* <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="Kriteria masih kosong"
-                  /> */}
                   {datadisplay.details.map((doc, idx) => {
                     return (
                       <div
@@ -234,8 +232,9 @@ const DrawerAssessmentUpdate = ({
                           value={doc.criteria}
                           placeholder="Nama Kriteria"
                           onChange={(e) => {
+                            let newCriteria = e.target.value;
                             const tempdisplay = [...datadisplay.details];
-                            tempdisplay[idx].criteria = e.target.value;
+                            tempdisplay[idx].criteria = newCriteria;
                             setdatadisplay((prev) => ({
                               ...prev,
                               criteria: tempdisplay,
@@ -249,12 +248,12 @@ const DrawerAssessmentUpdate = ({
                                   ...prev,
                                   update: [
                                     ...prev.update,
-                                    { ...doc, criteria: e.target.value },
+                                    { ...doc, criteria: newCriteria },
                                   ],
                                 }));
                               } else {
                                 var temp = [...dataupdate.update];
-                                temp[idxdataupdate].criteria = e.target.value;
+                                temp[idxdataupdate].criteria = newCriteria;
                                 setdataupdate((prev) => ({
                                   ...prev,
                                   update: temp,
@@ -262,7 +261,7 @@ const DrawerAssessmentUpdate = ({
                               }
                             } else {
                               var temp = [...dataupdate.add];
-                              temp[idx - criteriaLen].criteria = e.target.value;
+                              temp[idx - criteriaLen].criteria = newCriteria;
                               setdataupdate((prev) => ({
                                 ...prev,
                                 add: temp,

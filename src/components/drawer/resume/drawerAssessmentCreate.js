@@ -193,7 +193,7 @@ const DrawerAssessmentCreate = ({
                     }}
                   >
                     <TrashIconSvg
-                      size={15}
+                      size={18}
                       color={datacreate.add.length == 1 ? `#CCCCCC` : `#BF4A40`}
                     />
                   </div>
