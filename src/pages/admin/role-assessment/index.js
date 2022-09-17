@@ -10,12 +10,12 @@ import { AddNewFormButton } from "components/screen/resume";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  ROLE_ASSESSMENTS_GET,
-  ROLE_ASSESSMENT_ADD,
-  ROLE_ASSESSMENT_COUNT_GET,
-  ROLE_ASSESSMENT_DELETE,
-  ROLE_ASSESSMENT_GET,
-  ROLE_ASSESSMENT_UPDATE,
+  ASSESSMENTS_GET,
+  ASSESSMENT_ADD,
+  ASSESSMENT_COUNT_GET,
+  ASSESSMENT_DELETE,
+  ASSESSMENT_GET,
+  ASSESSMENT_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
@@ -69,14 +69,12 @@ const RoleAssessmentIndex = ({
    * Dependencies
    */
   const { hasPermission } = useAccessControl();
-  const isAllowedToGetRoleAssessmentList = hasPermission(ROLE_ASSESSMENTS_GET);
-  const isAllowedToGetRoleAssessmentCount = hasPermission(
-    ROLE_ASSESSMENT_COUNT_GET
-  );
-  const isAllowedToDeleteRoleAssessment = hasPermission(ROLE_ASSESSMENT_DELETE);
+  const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
+  const isAllowedToGetRoleAssessmentCount = hasPermission(ASSESSMENT_COUNT_GET);
+  const isAllowedToDeleteRoleAssessment = hasPermission(ASSESSMENT_DELETE);
   const canUpdateRoleAssessment = hasPermission([
-    ROLE_ASSESSMENT_UPDATE,
-    ROLE_ASSESSMENT_GET,
+    ASSESSMENT_UPDATE,
+    ASSESSMENT_GET,
   ]);
 
   // 1. Init
@@ -408,7 +406,7 @@ const RoleAssessmentIndex = ({
         <div className="flex flex-col px-5 lg:w-1/3">
           <AddNewFormButton
             title="Tambah Form"
-            disabled={!hasPermission(ROLE_ASSESSMENT_ADD)}
+            disabled={!hasPermission(ASSESSMENT_ADD)}
             onButtonClicked={onAddNewFormButtonClicked}
           />
           {/* CHART PENGGUNAAN TERBANYAK */}
@@ -579,7 +577,7 @@ const RoleAssessmentIndex = ({
       </div>
 
       {/* DRAWER */}
-      <AccessControl hasPermission={ROLE_ASSESSMENT_ADD}>
+      <AccessControl hasPermission={ASSESSMENT_ADD}>
         <DrawerAssessmentCreate
           title={"Tambah Form"}
           visible={isCreateDrawerShown}
@@ -589,7 +587,7 @@ const RoleAssessmentIndex = ({
         />
       </AccessControl>
 
-      <AccessControl hasPermission={ROLE_ASSESSMENT_GET}>
+      <AccessControl hasPermission={ASSESSMENT_GET}>
         <DrawerCore
           title={`${assessmentData.name}`}
           visible={drawread}
@@ -639,7 +637,7 @@ const RoleAssessmentIndex = ({
         </DrawerCore>
       </AccessControl>
 
-      <AccessControl hasPermission={ROLE_ASSESSMENT_UPDATE}>
+      <AccessControl hasPermission={ASSESSMENT_UPDATE}>
         <DrawerAssessmentUpdate
           title={"Ubah Form"}
           visible={drawUpdate}
@@ -651,7 +649,7 @@ const RoleAssessmentIndex = ({
         />
       </AccessControl>
 
-      <AccessControl hasPermission={ROLE_ASSESSMENT_DELETE}>
+      <AccessControl hasPermission={ASSESSMENT_DELETE}>
         <Modal
           title={`Peringatan`}
           visible={modaldelete}
@@ -735,7 +733,7 @@ export async function getServerSideProps({ req, res }) {
       dataProfile,
       dataCountAssessments,
       dataListRoleAssessments,
-      sidemenu: "11",
+      sidemenu: "101",
     },
   };
 }

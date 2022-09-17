@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ROLE_ASSESSMENT_ADD } from "lib/features";
+import { ASSESSMENT_ADD } from "lib/features";
 
+import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import { InputRequired } from "../../input";
 import { Label } from "../../typography";
@@ -22,7 +23,7 @@ const DrawerAssessmentCreate = ({
    * Dependencies
    */
   const { hasPermission } = useAccessControl();
-  const isAllowedToCreateForm = hasPermission(ROLE_ASSESSMENT_ADD);
+  const isAllowedToCreateForm = hasPermission(ASSESSMENT_ADD);
 
   const rt = useRouter();
 
@@ -201,8 +202,8 @@ const DrawerAssessmentCreate = ({
               );
             })}
           </div>
-          <div
-            className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 flex justify-center items-center w-full rounded-md cursor-pointer"
+          <ButtonSys
+            type={"dashed"}
             onClick={() => {
               setdatacreate((prev) => ({
                 ...prev,
@@ -215,10 +216,10 @@ const DrawerAssessmentCreate = ({
               }));
             }}
           >
-            <div className="text-primary100 hover:text-primary75">
+            <p className="text-primary100 hover:text-primary75">
               + Tambah Kriteria
-            </div>
-          </div>
+            </p>
+          </ButtonSys>
         </div>
       </Spin>
     </DrawerCore>

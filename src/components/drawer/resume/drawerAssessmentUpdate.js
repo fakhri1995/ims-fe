@@ -4,8 +4,9 @@ import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ROLE_ASSESSMENT_GET, ROLE_ASSESSMENT_UPDATE } from "lib/features";
+import { ASSESSMENT_GET, ASSESSMENT_UPDATE } from "lib/features";
 
+import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import { InputRequired } from "../../input";
 import { Label } from "../../typography";
@@ -24,8 +25,8 @@ const DrawerAssessmentUpdate = ({
    * Dependencies
    */
   const { hasPermission } = useAccessControl();
-  const isAllowedToUpdateRoleAssessment = hasPermission(ROLE_ASSESSMENT_UPDATE);
-  const isAllowedToGetRoleAssessment = hasPermission(ROLE_ASSESSMENT_GET);
+  const isAllowedToUpdateRoleAssessment = hasPermission(ASSESSMENT_UPDATE);
+  const isAllowedToGetRoleAssessment = hasPermission(ASSESSMENT_GET);
   const canUpdateRoleAssessment =
     isAllowedToUpdateRoleAssessment && isAllowedToGetRoleAssessment;
 
@@ -196,7 +197,7 @@ const DrawerAssessmentUpdate = ({
       ) : (
         <Spin spinning={loadingupdate}>
           <div className="flex flex-col">
-            <p className="mb-8 mx-3 text-red-500 text-xs italic">
+            <p className="mb-8 text-red-500 text-xs italic">
               *Informasi ini harus diisi
             </p>
 
@@ -207,7 +208,7 @@ const DrawerAssessmentUpdate = ({
               label="Nama Form"
             ></InputRequired>
 
-            <div className="flex flex-col mb-5 px-3">
+            <div className="flex flex-col mb-5">
               <div className="flex mb-1">
                 <Label>Kriteria</Label>
                 <span className="kriteria"></span>
@@ -370,8 +371,8 @@ const DrawerAssessmentUpdate = ({
                 </>
               )}
             </div>
-            <div
-              className="mb-4 border border-dashed border-primary100 hover:border-primary75 py-2 mx-3 flex justify-center rounded-md cursor-pointer"
+            <ButtonSys
+              type={"dashed"}
               onClick={() => {
                 setdatadisplay((prev) => ({
                   ...prev,
@@ -383,10 +384,10 @@ const DrawerAssessmentUpdate = ({
                 }));
               }}
             >
-              <div className="text-primary100 hover:text-primary75">
+              <p className="text-primary100 hover:text-primary75">
                 + Tambah Pekerjaan Baru
-              </div>
-            </div>
+              </p>
+            </ButtonSys>
           </div>
         </Spin>
       )}
