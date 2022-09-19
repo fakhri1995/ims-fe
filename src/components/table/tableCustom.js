@@ -1178,6 +1178,7 @@ const TableCustomCandidate = ({
   assessmentIds,
 }) => {
   const rt = useRouter();
+  const [rowstate, setrowstate] = useState(0);
   return (
     <Table
       className="tableCandidate"
@@ -1242,7 +1243,7 @@ const TableCustomCandidate = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}$assessment_ids=${assessmentIds}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}&assessment_ids=${assessmentIds}`,
               {
                 method: `GET`,
                 headers: {
@@ -1252,12 +1253,27 @@ const TableCustomCandidate = ({
             )
               .then((res) => res.json())
               .then((res2) => {
+                console.log(res2);
                 setdataraw(res2.data);
                 setDataSource(res2.data.data);
                 setpraloading(false);
               });
           }
         }
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: (event) => {
+            setrowstate(record.id);
+          },
+          onClick: (event) => {
+            rt.push(`/admin/candidates/${record.id}`);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
       }}
     />
   );
