@@ -653,15 +653,37 @@ const RoleAssessmentIndex = ({
         <Modal
           title={`Peringatan`}
           visible={modaldelete}
-          okButtonProps={{ disabled: loadingdelete }}
           onCancel={() => {
             setmodaldelete(false);
           }}
-          onOk={handleDelete}
           maskClosable={false}
           style={{ top: `3rem` }}
           width={500}
           destroyOnClose={true}
+          footer={
+            <div className="flex flex-row justify-between">
+              <ButtonSys
+                type={"default"}
+                onClick={() => {
+                  setmodaldelete(false);
+                }}
+              >
+                Batalkan
+              </ButtonSys>
+              ,
+              <ButtonSys
+                type={"primary"}
+                color={"danger"}
+                onClick={handleDelete}
+                disabled={loadingdelete}
+              >
+                <div className="flex flex-row space-x-2">
+                  <TrashIconSvg size={16} color={`white`} />
+                  <p>Ya, saya yakin dan hapus form</p>
+                </div>
+              </ButtonSys>
+            </div>
+          }
         >
           <p className="mb-4">
             Form assessment <strong>{roleSelected}</strong>&nbsp; digunakan oleh{" "}

@@ -115,7 +115,7 @@ const CompanyIconSvg = () => {
   );
   return <Icon component={companyIconSvg}></Icon>;
 };
-const UserIconSvg = () => {
+const UserIconSvg = ({ size, color }) => {
   const userIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -1854,7 +1854,7 @@ const ClipboardIconSvg = ({ size, color }) => {
   const clipboardIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-clipboard"
+      className="icon icon-tabler icon-tabler-clipboard"
       width={size}
       height={size}
       viewBox="0 0 24 24"
@@ -1874,12 +1874,12 @@ const UsersIconSvg = ({ size, color }) => {
   const usersIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-users"
-      width={size}
-      height={size}
+      className="icon icon-tabler icon-tabler-users"
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#597e8d"}
       fill="none"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
@@ -1896,7 +1896,7 @@ const DownloadIconSvg = ({ size, color }) => {
   const downloadIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-download"
+      className="icon icon-tabler icon-tabler-download"
       width={size}
       height={size}
       viewBox="0 0 24 24"
@@ -1911,6 +1911,28 @@ const DownloadIconSvg = ({ size, color }) => {
     </svg>
   );
   return <Icon component={downloadIconSvg}></Icon>;
+};
+
+const OneUserIconSvg = ({ size, color }) => {
+  const oneUserIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-user"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#597e8d"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <circle cx="12" cy="7" r="4" />
+      <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+    </svg>
+  );
+  return <Icon component={oneUserIconSvg}></Icon>;
 };
 
 export {
@@ -1990,4 +2012,6 @@ export {
   ResumeIconSvg,
   ClipboardIconSvg,
   UsersIconSvg,
+  DownloadIconSvg,
+  OneUserIconSvg,
 };
