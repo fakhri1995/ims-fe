@@ -24,7 +24,15 @@ const SkillCard = ({
   dataUpdateSkill,
   setDataUpdateSkill,
 }) => {
-  const [isShowInput, setIsShowInput] = useState(false);
+  const [isAdd, setIsAdd] = useState(false);
+
+  const clearDataUpdate = () => {
+    setDataUpdateSkill({
+      id: null,
+      name: "",
+      resume_id: null,
+    });
+  };
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5 row-span-1">
@@ -47,7 +55,7 @@ const SkillCard = ({
         ))}
       </div>
       {/* Input Skill */}
-      {isShowInput ? (
+      {isAdd ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -64,11 +72,8 @@ const SkillCard = ({
             <button
               onClick={() => {
                 handleAddSection("skill", dataUpdateSkill);
-                setDataUpdateSkill({
-                  id: null,
-                  name: "",
-                  resume_id: null,
-                });
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -76,7 +81,8 @@ const SkillCard = ({
             </button>
             <button
               onClick={() => {
-                setIsShowInput(false);
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -88,7 +94,8 @@ const SkillCard = ({
         <ButtonSys
           type={"dashed"}
           onClick={() => {
-            setIsShowInput(true);
+            clearDataUpdate();
+            setIsAdd(true);
           }}
         >
           <p className="text-primary100 hover:text-primary75">+ Add skill</p>

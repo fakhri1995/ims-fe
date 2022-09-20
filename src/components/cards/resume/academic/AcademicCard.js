@@ -8,69 +8,70 @@ import {
   Timeline,
   notification,
 } from "antd";
+import moment from "moment";
 import React from "react";
 import { useState } from "react";
 
-import ButtonSys from "../../button";
-import { CheckIconSvg, EditIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
-import { H2 } from "../../typography";
+import { AccessControl } from "components/features/AccessControl";
+
+import { RESUME_SECTION_DELETE } from "lib/features";
+
+import ButtonSys from "../../../button";
+import {
+  CheckIconSvg,
+  EditIconSvg,
+  TrashIconSvg,
+  XIconSvg,
+} from "../../../icon";
+import { ModalHapus2 } from "../../../modal/modalCustom";
+import { H2 } from "../../../typography";
+import AcademicBlock from "./AcademicBlock";
 
 const AcademicCard = ({
   dataDisplay,
   handleAddSection,
+  handleUpdateSection,
   handleDeleteSection,
   dataUpdateEdu,
   setDataUpdateEdu,
+  loadingDelete,
 }) => {
-  const [isShowInput, setIsShowInput] = useState(false);
+  const [isAdd, setIsAdd] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
 
+  const clearDataUpdate = () => {
+    setDataUpdateEdu({
+      id: null,
+      university: "",
+      major: "",
+      gpa: null,
+      graduation_year: "",
+      resume_id: 12,
+    });
+  };
+
+  // console.log(dataUpdateEdu)
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <H2>Academic History</H2>
       <hr className="my-4" />
       <Timeline>
-        {dataDisplay.educations?.map((edu, idx) => (
-          <Timeline.Item color="#35763B" key={idx}>
-            <div className="flex justify-between">
-              <div className="flex flex-col">
-                <p className="text-green-theme font-bold mb-1">
-                  {edu.university}
-                </p>
-                <p className="text-gray-400 mb-1">
-                  {edu.major} ·&nbsp;
-                  <strong>{edu.graduation_year.slice(0, 4)}</strong>
-                </p>
-                <p className="text-gray-400">GPA {edu.gpa}</p>
-              </div>
-              <div className="flex flex-row space-x-2 items-start">
-                <button
-                  onClick={(event) => {
-                    // console.log(edu.id)
-                    setIsShowInput(true);
-                  }}
-                  className="bg-transparent"
-                  value={edu.id}
-                >
-                  <EditIconSvg size={18} color="#4D4D4D" />
-                </button>
-
-                <button
-                  onClick={() => {
-                    console.log(edu.id);
-                    handleDeleteSection("education", edu.id);
-                  }}
-                  className="bg-transparent"
-                >
-                  <TrashIconSvg size={18} color="#4D4D4D" />
-                </button>
-              </div>
-            </div>
-          </Timeline.Item>
+        {dataDisplay.educations?.map((edu) => (
+          <AcademicBlock
+            key={edu.id}
+            edu={edu}
+            dataUpdateEdu={dataUpdateEdu}
+            setDataUpdateEdu={setDataUpdateEdu}
+            handleUpdateSection={handleUpdateSection}
+            clearDataUpdate={clearDataUpdate}
+            setModalDelete={setModalDelete}
+            isAdd={isAdd}
+          />
         ))}
       </Timeline>
-      {/* Input Academic */}
 
-      {isShowInput ? (
+      {/* Input Add Academic */}
+      {isAdd ? (
         <div className="flex flex-col space-y-4 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -87,14 +88,8 @@ const AcademicCard = ({
             <button
               onClick={() => {
                 handleAddSection("education", dataUpdateEdu);
-                setDataUpdateEdu({
-                  id: null,
-                  university: "",
-                  major: "",
-                  gpa: null,
-                  graduation_year: "",
-                  resume_id: 12,
-                });
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -102,7 +97,8 @@ const AcademicCard = ({
             </button>
             <button
               onClick={() => {
-                setIsShowInput(false);
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -122,33 +118,18 @@ const AcademicCard = ({
           />
 
           <div className="flex flex-row space-x-4 w-full">
-            {/* TODO FIX ERROR IN DATEPICKER */}
-            {/* <DatePicker
-								picker="year"
-								placeholder="Graduation Year"
-								// format={DATE_MOMENT_FORMAT_PAYLOAD}
-								className="w-1/2"
-								value={dataUpdateEdu.graduation_year}
-								onChange={(date, datestring) => {
-										// let input = value.toDate();
-										console.log(datestring)
-										// setDataUpdateEdu((prev) => ({
-										//   ...prev,
-										//   graduation_year: datestring,
-										// }))
-								}}
-								/> */}
-            <Input
+            <DatePicker
+              picker="year"
               placeholder="Graduation Year"
+              className="w-1/2"
               value={dataUpdateEdu.graduation_year}
-              onChange={(e) => {
-                let input = e.target.value;
+              onChange={(date) => {
+                let input = date.format("YYYY-MM-DD");
                 setDataUpdateEdu((prev) => ({
                   ...prev,
-                  graduation_year: input,
+                  graduation_year: moment(input),
                 }));
               }}
-              className="w-1/2"
             />
             <Input
               placeholder="GPA"
@@ -168,7 +149,8 @@ const AcademicCard = ({
         <ButtonSys
           type={"dashed"}
           onClick={() => {
-            setIsShowInput(true);
+            clearDataUpdate();
+            setIsAdd(true);
           }}
         >
           <p className="text-primary100 hover:text-primary75">
@@ -176,6 +158,29 @@ const AcademicCard = ({
           </p>
         </ButtonSys>
       )}
+
+      <AccessControl hasPermission={RESUME_SECTION_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => {
+            handleDeleteSection("education", dataUpdateEdu.id);
+            setModalDelete(false);
+            clearDataUpdate();
+          }}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"data"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin menghapus data akademis{" "}
+            <strong>{dataUpdateEdu.university}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </div>
   );
 };

@@ -8,60 +8,65 @@ import {
   Timeline,
   notification,
 } from "antd";
+import moment from "moment";
 import React from "react";
 import { useState } from "react";
 
-import ButtonSys from "../../button";
-import { CheckIconSvg, EditIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
-import { H2 } from "../../typography";
+import { AccessControl } from "components/features/AccessControl";
+
+import { RESUME_SECTION_DELETE } from "lib/features";
+
+import ButtonSys from "../../../button";
+import {
+  CheckIconSvg,
+  EditIconSvg,
+  TrashIconSvg,
+  XIconSvg,
+} from "../../../icon";
+import { ModalHapus2 } from "../../../modal/modalCustom";
+import { H2 } from "../../../typography";
+import CertificationBlock from "./CertificationBlock";
 
 const CertificationCard = ({
   dataDisplay,
   handleAddSection,
+  handleUpdateSection,
   handleDeleteSection,
   dataUpdateCert,
   setDataUpdateCert,
+  loadingDelete,
 }) => {
-  const [isShowInput, setIsShowInput] = useState(false);
+  const [isAdd, setIsAdd] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+
+  const clearDataUpdate = () => {
+    setDataUpdateCert({
+      id: null,
+      name: "",
+      organizer: "",
+      year: "",
+      resume_id: null,
+    });
+  };
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <H2>Certifications</H2>
       <hr className="my-4" />
       {dataDisplay.certificates?.map((certif) => (
-        <div key={certif.id} className="flex flex-row mb-3">
-          <p className="text-center text-green-theme font-bold w-1/4">
-            {certif.year.slice(0, 4)}
-          </p>
-          <div className="flex flex-col w-2/4">
-            <p className="font-bold text-gray-700">{certif.name}</p>
-            <p className="text-gray-500">{certif.organizer}</p>
-          </div>
-          <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-            <button
-              onClick={(event) => {
-                // console.log(edu.id)
-                setIsShowInput(true);
-              }}
-              className="bg-transparent"
-            >
-              <EditIconSvg size={18} color="#4D4D4D" />
-            </button>
-
-            <button
-              onClick={() => {
-                console.log(certif.id);
-                handleDeleteSection("certificate", certif.id);
-              }}
-              className="bg-transparent"
-            >
-              <TrashIconSvg size={18} color="#4D4D4D" />
-            </button>
-          </div>
-        </div>
+        <CertificationBlock
+          key={certif.id}
+          certif={certif}
+          dataUpdateCert={dataUpdateCert}
+          setDataUpdateCert={setDataUpdateCert}
+          handleUpdateSection={handleUpdateSection}
+          clearDataUpdate={clearDataUpdate}
+          setModalDelete={setModalDelete}
+          isAdd={isAdd}
+        />
       ))}
-      {/* Input Training */}
-      {isShowInput ? (
+      {/* Input Add Certification */}
+      {isAdd ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -78,13 +83,8 @@ const CertificationCard = ({
             <button
               onClick={() => {
                 handleAddSection("certificate", dataUpdateCert);
-                setDataUpdateCert({
-                  id: null,
-                  name: "",
-                  organizer: "",
-                  year: "",
-                  resume_id: null,
-                });
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -92,7 +92,8 @@ const CertificationCard = ({
             </button>
             <button
               onClick={() => {
-                setIsShowInput(false);
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -100,7 +101,20 @@ const CertificationCard = ({
             </button>
           </div>
           <div className="flex flex-row space-x-4 w-full">
-            <Input
+            <DatePicker
+              picker="year"
+              placeholder="Year"
+              className="w-1/3"
+              value={dataUpdateCert.year}
+              onChange={(date) => {
+                let input = date?.format("YYYY-MM-DD");
+                setDataUpdateCert((prev) => ({
+                  ...prev,
+                  year: moment(input),
+                }));
+              }}
+            />
+            {/* <Input
               placeholder="Year"
               value={dataUpdateCert.year}
               onChange={(e) => {
@@ -111,7 +125,7 @@ const CertificationCard = ({
                 }));
               }}
               className="w-1/3"
-            ></Input>
+            ></Input> */}
             <Input
               placeholder="Company or organization"
               value={dataUpdateCert.organizer}
@@ -130,7 +144,8 @@ const CertificationCard = ({
         <ButtonSys
           type={"dashed"}
           onClick={() => {
-            setIsShowInput(true);
+            clearDataUpdate();
+            setIsAdd(true);
           }}
         >
           <p className="text-primary100 hover:text-primary75">
@@ -138,6 +153,28 @@ const CertificationCard = ({
           </p>
         </ButtonSys>
       )}
+
+      <AccessControl hasPermission={RESUME_SECTION_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => {
+            handleDeleteSection("certificate", dataUpdateCert.id);
+            setModalDelete(false);
+          }}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"data"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin menghapus data sertifikat{" "}
+            <strong>{dataUpdateCert.name}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </div>
   );
 };

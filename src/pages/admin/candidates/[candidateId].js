@@ -9,7 +9,11 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  ASSESSMENTS_GET,
   RESUME_ADD,
+  RESUME_ASSESSMENT_ADD,
+  RESUME_ASSESSMENT_DELETE,
+  RESUME_ASSESSMENT_UPDATE,
   RESUME_DELETE,
   RESUME_GET,
   RESUME_SECTION_ADD,
@@ -18,18 +22,19 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
-import AcademicCard from "../../../components/cards/resume/AcademicCard";
-import AchievementCard from "../../../components/cards/resume/AchievementCard";
 import AssessmentResultCard from "../../../components/cards/resume/AssessmentResultCard";
 import BasicInfoCard from "../../../components/cards/resume/BasicInfoCard";
-import CertificationCard from "../../../components/cards/resume/CertificationCard";
-import ExperienceCard from "../../../components/cards/resume/ExperienceCard";
-import ProjectCard from "../../../components/cards/resume/ProjectCard";
 import SkillCard from "../../../components/cards/resume/SkillCard";
-import TrainingCard from "../../../components/cards/resume/TrainingCard";
+import AcademicCard from "../../../components/cards/resume/academic/AcademicCard";
+import AchievementCard from "../../../components/cards/resume/achievement/AchievementCard";
+import CertificationCard from "../../../components/cards/resume/certification/CertificationCard";
+import ExperienceCard from "../../../components/cards/resume/experience/ExperienceCard";
+import ProjectCard from "../../../components/cards/resume/project/ProjectCard";
+import TrainingCard from "../../../components/cards/resume/training/TrainingCard";
 import { TrashIconSvg } from "../../../components/icon";
 import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { H1, H2 } from "../../../components/typography";
 import httpcookie from "cookie";
 
@@ -60,11 +65,21 @@ const CandidateDetail = ({
   const isAllowedToAddSection = hasPermission(RESUME_SECTION_ADD);
   const isAllowedToDeleteSection = hasPermission(RESUME_SECTION_DELETE);
 
+  const isAllowedToAddResumeAssessment = hasPermission(RESUME_ASSESSMENT_ADD);
+  const isAllowedToUpdateResumeAssessment = hasPermission(
+    RESUME_ASSESSMENT_UPDATE
+  );
+  const isAllowedToDeleteResumeAssessment = hasPermission(
+    RESUME_ASSESSMENT_DELETE
+  );
+
+  const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
+
   //INIT
   const rt = useRouter();
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
-  console.log(pathArr);
+  // console.log(pathArr);
   pathArr[pathArr.length - 1] = "Detail Kandidat";
   const [instanceForm] = Form.useForm();
 
@@ -89,7 +104,7 @@ const CandidateDetail = ({
     achievements: [],
     assessment_results: [],
   });
-  const assessmentRoles = dataListRoleAssessments.data.data;
+  const [assessmentRoles, setAssessmentRoles] = useState([]);
 
   //2. update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -123,7 +138,7 @@ const CandidateDetail = ({
     major: "",
     gpa: null,
     graduation_year: "",
-    resume_id: 12,
+    resume_id: null,
   });
 
   const [dataUpdateExp, setDataUpdateExp] = useState({
@@ -175,9 +190,16 @@ const CandidateDetail = ({
     resume_id: null,
   });
 
+  const [dataUpdateAssessment, setDataUpdateAssessment] = useState({
+    id: Number(candidateId),
+    delete_assessment: false,
+    change_assessment: false,
+    assessment_id: null,
+    assessment_result_values: [],
+  });
+
   // 3. delete
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
 
   //HANDLER
   const onChangeInput = (e) => {
@@ -190,10 +212,6 @@ const CandidateDetail = ({
       [e.target.name]: e.target.value,
     });
     // setdisabledtrigger((prev) => prev + 1);
-  };
-
-  const onOpenDeleteModal = () => {
-    setModalDelete(true);
   };
 
   const handleAddSection = (sectionName, data) => {
@@ -267,20 +285,22 @@ const CandidateDetail = ({
       .then((response2) => {
         if (response2.success) {
           notification.success({
-            message: `Section ${sectionName} berhasil diubah.`,
+            message: `Berhasil mengubah section ${sectionName}.`,
             duration: 3,
           });
+          setTimeout(() => {
+            setLoadingUpdate(false);
+            rt.push(`/admin/candidates/${candidateId}`);
+          }, 500);
         } else {
           notification.error({
             message: `Gagal mengubah section ${sectionName}. ${response2.message}`,
             duration: 3,
           });
+          setTimeout(() => {
+            setLoadingUpdate(false);
+          }, 500);
         }
-        setTimeout(() => {
-          setLoadingUpdate(false);
-          // setData({ id: null, name: "", add: [{ criteria: "" }] });
-          rt.push(`/admin/candidates/${candidateId}`);
-        }, 500);
       })
       .catch((err) => {
         notification.error({
@@ -297,8 +317,8 @@ const CandidateDetail = ({
       id: Number(candidateId),
       [sectionName + "_id"]: sectionId,
     };
-
-    if (!isAllowedToUpdateCandidate) {
+    console.log(payload);
+    if (!isAllowedToDeleteCandidate) {
       return;
     }
 
@@ -340,50 +360,103 @@ const CandidateDetail = ({
       });
   };
 
-  const handleDeleteAssessment = () => {
-    const payload = {
-      id: Number(candidateId),
-    };
-
-    if (!isAllowedToUpdateCandidate) {
+  const handleAddAssessment = () => {
+    if (!isAllowedToAddResumeAssessment) {
       return;
     }
 
-    setLoadingDelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteResumeSection`, {
-      method: "DELETE",
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeAssessment`, {
+      method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(dataUpdateAssessment),
     })
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
           notification.success({
-            message: `Berhasil menghapus ${sectionName}.`,
+            message: `Assessment result berhasil ditambahkan.`,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setLoadingUpdate(false);
+            setDataUpdateAssessment({
+              id: Number(candidateId),
+              delete_assessment: false,
+              change_assessment: false,
+              assessment_id: null,
+              assessment_result_values: [],
+            });
+            rt.push(`/admin/candidates/${candidateId}`);
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan assessment result. ${response2.message}`,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setLoadingUpdate(false);
+            rt.push(`/admin/candidates/${candidateId}`);
+          }, 500);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan assessment result. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingUpdate(false);
+        // setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
+      });
+  };
+
+  const handleDeleteAssessment = () => {
+    if (!isAllowedToDeleteResumeAssessment) {
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteResumeAssessment?id=${candidateId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        // body: JSON.stringify(payload),
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Berhasil menghapus hasil assessment.`,
             duration: 3,
           });
         } else {
           notification.error({
-            message: `Gagal menghapus ${sectionName}. ${response2.message}`,
+            message: `Gagal menghapus hasil assessment. ${response2.message}`,
             duration: 3,
           });
         }
         setTimeout(() => {
           setLoadingDelete(false);
-          // setData({ id: null, name: "", add: [{ criteria: "" }] });
           rt.push(`/admin/candidates/${candidateId}`);
         }, 500);
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus ${sectionName}. ${err.response}`,
+          message: `Gagal menghapus hasil assessment. ${response2.message}`,
           duration: 3,
         });
-        setLoadingDelete(false);
-        // setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
+        setTimeout(() => {
+          setLoadingDelete(false);
+          rt.push(`/admin/candidates/${candidateId}`);
+        }, 500);
       });
   };
 
@@ -481,13 +554,18 @@ const CandidateDetail = ({
     }
   }, [isAllowedToGetCandidateDetail, dataResume]);
 
-  // useEffect(() => {
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessmentList) {
+      return;
+    }
 
-  // })
+    const roles = dataListRoleAssessments.data.data;
+    setAssessmentRoles(roles);
+  }, [isAllowedToGetRoleAssessmentList, dataListRoleAssessments]);
 
   //DEBUG
-  console.log(dataDisplay);
-  console.log(dataUpdateEdu);
+  // console.log(dataDisplay);
+  // console.log(dataUpdateEdu);
 
   return (
     <LayoutDashboard
@@ -506,21 +584,26 @@ const CandidateDetail = ({
           dataUpdateBasic={dataUpdateBasic}
           setDataUpdateBasic={setDataUpdateBasic}
           handleUpdate={handleUpdateSection}
-          onOpenDeleteModal={onOpenDeleteModal}
-          isAllowedToDeleteCandidate={isAllowedToDeleteCandidate}
+          handleDelete={handleDeleteResume}
           // onChangeInput={onChangeInput}
           praloading={praloading}
           assessmentRoles={assessmentRoles}
+          isAllowedToDeleteCandidate={isAllowedToDeleteCandidate}
+          loadingDelete={loadingDelete}
         />
+
         <div className="flex flex-row gap-6">
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
             <AcademicCard
               dataDisplay={dataDisplay}
+              setDataDisplay={setDataDisplay}
               dataUpdateEdu={dataUpdateEdu}
               setDataUpdateEdu={setDataUpdateEdu}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
+              loadingDelete={loadingDelete}
             />
 
             {/* SECTION EXPERIENCE */}
@@ -529,7 +612,9 @@ const CandidateDetail = ({
               dataUpdateExp={dataUpdateExp}
               setDataUpdateExp={setDataUpdateExp}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
+              loadingDelete={loadingDelete}
             />
 
             {/* SECTION PROJECT */}
@@ -538,7 +623,9 @@ const CandidateDetail = ({
               dataUpdateProj={dataUpdateProj}
               setDataUpdateProj={setDataUpdateProj}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
+              loadingDelete={loadingDelete}
             />
           </div>
           <div className="flex flex-col w-full gap-6">
@@ -557,7 +644,9 @@ const CandidateDetail = ({
               dataUpdateTrain={dataUpdateTrain}
               setDataUpdateTrain={setDataUpdateTrain}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
+              loadingDelete={loadingDelete}
             />
 
             {/* SECTION CERTIFICATION */}
@@ -566,7 +655,9 @@ const CandidateDetail = ({
               dataUpdateCert={dataUpdateCert}
               setDataUpdateCert={setDataUpdateCert}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
+              loadingDelete={loadingDelete}
             />
 
             {/* SECTION ACHIEVEMENT */}
@@ -575,64 +666,28 @@ const CandidateDetail = ({
               dataUpdateAchiev={dataUpdateAchiev}
               setDataUpdateAchiev={setDataUpdateAchiev}
               handleAddSection={handleAddSection}
+              handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
+              loadingDelete={loadingDelete}
             />
 
             {/* SECTION ASSESSMENT RESULT */}
             <AssessmentResultCard
               dataDisplay={dataDisplay}
-              dataUpdateAchiev={dataUpdateAchiev}
-              setDataUpdateAchiev={setDataUpdateAchiev}
-              handleAddSection={handleAddSection}
-              handleDeleteSection={handleDeleteSection}
+              dataUpdate={dataUpdateAssessment}
+              setDataUpdate={setDataUpdateAssessment}
+              handleAdd={handleAddAssessment}
+              // handleUpdate={handleUpdateAssessment}
+              handleDelete={handleDeleteAssessment}
               assessmentRoles={assessmentRoles}
+              isAllowedToDeleteResumeAssessment={
+                isAllowedToDeleteResumeAssessment
+              }
+              loadingDelete={loadingDelete}
             />
           </div>
         </div>
       </div>
-
-      <AccessControl hasPermission={RESUME_DELETE}>
-        <Modal
-          title={`Peringatan`}
-          visible={modalDelete}
-          maskClosable={false}
-          style={{ top: `3rem` }}
-          width={500}
-          onCancel={() => {
-            setModalDelete(false);
-          }}
-          destroyOnClose={true}
-          footer={
-            <div className="flex flex-row justify-between">
-              <ButtonSys
-                type={"default"}
-                onClick={() => {
-                  setModalDelete(false);
-                }}
-              >
-                Batalkan
-              </ButtonSys>
-              ,
-              <ButtonSys
-                type={"primary"}
-                color={"danger"}
-                onClick={handleDeleteResume}
-                disabled={loadingDelete}
-              >
-                <div className="flex flex-row space-x-2">
-                  <TrashIconSvg size={16} color={`white`} />
-                  <p>Ya, saya yakin dan hapus resume</p>
-                </div>
-              </ButtonSys>
-            </div>
-          }
-        >
-          <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan resume kandidat
-            dengan nama <strong>{dataDisplay.name}</strong>?
-          </p>
-        </Modal>
-      </AccessControl>
     </LayoutDashboard>
   );
 };

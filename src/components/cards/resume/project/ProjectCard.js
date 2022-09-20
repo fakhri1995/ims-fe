@@ -8,60 +8,66 @@ import {
   Timeline,
   notification,
 } from "antd";
+import moment from "moment";
 import React from "react";
 import { useState } from "react";
 
-import ButtonSys from "../../button";
-import { CheckIconSvg, EditIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
-import { H2 } from "../../typography";
+import { AccessControl } from "components/features/AccessControl";
+
+import { RESUME_SECTION_DELETE } from "lib/features";
+
+import ButtonSys from "../../../button";
+import {
+  CheckIconSvg,
+  EditIconSvg,
+  TrashIconSvg,
+  XIconSvg,
+} from "../../../icon";
+import { ModalHapus2 } from "../../../modal/modalCustom";
+import { H2 } from "../../../typography";
+import ProjectBlock from "./ProjectBlock";
 
 const ProjectCard = ({
   dataDisplay,
   handleAddSection,
+  handleUpdateSection,
   handleDeleteSection,
   dataUpdateProj,
   setDataUpdateProj,
+  loadingDelete,
 }) => {
-  const [isShowInput, setIsShowInput] = useState(false);
+  const [isAdd, setIsAdd] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+
+  const clearDataUpdate = () => {
+    setDataUpdateProj({
+      id: null,
+      name: "",
+      year: "",
+      description: "",
+      resume_id: null,
+    });
+  };
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <H2>Projects</H2>
       <hr className="my-4" />
       {dataDisplay.projects?.map((project) => (
-        <div key={project.id} className="flex flex-row mb-3">
-          <p className="text-center text-green-theme font-bold w-1/4">
-            {project.year.slice(0, 4)}
-          </p>
-          <div className="flex flex-col w-2/4">
-            <p className="font-bold text-gray-700">{project.name}</p>
-            <p className="text-gray-500">{project.description}</p>
-          </div>
-          <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-            <button
-              onClick={(event) => {
-                // console.log(edu.id)
-                setIsShowInput(true);
-              }}
-              className="bg-transparent"
-            >
-              <EditIconSvg size={18} color="#4D4D4D" />
-            </button>
-
-            <button
-              onClick={() => {
-                console.log(project.id);
-                handleDeleteSection("project", project.id);
-              }}
-              className="bg-transparent"
-            >
-              <TrashIconSvg size={18} color="#4D4D4D" />
-            </button>
-          </div>
-        </div>
+        <ProjectBlock
+          key={project.id}
+          project={project}
+          dataUpdateProj={dataUpdateProj}
+          setDataUpdateProj={setDataUpdateProj}
+          handleUpdateSection={handleUpdateSection}
+          clearDataUpdate={clearDataUpdate}
+          setModalDelete={setModalDelete}
+          isAdd={isAdd}
+        />
       ))}
-      {/* Input Project */}
-      {isShowInput ? (
+
+      {/* Input Add Project */}
+      {isAdd ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
             <Input
@@ -78,13 +84,8 @@ const ProjectCard = ({
             <button
               onClick={() => {
                 handleAddSection("project", dataUpdateProj);
-                setDataUpdateProj({
-                  id: null,
-                  name: "",
-                  year: "",
-                  description: "",
-                  resume_id: null,
-                });
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -92,7 +93,8 @@ const ProjectCard = ({
             </button>
             <button
               onClick={() => {
-                setIsShowInput(false);
+                setIsAdd(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -100,18 +102,19 @@ const ProjectCard = ({
             </button>
           </div>
           <div className="flex flex-row space-x-4 w-full">
-            <Input
+            <DatePicker
+              picker="year"
               placeholder="Year"
+              className="w-1/3"
               value={dataUpdateProj.year}
-              onChange={(e) => {
-                let input = e.target.value;
+              onChange={(date) => {
+                let input = date?.format("YYYY-MM-DD");
                 setDataUpdateProj((prev) => ({
                   ...prev,
-                  year: input,
+                  year: moment(input),
                 }));
               }}
-              className="w-1/3"
-            ></Input>
+            />
             <Input
               placeholder="Description"
               value={dataUpdateProj.description}
@@ -130,12 +133,35 @@ const ProjectCard = ({
         <ButtonSys
           type={"dashed"}
           onClick={() => {
-            setIsShowInput(true);
+            clearDataUpdate();
+            setIsAdd(true);
           }}
         >
           <p className="text-primary100 hover:text-primary75">+ Add project</p>
         </ButtonSys>
       )}
+
+      <AccessControl hasPermission={RESUME_SECTION_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => {
+            handleDeleteSection("project", dataUpdateProj.id);
+            setModalDelete(false);
+          }}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"data"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin menghapus data proyek{" "}
+            <strong>{dataUpdateProj.name}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </div>
   );
 };

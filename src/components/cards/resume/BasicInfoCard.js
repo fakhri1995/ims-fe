@@ -9,8 +9,11 @@ import {
   notification,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
 
 import ButtonSys from "../../button";
 import {
@@ -24,6 +27,7 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../icon";
+import { ModalHapus2 } from "../../modal/modalCustom";
 import { H1 } from "../../typography";
 
 const BasicInfoCard = ({
@@ -32,14 +36,19 @@ const BasicInfoCard = ({
   handleUpdate,
   dataUpdateBasic,
   setDataUpdateBasic,
-  onOpenDeleteModal,
-  isAllowedToDeleteCandidate,
   praloading,
   assessmentRoles,
+  handleDelete,
+  isAllowedToDeleteCandidate,
+  // modalDelete,
+  // setModalDelete,
+  loadingDelete,
   isCreateForm,
 }) => {
+  const rt = useRouter();
   const [instanceForm] = Form.useForm();
   const [isShowInput, setIsShowInput] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
 
   const onChangeInput = (e) => {
     // setDataDisplay({
@@ -53,8 +62,9 @@ const BasicInfoCard = ({
     // setdisabledtrigger((prev) => prev + 1);
   };
 
-  console.log(dataUpdateBasic);
+  // console.log(dataUpdateBasic);
   // console.log(dataDisplay)
+
   return isShowInput || isCreateForm ? (
     <div className=" shadow-lg rounded-md bg-white p-5 divide-y">
       <div className="flex flex-row items-center justify-between mb-4 ">
@@ -86,7 +96,7 @@ const BasicInfoCard = ({
             className="flex flex-row"
             onClick={() => {
               isCreateForm
-                ? handleUpdate
+                ? handleUpdate()
                 : handleUpdate("basic_information", dataUpdateBasic);
               setIsShowInput(false);
             }}
@@ -175,6 +185,7 @@ const BasicInfoCard = ({
         <Form.Item
           label="Phone Number"
           name={"telp"}
+          // type={"number"}
           rules={[
             {
               required: true,
@@ -245,7 +256,7 @@ const BasicInfoCard = ({
             type={isAllowedToDeleteCandidate ? "default" : "primary"}
             color="danger"
             disabled={!isAllowedToDeleteCandidate}
-            onClick={() => onOpenDeleteModal()}
+            onClick={() => setModalDelete(true)}
           >
             <div className="flex flex-row space-x-2">
               <TrashIconSvg size={16} color={`#BF4A40`} />
@@ -302,6 +313,25 @@ const BasicInfoCard = ({
           </div>
         </div>
       )}
+
+      <AccessControl isAllowedToDeleteCandidate>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={handleDelete}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"resume"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan resume kandidat
+            dengan nama <strong>{dataDisplay.name}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </div>
   );
 };
