@@ -30,6 +30,7 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomRoleAssessment } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
@@ -650,40 +651,16 @@ const RoleAssessmentIndex = ({
       </AccessControl>
 
       <AccessControl hasPermission={ASSESSMENT_DELETE}>
-        <Modal
+        <ModalHapus2
           title={`Peringatan`}
           visible={modaldelete}
+          onvisible={setmodaldelete}
+          onOk={handleDelete}
           onCancel={() => {
             setmodaldelete(false);
           }}
-          maskClosable={false}
-          style={{ top: `3rem` }}
-          width={500}
-          destroyOnClose={true}
-          footer={
-            <div className="flex flex-row justify-between">
-              <ButtonSys
-                type={"default"}
-                onClick={() => {
-                  setmodaldelete(false);
-                }}
-              >
-                Batalkan
-              </ButtonSys>
-              ,
-              <ButtonSys
-                type={"primary"}
-                color={"danger"}
-                onClick={handleDelete}
-                disabled={loadingdelete}
-              >
-                <div className="flex flex-row space-x-2">
-                  <TrashIconSvg size={16} color={`white`} />
-                  <p>Ya, saya yakin dan hapus form</p>
-                </div>
-              </ButtonSys>
-            </div>
-          }
+          itemName={"form"}
+          loading={loadingdelete}
         >
           <p className="mb-4">
             Form assessment <strong>{roleSelected}</strong>&nbsp; digunakan oleh{" "}
@@ -694,7 +671,7 @@ const RoleAssessmentIndex = ({
             Data hasil assessment kandidat yang menggunakan form ini akan tetap
             disimpan.
           </p>
-        </Modal>
+        </ModalHapus2>
       </AccessControl>
     </Layout>
   );
