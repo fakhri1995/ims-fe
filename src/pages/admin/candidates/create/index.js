@@ -1,20 +1,26 @@
-import { Form, Input } from "antd";
+import { DatePicker, Form, Input, Select, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD } from "lib/features";
+import { ASSESSMENTS_GET, RESUME_ADD } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
+import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { H1, H2 } from "../../../../components/typography";
 import httpcookie from "cookie";
 
-const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
+const CandidateCreate = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  dataListRoleAssessments,
+}) => {
   /**
    * Dependencies
    */
@@ -27,16 +33,18 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
   }
 
   const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
+  const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
 
   const rt = useRouter();
 
   const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
-  pathArr.splice(2, 1);
-  pathArr[pathArr.length - 1] = "Detail Kandidat";
+  // pathArr.splice(2, 1);
+  pathArr[pathArr.length - 1] = "Tambah Kandidat";
 
   const [instanceForm] = Form.useForm();
-  const [newCandidate, setNewCandidate] = useState({
+
+  const [dataAddCandidate, setDataAddCandidate] = useState({
     name: "",
     telp: "",
     email: "",
@@ -44,6 +52,105 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
     city: "",
     province: "",
   });
+
+  const [dataAddEducation, setDataAddEducation] = useState({
+    university: "",
+    major: "",
+    gpa: 0,
+    graduation_year: "",
+  });
+
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [assessmentRoles, setAssessmentRoles] = useState([]);
+  const [criterias, setCriterias] = useState([]);
+  const [selected, setSelected] = useState();
+
+  //HANDLER
+  const onChangeInputCandidate = (e) => {
+    setDataAddCandidate({
+      ...dataAddCandidate,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleCreateCandidate = () => {
+    if (!isAllowedToCreateCandidate) {
+      permissionWarningNotification("Menambah", "Kandidat");
+      return;
+    }
+    setLoadingCreate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResume`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataAddCandidate),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Kandidat berhasil ditambahkan.`,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setLoadingCreate(false);
+            setDataAddCandidate({
+              name: "",
+              telp: "",
+              email: "",
+              role: "",
+              city: "",
+              province: "",
+            });
+            rt.push(`/admin/candidates/${response2.id}`);
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan kandidat. ${response2.message}`,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setLoadingCreate(false);
+          }, 500);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan kandidat. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingCreate(false);
+      });
+  };
+
+  // USE EFFECT
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessmentList) {
+      return;
+    }
+
+    const roles = dataListRoleAssessments.data.data;
+    setAssessmentRoles(roles);
+  }, [isAllowedToGetRoleAssessmentList, dataListRoleAssessments]);
+
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessmentList) {
+      return;
+    }
+
+    if (selected !== undefined) {
+      let findCriterias = assessmentRoles.find(
+        (assessment) => assessment.name === selected
+      );
+      // console.log(findCriterias)
+      setCriterias(findCriterias.details);
+    }
+  }, [isAllowedToGetRoleAssessmentList, selected]);
+
+  //DEBUG
+  // console.log(dataAddCandidate);
 
   return (
     <LayoutDashboard
@@ -53,192 +160,151 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
       st={st}
       pathArr={pathArr}
     >
-      <div className="grid grid-cols-2 gap-6 ">
-        <div className="col-span-2 shadow-lg rounded-md bg-white p-5 divide-y">
-          <div className="flex flex-row items-center justify-between mb-4 ">
-            <H1>Basic Information</H1>
-            <div className="flex flex-row space-x-6">
-              <ButtonSys
-                type={"default"}
-                color={"danger"}
-                className="flex flex-row"
-                onClick={() => rt.back()}
-              >
-                <XIconSvg size={16} color={`#BF4A40`} />
-                <p>Batalkan</p>
+      <div className="flex flex-col gap-6 ">
+        <BasicInfoCard
+          dataUpdateBasic={dataAddCandidate}
+          setDataUpdateBasic={setDataAddCandidate}
+          handleUpdate={handleCreateCandidate}
+          assessmentRoles={assessmentRoles}
+          isCreateForm={true}
+        />
+
+        <div className="flex flex-row gap-6">
+          <div className="flex flex-col w-full gap-6">
+            {/* SECTION ACADEMIC */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Academic History</H2>
+              <hr className="my-4" />
+
+              <ButtonSys type={"dashed"}>
+                <p className="text-primary100 hover:text-primary75">
+                  + Add academic history
+                </p>
               </ButtonSys>
-              <ButtonSys type={"primary"} className="flex flex-row">
-                <CheckIconSvg size={16} color={`white`} />
-                <p>Tambah Kandidat</p>
+            </div>
+
+            {/* SECTION EXPERIENCE */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Experience</H2>
+              <hr className="my-4" />
+
+              <ButtonSys
+                type={"dashed"}
+                // disabled={true}
+              >
+                <p className="text-primary100 hover:text-primary75">
+                  + Add experience
+                </p>
+              </ButtonSys>
+            </div>
+
+            {/* SECTION PROJECT */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Projects</H2>
+              <hr className="my-4" />
+
+              <ButtonSys type={"dashed"}>
+                <p className="text-primary100 hover:text-primary75">
+                  + Add project
+                </p>
               </ButtonSys>
             </div>
           </div>
-          <Form
-            layout="vertical"
-            form={instanceForm}
-            className="grid grid-cols-2 gap-x-6 pt-5"
-          >
-            <Form.Item
-              label="Name"
-              name={"name"}
-              rules={[
-                {
-                  required: true,
-                  message: "Nama kandidat wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <Input
-                value={newCandidate.name}
-                name={"name"}
-                // onChange={onChangeCreateCandidate}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Role"
-              name={"role"}
-              rules={[
-                {
-                  required: true,
-                  message: "Role kandidat wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                value={newCandidate.role}
-                name={"role"}
-                // onChange={onChangeCreateCandidate}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Email"
-              name={"email"}
-              rules={[
-                {
-                  required: true,
-                  message: "Email kandidat wajib diisi",
-                },
-                {
-                  pattern:
-                    /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
-                  message: "Email belum diisi dengan benar",
-                },
-              ]}
-            >
-              <Input
-                value={newCandidate.email}
-                name={"email"}
-                // onChange={onChangeCreateCandidate}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Phone Number"
-              name={"telp"}
-              rules={[
-                {
-                  required: true,
-                  message: "Nomor HP wajib diisi",
-                },
-              ]}
-            >
-              <Input
-                value={newCandidate.telp}
-                name={"telp"}
-                // onChange={onChangeCreateCandidate}
-              />
-            </Form.Item>
-            <Form.Item
-              label="Address"
-              name={"address"}
-              rules={[
-                {
-                  required: true,
-                  message: "Alamat kandidat wajib diisi",
-                },
-              ]}
-            >
-              <div className="flex flex-row space-x-3">
-                <Input
-                  value={newCandidate.city}
-                  name={"city"}
-                  placeholder="City"
-                  // onChange={onChangeCreateCandidate}
-                />
-                <Input
-                  value={newCandidate.province}
-                  name={"province"}
-                  placeholder="Province"
-                  // onChange={onChangeCreateCandidate}
-                />
+          <div className="flex flex-col w-full gap-6">
+            {/* SECTION SKILLS */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Skills</H2>
+              <hr className="my-4" />
+
+              <ButtonSys type={"dashed"}>
+                <p className="text-primary100 hover:text-primary75">
+                  + Add skill
+                </p>
+              </ButtonSys>
+            </div>
+
+            {/* SECTION TRAINING */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Training</H2>
+              <hr className="my-4" />
+
+              <ButtonSys type={"dashed"}>
+                <p className="text-primary100 hover:text-primary75">
+                  + Add training
+                </p>
+              </ButtonSys>
+            </div>
+
+            {/* SECTION CERTIFICATION */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Certifications</H2>
+              <hr className="my-4" />
+
+              <ButtonSys type={"dashed"}>
+                <p className="text-primary100 hover:text-primary75">
+                  + Add certification
+                </p>
+              </ButtonSys>
+            </div>
+
+            {/* SECTION ACHIEVEMENT */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Achievements</H2>
+              <hr className="my-4" />
+
+              <ButtonSys type={"dashed"}>
+                <p className="text-primary100 hover:text-primary75">
+                  + Add achievement
+                </p>
+              </ButtonSys>
+            </div>
+
+            {/* SECTION ASSESSMENT RESULT */}
+            <div className="shadow-lg rounded-md bg-white p-5">
+              <H2>Technical Assessment Results</H2>
+
+              <hr className="my-4" />
+
+              {/* Input Assessment Result */}
+
+              <div>
+                <div className="flex flex-col space-y-2 mb-3">
+                  <p className="text-xs text-gray-400">Assessment Role</p>
+                  <Select
+                    defaultValue={"Choose assessment role..."}
+                    onChange={(value) => {
+                      // console.log(value)
+                      setSelected(value);
+                    }}
+                  >
+                    {assessmentRoles.map((role) => (
+                      <Select.Option key={role.id} value={role.name}>
+                        {role.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                <div>
+                  <p className="text-xs text-gray-400 mb-2">Criteria</p>
+                  <ul>
+                    {criterias.map((assessment) => (
+                      <li key={assessment.id}>
+                        <div className="flex flex-row justify-between items-center mb-1">
+                          <p className="w-full mr-5">{assessment.criteria}</p>
+                          {/* <Input
+                            className="w-20"
+                            value={assessment.value}
+                            onChange={}
+                          /> */}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
-            </Form.Item>
-          </Form>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Academic History</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">
-              + Add academic history
-            </p>
-          </ButtonSys>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Skills</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">+ Add skills</p>
-          </ButtonSys>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Experience</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">
-              + Add experience
-            </p>
-          </ButtonSys>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Training</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">
-              + Add training
-            </p>
-          </ButtonSys>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Projects</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">
-              + Add project
-            </p>
-          </ButtonSys>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Certifications</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">
-              + Add certification
-            </p>
-          </ButtonSys>
-        </div>
-        <div className="row-span-2" />
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Achievements</H2>
-          <hr className="my-4" />
-          <ButtonSys type={"dashed"}>
-            <p className="text-primary100 hover:text-primary75">
-              + Add achievement
-            </p>
-          </ButtonSys>
-        </div>
-        <div className="shadow-lg rounded-md bg-white p-5">
-          <H2>Technical Assessment Results</H2>
+            </div>
+          </div>
         </div>
       </div>
     </LayoutDashboard>
@@ -277,11 +343,24 @@ export async function getServerSideProps({ req, res }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGA = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGA = await resourcesGA.json();
+  const dataListRoleAssessments = resjsonGA;
+
   return {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "11",
+      sidemenu: "112",
+      dataListRoleAssessments,
     },
   };
 }

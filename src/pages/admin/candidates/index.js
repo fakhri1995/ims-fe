@@ -1,4 +1,4 @@
-import { Input, Modal, Spin, notification } from "antd";
+import { Input, Modal, Select, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRef } from "react";
@@ -72,10 +72,10 @@ const CandidatesIndex = ({
   const canDownloadResume =
     hasPermission(RESUMES_GET) && hasPermission(RESUME_GET);
 
-  // const isAllowedToDeleteRoleAssessment = hasPermission(ROLE_ASSESSMENT_DELETE);
+  // const isAllowedToDeleteRoleAssessment = hasPermission(ASSESSMENT_DELETE);
   // const canUpdateRoleAssessment = hasPermission([
-  //   ROLE_ASSESSMENT_UPDATE,
-  //   ROLE_ASSESSMENT_GET,
+  //   ASSESSMENT_UPDATE,
+  //   ASSESSMENT_GET,
   // ]);
 
   // 1. Init
@@ -154,8 +154,7 @@ const CandidatesIndex = ({
 
   // Filter
   const [searchingFilterResume, setSearchingFilterResume] = useState("");
-
-  const [roleFilterResume, setRoleFilterResume] = useState("all");
+  const [roleFilterResume, setRoleFilterResume] = useState([]);
 
   // Columns
   const columnsResume = [
@@ -236,18 +235,18 @@ const CandidatesIndex = ({
         return {
           children: (
             <div className="flex items-center space-x-2">
-              {/* <ButtonSys
-                type={`primary`}
-                disabled={!canDownloadResume}
-                onClick={(event) => {
-                  //  tempIdAssessmentUpdate.current = record.id;
-                  //  setTriggerAssessmentUpdate((prev) => prev + 1);
-                  //  setDrawUpdate(true);
-                  console.log(event)
-                }}
+              <ButtonSys
+                type={`default`}
+                // disabled={!canDownloadResume}
+                // onClick={(event) => {
+                //   //  tempIdAssessmentUpdate.current = record.id;
+                //   //  setTriggerAssessmentUpdate((prev) => prev + 1);
+                //   //  setDrawUpdate(true);
+                //   console.log(event)
+                // }}
               >
                 <DownloadIconSvg size={15} color={`#35763B`} />
-              </ButtonSys> */}
+              </ButtonSys>
             </div>
           ),
         };
@@ -265,6 +264,7 @@ const CandidatesIndex = ({
 
     if (dataCountResumes !== undefined) {
       setLoadingResumeCountData(false);
+      setRoleFilterResume(dataCountResumes.resume_assessments_count);
     }
   }, [isAllowedToGetResumeCount, dataCountResumes]);
 
@@ -313,79 +313,7 @@ const CandidatesIndex = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
-
-  // const onOpenReadDrawer = (record) => {
-  //   setdrawread(true);
-  //   setAssessmentData((prev) => ({
-  //     ...prev,
-  //     id: record.id,
-  //     name: record.name,
-  //     resumes_count: record.resumes_count,
-  //   }));
-  //   fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessment?id=${record.id}`,
-  //     {
-  //       method: `GET`,
-  //       headers: {
-  //         Authorization: JSON.parse(initProps),
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setAssessmentData((prev) => ({
-  //         ...prev,
-  //         details: res2.data.details,
-  //       }));
-  //     });
-  // };
-
-  // const onOpenDeleteModal = (record) => {
-  //   setmodaldelete(true);
-  //   setdatadelete({ ...datadelete, id: parseInt(record.id) });
-  //   setRoleSelected(record.name);
-  //   setCandidateCount(record.resumes_count);
-  // };
-
-  // const handleDelete = () => {
-  //   if (!isAllowedToDeleteRoleAssessment) {
-  //     permissionWarningNotification("Menghapus", "Form Assessment");
-  //     return;
-  //   }
-  //   setloadingdelete(true);
-  //   fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAssessment?id=${datadelete.id}`,
-  //     {
-  //       method: "DELETE",
-  //       headers: {
-  //         Authorization: JSON.parse(initProps),
-  //         "Content-Type": "application/json",
-  //       },
-  //     }
-  //   )
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       if (res2.success) {
-  //         notification.success({
-  //           message: res2.message,
-  //           duration: 3,
-  //         });
-  //         setTimeout(() => {
-  //           setloadingdelete(false);
-  //           setmodaldelete(false);
-  //           rt.push(`/admin/role-assessment`);
-  //         }, 500);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menghapus form assessment. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setloadingdelete(false);
-  //       setmodaldelete(false);
-  //     });
-  // };
+  // console.log(dataTable)
 
   return (
     <Layout
@@ -396,7 +324,7 @@ const CandidatesIndex = ({
       pathArr={pathArr}
     >
       <div className="flex flex-col lg:flex-row">
-        <div className="flex flex-col px-5 lg:w-1/3">
+        <div className="flex flex-col lg:px-5 lg:w-1/3">
           <AddNewFormButton
             title="Tambah Kandidat"
             disabled={!isAllowedToAddResume}
@@ -505,29 +433,33 @@ const CandidatesIndex = ({
                 disabled={!isAllowedToGetResumeList}
               />
 
-              {/* <Select
-                  value={
-                    roleFilterResume === ""
-                      ? null
-                      : roleFilterResume
-                  }
-                  disabled={!isAllowedToAddResume || !isAllowedToGetResumeList}
-                  placeholder="Semua Role"
-                  style={{ width: `100%` }}
-                  allowClear
-                  name={`role`}
-                  onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setRoleFilterResume("")
-                      : setRoleFilterResume(value);
-                  }}
-                >
-                  {dataticketrelation.ticket_types.map((doc, idx) => (
-                    <Select.Option key={idx} value={doc.id}>
-                      {doc.name}
-                    </Select.Option>
-                  ))}
-              </Select> */}
+              <Select
+                // value={
+                //   roleFilterResume === ""
+                //     ? null
+                //     : roleFilterResume
+                // }
+                disabled={!isAllowedToGetResumeList}
+                placeholder="Semua Role"
+                defaultValue={0}
+                style={{ width: `50%` }}
+                // allowClear
+                // name={`role`}
+                onChange={(value) => {
+                  // typeof value === "undefined"
+                  //   ? setRoleFilterResume("")
+                  //   : setRoleFilterResume(value);
+                  setAssessmentIds(value);
+                  // onFilterResume
+                }}
+              >
+                <Select.Option value={0}>Semua Role</Select.Option>
+                {roleFilterResume.map((doc) => (
+                  <Select.Option key={doc.id} value={doc.id}>
+                    {doc.name}
+                  </Select.Option>
+                ))}
+              </Select>
 
               <ButtonSys
                 type={"primary"}
@@ -557,105 +489,6 @@ const CandidatesIndex = ({
           </div>
         </div>
       </div>
-
-      {/* DRAWER */}
-      {/* <AccessControl hasPermission={ROLE_ASSESSMENT_ADD}>
-        <DrawerAssessmentCreate
-          title={"Tambah Form"}
-          visible={isCreateDrawerShown}
-          buttonOkText={"Tambah Form"}
-          initProps={initProps}
-          onvisible={setCreateDrawerShown}
-        />
-      </AccessControl>
-
-      <AccessControl hasPermission={ROLE_ASSESSMENT_GET}>
-        <DrawerCore
-          title={`${assessmentData.name}`}
-          visible={drawread}
-          onClose={() => {
-            setdrawread(false);
-          }}
-          width={380}
-          buttonOkText={"Ubah Form"}
-          onClick={() => {
-            tempIdAssessmentUpdate.current = assessmentData.id;
-            setTriggerAssessmentUpdate((prev) => prev + 1);
-            setDrawUpdate(true);
-            setdrawread(false);
-          }}
-          buttonCancelText={"Hapus Form"}
-          onButtonCancelClicked={() => {
-            onOpenDeleteModal(assessmentData);
-            setdrawread(false);
-          }}
-        >
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-between mb-5">
-              <div>
-                <p className="text-gray-400 mb-2">Jumlah Kriteria</p>
-                <div className="flex flex-row items-center space-x-3">
-                  <ClipboardIconSvg size={16} color={`#333333`} />
-                  <p>{assessmentData.details.length}</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-gray-400 mb-2">Jumlah Kandidat</p>
-                <div className="flex flex-row items-center space-x-3">
-                  <UsersIconSvg size={16} color={`#333333`} />
-                  <p>{assessmentData.resumes_count}</p>
-                </div>
-              </div>
-            </div>
-            <div>
-              <p className="text-gray-400 mb-2">Kriteria</p>
-              <ul>
-                {assessmentData.details.map((detail) => (
-                  <li key={detail.id}>{detail.criteria}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </DrawerCore>
-      </AccessControl>
-
-      <AccessControl hasPermission={ROLE_ASSESSMENT_UPDATE}>
-        <DrawerAssessmentUpdate
-          title={"Ubah Form"}
-          visible={drawUpdate}
-          buttonOkText={"Simpan Form"}
-          initProps={initProps}
-          onvisible={setDrawUpdate}
-          id={tempIdAssessmentUpdate}
-          trigger={triggerAssessmentUpdate}
-        />
-      </AccessControl>
-
-      <AccessControl hasPermission={ROLE_ASSESSMENT_DELETE}>
-        <Modal
-          title={`Peringatan`}
-          visible={modaldelete}
-          okButtonProps={{ disabled: loadingdelete }}
-          onCancel={() => {
-            setmodaldelete(false);
-          }}
-          onOk={handleDelete}
-          maskClosable={false}
-          style={{ top: `3rem` }}
-          width={500}
-          destroyOnClose={true}
-        >
-          <p className="mb-4">
-            Form assessment <strong>{roleSelected}</strong>&nbsp; digunakan oleh{" "}
-            <strong>{candidateCount}</strong> kandidat. Apakah Anda yakin ingin
-            melanjutkan penghapusan?
-          </p>
-          <p>
-            Data hasil assessment kandidat yang menggunakan form ini akan tetap
-            disimpan.
-          </p>
-        </Modal>
-      </AccessControl> */}
     </Layout>
   );
 };
@@ -715,7 +548,7 @@ export async function getServerSideProps({ req, res }) {
       dataProfile,
       dataCountResumes,
       dataListResumes,
-      sidemenu: "11",
+      sidemenu: "102",
     },
   };
 }
