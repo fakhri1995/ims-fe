@@ -95,9 +95,13 @@ const ButtonSys = ({
   );
 
   const dashedButtonClassName = clsx(
-    "border border-dashed border-primary100",
-    "hover:border-primary75 py-3.5 flex justify-center",
-    "items-center w-full rounded-md cursor-pointer bg-white"
+    {
+      "border border-dashed border-primary100 hover:border-primary75":
+        !disabled,
+    },
+    { "bg-gray-200": disabled },
+    "py-3.5 flex justify-center",
+    "items-center w-full rounded-md  bg-white"
   );
 
   const buttonType = submit ? "submit" : "button";
