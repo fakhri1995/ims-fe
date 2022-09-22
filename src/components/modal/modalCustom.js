@@ -759,6 +759,55 @@ const ModalReleaseItemTiket = ({
   );
 };
 
+const ModalHapus2 = ({
+  title,
+  visible,
+  onvisible,
+  onOk,
+  onCancel,
+  loading,
+  itemName,
+  // roleSelected,
+  children,
+}) => {
+  return (
+    <ModalCore
+      title={title}
+      visible={visible}
+      onCancel={onCancel}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex justify-between items-center">
+            <ButtonSys
+              type="default"
+              // color="danger"
+              onClick={() => {
+                onvisible(false);
+              }}
+            >
+              Batalkan
+            </ButtonSys>
+            <ButtonSys
+              type={"primary"}
+              color={"danger"}
+              onClick={onOk}
+              // disabled={loadingdelete}
+            >
+              <div className="flex flex-row space-x-2">
+                <TrashIconSvg size={16} color={`white`} />
+                <p>Ya, saya yakin dan hapus {itemName}</p>
+              </div>
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      {children}
+    </ModalCore>
+  );
+};
+
 export {
   ModalEdit,
   ModalHapus,
@@ -775,4 +824,5 @@ export {
   ModalNoteTiket,
   ModalCancelTiket,
   ModalReleaseItemTiket,
+  ModalHapus2,
 };

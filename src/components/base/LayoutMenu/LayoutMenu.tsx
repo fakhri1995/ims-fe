@@ -314,7 +314,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
 
           {hasPermission(SIDEBAR_RESUME_DAFTAR_KANDIDAT) && (
             <Menu.Item key="102">
-              <Link href="/admin/daftar-kandidat">Daftar Kandidat</Link>
+              <Link href="/admin/candidates">Daftar Kandidat</Link>
             </Menu.Item>
           )}
         </SubMenu>

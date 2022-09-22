@@ -1,0 +1,575 @@
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Input, Modal, Select, Spin, notification } from "antd";
+import moment from "moment";
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
+import { useRef } from "react";
+import { Bar, Doughnut } from "react-chartjs-2";
+
+import { AccessControl } from "components/features/AccessControl";
+import { AddNewFormButton } from "components/screen/resume";
+
+import { useAccessControl } from "contexts/access-control";
+
+import {
+  RESUMES_COUNT_GET,
+  RESUMES_GET,
+  RESUME_ADD,
+  RESUME_ASSESSMENT_LIST,
+  RESUME_GET,
+} from "lib/features";
+
+import ButtonSys from "../../../components/button";
+import {
+  ClipboardIconSvg,
+  DownloadIconSvg,
+  UsersIconSvg,
+} from "../../../components/icon";
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import { TableCustomCandidate } from "../../../components/table/tableCustom";
+import { H1, H2, Label, Text } from "../../../components/typography";
+import {
+  createKeyPressHandler,
+  permissionWarningNotification,
+} from "../../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
+import httpcookie from "cookie";
+
+Chart.register(
+  ArcElement,
+  Tooltip,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
+
+const CandidatesIndex = ({
+  initProps,
+  dataProfile,
+  dataCountResumes,
+  dataListResumes,
+  dataListAssessments,
+  sidemenu,
+}) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetResumeList = hasPermission(RESUMES_GET);
+  const isAllowedToGetResumeCount = hasPermission(RESUMES_COUNT_GET);
+  const isAllowedToAddResume = hasPermission(RESUME_ADD);
+  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+
+  const canDownloadResume =
+    hasPermission(RESUMES_GET) && hasPermission(RESUME_GET);
+
+  // 1. Init
+  const rt = useRouter();
+  const pathArr = rt.pathname.split("/").slice(1);
+
+  // 2. State
+  // 2.1. PENGGUNAAN TERBANYAK CARD
+  const [loadingResumeCountData, setLoadingResumeCountData] = useState(true);
+  const [dataColorBar, setDataColorBar] = useState([
+    "#2F80ED",
+    "#E5C471",
+    "#BF4A40",
+    "#6AAA70",
+    "#808080",
+  ]);
+  const top5CandidateCount = dataCountResumes.resume_assessments_count.slice(
+    0,
+    5
+  );
+
+  // 2.3. CREATE FORM
+  const onAddNewCandidateButtonClicked = useCallback(() => {
+    rt.push("/admin/candidates/create");
+  }, []);
+
+  // 2.7. TABLE KANDIDAT
+  const [dataTable, setDataTable] = useState([]);
+  const [dataRawResume, setDataRawResume] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+  const [loadingResumeList, setLoadingResumeList] = useState(true);
+  const [pageResume, setPageResume] = useState(1);
+  const [rowsResume, setRowsResume] = useState(10);
+  const [sortingResume, setSortingResume] = useState({
+    sort_by: "name",
+    sort_type: "desc",
+  });
+  const [assessmentIds, setAssessmentIds] = useState([]);
+
+  // Filter
+  const [searchingFilterResume, setSearchingFilterResume] = useState("");
+  const [roleFilterResume, setRoleFilterResume] = useState([]);
+
+  // Columns
+  const columnsResume = [
+    {
+      title: "No.",
+      dataIndex: "num",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <h1 className="text-center">{dataRawResume?.from + index}</h1>
+            </>
+          ),
+        };
+      },
+    },
+    {
+      title: "Nama",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <h1>{record.name}</h1>
+            </>
+          ),
+        };
+      },
+      sorter: isAllowedToGetResumeList ? (a, b) => a.name > b.name : false,
+    },
+    {
+      title: "Role",
+      dataIndex: "assessment_id",
+      key: "assessment_id",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <h1 className="">{record.assessment?.name}</h1>
+            </>
+          ),
+        };
+      },
+      sorter: isAllowedToGetResumeList
+        ? (a, b) => a.assessment?.name > b.assessment?.name
+        : false,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <h1 className="">{record.email}</h1>
+            </>
+          ),
+        };
+      },
+    },
+    {
+      title: "Nomor Handphone",
+      dataIndex: "telp",
+      key: "telp",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <h1 className="">{record.telp}</h1>
+            </>
+          ),
+        };
+      },
+    },
+    {
+      key: "button_download",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="flex items-center space-x-2">
+              {canDownloadResume && (
+                // <PDFDownloadLink
+                //   document={={
+                //     <ResumePDFTemplate
+                //       detail={dataDisplay}
+                //     />
+                //   }}
+                //   flieName={`R-000${dataDisplay.id}-${moment(new Date())
+                //       .locale("id")
+                //       .format('L-LT')}.pdf`}
+                // >
+                //   <ButtonSys
+                //     type={`default`}
+                //     // disabled={!canDownloadResume}
+                //     onClick={(event) => {
+                //       //  tempIdAssessmentUpdate.current = record.id;
+                //       //  setTriggerAssessmentUpdate((prev) => prev + 1);
+                //       //  setDrawUpdate(true);
+                //       console.log(event)
+                //       event.stopPropagation()
+                //     }}
+                //   >
+                //     <DownloadIconSvg size={15} color={`#35763B`} />
+                //   </ButtonSys>
+
+                // </PDFDownloadLink>
+                <ButtonSys
+                  type={`default`}
+                  // disabled={!canDownloadResume}
+                  onClick={(event) => {
+                    //  tempIdAssessmentUpdate.current = record.id;
+                    //  setTriggerAssessmentUpdate((prev) => prev + 1);
+                    //  setDrawUpdate(true);
+                    console.log(event);
+                    event.stopPropagation();
+                    rt.push(`candidates/viewpdf`);
+                  }}
+                >
+                  <DownloadIconSvg size={15} color={`#35763B`} />
+                </ButtonSys>
+              )}
+            </div>
+          ),
+        };
+      },
+    },
+  ];
+
+  // 3.UseEffect
+  // console.log(dataListAssessments)
+  // 3.1. Set role filter option
+  useEffect(() => {
+    if (!isAllowedToGetAssessmentList) {
+      return;
+    }
+
+    if (dataListAssessments !== undefined) {
+      // setLoadingAssessmentList(false);
+      setRoleFilterResume(dataListAssessments.data);
+    }
+  }, [isAllowedToGetAssessmentList, dataListAssessments]);
+
+  // 3.2. Stop loading if resume count is avalaible
+  useEffect(() => {
+    if (!isAllowedToGetResumeCount) {
+      return;
+    }
+
+    if (dataCountResumes !== undefined) {
+      setLoadingResumeCountData(false);
+    }
+  }, [isAllowedToGetResumeCount, dataCountResumes]);
+
+  // 3.2. GET TABEL SEMUA KANDIDAT
+  useEffect(() => {
+    if (!isAllowedToGetResumeList) {
+      return;
+    }
+
+    if (dataListResumes !== undefined) {
+      setDataRawResume(dataListResumes.data);
+      const mappedData = dataListResumes.data.data.map((doc, idx) => {
+        return {
+          ...doc,
+        };
+      });
+      setDataTable(mappedData);
+      setLoadingResumeList(false);
+    }
+  }, [isAllowedToGetResumeList, dataListResumes]);
+
+  // 4. Event
+  const onFilterResume = () => {
+    console.log(assessmentIds);
+    setLoadingResumeList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sortingResume.sort_by}&sort_type=${sortingResume.sort_type}&keyword=${searchingFilterResume}&page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log(res2);
+        setDataRawResume(res2.data);
+        setDataTable(res2.data.data);
+        setLoadingResumeList(false);
+      });
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
+  // console.log(dataTable)
+  // console.log(assessmentIds)
+  return (
+    <Layout
+      tok={initProps}
+      dataProfile={dataProfile}
+      sidemenu={sidemenu}
+      st={st}
+      pathArr={pathArr}
+    >
+      <div className="flex flex-col lg:flex-row">
+        <div className="flex flex-col lg:px-5 lg:w-1/3">
+          <AddNewFormButton
+            title="Tambah Kandidat"
+            disabled={!isAllowedToAddResume}
+            onButtonClicked={onAddNewCandidateButtonClicked}
+          />
+          {/* CHART ROLE KANDIDAT */}
+          {loadingResumeCountData ? (
+            <>
+              <Spin />
+            </>
+          ) : (
+            <div className="flex flex-col shadow-md rounded-md bg-white p-5 my-6">
+              <div className="flex items-center justify-between mb-4">
+                <H1>Role Kandidat</H1>
+              </div>
+              <div className=" w-full flex justify-center">
+                <Doughnut
+                  data={{
+                    labels: top5CandidateCount.map((doc) => doc.name),
+                    datasets: [
+                      {
+                        data: top5CandidateCount.map(
+                          (doc) => doc.resumes_count
+                        ),
+                        backgroundColor: top5CandidateCount.map(
+                          (doc, idx) =>
+                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                        ),
+                        borderColor: top5CandidateCount.map(
+                          (doc, idx) =>
+                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                        ),
+                        borderWidth: 1,
+                      },
+                    ],
+                  }}
+                  options={{
+                    title: {
+                      display: false,
+                    },
+                    legend: {
+                      display: false,
+                    },
+                    maintainAspectRatio: false,
+                    cutout: 55,
+                    spacing: 5,
+                  }}
+                />
+              </div>
+
+              <div className="flex flex-col w-full mt-5">
+                {top5CandidateCount.map((doc, idx) => (
+                  <div
+                    key={idx}
+                    className="flex justify-between items-center mb-1"
+                  >
+                    <div className="flex">
+                      <div
+                        className=" w-1 mr-2"
+                        style={{
+                          backgroundColor: `${
+                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                          }`,
+                        }}
+                      ></div>
+                      <Text>{doc.name}</Text>
+                    </div>
+                    <div className="flex">
+                      <H2>{doc.resumes_count}</H2>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* CARD TOTAL KANDIDAT */}
+          <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
+            <H1>Total Kandidat</H1>
+            <p className="font-semibold text-4xl">
+              {dataCountResumes.assessments_count}
+            </p>
+          </div>
+        </div>
+
+        {/* TABEL SEMUA KANDIDAT */}
+        <div className="lg:w-2/3 shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+          <H1 className="font-bold">Semua Kandidat</H1>
+          <div className="mt-5 flex flex-col">
+            <div className="flex flex-row w-full mb-5 space-x-4">
+              <Input
+                value={
+                  searchingFilterResume === "" ? null : searchingFilterResume
+                }
+                style={{ width: `100%` }}
+                placeholder="Kata Kunci.."
+                allowClear
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    setSearchingFilterResume("");
+                  } else {
+                    setSearchingFilterResume(e.target.value);
+                  }
+                }}
+                onKeyPress={onKeyPressHandler}
+                disabled={!isAllowedToGetResumeList}
+              />
+
+              <Select
+                // value={
+                //   roleFilterResume === ""
+                //     ? null
+                //     : roleFilterResume
+                // }
+                disabled={!isAllowedToGetAssessmentList}
+                placeholder="Semua Role"
+                defaultValue={0}
+                style={{ width: `50%` }}
+                // allowClear
+                // name={`role`}
+                onChange={(value) => {
+                  setAssessmentIds(value);
+                }}
+              >
+                <Select.Option value={0}>Semua Role</Select.Option>
+                {roleFilterResume.map((doc) => (
+                  <Select.Option key={doc.id} value={doc.id}>
+                    {doc.name}
+                  </Select.Option>
+                ))}
+              </Select>
+
+              <ButtonSys
+                type={"primary"}
+                onClick={onFilterResume}
+                disabled={!isAllowedToGetResumeList}
+              >
+                Cari
+              </ButtonSys>
+            </div>
+            <TableCustomCandidate
+              dataSource={dataTable}
+              setDataSource={setDataTable}
+              columns={columnsResume}
+              loading={loadingResumeList}
+              setpraloading={setLoadingResumeList}
+              pageSize={rowsResume}
+              total={dataRawResume?.total}
+              initProps={initProps}
+              setpage={setPageResume}
+              pagefromsearch={pageResume}
+              setdataraw={setDataRawResume}
+              setsorting={setSortingResume}
+              sorting={sortingResume}
+              searching={searchingFilterResume}
+              assessmentIds={assessmentIds}
+            />
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export async function getServerSideProps({ req, res }) {
+  var initProps = {};
+  if (req && req.headers) {
+    const cookies = req.headers.cookie;
+    if (!cookies) {
+      res.writeHead(302, { Location: "/login" });
+      res.end();
+    }
+    if (typeof cookies === "string") {
+      const cookiesJSON = httpcookie.parse(cookies);
+      initProps = cookiesJSON.token;
+    }
+  }
+  const resources = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjson = await resources.json();
+  const dataProfile = resjson;
+
+  const resourcesGCR = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountResume`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGCR = await resourcesGCR.json();
+  const dataCountResumes = resjsonGCR.data;
+
+  const resourcesGR = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?rows=10`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGR = await resourcesGR.json();
+  const dataListResumes = resjsonGR;
+
+  const resourcesGAL = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGAL = await resourcesGAL.json();
+  const dataListAssessments = resjsonGAL;
+
+  return {
+    props: {
+      initProps,
+      dataProfile,
+      dataCountResumes,
+      dataListResumes,
+      dataListAssessments,
+      sidemenu: "102",
+    },
+  };
+}
+
+export default CandidatesIndex;

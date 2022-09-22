@@ -131,15 +131,32 @@ export const MODULE_FEATURES_ADD = "MODULE_FEATURES_ADD"; // route: `/admin/modu
 export const MODULE_FEATURES_DELETE = "MODULE_FEATURES_DELETE"; // route: `/admin/modules`
 
 /**
- * Daftar feature untuk Resume management.
- *
+ * Daftar feature untuk Resume Builder management.
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/266174467/Assessment+Management
+ * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/266207258/Resume+Management
  */
-export const ROLE_ASSESSMENTS_GET = "ROLE_ASSESSMENTS_GET";
-export const ROLE_ASSESSMENT_COUNT_GET = "ROLE_ASSESSMENT_COUNT_GET";
-export const ROLE_ASSESSMENT_ADD = "ROLE_ASSESSMENT_ADD";
-export const ROLE_ASSESSMENT_UPDATE = "ROLE_ASSESSMENT_UPDATE";
-export const ROLE_ASSESSMENT_DELETE = "ROLE_ASSESSMENT_DELETE";
-export const ROLE_ASSESSMENT_GET = "ROLE_ASSESSMENT_GET";
+
+/** Assessment */
+export const ASSESSMENT_GET = "ASSESSMENT_GET";
+export const ASSESSMENTS_GET = "ASSESSMENTS_GET";
+export const ASSESSMENT_ADD = "ASSESSMENT_ADD";
+export const ASSESSMENT_UPDATE = "ASSESSMENT_UPDATE";
+export const ASSESSMENT_DELETE = "ASSESSMENT_DELETE";
+export const ASSESSMENT_COUNT_GET = "ASSESSMENT_COUNT_GET";
+export const RESUME_ASSESSMENT_LIST = "RESUME_ASSESSMENT_LIST";
+
+/** Resume */
+export const RESUME_GET = "RESUME_GET";
+export const RESUMES_GET = "RESUMES_GET";
+export const RESUME_ADD = "RESUME_ADD";
+export const RESUME_DELETE = "RESUME_DELETE";
+export const RESUME_UPDATE = "RESUME_UPDATE";
+export const RESUME_COUNT_GET = "RESUME_COUNT_GET";
+export const RESUME_SECTION_ADD = "RESUME_SECTION_ADD";
+export const RESUME_SECTION_DELETE = "RESUME_SECTION_DELETE";
+export const RESUME_ASSESSMENT_UPDATE = "RESUME_ASSESSMENT_UPDATE";
+export const RESUME_ASSESSMENT_ADD = "RESUME_ASSESSMENT_ADD";
+export const RESUME_ASSESSMENT_DELETE = "RESUME_ASSESSMENT_DELETE";
 
 /**
  * Daftar feature untuk User Management.

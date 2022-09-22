@@ -10,12 +10,12 @@ import { AddNewFormButton } from "components/screen/resume";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  ROLE_ASSESSMENTS_GET,
-  ROLE_ASSESSMENT_ADD,
-  ROLE_ASSESSMENT_COUNT_GET,
-  ROLE_ASSESSMENT_DELETE,
-  ROLE_ASSESSMENT_GET,
-  ROLE_ASSESSMENT_UPDATE,
+  ASSESSMENTS_GET,
+  ASSESSMENT_ADD,
+  ASSESSMENT_COUNT_GET,
+  ASSESSMENT_DELETE,
+  ASSESSMENT_GET,
+  ASSESSMENT_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
@@ -30,6 +30,7 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomRoleAssessment } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
@@ -69,19 +70,18 @@ const RoleAssessmentIndex = ({
    * Dependencies
    */
   const { hasPermission } = useAccessControl();
-  const isAllowedToGetRoleAssessmentList = hasPermission(ROLE_ASSESSMENTS_GET);
-  const isAllowedToGetRoleAssessmentCount = hasPermission(
-    ROLE_ASSESSMENT_COUNT_GET
-  );
-  const isAllowedToDeleteRoleAssessment = hasPermission(ROLE_ASSESSMENT_DELETE);
+  const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
+  const isAllowedToGetRoleAssessmentCount = hasPermission(ASSESSMENT_COUNT_GET);
+  const isAllowedToDeleteRoleAssessment = hasPermission(ASSESSMENT_DELETE);
   const canUpdateRoleAssessment = hasPermission([
-    ROLE_ASSESSMENT_UPDATE,
-    ROLE_ASSESSMENT_GET,
+    ASSESSMENT_UPDATE,
+    ASSESSMENT_GET,
   ]);
 
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  pathArr[pathArr.length - 1] = "Role Assessment";
 
   // 2. State
   // 2.1. PENGGUNAAN TERBANYAK CARD
@@ -406,7 +406,8 @@ const RoleAssessmentIndex = ({
       <div className="flex flex-col lg:flex-row">
         <div className="flex flex-col px-5 lg:w-1/3">
           <AddNewFormButton
-            disabled={!hasPermission(ROLE_ASSESSMENT_ADD)}
+            title="Tambah Form"
+            disabled={!hasPermission(ASSESSMENT_ADD)}
             onButtonClicked={onAddNewFormButtonClicked}
           />
           {/* CHART PENGGUNAAN TERBANYAK */}
@@ -526,60 +527,58 @@ const RoleAssessmentIndex = ({
         </div>
 
         {/* TABEL SEMUA ROLE ASSESSMENT */}
-        <div className="lg:w-2/3 shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
           <H1 className="font-bold">Semua Role Assesment</H1>
-          <div className="mt-5 flex flex-col">
-            <div className="flex flex-row w-full mb-5 space-x-4">
-              <Input
-                value={
-                  searchingFilterRoleAssessment === ""
-                    ? null
-                    : searchingFilterRoleAssessment
+          <div className="flex flex-row w-full mb-5 space-x-4">
+            <Input
+              value={
+                searchingFilterRoleAssessment === ""
+                  ? null
+                  : searchingFilterRoleAssessment
+              }
+              style={{ width: `100%` }}
+              placeholder="Kata Kunci.."
+              allowClear
+              onChange={(e) => {
+                if (e.target.value === "") {
+                  setSearchingFilterRoleAssessment("");
+                } else {
+                  setSearchingFilterRoleAssessment(e.target.value);
                 }
-                style={{ width: `100%` }}
-                placeholder="Kata Kunci.."
-                allowClear
-                onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterRoleAssessment("");
-                  } else {
-                    setSearchingFilterRoleAssessment(e.target.value);
-                  }
-                }}
-                onKeyPress={onKeyPressHandler}
-                disabled={!isAllowedToGetRoleAssessmentList}
-              />
-
-              <ButtonSys
-                type={"primary"}
-                onClick={onFilterRoleAssessment}
-                disabled={!isAllowedToGetRoleAssessmentList}
-              >
-                Cari
-              </ButtonSys>
-            </div>
-            <TableCustomRoleAssessment
-              dataSource={dataTable}
-              setDataSource={setDataTable}
-              columns={columnsRoleAssessment}
-              loading={loadingRoleAssesment}
-              setpraloading={setLoadingRoleAssessment}
-              pageSize={rowsRoleAssessment}
-              total={dataRawRoleAssessment?.total}
-              initProps={initProps}
-              setpage={setPageRoleAssessment}
-              pagefromsearch={pageRoleAssessment}
-              setdataraw={setDataRawRoleAssessment}
-              setsorting={setSortingRoleAssessment}
-              sorting={sortingRoleAssessment}
-              searching={searchingFilterRoleAssessment}
+              }}
+              onKeyPress={onKeyPressHandler}
+              disabled={!isAllowedToGetRoleAssessmentList}
             />
+
+            <ButtonSys
+              type={"primary"}
+              onClick={onFilterRoleAssessment}
+              disabled={!isAllowedToGetRoleAssessmentList}
+            >
+              Cari
+            </ButtonSys>
           </div>
+          <TableCustomRoleAssessment
+            dataSource={dataTable}
+            setDataSource={setDataTable}
+            columns={columnsRoleAssessment}
+            loading={loadingRoleAssesment}
+            setpraloading={setLoadingRoleAssessment}
+            pageSize={rowsRoleAssessment}
+            total={dataRawRoleAssessment?.total}
+            initProps={initProps}
+            setpage={setPageRoleAssessment}
+            pagefromsearch={pageRoleAssessment}
+            setdataraw={setDataRawRoleAssessment}
+            setsorting={setSortingRoleAssessment}
+            sorting={sortingRoleAssessment}
+            searching={searchingFilterRoleAssessment}
+          />
         </div>
       </div>
 
       {/* DRAWER */}
-      <AccessControl hasPermission={ROLE_ASSESSMENT_ADD}>
+      <AccessControl hasPermission={ASSESSMENT_ADD}>
         <DrawerAssessmentCreate
           title={"Tambah Form"}
           visible={isCreateDrawerShown}
@@ -589,7 +588,7 @@ const RoleAssessmentIndex = ({
         />
       </AccessControl>
 
-      <AccessControl hasPermission={ROLE_ASSESSMENT_GET}>
+      <AccessControl hasPermission={ASSESSMENT_GET}>
         <DrawerCore
           title={`${assessmentData.name}`}
           visible={drawread}
@@ -639,7 +638,7 @@ const RoleAssessmentIndex = ({
         </DrawerCore>
       </AccessControl>
 
-      <AccessControl hasPermission={ROLE_ASSESSMENT_UPDATE}>
+      <AccessControl hasPermission={ASSESSMENT_UPDATE}>
         <DrawerAssessmentUpdate
           title={"Ubah Form"}
           visible={drawUpdate}
@@ -651,19 +650,17 @@ const RoleAssessmentIndex = ({
         />
       </AccessControl>
 
-      <AccessControl hasPermission={ROLE_ASSESSMENT_DELETE}>
-        <Modal
+      <AccessControl hasPermission={ASSESSMENT_DELETE}>
+        <ModalHapus2
           title={`Peringatan`}
           visible={modaldelete}
-          okButtonProps={{ disabled: loadingdelete }}
+          onvisible={setmodaldelete}
+          onOk={handleDelete}
           onCancel={() => {
             setmodaldelete(false);
           }}
-          onOk={handleDelete}
-          maskClosable={false}
-          style={{ top: `3rem` }}
-          width={500}
-          destroyOnClose={true}
+          itemName={"form"}
+          loading={loadingdelete}
         >
           <p className="mb-4">
             Form assessment <strong>{roleSelected}</strong>&nbsp; digunakan oleh{" "}
@@ -674,7 +671,7 @@ const RoleAssessmentIndex = ({
             Data hasil assessment kandidat yang menggunakan form ini akan tetap
             disimpan.
           </p>
-        </Modal>
+        </ModalHapus2>
       </AccessControl>
     </Layout>
   );
@@ -735,7 +732,7 @@ export async function getServerSideProps({ req, res }) {
       dataProfile,
       dataCountAssessments,
       dataListRoleAssessments,
-      sidemenu: "11",
+      sidemenu: "101",
     },
   };
 }

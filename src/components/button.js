@@ -94,6 +94,16 @@ const ButtonSys = ({
     "border-none"
   );
 
+  const dashedButtonClassName = clsx(
+    {
+      "border border-dashed border-primary100 hover:border-primary75":
+        !disabled,
+    },
+    { "bg-gray-200": disabled },
+    "py-3.5 flex justify-center",
+    "items-center w-full rounded-md  bg-white"
+  );
+
   const buttonType = submit ? "submit" : "button";
 
   let buttonElement = null;
@@ -133,6 +143,19 @@ const ButtonSys = ({
           onClick={onClick}
           type={buttonType}
           className={ghostButtonClassName}
+        >
+          {children}
+        </button>
+      );
+      break;
+
+    case "dashed":
+      buttonElement = (
+        <button
+          form={form}
+          onClick={onClick}
+          type={buttonType}
+          className={dashedButtonClassName}
         >
           {children}
         </button>
