@@ -6,7 +6,7 @@ import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ASSESSMENTS_GET, RESUME_ADD } from "lib/features";
+import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
@@ -19,7 +19,7 @@ const CandidateCreate = ({
   initProps,
   dataProfile,
   sidemenu,
-  dataListRoleAssessments,
+  dataListAssessments,
 }) => {
   /**
    * Dependencies
@@ -33,7 +33,7 @@ const CandidateCreate = ({
   }
 
   const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
+  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
 
   const rt = useRouter();
 
@@ -48,16 +48,9 @@ const CandidateCreate = ({
     name: "",
     telp: "",
     email: "",
-    role: "",
     city: "",
     province: "",
-  });
-
-  const [dataAddEducation, setDataAddEducation] = useState({
-    university: "",
-    major: "",
-    gpa: 0,
-    graduation_year: "",
+    assessment_id: "",
   });
 
   const [loadingCreate, setLoadingCreate] = useState(false);
@@ -100,9 +93,9 @@ const CandidateCreate = ({
               name: "",
               telp: "",
               email: "",
-              role: "",
               city: "",
               province: "",
+              assessment_id: "",
             });
             rt.push(`/admin/candidates/${response2.id}`);
           }, 500);
@@ -127,27 +120,27 @@ const CandidateCreate = ({
 
   // USE EFFECT
   useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentList) {
+    if (!isAllowedToGetAssessmentList) {
       return;
     }
 
-    const roles = dataListRoleAssessments.data.data;
+    const roles = dataListAssessments.data;
     setAssessmentRoles(roles);
-  }, [isAllowedToGetRoleAssessmentList, dataListRoleAssessments]);
+  }, [isAllowedToGetAssessmentList, dataListAssessments]);
 
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentList) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isAllowedToGetAssessmentList) {
+  //     return;
+  //   }
 
-    if (selected !== undefined) {
-      let findCriterias = assessmentRoles.find(
-        (assessment) => assessment.name === selected
-      );
-      // console.log(findCriterias)
-      setCriterias(findCriterias.details);
-    }
-  }, [isAllowedToGetRoleAssessmentList, selected]);
+  //   if (selected !== undefined) {
+  //     let findCriterias = assessmentRoles.find(
+  //       (assessment) => assessment.name === selected
+  //     );
+  //     // console.log(findCriterias)
+  //     setCriterias(findCriterias.details);
+  //   }
+  // }, [isAllowedToGetAssessmentList, selected]);
 
   //DEBUG
   // console.log(dataAddCandidate);
@@ -165,6 +158,7 @@ const CandidateCreate = ({
           dataUpdateBasic={dataAddCandidate}
           setDataUpdateBasic={setDataAddCandidate}
           handleUpdate={handleCreateCandidate}
+          loadingUpdate={loadingCreate}
           assessmentRoles={assessmentRoles}
           isCreateForm={true}
         />
@@ -344,7 +338,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjsonGP;
 
   const resourcesGA = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
     {
       method: `GET`,
       headers: {
@@ -353,14 +347,14 @@ export async function getServerSideProps({ req, res }) {
     }
   );
   const resjsonGA = await resourcesGA.json();
-  const dataListRoleAssessments = resjsonGA;
+  const dataListAssessments = resjsonGA;
 
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "112",
-      dataListRoleAssessments,
+      dataListAssessments,
     },
   };
 }

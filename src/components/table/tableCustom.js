@@ -1194,7 +1194,7 @@ const TableCustomCandidate = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}&assessments_ids=${assessmentIds}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}&assessment_ids=${assessmentIds}`,
             {
               method: `GET`,
               headers: {
@@ -1235,6 +1235,7 @@ const TableCustomCandidate = ({
             )
               .then((res) => res.json())
               .then((res2) => {
+                console.log(res2);
                 setdataraw(res2.data);
                 setDataSource(res2.data.data);
                 setpraloading(false);
@@ -1253,7 +1254,7 @@ const TableCustomCandidate = ({
             )
               .then((res) => res.json())
               .then((res2) => {
-                console.log(res2);
+                // console.log(res2);
                 setdataraw(res2.data);
                 setDataSource(res2.data.data);
                 setpraloading(false);

@@ -12,6 +12,7 @@ import TextArea from "antd/lib/input/TextArea";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -40,8 +41,7 @@ const BasicInfoCard = ({
   assessmentRoles,
   handleDelete,
   isAllowedToDeleteCandidate,
-  // modalDelete,
-  // setModalDelete,
+  loadingUpdate,
   loadingDelete,
   isCreateForm,
 }) => {
@@ -51,15 +51,10 @@ const BasicInfoCard = ({
   const [modalDelete, setModalDelete] = useState(false);
 
   const onChangeInput = (e) => {
-    // setDataDisplay({
-    //   ...dataDisplay,
-    //   [e.target.name]: e.target.value,
-    // });
     setDataUpdateBasic({
       ...dataUpdateBasic,
       [e.target.name]: e.target.value,
     });
-    // setdisabledtrigger((prev) => prev + 1);
   };
 
   // console.log(dataUpdateBasic);
@@ -81,7 +76,7 @@ const BasicInfoCard = ({
                     name: dataDisplay.name,
                     telp: dataDisplay.telp,
                     email: dataDisplay.email,
-                    role: dataDisplay.role,
+                    assessment_id: dataDisplay.assessment_id,
                     city: dataDisplay.city,
                     province: dataDisplay.province,
                   });
@@ -100,6 +95,7 @@ const BasicInfoCard = ({
                 : handleUpdate("basic_information", dataUpdateBasic);
               setIsShowInput(false);
             }}
+            disabled={loadingUpdate}
           >
             <CheckIconSvg size={16} color={`white`} />
             {isCreateForm ? <p>Tambah Kandidat</p> : <p>Simpan Kandidat</p>}
@@ -142,17 +138,17 @@ const BasicInfoCard = ({
         >
           <div>
             <Select
-              defaultValue={dataUpdateBasic.role}
+              defaultValue={dataUpdateBasic.assessment_id}
               onChange={(value) => {
                 // console.log(value)
                 setDataUpdateBasic({
                   ...dataUpdateBasic,
-                  role: value,
+                  assessment_id: value,
                 });
               }}
             >
               {assessmentRoles.map((role) => (
-                <Select.Option key={role.id} value={role.name}>
+                <Select.Option key={role.id} value={role.id}>
                   {role.name}
                 </Select.Option>
               ))}
@@ -185,7 +181,6 @@ const BasicInfoCard = ({
         <Form.Item
           label="Phone Number"
           name={"telp"}
-          // type={"number"}
           rules={[
             {
               required: true,
@@ -239,7 +234,7 @@ const BasicInfoCard = ({
                 name: dataDisplay.name,
                 telp: dataDisplay.telp,
                 email: dataDisplay.email,
-                role: dataDisplay.role,
+                assessment_id: dataDisplay.assessment_id,
                 city: dataDisplay.city,
                 province: dataDisplay.province,
               });
@@ -265,7 +260,11 @@ const BasicInfoCard = ({
           </ButtonSys>
           <ButtonSys
             type={"default"}
-            // onClick={handleCreateCandidate}
+            onClick={() => rt.push(`/candidates/viewpdf/${dataDisplay.id}`)}
+            //   rt.push({
+            //   pathname:`/viewpdf`,
+            //   query: { detail: dataDisplay}
+            // }, '/viewpdf')}
           >
             <div className="flex flex-row space-x-2">
               <DownloadIconSvg size={16} color={"#35763B"} />
@@ -285,7 +284,7 @@ const BasicInfoCard = ({
             <p className="text-xs text-gray-300 mb-2">Role</p>
             <div className="flex flex-row items-center space-x-2">
               <OneUserIconSvg size={18} color="#4D4D4D" />
-              <p>{dataDisplay.role}</p>
+              <p>{dataDisplay.assessment?.name}</p>
             </div>
           </div>
           <div className="flex flex-col mt-3">

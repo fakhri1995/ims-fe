@@ -1,3 +1,13 @@
+import {
+  Document,
+  Image,
+  Link,
+  PDFDownloadLink,
+  Page,
+  StyleSheet,
+  Text,
+  View,
+} from "@react-pdf/renderer";
 import { Form, Modal, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -13,6 +23,7 @@ import {
   RESUME_ADD,
   RESUME_ASSESSMENT_ADD,
   RESUME_ASSESSMENT_DELETE,
+  RESUME_ASSESSMENT_LIST,
   RESUME_ASSESSMENT_UPDATE,
   RESUME_DELETE,
   RESUME_GET,
@@ -31,12 +42,51 @@ import CertificationCard from "../../../components/cards/resume/certification/Ce
 import ExperienceCard from "../../../components/cards/resume/experience/ExperienceCard";
 import ProjectCard from "../../../components/cards/resume/project/ProjectCard";
 import TrainingCard from "../../../components/cards/resume/training/TrainingCard";
-import { TrashIconSvg } from "../../../components/icon";
+import {
+  LocationIconSvg,
+  MappinIconSvg,
+  OneUserIconSvg,
+  TrashIconSvg,
+} from "../../../components/icon";
 import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { H1, H2 } from "../../../components/typography";
 import httpcookie from "cookie";
+
+// const styles = StyleSheet.create({
+
+// })
+// const ResumePDFTemplate = ({detail}) => {
+//   return (
+//     <Document>
+//       <Page size={'A4'} style={styles.page}>
+//         {/* Header */}
+//         <View style={styles.header}>
+//           <Text>
+//             {detail.name}
+//           </Text>
+//           <View>
+//             <View>
+//               <OneUserIconSvg />
+//               <Text>
+//                 {detail.role}
+//               </Text>
+//             </View>
+//             <View>
+//               <MappinIconSvg />
+//               <Text>
+//                 {detail.city}, {detail.province}
+//               </Text>
+//             </View>
+//           </View>
+//         </View>
+
+//       </Page>
+
+//     </Document>
+//   )
+// }
 
 const CandidateDetail = ({
   initProps,
@@ -44,7 +94,7 @@ const CandidateDetail = ({
   dataResume,
   sidemenu,
   candidateId,
-  dataListRoleAssessments,
+  dataListAssessments,
 }) => {
   /**
    * Dependencies
@@ -57,7 +107,6 @@ const CandidateDetail = ({
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
   const isAllowedToGetCandidateDetail = hasPermission(RESUME_GET);
   const isAllowedToUpdateCandidate = hasPermission(RESUME_UPDATE);
   const isAllowedToDeleteCandidate = hasPermission(RESUME_DELETE);
@@ -65,15 +114,13 @@ const CandidateDetail = ({
   const isAllowedToAddSection = hasPermission(RESUME_SECTION_ADD);
   const isAllowedToDeleteSection = hasPermission(RESUME_SECTION_DELETE);
 
-  const isAllowedToAddResumeAssessment = hasPermission(RESUME_ASSESSMENT_ADD);
   const isAllowedToUpdateResumeAssessment = hasPermission(
     RESUME_ASSESSMENT_UPDATE
   );
   const isAllowedToDeleteResumeAssessment = hasPermission(
     RESUME_ASSESSMENT_DELETE
   );
-
-  const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
+  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
 
   //INIT
   const rt = useRouter();
@@ -81,7 +128,6 @@ const CandidateDetail = ({
   const pathArr = rt.pathname.split("/").slice(1);
   // console.log(pathArr);
   pathArr[pathArr.length - 1] = "Detail Kandidat";
-  const [instanceForm] = Form.useForm();
 
   //STATE
   //1. display
@@ -91,7 +137,6 @@ const CandidateDetail = ({
     name: "",
     telp: "",
     email: "",
-    role: "",
     city: "",
     province: "",
     assessment_id: null,
@@ -102,32 +147,18 @@ const CandidateDetail = ({
     trainings: [],
     certificates: [],
     achievements: [],
+    assessment: {},
     assessment_results: [],
   });
   const [assessmentRoles, setAssessmentRoles] = useState([]);
 
   //2. update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
-  const [disabledUpdate, setDisabledUpdate] = useState(false);
-  const [disabledtrigger, setdisabledtrigger] = useState(-1);
-  const [isShowInput, setIsShowInput] = useState(false);
-  const [dataUpdate, setDataUpdate] = useState({
-    id: Number(candidateId),
-    basic_information: {},
-    education: {},
-    experience: {},
-    project: {},
-    skill: {},
-    training: {},
-    certificate: {},
-    achievement: {},
-  });
-
   const [dataUpdateBasic, setDataUpdateBasic] = useState({
     name: "",
     telp: "",
     email: "",
-    role: "",
+    assessment_id: "",
     city: "",
     province: "",
   });
@@ -192,28 +223,37 @@ const CandidateDetail = ({
 
   const [dataUpdateAssessment, setDataUpdateAssessment] = useState({
     id: Number(candidateId),
-    delete_assessment: false,
-    change_assessment: false,
-    assessment_id: null,
     assessment_result_values: [],
   });
 
   // 3. delete
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  //HANDLER
-  const onChangeInput = (e) => {
-    setDataDisplay({
-      ...dataDisplay,
-      [e.target.name]: e.target.value,
-    });
-    setDataUpdate({
-      ...dataUpdate,
-      [e.target.name]: e.target.value,
-    });
-    // setdisabledtrigger((prev) => prev + 1);
-  };
+  //USE EFFECT
+  useEffect(() => {
+    if (!isAllowedToGetCandidateDetail) {
+      setpraloading(false);
+      return;
+    }
 
+    if (dataResume !== undefined) {
+      setDataDisplay(dataResume.data);
+      setpraloading(false);
+    }
+  }, [isAllowedToGetCandidateDetail, dataResume]);
+
+  useEffect(() => {
+    if (!isAllowedToGetAssessmentList) {
+      return;
+    }
+    if (dataListAssessments !== undefined) {
+      const roles = dataListAssessments.data;
+      setAssessmentRoles(roles);
+    }
+  }, [isAllowedToGetAssessmentList, dataListAssessments]);
+
+  //HANDLER
+  // 1. Section
   const handleAddSection = (sectionName, data) => {
     const payload = {
       id: Number(candidateId),
@@ -308,7 +348,6 @@ const CandidateDetail = ({
           duration: 3,
         });
         setLoadingUpdate(false);
-        // setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
       });
   };
 
@@ -317,7 +356,7 @@ const CandidateDetail = ({
       id: Number(candidateId),
       [sectionName + "_id"]: sectionId,
     };
-    console.log(payload);
+
     if (!isAllowedToDeleteCandidate) {
       return;
     }
@@ -360,14 +399,15 @@ const CandidateDetail = ({
       });
   };
 
-  const handleAddAssessment = () => {
-    if (!isAllowedToAddResumeAssessment) {
+  //2. Assessment Result
+  const handleUpdateAssessment = () => {
+    if (!isAllowedToUpdateResumeAssessment) {
       return;
     }
 
     setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResumeAssessment`, {
-      method: "POST",
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateResumeAssessment`, {
+      method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
@@ -378,23 +418,16 @@ const CandidateDetail = ({
       .then((response2) => {
         if (response2.success) {
           notification.success({
-            message: `Assessment result berhasil ditambahkan.`,
+            message: `Nilai assessment berhasil diubah.`,
             duration: 3,
           });
           setTimeout(() => {
             setLoadingUpdate(false);
-            setDataUpdateAssessment({
-              id: Number(candidateId),
-              delete_assessment: false,
-              change_assessment: false,
-              assessment_id: null,
-              assessment_result_values: [],
-            });
             rt.push(`/admin/candidates/${candidateId}`);
           }, 500);
         } else {
           notification.error({
-            message: `Gagal menambahkan assessment result. ${response2.message}`,
+            message: `Gagal mengubah nilai assessment. ${response2.message}`,
             duration: 3,
           });
           setTimeout(() => {
@@ -405,11 +438,10 @@ const CandidateDetail = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambahkan assessment result. ${err.response}`,
+          message: `Gagal mengubah nilai assessment. ${err.response}`,
           duration: 3,
         });
         setLoadingUpdate(false);
-        // setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
       });
   };
 
@@ -450,7 +482,7 @@ const CandidateDetail = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus hasil assessment. ${response2.message}`,
+          message: `Gagal menghapus hasil assessment. ${err.message}`,
           duration: 3,
         });
         setTimeout(() => {
@@ -460,6 +492,7 @@ const CandidateDetail = ({
       });
   };
 
+  // 3. Resume/Candidate
   const handleDeleteResume = () => {
     const payload = {
       id: Number(candidateId),
@@ -498,7 +531,6 @@ const CandidateDetail = ({
             name: "",
             telp: "",
             email: "",
-            role: "",
             city: "",
             province: "",
             assessment_id: null,
@@ -509,6 +541,7 @@ const CandidateDetail = ({
             trainings: [],
             certificates: [],
             achievements: [],
+            assessment: {},
             assessment_results: [],
           });
           rt.push(`/admin/candidates`);
@@ -525,7 +558,6 @@ const CandidateDetail = ({
           name: "",
           telp: "",
           email: "",
-          role: "",
           city: "",
           province: "",
           assessment_id: null,
@@ -536,32 +568,11 @@ const CandidateDetail = ({
           trainings: [],
           certificates: [],
           achievements: [],
+          assessment: {},
           assessment_results: [],
         });
       });
   };
-
-  //USE EFFECT
-  useEffect(() => {
-    if (!isAllowedToGetCandidateDetail) {
-      setpraloading(false);
-      return;
-    }
-
-    if (dataResume !== undefined) {
-      setDataDisplay(dataResume.data);
-      setpraloading(false);
-    }
-  }, [isAllowedToGetCandidateDetail, dataResume]);
-
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentList) {
-      return;
-    }
-
-    const roles = dataListRoleAssessments.data.data;
-    setAssessmentRoles(roles);
-  }, [isAllowedToGetRoleAssessmentList, dataListRoleAssessments]);
 
   //DEBUG
   // console.log(dataDisplay);
@@ -575,7 +586,6 @@ const CandidateDetail = ({
       st={st}
       pathArr={pathArr}
     >
-      {/* START UBAH */}
       <div className="flex flex-col gap-6">
         {/* SECTION BASIC INFO */}
         <BasicInfoCard
@@ -589,7 +599,9 @@ const CandidateDetail = ({
           praloading={praloading}
           assessmentRoles={assessmentRoles}
           isAllowedToDeleteCandidate={isAllowedToDeleteCandidate}
+          isAllowedToGetAssessmentList={isAllowedToGetAssessmentList}
           loadingDelete={loadingDelete}
+          loadingUpdate={loadingUpdate}
         />
 
         <div className="flex flex-row gap-6">
@@ -674,15 +686,12 @@ const CandidateDetail = ({
             {/* SECTION ASSESSMENT RESULT */}
             <AssessmentResultCard
               dataDisplay={dataDisplay}
+              setDataDisplay={setDataDisplay}
               dataUpdate={dataUpdateAssessment}
               setDataUpdate={setDataUpdateAssessment}
-              handleAdd={handleAddAssessment}
-              // handleUpdate={handleUpdateAssessment}
+              handleUpdate={handleUpdateAssessment}
               handleDelete={handleDeleteAssessment}
               assessmentRoles={assessmentRoles}
-              isAllowedToDeleteResumeAssessment={
-                isAllowedToDeleteResumeAssessment
-              }
               loadingDelete={loadingDelete}
             />
           </div>
@@ -737,8 +746,8 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGR = await resourcesGR.json();
   const dataResume = resjsonGR;
 
-  const resourcesGA = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`,
+  const resourcesGAL = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
     {
       method: `GET`,
       headers: {
@@ -746,8 +755,8 @@ export async function getServerSideProps({ req, res, params }) {
       },
     }
   );
-  const resjsonGA = await resourcesGA.json();
-  const dataListRoleAssessments = resjsonGA;
+  const resjsonGAL = await resourcesGAL.json();
+  const dataListAssessments = resjsonGAL;
 
   return {
     props: {
@@ -756,7 +765,7 @@ export async function getServerSideProps({ req, res, params }) {
       dataResume,
       sidemenu: "102",
       candidateId,
-      dataListRoleAssessments,
+      dataListAssessments,
     },
   };
 }

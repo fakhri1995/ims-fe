@@ -23,28 +23,18 @@ import { H2 } from "../../typography";
 
 const AssessmentResultCard = ({
   dataDisplay,
+  setDataDisplay,
   handleAdd,
+  handleUpdate,
   handleDelete,
   dataUpdate,
   setDataUpdate,
   assessmentRoles,
-  isAllowedToDeleteResumeAssessment,
   loadingDelete,
 }) => {
   const [isShowInput, setIsShowInput] = useState(false);
-  const [selected, setSelected] = useState();
-  const [criterias, setCriterias] = useState([]);
   const [modalDelete, setModalDelete] = useState(false);
-
-  useEffect(() => {
-    if (isShowInput === true) {
-      let findCriterias = assessmentRoles.find(
-        (assessment) => assessment.id === selected
-      );
-      // console.log(findCriterias.details)
-      setCriterias(findCriterias.details);
-    }
-  }, [selected]);
+  const [resultValue, setResultValue] = useState([]);
 
   // console.log(assessmentRoles);
   // console.log(dataUpdate)
@@ -56,16 +46,8 @@ const AssessmentResultCard = ({
           <div className="flex flex-row space-x-4 items-start">
             <button
               onClick={() => {
-                handleAdd();
-                // setDataUpdate({
-                // 	id: null,
-                // 	role: "",
-                // 	company: "",
-                // 	start_date: "",
-                // 	end_date: "",
-                // 	description: "",
-                // 	resume_id: null,
-                // })
+                handleUpdate(dataUpdate);
+                setIsShowInput(false);
               }}
               className="bg-transparent"
             >
@@ -83,73 +65,54 @@ const AssessmentResultCard = ({
         ) : (
           <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
             <button
-              onClick={(event) => {
-                // console.log(edu.id)
+              onClick={() => {
                 setIsShowInput(true);
               }}
               className="bg-transparent"
             >
               <EditIconSvg size={18} color="#4D4D4D" />
             </button>
-
-            <button
-              onClick={() => {
-                setModalDelete(true);
-              }}
-              className="bg-transparent"
-            >
-              <TrashIconSvg size={18} color="#4D4D4D" />
-            </button>
           </div>
         )}
       </div>
 
       <hr className="my-4" />
+      <div>
+        <div className="flex flex-col space-y-2 mb-3">
+          <p className="text-xs text-gray-400">Assessment Role</p>
+          <p>{dataDisplay.assessment?.name}</p>
+        </div>
 
-      {/* Input Assessment Result */}
-      {isShowInput ? (
         <div>
-          <div className="flex flex-col space-y-2 mb-3">
-            <p className="text-xs text-gray-400">Assessment Role</p>
-            <Select
-              defaultValue={dataDisplay.role}
-              onChange={(value) => {
-                console.log(value);
-                setSelected(value);
-                setDataUpdate((prev) => ({
-                  ...prev,
-                  assessment_id: value,
-                }));
-              }}
-            >
-              {assessmentRoles.map((role) => (
-                <Select.Option key={role.id} value={role.id}>
-                  {role.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </div>
-
-          <div>
-            <p className="text-xs text-gray-400 mb-2">Criteria</p>
+          <p className="text-xs text-gray-400 mb-2">Criteria</p>
+          {isShowInput ? (
             <ul>
-              {criterias.map((assessment, idx) => (
-                <li key={assessment.id}>
+              {/* Input Assessment Result */}
+              {dataDisplay.assessment_results?.map((result, idx) => (
+                <li key={idx}>
                   <div className="flex flex-row justify-between items-center mb-1">
-                    <p className="w-full mr-5">{assessment.criteria}</p>
+                    <p className="w-full mr-5">{result.criteria}</p>
                     <Input
                       className="w-20"
-                      value={assessment.value}
+                      value={result.value}
                       onChange={(event) => {
+                        // to change display data
                         let newScore = event.target.value;
-                        let tempResult = [
+                        const tempDisplay = [...dataDisplay.assessment_results];
+                        tempDisplay[idx].value = newScore;
+                        setDataDisplay((prev) => ({
+                          ...prev,
+                          assessment_results: tempDisplay,
+                        }));
+
+                        // to change update data
+                        const tempUpdate = [
                           ...dataUpdate.assessment_result_values,
                         ];
-                        tempResult[idx] = newScore;
-                        // console.log(event.target.value)
+                        tempUpdate[idx] = newScore;
                         setDataUpdate((prev) => ({
                           ...prev,
-                          assessment_result_values: tempResult,
+                          assessment_result_values: tempUpdate,
                         }));
                       }}
                     />
@@ -157,51 +120,20 @@ const AssessmentResultCard = ({
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <div className="flex flex-col space-y-2 mb-3">
-            <p className="text-xs text-gray-400">Assessment Role</p>
-            <p>{dataDisplay.role}</p>
-          </div>
-
-          <div>
-            <p className="text-xs text-gray-400 mb-2">Criteria</p>
+          ) : (
             <ul>
-              {dataDisplay.assessment_results.map((assessment) => (
-                <li key={assessment.id}>
+              {dataDisplay.assessment_results?.map((result) => (
+                <li key={result.id}>
                   <div className="flex flex-row justify-between mb-1">
-                    <p>{assessment.criteria}</p>
-                    <p className="text-green-theme font-bold">
-                      {assessment.value}
-                    </p>
+                    <p>{result.criteria}</p>
+                    <p className="text-green-theme font-bold">{result.value}</p>
                   </div>
                 </li>
               ))}
             </ul>
-          </div>
+          )}
         </div>
-      )}
-
-      <AccessControl hasPermission={RESUME_ASSESSMENT_DELETE}>
-        <ModalHapus2
-          title={`Peringatan`}
-          visible={modalDelete}
-          onvisible={setModalDelete}
-          onOk={handleDelete}
-          onCancel={() => {
-            setModalDelete(false);
-          }}
-          itemName={"nilai"}
-          loading={loadingDelete}
-        >
-          <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan hasil assessment
-            kandidat dengan nama <strong>{dataDisplay.name}</strong>?
-          </p>
-        </ModalHapus2>
-      </AccessControl>
+      </div>
     </div>
   );
 };

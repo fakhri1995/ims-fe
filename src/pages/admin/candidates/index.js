@@ -1,4 +1,6 @@
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Input, Modal, Select, Spin, notification } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { useRef } from "react";
@@ -13,13 +15,11 @@ import {
   RESUMES_COUNT_GET,
   RESUMES_GET,
   RESUME_ADD,
+  RESUME_ASSESSMENT_LIST,
   RESUME_GET,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
-import DrawerCore from "../../../components/drawer/drawerCore";
-import DrawerAssessmentCreate from "../../../components/drawer/resume/drawerAssessmentCreate";
-import DrawerAssessmentUpdate from "../../../components/drawer/resume/drawerAssessmentUpdate";
 import {
   ClipboardIconSvg,
   DownloadIconSvg,
@@ -60,6 +60,7 @@ const CandidatesIndex = ({
   dataProfile,
   dataCountResumes,
   dataListResumes,
+  dataListAssessments,
   sidemenu,
 }) => {
   /**
@@ -69,14 +70,10 @@ const CandidatesIndex = ({
   const isAllowedToGetResumeList = hasPermission(RESUMES_GET);
   const isAllowedToGetResumeCount = hasPermission(RESUMES_COUNT_GET);
   const isAllowedToAddResume = hasPermission(RESUME_ADD);
+  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+
   const canDownloadResume =
     hasPermission(RESUMES_GET) && hasPermission(RESUME_GET);
-
-  // const isAllowedToDeleteRoleAssessment = hasPermission(ASSESSMENT_DELETE);
-  // const canUpdateRoleAssessment = hasPermission([
-  //   ASSESSMENT_UPDATE,
-  //   ASSESSMENT_GET,
-  // ]);
 
   // 1. Init
   const rt = useRouter();
@@ -98,34 +95,9 @@ const CandidatesIndex = ({
   );
 
   // 2.3. CREATE FORM
-  const [drawCreate, setDrawCreate] = useState(false);
   const onAddNewCandidateButtonClicked = useCallback(() => {
     rt.push("/admin/candidates/create");
   }, []);
-
-  // 2.4 READ FORM
-  const [drawRead, setDrawRead] = useState(false);
-
-  // 2.5. UPDATE FORM
-  const [drawUpdate, setDrawUpdate] = useState(false);
-  const [triggerResumeUpdate, setTriggerResumeUpdate] = useState(-1);
-  const tempIdResumeUpdate = useRef(-1);
-  const [resumeData, setResumeData] = useState({
-    id: 0,
-    name: "",
-    telp: "",
-    email: "",
-    role: "",
-  });
-
-  // 2.6. DELETE FORM
-  const [modalDelete, setModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  // const [roleSelected, setRoleSelected] = useState("");
-  // const [candidateCount, setCandidateCount] = useState(0);
-  const [dataDelete, setDataDelete] = useState({
-    id: 0,
-  });
 
   // 2.7. TABLE KANDIDAT
   const [dataTable, setDataTable] = useState([]);
@@ -188,18 +160,20 @@ const CandidatesIndex = ({
     },
     {
       title: "Role",
-      dataIndex: "role",
-      key: "role",
+      dataIndex: "assessment_id",
+      key: "assessment_id",
       render: (text, record, index) => {
         return {
           children: (
             <>
-              <h1 className="">{record.role}</h1>
+              <h1 className="">{record.assessment?.name}</h1>
             </>
           ),
         };
       },
-      sorter: isAllowedToGetResumeList ? (a, b) => a.role > b.role : false,
+      sorter: isAllowedToGetResumeList
+        ? (a, b) => a.assessment?.name > b.assessment?.name
+        : false,
     },
     {
       title: "Email",
@@ -235,18 +209,47 @@ const CandidatesIndex = ({
         return {
           children: (
             <div className="flex items-center space-x-2">
-              <ButtonSys
-                type={`default`}
-                // disabled={!canDownloadResume}
-                // onClick={(event) => {
-                //   //  tempIdAssessmentUpdate.current = record.id;
-                //   //  setTriggerAssessmentUpdate((prev) => prev + 1);
-                //   //  setDrawUpdate(true);
-                //   console.log(event)
-                // }}
-              >
-                <DownloadIconSvg size={15} color={`#35763B`} />
-              </ButtonSys>
+              {canDownloadResume && (
+                // <PDFDownloadLink
+                //   document={={
+                //     <ResumePDFTemplate
+                //       detail={dataDisplay}
+                //     />
+                //   }}
+                //   flieName={`R-000${dataDisplay.id}-${moment(new Date())
+                //       .locale("id")
+                //       .format('L-LT')}.pdf`}
+                // >
+                //   <ButtonSys
+                //     type={`default`}
+                //     // disabled={!canDownloadResume}
+                //     onClick={(event) => {
+                //       //  tempIdAssessmentUpdate.current = record.id;
+                //       //  setTriggerAssessmentUpdate((prev) => prev + 1);
+                //       //  setDrawUpdate(true);
+                //       console.log(event)
+                //       event.stopPropagation()
+                //     }}
+                //   >
+                //     <DownloadIconSvg size={15} color={`#35763B`} />
+                //   </ButtonSys>
+
+                // </PDFDownloadLink>
+                <ButtonSys
+                  type={`default`}
+                  // disabled={!canDownloadResume}
+                  onClick={(event) => {
+                    //  tempIdAssessmentUpdate.current = record.id;
+                    //  setTriggerAssessmentUpdate((prev) => prev + 1);
+                    //  setDrawUpdate(true);
+                    console.log(event);
+                    event.stopPropagation();
+                    rt.push(`candidates/viewpdf`);
+                  }}
+                >
+                  <DownloadIconSvg size={15} color={`#35763B`} />
+                </ButtonSys>
+              )}
             </div>
           ),
         };
@@ -255,8 +258,20 @@ const CandidatesIndex = ({
   ];
 
   // 3.UseEffect
+  // console.log(dataListAssessments)
+  // 3.1. Set role filter option
+  useEffect(() => {
+    if (!isAllowedToGetAssessmentList) {
+      return;
+    }
 
-  // 3.1. Stop loading if dataCountResumes are available
+    if (dataListAssessments !== undefined) {
+      // setLoadingAssessmentList(false);
+      setRoleFilterResume(dataListAssessments.data);
+    }
+  }, [isAllowedToGetAssessmentList, dataListAssessments]);
+
+  // 3.2. Stop loading if resume count is avalaible
   useEffect(() => {
     if (!isAllowedToGetResumeCount) {
       return;
@@ -264,7 +279,6 @@ const CandidatesIndex = ({
 
     if (dataCountResumes !== undefined) {
       setLoadingResumeCountData(false);
-      setRoleFilterResume(dataCountResumes.resume_assessments_count);
     }
   }, [isAllowedToGetResumeCount, dataCountResumes]);
 
@@ -288,15 +302,10 @@ const CandidatesIndex = ({
 
   // 4. Event
   const onFilterResume = () => {
+    console.log(assessmentIds);
     setLoadingResumeList(true);
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getResumes?page=${pageResume}&sort_by=${
-        sortingResume.sort_by
-      }&sort_type=${
-        sortingResume.sort_type
-      }&rows=${rowsResume}&keyword=${searchingFilterResume}&assessments_ids=${assessmentIds.toString()}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sortingResume.sort_by}&sort_type=${sortingResume.sort_type}&keyword=${searchingFilterResume}&page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
       {
         method: `GET`,
         headers: {
@@ -306,6 +315,7 @@ const CandidatesIndex = ({
     )
       .then((res) => res.json())
       .then((res2) => {
+        console.log(res2);
         setDataRawResume(res2.data);
         setDataTable(res2.data.data);
         setLoadingResumeList(false);
@@ -314,7 +324,7 @@ const CandidatesIndex = ({
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
   // console.log(dataTable)
-
+  // console.log(assessmentIds)
   return (
     <Layout
       tok={initProps}
@@ -439,18 +449,14 @@ const CandidatesIndex = ({
                 //     ? null
                 //     : roleFilterResume
                 // }
-                disabled={!isAllowedToGetResumeList}
+                disabled={!isAllowedToGetAssessmentList}
                 placeholder="Semua Role"
                 defaultValue={0}
                 style={{ width: `50%` }}
                 // allowClear
                 // name={`role`}
                 onChange={(value) => {
-                  // typeof value === "undefined"
-                  //   ? setRoleFilterResume("")
-                  //   : setRoleFilterResume(value);
                   setAssessmentIds(value);
-                  // onFilterResume
                 }}
               >
                 <Select.Option value={0}>Semua Role</Select.Option>
@@ -542,12 +548,25 @@ export async function getServerSideProps({ req, res }) {
   const resjsonGR = await resourcesGR.json();
   const dataListResumes = resjsonGR;
 
+  const resourcesGAL = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGAL = await resourcesGAL.json();
+  const dataListAssessments = resjsonGAL;
+
   return {
     props: {
       initProps,
       dataProfile,
       dataCountResumes,
       dataListResumes,
+      dataListAssessments,
       sidemenu: "102",
     },
   };
