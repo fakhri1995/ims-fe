@@ -111,7 +111,7 @@ const AcademicBlock = ({
       ) : (
         <div className="flex justify-between">
           <div className="flex flex-col">
-            <p className="text-green-theme font-bold mb-1">{edu.university}</p>
+            <p className="text-primary100 font-bold mb-1">{edu.university}</p>
             <p className="text-gray-400 mb-1">
               {edu.major} ·&nbsp;
               <strong>{edu.graduation_year.slice(0, 4)}</strong>

@@ -56,16 +56,28 @@ const CandidateCreate = ({
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [assessmentRoles, setAssessmentRoles] = useState([]);
   const [criterias, setCriterias] = useState([]);
-  const [selected, setSelected] = useState();
+  const [roleName, setRoleName] = useState("");
+
+  // USE EFFECT
+  useEffect(() => {
+    if (!isAllowedToGetAssessmentList) {
+      return;
+    }
+    const roles = dataListAssessments.data;
+    setAssessmentRoles(roles);
+  }, [isAllowedToGetAssessmentList, dataListAssessments]);
+
+  useEffect(() => {
+    if (dataAddCandidate.assessment_id !== undefined) {
+      const filterRole = assessmentRoles.filter(
+        (role) => role.id === dataAddCandidate?.assessment_id
+      )[0]?.name;
+
+      setRoleName(filterRole);
+    }
+  }, [dataAddCandidate.assessment_id]);
 
   //HANDLER
-  const onChangeInputCandidate = (e) => {
-    setDataAddCandidate({
-      ...dataAddCandidate,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const handleCreateCandidate = () => {
     if (!isAllowedToCreateCandidate) {
       permissionWarningNotification("Menambah", "Kandidat");
@@ -118,32 +130,13 @@ const CandidateCreate = ({
       });
   };
 
-  // USE EFFECT
-  useEffect(() => {
-    if (!isAllowedToGetAssessmentList) {
-      return;
-    }
-
-    const roles = dataListAssessments.data;
-    setAssessmentRoles(roles);
-  }, [isAllowedToGetAssessmentList, dataListAssessments]);
-
-  // useEffect(() => {
-  //   if (!isAllowedToGetAssessmentList) {
-  //     return;
-  //   }
-
-  //   if (selected !== undefined) {
-  //     let findCriterias = assessmentRoles.find(
-  //       (assessment) => assessment.name === selected
-  //     );
-  //     // console.log(findCriterias)
-  //     setCriterias(findCriterias.details);
-  //   }
-  // }, [isAllowedToGetAssessmentList, selected]);
-
-  //DEBUG
-  // console.log(dataAddCandidate);
+  // Open warning when add section is clicked in create form
+  const onClickAddSection = () => {
+    notification.warning({
+      message: `Harap mengisi Basic Information terlebih dahulu sebelum menambahkan informasi lainnya`,
+      duration: 3,
+    });
+  };
 
   return (
     <LayoutDashboard
@@ -170,7 +163,7 @@ const CandidateCreate = ({
               <H2>Academic History</H2>
               <hr className="my-4" />
 
-              <ButtonSys type={"dashed"}>
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add academic history
                 </p>
@@ -182,10 +175,7 @@ const CandidateCreate = ({
               <H2>Experience</H2>
               <hr className="my-4" />
 
-              <ButtonSys
-                type={"dashed"}
-                // disabled={true}
-              >
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add experience
                 </p>
@@ -197,7 +187,7 @@ const CandidateCreate = ({
               <H2>Projects</H2>
               <hr className="my-4" />
 
-              <ButtonSys type={"dashed"}>
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add project
                 </p>
@@ -210,7 +200,7 @@ const CandidateCreate = ({
               <H2>Skills</H2>
               <hr className="my-4" />
 
-              <ButtonSys type={"dashed"}>
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add skill
                 </p>
@@ -222,7 +212,7 @@ const CandidateCreate = ({
               <H2>Training</H2>
               <hr className="my-4" />
 
-              <ButtonSys type={"dashed"}>
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add training
                 </p>
@@ -234,7 +224,7 @@ const CandidateCreate = ({
               <H2>Certifications</H2>
               <hr className="my-4" />
 
-              <ButtonSys type={"dashed"}>
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add certification
                 </p>
@@ -246,7 +236,7 @@ const CandidateCreate = ({
               <H2>Achievements</H2>
               <hr className="my-4" />
 
-              <ButtonSys type={"dashed"}>
+              <ButtonSys type={"dashed"} onClick={onClickAddSection}>
                 <p className="text-primary100 hover:text-primary75">
                   + Add achievement
                 </p>
@@ -256,46 +246,25 @@ const CandidateCreate = ({
             {/* SECTION ASSESSMENT RESULT */}
             <div className="shadow-lg rounded-md bg-white p-5">
               <H2>Technical Assessment Results</H2>
-
               <hr className="my-4" />
-
-              {/* Input Assessment Result */}
-
               <div>
                 <div className="flex flex-col space-y-2 mb-3">
                   <p className="text-xs text-gray-400">Assessment Role</p>
-                  <Select
-                    defaultValue={"Choose assessment role..."}
-                    onChange={(value) => {
-                      // console.log(value)
-                      setSelected(value);
-                    }}
-                  >
-                    {assessmentRoles.map((role) => (
-                      <Select.Option key={role.id} value={role.name}>
-                        {role.name}
-                      </Select.Option>
-                    ))}
-                  </Select>
+                  <p>{roleName}</p>
                 </div>
 
-                <div>
+                {/* <div>
                   <p className="text-xs text-gray-400 mb-2">Criteria</p>
                   <ul>
                     {criterias.map((assessment) => (
                       <li key={assessment.id}>
                         <div className="flex flex-row justify-between items-center mb-1">
                           <p className="w-full mr-5">{assessment.criteria}</p>
-                          {/* <Input
-                            className="w-20"
-                            value={assessment.value}
-                            onChange={}
-                          /> */}
                         </div>
                       </li>
                     ))}
                   </ul>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

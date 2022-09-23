@@ -1,37 +1,86 @@
 import { CloseCircleFilled, CloseCircleOutlined } from "@ant-design/icons";
-import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
+import { Input, Select, Tag } from "antd";
 import React from "react";
+import { useEffect } from "react";
 import { useState } from "react";
+import { setConstantValue } from "typescript";
 
 import ButtonSys from "../../button";
 import { CheckIconSvg, EditIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
 import { H2 } from "../../typography";
 
 const SkillCard = ({
+  initProps,
   dataDisplay,
   handleAddSection,
   handleDeleteSection,
   dataUpdateSkill,
   setDataUpdateSkill,
+  isAllowedToGetSkillLists,
 }) => {
+  // State
   const [isAdd, setIsAdd] = useState(false);
+  const [skillList, setSkillList] = useState([]);
 
+  // Event
   const clearDataUpdate = () => {
     setDataUpdateSkill({
       id: null,
       name: "",
       resume_id: null,
     });
+  };
+
+  const handleGetSkillList = (value) => {
+    if (!isAllowedToGetSkillLists) {
+      return;
+    }
+
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSkillLists?name=${value}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setSkillList(response2.data);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  };
+
+  const handleSearch = (newValue) => {
+    if (newValue) {
+      handleGetSkillList(newValue);
+      setDataUpdateSkill((prev) => ({
+        ...prev,
+        name: newValue,
+      }));
+    } else {
+      setSkillList([]);
+    }
+  };
+
+  const handleChange = (newValue) => {
+    setDataUpdateSkill((prev) => ({
+      ...prev,
+      name: newValue,
+    }));
   };
 
   return (
@@ -48,7 +97,7 @@ const SkillCard = ({
             }}
             color="#35763B1A"
             closeIcon={<CloseCircleOutlined />}
-            className="text-green-theme"
+            className="text-primary100 mb-3"
           >
             {skill.name}
           </Tag>
@@ -58,17 +107,23 @@ const SkillCard = ({
       {isAdd ? (
         <div className="flex flex-col space-y-4 mt-8 mb-4">
           <div className="flex flex-row space-x-4">
-            <Input
+            <Select
+              showSearch
               placeholder="Skill name"
               value={dataUpdateSkill.name}
-              onChange={(e) => {
-                let input = e.target.value;
-                setDataUpdateSkill((prev) => ({
-                  ...prev,
-                  name: input,
-                }));
-              }}
-            ></Input>
+              defaultActiveFirstOption={false}
+              optionFilterProp="children"
+              notFoundContent={null}
+              onChange={handleChange}
+              onSearch={handleSearch}
+              className="w-full"
+            >
+              {skillList.map((skill) => (
+                <Select.Option key={skill?.id} value={skill.name}>
+                  {skill?.name}
+                </Select.Option>
+              ))}
+            </Select>
             <button
               onClick={() => {
                 handleAddSection("skill", dataUpdateSkill);

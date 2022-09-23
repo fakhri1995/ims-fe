@@ -191,7 +191,7 @@ const RoleAssessmentIndex = ({
         };
       },
       sorter: isAllowedToGetRoleAssessmentList
-        ? (a, b) => a.name > b.name
+        ? (a, b) => a.name.toLowerCase() > b.name.toLowerCase()
         : false,
     },
     {

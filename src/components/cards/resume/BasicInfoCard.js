@@ -1,3 +1,5 @@
+import { InfoCircleFilled } from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   DatePicker,
   Form,
@@ -9,6 +11,7 @@ import {
   notification,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -16,12 +19,14 @@ import { useEffect } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
+import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
   DownloadIconSvg,
   EditIconSvg,
   EmailIconSvg,
+  InfoCircleIconSvg,
   MappinIconSvg,
   OneUserIconSvg,
   PhoneIconSvg,
@@ -57,11 +62,17 @@ const BasicInfoCard = ({
     });
   };
 
+  /** State to only renders `<PDFDownloadLink>` component after this page mount (client-side) */
+  const [isOnClient, setIsOnClient] = useState(false);
+  useEffect(() => {
+    setIsOnClient(true);
+  }, []);
+
   // console.log(dataUpdateBasic);
   // console.log(dataDisplay)
 
   return isShowInput || isCreateForm ? (
-    <div className=" shadow-lg rounded-md bg-white p-5 divide-y">
+    <div className=" shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row items-center justify-between mb-4 ">
         <H1>Basic Information</H1>
         <div className="flex flex-row space-x-6">
@@ -102,6 +113,16 @@ const BasicInfoCard = ({
           </ButtonSys>
         </div>
       </div>
+      <hr />
+      {isCreateForm && (
+        <div className="px-2.5 py-2 space-x-2.5 flex flex-row items-center mt-4">
+          <InfoCircleIconSvg size={20} color={"#35763B"} />
+          <p className="text-mono30">
+            Harap mengisi <strong>Basic Information</strong> terlebih dahulu
+            sebelum menambahkan informasi lainnya!
+          </p>
+        </div>
+      )}
       <Form
         layout="vertical"
         form={instanceForm}
@@ -258,19 +279,26 @@ const BasicInfoCard = ({
               <p>Remove Candidate</p>
             </div>
           </ButtonSys>
-          <ButtonSys
-            type={"default"}
-            onClick={() => rt.push(`/candidates/viewpdf/${dataDisplay.id}`)}
-            //   rt.push({
-            //   pathname:`/viewpdf`,
-            //   query: { detail: dataDisplay}
-            // }, '/viewpdf')}
-          >
-            <div className="flex flex-row space-x-2">
-              <DownloadIconSvg size={16} color={"#35763B"} />
-              <p>Download Resume</p>
-            </div>
-          </ButtonSys>
+          {isOnClient && (
+            <PDFDownloadLink
+              document={<ResumePDFTemplate dataResume={dataDisplay} />}
+              fileName={`R-000${dataDisplay.id}-${moment(new Date())
+                .locale("id")
+                .format(`L-LT`)}.pdf`}
+            >
+              <ButtonSys
+                type={"default"}
+                onClick={() => {
+                  // rt.push(`/admin/candidates/viewpdf/${dataDisplay.id}`)
+                }}
+              >
+                <div className="flex flex-row space-x-2">
+                  <DownloadIconSvg size={16} color={"#35763B"} />
+                  <p>Download Resume</p>
+                </div>
+              </ButtonSys>
+            </PDFDownloadLink>
+          )}
         </div>
       </div>
       <hr />
