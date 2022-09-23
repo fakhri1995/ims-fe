@@ -3724,7 +3724,6 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             onvisible={setdrawertaskdetailcreate}
             taskid={taskid}
             settriggertaskdetailcreate={settriggertaskdetailcreate}
-            taskid={taskid}
           />
         </AccessControl>
 
