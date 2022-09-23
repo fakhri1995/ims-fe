@@ -98,7 +98,7 @@ const TrainingBlock = ({
       ) : (
         <>
           {/* Read State */}
-          <p className="text-center text-green-theme font-bold w-1/4">
+          <p className="text-center text-primary100 font-bold w-1/4">
             {training.year.slice(0, 4)}
           </p>
           <div className="flex flex-col w-2/4">

@@ -126,7 +126,7 @@ const AssessmentResultCard = ({
                 <li key={result.id}>
                   <div className="flex flex-row justify-between mb-1">
                     <p>{result.criteria}</p>
-                    <p className="text-green-theme font-bold">{result.value}</p>
+                    <p className="text-primary100 font-bold">{result.value}</p>
                   </div>
                 </li>
               ))}
