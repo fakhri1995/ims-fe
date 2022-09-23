@@ -28,6 +28,7 @@ import {
   RESUME_GET,
   RESUME_SECTION_ADD,
   RESUME_SECTION_DELETE,
+  RESUME_SKILL_LISTS,
   RESUME_UPDATE,
 } from "lib/features";
 
@@ -77,6 +78,7 @@ const CandidateDetail = ({
     RESUME_ASSESSMENT_DELETE
   );
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const isAllowedToGetSkillLists = hasPermission(RESUME_SKILL_LISTS);
 
   //INIT
   const rt = useRouter();
@@ -599,11 +601,13 @@ const CandidateDetail = ({
           <div className="flex flex-col w-full gap-6">
             {/* SECTION SKILLS */}
             <SkillCard
+              initProps={initProps}
               dataDisplay={dataDisplay}
               dataUpdateSkill={dataUpdateSkill}
               setDataUpdateSkill={setDataUpdateSkill}
               handleAddSection={handleAddSection}
               handleDeleteSection={handleDeleteSection}
+              isAllowedToGetSkillLists={isAllowedToGetSkillLists}
             />
 
             {/* SECTION TRAINING */}
