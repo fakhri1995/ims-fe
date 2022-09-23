@@ -27,12 +27,15 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import ModalCore from "../../../components/modal/modalCore";
+import { ModalDownload } from "../../../components/modal/modalCustom";
 import { TableCustomCandidate } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
   createKeyPressHandler,
   permissionWarningNotification,
 } from "../../../lib/helper";
+import { ResumePDFTemplate } from "./[candidateId]";
 import {
   ArcElement,
   BarElement,
@@ -94,12 +97,7 @@ const CandidatesIndex = ({
     5
   );
 
-  // 2.3. CREATE FORM
-  const onAddNewCandidateButtonClicked = useCallback(() => {
-    rt.push("/admin/candidates/create");
-  }, []);
-
-  // 2.7. TABLE KANDIDAT
+  // 2.2. Table Kandidat
   const [dataTable, setDataTable] = useState([]);
   const [dataRawResume, setDataRawResume] = useState({
     current_page: "",
@@ -128,7 +126,13 @@ const CandidatesIndex = ({
   const [searchingFilterResume, setSearchingFilterResume] = useState("");
   const [roleFilterResume, setRoleFilterResume] = useState([]);
 
-  // Columns
+  // 2.3. Download Resume
+  const [candidateId, setCandidateId] = useState(null);
+  const [dataResume, setDataResume] = useState();
+  const [loadingResumeData, setLoadingResumeData] = useState(false);
+  const [openDownloadModal, setOpenDownloadModal] = useState(false);
+
+  // 3. Columns
   const columnsResume = [
     {
       title: "No.",
@@ -156,12 +160,14 @@ const CandidatesIndex = ({
           ),
         };
       },
-      sorter: isAllowedToGetResumeList ? (a, b) => a.name > b.name : false,
+      sorter: isAllowedToGetResumeList
+        ? (a, b) => a.name.toLowerCase() > b.name.toLowerCase()
+        : false,
     },
     {
       title: "Role",
-      dataIndex: "assessment_id",
-      key: "assessment_id",
+      dataIndex: "role",
+      key: "role",
       render: (text, record, index) => {
         return {
           children: (
@@ -172,7 +178,8 @@ const CandidatesIndex = ({
         };
       },
       sorter: isAllowedToGetResumeList
-        ? (a, b) => a.assessment?.name > b.assessment?.name
+        ? (a, b) =>
+            a.assessment?.name.toLowerCase() > b.assessment?.name.toLowerCase()
         : false,
     },
     {
@@ -209,47 +216,16 @@ const CandidatesIndex = ({
         return {
           children: (
             <div className="flex items-center space-x-2">
-              {canDownloadResume && (
-                // <PDFDownloadLink
-                //   document={={
-                //     <ResumePDFTemplate
-                //       detail={dataDisplay}
-                //     />
-                //   }}
-                //   flieName={`R-000${dataDisplay.id}-${moment(new Date())
-                //       .locale("id")
-                //       .format('L-LT')}.pdf`}
-                // >
-                //   <ButtonSys
-                //     type={`default`}
-                //     // disabled={!canDownloadResume}
-                //     onClick={(event) => {
-                //       //  tempIdAssessmentUpdate.current = record.id;
-                //       //  setTriggerAssessmentUpdate((prev) => prev + 1);
-                //       //  setDrawUpdate(true);
-                //       console.log(event)
-                //       event.stopPropagation()
-                //     }}
-                //   >
-                //     <DownloadIconSvg size={15} color={`#35763B`} />
-                //   </ButtonSys>
-
-                // </PDFDownloadLink>
-                <ButtonSys
-                  type={`default`}
-                  // disabled={!canDownloadResume}
-                  onClick={(event) => {
-                    //  tempIdAssessmentUpdate.current = record.id;
-                    //  setTriggerAssessmentUpdate((prev) => prev + 1);
-                    //  setDrawUpdate(true);
-                    console.log(event);
-                    event.stopPropagation();
-                    rt.push(`candidates/viewpdf`);
-                  }}
-                >
-                  <DownloadIconSvg size={15} color={`#35763B`} />
-                </ButtonSys>
-              )}
+              <ButtonSys
+                type={"default"}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setCandidateId(record.id);
+                  setOpenDownloadModal(true);
+                }}
+              >
+                <DownloadIconSvg size={15} color={`#35763B`} />
+              </ButtonSys>
             </div>
           ),
         };
@@ -257,9 +233,8 @@ const CandidatesIndex = ({
     },
   ];
 
-  // 3.UseEffect
-  // console.log(dataListAssessments)
-  // 3.1. Set role filter option
+  // 4.UseEffect
+  // 4.1. Set role filter option
   useEffect(() => {
     if (!isAllowedToGetAssessmentList) {
       return;
@@ -271,7 +246,7 @@ const CandidatesIndex = ({
     }
   }, [isAllowedToGetAssessmentList, dataListAssessments]);
 
-  // 3.2. Stop loading if resume count is avalaible
+  // 4.2. Stop loading if resume count is avalaible
   useEffect(() => {
     if (!isAllowedToGetResumeCount) {
       return;
@@ -282,7 +257,7 @@ const CandidatesIndex = ({
     }
   }, [isAllowedToGetResumeCount, dataCountResumes]);
 
-  // 3.2. GET TABEL SEMUA KANDIDAT
+  // 4.3. GET TABEL SEMUA KANDIDAT
   useEffect(() => {
     if (!isAllowedToGetResumeList) {
       return;
@@ -300,9 +275,60 @@ const CandidatesIndex = ({
     }
   }, [isAllowedToGetResumeList, dataListResumes]);
 
-  // 4. Event
+  // 4.4. Get A Resume Data To Download as PDF
+  useEffect(() => {
+    if (!canDownloadResume) {
+      return;
+    }
+
+    if (candidateId) {
+      setLoadingResumeData(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${candidateId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataResume(response2.data);
+            setLoadingResumeData(false);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+            setLoadingResumeData(false);
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+          setLoadingResumeData(false);
+        });
+    }
+  }, [canDownloadResume, candidateId]);
+
+  /** State to only renders `<PDFDownloadLink>` component after this page mount (client-side) */
+  const [isOnClient, setIsOnClient] = useState(false);
+  useEffect(() => {
+    if (dataResume) {
+      setIsOnClient(true);
+    }
+  }, [dataResume]);
+
+  // 5. Event
+  const onAddNewCandidateButtonClicked = useCallback(() => {
+    rt.push("/admin/candidates/create");
+  }, []);
+
   const onFilterResume = () => {
-    console.log(assessmentIds);
     setLoadingResumeList(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sortingResume.sort_by}&sort_type=${sortingResume.sort_type}&keyword=${searchingFilterResume}&page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
@@ -315,7 +341,6 @@ const CandidatesIndex = ({
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log(res2);
         setDataRawResume(res2.data);
         setDataTable(res2.data.data);
         setLoadingResumeList(false);
@@ -323,8 +348,7 @@ const CandidatesIndex = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
-  // console.log(dataTable)
-  // console.log(assessmentIds)
+
   return (
     <Layout
       tok={initProps}
@@ -444,17 +468,10 @@ const CandidatesIndex = ({
               />
 
               <Select
-                // value={
-                //   roleFilterResume === ""
-                //     ? null
-                //     : roleFilterResume
-                // }
                 disabled={!isAllowedToGetAssessmentList}
                 placeholder="Semua Role"
                 defaultValue={0}
                 style={{ width: `50%` }}
-                // allowClear
-                // name={`role`}
                 onChange={(value) => {
                   setAssessmentIds(value);
                 }}
@@ -495,6 +512,37 @@ const CandidatesIndex = ({
           </div>
         </div>
       </div>
+
+      {/* Modal Unduh Resume */}
+      <AccessControl hasPermission={RESUME_GET}>
+        <ModalCore
+          title={"Unduh Resume"}
+          visible={openDownloadModal}
+          onCancel={() => setOpenDownloadModal(false)}
+          footer={<></>}
+        >
+          <Spin spinning={loadingResumeData}>
+            {isOnClient && (
+              <div className="flex flex-col items-center space-y-5">
+                <p className="">
+                  Klik untuk mengunduh resume kandidat dengan nama&nbsp;
+                  <strong>{dataResume.name}</strong>
+                </p>
+                <PDFDownloadLink
+                  document={<ResumePDFTemplate dataResume={dataResume} />}
+                  fileName={`R-000${dataResume?.id}-${moment(new Date())
+                    .locale("id")
+                    .format(`L-LT`)}.pdf`}
+                >
+                  <ButtonSys type={"default"}>
+                    <DownloadIconSvg size={15} color={`#35763B`} />
+                  </ButtonSys>
+                </PDFDownloadLink>
+              </div>
+            )}
+          </Spin>
+        </ModalCore>
+      </AccessControl>
     </Layout>
   );
 };

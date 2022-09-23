@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Table, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 
@@ -1235,9 +1235,16 @@ const TableCustomCandidate = ({
             )
               .then((res) => res.json())
               .then((res2) => {
-                console.log(res2);
                 setdataraw(res2.data);
                 setDataSource(res2.data.data);
+                setpraloading(false);
+              })
+              .catch((err) => {
+                // console.log(err);
+                notification.error({
+                  message: `${err.message}`,
+                  duration: 3,
+                });
                 setpraloading(false);
               });
           } else {
@@ -1254,7 +1261,6 @@ const TableCustomCandidate = ({
             )
               .then((res) => res.json())
               .then((res2) => {
-                // console.log(res2);
                 setdataraw(res2.data);
                 setDataSource(res2.data.data);
                 setpraloading(false);
