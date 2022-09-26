@@ -96,13 +96,17 @@ const DrawerAssessmentCreate = ({
 
   //USEEFFECT
   useEffect(() => {
-    if (datacreate.name !== "" && datacreate.add[0].criteria !== "") {
+    let criteriaIsFilled = datacreate.add.every(
+      (detail) => detail.criteria !== ""
+    );
+    if (datacreate.name !== "" && criteriaIsFilled) {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
     }
   }, [datacreate]);
 
+  console.log(datacreate);
   return (
     <DrawerCore
       title={title}

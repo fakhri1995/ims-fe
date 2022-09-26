@@ -50,7 +50,6 @@ const DrawerAssessmentUpdate = ({
     useState(false);
   const [loadingupdate, setloadingupdate] = useState(false);
   const [disabledupdate, setdisabledupdate] = useState(true);
-  const [disabledtrigger, setdisabledtrigger] = useState(-1);
   const [deletestate, setdeletestate] = useState(false);
   const [criteriaLen, setCriteriaLen] = useState(0);
 
@@ -64,7 +63,6 @@ const DrawerAssessmentUpdate = ({
       ...dataupdate,
       [e.target.name]: e.target.value,
     });
-    setdisabledtrigger((prev) => prev + 1);
   };
 
   const handleUpdateRoleAssessment = () => {
@@ -163,14 +161,15 @@ const DrawerAssessmentUpdate = ({
   }, [trigger, isAllowedToGetRoleAssessment]);
 
   useEffect(() => {
-    if (disabledtrigger !== -1) {
-      if (datadisplay.name !== "") {
-        setdisabledupdate(false);
-      } else {
-        setdisabledupdate(true);
-      }
+    let criteriaIsFilled = datadisplay.details.every(
+      (detail) => detail.criteria !== ""
+    );
+    if (datadisplay.name !== "" && criteriaIsFilled) {
+      setdisabledupdate(false);
+    } else {
+      setdisabledupdate(true);
     }
-  }, [disabledtrigger]);
+  }, [datadisplay]);
 
   return (
     <DrawerCore
@@ -238,7 +237,7 @@ const DrawerAssessmentUpdate = ({
                             tempdisplay[idx].criteria = newCriteria;
                             setdatadisplay((prev) => ({
                               ...prev,
-                              criteria: tempdisplay,
+                              details: tempdisplay,
                             }));
                             if (doc.id) {
                               var idxdataupdate = dataupdate.update
