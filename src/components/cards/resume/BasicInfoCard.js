@@ -207,6 +207,10 @@ const BasicInfoCard = ({
               required: true,
               message: "Nomor HP wajib diisi",
             },
+            {
+              pattern: /[0-9]+/,
+              message: "Nomor HP hanya boleh diisi dengan angka",
+            },
           ]}
         >
           <div>
