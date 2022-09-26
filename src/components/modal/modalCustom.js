@@ -767,7 +767,7 @@ const ModalHapus2 = ({
   onCancel,
   loading,
   itemName,
-  // roleSelected,
+  disabled,
   children,
 }) => {
   return (
@@ -791,7 +791,7 @@ const ModalHapus2 = ({
               type={"primary"}
               color={"danger"}
               onClick={onOk}
-              // disabled={loadingdelete}
+              disabled={disabled}
             >
               <div className="flex flex-row space-x-2">
                 <TrashIconSvg size={16} color={`white`} />

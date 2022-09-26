@@ -378,12 +378,12 @@ const RoleAssessmentIndex = ({
             message: res2.message,
             duration: 3,
           });
-          setTimeout(() => {
-            setloadingdelete(false);
-            setmodaldelete(false);
-            rt.push(`/admin/role-assessment`);
-          }, 500);
         }
+        setTimeout(() => {
+          setloadingdelete(false);
+          setmodaldelete(false);
+          rt.push(`/admin/role-assessment`);
+        }, 500);
       })
       .catch((err) => {
         notification.error({
@@ -527,8 +527,8 @@ const RoleAssessmentIndex = ({
         </div>
 
         {/* TABEL SEMUA ROLE ASSESSMENT */}
-        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
-          <H1 className="font-bold">Semua Role Assesment</H1>
+        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2 space-y-6">
+          <H1 className="font-bold">Semua Role Assessment</H1>
           <div className="flex flex-row w-full mb-5 space-x-4">
             <Input
               value={
@@ -661,16 +661,20 @@ const RoleAssessmentIndex = ({
           }}
           itemName={"form"}
           loading={loadingdelete}
+          disabled={candidateCount > 0}
         >
-          <p className="mb-4">
-            Form assessment <strong>{roleSelected}</strong>&nbsp; digunakan oleh{" "}
-            <strong>{candidateCount}</strong> kandidat. Apakah Anda yakin ingin
-            melanjutkan penghapusan?
-          </p>
-          <p>
-            Data hasil assessment kandidat yang menggunakan form ini akan tetap
-            disimpan.
-          </p>
+          {candidateCount > 0 ? (
+            <p className="mb-4">
+              Form assessment <strong>{roleSelected}</strong> tidak dapat
+              dihapus karena masih digunakan oleh{" "}
+              <strong>{candidateCount}</strong> kandidat.
+            </p>
+          ) : (
+            <p className="mb-4">
+              Apakah Anda yakin ingin melanjutkan penghapusan form assessment{" "}
+              <strong>{roleSelected}</strong>?
+            </p>
+          )}
         </ModalHapus2>
       </AccessControl>
     </Layout>
