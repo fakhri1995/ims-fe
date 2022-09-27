@@ -63,7 +63,11 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
   const isAllowedToGetRoleAssessmentCount = hasPermission(ASSESSMENT_COUNT_GET);
   const isAllowedToAddRoleAssessment = hasPermission(ASSESSMENT_ADD);
@@ -152,6 +156,10 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3.1. Get Role Assessment Count
   useEffect(() => {
     if (!isAllowedToGetRoleAssessmentCount) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Chart Penggunaan Terbanyak"
+      );
       setLoadingAssessmentsCountData(false);
       return;
     }
@@ -174,6 +182,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3.2. Get Role Assessments
   useEffect(() => {
     if (!isAllowedToGetRoleAssessmentList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role Assessment");
       setLoadingRoleAssessment(false);
       return;
     }

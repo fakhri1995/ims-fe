@@ -58,33 +58,31 @@ Chart.register(
   PointElement
 );
 
-const CandidatesIndex = ({
-  initProps,
-  dataProfile,
-  dataCountResumes,
-  dataListResumes,
-  dataListAssessments,
-  sidemenu,
-}) => {
+const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetResumeList = hasPermission(RESUMES_GET);
   const isAllowedToGetResumeCount = hasPermission(RESUMES_COUNT_GET);
   const isAllowedToAddResume = hasPermission(RESUME_ADD);
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
 
-  const canDownloadResume =
-    hasPermission(RESUMES_GET) && hasPermission(RESUME_GET);
+  const canDownloadResume = hasPermission(RESUME_GET);
 
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
   // 2. State
-  // 2.1. PENGGUNAAN TERBANYAK CARD
+  // 2.1. Card Role Kandidat & Total Kandidat
   const [loadingResumeCountData, setLoadingResumeCountData] = useState(true);
+  const [dataCountResumes, setDataCountResumes] = useState(0);
+  const [topCandidateCount, setTopCandidateCount] = useState([]);
   const [dataColorBar, setDataColorBar] = useState([
     "#2F80ED",
     "#E5C471",
@@ -92,12 +90,8 @@ const CandidatesIndex = ({
     "#6AAA70",
     "#808080",
   ]);
-  const top5CandidateCount = dataCountResumes.resume_assessments_count.slice(
-    0,
-    5
-  );
 
-  // 2.2. Table Kandidat
+  // 2.2. Table Semua Kandidat
   const [dataTable, setDataTable] = useState([]);
   const [dataRawResume, setDataRawResume] = useState({
     current_page: "",
@@ -124,6 +118,7 @@ const CandidatesIndex = ({
 
   // Filter
   const [searchingFilterResume, setSearchingFilterResume] = useState("");
+  const [loadingRoleList, setLoadingRoleList] = useState([]);
   const [roleFilterResume, setRoleFilterResume] = useState([]);
 
   // 2.3. Download Resume
@@ -132,7 +127,152 @@ const CandidatesIndex = ({
   const [loadingResumeData, setLoadingResumeData] = useState(false);
   const [openDownloadModal, setOpenDownloadModal] = useState(false);
 
-  // 3. Columns
+  // 3.UseEffect
+  // 3.1. Get role filter option
+  useEffect(() => {
+    if (!isAllowedToGetAssessmentList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role");
+      setLoadingRoleList(false);
+      return;
+    }
+
+    setLoadingRoleList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRoleFilterResume(res2.data);
+        setLoadingRoleList(false);
+      });
+  }, [isAllowedToGetAssessmentList]);
+
+  // 3.2. Get resume count
+  useEffect(() => {
+    if (!isAllowedToGetResumeCount) {
+      permissionWarningNotification("Mendapatkan", "Data Chart Kandidat");
+      setLoadingResumeCountData(false);
+      return;
+    }
+
+    setLoadingResumeCountData(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountResume`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataCountResumes(res2.data.assessments_count);
+        setTopCandidateCount(res2.data.resume_assessments_count.slice(0, 5));
+        setLoadingResumeCountData(false);
+      });
+  }, [isAllowedToGetResumeCount]);
+
+  // 3.3. Get resume list
+  useEffect(() => {
+    if (!isAllowedToGetResumeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kandidat");
+      setLoadingResumeList(false);
+      return;
+    }
+
+    setLoadingResumeList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?rows=10`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataRawResume(res2.data);
+        setDataTable(res2.data.data);
+        setLoadingResumeList(false);
+      });
+  }, [isAllowedToGetResumeList]);
+
+  // 3.4. Get a resume data to download as PDF
+  useEffect(() => {
+    if (!canDownloadResume) {
+      permissionWarningNotification("Mengunduh", "PDF Resume");
+      setLoadingResumeData(false);
+      return;
+    }
+
+    if (candidateId) {
+      setLoadingResumeData(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${candidateId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataResume(response2.data);
+            setLoadingResumeData(false);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+            setLoadingResumeData(false);
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+          setLoadingResumeData(false);
+        });
+    }
+  }, [canDownloadResume, candidateId]);
+
+  /** State to only renders `<PDFDownloadLink>` component after dataResume is available (client-side) */
+  const [isOnClient, setIsOnClient] = useState(false);
+  useEffect(() => {
+    if (dataResume) {
+      setIsOnClient(true);
+    }
+  }, [dataResume]);
+
+  // 4. Event
+  const onAddNewCandidateButtonClicked = useCallback(() => {
+    rt.push("/admin/candidates/create");
+  }, []);
+
+  const onFilterResume = () => {
+    setLoadingResumeList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sortingResume.sort_by}&sort_type=${sortingResume.sort_type}&keyword=${searchingFilterResume}&page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataRawResume(res2.data);
+        setDataTable(res2.data.data);
+        setLoadingResumeList(false);
+      });
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
+
+  // 5. Candidate Table's Columns
   const columnsResume = [
     {
       title: "No.",
@@ -233,122 +373,6 @@ const CandidatesIndex = ({
     },
   ];
 
-  // 4.UseEffect
-  // 4.1. Set role filter option
-  useEffect(() => {
-    if (!isAllowedToGetAssessmentList) {
-      return;
-    }
-
-    if (dataListAssessments !== undefined) {
-      // setLoadingAssessmentList(false);
-      setRoleFilterResume(dataListAssessments.data);
-    }
-  }, [isAllowedToGetAssessmentList, dataListAssessments]);
-
-  // 4.2. Stop loading if resume count is avalaible
-  useEffect(() => {
-    if (!isAllowedToGetResumeCount) {
-      return;
-    }
-
-    if (dataCountResumes !== undefined) {
-      setLoadingResumeCountData(false);
-    }
-  }, [isAllowedToGetResumeCount, dataCountResumes]);
-
-  // 4.3. GET TABEL SEMUA KANDIDAT
-  useEffect(() => {
-    if (!isAllowedToGetResumeList) {
-      return;
-    }
-
-    if (dataListResumes !== undefined) {
-      setDataRawResume(dataListResumes.data);
-      const mappedData = dataListResumes.data.data.map((doc, idx) => {
-        return {
-          ...doc,
-        };
-      });
-      setDataTable(mappedData);
-      setLoadingResumeList(false);
-    }
-  }, [isAllowedToGetResumeList, dataListResumes]);
-
-  // 4.4. Get A Resume Data To Download as PDF
-  useEffect(() => {
-    if (!canDownloadResume) {
-      return;
-    }
-
-    if (candidateId) {
-      setLoadingResumeData(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${candidateId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataResume(response2.data);
-            setLoadingResumeData(false);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-            setLoadingResumeData(false);
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-          setLoadingResumeData(false);
-        });
-    }
-  }, [canDownloadResume, candidateId]);
-
-  /** State to only renders `<PDFDownloadLink>` component after this page mount (client-side) */
-  const [isOnClient, setIsOnClient] = useState(false);
-  useEffect(() => {
-    if (dataResume) {
-      setIsOnClient(true);
-    }
-  }, [dataResume]);
-
-  // 5. Event
-  const onAddNewCandidateButtonClicked = useCallback(() => {
-    rt.push("/admin/candidates/create");
-  }, []);
-
-  const onFilterResume = () => {
-    setLoadingResumeList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sortingResume.sort_by}&sort_type=${sortingResume.sort_type}&keyword=${searchingFilterResume}&page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataRawResume(res2.data);
-        setDataTable(res2.data.data);
-        setLoadingResumeList(false);
-      });
-  };
-
-  const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
-
   return (
     <Layout
       tok={initProps}
@@ -377,17 +401,15 @@ const CandidatesIndex = ({
               <div className=" w-full flex justify-center">
                 <Doughnut
                   data={{
-                    labels: top5CandidateCount.map((doc) => doc.name),
+                    labels: topCandidateCount.map((doc) => doc.name),
                     datasets: [
                       {
-                        data: top5CandidateCount.map(
-                          (doc) => doc.resumes_count
-                        ),
-                        backgroundColor: top5CandidateCount.map(
+                        data: topCandidateCount.map((doc) => doc.resumes_count),
+                        backgroundColor: topCandidateCount.map(
                           (doc, idx) =>
                             dataColorBar[idx + (1 % dataColorBar.length) - 1]
                         ),
-                        borderColor: top5CandidateCount.map(
+                        borderColor: topCandidateCount.map(
                           (doc, idx) =>
                             dataColorBar[idx + (1 % dataColorBar.length) - 1]
                         ),
@@ -410,7 +432,7 @@ const CandidatesIndex = ({
               </div>
 
               <div className="flex flex-col w-full mt-5">
-                {top5CandidateCount.map((doc, idx) => (
+                {topCandidateCount.map((doc, idx) => (
                   <div
                     key={idx}
                     className="flex justify-between items-center mb-1"
@@ -438,9 +460,7 @@ const CandidatesIndex = ({
           {/* CARD TOTAL KANDIDAT */}
           <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
             <H1>Total Kandidat</H1>
-            <p className="font-semibold text-4xl">
-              {dataCountResumes.assessments_count}
-            </p>
+            <p className="font-semibold text-4xl">{dataCountResumes}</p>
           </div>
         </div>
 
@@ -572,49 +592,10 @@ export async function getServerSideProps({ req, res }) {
   const resjson = await resources.json();
   const dataProfile = resjson;
 
-  const resourcesGCR = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountResume`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGCR = await resourcesGCR.json();
-  const dataCountResumes = resjsonGCR.data;
-
-  const resourcesGR = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?rows=10`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGR = await resourcesGR.json();
-  const dataListResumes = resjsonGR;
-
-  const resourcesGAL = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGAL = await resourcesGAL.json();
-  const dataListAssessments = resjsonGAL;
-
   return {
     props: {
       initProps,
       dataProfile,
-      dataCountResumes,
-      dataListResumes,
-      dataListAssessments,
       sidemenu: "102",
     },
   };
