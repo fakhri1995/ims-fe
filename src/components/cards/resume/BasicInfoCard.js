@@ -19,6 +19,8 @@ import { useEffect } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
+import { RESUME_DELETE } from "lib/features";
+
 import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
 import {
@@ -45,7 +47,9 @@ const BasicInfoCard = ({
   praloading,
   assessmentRoles,
   handleDelete,
+  isAllowedToGetAssessmentList,
   isAllowedToDeleteCandidate,
+  isAllowedToUpdateCandidate,
   loadingUpdate,
   loadingDelete,
   isCreateForm,
@@ -253,22 +257,25 @@ const BasicInfoCard = ({
       <div className="flex flex-row items-center justify-between mb-4 ">
         <div className="flex flex-row space-x-2">
           <H1>{dataDisplay.name} </H1>
-          <button
-            onClick={() => {
-              setDataUpdateBasic({
-                name: dataDisplay.name,
-                telp: dataDisplay.telp,
-                email: dataDisplay.email,
-                assessment_id: dataDisplay.assessment_id,
-                city: dataDisplay.city,
-                province: dataDisplay.province,
-              });
-              setIsShowInput(true);
-            }}
-            className="bg-transparent flex items-center"
-          >
-            <EditIconSvg size={18} color={"#4D4D4D"} />
-          </button>
+          {isAllowedToUpdateCandidate && (
+            <button
+              onClick={() => {
+                setDataUpdateBasic({
+                  name: dataDisplay.name,
+                  telp: dataDisplay.telp,
+                  email: dataDisplay.email,
+                  assessment_id: dataDisplay.assessment_id,
+                  city: dataDisplay.city,
+                  province: dataDisplay.province,
+                });
+                setIsShowInput(true);
+              }}
+              disabled={!isAllowedToUpdateCandidate}
+              className="bg-transparent flex items-center"
+            >
+              <EditIconSvg size={18} color={"#4D4D4D"} />
+            </button>
+          )}
         </div>
 
         <div className="flex flex-row space-x-6">
@@ -290,12 +297,7 @@ const BasicInfoCard = ({
                 .locale("id")
                 .format(`L-LT`)}.pdf`}
             >
-              <ButtonSys
-                type={"default"}
-                onClick={() => {
-                  // rt.push(`/admin/candidates/viewpdf/${dataDisplay.id}`)
-                }}
-              >
+              <ButtonSys type={"default"}>
                 <div className="flex flex-row space-x-2">
                   <DownloadIconSvg size={16} color={"#35763B"} />
                   <p>Download Resume</p>
@@ -345,7 +347,7 @@ const BasicInfoCard = ({
         </div>
       )}
 
-      <AccessControl isAllowedToDeleteCandidate>
+      <AccessControl hasPermission={RESUME_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}

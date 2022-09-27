@@ -19,6 +19,8 @@ const AcademicBlock = ({
   clearDataUpdate,
   setModalDelete,
   isAdd,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -120,27 +122,29 @@ const AcademicBlock = ({
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start">
-              <button
-                onClick={(event) => {
-                  // console.log(edu.id)
-                  setIsUpdate(true);
-                  setDataUpdateEdu(edu);
-                }}
-                className="bg-transparent"
-                value={edu.id}
-              >
-                <EditIconSvg size={18} color="#4D4D4D" />
-              </button>
-
-              <button
-                onClick={() => {
-                  setDataUpdateEdu(edu);
-                  setModalDelete(true);
-                }}
-                className="bg-transparent"
-              >
-                <TrashIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToUpdateCandidate && (
+                <button
+                  onClick={() => {
+                    setIsUpdate(true);
+                    setDataUpdateEdu(edu);
+                  }}
+                  className="bg-transparent"
+                  value={edu.id}
+                >
+                  <EditIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
+              {isAllowedToDeleteSection && (
+                <button
+                  onClick={() => {
+                    setDataUpdateEdu(edu);
+                    setModalDelete(true);
+                  }}
+                  className="bg-transparent"
+                >
+                  <TrashIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
             </div>
           )}
         </div>

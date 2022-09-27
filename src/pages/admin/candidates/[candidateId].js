@@ -43,16 +43,10 @@ import ProjectCard from "../../../components/cards/resume/project/ProjectCard";
 import TrainingCard from "../../../components/cards/resume/training/TrainingCard";
 import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { permissionWarningNotification } from "../../../lib/helper";
 import httpcookie from "cookie";
 
-const CandidateDetail = ({
-  initProps,
-  dataProfile,
-  dataResume,
-  sidemenu,
-  candidateId,
-  dataListAssessments,
-}) => {
+const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
   /**
    * Dependencies
    */
@@ -74,21 +68,18 @@ const CandidateDetail = ({
   const isAllowedToUpdateResumeAssessment = hasPermission(
     RESUME_ASSESSMENT_UPDATE
   );
-  const isAllowedToDeleteResumeAssessment = hasPermission(
-    RESUME_ASSESSMENT_DELETE
-  );
+
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
   const isAllowedToGetSkillLists = hasPermission(RESUME_SKILL_LISTS);
 
   //INIT
   const rt = useRouter();
-  const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   // console.log(pathArr);
   pathArr[pathArr.length - 1] = "Detail Kandidat";
 
-  //STATE
-  //1. display
+  // 1. STATE
+  // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [dataDisplay, setDataDisplay] = useState({
     id: null,
@@ -109,8 +100,9 @@ const CandidateDetail = ({
     assessment_results: [],
   });
   const [assessmentRoles, setAssessmentRoles] = useState([]);
+  const [loadingRoleList, setLoadingRoleList] = useState(false);
 
-  //2. update
+  // 1.2. update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [dataUpdateBasic, setDataUpdateBasic] = useState({
     name: "",
@@ -184,34 +176,76 @@ const CandidateDetail = ({
     assessment_result_values: [],
   });
 
-  // 3. delete
+  // 1.3. delete
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  //USE EFFECT
+  // 2. USE EFFECT
+  // 2.1 Get candidate/resume detail
   useEffect(() => {
     if (!isAllowedToGetCandidateDetail) {
+      permissionWarningNotification("Mendapatkan", "Detail Kandidat");
       setpraloading(false);
       return;
     }
 
-    if (dataResume !== undefined) {
-      setDataDisplay(dataResume.data);
-      setpraloading(false);
+    if (candidateId) {
+      setpraloading(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${candidateId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataDisplay(response2.data);
+            setpraloading(false);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+            setpraloading(false);
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+          setpraloading(false);
+        });
     }
-  }, [isAllowedToGetCandidateDetail, dataResume]);
+  }, [isAllowedToGetCandidateDetail, candidateId]);
 
+  // 2.2. Get role option
   useEffect(() => {
     if (!isAllowedToGetAssessmentList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role");
+      setLoadingRoleList(false);
       return;
     }
-    if (dataListAssessments !== undefined) {
-      const roles = dataListAssessments.data;
-      setAssessmentRoles(roles);
-    }
-  }, [isAllowedToGetAssessmentList, dataListAssessments]);
 
-  //HANDLER
-  // 1. Section
+    setLoadingRoleList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setAssessmentRoles(res2.data);
+        setLoadingRoleList(false);
+      });
+  }, [isAllowedToGetAssessmentList]);
+
+  // 3. HANDLER
+  // 3.1. Section
   const handleAddSection = (sectionName, data) => {
     const payload = {
       id: Number(candidateId),
@@ -219,6 +253,7 @@ const CandidateDetail = ({
     };
 
     if (!isAllowedToAddSection) {
+      permissionWarningNotification("Menambah", `Section  ${sectionName}`);
       return;
     }
 
@@ -267,6 +302,7 @@ const CandidateDetail = ({
     };
 
     if (!isAllowedToUpdateCandidate) {
+      permissionWarningNotification("Mengubah", `Section ${sectionName}`);
       return;
     }
 
@@ -315,7 +351,8 @@ const CandidateDetail = ({
       [sectionName + "_id"]: sectionId,
     };
 
-    if (!isAllowedToDeleteCandidate) {
+    if (!isAllowedToDeleteSection) {
+      permissionWarningNotification("Menghapus", `Section ${sectionName}`);
       return;
     }
 
@@ -357,9 +394,10 @@ const CandidateDetail = ({
       });
   };
 
-  //2. Assessment Result
+  // 3.2. Assessment Result
   const handleUpdateAssessment = () => {
     if (!isAllowedToUpdateResumeAssessment) {
+      permissionWarningNotification("Mengubah", `Nilai Assessment Results`);
       return;
     }
 
@@ -403,60 +441,14 @@ const CandidateDetail = ({
       });
   };
 
-  const handleDeleteAssessment = () => {
-    if (!isAllowedToDeleteResumeAssessment) {
-      return;
-    }
-
-    setLoadingDelete(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteResumeAssessment?id=${candidateId}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        // body: JSON.stringify(payload),
-      }
-    )
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          notification.success({
-            message: `Berhasil menghapus hasil assessment.`,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: `Gagal menghapus hasil assessment. ${response2.message}`,
-            duration: 3,
-          });
-        }
-        setTimeout(() => {
-          setLoadingDelete(false);
-          rt.push(`/admin/candidates/${candidateId}`);
-        }, 500);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menghapus hasil assessment. ${err.message}`,
-          duration: 3,
-        });
-        setTimeout(() => {
-          setLoadingDelete(false);
-          rt.push(`/admin/candidates/${candidateId}`);
-        }, 500);
-      });
-  };
-
-  // 3. Resume/Candidate
+  // 3.3. Resume/Candidate
   const handleDeleteResume = () => {
     const payload = {
       id: Number(candidateId),
     };
 
-    if (!isAllowedToUpdateCandidate) {
+    if (!isAllowedToDeleteCandidate) {
+      permissionWarningNotification(("Menghapus", `Kandidat`));
       return;
     }
 
@@ -548,16 +540,15 @@ const CandidateDetail = ({
         {/* SECTION BASIC INFO */}
         <BasicInfoCard
           dataDisplay={dataDisplay}
-          setDataDisplay={setDataDisplay}
           dataUpdateBasic={dataUpdateBasic}
           setDataUpdateBasic={setDataUpdateBasic}
           handleUpdate={handleUpdateSection}
           handleDelete={handleDeleteResume}
-          // onChangeInput={onChangeInput}
           praloading={praloading}
           assessmentRoles={assessmentRoles}
           isAllowedToDeleteCandidate={isAllowedToDeleteCandidate}
           isAllowedToGetAssessmentList={isAllowedToGetAssessmentList}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
           loadingDelete={loadingDelete}
           loadingUpdate={loadingUpdate}
         />
@@ -574,6 +565,9 @@ const CandidateDetail = ({
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               loadingDelete={loadingDelete}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
 
             {/* SECTION EXPERIENCE */}
@@ -650,7 +644,6 @@ const CandidateDetail = ({
               dataUpdate={dataUpdateAssessment}
               setDataUpdate={setDataUpdateAssessment}
               handleUpdate={handleUpdateAssessment}
-              handleDelete={handleDeleteAssessment}
               assessmentRoles={assessmentRoles}
               loadingDelete={loadingDelete}
             />
@@ -1041,38 +1034,12 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
-  const resourcesGR = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${candidateId}`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGR = await resourcesGR.json();
-  const dataResume = resjsonGR;
-
-  const resourcesGAL = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGAL = await resourcesGAL.json();
-  const dataListAssessments = resjsonGAL;
-
   return {
     props: {
       initProps,
       dataProfile,
-      dataResume,
       sidemenu: "102",
       candidateId,
-      dataListAssessments,
     },
   };
 }
