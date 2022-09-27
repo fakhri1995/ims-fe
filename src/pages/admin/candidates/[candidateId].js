@@ -716,7 +716,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
           }}
         >
           <View style={{ flexDirection: "col", width: `45%` }}>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>ACADEMIC HISTORY</Text>
               {dataResume.educations.map((edu) => (
                 <View style={styles.sectionBlock1} key={edu.id}>
@@ -737,7 +737,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 </View>
               ))}
             </View>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>EXPERIENCE</Text>
               {dataResume.experiences.map((exp) => (
                 <View style={styles.sectionBlock1} key={exp.id}>
@@ -765,7 +765,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 </View>
               ))}
             </View>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>PROJECTS</Text>
               {dataResume.projects.map((proj) => (
                 <View style={styles.sectionBlock2} key={proj.id}>
@@ -784,7 +784,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             </View>
           </View>
           <View style={{ flexDirection: "col", width: `45%` }}>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>SKILLS</Text>
               <View
                 style={{
@@ -799,7 +799,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 ))}
               </View>
             </View>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>TRAINING</Text>
               {dataResume.trainings.map((train) => (
                 <View style={styles.sectionBlock2} key={train.id}>
@@ -816,7 +816,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 </View>
               ))}
             </View>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>CERTIFICATIONS</Text>
               {dataResume.certificates.map((cert) => (
                 <View style={styles.sectionBlock2} key={cert.id}>
@@ -833,7 +833,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 </View>
               ))}
             </View>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>ACHIEVEMENTS</Text>
               {dataResume.achievements.map((achiev) => (
                 <View style={styles.sectionBlock2} key={achiev.id}>
@@ -852,7 +852,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 </View>
               ))}
             </View>
-            <View>
+            <View wrap={false}>
               <Text style={styles.sectionHeader}>
                 TECHNICAL ASSESSMENT{"\n"}
                 RESULTS
