@@ -36,8 +36,16 @@ const AssessmentResultCard = ({
   const [modalDelete, setModalDelete] = useState(false);
   const [resultValue, setResultValue] = useState([]);
 
+  const clearDataUpdate = () => {
+    setDataUpdate({
+      id: Number(dataDisplay.id),
+      assessment_result_values: [],
+    });
+  };
+
   // console.log(assessmentRoles);
-  // console.log(dataUpdate)
+  console.log("data display", dataDisplay);
+  console.log(dataUpdate);
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row justify-between ">
@@ -56,6 +64,7 @@ const AssessmentResultCard = ({
             <button
               onClick={() => {
                 setIsShowInput(false);
+                clearDataUpdate();
               }}
               className="bg-transparent"
             >

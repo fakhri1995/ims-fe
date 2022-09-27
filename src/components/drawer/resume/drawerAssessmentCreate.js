@@ -18,15 +18,9 @@ const DrawerAssessmentCreate = ({
   onvisible,
   buttonOkText,
   initProps,
+  setRefresh,
+  isAllowedToAddRoleAssessment,
 }) => {
-  /**
-   * Dependencies
-   */
-  const { hasPermission } = useAccessControl();
-  const isAllowedToCreateForm = hasPermission(ASSESSMENT_ADD);
-
-  const rt = useRouter();
-
   //USESTATE
   const [datacreate, setdatacreate] = useState({
     id: null,
@@ -50,7 +44,7 @@ const DrawerAssessmentCreate = ({
       add: datacreate.add,
     };
 
-    if (!isAllowedToCreateForm) {
+    if (!isAllowedToAddRoleAssessment) {
       permissionWarningNotification("Membuat", "Form Assessment");
       return;
     }
@@ -65,23 +59,24 @@ const DrawerAssessmentCreate = ({
     })
       .then((response) => response.json())
       .then((response2) => {
+        setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
             message: `Form berhasil ditambahkan.`,
             duration: 3,
           });
+          setTimeout(() => {
+            setLoadingCreate(false);
+            onvisible(false);
+            setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
+          }, 500);
         } else {
           notification.error({
             message: `Gagal menambahkan form assessment. ${response2.message}`,
             duration: 3,
           });
-        }
-        setTimeout(() => {
           setLoadingCreate(false);
-          onvisible(false);
-          setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
-          rt.push(`/admin/role-assessment`);
-        }, 500);
+        }
       })
       .catch((err) => {
         notification.error({
@@ -89,20 +84,22 @@ const DrawerAssessmentCreate = ({
           duration: 3,
         });
         setLoadingCreate(false);
-        onvisible(false);
-        setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
       });
   };
 
   //USEEFFECT
   useEffect(() => {
-    if (datacreate.name !== "" && datacreate.add[0].criteria !== "") {
+    let criteriaIsFilled = datacreate.add.every(
+      (detail) => detail.criteria !== ""
+    );
+    if (datacreate.name !== "" && criteriaIsFilled) {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
     }
   }, [datacreate]);
 
+  // console.log(datacreate);
   return (
     <DrawerCore
       title={title}

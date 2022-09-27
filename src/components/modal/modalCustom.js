@@ -767,7 +767,7 @@ const ModalHapus2 = ({
   onCancel,
   loading,
   itemName,
-  // roleSelected,
+  disabled,
   children,
 }) => {
   return (
@@ -791,11 +791,60 @@ const ModalHapus2 = ({
               type={"primary"}
               color={"danger"}
               onClick={onOk}
-              // disabled={loadingdelete}
+              disabled={disabled}
             >
               <div className="flex flex-row space-x-2">
                 <TrashIconSvg size={16} color={`white`} />
                 <p>Ya, saya yakin dan hapus {itemName}</p>
+              </div>
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      {children}
+    </ModalCore>
+  );
+};
+
+const ModalUbah = ({
+  title,
+  visible,
+  onvisible,
+  onOk,
+  onCancel,
+  loading,
+  itemName,
+  disabled,
+  children,
+}) => {
+  return (
+    <ModalCore
+      title={title}
+      visible={visible}
+      onCancel={onCancel}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex justify-between items-center">
+            <ButtonSys
+              type="default"
+              // color="danger"
+              onClick={() => {
+                onvisible(false);
+              }}
+            >
+              Batalkan
+            </ButtonSys>
+            <ButtonSys
+              type={"primary"}
+              // color={"danger"}
+              onClick={onOk}
+              disabled={disabled}
+            >
+              <div className="flex flex-row space-x-2">
+                <CheckIconSvg size={16} color={`white`} />
+                <p>Ya, saya yakin dan akan menyimpan perubahan</p>
               </div>
             </ButtonSys>
           </div>
@@ -825,4 +874,5 @@ export {
   ModalCancelTiket,
   ModalReleaseItemTiket,
   ModalHapus2,
+  ModalUbah,
 };

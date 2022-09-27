@@ -35,6 +35,9 @@ const AcademicCard = ({
   dataUpdateEdu,
   setDataUpdateEdu,
   loadingDelete,
+  isAllowedToAddSection,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -66,6 +69,8 @@ const AcademicCard = ({
             clearDataUpdate={clearDataUpdate}
             setModalDelete={setModalDelete}
             isAdd={isAdd}
+            isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+            isAllowedToDeleteSection={isAllowedToDeleteSection}
           />
         ))}
       </Timeline>
@@ -146,17 +151,19 @@ const AcademicCard = ({
           </div>
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">
-            + Add academic history
-          </p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">
+              + Add academic history
+            </p>
+          </ButtonSys>
+        )
       )}
 
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>

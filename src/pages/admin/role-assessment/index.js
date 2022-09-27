@@ -59,19 +59,18 @@ Chart.register(
   PointElement
 );
 
-const RoleAssessmentIndex = ({
-  initProps,
-  dataProfile,
-  dataCountAssessments,
-  dataListRoleAssessments,
-  sidemenu,
-}) => {
+const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
-  const { hasPermission } = useAccessControl();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
   const isAllowedToGetRoleAssessmentList = hasPermission(ASSESSMENTS_GET);
   const isAllowedToGetRoleAssessmentCount = hasPermission(ASSESSMENT_COUNT_GET);
+  const isAllowedToAddRoleAssessment = hasPermission(ASSESSMENT_ADD);
   const isAllowedToDeleteRoleAssessment = hasPermission(ASSESSMENT_DELETE);
   const canUpdateRoleAssessment = hasPermission([
     ASSESSMENT_UPDATE,
@@ -85,6 +84,8 @@ const RoleAssessmentIndex = ({
 
   // 2. State
   // 2.1. PENGGUNAAN TERBANYAK CARD
+  const [dataCountAssessments, setDataCountAssessments] = useState(0);
+  const [top4AssessmentsCount, setTop4AssessmentsCount] = useState([]);
   const [loadingAssessmentsCountData, setLoadingAssessmentsCountData] =
     useState(true);
   const [dataColorBar, setDataColorBar] = useState([
@@ -93,39 +94,8 @@ const RoleAssessmentIndex = ({
     "#BF4A40",
     "#6AAA70",
   ]);
-  const top4AssessmentsCount =
-    dataCountAssessments.resume_assessments_count.slice(0, 4);
 
-  // 2.3. CREATE FORM
-  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
-  const onAddNewFormButtonClicked = useCallback(() => {
-    setCreateDrawerShown(true);
-  }, []);
-
-  // 2.4 READ FORM
-  const [drawread, setdrawread] = useState(false);
-
-  // 2.5. UPDATE FORM
-  const [drawUpdate, setDrawUpdate] = useState(false);
-  const [triggerAssessmentUpdate, setTriggerAssessmentUpdate] = useState(-1);
-  const tempIdAssessmentUpdate = useRef(-1);
-  const [assessmentData, setAssessmentData] = useState({
-    id: 0,
-    name: "",
-    resumes_count: 0,
-    details: [],
-  });
-
-  // 2.6. DELETE FORM
-  const [modaldelete, setmodaldelete] = useState(false);
-  const [loadingdelete, setloadingdelete] = useState(false);
-  const [roleSelected, setRoleSelected] = useState("");
-  const [candidateCount, setCandidateCount] = useState(0);
-  const [datadelete, setdatadelete] = useState({
-    id: 0,
-  });
-
-  // 2.7. TABLE ROLE ASSESSMENT
+  // 2.2. TABLE ROLE ASSESSMENT
   const [dataTable, setDataTable] = useState([]);
   const [dataRawRoleAssessment, setDataRawRoleAssessment] = useState({
     current_page: "",
@@ -148,12 +118,175 @@ const RoleAssessmentIndex = ({
     sort_by: "name",
     sort_type: "desc",
   });
-
-  // Filter
   const [searchingFilterRoleAssessment, setSearchingFilterRoleAssessment] =
     useState("");
 
-  // Columns
+  // 2.3. CREATE FORM
+  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
+  const onAddNewFormButtonClicked = useCallback(() => {
+    setCreateDrawerShown(true);
+  }, []);
+  const [refresh, setRefresh] = useState(-1);
+
+  // 2.4 READ FORM
+  const [drawread, setdrawread] = useState(false);
+
+  // 2.5. UPDATE FORM
+  const [drawUpdate, setDrawUpdate] = useState(false);
+  const [triggerAssessmentUpdate, setTriggerAssessmentUpdate] = useState(-1);
+  const tempIdAssessmentUpdate = useRef(-1);
+  const [modalUpdate, setModalUpdate] = useState(false);
+  const [assessmentData, setAssessmentData] = useState({
+    id: 0,
+    name: "",
+    resumes_count: 0,
+    details: [],
+  });
+
+  // 2.6. DELETE FORM
+  const [modaldelete, setmodaldelete] = useState(false);
+  const [loadingdelete, setloadingdelete] = useState(false);
+  const [roleSelected, setRoleSelected] = useState("");
+  const [candidateCount, setCandidateCount] = useState(0);
+  const [datadelete, setdatadelete] = useState({
+    id: 0,
+  });
+
+  // 3.UseEffect
+  // 3.1. Get Role Assessment Count
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessmentCount) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Chart Penggunaan Terbanyak"
+      );
+      setLoadingAssessmentsCountData(false);
+      return;
+    }
+
+    setLoadingAssessmentsCountData(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountAssessment`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataCountAssessments(res2.data.assessments_count);
+        setTop4AssessmentsCount(res2.data.resume_assessments_count.slice(0, 4));
+        setLoadingAssessmentsCountData(false);
+      });
+  }, [isAllowedToGetRoleAssessmentCount, refresh]);
+
+  // 3.2. Get Role Assessments
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessmentList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role Assessment");
+      setLoadingRoleAssessment(false);
+      return;
+    }
+
+    setLoadingRoleAssessment(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataRawRoleAssessment(res2.data);
+        setDataTable(res2.data.data);
+        setLoadingRoleAssessment(false);
+      });
+  }, [isAllowedToGetRoleAssessmentList, refresh]);
+
+  // 4. Event
+  const onFilterRoleAssessment = () => {
+    setLoadingRoleAssessment(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?page=${pageRoleAssessment}&sort_by=${sortingRoleAssessment.sort_by}&sort_type=${sortingRoleAssessment.sort_type}&rows=${rowsRoleAssessment}&keyword=${searchingFilterRoleAssessment}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataRawRoleAssessment(res2.data);
+        setDataTable(res2.data.data);
+        setLoadingRoleAssessment(false);
+      });
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(
+    onFilterRoleAssessment,
+    "Enter"
+  );
+
+  const onOpenReadDrawer = (record) => {
+    setdrawread(true);
+    setAssessmentData((prev) => ({
+      ...prev,
+      id: record.id,
+      name: record.name,
+      resumes_count: record.resumes_count,
+      details: record.details,
+    }));
+  };
+
+  const onOpenDeleteModal = (record) => {
+    setmodaldelete(true);
+    setdatadelete({ ...datadelete, id: parseInt(record.id) });
+    setRoleSelected(record.name);
+    setCandidateCount(record.resumes_count);
+  };
+
+  const handleDelete = () => {
+    if (!isAllowedToDeleteRoleAssessment) {
+      permissionWarningNotification("Menghapus", "Form Assessment");
+      return;
+    }
+    setloadingdelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAssessment?id=${datadelete.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+        setTimeout(() => {
+          setloadingdelete(false);
+          setmodaldelete(false);
+          // rt.push(`/admin/role-assessment`);
+        }, 500);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus form assessment. ${err.response}`,
+          duration: 3,
+        });
+        setloadingdelete(false);
+        setmodaldelete(false);
+      });
+  };
+
+  // 5. Table Columns
   const columnsRoleAssessment = [
     {
       title: "No.",
@@ -241,7 +374,8 @@ const RoleAssessmentIndex = ({
               <ButtonSys
                 type={canUpdateRoleAssessment ? "default" : "primary"}
                 disabled={!canUpdateRoleAssessment}
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   tempIdAssessmentUpdate.current = record.id;
                   setTriggerAssessmentUpdate((prev) => prev + 1);
                   setDrawUpdate(true);
@@ -253,7 +387,8 @@ const RoleAssessmentIndex = ({
                 type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
                 color="danger"
                 disabled={!isAllowedToDeleteRoleAssessment}
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   onOpenDeleteModal(record);
                 }}
               >
@@ -265,135 +400,6 @@ const RoleAssessmentIndex = ({
       },
     },
   ];
-
-  // 3.UseEffect
-
-  // 3.1. Stop loading if dataCountAssessments are available
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentCount) {
-      return;
-    }
-
-    if (dataCountAssessments !== undefined) {
-      setLoadingAssessmentsCountData(false);
-    }
-  }, [isAllowedToGetRoleAssessmentCount, dataCountAssessments]);
-
-  // 3.2. GET TABEL SEMUA ROLE ASSESSMENT
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessmentList) {
-      return;
-    }
-
-    if (dataListRoleAssessments !== undefined) {
-      setDataRawRoleAssessment(dataListRoleAssessments.data);
-      const mappedData = dataListRoleAssessments.data.data.map((doc, idx) => {
-        return {
-          ...doc,
-        };
-      });
-      setDataTable(mappedData);
-      setLoadingRoleAssessment(false);
-    }
-  }, [isAllowedToGetRoleAssessmentList, dataListRoleAssessments]);
-
-  // 4. Event
-  const onFilterRoleAssessment = () => {
-    setLoadingRoleAssessment(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?page=${pageRoleAssessment}&sort_by=${sortingRoleAssessment.sort_by}&sort_type=${sortingRoleAssessment.sort_type}&rows=${rowsRoleAssessment}&keyword=${searchingFilterRoleAssessment}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataRawRoleAssessment(res2.data);
-        setDataTable(res2.data.data);
-        setLoadingRoleAssessment(false);
-      });
-  };
-
-  const { onKeyPressHandler } = createKeyPressHandler(
-    onFilterRoleAssessment,
-    "Enter"
-  );
-
-  const onOpenReadDrawer = (record) => {
-    setdrawread(true);
-    setAssessmentData((prev) => ({
-      ...prev,
-      id: record.id,
-      name: record.name,
-      resumes_count: record.resumes_count,
-    }));
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessment?id=${record.id}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setAssessmentData((prev) => ({
-          ...prev,
-          details: res2.data.details,
-        }));
-      });
-  };
-
-  const onOpenDeleteModal = (record) => {
-    setmodaldelete(true);
-    setdatadelete({ ...datadelete, id: parseInt(record.id) });
-    setRoleSelected(record.name);
-    setCandidateCount(record.resumes_count);
-  };
-
-  const handleDelete = () => {
-    if (!isAllowedToDeleteRoleAssessment) {
-      permissionWarningNotification("Menghapus", "Form Assessment");
-      return;
-    }
-    setloadingdelete(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteAssessment?id=${datadelete.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          notification.success({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setloadingdelete(false);
-            setmodaldelete(false);
-            rt.push(`/admin/role-assessment`);
-          }, 500);
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menghapus form assessment. ${err.response}`,
-          duration: 3,
-        });
-        setloadingdelete(false);
-        setmodaldelete(false);
-      });
-  };
 
   return (
     <Layout
@@ -407,7 +413,7 @@ const RoleAssessmentIndex = ({
         <div className="flex flex-col px-5 lg:w-1/3">
           <AddNewFormButton
             title="Tambah Form"
-            disabled={!hasPermission(ASSESSMENT_ADD)}
+            disabled={!isAllowedToAddRoleAssessment}
             onButtonClicked={onAddNewFormButtonClicked}
           />
           {/* CHART PENGGUNAAN TERBANYAK */}
@@ -520,15 +526,13 @@ const RoleAssessmentIndex = ({
           {/* CARD TOTAL FORM */}
           <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
             <H1>Total Form</H1>
-            <p className="font-semibold text-4xl">
-              {dataCountAssessments.assessments_count}
-            </p>
+            <p className="font-semibold text-4xl">{dataCountAssessments}</p>
           </div>
         </div>
 
         {/* TABEL SEMUA ROLE ASSESSMENT */}
-        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
-          <H1 className="font-bold">Semua Role Assesment</H1>
+        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2 space-y-6">
+          <H1 className="font-bold">Semua Role Assessment</H1>
           <div className="flex flex-row w-full mb-5 space-x-4">
             <Input
               value={
@@ -573,6 +577,7 @@ const RoleAssessmentIndex = ({
             setsorting={setSortingRoleAssessment}
             sorting={sortingRoleAssessment}
             searching={searchingFilterRoleAssessment}
+            onOpenReadDrawer={onOpenReadDrawer}
           />
         </div>
       </div>
@@ -585,15 +590,24 @@ const RoleAssessmentIndex = ({
           buttonOkText={"Tambah Form"}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
+          setRefresh={setRefresh}
+          isAllowedToAddRoleAssessment={isAllowedToAddRoleAssessment}
         />
       </AccessControl>
 
+      {/* Drawer Role Detail */}
       <AccessControl hasPermission={ASSESSMENT_GET}>
         <DrawerCore
           title={`${assessmentData.name}`}
           visible={drawread}
           onClose={() => {
             setdrawread(false);
+            setAssessmentData({
+              id: 0,
+              name: "",
+              resumes_count: 0,
+              details: [],
+            });
           }}
           width={380}
           buttonOkText={"Ubah Form"}
@@ -647,9 +661,13 @@ const RoleAssessmentIndex = ({
           onvisible={setDrawUpdate}
           id={tempIdAssessmentUpdate}
           trigger={triggerAssessmentUpdate}
+          setRefresh={setRefresh}
+          modalUpdate={modalUpdate}
+          setModalUpdate={setModalUpdate}
         />
       </AccessControl>
 
+      {/* MODAL */}
       <AccessControl hasPermission={ASSESSMENT_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
@@ -661,16 +679,20 @@ const RoleAssessmentIndex = ({
           }}
           itemName={"form"}
           loading={loadingdelete}
+          disabled={candidateCount > 0}
         >
-          <p className="mb-4">
-            Form assessment <strong>{roleSelected}</strong>&nbsp; digunakan oleh{" "}
-            <strong>{candidateCount}</strong> kandidat. Apakah Anda yakin ingin
-            melanjutkan penghapusan?
-          </p>
-          <p>
-            Data hasil assessment kandidat yang menggunakan form ini akan tetap
-            disimpan.
-          </p>
+          {candidateCount > 0 ? (
+            <p className="mb-4">
+              Form assessment <strong>{roleSelected}</strong> tidak dapat
+              dihapus karena masih digunakan oleh{" "}
+              <strong>{candidateCount}</strong> kandidat.
+            </p>
+          ) : (
+            <p className="mb-4">
+              Apakah Anda yakin ingin melanjutkan penghapusan form assessment{" "}
+              <strong>{roleSelected}</strong>?
+            </p>
+          )}
         </ModalHapus2>
       </AccessControl>
     </Layout>
@@ -702,36 +724,10 @@ export async function getServerSideProps({ req, res }) {
   const resjson = await resources.json();
   const dataProfile = resjson;
 
-  const resourcesGCA = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountAssessment`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGCA = await resourcesGCA.json();
-  const dataCountAssessments = resjsonGCA.data;
-
-  const resourcesGA = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGA = await resourcesGA.json();
-  const dataListRoleAssessments = resjsonGA;
-
   return {
     props: {
       initProps,
       dataProfile,
-      dataCountAssessments,
-      dataListRoleAssessments,
       sidemenu: "101",
     },
   };

@@ -32,7 +32,7 @@ const TrainingBlock = ({
   return (
     <div className="flex flex-row mb-3">
       {isUpdate ? (
-        <div className="flex flex-col space-y-4 mt-2 mb-4">
+        <div className="flex flex-col space-y-4 mt-2 mb-4 w-full">
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Course or program name"

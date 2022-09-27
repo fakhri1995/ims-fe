@@ -13,14 +13,10 @@ import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { H1, H2 } from "../../../../components/typography";
+import { permissionWarningNotification } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
-const CandidateCreate = ({
-  initProps,
-  dataProfile,
-  sidemenu,
-  dataListAssessments,
-}) => {
+const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
@@ -42,8 +38,7 @@ const CandidateCreate = ({
   // pathArr.splice(2, 1);
   pathArr[pathArr.length - 1] = "Tambah Kandidat";
 
-  const [instanceForm] = Form.useForm();
-
+  // 1. USE STATE
   const [dataAddCandidate, setDataAddCandidate] = useState({
     name: "",
     telp: "",
@@ -54,19 +49,34 @@ const CandidateCreate = ({
   });
 
   const [loadingCreate, setLoadingCreate] = useState(false);
+  const [loadingRoleList, setLoadingRoleList] = useState(false);
   const [assessmentRoles, setAssessmentRoles] = useState([]);
-  const [criterias, setCriterias] = useState([]);
   const [roleName, setRoleName] = useState("");
 
-  // USE EFFECT
+  // 2. USE EFFECT
+  // 2.1. Get Role List
   useEffect(() => {
     if (!isAllowedToGetAssessmentList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role");
+      setLoadingRoleList(false);
       return;
     }
-    const roles = dataListAssessments.data;
-    setAssessmentRoles(roles);
-  }, [isAllowedToGetAssessmentList, dataListAssessments]);
 
+    setLoadingRoleList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setAssessmentRoles(res2.data);
+        setLoadingRoleList(false);
+      });
+  }, [isAllowedToGetAssessmentList]);
+
+  // 2.2. Get Role Name For Section Technical Assessment Result
   useEffect(() => {
     if (dataAddCandidate.assessment_id !== undefined) {
       const filterRole = assessmentRoles.filter(
@@ -77,7 +87,7 @@ const CandidateCreate = ({
     }
   }, [dataAddCandidate.assessment_id]);
 
-  //HANDLER
+  // 3. HANDLER
   const handleCreateCandidate = () => {
     if (!isAllowedToCreateCandidate) {
       permissionWarningNotification("Menambah", "Kandidat");
@@ -306,24 +316,11 @@ export async function getServerSideProps({ req, res }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
-  const resourcesGA = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGA = await resourcesGA.json();
-  const dataListAssessments = resjsonGA;
-
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "112",
-      dataListAssessments,
     },
   };
 }

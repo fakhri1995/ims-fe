@@ -33,7 +33,7 @@ const CertificationBlock = ({
   return (
     <div className="flex flex-row mb-3">
       {isUpdate ? (
-        <div className="flex flex-col space-y-4 mt-2 mb-4">
+        <div className="flex flex-col space-y-4 mt-2 mb-4 w-full">
           <div className="flex flex-row space-x-4">
             <Input
               placeholder="Course or program name"
@@ -82,18 +82,6 @@ const CertificationBlock = ({
                 }));
               }}
             />
-            {/* <Input
-								placeholder="Year"
-								value={dataUpdateCert.year}
-								onChange={(e) => {
-									let input = e.target.value;
-									setDataUpdateCert((prev) => ({
-										...prev,
-										year: input,
-									}));
-								}}
-								className="w-1/3"
-							></Input> */}
             <Input
               placeholder="Company or organization"
               value={dataUpdateCert.organizer}
