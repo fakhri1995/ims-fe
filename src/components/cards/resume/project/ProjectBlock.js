@@ -19,6 +19,8 @@ const ProjectBlock = ({
   clearDataUpdate,
   setModalDelete,
   isAdd,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -106,26 +108,29 @@ const ProjectBlock = ({
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-              <button
-                onClick={() => {
-                  setIsUpdate(true);
-                  setDataUpdateProj(project);
-                }}
-                className="bg-transparent"
-              >
-                <EditIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToUpdateCandidate && (
+                <button
+                  onClick={() => {
+                    setIsUpdate(true);
+                    setDataUpdateProj(project);
+                  }}
+                  className="bg-transparent"
+                >
+                  <EditIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  // console.log(project.id);
-                  setDataUpdateProj(project);
-                  setModalDelete(true);
-                }}
-                className="bg-transparent"
-              >
-                <TrashIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToDeleteSection && (
+                <button
+                  onClick={() => {
+                    setDataUpdateProj(project);
+                    setModalDelete(true);
+                  }}
+                  className="bg-transparent"
+                >
+                  <TrashIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
             </div>
           )}
         </>

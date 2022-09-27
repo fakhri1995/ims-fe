@@ -35,6 +35,9 @@ const CertificationCard = ({
   dataUpdateCert,
   setDataUpdateCert,
   loadingDelete,
+  isAllowedToAddSection,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -63,6 +66,8 @@ const CertificationCard = ({
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
           isAdd={isAdd}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
         />
       ))}
       {/* Input Add Certification */}
@@ -114,18 +119,6 @@ const CertificationCard = ({
                 }));
               }}
             />
-            {/* <Input
-              placeholder="Year"
-              value={dataUpdateCert.year}
-              onChange={(e) => {
-                let input = e.target.value;
-                setDataUpdateCert((prev) => ({
-                  ...prev,
-                  year: input,
-                }));
-              }}
-              className="w-1/3"
-            ></Input> */}
             <Input
               placeholder="Company or organization"
               value={dataUpdateCert.organizer}
@@ -141,17 +134,19 @@ const CertificationCard = ({
           </div>
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">
-            + Add certification
-          </p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">
+              + Add certification
+            </p>
+          </ButtonSys>
+        )
       )}
 
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>

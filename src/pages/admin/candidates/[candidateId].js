@@ -579,6 +579,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               loadingDelete={loadingDelete}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
 
             {/* SECTION PROJECT */}
@@ -590,6 +593,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               loadingDelete={loadingDelete}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
           </div>
           <div className="flex flex-col w-full gap-6">
@@ -602,6 +608,8 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               handleAddSection={handleAddSection}
               handleDeleteSection={handleDeleteSection}
               isAllowedToGetSkillLists={isAllowedToGetSkillLists}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
 
             {/* SECTION TRAINING */}
@@ -613,6 +621,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               loadingDelete={loadingDelete}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
 
             {/* SECTION CERTIFICATION */}
@@ -624,6 +635,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               loadingDelete={loadingDelete}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
 
             {/* SECTION ACHIEVEMENT */}
@@ -635,6 +649,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
               loadingDelete={loadingDelete}
+              isAllowedToAddSection={isAllowedToAddSection}
+              isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+              isAllowedToDeleteSection={isAllowedToDeleteSection}
             />
 
             {/* SECTION ASSESSMENT RESULT */}
@@ -645,7 +662,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
               setDataUpdate={setDataUpdateAssessment}
               handleUpdate={handleUpdateAssessment}
               assessmentRoles={assessmentRoles}
-              loadingDelete={loadingDelete}
+              isAllowedToUpdateResumeAssessment={
+                isAllowedToUpdateResumeAssessment
+              }
             />
           </div>
         </div>

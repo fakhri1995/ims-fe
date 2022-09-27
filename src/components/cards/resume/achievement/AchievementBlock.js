@@ -19,6 +19,8 @@ const AchievementBlock = ({
   clearDataUpdate,
   setModalDelete,
   isAdd,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -106,25 +108,28 @@ const AchievementBlock = ({
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-              <button
-                onClick={(event) => {
-                  setIsUpdate(true);
-                  setDataUpdateAchiev(achievement);
-                }}
-                className="bg-transparent"
-              >
-                <EditIconSvg size={18} color="#4D4D4D" />
-              </button>
-
-              <button
-                onClick={() => {
-                  setDataUpdateAchiev(achievement);
-                  setModalDelete(true);
-                }}
-                className="bg-transparent"
-              >
-                <TrashIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToUpdateCandidate && (
+                <button
+                  onClick={(event) => {
+                    setIsUpdate(true);
+                    setDataUpdateAchiev(achievement);
+                  }}
+                  className="bg-transparent"
+                >
+                  <EditIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
+              {isAllowedToDeleteSection && (
+                <button
+                  onClick={() => {
+                    setDataUpdateAchiev(achievement);
+                    setModalDelete(true);
+                  }}
+                  className="bg-transparent"
+                >
+                  <TrashIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
             </div>
           )}
         </>

@@ -35,6 +35,9 @@ const ProjectCard = ({
   dataUpdateProj,
   setDataUpdateProj,
   loadingDelete,
+  isAllowedToAddSection,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -63,6 +66,8 @@ const ProjectCard = ({
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
           isAdd={isAdd}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
         />
       ))}
 
@@ -130,15 +135,19 @@ const ProjectCard = ({
           </div>
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">+ Add project</p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">
+              + Add project
+            </p>
+          </ButtonSys>
+        )
       )}
 
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>

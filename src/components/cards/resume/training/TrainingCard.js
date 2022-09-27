@@ -35,6 +35,9 @@ const TrainingCard = ({
   dataUpdateTrain,
   setDataUpdateTrain,
   loadingDelete,
+  isAllowedToAddSection,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -63,6 +66,8 @@ const TrainingCard = ({
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
           isAdd={isAdd}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
         />
       ))}
       {/* Input Add Training */}
@@ -129,15 +134,19 @@ const TrainingCard = ({
           </div>
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">+ Add training</p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">
+              + Add training
+            </p>
+          </ButtonSys>
+        )
       )}
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>
         <ModalHapus2

@@ -19,6 +19,8 @@ const CertificationBlock = ({
   clearDataUpdate,
   setModalDelete,
   isAdd,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -108,25 +110,28 @@ const CertificationBlock = ({
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-              <button
-                onClick={(event) => {
-                  setIsUpdate(true);
-                  setDataUpdateCert(certif);
-                }}
-                className="bg-transparent"
-              >
-                <EditIconSvg size={18} color="#4D4D4D" />
-              </button>
-
-              <button
-                onClick={() => {
-                  setDataUpdateCert(certif);
-                  setModalDelete(true);
-                }}
-                className="bg-transparent"
-              >
-                <TrashIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToUpdateCandidate && (
+                <button
+                  onClick={(event) => {
+                    setIsUpdate(true);
+                    setDataUpdateCert(certif);
+                  }}
+                  className="bg-transparent"
+                >
+                  <EditIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
+              {isAllowedToDeleteSection && (
+                <button
+                  onClick={() => {
+                    setDataUpdateCert(certif);
+                    setModalDelete(true);
+                  }}
+                  className="bg-transparent"
+                >
+                  <TrashIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
             </div>
           )}
         </>
