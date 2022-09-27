@@ -1073,8 +1073,9 @@ const TableCustomRoleAssessment = ({
   setsorting,
   sorting,
   searching,
+  onOpenReadDrawer,
 }) => {
-  const rt = useRouter();
+  const [rowstate, setrowstate] = useState(0);
   return (
     <Table
       className="tableRoleAssessment"
@@ -1155,6 +1156,20 @@ const TableCustomRoleAssessment = ({
               });
           }
         }
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: (event) => {
+            setrowstate(record.id);
+          },
+          onClick: (event) => {
+            onOpenReadDrawer(record);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
       }}
     />
   );
