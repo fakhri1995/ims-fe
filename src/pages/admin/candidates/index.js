@@ -12,10 +12,10 @@ import { AddNewFormButton } from "components/screen/resume";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  RESUMES_COUNT_GET,
   RESUMES_GET,
   RESUME_ADD,
   RESUME_ASSESSMENT_LIST,
+  RESUME_COUNT_GET,
   RESUME_GET,
 } from "lib/features";
 
@@ -68,7 +68,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     return null;
   }
   const isAllowedToGetResumeList = hasPermission(RESUMES_GET);
-  const isAllowedToGetResumeCount = hasPermission(RESUMES_COUNT_GET);
+  const isAllowedToGetResumeCount = hasPermission(RESUME_COUNT_GET);
   const isAllowedToAddResume = hasPermission(RESUME_ADD);
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
 
