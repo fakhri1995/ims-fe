@@ -145,7 +145,22 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setRoleFilterResume(res2.data);
+        if (res2.success) {
+          setRoleFilterResume(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRoleList(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
         setLoadingRoleList(false);
       });
   }, [isAllowedToGetAssessmentList]);
@@ -153,7 +168,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3.2. Get resume count
   useEffect(() => {
     if (!isAllowedToGetResumeCount) {
-      permissionWarningNotification("Mendapatkan", "Data Chart Kandidat");
+      permissionWarningNotification("Mendapatkan", "Resume Count");
       setLoadingResumeCountData(false);
       return;
     }
@@ -167,8 +182,22 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setDataCountResumes(res2.data.assessments_count);
-        setTopCandidateCount(res2.data.resume_assessments_count.slice(0, 5));
+        if (res2.success) {
+          setDataCountResumes(res2.data.assessments_count);
+          setTopCandidateCount(res2.data.resume_assessments_count.slice(0, 5));
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingResumeCountData(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
         setLoadingResumeCountData(false);
       });
   }, [isAllowedToGetResumeCount]);
@@ -190,8 +219,22 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setDataRawResume(res2.data);
-        setDataTable(res2.data.data);
+        if (res2.success) {
+          setDataRawResume(res2.data);
+          setDataTable(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingResumeList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
         setLoadingResumeList(false);
       });
   }, [isAllowedToGetResumeList]);
