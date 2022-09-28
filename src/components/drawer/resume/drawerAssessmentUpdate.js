@@ -59,6 +59,57 @@ const DrawerAssessmentUpdate = ({
   const [deletestate, setdeletestate] = useState(false);
   const [criteriaLen, setCriteriaLen] = useState(0);
 
+  //USEEFFECT
+  // Get a role assessment data
+  useEffect(() => {
+    if (!isAllowedToGetRoleAssessment) {
+      setLoadingDataRoleAssessment(false);
+      return;
+    }
+
+    if (trigger !== -1) {
+      setLoadingDataRoleAssessment(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessment?id=${id.current}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setCriteriaLen(res2.data.details.length);
+          setdatadisplay({
+            id: res2.data.id,
+            name: res2.data.name,
+            resumes_count: res2.data.resumes_count,
+            details: res2.data.details,
+          });
+          setdataupdate((prev) => ({
+            ...prev,
+            id: res2.data.id,
+            name: res2.data.name,
+          }));
+          setLoadingDataRoleAssessment(false);
+          // console.log(datadisplay)
+        });
+    }
+  }, [trigger, isAllowedToGetRoleAssessment]);
+
+  // Disable update button if there are any empty field
+  useEffect(() => {
+    let criteriaIsFilled = datadisplay.details.every(
+      (detail) => detail.criteria !== ""
+    );
+    if (datadisplay.name !== "" && criteriaIsFilled) {
+      setdisabledupdate(false);
+    } else {
+      setdisabledupdate(true);
+    }
+  }, [datadisplay]);
+
   //HANDLER
   const onChangeInput = (e) => {
     setdatadisplay({
@@ -119,55 +170,8 @@ const DrawerAssessmentUpdate = ({
       });
   };
 
-  //USEEFFECT
-  useEffect(() => {
-    if (!isAllowedToGetRoleAssessment) {
-      setLoadingDataRoleAssessment(false);
-      return;
-    }
-
-    if (trigger !== -1) {
-      setLoadingDataRoleAssessment(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessment?id=${id.current}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          setCriteriaLen(res2.data.details.length);
-          setdatadisplay({
-            id: res2.data.id,
-            name: res2.data.name,
-            resumes_count: res2.data.resumes_count,
-            details: res2.data.details,
-          });
-          setdataupdate((prev) => ({
-            ...prev,
-            id: res2.data.id,
-            name: res2.data.name,
-          }));
-          setLoadingDataRoleAssessment(false);
-          // console.log(datadisplay)
-        });
-    }
-  }, [trigger, isAllowedToGetRoleAssessment]);
-
-  useEffect(() => {
-    let criteriaIsFilled = datadisplay.details.every(
-      (detail) => detail.criteria !== ""
-    );
-    if (datadisplay.name !== "" && criteriaIsFilled) {
-      setdisabledupdate(false);
-    } else {
-      setdisabledupdate(true);
-    }
-  }, [datadisplay]);
-
+  // console.log("data display", datadisplay)
+  // console.log("data update", dataupdate)
   return (
     <DrawerCore
       title={title}
@@ -333,12 +337,11 @@ const DrawerAssessmentUpdate = ({
                               setdeletestate(true);
                               const temp = [...datadisplay.details];
                               const temp2 = [...datadisplay.details];
-                              var tempp = temp.filter((dfil) => {
-                                return dfil.id !== doc.id;
-                              });
+                              temp.splice(idx, 1);
+
                               setdatadisplay((prev) => ({
                                 ...prev,
-                                details: [...tempp],
+                                details: [...temp],
                               }));
                               temp2[idx].id
                                 ? (setdataupdate((prev) => ({
