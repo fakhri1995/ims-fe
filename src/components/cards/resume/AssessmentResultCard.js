@@ -41,8 +41,8 @@ const AssessmentResultCard = ({
   };
 
   // console.log(assessmentRoles);
-  console.log("data display", dataDisplay);
-  console.log(dataUpdate);
+  // console.log("data display", dataDisplay);
+  // console.log(dataUpdate);
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row justify-between ">

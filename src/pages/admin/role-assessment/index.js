@@ -263,7 +263,6 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        setRefresh((prev) => prev + 1);
         if (res2.success) {
           notification.success({
             message: res2.message,
@@ -273,7 +272,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
         setTimeout(() => {
           setloadingdelete(false);
           setmodaldelete(false);
-          // rt.push(`/admin/role-assessment`);
+          setRefresh((prev) => prev + 1);
         }, 500);
       })
       .catch((err) => {

@@ -71,7 +71,21 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setAssessmentRoles(res2.data);
+        if (res2.success) {
+          setAssessmentRoles(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRoleList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
         setLoadingRoleList(false);
       });
   }, [isAllowedToGetAssessmentList]);

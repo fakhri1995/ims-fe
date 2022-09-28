@@ -101,6 +101,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
   });
   const [assessmentRoles, setAssessmentRoles] = useState([]);
   const [loadingRoleList, setLoadingRoleList] = useState(false);
+  const [refresh, setRefresh] = useState(-1);
 
   // 1.2. update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -203,14 +204,13 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
         .then((response2) => {
           if (response2.success) {
             setDataDisplay(response2.data);
-            setpraloading(false);
           } else {
             notification.error({
               message: `${response2.message}`,
               duration: 3,
             });
-            setpraloading(false);
           }
+          setpraloading(false);
         })
         .catch((err) => {
           notification.error({
@@ -220,7 +220,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           setpraloading(false);
         });
     }
-  }, [isAllowedToGetCandidateDetail, candidateId]);
+  }, [isAllowedToGetCandidateDetail, candidateId, refresh]);
 
   // 2.2. Get role option
   useEffect(() => {
@@ -239,8 +239,23 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setAssessmentRoles(res2.data);
+        if (res2.success) {
+          setAssessmentRoles(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
         setLoadingRoleList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingRoleList(false);
+        false;
       });
   }, [isAllowedToGetAssessmentList]);
 
@@ -268,6 +283,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
+        setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
             message: `Section ${sectionName} berhasil ditambahkan.`,
@@ -279,11 +295,9 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             duration: 3,
           });
         }
-        setTimeout(() => {
-          setLoadingUpdate(false);
-          // setData({ id: null, name: "", add: [{ criteria: "" }] });
-          rt.push(`/admin/candidates/${candidateId}`);
-        }, 500);
+        setLoadingUpdate(false);
+        // setData({ id: null, name: "", add: [{ criteria: "" }] });
+        // rt.push(`/admin/candidates/${candidateId}`);
       })
       .catch((err) => {
         notification.error({
@@ -291,7 +305,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           duration: 3,
         });
         setLoadingUpdate(false);
-        // setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
       });
   };
 
@@ -317,24 +330,19 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
+        setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
             message: `Berhasil mengubah section ${sectionName}.`,
             duration: 3,
           });
-          setTimeout(() => {
-            setLoadingUpdate(false);
-            rt.push(`/admin/candidates/${candidateId}`);
-          }, 500);
         } else {
           notification.error({
             message: `Gagal mengubah section ${sectionName}. ${response2.message}`,
             duration: 3,
           });
-          setTimeout(() => {
-            setLoadingUpdate(false);
-          }, 500);
         }
+        setLoadingUpdate(false);
       })
       .catch((err) => {
         notification.error({
@@ -367,6 +375,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
+        setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
             message: `Berhasil menghapus ${sectionName}.`,
@@ -378,11 +387,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             duration: 3,
           });
         }
-        setTimeout(() => {
-          setLoadingDelete(false);
-          // setData({ id: null, name: "", add: [{ criteria: "" }] });
-          rt.push(`/admin/candidates/${candidateId}`);
-        }, 500);
+        setLoadingDelete(false);
       })
       .catch((err) => {
         notification.error({
@@ -412,25 +417,19 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
+        setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
             message: `Nilai assessment berhasil diubah.`,
             duration: 3,
           });
-          setTimeout(() => {
-            setLoadingUpdate(false);
-            rt.push(`/admin/candidates/${candidateId}`);
-          }, 500);
         } else {
           notification.error({
             message: `Gagal mengubah nilai assessment. ${response2.message}`,
             duration: 3,
           });
-          setTimeout(() => {
-            setLoadingUpdate(false);
-            rt.push(`/admin/candidates/${candidateId}`);
-          }, 500);
         }
+        setLoadingUpdate(false);
       })
       .catch((err) => {
         notification.error({
