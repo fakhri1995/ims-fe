@@ -24,13 +24,10 @@ import { H2 } from "../../typography";
 const AssessmentResultCard = ({
   dataDisplay,
   setDataDisplay,
-  handleAdd,
   handleUpdate,
-  handleDelete,
   dataUpdate,
   setDataUpdate,
-  assessmentRoles,
-  loadingDelete,
+  isAllowedToUpdateResumeAssessment,
 }) => {
   const [isShowInput, setIsShowInput] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -72,16 +69,18 @@ const AssessmentResultCard = ({
             </button>
           </div>
         ) : (
-          <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-            <button
-              onClick={() => {
-                setIsShowInput(true);
-              }}
-              className="bg-transparent"
-            >
-              <EditIconSvg size={18} color="#4D4D4D" />
-            </button>
-          </div>
+          isAllowedToUpdateResumeAssessment && (
+            <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
+              <button
+                onClick={() => {
+                  setIsShowInput(true);
+                }}
+                className="bg-transparent"
+              >
+                <EditIconSvg size={18} color="#4D4D4D" />
+              </button>
+            </div>
+          )
         )}
       </div>
 

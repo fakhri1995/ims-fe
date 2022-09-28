@@ -20,6 +20,8 @@ const TrainingBlock = ({
   clearDataUpdate,
   setModalDelete,
   isAdd,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -107,25 +109,29 @@ const TrainingBlock = ({
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">
-              <button
-                onClick={() => {
-                  setIsUpdate(true);
-                  setDataUpdateTrain(training);
-                }}
-                className="bg-transparent"
-              >
-                <EditIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToUpdateCandidate && (
+                <button
+                  onClick={() => {
+                    setIsUpdate(true);
+                    setDataUpdateTrain(training);
+                  }}
+                  className="bg-transparent"
+                >
+                  <EditIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
 
-              <button
-                onClick={() => {
-                  setDataUpdateTrain(training);
-                  setModalDelete(true);
-                }}
-                className="bg-transparent"
-              >
-                <TrashIconSvg size={18} color="#4D4D4D" />
-              </button>
+              {isAllowedToDeleteSection && (
+                <button
+                  onClick={() => {
+                    setDataUpdateTrain(training);
+                    setModalDelete(true);
+                  }}
+                  className="bg-transparent"
+                >
+                  <TrashIconSvg size={18} color="#4D4D4D" />
+                </button>
+              )}
             </div>
           )}
         </>

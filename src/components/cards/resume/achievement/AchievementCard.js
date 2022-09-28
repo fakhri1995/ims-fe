@@ -35,6 +35,9 @@ const AchievementCard = ({
   dataUpdateAchiev,
   setDataUpdateAchiev,
   loadingDelete,
+  isAllowedToAddSection,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
@@ -65,6 +68,8 @@ const AchievementCard = ({
           clearDataUpdate={clearDataUpdate}
           setModalDelete={setModalDelete}
           isAdd={isAdd}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          isAllowedToDeleteSection={isAllowedToDeleteSection}
         />
       ))}
       {/* Input Add Achievement */}
@@ -131,17 +136,19 @@ const AchievementCard = ({
           </div>
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">
-            + Add achievement
-          </p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">
+              + Add achievement
+            </p>
+          </ButtonSys>
+        )
       )}
 
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>

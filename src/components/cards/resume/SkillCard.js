@@ -17,6 +17,8 @@ const SkillCard = ({
   dataUpdateSkill,
   setDataUpdateSkill,
   isAllowedToGetSkillLists,
+  isAllowedToAddSection,
+  isAllowedToDeleteSection,
 }) => {
   // State
   const [isAdd, setIsAdd] = useState(false);
@@ -93,10 +95,11 @@ const SkillCard = ({
             key={skill.id}
             closable
             onClose={() => {
-              handleDeleteSection("skill", skill.id);
+              isAllowedToDeleteSection &&
+                handleDeleteSection("skill", skill.id);
             }}
             color="#35763B1A"
-            closeIcon={<CloseCircleOutlined />}
+            closeIcon={isAllowedToDeleteSection && <CloseCircleOutlined />}
             className="text-primary100 mb-3"
           >
             {skill.name}
@@ -146,15 +149,17 @@ const SkillCard = ({
           </div>
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">+ Add skill</p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">+ Add skill</p>
+          </ButtonSys>
+        )
       )}
     </div>
   );

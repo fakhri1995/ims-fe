@@ -38,11 +38,12 @@ const ExperienceCard = ({
   dataUpdateExp,
   setDataUpdateExp,
   loadingDelete,
+  isAllowedToAddSection,
+  isAllowedToUpdateCandidate,
+  isAllowedToDeleteSection,
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-  const [experienceId, setExperienceId] = useState();
-  const [experienceName, setExperienceName] = useState("");
 
   const clearDataUpdate = () => {
     setDataUpdateExp({
@@ -72,6 +73,8 @@ const ExperienceCard = ({
             clearDataUpdate={clearDataUpdate}
             setModalDelete={setModalDelete}
             isAdd={isAdd}
+            isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+            isAllowedToDeleteSection={isAllowedToDeleteSection}
           />
         ))}
       </Timeline>
@@ -149,17 +152,19 @@ const ExperienceCard = ({
           />
         </div>
       ) : (
-        <ButtonSys
-          type={"dashed"}
-          onClick={() => {
-            clearDataUpdate();
-            setIsAdd(true);
-          }}
-        >
-          <p className="text-primary100 hover:text-primary75">
-            + Add experience
-          </p>
-        </ButtonSys>
+        isAllowedToAddSection && (
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              clearDataUpdate();
+              setIsAdd(true);
+            }}
+          >
+            <p className="text-primary100 hover:text-primary75">
+              + Add experience
+            </p>
+          </ButtonSys>
+        )
       )}
 
       <AccessControl hasPermission={RESUME_SECTION_DELETE}>
