@@ -651,7 +651,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
         </DrawerCore>
       </AccessControl>
 
-      <AccessControl hasPermission={ASSESSMENT_UPDATE}>
+      <AccessControl hasPermission={[ASSESSMENT_UPDATE, ASSESSMENT_GET]}>
         <DrawerAssessmentUpdate
           title={"Ubah Form"}
           visible={drawUpdate}
