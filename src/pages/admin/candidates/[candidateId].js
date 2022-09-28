@@ -336,19 +336,13 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             message: `Berhasil mengubah section ${sectionName}.`,
             duration: 3,
           });
-          setTimeout(() => {
-            setLoadingUpdate(false);
-            rt.push(`/admin/candidates/${candidateId}`);
-          }, 500);
         } else {
           notification.error({
             message: `Gagal mengubah section ${sectionName}. ${response2.message}`,
             duration: 3,
           });
-          setTimeout(() => {
-            setLoadingUpdate(false);
-          }, 500);
         }
+        setLoadingUpdate(false);
       })
       .catch((err) => {
         notification.error({
@@ -393,11 +387,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             duration: 3,
           });
         }
-        setTimeout(() => {
-          setLoadingDelete(false);
-          // setData({ id: null, name: "", add: [{ criteria: "" }] });
-          rt.push(`/admin/candidates/${candidateId}`);
-        }, 500);
+        setLoadingDelete(false);
       })
       .catch((err) => {
         notification.error({
