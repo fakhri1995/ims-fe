@@ -78,7 +78,7 @@ const BasicInfoCard = ({
   return isShowInput || isCreateForm ? (
     <div className=" shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row items-center justify-between mb-4 ">
-        <H1>Basic Information</H1>
+        <h3 className="mig-heading--3">Basic Information</h3>
         <div className="flex flex-row space-x-6">
           <ButtonSys
             type={"default"}
@@ -256,7 +256,7 @@ const BasicInfoCard = ({
     <div className="col-span-2 shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row items-center justify-between mb-4 ">
         <div className="flex flex-row space-x-2">
-          <H1>{dataDisplay.name} </H1>
+          <h3 className="mig-heading--3">{dataDisplay.name}</h3>
           {isAllowedToUpdateCandidate && (
             <button
               onClick={() => {

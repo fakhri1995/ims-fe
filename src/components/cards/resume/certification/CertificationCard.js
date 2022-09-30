@@ -54,7 +54,7 @@ const CertificationCard = ({
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
-      <H2>Certifications</H2>
+      <h4 className="mig-heading--4">Certifications</h4>
       <hr className="my-4" />
       {dataDisplay.certificates?.map((certif) => (
         <CertificationBlock

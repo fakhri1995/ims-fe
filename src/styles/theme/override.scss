@@ -19,6 +19,27 @@ ul {
   text-transform: none !important;
 }
 
+/* Text editor */
+.ql-toolbar {
+  border-radius: 5px 5px 0px 0px;
+}
+
+.ql-container {
+  border-radius: 0px 0px 5px 5px;
+}
+
+.ql-editor {
+  border-color: #35763b;
+  border-radius: 0px 0px 5px 5px;
+}
+
+.ql-editor:focus {
+  border-color: #35763b;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 1px #35763b;
+  box-shadow: 0 0 0 1px #35763b;
+}
+
 /* Spin */
 .ant-spin-dot-item,
 .ant-spin-text {

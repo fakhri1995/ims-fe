@@ -103,8 +103,8 @@ const AchievementBlock = ({
             {achievement.year.slice(0, 4)}
           </p>
           <div className="flex flex-col w-2/4">
-            <p className="font-bold text-gray-700">{achievement.name}</p>
-            <p className="text-gray-500">{achievement.organizer}</p>
+            <p className="font-bold text-mono30">{achievement.name}</p>
+            <p className="text-mono50">{achievement.organizer}</p>
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start w-1/4 justify-end">

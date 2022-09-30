@@ -54,7 +54,7 @@ const TrainingCard = ({
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5 row-span-1">
-      <H2>Training</H2>
+      <h4 className="mig-heading--4">Training</h4>
       <hr className="my-4" />
       {dataDisplay.trainings?.map((training) => (
         <TrainingBlock

@@ -184,7 +184,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Academic History</H2>
+              <h4 className="mig-heading--4">Academic History</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -196,7 +196,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
             {/* SECTION EXPERIENCE */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Experience</H2>
+              <h4 className="mig-heading--4">Experience</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -208,7 +208,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
             {/* SECTION PROJECT */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Projects</H2>
+              <h4 className="mig-heading--4">Projects</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -221,7 +221,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
           <div className="flex flex-col w-full gap-6">
             {/* SECTION SKILLS */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Skills</H2>
+              <h4 className="mig-heading--4">Skills</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -233,7 +233,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
             {/* SECTION TRAINING */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Training</H2>
+              <h4 className="mig-heading--4">Training</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -245,7 +245,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
             {/* SECTION CERTIFICATION */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Certifications</H2>
+              <h4 className="mig-heading--4">Certifications</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -257,7 +257,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
             {/* SECTION ACHIEVEMENT */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Achievements</H2>
+              <h4 className="mig-heading--4">Achievements</h4>
               <hr className="my-4" />
 
               <ButtonSys type={"dashed"} onClick={onClickAddSection}>
@@ -269,7 +269,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
             {/* SECTION ASSESSMENT RESULT */}
             <div className="shadow-lg rounded-md bg-white p-5">
-              <H2>Technical Assessment Results</H2>
+              <h4 className="mig-heading--4">Technical Assessment Results</h4>
               <hr className="my-4" />
               <div>
                 <div className="flex flex-col space-y-2 mb-3">
