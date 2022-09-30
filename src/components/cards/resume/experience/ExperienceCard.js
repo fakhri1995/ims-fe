@@ -10,8 +10,10 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import moment from "moment";
+import dynamic from "next/dynamic";
 import React from "react";
 import { useState } from "react";
+import "react-quill/dist/quill.snow.css";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -27,6 +29,9 @@ import {
 import { ModalHapus2 } from "../../../modal/modalCustom";
 import { H2 } from "../../../typography";
 import ExperienceBlock from "./ExperienceBlock";
+
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const { RangePicker } = DatePicker;
 
@@ -57,10 +62,33 @@ const ExperienceCard = ({
     });
   };
 
+  // Text Editor Config
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [
+        { list: "ordered" },
+        { list: "bullet" },
+        { indent: "-1" },
+        { indent: "+1" },
+      ],
+      ["link"],
+    ],
+  };
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
+
   // console.log(dataUpdateExp)
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
-      <H2>Experience</H2>
+      <h4 className="mig-heading--4">Experience</h4>
       <hr className="my-4" />
       <Timeline>
         {dataDisplay.experiences?.map((exp) => (
@@ -75,6 +103,8 @@ const ExperienceCard = ({
             isAdd={isAdd}
             isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
             isAllowedToDeleteSection={isAllowedToDeleteSection}
+            modules={modules}
+            formats={formats}
           />
         ))}
       </Timeline>
@@ -139,31 +169,36 @@ const ExperienceCard = ({
               }));
             }}
           />
-          <TextArea
+          <ReactQuill
             placeholder="Job description..."
+            theme="snow"
             value={dataUpdateExp.description}
-            onChange={(e) => {
-              let input = e.target.value;
+            modules={modules}
+            formats={formats}
+            className="h-32 pb-4"
+            onChange={(value) => {
               setDataUpdateExp((prev) => ({
                 ...prev,
-                description: input,
+                description: value,
               }));
             }}
           />
         </div>
       ) : (
         isAllowedToAddSection && (
-          <ButtonSys
-            type={"dashed"}
-            onClick={() => {
-              clearDataUpdate();
-              setIsAdd(true);
-            }}
-          >
-            <p className="text-primary100 hover:text-primary75">
-              + Add experience
-            </p>
-          </ButtonSys>
+          <div>
+            <ButtonSys
+              type={"dashed"}
+              onClick={() => {
+                clearDataUpdate();
+                setIsAdd(true);
+              }}
+            >
+              <p className="text-primary100 hover:text-primary75">
+                + Add experience
+              </p>
+            </ButtonSys>
+          </div>
         )
       )}
 

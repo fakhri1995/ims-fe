@@ -1,9 +1,12 @@
 import { DatePicker, Input, Timeline } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import parse from "html-react-parser";
 import moment from "moment";
+import dynamic from "next/dynamic";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import "react-quill/dist/quill.snow.css";
 
 import {
   CheckIconSvg,
@@ -11,6 +14,9 @@ import {
   TrashIconSvg,
   XIconSvg,
 } from "../../../icon";
+
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const { RangePicker } = DatePicker;
 
@@ -24,6 +30,8 @@ const ExperienceBlock = ({
   isAdd,
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
+  modules,
+  formats,
 }) => {
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -101,15 +109,16 @@ const ExperienceBlock = ({
               }));
             }}
           />
-
-          <TextArea
-            placeholder="Job description..."
+          <ReactQuill
+            theme="snow"
             value={dataUpdateExp.description}
-            onChange={(e) => {
-              let input = e.target.value;
+            modules={modules}
+            formats={formats}
+            className="h-44 pb-10"
+            onChange={(value) => {
               setDataUpdateExp((prev) => ({
                 ...prev,
-                description: input,
+                description: value,
               }));
             }}
           />
@@ -118,14 +127,14 @@ const ExperienceBlock = ({
         <div className="flex justify-between">
           <div className="flex flex-col">
             <p className="text-primary100 font-bold mb-1">{exp.role}</p>
-            <p className="text-gray-400 mb-1">
+            <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
               <strong>
                 {moment(exp.start_date).format("MMM YYYY")} -&nbsp;
                 {moment(exp.end_date).format("MMM YYYY")}
               </strong>
             </p>
-            <p className="text-gray-400">{exp.description}</p>
+            <p className="text-mono50">{parse(exp.description)}</p>
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start">
