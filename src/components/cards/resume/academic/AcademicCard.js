@@ -56,7 +56,7 @@ const AcademicCard = ({
   // console.log(dataUpdateEdu)
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
-      <H2>Academic History</H2>
+      <h4 className="mig-heading--4">Academic History</h4>
       <hr className="my-4" />
       <Timeline>
         {dataDisplay.educations?.map((edu) => (

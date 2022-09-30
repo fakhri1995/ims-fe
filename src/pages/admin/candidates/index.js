@@ -508,8 +508,8 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         </div>
 
         {/* TABEL SEMUA KANDIDAT */}
-        <div className="lg:w-2/3 shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
-          <H1 className="font-bold">Semua Kandidat</H1>
+        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+          <h4 className="mig-heading--4">Semua Kandidat</h4>
           <div className="mt-5 flex flex-col">
             <div className="flex flex-row w-full mb-5 space-x-4">
               <Input
@@ -593,11 +593,12 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                 </p>
                 <PDFDownloadLink
                   document={<ResumePDFTemplate dataResume={dataResume} />}
-                  fileName={`R-000${dataResume?.id}-${moment(new Date())
-                    .locale("id")
-                    .format(`L-LT`)}.pdf`}
+                  fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
                 >
-                  <ButtonSys type={"default"}>
+                  <ButtonSys
+                    type={"default"}
+                    // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                  >
                     <DownloadIconSvg size={15} color={`#35763B`} />
                   </ButtonSys>
                 </PDFDownloadLink>

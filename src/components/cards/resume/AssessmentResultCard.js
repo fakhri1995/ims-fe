@@ -46,7 +46,7 @@ const AssessmentResultCard = ({
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row justify-between ">
-        <H2>Technical Assessment Results</H2>
+        <h4 className="mig-heading--4">Technical Assessment Results</h4>
         {isShowInput ? (
           <div className="flex flex-row space-x-4 items-start">
             <button
@@ -87,12 +87,12 @@ const AssessmentResultCard = ({
       <hr className="my-4" />
       <div>
         <div className="flex flex-col space-y-2 mb-3">
-          <p className="text-xs text-gray-400">Assessment Role</p>
+          <p className="text-xs text-mono80">Assessment Role</p>
           <p>{dataDisplay.assessment?.name}</p>
         </div>
 
         <div>
-          <p className="text-xs text-gray-400 mb-2">Criteria</p>
+          <p className="text-xs text-mono80 mb-2">Criteria</p>
           {isShowInput ? (
             <ul>
               {/* Input Assessment Result */}
@@ -133,7 +133,7 @@ const AssessmentResultCard = ({
               {dataDisplay.assessment_results?.map((result) => (
                 <li key={result.id}>
                   <div className="flex flex-row justify-between mb-1">
-                    <p>{result.criteria}</p>
+                    <p className="text-mono30">{result.criteria}</p>
                     <p className="text-primary100 font-bold">{result.value}</p>
                   </div>
                 </li>

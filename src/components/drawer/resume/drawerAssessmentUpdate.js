@@ -59,67 +59,8 @@ const DrawerAssessmentUpdate = ({
   const [deletestate, setdeletestate] = useState(false);
   const [criteriaLen, setCriteriaLen] = useState(0);
 
-  //HANDLER
-  const onChangeInput = (e) => {
-    setdatadisplay({
-      ...datadisplay,
-      [e.target.name]: e.target.value,
-    });
-    setdataupdate({
-      ...dataupdate,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleUpdateRoleAssessment = () => {
-    setloadingupdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAssessment`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataupdate),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setRefresh((prev) => prev + 1);
-        if (res2.success) {
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setloadingupdate(false);
-            setdataupdate({
-              id: 0,
-              name: "",
-              add: [],
-              update: [],
-              delete: [],
-            });
-            onvisible(false);
-            setModalUpdate(false);
-          }, 500);
-        } else {
-          notification["error"]({
-            message: `Gagal mengubah form. ${res2.message}`,
-            duration: 3,
-          });
-          setloadingupdate(false);
-          setModalUpdate(false);
-        }
-      })
-      .catch((err) => {
-        notification["error"]({
-          message: `Gagal mengubah form. ${err.message}`,
-          duration: 3,
-        });
-        setloadingupdate(false);
-      });
-  };
-
   //USEEFFECT
+  // Get a role assessment data
   useEffect(() => {
     if (!isAllowedToGetRoleAssessment) {
       setLoadingDataRoleAssessment(false);
@@ -157,6 +98,7 @@ const DrawerAssessmentUpdate = ({
     }
   }, [trigger, isAllowedToGetRoleAssessment]);
 
+  // Disable update button if there are any empty field
   useEffect(() => {
     let criteriaIsFilled = datadisplay.details.every(
       (detail) => detail.criteria !== ""
@@ -168,6 +110,68 @@ const DrawerAssessmentUpdate = ({
     }
   }, [datadisplay]);
 
+  //HANDLER
+  const onChangeInput = (e) => {
+    setdatadisplay({
+      ...datadisplay,
+      [e.target.name]: e.target.value,
+    });
+    setdataupdate({
+      ...dataupdate,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleUpdateRoleAssessment = () => {
+    setloadingupdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateAssessment`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataupdate),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setloadingupdate(false);
+            setdataupdate({
+              id: 0,
+              name: "",
+              add: [],
+              update: [],
+              delete: [],
+            });
+            onvisible(false);
+            setModalUpdate(false);
+          }, 500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          setloadingupdate(false);
+          setModalUpdate(false);
+          notification["error"]({
+            message: `Gagal mengubah form. ${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        setloadingupdate(false);
+        notification["error"]({
+          message: `Gagal mengubah form. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
+
+  // console.log("data display", datadisplay)
+  // console.log("data update", dataupdate)
   return (
     <DrawerCore
       title={title}
@@ -333,12 +337,11 @@ const DrawerAssessmentUpdate = ({
                               setdeletestate(true);
                               const temp = [...datadisplay.details];
                               const temp2 = [...datadisplay.details];
-                              var tempp = temp.filter((dfil) => {
-                                return dfil.id !== doc.id;
-                              });
+                              temp.splice(idx, 1);
+
                               setdatadisplay((prev) => ({
                                 ...prev,
-                                details: [...tempp],
+                                details: [...temp],
                               }));
                               temp2[idx].id
                                 ? (setdataupdate((prev) => ({

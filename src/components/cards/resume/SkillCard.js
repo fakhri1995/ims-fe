@@ -87,7 +87,7 @@ const SkillCard = ({
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5 row-span-1">
-      <H2>Skills</H2>
+      <h4 className="mig-heading--4">Skills</h4>
       <hr className="my-4" />
       <div className="mb-5">
         {dataDisplay.skills?.map((skill) => (

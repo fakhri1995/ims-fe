@@ -54,7 +54,7 @@ const ProjectCard = ({
 
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
-      <H2>Projects</H2>
+      <h4 className="mig-heading--4">Projects</h4>
       <hr className="my-4" />
       {dataDisplay.projects?.map((project) => (
         <ProjectBlock

@@ -56,7 +56,7 @@ const AchievementCard = ({
   // console.log(dataDisplay.achievements)
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
-      <H2>Achievements</H2>
+      <h4 className="mig-heading--4">Achievements</h4>
       <hr className="my-4" />
       {dataDisplay.achievements?.map((achievement) => (
         <AchievementBlock
