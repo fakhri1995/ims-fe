@@ -293,9 +293,7 @@ const BasicInfoCard = ({
           {isOnClient && (
             <PDFDownloadLink
               document={<ResumePDFTemplate dataResume={dataDisplay} />}
-              fileName={`R-000${dataDisplay.id}-${moment(new Date())
-                .locale("id")
-                .format(`L-LT`)}.pdf`}
+              fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
             >
               <ButtonSys type={"default"}>
                 <div className="flex flex-row space-x-2">
