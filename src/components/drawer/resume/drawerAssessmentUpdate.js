@@ -136,10 +136,6 @@ const DrawerAssessmentUpdate = ({
       .then((res2) => {
         setRefresh((prev) => prev + 1);
         if (res2.success) {
-          notification["success"]({
-            message: res2.message,
-            duration: 3,
-          });
           setTimeout(() => {
             setloadingupdate(false);
             setdataupdate({
@@ -152,21 +148,25 @@ const DrawerAssessmentUpdate = ({
             onvisible(false);
             setModalUpdate(false);
           }, 500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
         } else {
+          setloadingupdate(false);
+          setModalUpdate(false);
           notification["error"]({
             message: `Gagal mengubah form. ${res2.message}`,
             duration: 3,
           });
-          setloadingupdate(false);
-          setModalUpdate(false);
         }
       })
       .catch((err) => {
+        setloadingupdate(false);
         notification["error"]({
           message: `Gagal mengubah form. ${err.message}`,
           duration: 3,
         });
-        setloadingupdate(false);
       });
   };
 
