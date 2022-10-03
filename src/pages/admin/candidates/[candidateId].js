@@ -746,7 +746,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
           style={{
             flexDirection: "row",
             justifyContent: `space-between`,
-            marginTop: 45,
+            marginTop: 23,
             paddingHorizontal: 48,
           }}
         >
@@ -844,10 +844,6 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                         />
                       } */}
                     </View>
-                    {/* <Image
-                      style={{ width: 10, height: 10, padding: 1, marginTop: 2 }}
-                      src={`/image/circleResume.png`}
-                    /> */}
                     <View style={{ flexDirection: "col", marginLeft: 15 }}>
                       <Text style={styles.title}>{exp.role}</Text>
                       <View
@@ -870,6 +866,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                           p: { margin: 0, marginBottom: 4 },
                           ul: { margin: 0, paddingLeft: 0 },
                           ol: { margin: 0, padding: 0 },
+                          ".ql-indent-1": { marginLeft: 30 },
+                          ".ql-indent-2": { marginLeft: 40 },
+                          ".ql-indent-3": { marginLeft: 50 },
                         }}
                       >
                         {/* {`<html>
@@ -885,11 +884,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                         </html>
                         `} */}
                         {exp.description}
-                        {/* {`<ul><li>yee</li></ul>`} */}
                       </Html>
-                      {/* <Text style={styles.desc}>
-                        {parse(exp.description)}
-                      </Text> */}
                     </View>
                   </View>
                 ))}
@@ -1077,10 +1072,10 @@ Font.register({
   family: "Inter",
   fonts: [
     {
-      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf",
+      src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf",
     },
     {
-      src: "http://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
+      src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
       fontWeight: "bold",
     },
   ],
@@ -1089,14 +1084,14 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "col",
     backgroundColor: "#ffffff",
-    paddingTop: 80,
+    paddingTop: 32,
     paddingBottom: 88,
     fontFamily: "Inter",
     color: "#4D4D4D",
   },
 
   section: {
-    marginBottom: 20,
+    marginTop: 32,
   },
 
   sectionHeader: {
