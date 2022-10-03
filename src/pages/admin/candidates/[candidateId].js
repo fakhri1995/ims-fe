@@ -709,8 +709,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             )
           }
         />
+
         {/* Name Section */}
-        <View style={{ flexDirection: `col`, paddingHorizontal: 48 }}>
+        <View style={{ paddingHorizontal: 48, paddingBottom: 26 }}>
           <Text
             style={{
               fontSize: 26,
@@ -720,6 +721,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
               borderBottomWidth: 1,
               borderColor: `1px solid #4D4D4D`,
               paddingBottom: 8,
+              marginBottom: 8,
             }}
           >
             {dataResume.name?.toUpperCase()}
@@ -728,7 +730,6 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             style={{
               flexDirection: "row",
               alignItems: "center",
-              paddingTop: 8,
             }}
           >
             <Image
@@ -741,296 +742,260 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             </Text>
           </View>
         </View>
+
         {/* Body */}
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: `space-between`,
-            marginTop: 23,
-            paddingHorizontal: 48,
-          }}
-        >
-          <View style={{ flexDirection: "col", width: `45%` }}>
-            {/* EDUCATION SECTION */}
-            {dataResume.educations?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>ACADEMIC HISTORY</Text>
-                {dataResume.educations.map((edu, idx) => (
-                  <View style={styles.sectionBlock1} key={edu.id}>
-                    <View style={{ flexDirection: "column" }}>
-                      <Image
-                        style={{
-                          width: 10,
-                          height: 10,
-                          padding: 1,
-                          marginTop: 2,
-                        }}
-                        src={`/image/circleResume.png`}
-                      />
-                      {/* Unused dashed line */}
-                      {/* { (idx !== dataResume.educations?.length-1) &&
-                        <Canvas
-                          fixed={true}
-                          style={{position: 'absolute'}}
-                          // debug={true}
-                          paint={
-                            (painterObject) => 
-                              painterObject.save()
-                              .moveTo(5, 10)
-                              .lineTo(5, 76)
-                              .strokeColor('#35763B')
-                              .strokeOpacity(0.5)
-                              .lineWidth(2)
-                              .dash(3, {space: 3})
-                              .stroke()
-                          }
-                        />
-                      } */}
-                    </View>
-
-                    <View style={{ flexDirection: "col", marginLeft: 15 }}>
-                      <Text style={styles.title}>{edu.university}</Text>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          flexWrap: "wrap",
-                          paddingBottom: 4,
-                        }}
-                      >
-                        <Text style={styles.desc}>{edu.major} ·&nbsp;</Text>
-                        <Text style={styles.textYear}>
-                          {edu.graduation_year.slice(0, 4)}
-                        </Text>
-                      </View>
-                      <Text style={styles.desc}>GPA {edu.gpa}</Text>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {/* EXPERIENCE SECTION */}
-            {dataResume.experiences?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>EXPERIENCE</Text>
-                {dataResume.experiences.map((exp, idx) => (
-                  <View style={styles.sectionBlock1} key={exp.id}>
-                    <View style={{ flexDirection: "column" }}>
-                      <Image
-                        style={{
-                          width: 10,
-                          height: 10,
-                          padding: 1,
-                          marginTop: 2,
-                        }}
-                        src={`/image/circleResume.png`}
-                      />
-                      {/* Unused dashed line */}
-                      {/* { (idx !== dataResume.experiences?.length-1) &&
-                        <Canvas
-                          fixed={true}
-                          style={{position: 'absolute'}}
-                          paint={
-                            (painterObject) => 
-                              painterObject.save()
-                              .moveTo(5, 10)
-                              .lineTo(5, 76)
-                              .strokeColor('#35763B')
-                              .strokeOpacity(0.5)
-                              .lineWidth(2)
-                              .dash(3, {space: 3})
-                              .stroke()
-                          }
-                        />
-                      } */}
-                    </View>
-                    <View style={{ flexDirection: "col", marginLeft: 15 }}>
-                      <Text style={styles.title}>{exp.role}</Text>
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          flexWrap: "wrap",
-                          marginBottom: 4,
-                        }}
-                      >
-                        <Text style={styles.desc}>{exp.company} ·&nbsp;</Text>
-                        <Text style={styles.textYear}>
-                          {moment(exp.start_date).format("MMM YYYY")} -&nbsp;
-                          {moment(exp.end_date).format("MMM YYYY")}
-                        </Text>
-                      </View>
-                      <Html
-                        // resetStyles
-                        style={styles.desc}
-                        stylesheet={{
-                          p: { margin: 0, marginBottom: 4 },
-                          ul: { margin: 0, paddingLeft: 0 },
-                          ol: { margin: 0, padding: 0 },
-                          ".ql-indent-1": { marginLeft: 30 },
-                          ".ql-indent-2": { marginLeft: 40 },
-                          ".ql-indent-3": { marginLeft: 50 },
-                        }}
-                      >
-                        {/* {`<html>
-                          <body>
-                            <style>
-                              ul {
-                                margin-left: 1.2em;
-                              }
-
-                            </style>
-                            ${exp.description}
-                          </body>
-                        </html>
-                        `} */}
-                        {exp.description}
-                      </Html>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            )}
-
-            {/* PROJECT SECTION */}
-            {dataResume.projects?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>PROJECTS</Text>
-                {dataResume.projects.map((proj) => (
-                  <View style={styles.sectionBlock2} key={proj.id}>
-                    <Text style={styles.textGreen}>
-                      {proj.year.slice(0, 4)}
+        {/* EXPERIENCE SECTION */}
+        {dataResume.experiences?.length !== 0 && (
+          <View style={{ ...styles.rowOneCol, paddingBottom: 40 }}>
+            <Text style={styles.sectionHeader}>EXPERIENCE</Text>
+            {dataResume.experiences.map((exp, idx) => (
+              <View style={styles.sectionBlock1} key={exp.id}>
+                <View style={{ flexDirection: "column" }}>
+                  <Image
+                    style={{ width: 10, height: 10, padding: 1, marginTop: 2 }}
+                    src={`/image/circleResume.png`}
+                  />
+                </View>
+                <View style={{ flexDirection: "col", marginLeft: 15 }}>
+                  <Text style={styles.title}>{exp.role}</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      marginBottom: 2,
+                      ...styles.desc,
+                    }}
+                  >
+                    <Text>{exp.company} ·&nbsp;</Text>
+                    <Text style={styles.textYear}>
+                      {moment(exp.start_date).format("MMM YYYY")} -&nbsp;
+                      {moment(exp.end_date).format("MMM YYYY")}
                     </Text>
-                    <View style={styles.sectionCol2}>
-                      <Text style={styles.title}>{proj.name}</Text>
-                      <Text style={styles.desc}>{proj.description}</Text>
-                    </View>
                   </View>
-                ))}
-              </View>
-            )}
-          </View>
-          <View style={{ flexDirection: "col", width: `45%` }}>
-            {/* SKILL SECTION */}
-            {dataResume.skills?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>SKILLS</Text>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  {dataResume.skills.map((skill) => (
-                    <View style={styles.skillTag} key={skill.id}>
-                      <Text>{skill.name}</Text>
-                    </View>
-                  ))}
+                  <Html
+                    style={styles.desc}
+                    stylesheet={{
+                      p: {
+                        margin: 0,
+                        marginBottom: 2,
+                        color: "#808080",
+                        lineHeight: 1.5,
+                        marginRight: 10,
+                      },
+                      ul: {
+                        margin: 0,
+                        paddingLeft: 0,
+                        color: "#808080",
+                        lineHeight: 1.5,
+                        marginRight: 10,
+                      },
+                      ".ql-indent-1": { marginLeft: 30 },
+                      ".ql-indent-2": { marginLeft: 40 },
+                      ".ql-indent-3": { marginLeft: 50 },
+                    }}
+                  >
+                    {exp.description}
+                  </Html>
                 </View>
               </View>
-            )}
+            ))}
+          </View>
+        )}
+        <View style={styles.rowTwoCol} wrap={false}>
+          {/* ACADEMIC SECTION */}
+          {dataResume.educations?.length !== 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionHeader}>ACADEMIC HISTORY</Text>
+              {dataResume.educations.map((edu, idx) => (
+                <View style={styles.sectionBlock1} key={edu.id}>
+                  <View style={{ flexDirection: "column" }}>
+                    <Image
+                      style={{
+                        width: 10,
+                        height: 10,
+                        padding: 1,
+                        marginTop: 2,
+                      }}
+                      src={`/image/circleResume.png`}
+                    />
+                  </View>
 
-            {/* TRAINING SECTION */}
-            {dataResume.trainings?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>TRAINING</Text>
-                {dataResume.trainings.map((train) => (
-                  <View style={styles.sectionBlock2} key={train.id}>
-                    <Text style={styles.textGreen}>
-                      {train.year.slice(0, 4)}
-                    </Text>
-                    <View style={styles.sectionCol2}>
-                      <Text style={styles.title}>{train.name}</Text>
-                      <Text style={styles.desc}>{train.organizer}</Text>
+                  <View style={{ flexDirection: "col", marginLeft: 15 }}>
+                    <Text style={styles.title}>{edu.university}</Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        flexWrap: "wrap",
+                        paddingBottom: 4,
+                        ...styles.desc,
+                      }}
+                    >
+                      <Text>{edu.major} ·&nbsp;</Text>
+                      <Text style={styles.textYear}>
+                        {edu.graduation_year.slice(0, 4)}
+                      </Text>
                     </View>
+                    <Text style={styles.desc}>GPA {edu.gpa}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* SKILL SECTION */}
+          {dataResume.skills?.length !== 0 && (
+            <View style={styles.section} wrap={false}>
+              <Text style={styles.sectionHeader}>SKILLS</Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                }}
+              >
+                {dataResume.skills.map((skill) => (
+                  <View style={styles.skillTag} key={skill.id}>
+                    <Text>{skill.name}</Text>
                   </View>
                 ))}
               </View>
-            )}
+            </View>
+          )}
+        </View>
 
-            {/* CERTIFICATION SECTION */}
-            {dataResume.certificates?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>CERTIFICATIONS</Text>
-                {dataResume.certificates.map((cert) => (
-                  <View style={styles.sectionBlock2} key={cert.id}>
-                    <Text style={styles.textGreen}>
-                      {cert.year.slice(0, 4)}
-                    </Text>
-                    <View style={styles.sectionCol2}>
-                      <Text style={styles.title}>{cert.name}</Text>
-                      <Text style={styles.desc}>{cert.organizer}</Text>
-                    </View>
+        {/* PROJECT SECTION */}
+        {dataResume.projects?.length !== 0 && (
+          <View
+            style={styles.rowOneCol}
+            // wrap={false}
+          >
+            <Text style={styles.sectionHeader}>PROJECTS</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                justifyContent: "space-between",
+              }}
+            >
+              {dataResume.projects.map((proj) => (
+                <View
+                  style={{
+                    width: "45%",
+                    ...styles.sectionBlock2,
+                  }}
+                  key={proj.id}
+                  wrap={false}
+                >
+                  <Text style={styles.textGreen}>{proj.year.slice(0, 4)}</Text>
+                  <View style={styles.sectionCol2}>
+                    <Text style={styles.title}>{proj.name}</Text>
+                    <Text style={styles.desc}>{proj.description}</Text>
                   </View>
-                ))}
-              </View>
-            )}
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
 
-            {/* ACHIEVEMENT SECTION */}
-            {dataResume.achievements?.length !== 0 && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>ACHIEVEMENTS</Text>
-                {dataResume.achievements.map((achiev) => (
-                  <View style={styles.sectionBlock2} key={achiev.id}>
-                    <Text style={styles.textGreen}>
-                      {achiev.year.slice(0, 4)}
-                    </Text>
-                    <View style={styles.sectionCol2}>
-                      <Text style={styles.title}>{achiev.name}</Text>
-                      <Text style={styles.desc}>{achiev.organizer}</Text>
-                    </View>
+        <View
+          style={{
+            ...styles.rowTwoCol,
+            flexWrap: "wrap",
+            justifyContent: "space-between",
+          }}
+        >
+          {/* TRAINING SECTION */}
+          {dataResume.trainings?.length !== 0 && (
+            <View style={styles.section} wrap={false}>
+              <Text style={styles.sectionHeader}>TRAINING</Text>
+              {dataResume.trainings.map((train) => (
+                <View style={styles.sectionBlock2} key={train.id}>
+                  <Text style={styles.textGreen}>{train.year.slice(0, 4)}</Text>
+                  <View style={styles.sectionCol2}>
+                    <Text style={styles.title}>{train.name}</Text>
+                    <Text style={styles.desc}>{train.organizer}</Text>
                   </View>
-                ))}
-              </View>
-            )}
+                </View>
+              ))}
+            </View>
+          )}
 
-            {/* ASSESSMENT SECTION */}
+          {/* CERTIFICATION SECTION */}
+          {dataResume.certificates?.length !== 0 && (
+            <View style={styles.section} wrap={false}>
+              <Text style={styles.sectionHeader}>CERTIFICATIONS</Text>
+              {dataResume.certificates.map((cert) => (
+                <View style={styles.sectionBlock2} key={cert.id}>
+                  <Text style={styles.textGreen}>{cert.year.slice(0, 4)}</Text>
+                  <View style={styles.sectionCol2}>
+                    <Text style={styles.title}>{cert.name}</Text>
+                    <Text style={styles.desc}>{cert.organizer}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
 
-            {isAllResultEmpty === false && (
-              <View style={styles.section} wrap={false}>
-                <Text style={styles.sectionHeader}>
-                  TECHNICAL ASSESSMENT{"\n"}
-                  RESULTS
-                </Text>
-                {dataResume.assessment_results?.map(
-                  (result) =>
-                    result.value !== "" && (
+          {/* ACHIEVEMENT SECTION */}
+          {dataResume.achievements?.length !== 0 && (
+            <View style={styles.section} wrap={false}>
+              <Text style={styles.sectionHeader}>ACHIEVEMENTS</Text>
+              {dataResume.achievements.map((achiev) => (
+                <View style={styles.sectionBlock2} key={achiev.id}>
+                  <Text style={styles.textGreen}>
+                    {achiev.year.slice(0, 4)}
+                  </Text>
+                  <View style={styles.sectionCol2}>
+                    <Text style={styles.title}>{achiev.name}</Text>
+                    <Text style={styles.desc}>{achiev.organizer}</Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          )}
+
+          {/* ASSESSMENT SECTION */}
+          {isAllResultEmpty === false && (
+            <View style={styles.section} wrap={false}>
+              <Text style={styles.sectionHeader}>
+                TECHNICAL ASSESSMENT{"\n"}
+                RESULTS
+              </Text>
+              {dataResume.assessment_results?.map(
+                (result) =>
+                  result.value !== "" && (
+                    <View
+                      key={result.id}
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        alignItems: "top",
+                        marginBottom: 10,
+                      }}
+                    >
                       <View
-                        key={result.id}
                         style={{
                           flexDirection: "row",
-                          justifyContent: "space-between",
-                          alignItems: "top",
-                          marginBottom: 12,
+                          alignItems: "flex-start",
                         }}
                       >
-                        <View
+                        <Text style={{ marginRight: 10, fontSize: 10 }}>•</Text>
+                        <Text
                           style={{
-                            flexDirection: "row",
-                            alignItems: "flex-start",
+                            color: `#4D4D4D`,
+                            fontSize: 10,
+                            width: 160,
+                            lineHeight: 1.5,
                           }}
                         >
-                          <Text style={{ marginRight: 10, fontSize: 10 }}>
-                            •
-                          </Text>
-                          <Text
-                            style={{
-                              color: `#4D4D4D`,
-                              fontSize: 10,
-                              width: 160,
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {result.criteria}
-                          </Text>
-                        </View>
-
-                        <Text style={styles.textGreen}>{result.value}</Text>
+                          {result.criteria}
+                        </Text>
                       </View>
-                    )
-                )}
-              </View>
-            )}
-          </View>
+
+                      <Text style={styles.textGreen}>{result.value}</Text>
+                    </View>
+                  )
+              )}
+            </View>
+          )}
         </View>
 
         {/* Footer */}
@@ -1084,14 +1049,26 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "col",
     backgroundColor: "#ffffff",
-    paddingTop: 32,
+    paddingTop: 28,
     paddingBottom: 88,
     fontFamily: "Inter",
     color: "#4D4D4D",
   },
 
+  rowOneCol: {
+    paddingHorizontal: 48,
+    paddingBottom: 30,
+  },
+
+  rowTwoCol: {
+    paddingHorizontal: 48,
+    flexDirection: "row",
+    justifyContent: `space-between`,
+  },
+
   section: {
-    marginTop: 32,
+    width: `45%`,
+    paddingBottom: 30,
   },
 
   sectionHeader: {
@@ -1108,13 +1085,16 @@ const styles = StyleSheet.create({
 
   sectionBlock1: {
     paddingHorizontal: 6,
-    paddingVertical: 6,
+    paddingTop: 6,
+    paddingBottom: 14,
     flexDirection: "row",
     alignItems: "flex-start",
   },
 
   sectionBlock2: {
-    paddingVertical: 6,
+    paddingTop: 6,
+    paddingBottom: 14,
+    paddingRight: 6,
     flexDirection: "row",
   },
 
@@ -1128,13 +1108,15 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 10,
     color: `#4D4D4D`,
-    paddingBottom: 6,
+    paddingBottom: 4,
+    marginRight: 20,
   },
 
   desc: {
     fontSize: 10,
     color: `#808080`,
-    marginBottom: 4,
+    marginBottom: 2,
+    marginRight: 12,
   },
 
   textGreen: {
@@ -1149,7 +1131,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: `#808080`,
     fontSize: 10,
-    marginBottom: 4,
+    marginBottom: 2,
   },
 
   skillTag: {
@@ -1164,10 +1146,11 @@ const styles = StyleSheet.create({
   },
 
   header: {
-    position: "absolute",
     fontSize: 10,
-    top: 32,
-    right: 48,
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingBottom: 20,
+    paddingRight: 48,
     color: "#4D4D4D",
   },
 
