@@ -685,10 +685,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
         {/* Header */}
         <View
           fixed
-          style={styles.header}
           render={({ pageNumber }) =>
             pageNumber !== 1 && (
-              <View style={{ flexDirection: "row" }}>
+              <View style={styles.header}>
                 <Text
                   style={{
                     fontFamily: "Helvetica-Bold",
@@ -708,6 +707,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
               </View>
             )
           }
+          // debug={true}
         />
 
         {/* Name Section */}
@@ -746,7 +746,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume.experiences?.length !== 0 && (
-          <View style={{ ...styles.rowOneCol, paddingBottom: 40 }}>
+          <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
             <Text style={styles.sectionHeader}>EXPERIENCE</Text>
             {dataResume.experiences.map((exp, idx) => (
               <View style={styles.sectionBlock1} key={exp.id}>
@@ -760,9 +760,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                   <Text style={styles.title}>{exp.role}</Text>
                   <View
                     style={{
-                      flexDirection: "row",
-                      marginBottom: 2,
                       ...styles.desc,
+                      flexDirection: "row",
+                      paddingBottom: 2,
                     }}
                   >
                     <Text>{exp.company} ·&nbsp;</Text>
@@ -1049,7 +1049,7 @@ const styles = StyleSheet.create({
   page: {
     flexDirection: "col",
     backgroundColor: "#ffffff",
-    paddingTop: 28,
+    paddingTop: 30,
     paddingBottom: 88,
     fontFamily: "Inter",
     color: "#4D4D4D",
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
 
   section: {
     width: `45%`,
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
 
   sectionHeader: {
@@ -1077,8 +1077,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     letterSpacing: 1.5,
     color: `#35763B`,
-    paddingBottom: 12,
-    marginBottom: 12,
+    paddingBottom: 10,
+    marginBottom: 10,
     borderBottomWidth: 1,
     borderColor: `1px solid #E6E6E6`,
   },
@@ -1086,14 +1086,14 @@ const styles = StyleSheet.create({
   sectionBlock1: {
     paddingHorizontal: 6,
     paddingTop: 6,
-    paddingBottom: 14,
+    paddingBottom: 10,
     flexDirection: "row",
     alignItems: "flex-start",
   },
 
   sectionBlock2: {
     paddingTop: 6,
-    paddingBottom: 14,
+    paddingBottom: 10,
     paddingRight: 6,
     flexDirection: "row",
   },
@@ -1131,7 +1131,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: `#808080`,
     fontSize: 10,
-    marginBottom: 2,
+    // marginBottom: 2,
   },
 
   skillTag: {
@@ -1149,7 +1149,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     flexDirection: "row",
     justifyContent: "flex-end",
-    paddingBottom: 20,
+    paddingBottom: 28,
     paddingRight: 48,
     color: "#4D4D4D",
   },
