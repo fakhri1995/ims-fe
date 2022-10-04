@@ -679,6 +679,10 @@ export const ResumePDFTemplate = ({ dataResume }) => {
     (result) => result.value === ""
   );
 
+  function breakText(text) {
+    return [text];
+  }
+
   return (
     <Document>
       <Page size={"A4"} style={styles.page} wrap>
@@ -756,8 +760,13 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                     src={`/image/circleResume.png`}
                   />
                 </View>
-                <View style={{ flexDirection: "col", marginLeft: 15 }}>
-                  <Text style={styles.title}>{exp.role}</Text>
+                <View style={{ flexDirection: "col", marginHorizontal: 15 }}>
+                  <Text
+                    style={styles.title}
+                    hyphenationCallback={(e) => breakText(e)}
+                  >
+                    {exp.role}
+                  </Text>
                   <View
                     style={{
                       ...styles.desc,
@@ -772,6 +781,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                     </Text>
                   </View>
                   <Html
+                    // hyphenationCallback={e => breakText(e)}
                     style={styles.desc}
                     stylesheet={{
                       p: {
@@ -820,7 +830,12 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                   </View>
 
                   <View style={{ flexDirection: "col", marginLeft: 15 }}>
-                    <Text style={styles.title}>{edu.university}</Text>
+                    <Text
+                      style={styles.title}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {edu.university}
+                    </Text>
                     <View
                       style={{
                         flexDirection: "row",
@@ -829,7 +844,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                         ...styles.desc,
                       }}
                     >
-                      <Text>{edu.major} ·&nbsp;</Text>
+                      <Text hyphenationCallback={(e) => breakText(e)}>
+                        {edu.major} ·&nbsp;
+                      </Text>
                       <Text style={styles.textYear}>
                         {edu.graduation_year.slice(0, 4)}
                       </Text>
@@ -886,8 +903,18 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 >
                   <Text style={styles.textGreen}>{proj.year.slice(0, 4)}</Text>
                   <View style={styles.sectionCol2}>
-                    <Text style={styles.title}>{proj.name}</Text>
-                    <Text style={styles.desc}>{proj.description}</Text>
+                    <Text
+                      style={styles.title}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {proj.name}
+                    </Text>
+                    <Text
+                      style={styles.desc}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {proj.description}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -910,8 +937,18 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 <View style={styles.sectionBlock2} key={train.id}>
                   <Text style={styles.textGreen}>{train.year.slice(0, 4)}</Text>
                   <View style={styles.sectionCol2}>
-                    <Text style={styles.title}>{train.name}</Text>
-                    <Text style={styles.desc}>{train.organizer}</Text>
+                    <Text
+                      style={styles.title}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {train.name}
+                    </Text>
+                    <Text
+                      style={styles.desc}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {train.organizer}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -926,8 +963,18 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 <View style={styles.sectionBlock2} key={cert.id}>
                   <Text style={styles.textGreen}>{cert.year.slice(0, 4)}</Text>
                   <View style={styles.sectionCol2}>
-                    <Text style={styles.title}>{cert.name}</Text>
-                    <Text style={styles.desc}>{cert.organizer}</Text>
+                    <Text
+                      style={styles.title}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {cert.name}
+                    </Text>
+                    <Text
+                      style={styles.desc}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {cert.organizer}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -944,8 +991,18 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                     {achiev.year.slice(0, 4)}
                   </Text>
                   <View style={styles.sectionCol2}>
-                    <Text style={styles.title}>{achiev.name}</Text>
-                    <Text style={styles.desc}>{achiev.organizer}</Text>
+                    <Text
+                      style={styles.title}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {achiev.name}
+                    </Text>
+                    <Text
+                      style={styles.desc}
+                      hyphenationCallback={(e) => breakText(e)}
+                    >
+                      {achiev.organizer}
+                    </Text>
                   </View>
                 </View>
               ))}
@@ -985,6 +1042,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                             width: 160,
                             lineHeight: 1.5,
                           }}
+                          hyphenationCallback={(e) => breakText(e)}
                         >
                           {result.criteria}
                         </Text>
@@ -1116,7 +1174,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: `#808080`,
     marginBottom: 2,
-    marginRight: 12,
+    marginRight: 0,
   },
 
   textGreen: {

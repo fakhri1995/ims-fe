@@ -508,7 +508,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         </div>
 
         {/* TABEL SEMUA KANDIDAT */}
-        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2">
+        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 ">
           <h4 className="mig-heading--4">Semua Kandidat</h4>
           <div className="mt-5 flex flex-col">
             <div className="flex flex-row w-full mb-5 space-x-4">
