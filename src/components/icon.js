@@ -1247,6 +1247,29 @@ const SendIconSvg = ({ size, color }) => {
   );
   return <Icon component={sendIconSvg}></Icon>;
 };
+const LayoutGridSvg = ({ size, color }) => {
+  const layoutGridSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-layout-grid"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <rect x="4" y="4" width="6" height="6" rx="1" />
+      <rect x="14" y="4" width="6" height="6" rx="1" />
+      <rect x="4" y="14" width="6" height="6" rx="1" />
+      <rect x="14" y="14" width="6" height="6" rx="1" />
+    </svg>
+  );
+  return <Icon component={layoutGridSvg}></Icon>;
+};
 const LayoutGridAddSvg = ({ size, color }) => {
   const layoutGridAddSvg = () => (
     <svg
@@ -1935,6 +1958,54 @@ const OneUserIconSvg = ({ size, color }) => {
   return <Icon component={oneUserIconSvg}></Icon>;
 };
 
+const ListSearchIconSvg = ({ size, color }) => {
+  const listSearchIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-list-search"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="2"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <circle cx="15" cy="15" r="4" />
+      <path d="M18.5 18.5l2.5 2.5" />
+      <path d="M4 6h16" />
+      <path d="M4 12h4" />
+      <path d="M4 18h4" />
+    </svg>
+  );
+  return <Icon component={listSearchIconSvg}></Icon>;
+};
+const MailForwardIconSvg = ({ size, color }) => {
+  const mailForwardIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-mail-forward"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 18h-7a2 2 0 0 1 -2 -2v-10a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v7.5" />
+      <path d="M3 6l9 6l9 -6" />
+      <path d="M15 18h6" />
+      <path d="M18 15l3 3l-3 3" />
+    </svg>
+  );
+  return <Icon component={mailForwardIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -1998,6 +2069,7 @@ export {
   FileTextIconSvg,
   SendIconSvg,
   LayoutGridAddSvg,
+  LayoutGridSvg,
   FilePlusIconSvg,
   TableExportIconSvg,
   AdjusmentsHorizontalIconSvg,
@@ -2014,4 +2086,6 @@ export {
   UsersIconSvg,
   DownloadIconSvg,
   OneUserIconSvg,
+  ListSearchIconSvg,
+  MailForwardIconSvg,
 };
