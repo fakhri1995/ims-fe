@@ -40,6 +40,8 @@ import {
   SIDEBAR_FEATURE_MODULE,
   SIDEBAR_FEATURE_ROLE,
   SIDEBAR_ITEMS,
+  SIDEBAR_RECRUITMENT,
+  SIDEBAR_RECRUITMENT_CANDIDATE,
   SIDEBAR_RESUME,
   SIDEBAR_RESUME_DAFTAR_KANDIDAT,
   SIDEBAR_RESUME_ROLE_ASSESSMENT,
@@ -315,6 +317,21 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_RESUME_DAFTAR_KANDIDAT) && (
             <Menu.Item key="102">
               <Link href="/admin/candidates">Daftar Kandidat</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Recruitment Management */}
+      {hasPermission(SIDEBAR_RECRUITMENT) && (
+        <SubMenu
+          title="Recruitment"
+          key="11"
+          icon={<ResumeIconSvg className="text-[#597e8d]" />}
+        >
+          {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
+            <Menu.Item key="111">
+              <Link href="/admin/recruitment/candidate">Kandidat</Link>
             </Menu.Item>
           )}
         </SubMenu>
