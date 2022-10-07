@@ -32,8 +32,6 @@ const AchievementCard = ({
   handleAddSection,
   handleUpdateSection,
   handleDeleteSection,
-  dataUpdateAchiev,
-  setDataUpdateAchiev,
   loadingDelete,
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
@@ -41,6 +39,15 @@ const AchievementCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+
+  const [dataUpdateAchiev, setDataUpdateAchiev] = useState({
+    id: null,
+    achievement: "",
+    name: "",
+    organizer: "",
+    year: "",
+    resume_id: null,
+  });
 
   const clearDataUpdate = () => {
     setDataUpdateAchiev({

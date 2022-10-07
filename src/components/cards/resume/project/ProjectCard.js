@@ -32,8 +32,6 @@ const ProjectCard = ({
   handleAddSection,
   handleUpdateSection,
   handleDeleteSection,
-  dataUpdateProj,
-  setDataUpdateProj,
   loadingDelete,
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
@@ -41,6 +39,14 @@ const ProjectCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+
+  const [dataUpdateProj, setDataUpdateProj] = useState({
+    id: null,
+    name: "",
+    year: "",
+    description: "",
+    resume_id: null,
+  });
 
   const clearDataUpdate = () => {
     setDataUpdateProj({

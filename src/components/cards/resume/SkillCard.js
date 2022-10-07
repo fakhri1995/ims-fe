@@ -14,8 +14,6 @@ const SkillCard = ({
   dataDisplay,
   handleAddSection,
   handleDeleteSection,
-  dataUpdateSkill,
-  setDataUpdateSkill,
   isAllowedToGetSkillLists,
   isAllowedToAddSection,
   isAllowedToDeleteSection,
@@ -23,6 +21,12 @@ const SkillCard = ({
   // State
   const [isAdd, setIsAdd] = useState(false);
   const [skillList, setSkillList] = useState([]);
+
+  const [dataUpdateSkill, setDataUpdateSkill] = useState({
+    id: null,
+    name: "",
+    resume_id: null,
+  });
 
   // Event
   const clearDataUpdate = () => {
