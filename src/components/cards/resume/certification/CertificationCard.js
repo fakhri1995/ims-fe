@@ -32,8 +32,6 @@ const CertificationCard = ({
   handleAddSection,
   handleUpdateSection,
   handleDeleteSection,
-  dataUpdateCert,
-  setDataUpdateCert,
   loadingDelete,
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
@@ -41,6 +39,14 @@ const CertificationCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+
+  const [dataUpdateCert, setDataUpdateCert] = useState({
+    id: null,
+    name: "",
+    organizer: "",
+    year: "",
+    resume_id: null,
+  });
 
   const clearDataUpdate = () => {
     setDataUpdateCert({

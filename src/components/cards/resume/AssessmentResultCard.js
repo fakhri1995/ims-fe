@@ -1,48 +1,39 @@
-import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Timeline,
-  notification,
-} from "antd";
+import { Input } from "antd";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
-import { AccessControl } from "components/features/AccessControl";
-
-import { RESUME_ASSESSMENT_DELETE } from "lib/features";
-
-import ButtonSys from "../../button";
 import { CheckIconSvg, EditIconSvg, TrashIconSvg, XIconSvg } from "../../icon";
-import { ModalHapus2 } from "../../modal/modalCustom";
-import { H2 } from "../../typography";
 
 const AssessmentResultCard = ({
   dataDisplay,
   setDataDisplay,
   handleUpdate,
-  dataUpdate,
-  setDataUpdate,
   isAllowedToUpdateResumeAssessment,
 }) => {
   const [isShowInput, setIsShowInput] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-  const [resultValue, setResultValue] = useState([]);
 
-  const clearDataUpdate = () => {
+  const [dataUpdate, setDataUpdate] = useState({
+    id: null,
+    assessment_result_values: [],
+  });
+
+  useEffect(() => {
+    if (!isAllowedToUpdateResumeAssessment) {
+      return;
+    }
+
+    let oldResult = dataDisplay.assessment_results.map(
+      (result) => result.value
+    );
     setDataUpdate({
       id: Number(dataDisplay.id),
-      assessment_result_values: [],
+      assessment_result_values: oldResult,
     });
-  };
+  }, [isAllowedToUpdateResumeAssessment, dataDisplay]);
 
-  // console.log(assessmentRoles);
   // console.log("data display", dataDisplay);
-  // console.log(dataUpdate);
+  // console.log("data update", dataUpdate);
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row justify-between ">
@@ -61,7 +52,6 @@ const AssessmentResultCard = ({
             <button
               onClick={() => {
                 setIsShowInput(false);
-                clearDataUpdate();
               }}
               className="bg-transparent"
             >
@@ -102,18 +92,10 @@ const AssessmentResultCard = ({
                     <p className="w-full mr-5">{result.criteria}</p>
                     <Input
                       className="w-20"
-                      value={result.value}
+                      value={dataUpdate.assessment_result_values[idx]}
                       onChange={(event) => {
-                        // to change display data
-                        let newScore = event.target.value;
-                        const tempDisplay = [...dataDisplay.assessment_results];
-                        tempDisplay[idx].value = newScore;
-                        setDataDisplay((prev) => ({
-                          ...prev,
-                          assessment_results: tempDisplay,
-                        }));
-
                         // to change update data
+                        let newScore = event.target.value;
                         const tempUpdate = [
                           ...dataUpdate.assessment_result_values,
                         ];
@@ -129,6 +111,7 @@ const AssessmentResultCard = ({
               ))}
             </ul>
           ) : (
+            // Read state
             <ul>
               {dataDisplay.assessment_results?.map((result) => (
                 <li key={result.id}>

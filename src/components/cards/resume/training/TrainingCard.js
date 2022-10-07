@@ -32,8 +32,6 @@ const TrainingCard = ({
   handleAddSection,
   handleUpdateSection,
   handleDeleteSection,
-  dataUpdateTrain,
-  setDataUpdateTrain,
   loadingDelete,
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
@@ -41,6 +39,14 @@ const TrainingCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+
+  const [dataUpdateTrain, setDataUpdateTrain] = useState({
+    id: null,
+    name: "",
+    organizer: "",
+    year: "",
+    resume_id: null,
+  });
 
   const clearDataUpdate = () => {
     setDataUpdateTrain({

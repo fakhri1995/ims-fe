@@ -40,8 +40,6 @@ const ExperienceCard = ({
   handleAddSection,
   handleUpdateSection,
   handleDeleteSection,
-  dataUpdateExp,
-  setDataUpdateExp,
   loadingDelete,
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
@@ -49,6 +47,16 @@ const ExperienceCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+
+  const [dataUpdateExp, setDataUpdateExp] = useState({
+    id: null,
+    role: "",
+    company: "",
+    start_date: "",
+    end_date: "",
+    description: "",
+    resume_id: null,
+  });
 
   const clearDataUpdate = () => {
     setDataUpdateExp({

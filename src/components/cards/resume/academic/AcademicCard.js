@@ -32,8 +32,6 @@ const AcademicCard = ({
   handleAddSection,
   handleUpdateSection,
   handleDeleteSection,
-  dataUpdateEdu,
-  setDataUpdateEdu,
   loadingDelete,
   isAllowedToAddSection,
   isAllowedToUpdateCandidate,
@@ -41,6 +39,15 @@ const AcademicCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+
+  const [dataUpdateEdu, setDataUpdateEdu] = useState({
+    id: null,
+    university: "",
+    major: "",
+    gpa: null,
+    graduation_year: "",
+    resume_id: null,
+  });
 
   const clearDataUpdate = () => {
     setDataUpdateEdu({

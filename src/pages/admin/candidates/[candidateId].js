@@ -116,69 +116,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     province: "",
   });
 
-  const [dataUpdateEdu, setDataUpdateEdu] = useState({
-    id: null,
-    university: "",
-    major: "",
-    gpa: null,
-    graduation_year: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateExp, setDataUpdateExp] = useState({
-    id: null,
-    role: "",
-    company: "",
-    start_date: "",
-    end_date: "",
-    description: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateProj, setDataUpdateProj] = useState({
-    id: null,
-    name: "",
-    year: "",
-    description: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateSkill, setDataUpdateSkill] = useState({
-    id: null,
-    name: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateTrain, setDataUpdateTrain] = useState({
-    id: null,
-    name: "",
-    organizer: "",
-    year: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateCert, setDataUpdateCert] = useState({
-    id: null,
-    name: "",
-    organizer: "",
-    year: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateAchiev, setDataUpdateAchiev] = useState({
-    id: null,
-    achievement: "",
-    name: "",
-    organizer: "",
-    year: "",
-    resume_id: null,
-  });
-
-  const [dataUpdateAssessment, setDataUpdateAssessment] = useState({
-    id: Number(candidateId),
-    assessment_result_values: [],
-  });
-
   // 1.3. delete
   const [loadingDelete, setLoadingDelete] = useState(false);
 
@@ -402,7 +339,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
   };
 
   // 3.2. Assessment Result
-  const handleUpdateAssessment = () => {
+  const handleUpdateAssessment = (data) => {
     if (!isAllowedToUpdateResumeAssessment) {
       permissionWarningNotification("Mengubah", `Nilai Assessment Results`);
       return;
@@ -415,7 +352,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataUpdateAssessment),
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -560,8 +497,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             <AcademicCard
               dataDisplay={dataDisplay}
               setDataDisplay={setDataDisplay}
-              dataUpdateEdu={dataUpdateEdu}
-              setDataUpdateEdu={setDataUpdateEdu}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -574,8 +509,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             {/* SECTION EXPERIENCE */}
             <ExperienceCard
               dataDisplay={dataDisplay}
-              dataUpdateExp={dataUpdateExp}
-              setDataUpdateExp={setDataUpdateExp}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -588,8 +521,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             {/* SECTION PROJECT */}
             <ProjectCard
               dataDisplay={dataDisplay}
-              dataUpdateProj={dataUpdateProj}
-              setDataUpdateProj={setDataUpdateProj}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -604,8 +535,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             <SkillCard
               initProps={initProps}
               dataDisplay={dataDisplay}
-              dataUpdateSkill={dataUpdateSkill}
-              setDataUpdateSkill={setDataUpdateSkill}
               handleAddSection={handleAddSection}
               handleDeleteSection={handleDeleteSection}
               isAllowedToGetSkillLists={isAllowedToGetSkillLists}
@@ -616,8 +545,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             {/* SECTION TRAINING */}
             <TrainingCard
               dataDisplay={dataDisplay}
-              dataUpdateTrain={dataUpdateTrain}
-              setDataUpdateTrain={setDataUpdateTrain}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -630,8 +557,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             {/* SECTION CERTIFICATION */}
             <CertificationCard
               dataDisplay={dataDisplay}
-              dataUpdateCert={dataUpdateCert}
-              setDataUpdateCert={setDataUpdateCert}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -644,8 +569,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             {/* SECTION ACHIEVEMENT */}
             <AchievementCard
               dataDisplay={dataDisplay}
-              dataUpdateAchiev={dataUpdateAchiev}
-              setDataUpdateAchiev={setDataUpdateAchiev}
               handleAddSection={handleAddSection}
               handleUpdateSection={handleUpdateSection}
               handleDeleteSection={handleDeleteSection}
@@ -659,8 +582,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
             <AssessmentResultCard
               dataDisplay={dataDisplay}
               setDataDisplay={setDataDisplay}
-              dataUpdate={dataUpdateAssessment}
-              setDataUpdate={setDataUpdateAssessment}
               handleUpdate={handleUpdateAssessment}
               assessmentRoles={assessmentRoles}
               isAllowedToUpdateResumeAssessment={
