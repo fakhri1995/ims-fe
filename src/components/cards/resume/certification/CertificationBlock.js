@@ -72,12 +72,13 @@ const CertificationBlock = ({
           </div>
           <div className="flex flex-row space-x-4 w-full">
             <DatePicker
+              allowClear={true}
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={moment(dataUpdateCert.year)}
+              value={dataUpdateCert.year ? moment(dataUpdateCert.year) : null}
               onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
+                let input = date ? date.format("YYYY-MM-DD") : null;
                 setDataUpdateCert((prev) => ({
                   ...prev,
                   year: input,
@@ -102,7 +103,7 @@ const CertificationBlock = ({
         <>
           {/* Read State */}
           <p className="text-center text-primary100 font-bold w-1/4">
-            {certif.year.slice(0, 4)}
+            {certif.year ? certif.year.slice(0, 4) : "-"}
           </p>
           <div className="flex flex-col w-2/4">
             <p className="font-bold text-mono30">{certif.name}</p>

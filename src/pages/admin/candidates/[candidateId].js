@@ -76,7 +76,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
   //INIT
   const rt = useRouter();
-  const pathArr = rt.pathname.split("/").slice(1);
+  const pathArr = rt.pathname.split("/")?.slice(1);
   // console.log(pathArr);
   pathArr[pathArr.length - 1] = "Detail Kandidat";
 
@@ -769,7 +769,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                         {edu.major} ·&nbsp;
                       </Text>
                       <Text style={styles.textYear}>
-                        {edu.graduation_year.slice(0, 4)}
+                        {edu.graduation_year
+                          ? edu.graduation_year.slice(0, 4)
+                          : "-"}
                       </Text>
                     </View>
                     <Text style={styles.desc}>GPA {edu.gpa}</Text>
@@ -822,7 +824,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                   key={proj.id}
                   wrap={false}
                 >
-                  <Text style={styles.textGreen}>{proj.year.slice(0, 4)}</Text>
+                  <Text style={styles.textGreen}>
+                    {proj.year ? proj.year.slice(0, 4) : "-"}
+                  </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
@@ -856,7 +860,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
               <Text style={styles.sectionHeader}>TRAINING</Text>
               {dataResume.trainings.map((train) => (
                 <View style={styles.sectionBlock2} key={train.id}>
-                  <Text style={styles.textGreen}>{train.year.slice(0, 4)}</Text>
+                  <Text style={styles.textGreen}>
+                    {train.year ? train.year.slice(0, 4) : "-"}
+                  </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
@@ -882,7 +888,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
               <Text style={styles.sectionHeader}>CERTIFICATIONS</Text>
               {dataResume.certificates.map((cert) => (
                 <View style={styles.sectionBlock2} key={cert.id}>
-                  <Text style={styles.textGreen}>{cert.year.slice(0, 4)}</Text>
+                  <Text style={styles.textGreen}>
+                    {cert.year ? cert.year.slice(0, 4) : "-"}
+                  </Text>
                   <View style={styles.sectionCol2}>
                     <Text
                       style={styles.title}
@@ -909,7 +917,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
               {dataResume.achievements.map((achiev) => (
                 <View style={styles.sectionBlock2} key={achiev.id}>
                   <Text style={styles.textGreen}>
-                    {achiev.year.slice(0, 4)}
+                    {achiev.year ? achiev.year.slice(0, 4) : "-"}
                   </Text>
                   <View style={styles.sectionCol2}>
                     <Text
@@ -1103,6 +1111,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: "Inter",
     fontWeight: "bold",
+    width: 40,
   },
 
   textYear: {
