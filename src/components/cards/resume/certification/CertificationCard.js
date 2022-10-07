@@ -113,15 +113,16 @@ const CertificationCard = ({
           </div>
           <div className="flex flex-row space-x-4 w-full">
             <DatePicker
+              allowClear={true}
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateCert.year}
+              value={dataUpdateCert.year ? moment(dataUpdateCert.year) : null}
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
                 setDataUpdateCert((prev) => ({
                   ...prev,
-                  year: moment(input),
+                  year: input,
                 }));
               }}
             />

@@ -116,15 +116,18 @@ const AchievementCard = ({
           </div>
           <div className="flex flex-row space-x-4 w-full">
             <DatePicker
+              allowClear={true}
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateAchiev.year}
+              value={
+                dataUpdateAchiev.year ? moment(dataUpdateAchiev.year) : null
+              }
               onChange={(date) => {
-                let input = date?.format("YYYY-MM-DD");
+                let input = date ? date.format("YYYY-MM-DD") : null;
                 setDataUpdateAchiev((prev) => ({
                   ...prev,
-                  year: moment(input),
+                  year: input,
                 }));
               }}
             />

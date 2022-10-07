@@ -113,15 +113,16 @@ const TrainingCard = ({
           </div>
           <div className="flex flex-row space-x-4 w-full">
             <DatePicker
+              allowClear={true}
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateTrain.year}
+              value={dataUpdateTrain.year ? moment(dataUpdateTrain.year) : null}
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
                 setDataUpdateTrain((prev) => ({
                   ...prev,
-                  year: moment(input),
+                  year: input,
                 }));
               }}
             />

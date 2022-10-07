@@ -116,7 +116,7 @@ const AcademicBlock = ({
             <p className="text-primary100 font-bold mb-1">{edu.university}</p>
             <p className="text-mono50 mb-1">
               {edu.major} ·&nbsp;
-              <strong>{edu.graduation_year.slice(0, 4)}</strong>
+              <strong>{edu.graduation_year?.slice(0, 4)}</strong>
             </p>
             <p className="text-mono50">GPA {edu.gpa}</p>
           </div>

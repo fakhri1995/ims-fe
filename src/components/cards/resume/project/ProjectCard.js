@@ -114,15 +114,16 @@ const ProjectCard = ({
           </div>
           <div className="flex flex-row space-x-4 w-full">
             <DatePicker
+              allowClear={true}
               picker="year"
               placeholder="Year"
               className="w-1/3"
-              value={dataUpdateProj.year}
+              value={dataUpdateProj.year ? moment(dataUpdateProj.year) : null}
               onChange={(date) => {
                 let input = date?.format("YYYY-MM-DD");
                 setDataUpdateProj((prev) => ({
                   ...prev,
-                  year: moment(input),
+                  year: input,
                 }));
               }}
             />
