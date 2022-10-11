@@ -1962,7 +1962,7 @@ const ListSearchIconSvg = ({ size, color }) => {
   const listSearchIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-list-search"
+      className="icon icon-tabler icon-tabler-list-search"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
