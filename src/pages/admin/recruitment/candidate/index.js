@@ -22,12 +22,14 @@ import { AddNewFormButton } from "components/screen/resume";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  TICKETS_CLIENT_GET,
-  TICKETS_EXPORT,
-  TICKETS_GET,
-  TICKET_ADD,
-  TICKET_CLIENT_GET,
-  TICKET_GET,
+  RECRUITMENTS_GET,
+  RECRUITMENT_ADD,
+  RECRUITMENT_DELETE,
+  RECRUITMENT_GET,
+  RECRUITMENT_ROLES_LIST_GET,
+  RECRUITMENT_STAGES_LIST_GET,
+  RECRUITMENT_STATUSES_LIST_GET,
+  RECRUITMENT_UPDATE,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
@@ -38,10 +40,12 @@ import DrawerCandidateCreate from "../../../../components/drawer/recruitment/dra
 import {
   AdjusmentsHorizontalIconSvg,
   AlerttriangleIconSvg,
+  DownIconSvg,
   DownloadIconSvg,
   FileExportIconSvg,
   FilePlusIconSvg,
   HistoryIconSvg,
+  InfoSquareIconSvg,
   LayoutGridSvg,
   ListSearchIconSvg,
   MailForwardIconSvg,
@@ -49,11 +53,21 @@ import {
   SearchIconSvg,
   TableExportIconSvg,
   TicketIconSvg,
+  TrashIconSvg,
+  TrendingUpIconSvg,
   UserPlusIconSvg,
+  XIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import { TableCustomTickets } from "../../../../components/table/tableCustom";
+import {
+  ModalHapus2,
+  ModalUbah,
+} from "../../../../components/modal/modalCustom";
+import {
+  TableCustomCandidateRecruitment,
+  TableCustomTickets,
+} from "../../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../../components/typography";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import {
@@ -79,22 +93,286 @@ Chart.register(
 );
 
 const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRecruitmentRolesList = hasPermission(
+    RECRUITMENT_ROLES_LIST_GET
+  );
+  const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
+  const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
+  const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
+  const isAllowedToDeleteRecruitment = hasPermission(RECRUITMENT_DELETE);
+  const canUpdateRecruitment = hasPermission([
+    RECRUITMENT_UPDATE,
+    RECRUITMENT_GET,
+  ]);
+
+  const isAllowedToGetRecruitmentStatusesList = hasPermission(
+    RECRUITMENT_STATUSES_LIST_GET
+  );
+  const isAllowedToGetRecruitmentStagesList = hasPermission(
+    RECRUITMENT_STAGES_LIST_GET
+  );
+
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
   // 2. Use state
-  const [dropdownAddCandidate, setDropdownAddCandidate] = useState(false);
+  // 2.1. Role List & Candidate Count
+  const [loadingRoleList, setLoadingRoleList] = useState(false);
+  const [dataRoleList, setDataRoleList] = useState([]);
+
+  // 2.2. Table Candidate Recruitment
+  const [loadingStageList, setLoadingStageList] = useState(false);
+  const [dataStageList, setDataStageList] = useState([]);
+  const [loadingStatusList, setLoadingStatusList] = useState(false);
+  const [dataStatusList, setDataStatusList] = useState([]);
+
+  const [loadingRecruitments, setLoadingRecruitments] = useState(true);
+  const [dataRecruitments, setDataRecruitments] = useState([]);
+  const [dataRawRecruitments, setDataRawRecruitments] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+
+  const [pageRecruitments, setPageRecruitments] = useState(1);
+  const [rowsRecruitment, setRowsRecruitments] = useState(10);
+  const [sortingRecruitments, setSortingRecruitments] = useState({
+    sort_by: "",
+    sort_type: "",
+  });
+  const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
+    useState("");
+  const [roleId, setRoleId] = useState(0);
+  const [selectedStage, setSelectedStage] = useState(0);
+  const [selectedStatus, setSelectedStatus] = useState(0);
+
+  const [isBulk, setBulk] = useState(false);
+
+  // 2.3. Drawer & Modal
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [refresh, setRefresh] = useState(-1);
 
+  const [modalDelete, setModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const [modalUpdate, setModalUpdate] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+
+  // 3. UseEffect
+  // 3.1. Get Recruitment Roles List
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentRolesList) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Recruitment Role List"
+      );
+      setLoadingRoleList(false);
+      return;
+    }
+
+    setLoadingRoleList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRoleList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRoleList(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingRoleList(false);
+      });
+  }, [isAllowedToGetRecruitmentRolesList, refresh]);
+
+  // 3.2. Get Recruitments
+  useEffect(() => {
+    if (!isAllowedToGetRecruitments) {
+      permissionWarningNotification("Mendapatkan", "Daftar Recruitment");
+      setLoadingRecruitments(false);
+      return;
+    }
+
+    setLoadingRecruitments(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=10`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRawRecruitments(res2.data);
+          setDataRecruitments(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRecruitments(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingRecruitments(false);
+      });
+  }, [isAllowedToGetRecruitments, refresh]);
+
+  // 3.3. Get Stage List
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentStagesList) {
+      permissionWarningNotification("Mendapatkan", "Recruitment Stages List");
+      setLoadingStageList(false);
+      return;
+    }
+
+    setLoadingStageList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStagesList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataStageList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingStageList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingStageList(false);
+      });
+  }, [isAllowedToGetRecruitmentStagesList, refresh]);
+
+  // 3.3. Get Status List
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentStatusesList) {
+      permissionWarningNotification("Mendapatkan", "Recruitment Statuses List");
+      setLoadingStatusList(false);
+      return;
+    }
+
+    setLoadingStatusList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataStatusList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingStatusList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingStatusList(false);
+      });
+  }, [isAllowedToGetRecruitmentStatusesList, refresh]);
+
+  // 4. Event
+  const onFilterRecruitments = () => {
+    setLoadingRecruitments(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${roleId}&sort_by=${sortingRecruitments.sort_by}&sort_type=${sortingRecruitments.sort_type}&keyword=${searchingFilterRecruitments}&page=${pageRecruitments}&rows=${rowsRecruitment}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRawRecruitments(res2.data);
+          setDataRecruitments(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRecruitments(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingRecruitments(false);
+      });
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(
+    onFilterRecruitments,
+    "Enter"
+  );
+
   // Dropdown Menu
   const dropdownMenu = (
-    <Menu className="mx-0">
+    <Menu>
       <Menu.Item>
         <button
           className="flex flex-row space-x-2 items-center 
-					bg-transparent w-full px-2.5 py-2 hover:bg-gray-200"
+					bg-transparent w-full px-2.5 py-2"
           onClick={() => {
             setCreateDrawerShown(true);
           }}
@@ -107,7 +385,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       <Menu.Item>
         <button
           className="flex flex-row space-x-2 items-center
-					bg-transparent w-full px-2.5 py-2 hover:bg-gray-200"
+					bg-transparent w-full px-2.5 py-2"
         >
           <FilePlusIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">Masukkan dari Excel</p>
@@ -117,7 +395,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       <Menu.Item>
         <button
           className="flex flex-row space-x-2 items-center 
-					bg-transparent w-full px-2.5 py-2 hover:bg-gray-200"
+					bg-transparent w-full px-2.5 py-2"
         >
           <DownloadIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">
@@ -128,167 +406,182 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     </Menu>
   );
 
+  // Bulk Menu
+  const bulkMenu = (
+    <Menu>
+      <Menu.Item>
+        <button
+          className="flex flex-row space-x-2 items-center 
+					bg-transparent w-full px-2.5 pt-2.5 pb-2.5"
+          // onClick={() => {
+          //   setCreateDrawerShown(true);
+          // }}
+        >
+          <TrendingUpIconSvg size={16} />
+          <p className="mig-caption--medium text-mono30">Ubah Stage</p>
+        </button>
+      </Menu.Item>
+
+      <Menu.Item>
+        <button
+          className="flex flex-row space-x-2 items-center
+					bg-transparent w-full px-2.5 pb-2.5"
+        >
+          <InfoSquareIconSvg size={16} />
+          <p className="mig-caption--medium text-mono30">Ubah Status</p>
+        </button>
+      </Menu.Item>
+
+      <Menu.Item>
+        <button
+          className="flex flex-row space-x-2 items-center 
+					bg-transparent w-full px-2.5 pb-2.5"
+        >
+          <MailForwardIconSvg size={16} />
+          <p className="mig-caption--medium text-mono30">Kirim Email</p>
+        </button>
+      </Menu.Item>
+      <Menu.Item>
+        <button
+          className="flex flex-row space-x-2 items-center 
+					bg-transparent w-full px-2.5 pb-2.5"
+        >
+          <FileExportIconSvg size={16} />
+          <p className="mig-caption--medium text-mono30">Kirim Form Profil</p>
+        </button>
+      </Menu.Item>
+      <Menu.Item>
+        <button
+          className="flex flex-row space-x-2 items-center 
+					bg-transparent w-full px-2.5 pb-2.5"
+        >
+          <TrashIconSvg size={16} />
+          <p className="mig-caption--medium text-mono30">Hapus Kandidat</p>
+        </button>
+      </Menu.Item>
+    </Menu>
+  );
+
   // Table's columns
-  // const columnsTickets = [
-  //   {
-  //     title: "No",
-  //     dataIndex: "num",
-  //     render: (text, record, index) => {
-  //       return {
-  //         children: <>{datarawcandidates?.from + index}</>,
-  //       };
-  //     },
-  //   },
-  //   {
-  //     title: "Nama",
-  //     dataIndex: "name",
-  //     render: (text, record, index) => {
-  //       return {
-  //         children: <>{record.full_name}</>,
-  //       };
-  //     },
-  //     sorter: isAllowedToGetCandidates? (a, b) => a.id > b.id : false,
-  //   },
-  //   {
-  //     title: "Role",
-  //     dataIndex: "role",
-  //     render: (text, record, index) => {
-  //       return {
-  //         children: <>{record.role}</>,
-  //       };
-  //     },
-  //     sorter: isAllowedToGetCandidates
-  //       ? (a, b) => a.role.localeCompare(b.role)
-  //       : false,
-  //   },
-  //   {
-  //     title: "Stage",
-  //     dataIndex: "stage",
-  //     render: (text, record, index) => {
-  //       return {
-  //         children: <>{record.stage}</>,
-  //       };
-  //     },
-  // 		sorter: isAllowedToGetCandidates
-  //       ? (a, b) => a.stage.localeCompare(b.stage)
-  //       : false,
-  //   },
-  //   {
-  //     title: "Status",
-  //     dataIndex: "status",
-  //     render: (text, record, index) => {
-  //       return {
-  //         children: (
-  //           <>
-  //             {dataProfile.data.role === 1 ? (
-  //               <>
-  //                 {record.status === 1 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-overdue bg-opacity-10 text-overdue">
-  //                     Overdue
-  //                   </div>
-  //                 )}
-  //                 {record.status === 2 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">
-  //                     Open
-  //                   </div>
-  //                 )}
-  //                 {record.status === 3 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">
-  //                     On-Progress
-  //                   </div>
-  //                 )}
-  //                 {record.status === 4 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-onhold bg-opacity-10 text-onhold">
-  //                     On-Hold
-  //                   </div>
-  //                 )}
-  //                 {record.status === 5 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-completed bg-opacity-10 text-completed">
-  //                     Completed
-  //                   </div>
-  //                 )}
-  //                 {record.status === 6 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">
-  //                     Closed
-  //                   </div>
-  //                 )}
-  //                 {record.status === 7 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-canceled bg-opacity-10 text-canceled">
-  //                     Canceled
-  //                   </div>
-  //                 )}
-  //               </>
-  //             ) : (
-  //               <>
-  //                 {(record.status === 1 ||
-  //                   record.status === 3 ||
-  //                   record.status === 4) && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-onprogress bg-opacity-10 text-onprogress">
-  //                     Dalam Proses
-  //                   </div>
-  //                 )}
-  //                 {record.status === 2 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-open bg-opacity-10 text-open">
-  //                     Menunggu Staff
-  //                   </div>
-  //                 )}
-  //                 {record.status === 6 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-closed bg-opacity-10 text-closed">
-  //                     Selesai
-  //                   </div>
-  //                 )}
-  //                 {record.status === 7 && (
-  //                   <div className="rounded-md h-auto px-3 text-center py-1 bg-canceled bg-opacity-10 text-canceled">
-  //                     Dibatalkan
-  //                   </div>
-  //                 )}
-  //               </>
-  //             )}
-  //           </>
-  //         ),
-  //       };
-  //     },
-  //     sorter: isAllowedToGetCandidates
-  //       ? (a, b) => a?.status_name.localeCompare(b?.status_name)
-  //       : false,
-  //   },
-  // 	{
-  //     key: "button_action",
-  //     render: (text, record, index) => {
-  //       return {
-  //         children: (
-  //           <div className="flex items-center space-x-2">
-  //             <ButtonSys
-  // 							type={"primary"}
-  //               // type={canUpdateRoleAssessment ? "default" : "primary"}
-  //               // disabled={!canUpdateRoleAssessment}
-  //               // onClick={(event) => {
-  //               //   event.stopPropagation();
-  //               //   tempIdAssessmentUpdate.current = record.id;
-  //               //   setTriggerAssessmentUpdate((prev) => prev + 1);
-  //               //   setDrawUpdate(true);
-  //               // }}
-  //             >
-  // 							<MailForwardIconSvg size={8} color={`#35763B`} />
-  //             </ButtonSys>
-  //             <ButtonSys
-  // 							type={"primary"}
-  //               // type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
-  //               // color="danger"
-  //               // disabled={!isAllowedToDeleteRoleAssessment}
-  //               // onClick={(event) => {
-  //               //   event.stopPropagation();
-  //               //   onOpenDeleteModal(record);
-  //               // }}
-  //             >
-  // 							<FileExportIconSvg size={8} color={`#00589F`} />
-  //             </ButtonSys>
-  //           </div>
-  //         ),
-  //       };
-  //     },
-  //   },
-  // ];
+  const columnRecruitment = [
+    {
+      title: "No",
+      dataIndex: "num",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="flex justify-center">
+              {dataRawRecruitments?.from + index}
+            </div>
+          ),
+        };
+      },
+    },
+    {
+      title: "Nama",
+      dataIndex: "name",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="xl:w-60">{record.name ? record.name : ""}</div>
+          ),
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        : false,
+    },
+    {
+      title: "Role",
+      dataIndex: "role",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.role?.name}</>,
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+        : false,
+    },
+    {
+      title: "Stage",
+      dataIndex: "stage",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.stage?.name}</>,
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.stage?.name
+              .toLowerCase()
+              .localeCompare(b.stage?.name.toLowerCase())
+        : false,
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              <div
+                className="rounded-md h-auto px-3 text-center py-1"
+                style={{ backgroundColor: `${record.status?.color}10` }}
+              >
+                <p style={{ color: `${record.status?.color}` }}>
+                  {record.status?.name}
+                </p>
+              </div>
+            </>
+          ),
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.status?.name
+              .toLowerCase()
+              .localeCompare(b.status?.name.toLowerCase())
+        : false,
+    },
+    {
+      key: "button_action",
+      render: (text, record) => {
+        return {
+          children: (
+            <div className="flex flex-row space-x-2 justify-center">
+              <ButtonSys
+                type={"default"}
+                // type={canUpdateRoleAssessment ? "default" : "primary"}
+                // disabled={!canUpdateRoleAssessment}
+                // onClick={(event) => {
+                //   event.stopPropagation();
+                //   tempIdAssessmentUpdate.current = record.id;
+                //   setTriggerAssessmentUpdate((prev) => prev + 1);
+                //   setDrawUpdate(true);
+                // }}
+              >
+                <MailForwardIconSvg size={16} color={`#35763B`} />
+              </ButtonSys>
+              <ButtonSys
+                type={"default"}
+                // type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
+                // color="danger"
+                // disabled={!isAllowedToDeleteRoleAssessment}
+                // onClick={(event) => {
+                //   event.stopPropagation();
+                //   onOpenDeleteModal(record);
+                // }}
+              >
+                <FileExportIconSvg size={16} color={`#00589F`} />
+              </ButtonSys>
+            </div>
+          ),
+        };
+      },
+    },
+  ];
 
   return (
     <Layout
@@ -299,20 +592,26 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-3 px-5 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 px-5 gap-6">
           <div
             className="col-span-2 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
 						divide-x divide-gray-300"
           >
             <div className="flex flex-row items-center justify-between w-full pr-8 ">
-              <h4 className="mig-heading--4">Jumlah Role</h4>
-              <p className="text-5xl text-primary100 pl-2">32</p>
+              <h4 className="font-semibold lg:mig-heading--4">Jumlah Role</h4>
+              <p className="text-4xl lg:text-5xl text-primary100 pl-2">
+                {dataRoleList?.length}
+              </p>
             </div>
 
             <div className="flex flex-row items-center justify-between w-full pl-8">
-              <h4 className="mig-heading--4">Total Kandidat</h4>
-              <p className="text-5xl text-secondary100 pl-2">1,024</p>
+              <h4 className="font-semibold lg:mig-heading--4">
+                Total Kandidat
+              </h4>
+              <p className="text-4xl lg:text-5xl text-secondary100 pl-2">
+                1,024
+              </p>
             </div>
           </div>
           <AddNewFormButton icon={<SettingsIcon />} title="Kelola Rekrutmen" />
@@ -340,84 +639,71 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <ListSearchIconSvg size={24} />
             </div>
           </div>
+
           {/* Table Kandidat */}
-          <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-2">
+          <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-4">
               <h4 className="mig-heading--4 ">Semua Kandidat</h4>
-              <div className="relative flex flex-row space-x-6">
-                <ButtonSys type={"default"}>
-                  <div className="flex flex-row space-x-2.5 items-center">
-                    <LayoutGridSvg size={16} color="#35763B" />
-                    <p>Bulk Action</p>
-                  </div>
-                </ButtonSys>
-                {/* <ButtonSys 
-									type={'primary'}
-									onClick={() => setDropdownAddCandidate(!dropdownAddCandidate)}
-									className=""
-								>
-									<div className='flex flex-row space-x-2.5 items-center'>
-										<UserPlusIconSvg size={16} color='#FFFFFF'/>
-										<p>Tambah Kandidat</p>
-									</div>
-								</ButtonSys> */}
-
-                {/* Dropdown Tambah Kandidat */}
-                <Dropdown
-                  overlay={dropdownMenu}
-                  overlayClassName=""
-                  placement="bottomCenter"
-                >
-                  <Button
-                    type={"primary"}
-                    // onClick={() => setDropdownAddCandidate(!dropdownAddCandidate)}
-                    className="btn btn-sm text-white font-semibold px-6 border 
-										bg-primary100 hover:bg-primary75 border-primary100 
-										hover:border-primary75"
-                  >
+              {isBulk === false ? (
+                <div className="flex flex-col lg:flex-row space-x-6 space-y-2 lg:space-y-0">
+                  <ButtonSys type={"default"} onClick={() => setBulk(true)}>
                     <div className="flex flex-row space-x-2.5 items-center">
-                      <UserPlusIconSvg size={16} color="#FFFFFF" />
-                      <p>Tambah Kandidat</p>
+                      <LayoutGridSvg size={16} color="#35763B" />
+                      <p>Bulk Action</p>
                     </div>
-                  </Button>
-                  {/* <button>test</button> */}
-                </Dropdown>
+                  </ButtonSys>
 
-                {/* { dropdownAddCandidate && (
-									<div className='absolute top-10 right-0 z-10 flex flex-col 
-										py-2 bg-white shadow-md rounded-md'
-									>
-										<button 
-											className='flex flex-row space-x-2 items-center 
-											bg-transparent px-2.5 py-2 hover:bg-gray-200'
-											onClick={() => {
-												setCreateDrawerShown(true);
-											}}
-										>
-											<PlusIconSvg size={20} color="#4D4D4D" />
-											<p className='mig-caption--medium text-mono30'>
-												Tambah Perorangan
-											</p>
-										</button>
-										<button className='flex flex-row space-x-2 items-center
-											bg-transparent px-2.5 py-2 hover:bg-gray-200'
-										>
-											<FilePlusIconSvg size={20} color="#4D4D4D" />
-											<p className='mig-caption--medium text-mono30'>
-												Masukkan dari Excel
-											</p>
-										</button>
-										<button className='flex flex-row space-x-2 items-center 
-											bg-transparent px-2.5 py-2 hover:bg-gray-200'
-										>
-											<DownloadIconSvg size={20} color="#4D4D4D"/>
-											<p className='mig-caption--medium text-mono30'>
-												Unduh Template Excel
-											</p>
-										</button>
-									</div>
-								)} */}
-              </div>
+                  {/* Dropdown Tambah Kandidat */}
+                  <Dropdown
+                    overlay={dropdownMenu}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                    className="z-0"
+                  >
+                    <Button
+                      type={"primary"}
+                      className="btn btn-sm text-white font-semibold px-6 border 
+                        bg-primary100 hover:bg-primary75 border-primary100 
+                        hover:border-primary75 focus:bg-primary100 focus:border-primary100"
+                      icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
+                    >
+                      Tambah Kandidat
+                    </Button>
+                  </Dropdown>
+                </div>
+              ) : (
+                <div className="flex flex-row space-x-6">
+                  <ButtonSys
+                    type={"default"}
+                    color={"danger"}
+                    onClick={() => setBulk(false)}
+                  >
+                    <div className="flex flex-row space-x-1 items-center">
+                      <XIconSvg size={16} color={"#BF4A40"} />
+                      <p>Batal</p>
+                    </div>
+                  </ButtonSys>
+                  {/* Dropdown Aksi */}
+                  <Dropdown
+                    overlay={bulkMenu}
+                    trigger={["click"]}
+                    placement="bottomRight"
+                  >
+                    <Button
+                      type={"default"}
+                      className="btn btn-sm font-semibold px-6 border border-primary100
+                        hover:border-primary75  hover:bg-primary75 focus:bg-white
+                        focus:border-primary100 text-primary100 hover:text-white focus:text-primary100"
+                    >
+                      <div className="flex flex-row items-center space-x-3.5">
+                        <p>Aksi</p>
+                        <DownIconSvg size={16} color={"#35763B"} />
+                      </div>
+                    </Button>
+                  </Dropdown>
+                </div>
+                // <div></div>
+              )}
             </div>
 
             {/* Start: Search criteria */}
@@ -425,197 +711,90 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by keyword (kata kunci) */}
               <div className="w-4/12">
                 <Input
-                  // value={
-                  //   searcingfiltertickets === "" ? null : searcingfiltertickets
-                  // }
+                  value={
+                    searchingFilterRecruitments === ""
+                      ? null
+                      : searchingFilterRecruitments
+                  }
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
-                  // onChange={(e) => {
-                  //   if (e.target.value === "") {
-                  //     setsearcingfiltertickets("");
-                  //   } else {
-                  //     setsearcingfiltertickets(e.target.value);
-                  //   }
-                  // }}
-                  // onKeyPress={onKeyPressHandler}
-                  // disabled={!isAllowedGetTickets}
+                  onChange={(e) => {
+                    if (e.target.value === "") {
+                      setSearchingFilterRecruitments("");
+                    } else {
+                      setSearchingFilterRecruitments(e.target.value);
+                    }
+                  }}
+                  onKeyPress={onKeyPressHandler}
+                  disabled={!isAllowedToGetRecruitments}
                 />
               </div>
 
               {/* Filter by role (dropdown) */}
               <div className="w-2/12">
                 <Select
-                  // value={
-                  //   tickettypefiltertickets === ""
-                  //     ? null
-                  //     : tickettypefiltertickets
-                  // }
-                  // disabled={!isAllowedToAddTicket || !isAllowedGetTickets}
+                  disabled={!isAllowedToGetRecruitmentRolesList}
                   placeholder="Semua Role"
+                  defaultValue={0}
                   style={{ width: `100%` }}
-                  allowClear
-                  // name={`task_type`}
-                  // onChange={(value) => {
-                  //   typeof value === "undefined"
-                  //     ? settickettypefiltertickets("")
-                  //     : settickettypefiltertickets(value);
-                  // }}
+                  onChange={(value) => {
+                    setRoleId(value);
+                  }}
                 >
-                  {/* {dataticketrelation.ticket_types.map((doc, idx) => (
-                    <Select.Option key={idx} value={doc.id}>
-                      {doc.name}
+                  <Select.Option value={0}>Semua Role</Select.Option>
+                  {dataRoleList.map((role) => (
+                    <Select.Option key={role.id} value={role.id}>
+                      {role.name}
                     </Select.Option>
-                  ))} */}
+                  ))}
                 </Select>
               </div>
 
               {/* Filter by stage */}
               <div className="w-2/12">
                 <Select
-                  // value={
-                  //   tickettypefiltertickets === ""
-                  //     ? null
-                  //     : tickettypefiltertickets
-                  // }
-                  // disabled={!isAllowedToAddTicket || !isAllowedGetTickets}
+                  disabled={!isAllowedToGetRecruitmentStagesList}
                   placeholder="Semua Stage"
+                  defaultValue={0}
                   style={{ width: `100%` }}
-                  allowClear
-                  // name={`task_type`}
-                  // onChange={(value) => {
-                  //   typeof value === "undefined"
-                  //     ? settickettypefiltertickets("")
-                  //     : settickettypefiltertickets(value);
-                  // }}
+                  onChange={(value) => {
+                    setSelectedStage(value);
+                  }}
                 >
-                  {/* {dataticketrelation.ticket_types.map((doc, idx) => (
-                    <Select.Option key={idx} value={doc.id}>
-                      {doc.name}
+                  <Select.Option value={0}>Semua Stage</Select.Option>
+                  {dataStageList.map((stage) => (
+                    <Select.Option key={stage.id} value={stage.id}>
+                      {stage.name}
                     </Select.Option>
-                  ))} */}
+                  ))}
                 </Select>
               </div>
 
               {/* Search by status (dropdown) */}
               <div className="w-2/12">
                 <Select
-                  // value={
-                  //   statusfiltertickets === "" ? null : statusfiltertickets
-                  // }
-                  // disabled={!isAllowedGetTicket || !isAllowedGetTickets}
+                  disabled={!isAllowedToGetRecruitmentStatusesList}
                   placeholder="Semua Status"
+                  defaultValue={0}
                   style={{ width: `100%` }}
-                  allowClear
-                  name={`status`}
-                  // onChange={(value, option) => {
-                  //   typeof value === "undefined"
-                  //     ? setstatusfiltertickets("")
-                  //     : setstatusfiltertickets(value);
-                  // }}
+                  onChange={(value) => {
+                    setSelectedStatus(value);
+                  }}
                 >
-                  {/* {dataProfile.data.role === 1
-                    ? dataticketrelation.status_ticket.map((doc, idx) => {
-                        if (doc.id === 1)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-overdue"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 2)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-open"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 3)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-onprogress"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 4)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-onhold"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 5)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-completed"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 6)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-closed"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                      })
-                    : dataticketrelation.status_ticket.map((doc, idx) => {
-                        if (doc.id === 1)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-onprogress"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 2)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-open"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 6)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-closed"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                        else if (doc.id === 7)
-                          return (
-                            <Select.Option key={idx} value={doc.id}>
-                              <div className=" flex items-center">
-                                <div className="mr-1 w-3 h-3 rounded-full bg-canceled"></div>{" "}
-                                {doc.name}
-                              </div>
-                            </Select.Option>
-                          );
-                      })} */}
+                  <Select.Option value={0}>Semua Status</Select.Option>
+                  {dataStatusList.map((status) => (
+                    <Select.Option key={status.id} value={status.id}>
+                      {status.name}
+                    </Select.Option>
+                  ))}
                 </Select>
               </div>
 
               <ButtonSys
                 type={`primary`}
-                // onClick={onFilterTickets}
-                // disabled={!isAllowedGetTickets}
+                onClick={onFilterRecruitments}
+                disabled={!isAllowedToGetRecruitments}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -625,30 +804,27 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
             {/* End: Search criteria */}
 
-            {/* <div>
-              <TableCustomTickets
-                dataSource={datatickets}
-                setDataSource={setdatatickets}
-                columns={columnsTickets}
-                loading={loadingtickets}
-                setpraloading={setloadingtickets}
-                pageSize={rowstickets}
-                total={datarawtickets?.total}
+            <div>
+              <TableCustomCandidateRecruitment
+                dataSource={dataRecruitments}
+                setDataSource={setDataRecruitments}
+                columns={columnRecruitment}
+                loading={loadingRecruitments}
+                setpraloading={setLoadingRecruitments}
+                pageSize={rowsRecruitment}
+                total={dataRawRecruitments?.total}
                 initProps={initProps}
-                setpage={setpagetickets}
-                pagefromsearch={pagetickets}
-                setdataraw={setdatarawtickets}
-                setsorting={setsortingtickets}
-                sorting={sortingtickets}
-                searching={searcingfiltertickets}
-                tickettype={tickettypefiltertickets}
-                fromdate={fromfiltertickets}
-                todate={tofiltertickets}
-                location={locfiltertickets}
-                status={statusfiltertickets}
-                dataprofile={dataProfile}
+                setpage={setPageRecruitments}
+                pagefromsearch={pageRecruitments}
+                setdataraw={setDataRawRecruitments}
+                setsorting={setSortingRecruitments}
+                sorting={sortingRecruitments}
+                searching={searchingFilterRecruitments}
+                roleId={roleId}
+                // status={statusfiltertickets}
+                // dataprofile={dataProfile}
               />
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
@@ -661,8 +837,51 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         initProps={initProps}
         onvisible={setCreateDrawerShown}
         setRefresh={setRefresh}
-        // isAllowedToAddCandidate={isAllowedToAddCandidate}
+        isAllowedToAddRecruitment={isAllowedToAddRecruitment}
+        dataRoleList={dataRoleList}
+        dataStageList={dataStageList}
+        dataStatusList={dataStatusList}
       />
+      {/* </AccessControl> */}
+
+      {/* <AccessControl hasPermission={ASSESSMENT_DELETE}> */}
+      <ModalHapus2
+        title={`Peringatan`}
+        visible={modalDelete}
+        onvisible={setModalDelete}
+        // onOk={handleDelete}
+        onCancel={() => {
+          setModalDelete(false);
+        }}
+        itemName={"kandidat"}
+        loading={loadingDelete}
+        // disabled={candidateCount > 0}
+      >
+        Apakah Anda yakin ingin menghapus kandidat{" "}
+        {/* <strong>{candidateName}</strong>? */}
+      </ModalHapus2>
+      {/* </AccessControl> */}
+
+      {/* <AccessControl hasPermission={ASSESSMENT_UPDATE}> */}
+      <ModalUbah
+        title={`Konfirmasi Perubahan`}
+        visible={modalUpdate}
+        onvisible={setModalUpdate}
+        // onOk={handleUpdateRoleAssessment}
+        onCancel={() => {
+          setModalUpdate(false);
+        }}
+        loading={loadingUpdate}
+      >
+        <div className="space-y-4">
+          {/* <p className="">
+              Anda telah melakukan perubahan pada kandidat <strong>{candidateName}</strong>
+              pada item berikut
+            </p> */}
+          <p className="font-bold">[perubahan]</p>
+          <p>Apakah Anda yakin ingin menyimpan perubahan tersebut?</p>
+        </div>
+      </ModalUbah>
       {/* </AccessControl> */}
     </Layout>
   );
