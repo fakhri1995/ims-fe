@@ -1325,6 +1325,7 @@ const TableCustomCandidateRecruitment = ({
       // className="tableCandidate"
       dataSource={dataSource}
       columns={columns}
+      rowKey={(record) => record.id}
       loading={loading}
       scroll={{ x: 200 }}
       pagination={{

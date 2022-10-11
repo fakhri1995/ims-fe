@@ -1251,7 +1251,7 @@ const LayoutGridSvg = ({ size, color }) => {
   const layoutGridSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-layout-grid"
+      className="icon icon-tabler icon-tabler-layout-grid"
       width={size}
       height={size}
       viewBox="0 0 24 24"
@@ -1986,7 +1986,7 @@ const MailForwardIconSvg = ({ size, color }) => {
   const mailForwardIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-mail-forward"
+      className="icon icon-tabler icon-tabler-mail-forward"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2010,7 +2010,7 @@ const TrendingUpIconSvg = ({ size, color }) => {
   const trendingUpIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-trending-up"
+      className="icon icon-tabler icon-tabler-trending-up"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2032,7 +2032,7 @@ const InfoSquareIconSvg = ({ size, color }) => {
   const infoSquareIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-info-square"
+      className="icon icon-tabler icon-tabler-info-square"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2055,7 +2055,7 @@ const BriefcaseIconSvg = ({ size, color }) => {
   const briefcaseIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-briefcase"
+      className="icon icon-tabler icon-tabler-briefcase"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2079,7 +2079,7 @@ const ClickIconSvg = ({ size, color }) => {
   const clickIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-click"
+      className="icon icon-tabler icon-tabler-click"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
