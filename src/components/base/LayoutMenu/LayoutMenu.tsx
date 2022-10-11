@@ -13,6 +13,7 @@ import {
   TaskIconSvg,
   TicketIconSvg,
   UserIconSvg,
+  UserPlusIconSvg,
 } from "components/icon";
 import commonLayoutStyle from "components/layout-dashboard.module.css";
 
@@ -42,6 +43,7 @@ import {
   SIDEBAR_ITEMS,
   SIDEBAR_RECRUITMENT,
   SIDEBAR_RECRUITMENT_CANDIDATE,
+  SIDEBAR_RECRUITMENT_SETUP,
   SIDEBAR_RESUME,
   SIDEBAR_RESUME_DAFTAR_KANDIDAT,
   SIDEBAR_RESUME_ROLE_ASSESSMENT,
@@ -323,19 +325,25 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Recruitment Management */}
-      {hasPermission(SIDEBAR_RECRUITMENT) && (
+      {/* {hasPermission(SIDEBAR_RECRUITMENT) && (
         <SubMenu
           title="Recruitment"
           key="11"
-          icon={<ResumeIconSvg className="text-[#597e8d]" />}
+          icon={<UserPlusIconSvg className="text-[#597e8d]" />}
         >
           {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
             <Menu.Item key="111">
               <Link href="/admin/recruitment/candidate">Kandidat</Link>
             </Menu.Item>
           )}
+
+          {hasPermission(SIDEBAR_RECRUITMENT_SETUP) && (
+            <Menu.Item key="112">
+              <Link href="/admin/recruitment/role">Setup</Link>
+            </Menu.Item>
+          )}
         </SubMenu>
-      )}
+      )} */}
     </>
   );
 
