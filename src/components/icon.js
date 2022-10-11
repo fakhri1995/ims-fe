@@ -274,11 +274,11 @@ const EmailIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-mail"
-      width={size}
-      height={size}
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#4D4D4D"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -418,7 +418,7 @@ const TrashIconSvg = ({ size, color }) => {
       height={size}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#4D4D4D"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1032,11 +1032,11 @@ const UserPlusIconSvg = ({ size, color }) => {
     <svg
       xmlns="http://www.w3.org/2000/svg"
       className="icon icon-tabler icon-tabler-user-plus"
-      width={size}
-      height={size}
+      width={size ? size : 20}
+      height={size ? size : 20}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#597e8d"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1251,7 +1251,7 @@ const LayoutGridSvg = ({ size, color }) => {
   const layoutGridSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-layout-grid"
+      className="icon icon-tabler icon-tabler-layout-grid"
       width={size}
       height={size}
       viewBox="0 0 24 24"
@@ -1345,7 +1345,7 @@ const FileExportIconSvg = ({ size, color }) => {
       height={size}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke={color}
+      stroke={color ? color : "#4D4D4D"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -1962,7 +1962,7 @@ const ListSearchIconSvg = ({ size, color }) => {
   const listSearchIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-list-search"
+      className="icon icon-tabler icon-tabler-list-search"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -1986,7 +1986,7 @@ const MailForwardIconSvg = ({ size, color }) => {
   const mailForwardIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-mail-forward"
+      className="icon icon-tabler icon-tabler-mail-forward"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2004,6 +2004,101 @@ const MailForwardIconSvg = ({ size, color }) => {
     </svg>
   );
   return <Icon component={mailForwardIconSvg}></Icon>;
+};
+
+const TrendingUpIconSvg = ({ size, color }) => {
+  const trendingUpIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-trending-up"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <polyline points="3 17 9 11 13 15 21 7" />
+      <polyline points="14 7 21 7 21 14" />
+    </svg>
+  );
+  return <Icon component={trendingUpIconSvg}></Icon>;
+};
+
+const InfoSquareIconSvg = ({ size, color }) => {
+  const infoSquareIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-info-square"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+      <rect x="4" y="4" width="16" height="16" rx="2" />
+      <polyline points="11 12 12 12 12 16 13 16" />
+    </svg>
+  );
+  return <Icon component={infoSquareIconSvg}></Icon>;
+};
+
+const BriefcaseIconSvg = ({ size, color }) => {
+  const briefcaseIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-briefcase"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M8 7v-2a2 2 0 0 1 2 -2h4a2 2 0 0 1 2 2v2" />
+      <line x1="12" y1="12" x2="12" y2="12.01" />
+      <path d="M3 13a20 20 0 0 0 18 0" />
+    </svg>
+  );
+  return <Icon component={briefcaseIconSvg}></Icon>;
+};
+
+const ClickIconSvg = ({ size, color }) => {
+  const clickIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-click"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <line x1="3" y1="12" x2="6" y2="12" />
+      <line x1="12" y1="3" x2="12" y2="6" />
+      <line x1="7.8" y1="7.8" x2="5.6" y2="5.6" />
+      <line x1="16.2" y1="7.8" x2="18.4" y2="5.6" />
+      <line x1="7.8" y1="16.2" x2="5.6" y2="18.4" />
+      <path d="M12 12l9 3l-4 2l-2 4l-3 -9" />
+    </svg>
+  );
+  return <Icon component={clickIconSvg}></Icon>;
 };
 
 export {
@@ -2088,4 +2183,8 @@ export {
   OneUserIconSvg,
   ListSearchIconSvg,
   MailForwardIconSvg,
+  TrendingUpIconSvg,
+  InfoSquareIconSvg,
+  BriefcaseIconSvg,
+  ClickIconSvg,
 };

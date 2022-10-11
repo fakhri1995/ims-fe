@@ -1,10 +1,11 @@
-import { Input, Spin, notification } from "antd";
+import { Input, Select, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { ASSESSMENT_ADD } from "lib/features";
+import { RECRUITMENT_JALUR_DAFTAR_LIST_GET } from "lib/features";
 
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
@@ -19,98 +20,169 @@ const DrawerCandidateCreate = ({
   buttonOkText,
   initProps,
   setRefresh,
-  isAllowedToAddRoleAssessment,
+  isAllowedToAddRecruitment,
+  dataRoleList,
+  dataStageList,
+  dataStatusList,
 }) => {
+  /**
+   * Dependencies
+   */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  if (isAccessControlPending) {
+    return null;
+  }
+  const isAllowedToGetRegistPlatformList = hasPermission(
+    RECRUITMENT_JALUR_DAFTAR_LIST_GET
+  );
+
   //USESTATE
-  const [datacreate, setdatacreate] = useState({
-    id: null,
+  const [dataCandidate, setDataCandidate] = useState({
     name: "",
-    add: [{ criteria: "" }],
+    email: "",
+    university: "",
+    recruitment_role_id: null,
+    recruitment_jalur_daftar_id: null,
+    recruitment_stage_id: null,
+    recruitment_status_id: null,
   });
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [disabledcreate, setdisabledcreate] = useState(true);
 
+  const [loadingRegistPlatformList, setLoadingRegistPlatformList] =
+    useState(false);
+  const [dataRegistPlatformList, setDataRegistPlatformList] = useState([]);
+
+  // useEffect
+  // 3.1. Get Recruitment Registration Platform (Jalur Daftar) List
+  useEffect(() => {
+    if (!isAllowedToGetRegistPlatformList) {
+      permissionWarningNotification("Mendapatkan", "Data Jalur Daftar");
+      setLoadingRegistPlatformList(false);
+      return;
+    }
+
+    setLoadingRegistPlatformList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftarsList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRegistPlatformList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingRegistPlatformList(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingRegistPlatformList(false);
+      });
+  }, [isAllowedToGetRegistPlatformList]);
+
   //HANDLER
   const onChangeInput = (e) => {
-    setdatacreate({
-      ...datacreate,
+    setDataCandidate({
+      ...dataCandidate,
       [e.target.name]: e.target.value,
     });
   };
 
   const handleCreateForm = () => {
-    const payload = {
-      name: datacreate.name,
-      add: datacreate.add,
-    };
-
-    if (!isAllowedToAddRoleAssessment) {
-      permissionWarningNotification("Membuat", "Form Assessment");
+    if (!isAllowedToAddRecruitment) {
+      permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
       return;
     }
     setLoadingCreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addAssessment`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitment`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(dataCandidate),
     })
       .then((response) => response.json())
       .then((response2) => {
         setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
-            message: `Form berhasil ditambahkan.`,
+            message: `Kandidat berhasil ditambahkan.`,
             duration: 3,
           });
           setTimeout(() => {
-            setLoadingCreate(false);
             onvisible(false);
-            setdatacreate({ id: null, name: "", add: [{ criteria: "" }] });
+            setDataCandidate({
+              name: "",
+              email: "",
+              university: "",
+              recruitment_role_id: null,
+              recruitment_jalur_daftar_id: null,
+              recruitment_stage_id: null,
+              recruitment_status_id: null,
+            });
           }, 500);
         } else {
           notification.error({
-            message: `Gagal menambahkan form assessment. ${response2.message}`,
+            message: `Gagal menambahkan kandidat. ${response2.message}`,
             duration: 3,
           });
-          setLoadingCreate(false);
         }
+        setLoadingCreate(false);
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambahkan form assessment. ${err.response}`,
+          message: `Gagal menambahkan kandidat. ${err.response}`,
           duration: 3,
         });
         setLoadingCreate(false);
       });
   };
 
-  //USEEFFECT
+  // USEEFFECT
   useEffect(() => {
-    let criteriaIsFilled = datacreate.add.every(
-      (detail) => detail.criteria !== ""
+    let allFilled = Object.values(dataCandidate).every(
+      (value) => value !== "" && value !== null
     );
-    if (datacreate.name !== "" && criteriaIsFilled) {
+    // console.log(allFilled)
+    if (allFilled) {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
     }
-  }, [datacreate]);
+  }, [dataCandidate]);
 
-  // console.log(datacreate);
+  // console.log(dataCandidate);
   return (
     <DrawerCore
       title={title}
       visible={visible}
       onClose={() => {
-        setdatacreate({
-          id: null,
+        setDataCandidate({
           name: "",
-          add: [{ criteria: "" }],
+          email: "",
+          university: "",
+          recruitment_role_id: null,
+          recruitment_jalur_daftar_id: null,
+          recruitment_stage_id: null,
+          recruitment_status_id: null,
         });
-
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
@@ -128,20 +200,12 @@ const DrawerCandidateCreate = ({
           <div className=" mb-5 flex flex-col">
             <div className="flex mb-1">
               <Label>Nama&nbsp;</Label>
-              <span className="namaField"></span>
-              <style jsx>
-                {`
-											.namaField::before{
-															content: '*';
-															color: red;
-											}
-							`}
-              </style>
+              <span className="text-red-500">*</span>
             </div>
             <Input
               style={{ width: `100%` }}
               name="name"
-              defaultValue={datacreate.name}
+              defaultValue={dataCandidate.name}
               onChange={onChangeInput}
             ></Input>
           </div>
@@ -149,20 +213,12 @@ const DrawerCandidateCreate = ({
           <div className=" mb-5 flex flex-col">
             <div className="flex mb-1">
               <Label>Email&nbsp;</Label>
-              <span className="namaField"></span>
-              <style jsx>
-                {`
-											.namaField::before{
-															content: '*';
-															color: red;
-											}
-							`}
-              </style>
+              <span className="text-red-500">*</span>
             </div>
             <Input
               style={{ width: `100%` }}
-              name="name"
-              defaultValue={datacreate.name}
+              name="email"
+              defaultValue={dataCandidate.email}
               onChange={onChangeInput}
             ></Input>
           </div>
@@ -170,20 +226,12 @@ const DrawerCandidateCreate = ({
           <div className=" mb-5 flex flex-col">
             <div className="flex mb-1">
               <Label>Universitas&nbsp;</Label>
-              <span className="namaField"></span>
-              <style jsx>
-                {`
-													.namaField::before{
-																	content: '*';
-																	color: red;
-													}
-									`}
-              </style>
+              <span className="text-red-500">*</span>
             </div>
             <Input
               style={{ width: `100%` }}
-              name="name"
-              defaultValue={datacreate.name}
+              name="university"
+              defaultValue={dataCandidate.university}
               onChange={onChangeInput}
             ></Input>
           </div>
@@ -191,86 +239,101 @@ const DrawerCandidateCreate = ({
           <div className=" mb-5 flex flex-col">
             <div className="flex mb-1">
               <Label>Role&nbsp;</Label>
-              <span className="namaField"></span>
-              <style jsx>
-                {`
-													.namaField::before{
-																	content: '*';
-																	color: red;
-													}
-									`}
-              </style>
+              <span className="text-red-500">*</span>
             </div>
-            <Input
+            <Select
+              showSearch
+              placeholder="Pilih role.."
               style={{ width: `100%` }}
-              name="name"
-              defaultValue={datacreate.name}
-              onChange={onChangeInput}
-            ></Input>
+              defaultValue={dataCandidate.recruitment_role_id}
+              onChange={(value) => {
+                setDataCandidate({
+                  ...dataCandidate,
+                  recruitment_role_id: value,
+                });
+              }}
+            >
+              {/* <Select.Option value={0}>Semua Role</Select.Option> */}
+              {dataRoleList?.map((role) => (
+                <Select.Option key={role.id} value={role.id}>
+                  {role.name}
+                </Select.Option>
+              ))}
+            </Select>
           </div>
 
           <div className=" mb-5 flex flex-col">
             <div className="flex mb-1">
               <Label>Jalur Daftar&nbsp;</Label>
-              <span className="namaField"></span>
-              <style jsx>
-                {`
-									.namaField::before{
-													content: '*';
-													color: red;
-									}
-								`}
-              </style>
+              <span className="text-red-500">*</span>
             </div>
-            <Input
+            <Select
+              placeholder="Pilih jalur daftar..."
               style={{ width: `100%` }}
-              name="name"
-              defaultValue={datacreate.name}
-              onChange={onChangeInput}
-            ></Input>
+              defaultValue={dataCandidate.recruitment_jalur_daftar_id}
+              onChange={(value) => {
+                setDataCandidate({
+                  ...dataCandidate,
+                  recruitment_jalur_daftar_id: value,
+                });
+              }}
+            >
+              {/* <Select.Option value={0}>Semua Jalur Daftar</Select.Option> */}
+              {dataRegistPlatformList.map((platform) => (
+                <Select.Option key={platform.id} value={platform.id}>
+                  {platform.name}
+                </Select.Option>
+              ))}
+            </Select>
           </div>
 
           <div className="flex flex-row space-x-6">
-            <div className=" mb-5 flex flex-col">
+            <div className=" mb-5 flex flex-col w-full">
               <div className="flex mb-1">
                 <Label>Stage&nbsp;</Label>
-                <span className="namaField"></span>
-                <style jsx>
-                  {`
-										.namaField::before{
-														content: '*';
-														color: red;
-										}
-									`}
-                </style>
+                <span className="text-red-500">*</span>
               </div>
-              <Input
-                style={{ width: `100%` }}
-                name="name"
-                defaultValue={datacreate.name}
-                onChange={onChangeInput}
-              ></Input>
+              <Select
+                placeholder="Pilih stage..."
+                defaultValue={dataCandidate.recruitment_stage_id}
+                onChange={(value) => {
+                  setDataCandidate({
+                    ...dataCandidate,
+                    recruitment_stage_id: value,
+                  });
+                }}
+              >
+                {/* <Select.Option value={0}>Semua Stage</Select.Option> */}
+                {dataStageList?.map((stage) => (
+                  <Select.Option key={stage.id} value={stage.id}>
+                    {stage.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </div>
 
-            <div className=" mb-5 flex flex-col">
-              <div className="flex mb-1">
+            <div className=" mb-5 flex flex-col w-full">
+              <div className="flex mb-1 ">
                 <Label>Status&nbsp;</Label>
-                <span className="namaField"></span>
-                <style jsx>
-                  {`
-										.namaField::before{
-														content: '*';
-														color: red;
-										}
-									`}
-                </style>
+                <span className="text-red-500">*</span>
               </div>
-              <Input
-                style={{ width: `100%` }}
-                name="name"
-                defaultValue={datacreate.name}
-                onChange={onChangeInput}
-              ></Input>
+              <Select
+                placeholder="Pilih status..."
+                defaultValue={dataCandidate.recruitment_status_id}
+                onChange={(value) => {
+                  setDataCandidate({
+                    ...dataCandidate,
+                    recruitment_status_id: value,
+                  });
+                }}
+              >
+                {/* <Select.Option value={0}>Semua Status</Select.Option> */}
+                {dataStatusList?.map((status) => (
+                  <Select.Option key={status.id} value={status.id}>
+                    {status.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </div>
           </div>
         </div>
