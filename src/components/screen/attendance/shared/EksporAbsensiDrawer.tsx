@@ -225,10 +225,11 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   }, [form, formAktivitasStaffList, exportAsAdmin]);
 
   const handleOnSelectStaff = useCallback(
-    (value: string | undefined) => {
+    (event) => {
       if (!exportAsAdmin) {
         return;
       }
+      const { value } = event;
       let dataNamaTemp = [];
       if (namaSelected.length > 1) {
         if (namaTempSelected.length > 0) {

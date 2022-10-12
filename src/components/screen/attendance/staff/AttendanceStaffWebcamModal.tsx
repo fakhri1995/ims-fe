@@ -5,6 +5,7 @@ import Webcam from "react-webcam";
 import ButtonSys from "components/button";
 
 const WEBCAM_WIDTH = 640;
+const WEBCAM_WIDTH_MOBILE = 480;
 const WEBCAM_HEIGHT = 480;
 const WEBCAM_SCREENSHOT_FORMAT = "image/jpeg";
 const WEBCAM_VIDEO_CONSTRAINTS: MediaTrackConstraints = {
@@ -12,7 +13,6 @@ const WEBCAM_VIDEO_CONSTRAINTS: MediaTrackConstraints = {
   height: WEBCAM_HEIGHT,
   facingMode: "user" /** Front camera */,
 };
-
 /**
  * Component AttendanceStaffWebcamModal's props.
  */
@@ -166,10 +166,17 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
       <div className="flex flex-col">
         <div
           className="bg-gray-100 rounded-md overflow-hidden flex items-center justify-center"
-          style={{
-            minWidth: `${WEBCAM_WIDTH}px`,
-            minHeight: `${WEBCAM_HEIGHT}px`,
-          }}
+          style={
+            window.innerWidth < 720
+              ? {
+                  minWidth: `${WEBCAM_WIDTH}px`,
+                  minHeight: `${WEBCAM_HEIGHT}px`,
+                }
+              : {
+                  maxWidth: `${window.innerWidth - 10}px`,
+                  minHeight: `${WEBCAM_HEIGHT}px`,
+                }
+          }
         >
           {webcamAvailabilityStatus === "cameraDeviceNotFound" && (
             <h3 className="text-mono30">
