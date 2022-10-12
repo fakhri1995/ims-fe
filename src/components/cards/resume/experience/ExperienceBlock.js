@@ -98,14 +98,13 @@ const ExperienceBlock = ({
               moment(dataUpdateExp.start_date),
               moment(dataUpdateExp.end_date),
             ]}
-            onChange={(dates) => {
-              // console.log(dates)
-              let startDate = dates[0].format("MMM YYYY");
-              let endDate = dates[1].format("MMM YYYY");
+            onChange={(value, datestring) => {
+              let startDate = datestring[0];
+              let endDate = datestring[1];
               setDataUpdateExp((prev) => ({
                 ...prev,
-                start_date: moment(startDate),
-                end_date: moment(endDate),
+                start_date: startDate,
+                end_date: endDate,
               }));
             }}
           />
