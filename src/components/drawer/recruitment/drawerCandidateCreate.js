@@ -1,4 +1,4 @@
-import { Input, Select, Spin, notification } from "antd";
+import { Form, Input, Select, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
@@ -37,6 +37,8 @@ const DrawerCandidateCreate = ({
   const isAllowedToGetRegistPlatformList = hasPermission(
     RECRUITMENT_JALUR_DAFTAR_LIST_GET
   );
+
+  const [instanceForm] = Form.useForm();
 
   //USESTATE
   const [dataCandidate, setDataCandidate] = useState({
@@ -191,151 +193,200 @@ const DrawerCandidateCreate = ({
     >
       <Spin spinning={loadingCreate}>
         <div className="flex flex-col">
-          <div className="mb-8">
-            <p className="mb-0 text-red-500 text-xs italic">
-              *Informasi ini harus diisi
-            </p>
-          </div>
-
-          <div className=" mb-5 flex flex-col">
-            <div className="flex mb-1">
-              <Label>Nama&nbsp;</Label>
-              <span className="text-red-500">*</span>
-            </div>
-            <Input
-              style={{ width: `100%` }}
-              name="name"
-              defaultValue={dataCandidate.name}
-              onChange={onChangeInput}
-            ></Input>
-          </div>
-
-          <div className=" mb-5 flex flex-col">
-            <div className="flex mb-1">
-              <Label>Email&nbsp;</Label>
-              <span className="text-red-500">*</span>
-            </div>
-            <Input
-              style={{ width: `100%` }}
-              name="email"
-              defaultValue={dataCandidate.email}
-              onChange={onChangeInput}
-            ></Input>
-          </div>
-
-          <div className=" mb-5 flex flex-col">
-            <div className="flex mb-1">
-              <Label>Universitas&nbsp;</Label>
-              <span className="text-red-500">*</span>
-            </div>
-            <Input
-              style={{ width: `100%` }}
-              name="university"
-              defaultValue={dataCandidate.university}
-              onChange={onChangeInput}
-            ></Input>
-          </div>
-
-          <div className=" mb-5 flex flex-col">
-            <div className="flex mb-1">
-              <Label>Role&nbsp;</Label>
-              <span className="text-red-500">*</span>
-            </div>
-            <Select
-              showSearch
-              placeholder="Pilih role.."
-              style={{ width: `100%` }}
-              defaultValue={dataCandidate.recruitment_role_id}
-              onChange={(value) => {
-                setDataCandidate({
-                  ...dataCandidate,
-                  recruitment_role_id: value,
-                });
-              }}
+          <p className="mb-6 text-red-500 text-xs italic">
+            *Informasi ini harus diisi
+          </p>
+          <Form
+            layout="vertical"
+            form={instanceForm}
+            className="grid grid-cols-2 gap-x-6"
+          >
+            <Form.Item
+              label="Nama"
+              name={"name"}
+              rules={[
+                {
+                  required: true,
+                  message: "Nama kandidat wajib diisi",
+                },
+              ]}
+              className="col-span-2"
             >
-              {/* <Select.Option value={0}>Semua Role</Select.Option> */}
-              {dataRoleList?.map((role) => (
-                <Select.Option key={role.id} value={role.id}>
-                  {role.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </div>
+              <div>
+                <Input
+                  value={dataCandidate.name}
+                  name={"name"}
+                  onChange={onChangeInput}
+                />
+              </div>
+            </Form.Item>
 
-          <div className=" mb-5 flex flex-col">
-            <div className="flex mb-1">
-              <Label>Jalur Daftar&nbsp;</Label>
-              <span className="text-red-500">*</span>
-            </div>
-            <Select
-              placeholder="Pilih jalur daftar..."
-              style={{ width: `100%` }}
-              defaultValue={dataCandidate.recruitment_jalur_daftar_id}
-              onChange={(value) => {
-                setDataCandidate({
-                  ...dataCandidate,
-                  recruitment_jalur_daftar_id: value,
-                });
-              }}
+            <Form.Item
+              label="Email"
+              name={"email"}
+              rules={[
+                {
+                  required: true,
+                  message: "Email kandidat wajib diisi",
+                },
+                {
+                  pattern:
+                    /(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/,
+                  message: "Email belum diisi dengan benar",
+                },
+              ]}
+              className="col-span-2"
             >
-              {/* <Select.Option value={0}>Semua Jalur Daftar</Select.Option> */}
-              {dataRegistPlatformList.map((platform) => (
-                <Select.Option key={platform.id} value={platform.id}>
-                  {platform.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </div>
-
-          <div className="flex flex-row space-x-6">
-            <div className=" mb-5 flex flex-col w-full">
-              <div className="flex mb-1">
-                <Label>Stage&nbsp;</Label>
-                <span className="text-red-500">*</span>
+              <div>
+                <Input
+                  value={dataCandidate.email}
+                  name={"email"}
+                  onChange={onChangeInput}
+                />
               </div>
-              <Select
-                placeholder="Pilih stage..."
-                defaultValue={dataCandidate.recruitment_stage_id}
-                onChange={(value) => {
-                  setDataCandidate({
-                    ...dataCandidate,
-                    recruitment_stage_id: value,
-                  });
-                }}
-              >
-                {/* <Select.Option value={0}>Semua Stage</Select.Option> */}
-                {dataStageList?.map((stage) => (
-                  <Select.Option key={stage.id} value={stage.id}>
-                    {stage.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
+            </Form.Item>
 
-            <div className=" mb-5 flex flex-col w-full">
-              <div className="flex mb-1 ">
-                <Label>Status&nbsp;</Label>
-                <span className="text-red-500">*</span>
+            <Form.Item
+              label="Universitas"
+              name={"university"}
+              rules={[
+                {
+                  required: true,
+                  message: "Nama universitas wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Input
+                  value={dataCandidate.university}
+                  name={"university"}
+                  onChange={onChangeInput}
+                />
               </div>
-              <Select
-                placeholder="Pilih status..."
-                defaultValue={dataCandidate.recruitment_status_id}
-                onChange={(value) => {
-                  setDataCandidate({
-                    ...dataCandidate,
-                    recruitment_status_id: value,
-                  });
-                }}
-              >
-                {/* <Select.Option value={0}>Semua Status</Select.Option> */}
-                {dataStatusList?.map((status) => (
-                  <Select.Option key={status.id} value={status.id}>
-                    {status.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </div>
-          </div>
+            </Form.Item>
+            <Form.Item
+              label="Role"
+              name={"role"}
+              rules={[
+                {
+                  required: true,
+                  message: "Role kandidat wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Select
+                  showSearch
+                  placeholder="Pilih role.."
+                  style={{ width: `100%` }}
+                  defaultValue={dataCandidate.recruitment_role_id}
+                  onChange={(value) => {
+                    setDataCandidate({
+                      ...dataCandidate,
+                      recruitment_role_id: value,
+                    });
+                  }}
+                >
+                  {dataRoleList?.map((role) => (
+                    <Select.Option key={role.id} value={role.id}>
+                      {role.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </Form.Item>
+
+            <Form.Item
+              label="Jalur Daftar"
+              rules={[
+                {
+                  required: true,
+                  message: "Jalur daftar wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Select
+                  placeholder="Pilih jalur daftar..."
+                  style={{ width: `100%` }}
+                  defaultValue={dataCandidate.recruitment_jalur_daftar_id}
+                  onChange={(value) => {
+                    setDataCandidate({
+                      ...dataCandidate,
+                      recruitment_jalur_daftar_id: value,
+                    });
+                  }}
+                >
+                  {dataRegistPlatformList.map((platform) => (
+                    <Select.Option key={platform.id} value={platform.id}>
+                      {platform.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </Form.Item>
+
+            <Form.Item
+              label="Stage"
+              rules={[
+                {
+                  required: true,
+                  message: "Stage wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <Select
+                  placeholder="Pilih stage..."
+                  defaultValue={dataCandidate.recruitment_stage_id}
+                  onChange={(value) => {
+                    setDataCandidate({
+                      ...dataCandidate,
+                      recruitment_stage_id: value,
+                    });
+                  }}
+                >
+                  {dataStageList?.map((stage) => (
+                    <Select.Option key={stage.id} value={stage.id}>
+                      {stage.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </Form.Item>
+
+            <Form.Item
+              label="Status"
+              rules={[
+                {
+                  required: true,
+                  message: "Status wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <Select
+                  placeholder="Pilih status..."
+                  defaultValue={dataCandidate.recruitment_status_id}
+                  onChange={(value) => {
+                    setDataCandidate({
+                      ...dataCandidate,
+                      recruitment_status_id: value,
+                    });
+                  }}
+                >
+                  {dataStatusList?.map((status) => (
+                    <Select.Option key={status.id} value={status.id}>
+                      {status.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </Form.Item>
+          </Form>
         </div>
       </Spin>
     </DrawerCore>
