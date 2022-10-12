@@ -49,7 +49,8 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
 
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue);
-
+  const [namaSelected, setNamaSelected] = useState([]);
+  const [namaTempSelected, setNamaTempSelected] = useState([]);
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     number | undefined
   >(undefined);
@@ -90,7 +91,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       if (formAktivitasId === undefined) {
         return undefined;
       }
-
       return AttendanceFormAktivitasService.findOne(
         axiosClient,
         formAktivitasId
@@ -114,7 +114,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       const from = fieldValues.rentang_waktu[0].toDate();
       const to = fieldValues.rentang_waktu[1].toDate();
       let staffIds: number[] = [];
-
       /**
        * 1. Form Aktivitas is required
        * 2. Transform array of selected staff (string) into their respective ID (number)
@@ -172,7 +171,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       if (!exportAsAdmin) {
         return;
       }
-
       if (value === undefined) {
         setSearchValue("");
         setSelectedFormAktivitasId(undefined);
@@ -202,20 +200,55 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
    * Handler ketika User click "button" Pilih semua.
    * Callback akan checklist seluruh staff pada checkbox group.
    */
+  const handleOnUnSelectAllStaff = useCallback(() => {
+    if (!form || !exportAsAdmin) {
+      return;
+    }
+    setNamaTempSelected([]);
+    form.setFields([{ name: "selected_staff", value: [] }]);
+  }, [form, formAktivitasStaffList, exportAsAdmin]);
+
   const handleOnSelectAllStaff = useCallback(() => {
     if (!form || !exportAsAdmin) {
       return;
     }
-
+    // setNamaSelected([])
+    // setNamaTempSelected([])
     const formAktivitasStaffListOnlyName = formAktivitasStaffList?.map(
       (user) => user.name
     );
-
+    setNamaSelected(formAktivitasStaffListOnlyName);
+    setNamaTempSelected(formAktivitasStaffListOnlyName);
     form.setFields([
       { name: "selected_staff", value: formAktivitasStaffListOnlyName || [] },
     ]);
   }, [form, formAktivitasStaffList, exportAsAdmin]);
 
+  const handleOnSelectStaff = useCallback(
+    (value: string | undefined) => {
+      if (!exportAsAdmin) {
+        return;
+      }
+      let dataNamaTemp = [];
+      if (namaSelected.length > 1) {
+        if (namaTempSelected.length > 0) {
+          namaTempSelected.map((data) => {
+            if (value.target.checked) {
+              dataNamaTemp.push(data);
+            } else {
+              if (data != value.target.value) {
+                dataNamaTemp.push(data);
+              }
+            }
+          });
+        }
+      } else {
+        if (value.target.checked) dataNamaTemp.push(value.target.value);
+      }
+      setNamaTempSelected(dataNamaTemp);
+    },
+    [exportAsAdmin]
+  );
   /**
    * Effect untuk set form default field values.
    */
@@ -223,7 +256,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     if (!form) {
       return;
     }
-
     const fieldData = [];
 
     // default selected time range picker
@@ -275,6 +307,12 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     });
   }, [selectedFormAktivitasId]);
 
+  useEffect(() => {
+    let dataNama = [];
+    formAktivitasStaffList?.map(({ id, name }) => dataNama.push(name));
+    setNamaSelected(dataNama);
+    setNamaTempSelected(dataNama);
+  }, [formAktivitasStaffList]);
   return (
     <DrawerCore
       visible={visible}
@@ -324,18 +362,31 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                   ))}
                 </Select>
               </Form.Item>
-
               {/* Selectable staff */}
               <Form.Item label="Staff" required className="relative">
-                {formAktivitasStaffList && formAktivitasStaffList.length > 0 && (
-                  <Button
-                    type="link"
-                    onClick={handleOnSelectAllStaff}
-                    className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
-                  >
-                    Pilih Semua
-                  </Button>
-                )}
+                {formAktivitasStaffList &&
+                  formAktivitasStaffList.length > 0 &&
+                  namaSelected.length == namaTempSelected.length &&
+                  namaSelected.length != 0 && (
+                    <Button
+                      type="link"
+                      onClick={handleOnUnSelectAllStaff}
+                      className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
+                    >
+                      Hapus Semua
+                    </Button>
+                  )}
+                {formAktivitasStaffList &&
+                  formAktivitasStaffList.length > 0 &&
+                  namaSelected.length > namaTempSelected.length && (
+                    <Button
+                      type="link"
+                      onClick={handleOnSelectAllStaff}
+                      className="absolute -top-8 right-0 p-0 m-0 border text-primary100 hover:text-primary75 active:text-primary75 focus:text-primary75"
+                    >
+                      Pilih Semua
+                    </Button>
+                  )}
 
                 {!formAktivitasStaffList && !formAktivitasStaffListLoading && (
                   <span className="text-mono50">
@@ -350,7 +401,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                       Form Aktivitas ini belum memiliki staff.
                     </span>
                   )}
-
                 {formAktivitasStaffList && (
                   <Form.Item name="selected_staff" rules={[{ required: true }]}>
                     <Checkbox.Group>
@@ -359,6 +409,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                           <Checkbox
                             key={user.id}
                             value={user.name}
+                            onChange={handleOnSelectStaff}
                             className="flex items-center"
                           >
                             <div className="flex items-center space-x-4">
