@@ -224,32 +224,21 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     ]);
   }, [form, formAktivitasStaffList, exportAsAdmin]);
 
-  const handleOnSelectStaff = useCallback(
-    (event) => {
-      if (!exportAsAdmin) {
-        return;
-      }
-      const { value } = event;
-      let dataNamaTemp = [];
-      if (namaSelected.length > 1) {
-        if (namaTempSelected.length > 0) {
-          namaTempSelected.map((data) => {
-            if (value.target.checked) {
-              dataNamaTemp.push(data);
-            } else {
-              if (data != value.target.value) {
-                dataNamaTemp.push(data);
-              }
-            }
-          });
-        }
+  const handleOnSelectStaff = (value) => {
+    let dataNamaTemp = namaTempSelected;
+    if (dataNamaTemp.length == 0) {
+      dataNamaTemp.push(value.target.value);
+    } else if (namaSelected.length > 1) {
+      if (value.target.checked == false) {
+        dataNamaTemp = dataNamaTemp.filter(function (item) {
+          return item !== value.target.value;
+        });
       } else {
-        if (value.target.checked) dataNamaTemp.push(value.target.value);
+        dataNamaTemp.push(value.target.value);
       }
-      setNamaTempSelected(dataNamaTemp);
-    },
-    [exportAsAdmin]
-  );
+    }
+    setNamaTempSelected([...dataNamaTemp]);
+  };
   /**
    * Effect untuk set form default field values.
    */
@@ -311,9 +300,12 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   useEffect(() => {
     let dataNama = [];
     formAktivitasStaffList?.map(({ id, name }) => dataNama.push(name));
-    setNamaSelected(dataNama);
-    setNamaTempSelected(dataNama);
+    if (dataNama.length > 0) {
+      setNamaTempSelected(dataNama);
+      setNamaSelected(dataNama);
+    }
   }, [formAktivitasStaffList]);
+
   return (
     <DrawerCore
       visible={visible}
@@ -403,14 +395,20 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                     </span>
                   )}
                 {formAktivitasStaffList && (
-                  <Form.Item name="selected_staff" rules={[{ required: true }]}>
+                  <Form.Item
+                    name="selected_staff"
+                    rules={[{ required: true }]}
+                    shouldUpdate
+                  >
                     <Checkbox.Group>
                       <div className="flex flex-col space-x-0 space-y-4">
                         {formAktivitasStaffList.map((user) => (
                           <Checkbox
                             key={user.id}
                             value={user.name}
-                            onChange={handleOnSelectStaff}
+                            onChange={(e) => {
+                              handleOnSelectStaff(e);
+                            }}
                             className="flex items-center"
                           >
                             <div className="flex items-center space-x-4">
