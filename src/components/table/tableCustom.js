@@ -1435,9 +1435,9 @@ const TableCustomRecruitmentCandidate = ({
           onMouseOver: () => {
             setrowstate(record.id);
           },
-          onClick: () => {
-            rt.push(`/admin/recruitment/candidate/${record.id}`);
-          },
+          // onClick: () => {
+          //   rt.push(`/admin/recruitment/candidate/${record.id}`);
+          // },
         };
       }}
       rowClassName={(record, idx) => {
@@ -1559,19 +1559,120 @@ const TableCustomRecruitmentRole = ({
           }
         }
       }}
-      onRow={(record, rowIndex) => {
-        return {
-          onMouseOver: () => {
-            setrowstate(record.id);
-          },
-          // onClick: () => {
-          //   rt.push(`/admin/recruitment/candidate/${record.id}`);
-          // },
-        };
+    />
+  );
+};
+
+const TableCustomRecruitmentStage = ({
+  dataSource,
+  setDataSource,
+  columns,
+  loading,
+  pageSize,
+  total,
+  setpraloading,
+  initProps,
+  setpage,
+  pagefromsearch,
+  setdataraw,
+  setsorting,
+  sorting,
+  searching,
+  roleTypeId,
+}) => {
+  const rt = useRouter();
+  const [rowstate, setrowstate] = useState(0);
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      rowKey={(record) => record.id}
+      loading={loading}
+      scroll={{ x: 200 }}
+      pagination={{
+        current: pagefromsearch,
+        pageSize: pageSize,
+        total: total,
+        onChange: (page, pageSize) => {
+          setpraloading(true);
+          setpage(page);
+          fetch(
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&rows=${pageSize}&page=${page}`,
+            {
+              method: `GET`,
+              headers: {
+                Authorization: JSON.parse(initProps),
+              },
+            }
+          )
+            .then((res) => res.json())
+            .then((res2) => {
+              setdataraw(res2.data);
+              setDataSource(res2.data.data);
+              setpraloading(false);
+            });
+        },
       }}
-      rowClassName={(record, idx) => {
-        return `${record.id === rowstate && `cursor-pointer`}
-        }`;
+      onChange={(pagination, filters, sorter, extra) => {
+        if (extra.action === "sort") {
+          if (sorter.column) {
+            setpraloading(true);
+            setsorting({
+              sort_by: sorter.column.dataIndex,
+              sort_type: sorter.order === "ascend" ? "asc" : "desc",
+            });
+            fetch(
+              `${
+                process.env.NEXT_PUBLIC_BACKEND_URL
+              }/getRecruitmentStages?sort_by=${
+                sorter.column.dataIndex
+              }&sort_type=${
+                sorter.order === "ascend" ? "asc" : "desc"
+              }&keyword=${searching}&rows=${pagination.pageSize}&page=${
+                pagination.current
+              }`,
+              {
+                method: `GET`,
+                headers: {
+                  Authorization: JSON.parse(initProps),
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then((res2) => {
+                setdataraw(res2.data);
+                setDataSource(res2.data.data);
+                setpraloading(false);
+              })
+              .catch((err) => {
+                // console.log(err);
+                notification.error({
+                  message: `${err.message}`,
+                  duration: 3,
+                });
+                setpraloading(false);
+              });
+          } else {
+            setpraloading(true);
+            setsorting({ sort_by: "", sort_type: "" });
+            fetch(
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?sort_by=&sort_type=
+                  &keyword=${searching}&rows=${pagination.pageSize}&page=${pagination.current}`,
+              {
+                method: `GET`,
+                headers: {
+                  Authorization: JSON.parse(initProps),
+                },
+              }
+            )
+              .then((res) => res.json())
+              .then((res2) => {
+                setdataraw(res2.data);
+                setDataSource(res2.data.data);
+                setpraloading(false);
+              });
+          }
+        }
       }}
     />
   );
@@ -1592,4 +1693,5 @@ export {
   TableCustomCandidate,
   TableCustomRecruitmentCandidate,
   TableCustomRecruitmentRole,
+  TableCustomRecruitmentStage,
 };
