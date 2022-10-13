@@ -50,7 +50,7 @@ const SetupMenu = ({ menu }) => {
           icon={<ClickIconSvg color={"#808080"} />}
           title="Registration"
         >
-          <Link href="/admin/recruitment/registration">Jalur Daftar</Link>
+          <Link href="#">Jalur Daftar</Link>
         </Menu.Item>
       )}
 
@@ -60,7 +60,7 @@ const SetupMenu = ({ menu }) => {
           icon={<TrendingUpIconSvg color={"#808080"} />}
           title="Stage"
         >
-          <Link href="/admin/recruitment/stage">Stage</Link>
+          <Link href="#">Stage</Link>
         </Menu.Item>
       )}
 
@@ -70,7 +70,7 @@ const SetupMenu = ({ menu }) => {
           icon={<InfoSquareIconSvg color={"#808080"} />}
           title="Status"
         >
-          <Link href="/admin/recruitment/status">Status</Link>
+          <Link href="#">Status</Link>
         </Menu.Item>
       )}
 
@@ -80,7 +80,7 @@ const SetupMenu = ({ menu }) => {
           icon={<EmailIconSvg color={"#808080"} />}
           title="Template"
         >
-          <Link href="/admin/recruitment/template">Template Email</Link>
+          <Link href="#">Template Email</Link>
         </Menu.Item>
       )}
     </Menu>
