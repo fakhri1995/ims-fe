@@ -1,20 +1,25 @@
 import { Form, Input, Select, Spin, notification } from "antd";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { permissionWarningNotification } from "../../../lib/helper";
+import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
+import { InputRequired } from "../../input";
+import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
-const DrawerRoleUpdate = ({
+const DrawerStageUpdate = ({
   id,
   visible,
   onvisible,
   initProps,
   trigger,
   setRefresh,
-  isAllowedToGetRole,
-  isAllowedToUpdateRole,
-  dataRoleTypes,
+  isAllowedToGetStage,
+  isAllowedToUpdateStage,
   setLoadingUpdate,
   loadingUpdate,
   onClickDelete,
@@ -26,38 +31,37 @@ const DrawerRoleUpdate = ({
   const [instanceForm] = Form.useForm();
 
   // USESTATE
-  const [dataRole, setDataRole] = useState({
+  const [dataStage, setDataStage] = useState({
     id: null,
     name: "",
-    alias: "",
+    description: "",
     recruitments_count: 0,
-    recruitment_role_type_id: null,
   });
-  const [loadingDataRole, setLoadingDataRole] = useState(false);
+  const [loadingDataStage, setLoadingDataStage] = useState(false);
   const [disabledUpdate, setDisabledUpdate] = useState(true);
 
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataRole.name !== "" && dataRole.recruitment_role_type_id !== null) {
+    if (dataStage.name !== "" && dataStage.description !== "") {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
     }
-  }, [dataRole]);
+  }, [dataStage]);
 
-  // Get role data
+  // Get stage data
   useEffect(() => {
-    if (!isAllowedToGetRole) {
-      setLoadingDataRole(false);
-      permissionWarningNotification("Mendapatkan", "Data Role");
+    if (!isAllowedToGetStage) {
+      setLoadingDataStage(false);
+      permissionWarningNotification("Mendapatkan", "Data Stage");
       return;
     }
 
     if (trigger !== -1) {
-      setLoadingDataRole(true);
+      setLoadingDataStage(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRole?id=${id.current}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStage?id=${id.current}`,
         {
           method: `GET`,
           headers: {
@@ -67,49 +71,47 @@ const DrawerRoleUpdate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          setDataRole((prev) => ({
+          setDataStage((prev) => ({
             ...prev,
             id: res2.data.id,
             name: res2.data.name,
-            alias: res2.data.alias,
+            description: res2.data.description,
             recruitments_count: res2.data.recruitments_count,
-            recruitment_role_type_id: res2.data.recruitment_role_type_id,
           }));
-          setLoadingDataRole(false);
+          setLoadingDataStage(false);
         });
     }
-  }, [trigger, isAllowedToGetRole]);
+  }, [trigger, isAllowedToGetStage]);
 
   //HANDLER
   const onChangeInput = (e) => {
-    setDataRole({
-      ...dataRole,
+    setDataStage({
+      ...dataStage,
       [e.target.name]: e.target.value,
     });
   };
 
   const clearData = () => {
-    setDataRole({
+    setDataStage({
       id: null,
       name: "",
-      alias: "",
-      recruitment_role_type_id: null,
+      description: "",
     });
   };
 
-  const handleUpdateRole = () => {
-    if (!isAllowedToUpdateRole) {
-      permissionWarningNotification("Mengubah", "Role Rekrutmen");
+  const handleUpdateStage = () => {
+    if (!isAllowedToUpdateStage) {
+      permissionWarningNotification("Mengubah", "Stage Rekrutmen");
       return;
     }
     setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitmentRole`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitmentStage`, {
       method: "PUT",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataRole),
+      body: JSON.stringify(dataStage),
     })
       .then((res) => res.json())
       .then((res2) => {
@@ -125,7 +127,7 @@ const DrawerRoleUpdate = ({
         } else {
           setLoadingUpdate(false);
           notification["error"]({
-            message: `Gagal mengubah role. ${res2.message}`,
+            message: `Gagal mengubah stage. ${res2.message}`,
             duration: 3,
           });
         }
@@ -133,7 +135,7 @@ const DrawerRoleUpdate = ({
       .catch((err) => {
         setLoadingUpdate(false);
         notification["error"]({
-          message: `Gagal mengubah role. ${err.message}`,
+          message: `Gagal mengubah stage. ${err.message}`,
           duration: 3,
         });
       });
@@ -142,23 +144,23 @@ const DrawerRoleUpdate = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={"Ubah Role"}
+      title={"Ubah Stage"}
       visible={visible}
       onClose={() => {
         clearData();
         onvisible(false);
       }}
-      buttonOkText={"Simpan Role"}
-      onClick={handleUpdateRole}
+      buttonOkText={"Simpan Stage"}
+      onClick={handleUpdateStage}
       disabled={disabledUpdate}
       buttonCancelText={
         <div className="flex flex-row space-x-2 items-center">
           <TrashIconSvg size={16} color={"#BF4A40"} />
-          <p>Hapus Role</p>
+          <p>Hapus Stage</p>
         </div>
       }
       onButtonCancelClicked={() => {
-        onClickDelete(dataRole);
+        onClickDelete(dataStage);
         onvisible(false);
       }}
     >
@@ -185,52 +187,31 @@ const DrawerRoleUpdate = ({
             >
               <div>
                 <Input
-                  value={dataRole.name}
+                  value={dataStage.name}
                   name={"name"}
                   onChange={onChangeInput}
                 />
               </div>
             </Form.Item>
 
-            <Form.Item label="Alias" name={"alias"} className="col-span-2">
-              <div>
-                <Input
-                  value={dataRole.alias}
-                  name={"alias"}
-                  onChange={onChangeInput}
-                />
-              </div>
-            </Form.Item>
-
             <Form.Item
-              label="Tipe"
-              name={"recruitment_role_type_id"}
+              label="Deskripsi"
+              name={"description"}
               rules={[
                 {
                   required: true,
-                  message: "Tipe role wajib diisi",
+                  message: "Deskripsi wajib diisi",
                 },
               ]}
               className="col-span-2"
             >
               <div>
-                <Select
-                  placeholder="Pilih tipe.."
-                  style={{ width: `100%` }}
-                  value={dataRole.recruitment_role_type_id}
-                  onChange={(value) => {
-                    setDataRole({
-                      ...dataRole,
-                      recruitment_role_type_id: value,
-                    });
-                  }}
-                >
-                  {dataRoleTypes?.map((type) => (
-                    <Select.Option key={type.id} value={type.id}>
-                      {type.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                <Input.TextArea
+                  value={dataStage.description}
+                  name={"description"}
+                  onChange={onChangeInput}
+                  rows={4}
+                />
               </div>
             </Form.Item>
           </Form>
@@ -240,4 +221,4 @@ const DrawerRoleUpdate = ({
   );
 };
 
-export default DrawerRoleUpdate;
+export default DrawerStageUpdate;

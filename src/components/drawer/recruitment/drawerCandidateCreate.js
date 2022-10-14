@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import { ASSESSMENT_ADD } from "lib/features";
-import { RECRUITMENT_JALUR_DAFTAR_LIST_GET } from "lib/features";
+import { RECRUITMENT_JALUR_DAFTARS_LIST_GET } from "lib/features";
 
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
@@ -35,7 +35,7 @@ const DrawerCandidateCreate = ({
     return null;
   }
   const isAllowedToGetRegistPlatformList = hasPermission(
-    RECRUITMENT_JALUR_DAFTAR_LIST_GET
+    RECRUITMENT_JALUR_DAFTARS_LIST_GET
   );
 
   const [instanceForm] = Form.useForm();
@@ -288,6 +288,10 @@ const DrawerCandidateCreate = ({
                       recruitment_role_id: value,
                     });
                   }}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
                 >
                   {dataRoleList?.map((role) => (
                     <Select.Option key={role.id} value={role.id}>
@@ -300,6 +304,7 @@ const DrawerCandidateCreate = ({
 
             <Form.Item
               label="Jalur Daftar"
+              name={"jalur_daftar"}
               rules={[
                 {
                   required: true,
@@ -331,6 +336,7 @@ const DrawerCandidateCreate = ({
 
             <Form.Item
               label="Stage"
+              name={"stage"}
               rules={[
                 {
                   required: true,
@@ -360,6 +366,7 @@ const DrawerCandidateCreate = ({
 
             <Form.Item
               label="Status"
+              name={"status"}
               rules={[
                 {
                   required: true,
@@ -380,7 +387,13 @@ const DrawerCandidateCreate = ({
                 >
                   {dataStatusList?.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
-                      {status.name}
+                      <div className="flex flex-row items-center space-x-2">
+                        <div
+                          className="rounded-full w-4 h-4"
+                          style={{ backgroundColor: `${status.color}` }}
+                        />
+                        <p>{status.name}</p>
+                      </div>
                     </Select.Option>
                   ))}
                 </Select>

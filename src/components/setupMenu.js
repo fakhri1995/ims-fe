@@ -5,11 +5,11 @@ import React from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  MENU_SETUP_REGISTRATION,
-  MENU_SETUP_ROLE,
-  MENU_SETUP_STAGE,
-  MENU_SETUP_STATUS,
-  MENU_SETUP_TEMPLATE,
+  RECRUITMENT_SETUP_REGISTRATION,
+  RECRUITMENT_SETUP_ROLE,
+  RECRUITMENT_SETUP_STAGE,
+  RECRUITMENT_SETUP_STATUS,
+  RECRUITMENT_SETUP_TEMPLATE,
 } from "lib/features";
 
 import {
@@ -33,8 +33,9 @@ const SetupMenu = ({ menu }) => {
       mode="inline"
       defaultSelectedKeys={[menu]}
       triggerSubMenuAction="hover"
+      inlineIndent={10}
     >
-      {hasPermission(MENU_SETUP_ROLE) && (
+      {hasPermission(RECRUITMENT_SETUP_ROLE) && (
         <Menu.Item
           key="1"
           icon={<BriefcaseIconSvg color={"#808080"} />}
@@ -44,7 +45,7 @@ const SetupMenu = ({ menu }) => {
         </Menu.Item>
       )}
 
-      {hasPermission(MENU_SETUP_REGISTRATION) && (
+      {hasPermission(RECRUITMENT_SETUP_REGISTRATION) && (
         <Menu.Item
           key="2"
           icon={<ClickIconSvg color={"#808080"} />}
@@ -54,17 +55,17 @@ const SetupMenu = ({ menu }) => {
         </Menu.Item>
       )}
 
-      {hasPermission(MENU_SETUP_STAGE) && (
+      {hasPermission(RECRUITMENT_SETUP_STAGE) && (
         <Menu.Item
           key="3"
           icon={<TrendingUpIconSvg color={"#808080"} />}
           title="Stage"
         >
-          <Link href="#">Stage</Link>
+          <Link href="/admin/recruitment/stage">Stage</Link>
         </Menu.Item>
       )}
 
-      {hasPermission(MENU_SETUP_STATUS) && (
+      {hasPermission(RECRUITMENT_SETUP_STATUS) && (
         <Menu.Item
           key="4"
           icon={<InfoSquareIconSvg color={"#808080"} />}
@@ -74,7 +75,7 @@ const SetupMenu = ({ menu }) => {
         </Menu.Item>
       )}
 
-      {hasPermission(MENU_SETUP_TEMPLATE) && (
+      {hasPermission(RECRUITMENT_SETUP_TEMPLATE) && (
         <Menu.Item
           key="5"
           icon={<EmailIconSvg color={"#808080"} />}

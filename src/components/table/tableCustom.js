@@ -1316,7 +1316,9 @@ const TableCustomRecruitmentCandidate = ({
   setsorting,
   sorting,
   searching,
-  roleId,
+  selectedRoleId,
+  selectedStage,
+  selectedStatus,
   isBulk,
   setSelectedRecruitments,
 }) => {
@@ -1325,7 +1327,11 @@ const TableCustomRecruitmentCandidate = ({
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRecruitments(selectedRows);
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+      // console.log(
+      //   `selectedRowKeys: ${selectedRowKeys}`,
+      //   "selectedRows: ",
+      //   selectedRows
+      // );
     },
     // getCheckboxProps: (record) => ({
     //   disabled: record.name === 'Disabled User',
@@ -1354,7 +1360,7 @@ const TableCustomRecruitmentCandidate = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${roleId}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -1381,7 +1387,7 @@ const TableCustomRecruitmentCandidate = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getRecruitments?recruitment_role_id=${roleId}&sort_by=${
+              }/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -1413,7 +1419,7 @@ const TableCustomRecruitmentCandidate = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${roleId}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
@@ -1436,7 +1442,7 @@ const TableCustomRecruitmentCandidate = ({
             setrowstate(record.id);
           },
           // onClick: () => {
-          //   rt.push(`/admin/recruitment/candidate/${record.id}`);
+          //   rt.push(`/admin/recruitment/${record.id}`);
           // },
         };
       }}

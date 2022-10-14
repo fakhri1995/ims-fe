@@ -1,4 +1,6 @@
 import { Input, Select, notification } from "antd";
+// import DrawerStageCreate from "../../../../components/drawer/recruitment/drawerStageCreate";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -9,19 +11,17 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  RECRUITMENT_ROLES_GET,
-  RECRUITMENT_ROLES_LIST_GET,
-  RECRUITMENT_ROLE_ADD,
-  RECRUITMENT_ROLE_DELETE,
-  RECRUITMENT_ROLE_GET,
-  RECRUITMENT_ROLE_TYPES_GET,
-  RECRUITMENT_ROLE_UPDATE,
+  RECRUITMENT_STAGES_GET,
+  RECRUITMENT_STAGES_LIST_GET,
+  RECRUITMENT_STAGE_ADD,
+  RECRUITMENT_STAGE_DELETE,
+  RECRUITMENT_STAGE_GET,
+  RECRUITMENT_STAGE_UPDATE,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
-import DrawerRoleCreate from "../../../../components/drawer/recruitment/drawerRoleCreate";
-import DrawerRoleUpdate from "../../../../components/drawer/recruitment/drawerRoleUpdate";
+import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerStageUpdate";
 import {
   EditIconSvg,
   LayoutGridAddSvg,
@@ -35,14 +35,20 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import SetupMenu from "../../../../components/setupMenu";
-import {
-  TableCustomRecruitmentRole,
-  TableCustomTickets,
-} from "../../../../components/table/tableCustom";
+import { TableCustomRecruitmentStage } from "../../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
-const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
+const DrawerStageCreate = dynamic(
+  () => {
+    return import(
+      "../../../../components/drawer/recruitment/drawerStageCreate"
+    );
+  },
+  { ssr: false }
+);
+
+const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   /**
    * Dependencies
    */
@@ -51,16 +57,15 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetRolesList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
-  const isAllowedToGetRoles = hasPermission(RECRUITMENT_ROLES_GET);
-  const isAllowedToGetRoleTypes = hasPermission(RECRUITMENT_ROLE_TYPES_GET);
-  const isAllowedToGetRole = hasPermission(RECRUITMENT_ROLE_GET);
-  const isAllowedToAddRole = hasPermission(RECRUITMENT_ROLE_ADD);
-  const isAllowedToUpdateRole = hasPermission(RECRUITMENT_ROLE_UPDATE);
-  const isAllowedToDeleteRole = hasPermission(RECRUITMENT_ROLE_DELETE);
-  const canUpdateRole = hasPermission([
-    RECRUITMENT_ROLE_UPDATE,
-    RECRUITMENT_ROLE_GET,
+  const isAllowedToGetStagesList = hasPermission(RECRUITMENT_STAGES_LIST_GET);
+  const isAllowedToGetStages = hasPermission(RECRUITMENT_STAGES_GET);
+  const isAllowedToGetStage = hasPermission(RECRUITMENT_STAGE_GET);
+  const isAllowedToAddStage = hasPermission(RECRUITMENT_STAGE_ADD);
+  const isAllowedToUpdateStage = hasPermission(RECRUITMENT_STAGE_UPDATE);
+  const isAllowedToDeleteStage = hasPermission(RECRUITMENT_STAGE_DELETE);
+  const canUpdateStage = hasPermission([
+    RECRUITMENT_STAGE_UPDATE,
+    RECRUITMENT_STAGE_GET,
   ]);
 
   // 1. Init
@@ -68,15 +73,13 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const pathArr = rt.pathname.split("/").slice(1);
 
   // 2. Use state
-  // 2.1. Table Role
-  const [loadingRoles, setLoadingRoles] = useState(false);
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [loadingRoleTypes, setLoadingRoleTypes] = useState(false);
+  // 2.1. Table Stage
+  const [loadingStages, setLoadingStages] = useState(false);
+  const [loadingStageList, setLoadingStageList] = useState(false);
 
-  const [dataRoles, setDataRoles] = useState([]);
-  const [dataRoleList, setDataRoleList] = useState([]);
-  const [dataRoleTypes, setDataRoleTypes] = useState([]);
-  const [dataRawRoles, setDataRawRoles] = useState({
+  const [dataStages, setDataStages] = useState([]);
+  const [dataStageList, setDataStageList] = useState([]);
+  const [dataRawStages, setDataRawStages] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -91,29 +94,27 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
 
-  const [pageRoles, setPageRoles] = useState(1);
-  const [rowsRoles, setRowsRoles] = useState(10);
-  const [sortingRoles, setSortingRoles] = useState({
+  const [pageStages, setPageStages] = useState(1);
+  const [rowsStages, setRowsStages] = useState(10);
+  const [sortingStages, setSortingStages] = useState({
     sort_by: "",
     sort_type: "",
   });
-  // const typeOrder = ['Internship', 'Contract', 'Part Time', 'Full Time']
 
-  const [searchingFilterRoles, setSearchingFilterRoles] = useState("");
-  const [roleTypeId, setRoleTypeId] = useState(0);
+  const [searchingFilterStages, setSearchingFilterStages] = useState("");
   const [refresh, setRefresh] = useState(-1);
 
-  // 2.2. Create Role
+  // 2.2. Create Stage
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
 
-  // 2.3. Update Role
+  // 2.3. Update Stage
   const [isUpdateDrawerShown, setUpdateDrawerShown] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const tempIdUpdate = useRef(-1);
   const [triggerUpdate, setTriggerUpdate] = useState(-1);
 
-  // 2.4. Delete Role
+  // 2.4. Delete Stage
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({
@@ -123,19 +124,19 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 3. UseEffect
-  // 3.1. Get Roles List
+  // 3.1. Get Stages List
   useEffect(() => {
-    if (!isAllowedToGetRolesList) {
+    if (!isAllowedToGetStagesList) {
       permissionWarningNotification(
         "Mendapatkan",
-        "Data Recruitment Role List"
+        "Data Recruitment Stage List"
       );
-      setLoadingRoleList(false);
+      setLoadingStageList(false);
       return;
     }
 
-    setLoadingRoleList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
+    setLoadingStageList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStagesList`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -144,14 +145,14 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRoleList(res2.data);
+          setDataStageList(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingRoleList(false);
+        setLoadingStageList(false);
       })
       .catch((err) => {
         // console.log(err);
@@ -159,21 +160,21 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingRoleList(false);
+        setLoadingStageList(false);
       });
-  }, [isAllowedToGetRolesList, refresh]);
+  }, [isAllowedToGetStagesList, refresh]);
 
-  // 3.2. Get Roles
+  // 3.2. Get Stages
   useEffect(() => {
-    if (!isAllowedToGetRoles) {
-      permissionWarningNotification("Mendapatkan", "Daftar Role");
-      setLoadingRoles(false);
+    if (!isAllowedToGetStages) {
+      permissionWarningNotification("Mendapatkan", "Daftar Stage");
+      setLoadingStages(false);
       return;
     }
 
-    setLoadingRoles(true);
+    setLoadingStages(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoles?rows=10`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?rows=10`,
       {
         method: `GET`,
         headers: {
@@ -184,69 +185,30 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawRoles(res2.data);
-          setDataRoles(res2.data.data);
+          setDataRawStages(res2.data);
+          setDataStages(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingRoles(false);
+        setLoadingStages(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingRoles(false);
+        setLoadingStages(false);
       });
-  }, [isAllowedToGetRoles, refresh]);
-
-  // 3.3. Get Role Types
-  useEffect(() => {
-    if (!isAllowedToGetRoleTypes) {
-      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
-      setLoadingRoleTypes(false);
-      return;
-    }
-
-    setLoadingRoleTypes(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRoleTypes(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingRoleTypes(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingRoleTypes(false);
-      });
-  }, [isAllowedToGetRoleTypes, refresh]);
+  }, [isAllowedToGetStages, refresh]);
 
   // 4. Event
-  const onFilterRoles = () => {
-    setLoadingRoles(true);
+  const onFilterStage = () => {
+    setLoadingStages(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoles?sort_by=${sortingRoles.sort_by}&sort_type=${sortingRoles.sort_type}&recruitment_role_type_id=${roleTypeId}&keyword=${searchingFilterRoles}&rows=${rowsRoles}&page=${pageRoles}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?sort_by=${sortingStages.sort_by}&sort_type=${sortingStages.sort_type}&keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
       {
         method: `GET`,
         headers: {
@@ -257,26 +219,26 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawRoles(res2.data);
-          setDataRoles(res2.data.data);
+          setDataRawStages(res2.data);
+          setDataStages(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingRoles(false);
+        setLoadingStages(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingRoles(false);
+        setLoadingStages(false);
       });
   };
 
-  const { onKeyPressHandler } = createKeyPressHandler(onFilterRoles, "Enter");
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterStage, "Enter");
 
   const onOpenDeleteModal = (data) => {
     setModalDelete(true);
@@ -288,13 +250,13 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   const handleDelete = () => {
-    if (!isAllowedToDeleteRole) {
-      permissionWarningNotification("Menghapus", "Role Rekrutmen");
+    if (!isAllowedToDeleteStage) {
+      permissionWarningNotification("Menghapus", "Stage Rekrutmen");
       return;
     }
     setLoadingDelete(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitmentRole?id=${dataDelete.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitmentStage?id=${dataDelete.id}`,
       {
         method: "DELETE",
         headers: {
@@ -319,7 +281,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus role rekrutmen. ${err.response}`,
+          message: `Gagal menghapus stage rekrutmen. ${err.response}`,
           duration: 3,
         });
         setLoadingDelete(false);
@@ -328,7 +290,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // Table's columns
-  const columnsRole = [
+  const columnsStage = [
     {
       title: "No",
       dataIndex: "num",
@@ -336,7 +298,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex justify-center">
-              {dataRawRoles?.from + index}
+              {dataRawStages?.from + index}
             </div>
           ),
         };
@@ -350,30 +312,18 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.name}</>,
         };
       },
-      sorter: isAllowedToGetRoles
+      sorter: isAllowedToGetStages
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
     {
-      title: "Alias",
-      dataIndex: "alias",
+      title: "Deskripsi",
+      dataIndex: "description",
       render: (text, record, index) => {
         return {
-          children: <>{record.alias}</>,
+          children: <div className="xl:w-60">{record.description}</div>,
         };
       },
-    },
-    {
-      title: "Tipe",
-      dataIndex: "role_type",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.type?.name}</>,
-        };
-      },
-      sorter: isAllowedToGetRoles
-        ? (a, b) => a.type?.name > b.type?.name
-        : false,
     },
     {
       title: "Jumlah Kandidat",
@@ -383,7 +333,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.recruitments_count}</>,
         };
       },
-      sorter: isAllowedToGetRoles
+      sorter: isAllowedToGetStages
         ? (a, b) => a.recruitments_count > b.recruitments_count
         : false,
     },
@@ -395,8 +345,8 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex items-center space-x-2">
               <ButtonSys
-                type={canUpdateRole ? "default" : "primary"}
-                disabled={!canUpdateRole}
+                type={canUpdateStage ? "default" : "primary"}
+                disabled={!canUpdateStage}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -407,9 +357,9 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <EditIconSvg size={15} color={`#35763B`} />
               </ButtonSys>
               <ButtonSys
-                type={isAllowedToDeleteRole ? "default" : "primary"}
+                type={isAllowedToDeleteStage ? "default" : "primary"}
                 color="danger"
-                disabled={!isAllowedToDeleteRole}
+                disabled={!isAllowedToDeleteStage}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
@@ -435,79 +385,54 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="flex flex-col" id="mainWrapper">
         <div className="grid grid-cols-5 px-5 gap-6">
-          <SetupMenu menu={"1"} />
+          <SetupMenu menu={"3"} />
 
-          {/* Table Semua Role */}
+          {/* Table Semua Stage */}
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Role ({dataRoleList.length})
+                Semua Stage ({dataStageList.length})
               </h4>
 
               <ButtonSys
-                type={isAllowedToAddRole ? "default" : "primary"}
+                type={isAllowedToAddStage ? "default" : "primary"}
                 onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddRole}
+                disabled={!isAllowedToAddStage}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
                   <LayoutGridAddSvg size={16} color="#35763B" />
-                  <p>Tambah Role</p>
+                  <p>Tambah Stage</p>
                 </div>
               </ButtonSys>
             </div>
 
             {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-2 items-center mb-4">
+            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
               {/* Search by keyword (kata kunci) */}
-              <div className="w-7/12">
+              <div className="w-11/12">
                 <Input
                   value={
-                    searchingFilterRoles === "" ? null : searchingFilterRoles
+                    searchingFilterStages === "" ? null : searchingFilterStages
                   }
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
-                      setSearchingFilterRoles("");
+                      setSearchingFilterStages("");
                     } else {
-                      setSearchingFilterRoles(e.target.value);
+                      setSearchingFilterStages(e.target.value);
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetRoles}
+                  disabled={!isAllowedToGetStages}
                 />
-              </div>
-
-              {/* Filter by role type (dropdown) */}
-              <div className="w-3/12">
-                <Select
-                  value={roleTypeId === 0 ? null : roleTypeId}
-                  allowClear
-                  name={`role_type`}
-                  disabled={!isAllowedToGetRoleTypes}
-                  defaultValue={0}
-                  placeholder="Semua Tipe"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setRoleTypeId(0)
-                      : setRoleTypeId(value);
-                  }}
-                >
-                  <Select.Option value={0}>Semua Tipe</Select.Option>
-                  {dataRoleTypes.map((type) => (
-                    <Select.Option key={type.id} value={type.id}>
-                      {type.name}
-                    </Select.Option>
-                  ))}
-                </Select>
               </div>
 
               <ButtonSys
                 type={`primary`}
-                onClick={onFilterRoles}
-                disabled={!isAllowedToGetRoles}
+                onClick={onFilterStage}
+                disabled={!isAllowedToGetStages}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -517,59 +442,55 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
             {/* End: Search criteria */}
 
-            <TableCustomRecruitmentRole
-              dataSource={dataRoles}
-              setDataSource={setDataRoles}
-              columns={columnsRole}
-              loading={loadingRoles}
-              setpraloading={setLoadingRoles}
-              pageSize={rowsRoles}
-              total={dataRawRoles?.total}
+            <TableCustomRecruitmentStage
+              dataSource={dataStages}
+              setDataSource={setDataStages}
+              columns={columnsStage}
+              loading={loadingStages}
+              setpraloading={setLoadingStages}
+              pageSize={rowsStages}
+              total={dataRawStages?.total}
               initProps={initProps}
-              setpage={setPageRoles}
-              pagefromsearch={pageRoles}
-              setdataraw={setDataRawRoles}
-              setsorting={setSortingRoles}
-              sorting={sortingRoles}
-              searching={searchingFilterRoles}
-              roleTypeId={roleTypeId}
-              // onOpenReadDrawer={onOpenReadDrawer}
+              setpage={setPageStages}
+              pagefromsearch={pageStages}
+              setdataraw={setDataRawStages}
+              setsorting={setSortingStages}
+              sorting={sortingStages}
+              searching={searchingFilterStages}
             />
           </div>
         </div>
       </div>
 
-      <AccessControl hasPermission={RECRUITMENT_ROLE_ADD}>
-        <DrawerRoleCreate
+      <AccessControl hasPermission={RECRUITMENT_STAGE_ADD}>
+        <DrawerStageCreate
           visible={isCreateDrawerShown}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
           setRefresh={setRefresh}
-          isAllowedToAddRole={isAllowedToAddRole}
-          dataRoleTypes={dataRoleTypes}
+          isAllowedToAdd={isAllowedToAddStage}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_ROLE_UPDATE}>
-        <DrawerRoleUpdate
+      <AccessControl hasPermission={RECRUITMENT_STAGE_UPDATE}>
+        <DrawerStageUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
           initProps={initProps}
           onvisible={setUpdateDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetRole={isAllowedToGetRole}
-          isAllowedToUpdateRole={isAllowedToUpdateRole}
-          dataRoleTypes={dataRoleTypes}
+          isAllowedToGetStage={isAllowedToGetStage}
+          isAllowedToUpdateStage={isAllowedToUpdateStage}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_ROLE_DELETE}>
+      <AccessControl hasPermission={RECRUITMENT_STAGE_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
@@ -578,11 +499,12 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"role"}
+          itemName={"stage"}
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
-          Ada <strong>{dataDelete.recruitments_count}</strong> yang melamar role
+          Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
+          berada pada stage
           {"\n"}
           <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
           melanjutkan penghapusan?
@@ -633,4 +555,4 @@ export async function getServerSideProps({ req, res }) {
   };
 }
 
-export default RoleManagementIndex;
+export default StageManagementIndex;
