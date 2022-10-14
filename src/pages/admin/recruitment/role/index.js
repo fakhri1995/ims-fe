@@ -97,6 +97,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     sort_by: "",
     sort_type: "",
   });
+  // const typeOrder = ['Internship', 'Contract', 'Part Time', 'Full Time']
 
   const [searchingFilterRoles, setSearchingFilterRoles] = useState("");
   const [roleTypeId, setRoleTypeId] = useState(0);
@@ -206,7 +207,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     if (!isAllowedToGetRoleTypes) {
       permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
-      setLoad(false);
+      setLoadingRoleTypes(false);
       return;
     }
 
@@ -370,9 +371,9 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.type?.name}</>,
         };
       },
-      // sorter: isAllowedToGetRoles
-      //   ? (a, b) => a.stage.localeCompare(b.stage)
-      //   : false,
+      sorter: isAllowedToGetRoles
+        ? (a, b) => a.type?.name > b.type?.name
+        : false,
     },
     {
       title: "Jumlah Kandidat",
@@ -438,14 +439,15 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Table Semua Role */}
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
                 Semua Role ({dataRoleList.length})
               </h4>
 
               <ButtonSys
-                type={"default"}
+                type={isAllowedToAddRole ? "default" : "primary"}
                 onClick={() => setCreateDrawerShown(true)}
+                disabled={!isAllowedToAddRole}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
                   <LayoutGridAddSvg size={16} color="#35763B" />
@@ -480,11 +482,13 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by role type (dropdown) */}
               <div className="w-3/12">
                 <Select
+                  value={roleTypeId === 0 ? null : roleTypeId}
+                  allowClear
+                  name={`role_type`}
                   disabled={!isAllowedToGetRoleTypes}
                   defaultValue={0}
                   placeholder="Semua Tipe"
                   style={{ width: `100%` }}
-                  allowClear
                   onChange={(value) => {
                     typeof value === "undefined"
                       ? setRoleTypeId(0)
