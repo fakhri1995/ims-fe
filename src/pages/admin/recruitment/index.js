@@ -1,4 +1,3 @@
-import { SearchOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -12,7 +11,6 @@ import {
   TreeSelect,
   notification,
 } from "antd";
-import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -27,51 +25,43 @@ import { useAccessControl } from "contexts/access-control";
 import {
   RECRUITMENTS_GET,
   RECRUITMENT_ADD,
+  RECRUITMENT_COUNT_GET,
   RECRUITMENT_DELETE,
   RECRUITMENT_GET,
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
+  SIDEBAR_RECRUITMENT_SETUP,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import SettingsIcon from "assets/vectors/icon-settings.svg";
 
-import ButtonSys from "../../../../components/button";
-import DrawerCandidateCreate from "../../../../components/drawer/recruitment/drawerCandidateCreate";
+import ButtonSys from "../../../components/button";
+import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
 import {
-  AdjusmentsHorizontalIconSvg,
-  AlerttriangleIconSvg,
   CheckIconSvg,
   DownIconSvg,
   DownloadIconSvg,
   FileExportIconSvg,
   FilePlusIconSvg,
-  HistoryIconSvg,
   InfoSquareIconSvg,
   LayoutGridSvg,
-  ListSearchIconSvg,
   MailForwardIconSvg,
   PlusIconSvg,
   SearchIconSvg,
-  TableExportIconSvg,
-  TicketIconSvg,
   TrashIconSvg,
   TrendingUpIconSvg,
   UserPlusIconSvg,
   XIconSvg,
-} from "../../../../components/icon";
-import Layout from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
-import ModalCore from "../../../../components/modal/modalCore";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
-import { TableCustomRecruitmentCandidate } from "../../../../components/table/tableCustom";
-import { H1, H2, Label, Text } from "../../../../components/typography";
-import { createKeyPressHandler } from "../../../../lib/helper";
+} from "../../../components/icon";
+import Layout from "../../../components/layout-dashboard";
+import st from "../../../components/layout-dashboard.module.css";
+import ModalCore from "../../../components/modal/modalCore";
+import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
+import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";
+import { createKeyPressHandler } from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -103,18 +93,21 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetRecruitmentRolesList = hasPermission(
-    RECRUITMENT_ROLES_LIST_GET
-  );
+  const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
   const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
   const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
   const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
   const isAllowedToUpdateRecruitment = hasPermission(RECRUITMENT_UPDATE);
   const isAllowedToDeleteRecruitment = hasPermission(RECRUITMENT_DELETE);
+  const isAllowedToGetRecruitmentCount = hasPermission(RECRUITMENT_COUNT_GET);
   const canUpdateRecruitment = hasPermission([
     RECRUITMENT_UPDATE,
     RECRUITMENT_GET,
   ]);
+
+  const isAllowedToGetRecruitmentRolesList = hasPermission(
+    RECRUITMENT_ROLES_LIST_GET
+  );
 
   const isAllowedToGetRecruitmentStatusesList = hasPermission(
     RECRUITMENT_STATUSES_LIST_GET
@@ -129,10 +122,15 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. Use state
   // 2.1. Role List & Candidate Count
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [dataRoleList, setDataRoleList] = useState([]);
+  const [loadingDataCount, setLoadingDataCount] = useState(false);
+  const [dataCount, setDataCount] = useState({
+    recruitments_count: 0,
+    recruitment_roles_count: 0,
+  });
 
   // 2.2. Table Candidate Recruitment
+  const [loadingRoleList, setLoadingRoleList] = useState(false);
+  const [dataRoleList, setDataRoleList] = useState([]);
   const [loadingStageList, setLoadingStageList] = useState(false);
   const [dataStageList, setDataStageList] = useState([]);
   const [loadingStatusList, setLoadingStatusList] = useState(false);
@@ -163,7 +161,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
   const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
     useState("");
-  const [roleId, setRoleId] = useState(0);
+  const [selectedRoleId, setSelectedRoleId] = useState(0);
   const [selectedStage, setSelectedStage] = useState(0);
   const [selectedStatus, setSelectedStatus] = useState(0);
 
@@ -194,9 +192,47 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     recruitment_stage_id: null,
     recruitment_status_id: null,
   });
+  const [isUpdate, setIsUpdate] = useState(false);
 
   // 3. UseEffect
-  // 3.1. Get Recruitment Roles List
+  // 3.1. Get Recruitment Count
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentCount) {
+      permissionWarningNotification("Mendapatkan", "Data Recruitment Count");
+      setLoadingDataCount(false);
+      return;
+    }
+
+    setLoadingDataCount(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountRecruitment`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataCount(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingDataCount(false);
+      })
+      .catch((err) => {
+        // console.log(err);
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingDataCount(false);
+      });
+  }, [isAllowedToGetRecruitmentCount, refresh]);
+
+  // 3.2. Get Recruitment Roles List
   useEffect(() => {
     if (!isAllowedToGetRecruitmentRolesList) {
       permissionWarningNotification(
@@ -236,7 +272,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRecruitmentRolesList, refresh]);
 
-  // 3.2. Get Recruitments
+  // 3.3. Get Recruitments
   useEffect(() => {
     if (!isAllowedToGetRecruitments) {
       permissionWarningNotification("Mendapatkan", "Daftar Recruitment");
@@ -273,7 +309,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRecruitments, refresh]);
 
-  // 3.3. Get Stage List
+  // 3.4. Get Stage List
   useEffect(() => {
     if (!isAllowedToGetRecruitmentStagesList) {
       permissionWarningNotification("Mendapatkan", "Recruitment Stages List");
@@ -309,7 +345,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRecruitmentStagesList, refresh]);
 
-  // 3.3. Get Status List
+  // 3.5. Get Status List
   useEffect(() => {
     if (!isAllowedToGetRecruitmentStatusesList) {
       permissionWarningNotification("Mendapatkan", "Recruitment Statuses List");
@@ -345,6 +381,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRecruitmentStatusesList, refresh]);
 
+  // 3.6. Update if candidate's stage or status changed
+  useEffect(() => {
+    if (isUpdate & (dataUpdate.id !== null)) {
+      handleUpdateRecruitment();
+    }
+  }, [dataUpdate, isUpdate]);
+
   // 4. Event
   const onManageRecruitmentButtonClicked = useCallback(() => {
     rt.push("/admin/recruitment/role");
@@ -354,7 +397,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterRecruitments = () => {
     setLoadingRecruitments(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${roleId}&sort_by=${sortingRecruitments.sort_by}&sort_type=${sortingRecruitments.sort_type}&keyword=${searchingFilterRecruitments}&page=${pageRecruitments}&rows=${rowsRecruitment}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?sort_by=${sortingRecruitments.sort_by}&sort_type=${sortingRecruitments.sort_type}&recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&keyword=${searchingFilterRecruitments}&page=${pageRecruitments}&rows=${rowsRecruitment}`,
       {
         method: `GET`,
         headers: {
@@ -537,10 +580,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-1 py-1"
-          onClick={() => {
-            setModalBulk(true);
-            setBulkMode("stage");
-          }}
+          // onClick={() => {
+          //   setModalBulk(true);
+          //   setBulkMode("stage");
+          // }}
+          disabled={!isAllowedToUpdateRecruitment}
         >
           <TrendingUpIconSvg size={16} />
           <p className="mig-caption--medium text-mono30">Ubah Stage</p>
@@ -551,10 +595,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center
 					bg-transparent w-full px-1 py-1"
-          onClick={() => {
-            setModalBulk(true);
-            setBulkMode("status");
-          }}
+          // onClick={() => {
+          //   setModalBulk(true);
+          //   setBulkMode("status");
+          // }}
+          disabled={!isAllowedToUpdateRecruitment}
         >
           <InfoSquareIconSvg size={16} />
           <p className="mig-caption--medium text-mono30">Ubah Status</p>
@@ -584,6 +629,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-1 py-1"
           onClick={onOpenDeleteModal}
+          disabled={!isAllowedToDeleteRecruitment}
         >
           <TrashIconSvg size={16} />
           <p className="mig-caption--medium text-mono30">Hapus Kandidat</p>
@@ -594,26 +640,28 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // Table's columns
   const columnRecruitment = [
-    {
-      title: "No",
-      dataIndex: "num",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <div className="flex justify-center">
-              {dataRawRecruitments?.from + index}
-            </div>
-          ),
-        };
-      },
-    },
+    !isBulk
+      ? {
+          title: "No",
+          dataIndex: "num",
+          render: (text, record, index) => {
+            return {
+              children: (
+                <div className="flex justify-center">
+                  {dataRawRecruitments?.from + index}
+                </div>
+              ),
+            };
+          },
+        }
+      : {},
     {
       title: "Nama",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
           children: (
-            <div className="xl:w-60">{record.name ? record.name : ""}</div>
+            <div className="xl:w-40">{record.name ? record.name : ""}</div>
           ),
         };
       },
@@ -643,9 +691,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div>
               <select
                 disabled={!isAllowedToGetRecruitmentStagesList}
-                // placeholder="Semua Stage"
-                className={"border-none active:border-none"}
-                defaultValue={record.recruitment_stage_id}
+                className="rounded-md py-1"
+                value={record.recruitment_stage_id}
                 style={{ width: `100%` }}
                 onChange={(event) => {
                   // console.log(event.target.value)
@@ -661,9 +708,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     recruitment_stage_id: Number(event.target.value),
                   });
 
-                  setTimeout(() => {
-                    handleUpdateRecruitment();
-                  }, 1000);
+                  setIsUpdate(true);
                 }}
               >
                 {dataStageList.map((stage) => (
@@ -692,12 +737,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             <>
               <select
                 disabled={!isAllowedToGetRecruitmentStatusesList}
-                defaultValue={record.recruitment_status_id}
-                className="rounded-md px-4 py-1"
+                value={record.recruitment_status_id}
+                className="rounded-md py-1"
                 style={{
                   width: `100%`,
                   backgroundColor: `${record.status?.color}10`,
-                  // color: `${record.status?.color}`
+                  color: `${record.status?.color}`,
                 }}
                 onChange={(event) => {
                   setDataUpdate({
@@ -712,17 +757,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     recruitment_stage_id: record.recruitment_stage_id,
                   });
 
-                  setTimeout(() => {
-                    handleUpdateRecruitment();
-                  }, 1000);
+                  setIsUpdate(true);
                 }}
               >
                 {dataStatusList.map((status) => (
                   <option
                     key={status.id}
                     value={status.id}
-                    // className="bg-gray-400"
-                    style={{ backgroundColor: `${status?.color}10` }}
+                    style={{
+                      backgroundColor: `${status?.color}20`,
+                      color: `${status?.color}`,
+                    }}
                   >
                     {status?.name}
                   </option>
@@ -797,53 +842,58 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           >
             <div className="flex flex-row items-center justify-between w-full pr-8 ">
               <h4 className="font-semibold lg:mig-heading--4">Jumlah Role</h4>
-              <p className="text-4xl lg:text-5xl text-primary100 pl-2">
-                {dataRoleList?.length}
-              </p>
+              <Spin spinning={loadingDataCount}>
+                <p className="text-4xl lg:text-5xl text-primary100 pl-2">
+                  {dataCount.recruitment_roles_count}
+                </p>
+              </Spin>
             </div>
 
             <div className="flex flex-row items-center justify-between w-full pl-8">
               <h4 className="font-semibold lg:mig-heading--4">
                 Total Kandidat
               </h4>
-              <p className="text-4xl lg:text-5xl text-secondary100 pl-2">
-                1,024
-              </p>
+              <Spin spinning={loadingDataCount}>
+                <p className="text-4xl lg:text-5xl text-secondary100 pl-2">
+                  {dataCount.recruitments_count}
+                </p>
+              </Spin>
             </div>
           </div>
           <AddNewFormButton
             icon={<SettingsIcon />}
             title="Kelola Rekrutmen"
             onButtonClicked={onManageRecruitmentButtonClicked}
+            disabled={!isAllowedToSetupRecruitment}
           />
 
           {/* Card Jalur Daftar */}
-          <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
+          {/* <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
             <div className="flex flex-row justify-between items-center w-full">
               <h4 className="mig-heading--4">Jalur Daftar</h4>
               <ListSearchIconSvg size={24} />
             </div>
-          </div>
+          </div> */}
 
           {/* Card Stage */}
-          <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
+          {/* <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
             <div className="flex flex-row justify-between items-center w-full">
               <h4 className="mig-heading--4">Stage</h4>
               <ListSearchIconSvg size={24} />
             </div>
-          </div>
+          </div> */}
 
           {/* Card Status */}
-          <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
+          {/* <div className="col-span-1 flex flex-col shadow-md rounded-md bg-white p-6">
             <div className="flex flex-row justify-between items-center w-full">
               <h4 className="mig-heading--4">Status</h4>
               <ListSearchIconSvg size={24} />
             </div>
-          </div>
+          </div> */}
 
           {/* Table Kandidat */}
           <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">Semua Kandidat</h4>
               {isBulk === false ? (
                 <div className="flex flex-col lg:flex-row space-x-6 space-y-2 lg:space-y-0">
@@ -860,6 +910,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     trigger={["click"]}
                     placement="bottomRight"
                     className="z-0"
+                    disabled={!isAllowedToAddRecruitment}
                   >
                     <Button
                       type={"primary"}
@@ -877,18 +928,23 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <ButtonSys
                     type={"default"}
                     color={"danger"}
-                    onClick={() => setBulk(false)}
+                    onClick={() => {
+                      setBulk(false);
+                      setSelectedRecruitments([]);
+                    }}
                   >
                     <div className="flex flex-row space-x-1 items-center">
                       <XIconSvg size={16} color={"#BF4A40"} />
                       <p>Batal</p>
                     </div>
                   </ButtonSys>
+
                   {/* Dropdown Aksi */}
                   <Dropdown
                     overlay={bulkMenu}
                     trigger={["click"]}
                     placement="bottomRight"
+                    disabled={selectedRecruitments.length === 0}
                   >
                     <Button
                       type={"default"}
@@ -908,7 +964,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full items-center mb-4">
+            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
               {/* Search by keyword (kata kunci) */}
               <div className="w-4/12">
                 <Input
@@ -935,15 +991,19 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by role (dropdown) */}
               <div className="w-2/12">
                 <Select
+                  value={selectedRoleId === 0 ? null : selectedRoleId}
+                  allowClear
+                  name={`role`}
                   disabled={!isAllowedToGetRecruitmentRolesList}
                   placeholder="Semua Role"
-                  defaultValue={0}
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setRoleId(value);
+                    typeof value === "undefined"
+                      ? setSelectedRoleId(0)
+                      : setSelectedRoleId(value);
                   }}
                 >
-                  <Select.Option value={0}>Semua Role</Select.Option>
+                  {/* <Select.Option value={0}>Semua Role</Select.Option> */}
                   {dataRoleList.map((role) => (
                     <Select.Option key={role.id} value={role.id}>
                       {role.name}
@@ -955,12 +1015,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by stage */}
               <div className="w-2/12">
                 <Select
+                  value={selectedStage === 0 ? null : selectedStage}
+                  allowClear
+                  name={`stage`}
                   disabled={!isAllowedToGetRecruitmentStagesList}
                   placeholder="Semua Stage"
                   defaultValue={0}
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setSelectedStage(value);
+                    typeof value === "undefined"
+                      ? setSelectedStage(0)
+                      : setSelectedStage(value);
                   }}
                 >
                   <Select.Option value={0}>Semua Stage</Select.Option>
@@ -975,18 +1040,29 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by status (dropdown) */}
               <div className="w-2/12">
                 <Select
+                  value={selectedStatus === 0 ? null : selectedStatus}
+                  allowClear
+                  name={`status`}
                   disabled={!isAllowedToGetRecruitmentStatusesList}
                   placeholder="Semua Status"
                   defaultValue={0}
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setSelectedStatus(value);
+                    typeof value === "undefined"
+                      ? setSelectedStatus(0)
+                      : setSelectedStatus(value);
                   }}
                 >
                   <Select.Option value={0}>Semua Status</Select.Option>
                   {dataStatusList.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
-                      {status.name}
+                      <div className="flex items-center">
+                        <div
+                          className="rounded-full w-4 h-4 mr-2"
+                          style={{ backgroundColor: `${status.color}` }}
+                        />
+                        <p className="truncate">{status.name}</p>
+                      </div>
                     </Select.Option>
                   ))}
                 </Select>
@@ -1021,11 +1097,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 setsorting={setSortingRecruitments}
                 sorting={sortingRecruitments}
                 searching={searchingFilterRecruitments}
-                roleId={roleId}
+                selectedRoleId={selectedRoleId}
+                selectedStage={selectedStage}
+                selectedStatus={selectedStatus}
                 isBulk={isBulk}
                 setSelectedRecruitments={setSelectedRecruitments}
-                // status={statusfiltertickets}
-                // dataprofile={dataProfile}
               />
             </div>
           </div>
@@ -1152,22 +1228,22 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <Select
                   disabled={!isAllowedToGetRecruitmentStagesList}
                   className={"border-none active:border-none"}
-                  // defaultValue={record.recruitment_stage_id}
+                  value={selectedRecruitments[0]?.recruitment_stage_id}
                   style={{ width: `100%` }}
-                  onChange={(value) => {
-                    // setDataUpdate
-                    // console.log(event.target.value)
-                    // setDataUpdate({
-                    //   id: record.id,
-                    //   name: record.name,
-                    //   email: record.email,
-                    //   university: record.university,
-                    //   recruitment_role_id: record.recruitment_role_id,
-                    //   recruitment_jalur_daftar_id: record.recruitment_jalur_daftar_id,
-                    //   recruitment_status_id: record.recruitment_status_id,
-                    //   recruitment_stage_id: value
-                    // })
-                  }}
+                  // onChange={(value) => {
+                  //   setDataUpdate
+                  //   console.log(event.target.value)
+                  //   setDataUpdate({
+                  //     id: record.id,
+                  //     name: record.name,
+                  //     email: record.email,
+                  //     university: record.university,
+                  //     recruitment_role_id: record.recruitment_role_id,
+                  //     recruitment_jalur_daftar_id: record.recruitment_jalur_daftar_id,
+                  //     recruitment_status_id: record.recruitment_status_id,
+                  //     recruitment_stage_id: value
+                  //   })
+                  // }}
                 >
                   {dataStageList.map((stage) => (
                     <Select.Option key={stage.id} value={stage.id}>
@@ -1182,22 +1258,22 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <Select
                   disabled={!isAllowedToGetRecruitmentStatusesList}
                   className={"border-none active:border-none"}
-                  // defaultValue={record.recruitment_stage_id}
+                  value={selectedRecruitments[0]?.recruitment_status_id}
                   style={{ width: `100%` }}
-                  onChange={(value) => {
-                    // setDataUpdate
-                    // console.log(event.target.value)
-                    // setDataUpdate({
-                    //   id: record.id,
-                    //   name: record.name,
-                    //   email: record.email,
-                    //   university: record.university,
-                    //   recruitment_role_id: record.recruitment_role_id,
-                    //   recruitment_jalur_daftar_id: record.recruitment_jalur_daftar_id,
-                    //   recruitment_status_id: record.recruitment_status_id,
-                    //   recruitment_stage_id: value
-                    // })
-                  }}
+                  // onChange={(value) => {
+                  //   setDataUpdate
+                  //   console.log(event.target.value)
+                  //   setDataUpdate({
+                  //     id: record.id,
+                  //     name: record.name,
+                  //     email: record.email,
+                  //     university: record.university,
+                  //     recruitment_role_id: record.recruitment_role_id,
+                  //     recruitment_jalur_daftar_id: record.recruitment_jalur_daftar_id,
+                  //     recruitment_status_id: record.recruitment_status_id,
+                  //     recruitment_stage_id: value
+                  //   })
+                  // }}
                 >
                   {dataStatusList.map((status) => (
                     <Select.Option key={status.id} value={status.id}>

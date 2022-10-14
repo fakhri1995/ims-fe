@@ -325,7 +325,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Recruitment Management */}
-      {/* {hasPermission(SIDEBAR_RECRUITMENT) && (
+      {hasPermission(SIDEBAR_RECRUITMENT) && (
         <SubMenu
           title="Recruitment"
           key="11"
@@ -333,7 +333,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         >
           {hasPermission(SIDEBAR_RECRUITMENT_CANDIDATE) && (
             <Menu.Item key="111">
-              <Link href="/admin/recruitment/candidate">Kandidat</Link>
+              <Link href="/admin/recruitment">Candidates</Link>
             </Menu.Item>
           )}
 
@@ -343,7 +343,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )} */}
+      )}
     </>
   );
 
