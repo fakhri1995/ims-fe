@@ -61,12 +61,12 @@ const DrawerStageCreate = ({
   };
 
   const handleCreateStage = () => {
-    if (!isAllowedToAdd) {
+    if (true) {
       permissionWarningNotification("Menambah", "Stage Rekrutmen");
       return;
     }
     setLoadingCreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitmentStage`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitmentJalurDaftar`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -142,27 +142,6 @@ const DrawerStageCreate = ({
                   value={dataStage.name}
                   name={"name"}
                   onChange={onChangeInput}
-                />
-              </div>
-            </Form.Item>
-
-            <Form.Item
-              label="Deskripsi"
-              name={"description"}
-              rules={[
-                {
-                  required: true,
-                  message: "Deskripsi stage wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div>
-                <Input.TextArea
-                  value={dataStage.description}
-                  name={"description"}
-                  onChange={onChangeInput}
-                  rows={4}
                 />
               </div>
             </Form.Item>

@@ -21,7 +21,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
-import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerStageUpdate";
+import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerRegistrationUpdate";
 import {
   EditIconSvg,
   LayoutGridAddSvg,
@@ -42,7 +42,7 @@ import httpcookie from "cookie";
 const DrawerStageCreate = dynamic(
   () => {
     return import(
-      "../../../../components/drawer/recruitment/drawerStageCreate"
+      "../../../../components/drawer/recruitment/drawerRegistrationCreate"
     );
   },
   { ssr: false }
@@ -182,7 +182,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.2. Get Stages
   useEffect(() => {
     if (!isAllowedToGetResgistrations) {
-      permissionWarningNotification("Mendapatkan", "Daftar Stage");
+      permissionWarningNotification("Mendapatkan", "Dafta");
       setLoadingStages(false);
       return;
     }

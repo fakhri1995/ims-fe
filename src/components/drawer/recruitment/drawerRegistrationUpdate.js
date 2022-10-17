@@ -61,7 +61,7 @@ const DrawerStageUpdate = ({
     if (trigger !== -1) {
       setLoadingDataStage(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStage?id=${id.current}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitmentJalurDaftar?id=${id.current}`,
         {
           method: `GET`,
           headers: {
@@ -105,14 +105,17 @@ const DrawerStageUpdate = ({
       return;
     }
     setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitmentStage`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataStage),
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitmentJalurDaftar`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataStage),
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setRefresh((prev) => prev + 1);
@@ -190,27 +193,6 @@ const DrawerStageUpdate = ({
                   value={dataStage.name}
                   name={"name"}
                   onChange={onChangeInput}
-                />
-              </div>
-            </Form.Item>
-
-            <Form.Item
-              label="Deskripsi"
-              name={"description"}
-              rules={[
-                {
-                  required: true,
-                  message: "Deskripsi wajib diisi",
-                },
-              ]}
-              className="col-span-2"
-            >
-              <div>
-                <Input.TextArea
-                  value={dataStage.description}
-                  name={"description"}
-                  onChange={onChangeInput}
-                  rows={4}
                 />
               </div>
             </Form.Item>
