@@ -71,6 +71,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  pathArr[pathArr.length - 1] = "Kelola Stage";
 
   // 2. Use state
   // 2.1. Table Stage

@@ -15,6 +15,7 @@ const DrawerCore = ({
   drawerStyle,
   buttonCancelText,
   onButtonCancelClicked,
+  buttonUpdateText,
 }) => {
   return (
     <Drawer
@@ -31,7 +32,7 @@ const DrawerCore = ({
           {buttonCancelText && onButtonCancelClicked && (
             <ButtonSys
               disabled={disabled}
-              type="default"
+              type={disabled ? "primary" : "default"}
               color="danger"
               onClick={onButtonCancelClicked}
             >
@@ -39,10 +40,22 @@ const DrawerCore = ({
             </ButtonSys>
           )}
 
-          <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
-            <CheckIconSvg size={15} color="#FFFFFF" />
-            {buttonOkText}
-          </ButtonSys>
+          {buttonOkText && onClick && (
+            <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
+              <CheckIconSvg size={15} color="#FFFFFF" />
+              {buttonOkText}
+            </ButtonSys>
+          )}
+
+          {buttonUpdateText && onClick && (
+            <ButtonSys
+              disabled={disabled}
+              type={disabled ? "primary" : "default"}
+              onClick={onClick}
+            >
+              {buttonUpdateText}
+            </ButtonSys>
+          )}
         </div>
       }
     >

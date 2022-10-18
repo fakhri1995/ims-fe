@@ -14,7 +14,7 @@ import {
   RECRUITMENT_ROLE_ADD,
   RECRUITMENT_ROLE_DELETE,
   RECRUITMENT_ROLE_GET,
-  RECRUITMENT_ROLE_TYPES_GET,
+  RECRUITMENT_ROLE_TYPES_LIST_GET,
   RECRUITMENT_ROLE_UPDATE,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -53,7 +53,9 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   }
   const isAllowedToGetRolesList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoles = hasPermission(RECRUITMENT_ROLES_GET);
-  const isAllowedToGetRoleTypes = hasPermission(RECRUITMENT_ROLE_TYPES_GET);
+  const isAllowedToGetRoleTypes = hasPermission(
+    RECRUITMENT_ROLE_TYPES_LIST_GET
+  );
   const isAllowedToGetRole = hasPermission(RECRUITMENT_ROLE_GET);
   const isAllowedToAddRole = hasPermission(RECRUITMENT_ROLE_ADD);
   const isAllowedToUpdateRole = hasPermission(RECRUITMENT_ROLE_UPDATE);
@@ -66,6 +68,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  pathArr[pathArr.length - 1] = "Kelola Role";
 
   // 2. Use state
   // 2.1. Table Role
