@@ -1,4 +1,5 @@
 import { Form, Input, Select, Spin, notification } from "antd";
+import parse from "html-react-parser";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
@@ -41,6 +42,7 @@ const DrawerEmailTemplateUpdate = ({
   });
   const [loadingDataUpdate, setLoadingDataUpdate] = useState(false);
   const [disabledUpdate, setDisabledUpdate] = useState(true);
+  const [textEditorContent, setTextEditorContent] = useState("");
 
   // USEEFFECT
   // Validate input field
@@ -48,13 +50,13 @@ const DrawerEmailTemplateUpdate = ({
     if (
       dataTemplate.name !== "" &&
       dataTemplate.subject !== "" &&
-      dataTemplate.body !== ""
+      textEditorContent.length > 1
     ) {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
     }
-  }, [dataTemplate]);
+  }, [dataTemplate, textEditorContent]);
 
   // Get stage data
   useEffect(() => {
@@ -77,7 +79,6 @@ const DrawerEmailTemplateUpdate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          // console.log(res2)
           setDataTemplate((prev) => ({
             ...prev,
             id: res2.data.id,
@@ -85,6 +86,7 @@ const DrawerEmailTemplateUpdate = ({
             subject: res2.data.subject,
             body: res2.data.body,
           }));
+          setTextEditorContent(res2.data.body);
           setLoadingDataUpdate(false);
         });
     }
@@ -171,7 +173,6 @@ const DrawerEmailTemplateUpdate = ({
     "link",
   ];
 
-  // console.log(dataTemplate);
   return (
     <DrawerCore
       title={"Ubah Template"}
@@ -244,21 +245,22 @@ const DrawerEmailTemplateUpdate = ({
               ]}
               className="col-span-2"
             >
-              <div>
+              <>
                 <ReactQuill
                   theme="snow"
                   value={dataTemplate.body}
                   modules={modules}
                   formats={formats}
-                  onChange={(value) => {
+                  onChange={(content, delta, source, editor) => {
                     setDataTemplate((prev) => ({
                       ...prev,
-                      body: value,
+                      body: content,
                     }));
+                    setTextEditorContent(editor.getText(content));
                   }}
                   className="h-44 pb-10"
                 />
-              </div>
+              </>
             </Form.Item>
           </Form>
         </div>

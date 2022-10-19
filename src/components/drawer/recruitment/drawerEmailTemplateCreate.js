@@ -36,6 +36,7 @@ const DrawerEmailTemplateCreate = ({
     body: "",
   });
   const [disabledCreate, setDisabledCreate] = useState(true);
+  const [textEditorContent, setTextEditorContent] = useState("");
 
   // USEEFFECT
   // Validate input field
@@ -43,15 +44,13 @@ const DrawerEmailTemplateCreate = ({
     if (
       dataTemplate.name !== "" &&
       dataTemplate.subject !== "" &&
-      dataTemplate.body !== ""
+      textEditorContent.length > 1
     ) {
       setDisabledCreate(false);
     } else {
       setDisabledCreate(true);
     }
-  }, [dataTemplate]);
-
-  // console.log(dataTemplate)
+  }, [dataTemplate, textEditorContent]);
 
   //HANDLER
   const onChangeInput = (e) => {
@@ -213,11 +212,12 @@ const DrawerEmailTemplateCreate = ({
                   value={dataTemplate.body}
                   modules={modules}
                   formats={formats}
-                  onChange={(value) => {
+                  onChange={(content, delta, source, editor) => {
                     setDataTemplate((prev) => ({
                       ...prev,
-                      body: value,
+                      body: content,
                     }));
+                    setTextEditorContent(editor.getText(content));
                   }}
                   className="h-44 pb-10"
                 />
