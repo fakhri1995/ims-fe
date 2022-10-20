@@ -46,7 +46,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
 }) => {
   const [form] = Form.useForm();
   const axiosClient = useAxiosClient();
-
+  const [dataFormAktifitas, setDataFormAktifitas] = useState([]);
   const [searchValue, setSearchValue] = useState("");
   const debouncedSearchValue = useDebounce(searchValue);
   const [namaSelected, setNamaSelected] = useState([]);
@@ -87,6 +87,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       /**
        * Set nilai menjadi undefined ketika Form Aktivtias null atau tidak terpilih.
        */
+
       const formAktivitasId = query.queryKey[1] as number | undefined;
       if (formAktivitasId === undefined) {
         return undefined;
@@ -98,7 +99,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     },
     {
       enabled: false,
-      select: (response) => response.data.data.users,
+      select: (response) => response.data.data,
     }
   );
 
@@ -120,7 +121,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
        */
       if (exportAsAdmin) {
         fieldValues.selected_staff.map((staffName) => {
-          const staff = formAktivitasStaffList.find(
+          const staff = dataFormAktifitas.find(
             (staff) => staff.name === staffName
           );
 
@@ -160,7 +161,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         console.error(error);
       }
     },
-    [exportAsAdmin, formAktivitasStaffList]
+    [exportAsAdmin, dataFormAktifitas]
   );
 
   /**
@@ -174,6 +175,11 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
       if (value === undefined) {
         setSearchValue("");
         setSelectedFormAktivitasId(undefined);
+        return;
+      } else if (value.length == 0) {
+        setSearchValue("");
+        setSelectedFormAktivitasId(undefined);
+        setDataFormAktifitas([]);
         return;
       }
 
@@ -214,8 +220,11 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     }
     // setNamaSelected([])
     // setNamaTempSelected([])
-    const formAktivitasStaffListOnlyName = formAktivitasStaffList?.map(
-      (user) => user.name
+    let formAktivitasStaffListOnlyName = [];
+    formAktivitasStaffList?.map((data_user) =>
+      data_user.users.map((user) =>
+        formAktivitasStaffListOnlyName.push(user.name)
+      )
     );
     setNamaSelected(formAktivitasStaffListOnlyName);
     setNamaTempSelected(formAktivitasStaffListOnlyName);
@@ -256,9 +265,16 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
 
     // default selected staff
     if (exportAsAdmin) {
-      const formAktivitasStaffListOnlyName = formAktivitasStaffList?.map(
-        (user) => user.name
+      let formAktivitasStaffListOnlyName = [];
+      formAktivitasStaffList?.map((data_user) =>
+        data_user.users.map((user) =>
+          formAktivitasStaffListOnlyName.push(user.name)
+        )
       );
+
+      // const formAktivitasStaffListOnlyName = formAktivitasStaffList?.map(
+      //   (user) => user.name
+      // );
 
       fieldData.push({
         name: "selected_staff",
@@ -298,8 +314,17 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   }, [selectedFormAktivitasId]);
 
   useEffect(() => {
+    let dataForm = [];
+    formAktivitasStaffList?.map((dataUser) =>
+      dataUser.users.map((user) => dataForm.push(user))
+    );
+    if (dataForm.length > 0) {
+      setDataFormAktifitas(dataForm);
+    }
     let dataNama = [];
-    formAktivitasStaffList?.map(({ id, name }) => dataNama.push(name));
+    formAktivitasStaffList?.map((dataUser) =>
+      dataUser.users.map(({ id, name }) => dataNama.push(name))
+    );
     if (dataNama.length > 0) {
       setNamaTempSelected(dataNama);
       setNamaSelected(dataNama);
@@ -342,6 +367,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               >
                 <Select
                   showSearch
+                  mode={"multiple"}
                   allowClear
                   placeholder="Pilih form aktivitas"
                   filterOption={false}
@@ -394,7 +420,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                       Form Aktivitas ini belum memiliki staff.
                     </span>
                   )}
-                {formAktivitasStaffList && (
+                {dataFormAktifitas && (
                   <Form.Item
                     name="selected_staff"
                     rules={[{ required: true }]}
@@ -402,7 +428,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                   >
                     <Checkbox.Group>
                       <div className="flex flex-col space-x-0 space-y-4">
-                        {formAktivitasStaffList.map((user) => (
+                        {dataFormAktifitas.map((user) => (
                           <Checkbox
                             key={user.id}
                             value={user.name}
