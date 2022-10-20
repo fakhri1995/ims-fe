@@ -1,5 +1,5 @@
 import { Input, Select, notification } from "antd";
-// import DrawerStageCreate from "../../../../components/drawer/recruitment/drawerStageCreate";
+import parse from "html-react-parser";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
@@ -11,17 +11,17 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  RECRUITMENT_STAGES_GET,
-  RECRUITMENT_STAGES_LIST_GET,
-  RECRUITMENT_STAGE_ADD,
-  RECRUITMENT_STAGE_DELETE,
-  RECRUITMENT_STAGE_GET,
-  RECRUITMENT_STAGE_UPDATE,
+  RECRUITMENT_EMAIL_TEMPLATES_GET,
+  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+  RECRUITMENT_EMAIL_TEMPLATE_ADD,
+  RECRUITMENT_EMAIL_TEMPLATE_DELETE,
+  RECRUITMENT_EMAIL_TEMPLATE_GET,
+  RECRUITMENT_EMAIL_TEMPLATE_UPDATE,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
-import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerStageUpdate";
+import DrawerCore from "../../../../components/drawer/drawerCore";
 import {
   EditIconSvg,
   LayoutGridAddSvg,
@@ -35,20 +35,29 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import SetupMenu from "../../../../components/setupMenu";
-import { TableCustomRecruitmentStage } from "../../../../components/table/tableCustom";
+import { TableCustomRecruitmentTemplateEmail } from "../../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
-const DrawerStageCreate = dynamic(
+const DrawerEmailTemplateCreate = dynamic(
   () => {
     return import(
-      "../../../../components/drawer/recruitment/drawerStageCreate"
+      "../../../../components/drawer/recruitment/drawerEmailTemplateCreate"
     );
   },
   { ssr: false }
 );
 
-const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
+const DrawerEmailTemplateUpdate = dynamic(
+  () => {
+    return import(
+      "../../../../components/drawer/recruitment/drawerEmailTemplateUpdate"
+    );
+  },
+  { ssr: false }
+);
+
+const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   /**
    * Dependencies
    */
@@ -57,30 +66,43 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetStagesList = hasPermission(RECRUITMENT_STAGES_LIST_GET);
-  const isAllowedToGetStages = hasPermission(RECRUITMENT_STAGES_GET);
-  const isAllowedToGetStage = hasPermission(RECRUITMENT_STAGE_GET);
-  const isAllowedToAddStage = hasPermission(RECRUITMENT_STAGE_ADD);
-  const isAllowedToUpdateStage = hasPermission(RECRUITMENT_STAGE_UPDATE);
-  const isAllowedToDeleteStage = hasPermission(RECRUITMENT_STAGE_DELETE);
-  const canUpdateStage = hasPermission([
-    RECRUITMENT_STAGE_UPDATE,
-    RECRUITMENT_STAGE_GET,
+  const isAllowedToGetEmailTemplatesList = hasPermission(
+    RECRUITMENT_EMAIL_TEMPLATES_LIST_GET
+  );
+  const isAllowedToGetEmailTemplates = hasPermission(
+    RECRUITMENT_EMAIL_TEMPLATES_GET
+  );
+  const isAllowedToGetEmailTemplate = hasPermission(
+    RECRUITMENT_EMAIL_TEMPLATE_GET
+  );
+  const isAllowedToAddEmailTemplate = hasPermission(
+    RECRUITMENT_EMAIL_TEMPLATE_ADD
+  );
+  const isAllowedToUpdateEmailTemplate = hasPermission(
+    RECRUITMENT_EMAIL_TEMPLATE_UPDATE
+  );
+  const isAllowedToDeleteEmailTemplate = hasPermission(
+    RECRUITMENT_EMAIL_TEMPLATE_DELETE
+  );
+  const canUpdateEmailTemplate = hasPermission([
+    RECRUITMENT_EMAIL_TEMPLATE_UPDATE,
+    RECRUITMENT_EMAIL_TEMPLATE_GET,
   ]);
 
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-  pathArr[pathArr.length - 1] = "Kelola Stage";
+  pathArr[pathArr.length - 1] = "Kelola Template Email";
 
   // 2. Use state
   // 2.1. Table Stage
-  const [loadingStages, setLoadingStages] = useState(false);
-  const [loadingStageList, setLoadingStageList] = useState(false);
+  const [loadingEmailTemplates, setLoadingEmailTemplates] = useState(false);
+  const [loadingEmailTemplateList, setLoadingEmailTemplateList] =
+    useState(false);
 
-  const [dataStages, setDataStages] = useState([]);
-  const [dataStageList, setDataStageList] = useState([]);
-  const [dataRawStages, setDataRawStages] = useState({
+  const [dataEmailTemplates, setDataEmailTemplates] = useState([]);
+  const [dataEmailTemplateList, setDataEmailTemplateList] = useState([]);
+  const [dataRawEmailTemplates, setDataRawEmailTemplates] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -95,27 +117,28 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
 
-  const [pageStages, setPageStages] = useState(1);
-  const [rowsStages, setRowsStages] = useState(10);
-  const [sortingStages, setSortingStages] = useState({
+  const [pageEmailTemplates, setPageEmailTemplates] = useState(1);
+  const [rowsEmailTemplates, setRowsEmailTemplates] = useState(10);
+  const [sortingEmailTemplates, setSortingEmailTemplates] = useState({
     sort_by: "",
     sort_type: "",
   });
 
-  const [searchingFilterStages, setSearchingFilterStages] = useState("");
+  const [searchingFilterEmailTemplates, setSearchingFilterEmailTemplates] =
+    useState("");
   const [refresh, setRefresh] = useState(-1);
 
-  // 2.2. Create Stage
+  // 2.2. Create Email Template
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
 
-  // 2.3. Update Stage
+  // 2.3. Update Email Template
   const [isUpdateDrawerShown, setUpdateDrawerShown] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const tempIdUpdate = useRef(-1);
   const [triggerUpdate, setTriggerUpdate] = useState(-1);
 
-  // 2.4. Delete Stage
+  // 2.4. Delete Email Template
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({
@@ -124,36 +147,46 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     recruitments_count: 0,
   });
 
+  // 2.2. Read Email Template
+  const [isReadDrawerShown, setReadDrawerShown] = useState(false);
+  const [loadingRead, setLoadingRead] = useState(false);
+  const [dataTemplate, setDataTemplate] = useState({
+    id: null,
+    name: "",
+    subject: "",
+    body: "",
+  });
+
   // 3. UseEffect
-  // 3.1. Get Stages List
+  // 3.1. Get Email Templates List
   useEffect(() => {
-    if (!isAllowedToGetStagesList) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Recruitment Stage List"
-      );
-      setLoadingStageList(false);
+    if (!isAllowedToGetEmailTemplatesList) {
+      permissionWarningNotification("Mendapatkan", "Data Email Template List");
+      setLoadingEmailTemplateList(false);
       return;
     }
 
-    setLoadingStageList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStagesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    setLoadingEmailTemplateList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentEmailTemplatesList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataStageList(res2.data);
+          setDataEmailTemplateList(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStageList(false);
+        setLoadingEmailTemplateList(false);
       })
       .catch((err) => {
         // console.log(err);
@@ -161,21 +194,21 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStageList(false);
+        setLoadingEmailTemplateList(false);
       });
-  }, [isAllowedToGetStagesList, refresh]);
+  }, [isAllowedToGetEmailTemplatesList, refresh]);
 
   // 3.2. Get Stages
   useEffect(() => {
-    if (!isAllowedToGetStages) {
-      permissionWarningNotification("Mendapatkan", "Daftar Stage");
-      setLoadingStages(false);
+    if (!isAllowedToGetEmailTemplates) {
+      permissionWarningNotification("Mendapatkan", "Daftar Email Template");
+      setLoadingEmailTemplates(false);
       return;
     }
 
-    setLoadingStages(true);
+    setLoadingEmailTemplates(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?rows=10`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentEmailTemplates?rows=10`,
       {
         method: `GET`,
         headers: {
@@ -186,30 +219,30 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
+          setDataRawEmailTemplates(res2.data);
+          setDataEmailTemplates(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStages(false);
+        setLoadingEmailTemplates(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStages(false);
+        setLoadingEmailTemplates(false);
       });
-  }, [isAllowedToGetStages, refresh]);
+  }, [isAllowedToGetEmailTemplates, refresh]);
 
   // 4. Event
-  const onFilterStage = () => {
-    setLoadingStages(true);
+  const onFilterEmailTemplate = () => {
+    setLoadingEmailTemplates(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?sort_by=${sortingStages.sort_by}&sort_type=${sortingStages.sort_type}&keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentEmailTemplates?sort_by=${sortingEmailTemplates.sort_by}&sort_type=${sortingEmailTemplates.sort_type}&keyword=${searchingFilterEmailTemplates}&rows=${rowsEmailTemplates}&page=${pageEmailTemplates}`,
       {
         method: `GET`,
         headers: {
@@ -220,44 +253,66 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
+          setDataRawEmailTemplates(res2.data);
+          setDataEmailTemplates(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStages(false);
+        setLoadingEmailTemplates(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStages(false);
+        setLoadingEmailTemplates(false);
       });
   };
 
-  const { onKeyPressHandler } = createKeyPressHandler(onFilterStage, "Enter");
+  const { onKeyPressHandler } = createKeyPressHandler(
+    onFilterEmailTemplate,
+    "Enter"
+  );
 
   const onOpenDeleteModal = (data) => {
     setModalDelete(true);
     setDataDelete({
       id: parseInt(data.id),
       name: data.name,
-      recruitments_count: parseInt(data.recruitments_count),
+    });
+  };
+
+  const onOpenReadDrawer = (record) => {
+    setReadDrawerShown(true);
+    setDataTemplate((prev) => ({
+      ...prev,
+      id: record.id,
+      name: record.name,
+      subject: record.subject,
+      body: record.body,
+    }));
+  };
+
+  const clearData = () => {
+    setDataTemplate({
+      id: null,
+      name: "",
+      subject: "",
+      body: "",
     });
   };
 
   const handleDelete = () => {
-    if (!isAllowedToDeleteStage) {
-      permissionWarningNotification("Menghapus", "Stage Rekrutmen");
+    if (!isAllowedToDeleteEmailTemplate) {
+      permissionWarningNotification("Menghapus", "Template Email Rekrutmen");
       return;
     }
     setLoadingDelete(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitmentStage?id=${dataDelete.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitmentEmailTemplate?id=${dataDelete.id}`,
       {
         method: "DELETE",
         headers: {
@@ -282,7 +337,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus stage rekrutmen. ${err.response}`,
+          message: `Gagal menghapus template email rekrutmen. ${err.response}`,
           duration: 3,
         });
         setLoadingDelete(false);
@@ -291,15 +346,15 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // Table's columns
-  const columnsStage = [
+  const columnsTemplateEmail = [
     {
       title: "No",
       dataIndex: "num",
       render: (text, record, index) => {
         return {
           children: (
-            <div className="flex justify-center">
-              {dataRawStages?.from + index}
+            <div className="text-center w-5">
+              {dataRawEmailTemplates?.from + index}
             </div>
           ),
         };
@@ -310,32 +365,11 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "name",
       render: (text, record, index) => {
         return {
-          children: <>{record.name}</>,
+          children: <div className="flex lg:w-80 xl:w-96">{record.name}</div>,
         };
       },
-      sorter: isAllowedToGetStages
+      sorter: isAllowedToGetEmailTemplates
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
-        : false,
-    },
-    {
-      title: "Deskripsi",
-      dataIndex: "description",
-      render: (text, record, index) => {
-        return {
-          children: <div className="xl:w-60">{record.description}</div>,
-        };
-      },
-    },
-    {
-      title: "Jumlah Kandidat",
-      dataIndex: "recruitments_count",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.recruitments_count}</>,
-        };
-      },
-      sorter: isAllowedToGetStages
-        ? (a, b) => a.recruitments_count > b.recruitments_count
         : false,
     },
     {
@@ -346,8 +380,8 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex items-center space-x-2">
               <ButtonSys
-                type={canUpdateStage ? "default" : "primary"}
-                disabled={!canUpdateStage}
+                type={canUpdateEmailTemplate ? "default" : "primary"}
+                disabled={!canUpdateEmailTemplate}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -358,13 +392,12 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <EditIconSvg size={15} color={`#35763B`} />
               </ButtonSys>
               <ButtonSys
-                type={isAllowedToDeleteStage ? "default" : "primary"}
+                type={isAllowedToDeleteEmailTemplate ? "default" : "primary"}
                 color="danger"
-                disabled={!isAllowedToDeleteStage}
+                disabled={!isAllowedToDeleteEmailTemplate}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
-                  // setModalDelete(true);
                 }}
               >
                 <TrashIconSvg size={15} color={`#BF4A40`} />
@@ -386,23 +419,23 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="flex flex-col" id="mainWrapper">
         <div className="grid grid-cols-5 px-5 gap-6">
-          <SetupMenu menu={"3"} />
+          <SetupMenu menu={"5"} />
 
-          {/* Table Semua Stage */}
+          {/* Table Semua Template Email */}
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Stage ({dataStageList.length})
+                Semua Template Email ({dataEmailTemplateList.length})
               </h4>
 
               <ButtonSys
-                type={isAllowedToAddStage ? "default" : "primary"}
+                type={isAllowedToAddEmailTemplate ? "default" : "primary"}
                 onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddStage}
+                disabled={!isAllowedToAddEmailTemplate}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
                   <LayoutGridAddSvg size={16} color="#35763B" />
-                  <p>Tambah Stage</p>
+                  <p>Tambah Template</p>
                 </div>
               </ButtonSys>
             </div>
@@ -413,27 +446,29 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               <div className="w-11/12">
                 <Input
                   value={
-                    searchingFilterStages === "" ? null : searchingFilterStages
+                    searchingFilterEmailTemplates === ""
+                      ? null
+                      : searchingFilterEmailTemplates
                   }
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
-                      setSearchingFilterStages("");
+                      setSearchingFilterEmailTemplates("");
                     } else {
-                      setSearchingFilterStages(e.target.value);
+                      setSearchingFilterEmailTemplates(e.target.value);
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetStages}
+                  disabled={!isAllowedToGetEmailTemplates}
                 />
               </div>
 
               <ButtonSys
                 type={`primary`}
-                onClick={onFilterStage}
-                disabled={!isAllowedToGetStages}
+                onClick={onFilterEmailTemplate}
+                disabled={!isAllowedToGetEmailTemplates}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -443,55 +478,102 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
             {/* End: Search criteria */}
 
-            <TableCustomRecruitmentStage
-              dataSource={dataStages}
-              setDataSource={setDataStages}
-              columns={columnsStage}
-              loading={loadingStages}
-              setpraloading={setLoadingStages}
-              pageSize={rowsStages}
-              total={dataRawStages?.total}
+            <TableCustomRecruitmentTemplateEmail
+              dataSource={dataEmailTemplates}
+              setDataSource={setDataEmailTemplates}
+              columns={columnsTemplateEmail}
+              loading={loadingEmailTemplates}
+              setpraloading={setLoadingEmailTemplates}
+              pageSize={rowsEmailTemplates}
+              total={dataRawEmailTemplates?.total}
               initProps={initProps}
-              setpage={setPageStages}
-              pagefromsearch={pageStages}
-              setdataraw={setDataRawStages}
-              setsorting={setSortingStages}
-              sorting={sortingStages}
-              searching={searchingFilterStages}
+              setpage={setPageEmailTemplates}
+              pagefromsearch={pageEmailTemplates}
+              setdataraw={setDataRawEmailTemplates}
+              setsorting={setSortingEmailTemplates}
+              sorting={sortingEmailTemplates}
+              searching={searchingFilterEmailTemplates}
+              onOpenReadDrawer={onOpenReadDrawer}
             />
           </div>
         </div>
       </div>
 
-      <AccessControl hasPermission={RECRUITMENT_STAGE_ADD}>
-        <DrawerStageCreate
+      {/* Drawer Template Detail */}
+      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATES_GET}>
+        <DrawerCore
+          title={dataTemplate.name}
+          visible={isReadDrawerShown}
+          onClose={() => {
+            setReadDrawerShown(false);
+            clearData();
+          }}
+          width={380}
+          buttonUpdateText={
+            <div className="flex flex-row space-x-2 items-center">
+              <EditIconSvg size={16} color={"#35763B"} />
+              <p>Ubah Template</p>
+            </div>
+          }
+          onClick={() => {
+            tempIdUpdate.current = dataTemplate.id;
+            setTriggerUpdate((prev) => prev + 1);
+            setUpdateDrawerShown(true);
+            setReadDrawerShown(false);
+          }}
+          buttonCancelText={
+            <div className="flex flex-row space-x-2 items-center">
+              <TrashIconSvg size={16} color={"#BF4A40"} />
+              <p>Hapus Template</p>
+            </div>
+          }
+          onButtonCancelClicked={() => {
+            onOpenDeleteModal(dataTemplate);
+            setReadDrawerShown(false);
+          }}
+        >
+          <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
+              <p className="mig-caption--medium text-mono80">Subyek</p>
+              <p>{dataTemplate.subject}</p>
+            </div>
+            <div className="flex flex-col space-y-4">
+              <p className="mig-caption--medium text-mono80">Body</p>
+              <p>{parse(dataTemplate.body)}</p>
+            </div>
+          </div>
+        </DrawerCore>
+      </AccessControl>
+
+      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATE_ADD}>
+        <DrawerEmailTemplateCreate
           visible={isCreateDrawerShown}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
           setRefresh={setRefresh}
-          isAllowedToAdd={isAllowedToAddStage}
+          isAllowedToAdd={isAllowedToAddEmailTemplate}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_STAGE_UPDATE}>
-        <DrawerStageUpdate
+      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATE_UPDATE}>
+        <DrawerEmailTemplateUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
           initProps={initProps}
           onvisible={setUpdateDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetStage={isAllowedToGetStage}
-          isAllowedToUpdateStage={isAllowedToUpdateStage}
+          isAllowedToGetEmailTemplate={isAllowedToGetEmailTemplate}
+          isAllowedToUpdateEmailTemplate={isAllowedToUpdateEmailTemplate}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_STAGE_DELETE}>
+      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATE_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
@@ -500,15 +582,11 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"stage"}
+          itemName={"template"}
           loading={loadingDelete}
-          // disabled={candidateCount > 0}
         >
-          Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada stage
-          {"\n"}
-          <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
-          melanjutkan penghapusan?
+          Apakah Anda yakin ingin menghapus template email{" "}
+          <strong>{dataDelete.name}</strong>?
         </ModalHapus2>
       </AccessControl>
     </Layout>
@@ -556,4 +634,4 @@ export async function getServerSideProps({ req, res }) {
   };
 }
 
-export default StageManagementIndex;
+export default EmailTemplateManagementIndex;
