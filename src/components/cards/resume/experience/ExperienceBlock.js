@@ -95,8 +95,10 @@ const ExperienceBlock = ({
 
           <RangePicker
             value={[
-              moment(dataUpdateExp.start_date),
-              moment(dataUpdateExp.end_date),
+              dataUpdateExp.start_date
+                ? moment(dataUpdateExp.start_date)
+                : null,
+              dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
             ]}
             onChange={(value, datestring) => {
               let startDate = datestring[0];

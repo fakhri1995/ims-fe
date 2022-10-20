@@ -325,7 +325,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Recruitment Management */}
-      {hasPermission(SIDEBAR_RECRUITMENT) && (
+      {/* {hasPermission(SIDEBAR_RECRUITMENT) && (
         <SubMenu
           title="Recruitment"
           key="11"
@@ -343,7 +343,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )}
+      )} */}
     </>
   );
 
