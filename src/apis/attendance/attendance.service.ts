@@ -140,7 +140,7 @@ export class AttendanceService {
       const response = await axiosClient.get(endpoint + querySearch, {
         responseType: "blob",
         headers: {
-          Accept:
+          "Content-Type":
             "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         },
       });
@@ -150,7 +150,6 @@ export class AttendanceService {
         formatDateToLocale(Date.now(), "yyyy-MM-dd"),
         ".xlsx"
       );
-
       result.file = new Blob([response.data], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
