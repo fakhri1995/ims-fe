@@ -160,15 +160,19 @@ const ExperienceCard = ({
           />
 
           <RangePicker
-            value={[dataUpdateExp.start_date, dataUpdateExp.end_date]}
-            onChange={(dates) => {
-              // console.log(dates[0].format('MMMM YYYY'))
-              let startDate = dates[0].format("MMM YYYY");
-              let endDate = dates[1].format("MMM YYYY");
+            value={[
+              dataUpdateExp.start_date
+                ? moment(dataUpdateExp.start_date)
+                : null,
+              dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
+            ]}
+            onChange={(value, datestring) => {
+              let startDate = datestring[0];
+              let endDate = datestring[1];
               setDataUpdateExp((prev) => ({
                 ...prev,
-                start_date: moment(startDate),
-                end_date: moment(endDate),
+                start_date: startDate,
+                end_date: endDate,
               }));
             }}
           />
