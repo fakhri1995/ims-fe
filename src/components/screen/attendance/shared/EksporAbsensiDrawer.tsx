@@ -269,11 +269,13 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     // default selected staff
     if (exportAsAdmin) {
       let formAktivitasStaffListOnlyName = [];
-      formAktivitasStaffList?.map((data_user) =>
-        data_user.users.map((user) =>
-          formAktivitasStaffListOnlyName.push(user.name)
-        )
-      );
+      if (Array.isArray(formAktivitasStaffList)) {
+        formAktivitasStaffList?.map((data_user) =>
+          data_user.users.map((user) =>
+            formAktivitasStaffListOnlyName.push(user.name)
+          )
+        );
+      }
 
       // const formAktivitasStaffListOnlyName = formAktivitasStaffList?.map(
       //   (user) => user.name
@@ -318,16 +320,21 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
 
   useEffect(() => {
     let dataForm = [];
-    formAktivitasStaffList?.map((dataUser) =>
-      dataUser.users.map((user) => dataForm.push(user))
-    );
+    if (Array.isArray(formAktivitasStaffList)) {
+      formAktivitasStaffList?.map((dataUser) =>
+        dataUser.users.map((user) => dataForm.push(user))
+      );
+    }
+
     if (dataForm.length > 0) {
       setDataFormAktifitas(dataForm);
     }
     let dataNama = [];
-    formAktivitasStaffList?.map((dataUser) =>
-      dataUser.users.map(({ id, name }) => dataNama.push(name))
-    );
+    if (Array.isArray(formAktivitasStaffList)) {
+      formAktivitasStaffList?.map((dataUser) =>
+        dataUser.users.map(({ id, name }) => dataNama.push(name))
+      );
+    }
     if (dataNama.length > 0) {
       setNamaTempSelected(dataNama);
       setNamaSelected(dataNama);
