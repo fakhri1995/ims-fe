@@ -88,7 +88,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
        * Set nilai menjadi undefined ketika Form Aktivtias null atau tidak terpilih.
        */
 
-      const formAktivitasId = query.queryKey[1] as number | undefined;
+      const formAktivitasId = query.queryKey[1] as number[] | undefined;
       if (formAktivitasId === undefined) {
         return undefined;
       }
