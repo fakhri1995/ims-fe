@@ -424,7 +424,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                   </span>
                 )}
 
-                {formAktivitasStaffList &&
+                {Array.isArray(formAktivitasStaffList) &&
                   formAktivitasStaffList.length === 0 && (
                     <span className="text-mono50">
                       Form Aktivitas ini belum memiliki staff.
