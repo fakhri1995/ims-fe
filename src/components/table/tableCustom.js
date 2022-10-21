@@ -1321,12 +1321,14 @@ const TableCustomRecruitmentCandidate = ({
   selectedStatus,
   isBulk,
   setSelectedRecruitments,
+  setSelectedRecruitmentIds,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRecruitments(selectedRows);
+      setSelectedRecruitmentIds(selectedRowKeys);
       // console.log(
       //   `selectedRowKeys: ${selectedRowKeys}`,
       //   "selectedRows: ",
@@ -1441,9 +1443,9 @@ const TableCustomRecruitmentCandidate = ({
           onMouseOver: () => {
             setrowstate(record.id);
           },
-          // onClick: () => {
-          //   rt.push(`/admin/recruitment/${record.id}`);
-          // },
+          onClick: () => {
+            !isBulk && rt.push(`/admin/recruitment/${record.id}`);
+          },
         };
       }}
       rowClassName={(record, idx) => {

@@ -829,19 +829,13 @@ const ModalUbah = ({
           <div className="flex justify-between items-center">
             <ButtonSys
               type="default"
-              // color="danger"
               onClick={() => {
                 onvisible(false);
               }}
             >
               Batalkan
             </ButtonSys>
-            <ButtonSys
-              type={"primary"}
-              // color={"danger"}
-              onClick={onOk}
-              disabled={disabled}
-            >
+            <ButtonSys type={"primary"} onClick={onOk} disabled={disabled}>
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg size={16} color={`white`} />
                 <p>Ya, saya yakin dan akan menyimpan perubahan</p>

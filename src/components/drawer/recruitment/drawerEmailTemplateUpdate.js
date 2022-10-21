@@ -58,7 +58,7 @@ const DrawerEmailTemplateUpdate = ({
     }
   }, [dataTemplate, textEditorContent]);
 
-  // Get stage data
+  // Get email template data
   useEffect(() => {
     if (!isAllowedToGetEmailTemplate) {
       setLoadingDataUpdate(false);
