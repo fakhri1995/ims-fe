@@ -250,14 +250,14 @@ export const AttendanceStaffCheckInDrawer: FC<
                     name="work_from"
                     label="Kerja Dari"
                     required
-                    initialValue="WFH"
+                    initialValue="WFO"
                   >
                     <Radio.Group disabled={uploadPictureLoading}>
-                      <Radio value="WFH" className="block">
-                        WFH
-                      </Radio>
                       <Radio value="WFO" className="block">
                         WFO
+                      </Radio>
+                      <Radio value="WFH" className="block">
+                        WFH
                       </Radio>
                     </Radio.Group>
                   </Form.Item>
