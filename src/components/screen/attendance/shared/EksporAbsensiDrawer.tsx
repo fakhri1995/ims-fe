@@ -52,7 +52,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const [namaSelected, setNamaSelected] = useState([]);
   const [namaTempSelected, setNamaTempSelected] = useState([]);
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
-    number | undefined
+    Array<number> | undefined
   >(undefined);
 
   const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
