@@ -221,11 +221,14 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
     // setNamaSelected([])
     // setNamaTempSelected([])
     let formAktivitasStaffListOnlyName = [];
-    formAktivitasStaffList?.map((data_user) =>
-      data_user.users.map((user) =>
-        formAktivitasStaffListOnlyName.push(user.name)
-      )
-    );
+    if (Array.isArray(formAktivitasStaffList)) {
+      formAktivitasStaffList?.map((data_user) =>
+        data_user.users.map((user) =>
+          formAktivitasStaffListOnlyName.push(user.name)
+        )
+      );
+    }
+
     setNamaSelected(formAktivitasStaffListOnlyName);
     setNamaTempSelected(formAktivitasStaffListOnlyName);
     form.setFields([
