@@ -51,9 +51,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const debouncedSearchValue = useDebounce(searchValue);
   const [namaSelected, setNamaSelected] = useState([]);
   const [namaTempSelected, setNamaTempSelected] = useState([]);
-  const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
-    number | undefined
-  >(undefined);
+  const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState([]);
 
   const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND, debouncedSearchValue],
