@@ -8,7 +8,16 @@ import {
   Text,
   View,
 } from "@react-pdf/renderer";
-import { Button, Input, Popover, Spin, Timeline, notification } from "antd";
+import {
+  Button,
+  Dropdown,
+  Input,
+  Menu,
+  Popover,
+  Spin,
+  Timeline,
+  notification,
+} from "antd";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
@@ -457,7 +466,7 @@ const RecruitmentDetailIndex = ({
               </button>
             </div>
             <Spin spinning={loadingActivities}>
-              {dataActivities?.map((activity) => (
+              {dataActivities?.slice(0, 5).map((activity) => (
                 <div key={activity.id} className="mb-6">
                   <p className="text-md mb-2">{activity.notes}</p>
                   <div className="flex flex-row justify-between flex-wrap items-center">
@@ -485,7 +494,7 @@ const RecruitmentDetailIndex = ({
           <div className="shadow-lg rounded-md bg-white p-4">
             <h4 className="mig-heading--4 mb-6">Aktivitas</h4>
             <Spin spinning={loadingActivities}>
-              {dataActivities?.map((activity) => (
+              {dataActivities?.slice(0, 5).map((activity) => (
                 <div key={activity.id} className="mb-6">
                   <p className="text-md mb-2">{activity.description}</p>
                   <div className="flex flex-row justify-between flex-wrap items-center">
@@ -517,9 +526,32 @@ const RecruitmentDetailIndex = ({
 						flex flex-row gap-4 items-center"
           >
             <div className="flex flex-col space-y-2 w-full py-4">
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-row justify-between items-center">
                 <p>Stage</p>
-                <DotsIconSvg size={16} color="#4D4D4D" />
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item key={"update_stage"}>
+                        <button
+                          className="flex flex-row space-x-2 items-center 
+													bg-transparent w-full"
+                          // onClick={}
+                        >
+                          <EditIconSvg size={20} color="#4D4D4D" />
+                          <p className="mig-caption--medium text-mono30">
+                            Ubah Stage
+                          </p>
+                        </button>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  placement="bottomRight"
+                >
+                  <Button
+                    icon={<DotsIconSvg size={16} color="#4D4D4D" />}
+                    ghost={true}
+                  />
+                </Dropdown>
               </div>
               <div className="flex flex-row space-x-1 items-center">
                 <h4 className="mig-heading--4">
@@ -549,12 +581,40 @@ const RecruitmentDetailIndex = ({
             </div>
 
             <div className="flex flex-col space-y-2 w-full py-4">
-              <div className="flex flex-row justify-between">
+              <div className="flex flex-row justify-between items-center">
                 <p>Status</p>
-                <DotsIconSvg size={16} color="#4D4D4D" />
+                <Dropdown
+                  overlay={
+                    <Menu>
+                      <Menu.Item key={"update_status"}>
+                        <button
+                          className="flex flex-row space-x-2 items-center 
+													bg-transparent w-full"
+                          // onClick={}
+                        >
+                          <EditIconSvg size={20} color="#4D4D4D" />
+                          <p className="mig-caption--medium text-mono30">
+                            Ubah Status
+                          </p>
+                        </button>
+                      </Menu.Item>
+                    </Menu>
+                  }
+                  placement="bottomRight"
+                >
+                  <Button
+                    icon={<DotsIconSvg size={16} color="#4D4D4D" />}
+                    ghost={true}
+                  />
+                </Dropdown>
               </div>
               <div className="flex flex-row space-x-2 items-center">
-                <div className="rounded-full w-4 h-4 bg-yellow-300 "></div>
+                <div
+                  className="rounded-full w-4 h-4"
+                  style={{
+                    backgroundColor: `${dataRecruitment.status?.color}`,
+                  }}
+                />
                 <h4 className="mig-heading--4">
                   {dataRecruitment.status?.name}
                 </h4>
@@ -601,24 +661,6 @@ const RecruitmentDetailIndex = ({
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">Nama</p>
                   <p className="text-md">John Doe</p>
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <p className="mig-caption--medium text-mono80">
-                    Tanggal Lahir
-                  </p>
-                  <p className="text-md">1 Januari 2000</p>
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <p className="mig-caption--medium text-mono80">
-                    Jenis Kelamin
-                  </p>
-                  <p className="text-md">Laki-laki</p>
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <p className="mig-caption--medium text-mono80">
-                    Kewarganegaraan
-                  </p>
-                  <p className="text-md">Indonesia</p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">
@@ -730,7 +772,7 @@ const RecruitmentDetailIndex = ({
                 <p className="mig-caption text-mono50">Compfest, Juni 2025</p>
               </div>
             </div>
-            <div className="flex flex-col pt-4">
+            {/* <div className="flex flex-col pt-4">
               <p className="text-sm font-bold text-primary100 mb-4">
                 Pranala Luar
               </p>
@@ -755,7 +797,7 @@ const RecruitmentDetailIndex = ({
                   <a href="#">https://github.com/johndoe00</a>
                 </div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
