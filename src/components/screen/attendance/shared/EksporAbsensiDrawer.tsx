@@ -182,7 +182,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         setDataFormAktifitas([]);
         return;
       } else {
-        setSelectedFormAktivitasId(value[value.length - 1]);
+        setSelectedFormAktivitasId(value);
       }
     },
     [exportAsAdmin]
