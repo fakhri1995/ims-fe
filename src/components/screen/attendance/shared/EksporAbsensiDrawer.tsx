@@ -51,7 +51,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const debouncedSearchValue = useDebounce(searchValue);
   const [namaSelected, setNamaSelected] = useState([]);
   const [namaTempSelected, setNamaTempSelected] = useState([]);
-  const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState([]);
+  const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState("");
 
   const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND, debouncedSearchValue],
@@ -166,7 +166,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
    * Handler ketika Select field berubah nilai (mengganti form aktivitas)
    */
   const handleOnChangeFormAktivitas = useCallback(
-    (value: Array<number> | undefined) => {
+    (value: number | undefined) => {
       if (!exportAsAdmin) {
         return;
       }
@@ -174,7 +174,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
         setSearchValue("");
         setSelectedFormAktivitasId(undefined);
         return;
-      } else if (value.length == 0) {
+      } else if (value == "") {
         setSearchValue("");
         setSelectedFormAktivitasId(undefined);
         setDataFormAktifitas([]);
