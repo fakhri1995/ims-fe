@@ -393,7 +393,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
               </Form.Item>
               {/* Selectable staff */}
               <Form.Item label="Staff" required className="relative">
-                {formAktivitasStaffList &&
+                {Array.isArray(formAktivitasStaffList) &&
                   formAktivitasStaffList.length > 0 &&
                   namaSelected.length == namaTempSelected.length &&
                   namaSelected.length != 0 && (
@@ -405,7 +405,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                       Hapus Semua
                     </Button>
                   )}
-                {formAktivitasStaffList &&
+                {Array.isArray(formAktivitasStaffList) &&
                   formAktivitasStaffList.length > 0 &&
                   namaSelected.length > namaTempSelected.length && (
                     <Button
