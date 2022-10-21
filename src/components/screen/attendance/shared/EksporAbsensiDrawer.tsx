@@ -168,7 +168,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
    * Handler ketika Select field berubah nilai (mengganti form aktivitas)
    */
   const handleOnChangeFormAktivitas = useCallback(
-    (value: number[] | undefined) => {
+    (value: Array<number> | undefined) => {
       if (!exportAsAdmin) {
         return;
       }
