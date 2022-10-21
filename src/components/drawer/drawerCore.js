@@ -31,8 +31,9 @@ const DrawerCore = ({
           {/* Additional button on the LHS for Cancelling the action, etc. */}
           {buttonCancelText && onButtonCancelClicked && (
             <ButtonSys
-              disabled={disabled}
-              type={disabled ? "primary" : "default"}
+              // disabled={disabled}
+              // type={disabled ? "primary" : "default"}
+              type={"default"}
               color="danger"
               onClick={onButtonCancelClicked}
             >
