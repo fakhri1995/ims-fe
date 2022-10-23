@@ -15,6 +15,7 @@ const DrawerCore = ({
   drawerStyle,
   buttonCancelText,
   onButtonCancelClicked,
+  buttonUpdateText,
 }) => {
   return (
     <Drawer
@@ -30,8 +31,9 @@ const DrawerCore = ({
           {/* Additional button on the LHS for Cancelling the action, etc. */}
           {buttonCancelText && onButtonCancelClicked && (
             <ButtonSys
-              disabled={disabled}
-              type="default"
+              // disabled={disabled}
+              // type={disabled ? "primary" : "default"}
+              type={"default"}
               color="danger"
               onClick={onButtonCancelClicked}
             >
@@ -39,10 +41,22 @@ const DrawerCore = ({
             </ButtonSys>
           )}
 
-          <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
-            <CheckIconSvg size={15} color="#FFFFFF" />
-            {buttonOkText}
-          </ButtonSys>
+          {buttonOkText && onClick && (
+            <ButtonSys disabled={disabled} type="primary" onClick={onClick}>
+              <CheckIconSvg size={15} color="#FFFFFF" />
+              {buttonOkText}
+            </ButtonSys>
+          )}
+
+          {buttonUpdateText && onClick && (
+            <ButtonSys
+              disabled={disabled}
+              type={disabled ? "primary" : "default"}
+              onClick={onClick}
+            >
+              {buttonUpdateText}
+            </ButtonSys>
+          )}
         </div>
       }
     >

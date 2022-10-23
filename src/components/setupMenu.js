@@ -81,7 +81,7 @@ const SetupMenu = ({ menu }) => {
           icon={<EmailIconSvg color={"#808080"} />}
           title="Template"
         >
-          <Link href="#">Template Email</Link>
+          <Link href="/admin/recruitment/email-template">Template Email</Link>
         </Menu.Item>
       )}
     </Menu>

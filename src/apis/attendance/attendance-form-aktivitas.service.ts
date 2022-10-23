@@ -37,7 +37,10 @@ export class AttendanceFormAktivitasService {
    * @see {AttendanceFormAktivitasServiceQueryKeys.FIND_ONE} Query key attach with `aktivitasId` (e.g. [FIND, aktivitasId]).
    * @access GET /getAttendanceForm
    */
-  static async findOne(axiosClient: AxiosInstance, aktivitasId: number) {
+  static async findOne(
+    axiosClient: AxiosInstance,
+    aktivitasId: number[] | number
+  ) {
     const querySearchCriteria = QueryString.stringify(
       { id: aktivitasId },
       { addQueryPrefix: true }

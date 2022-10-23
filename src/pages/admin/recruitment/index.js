@@ -28,10 +28,14 @@ import {
   RECRUITMENT_COUNT_GET,
   RECRUITMENT_DELETE,
   RECRUITMENT_GET,
+  RECRUITMENT_LOG_GET,
+  RECRUITMENT_LOG_NOTES_ADD,
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
+  RECRUITMENT_UPDATE_STAGE,
+  RECRUITMENT_UPDATE_STATUS,
   SIDEBAR_RECRUITMENT_SETUP,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -115,6 +119,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetRecruitmentStagesList = hasPermission(
     RECRUITMENT_STAGES_LIST_GET
   );
+  const canUpdateStage = hasPermission([RECRUITMENT_UPDATE_STAGE]);
+  const canUpdateStatus = hasPermission([RECRUITMENT_UPDATE_STATUS]);
 
   // 1. Init
   const rt = useRouter();
@@ -167,6 +173,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const [isBulk, setBulk] = useState(false);
   const [selectedRecruitments, setSelectedRecruitments] = useState([]);
+  const [selectedRecruitmentIds, setSelectedRecruitmentIds] = useState([]);
 
   // 2.3. Drawer & Modal
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
@@ -192,7 +199,29 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     recruitment_stage_id: null,
     recruitment_status_id: null,
   });
-  const [isUpdate, setIsUpdate] = useState(false);
+  const [disableUpdate, setDisableUpdate] = useState(false);
+
+  // 2.5. Update Stage
+  const [dataUpdateStage, setDataUpdateStage] = useState({
+    id: null,
+    recruitment_stage_id: null,
+    notes: null,
+    name: "",
+    prev_recruitment_stage_name: "",
+    recruitment_stage_name: "",
+  });
+  const [modalUpdateStage, setModalUpdateStage] = useState(false);
+
+  // 2.6. Update Status
+  const [dataUpdateStatus, setDataUpdateStatus] = useState({
+    id: null,
+    recruitment_status_id: null,
+    notes: null,
+    name: "",
+    prev_recruitment_status_name: "",
+    recruitment_status_name: "",
+  });
+  const [modalUpdateStatus, setModalUpdateStatus] = useState(false);
 
   // 3. UseEffect
   // 3.1. Get Recruitment Count
@@ -223,7 +252,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         setLoadingDataCount(false);
       })
       .catch((err) => {
-        // console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,
@@ -263,7 +291,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         setLoadingRoleList(false);
       })
       .catch((err) => {
-        // console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,
@@ -381,12 +408,14 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRecruitmentStatusesList, refresh]);
 
-  // 3.6. Update if candidate's stage or status changed
+  // 3.6. Disable update stage or status if notes empty
   useEffect(() => {
-    if (isUpdate & (dataUpdate.id !== null)) {
-      handleUpdateRecruitment();
-    }
-  }, [dataUpdate, isUpdate]);
+    dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
+  }, [dataUpdateStage]);
+
+  useEffect(() => {
+    dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
+  }, [dataUpdateStatus]);
 
   // 4. Event
   const onManageRecruitmentButtonClicked = useCallback(() => {
@@ -419,7 +448,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         setLoadingRecruitments(false);
       })
       .catch((err) => {
-        // console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,
@@ -453,7 +481,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         setRefresh((prev) => prev + 1);
-        // console.log(res2)
         if (res2.success) {
           setTimeout(() => {
             setDataUpdate({
@@ -488,7 +515,219 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.3. Delete Recruitment
+  // 4.3. Update Stage
+  const handleUpdateStage = () => {
+    const payload = {
+      id: dataUpdateStage.id,
+      recruitment_stage_id: dataUpdateStage.recruitment_stage_id,
+      notes: dataUpdateStage.notes,
+    };
+
+    if (!canUpdateStage) {
+      permissionWarningNotification("Mengubah", "Stage Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitment/stage`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStage({});
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah stage kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdate(false);
+        setModalUpdateStage(false);
+      })
+      .catch((err) => {
+        setLoadingUpdate(false);
+        notification["error"]({
+          message: `Gagal mengubah stage kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
+
+  // 4.4. Update Status
+  const handleUpdateStatus = () => {
+    const payload = {
+      id: dataUpdateStatus.id,
+      recruitment_status_id: dataUpdateStatus.recruitment_status_id,
+      notes: dataUpdateStatus.notes,
+    };
+
+    if (!canUpdateStatus) {
+      permissionWarningNotification("Mengubah", "Status Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitment/status`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStatus({});
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah status kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdate(false);
+        setModalUpdateStatus(false);
+      })
+      .catch((err) => {
+        setLoadingUpdate(false);
+        notification["error"]({
+          message: `Gagal mengubah status kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
+
+  // 4.5. Bulk Update Stages
+  const handleUpdateStages = () => {
+    const payload = {
+      id: dataUpdateStage.id,
+      recruitment_stage_id: dataUpdateStage.recruitment_stage_id,
+      notes: dataUpdateStage.notes,
+    };
+
+    if (!canUpdateStage) {
+      permissionWarningNotification("Mengubah", "Stage Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitments/stage`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStage({});
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah stage kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdate(false);
+        setModalBulk(false);
+        setModalUpdateStage(false);
+        setBulk(false);
+      })
+      .catch((err) => {
+        setLoadingUpdate(false);
+        notification["error"]({
+          message: `Gagal mengubah stage kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
+
+  // 4.6. Bulk Update Statuses
+  const handleUpdateStatuses = () => {
+    const payload = {
+      id: dataUpdateStatus.id,
+      recruitment_status_id: dataUpdateStatus.recruitment_status_id,
+      notes: dataUpdateStatus.notes,
+    };
+
+    if (!canUpdateStatus) {
+      permissionWarningNotification("Mengubah", "Status Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitments/status`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStatus({});
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah status kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdate(false);
+        setModalBulk(false);
+        setModalUpdateStatus(false);
+        setBulk(false);
+      })
+      .catch((err) => {
+        setLoadingUpdate(false);
+        notification["error"]({
+          message: `Gagal mengubah status kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
+
+  // 4.7. Delete Recruitment
   const onOpenDeleteModal = () => {
     setModalDelete(true);
   };
@@ -580,10 +819,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-1 py-1"
-          // onClick={() => {
-          //   setModalBulk(true);
-          //   setBulkMode("stage");
-          // }}
+          onClick={() => {
+            setModalBulk(true);
+            setBulkMode("stage");
+          }}
           disabled={!isAllowedToUpdateRecruitment}
         >
           <TrendingUpIconSvg size={16} />
@@ -595,10 +834,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center
 					bg-transparent w-full px-1 py-1"
-          // onClick={() => {
-          //   setModalBulk(true);
-          //   setBulkMode("status");
-          // }}
+          onClick={() => {
+            setModalBulk(true);
+            setBulkMode("status");
+          }}
           disabled={!isAllowedToUpdateRecruitment}
         >
           <InfoSquareIconSvg size={16} />
@@ -690,25 +929,22 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div>
               <select
-                disabled={!isAllowedToGetRecruitmentStagesList}
-                className="rounded-md py-1"
+                disabled={!isAllowedToGetRecruitmentStagesList || isBulk}
+                className="rounded-md py-1 hover:cursor-pointer"
                 value={record.recruitment_stage_id}
                 style={{ width: `100%` }}
+                onClick={(e) => e.stopPropagation()}
                 onChange={(event) => {
-                  // console.log(event.target.value)
-                  setDataUpdate({
+                  setDataUpdateStage({
+                    ...dataUpdateStage,
                     id: record.id,
                     name: record.name,
-                    email: record.email,
-                    university: record.university,
-                    recruitment_role_id: record.recruitment_role_id,
-                    recruitment_jalur_daftar_id:
-                      record.recruitment_jalur_daftar_id,
-                    recruitment_status_id: record.recruitment_status_id,
-                    recruitment_stage_id: Number(event.target.value),
+                    prev_recruitment_stage_name: record.stage?.name,
+                    recruitment_stage_name:
+                      event.target?.selectedOptions[0]?.text,
+                    recruitment_stage_id: Number(event.target?.value),
                   });
-
-                  setIsUpdate(true);
+                  setModalUpdateStage(true);
                 }}
               >
                 {dataStageList.map((stage) => (
@@ -736,28 +972,26 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               <select
-                disabled={!isAllowedToGetRecruitmentStatusesList}
+                disabled={!isAllowedToGetRecruitmentStatusesList || isBulk}
                 value={record.recruitment_status_id}
-                className="rounded-md py-1"
+                className="rounded-md py-1 hover:cursor-pointer"
                 style={{
                   width: `100%`,
                   backgroundColor: `${record.status?.color}10`,
                   color: `${record.status?.color}`,
                 }}
+                onClick={(e) => e.stopPropagation()}
                 onChange={(event) => {
-                  setDataUpdate({
+                  setDataUpdateStatus({
+                    ...dataUpdateStatus,
                     id: record.id,
                     name: record.name,
-                    email: record.email,
-                    university: record.university,
-                    recruitment_role_id: record.recruitment_role_id,
-                    recruitment_jalur_daftar_id:
-                      record.recruitment_jalur_daftar_id,
-                    recruitment_status_id: Number(event.target.value),
-                    recruitment_stage_id: record.recruitment_stage_id,
+                    prev_recruitment_status_name: record.status?.name,
+                    recruitment_status_name:
+                      event.target?.selectedOptions[0]?.text,
+                    recruitment_status_id: Number(event.target?.value),
                   });
-
-                  setIsUpdate(true);
+                  setModalUpdateStatus(true);
                 }}
               >
                 {dataStatusList.map((status) => (
@@ -796,9 +1030,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // disabled={!canUpdateRoleAssessment}
                 // onClick={(event) => {
                 //   event.stopPropagation();
-                //   tempIdAssessmentUpdate.current = record.id;
-                //   setTriggerAssessmentUpdate((prev) => prev + 1);
-                //   setDrawUpdate(true);
                 // }}
               >
                 <MailForwardIconSvg size={16} color={`#35763B`} />
@@ -810,7 +1041,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // disabled={!isAllowedToDeleteRoleAssessment}
                 // onClick={(event) => {
                 //   event.stopPropagation();
-                //   onOpenDeleteModal(record);
                 // }}
               >
                 <FileExportIconSvg size={16} color={`#00589F`} />
@@ -822,7 +1052,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  // console.log(dataUpdate)
+  // console.log(dataUpdateStage)
   // console.log(refresh)
   // console.log(selectedRecruitments)
   return (
@@ -931,6 +1161,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onClick={() => {
                       setBulk(false);
                       setSelectedRecruitments([]);
+                      setSelectedRecruitmentIds([]);
+                      setDataUpdateStage([]);
+                      setDataUpdateStatus([]);
                     }}
                   >
                     <div className="flex flex-row space-x-1 items-center">
@@ -1102,12 +1335,14 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 selectedStatus={selectedStatus}
                 isBulk={isBulk}
                 setSelectedRecruitments={setSelectedRecruitments}
+                setSelectedRecruitmentIds={setSelectedRecruitmentIds}
               />
             </div>
           </div>
         </div>
       </div>
 
+      {/* Drawer Tambah Kandidat */}
       <AccessControl hasPermission={RECRUITMENT_ADD}>
         <DrawerCandidateCreate
           title={"Tambah Kandidat"}
@@ -1123,6 +1358,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         />
       </AccessControl>
 
+      {/* Drawer Hapus Kandidat */}
       <AccessControl hasPermission={RECRUITMENT_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
@@ -1139,6 +1375,156 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           Apakah Anda yakin ingin menghapus kandidat{" "}
           <strong>{selectedRecruitments[0]?.name}</strong>?
         </ModalHapus2>
+      </AccessControl>
+
+      {/* Modal Update Stage */}
+      <AccessControl hasPermission={RECRUITMENT_UPDATE_STAGE}>
+        <ModalUbah
+          title={`Konfirmasi Perubahan`}
+          visible={modalUpdateStage}
+          onvisible={setModalUpdateStage}
+          onOk={isBulk ? handleUpdateStages : handleUpdateStage}
+          onCancel={() => {
+            setModalUpdateStage(false);
+            setDataUpdateStage({});
+          }}
+          loading={loadingUpdate}
+          disabled={disableUpdate}
+        >
+          {modalUpdateStage && isBulk ? (
+            <div className="space-y-4">
+              <p className="">
+                Anda telah melakukan perubahan pada{" "}
+                <strong>{selectedRecruitmentIds.length} kandidat</strong>
+                &nbsp;berikut
+              </p>
+              {selectedRecruitmentIds.map((value, idx) => (
+                <p key={value} className="font-bold">
+                  {`${idx + 1}. ${dataUpdateStage.name[idx]} - ${
+                    dataUpdateStage.prev_recruitment_stage_name[idx]
+                  }`}
+                </p>
+              ))}
+              <p>Tambah catatan:</p>
+              <Input.TextArea
+                // placeholder="Masukkan catatan"
+                required={true}
+                rows={2}
+                value={dataUpdateStage.notes}
+                onChange={(event) => {
+                  setDataUpdateStage({
+                    ...dataUpdateStage,
+                    notes: event.target.value,
+                  });
+                }}
+              />
+              <p>
+                Apakah Anda yakin ingin mengubah stage menjadi{" "}
+                <strong>{dataUpdateStage.recruitment_stage_name}</strong>?
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="">
+                Anda telah melakukan perubahan pada kandidat{" "}
+                <strong>{dataUpdateStage.name}</strong>
+                &nbsp;pada item berikut
+              </p>
+              <p className="font-bold">
+                {`Stage ${dataUpdateStage.prev_recruitment_stage_name} → ${dataUpdateStage.recruitment_stage_name}`}
+              </p>
+              <p>Tambah catatan:</p>
+              <Input.TextArea
+                // placeholder="Masukkan catatan"
+                required={true}
+                rows={2}
+                value={dataUpdateStage.notes}
+                onChange={(event) => {
+                  setDataUpdateStage({
+                    ...dataUpdateStage,
+                    notes: event.target.value,
+                  });
+                }}
+              />
+              <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+            </div>
+          )}
+        </ModalUbah>
+      </AccessControl>
+
+      {/* Modal Update Status */}
+      <AccessControl hasPermission={RECRUITMENT_UPDATE_STATUS}>
+        <ModalUbah
+          title={`Konfirmasi Perubahan`}
+          visible={modalUpdateStatus}
+          onvisible={setModalUpdateStatus}
+          onOk={isBulk ? handleUpdateStatuses : handleUpdateStatus}
+          onCancel={() => {
+            setModalUpdateStatus(false);
+            setDataUpdateStatus({});
+          }}
+          loading={loadingUpdate}
+          disabled={disableUpdate}
+        >
+          {modalUpdateStatus && isBulk ? (
+            <div className="space-y-4">
+              <p className="">
+                Anda telah melakukan perubahan pada{" "}
+                <strong>{selectedRecruitmentIds.length} kandidat</strong>
+                &nbsp;berikut
+              </p>
+              {selectedRecruitmentIds?.map((value, idx) => (
+                <p key={value} className="font-bold">
+                  {`${idx + 1}. ${dataUpdateStatus.name[idx]} - ${
+                    dataUpdateStatus.prev_recruitment_status_name[idx]
+                  }`}
+                </p>
+              ))}
+              <p>Tambah catatan:</p>
+              <Input.TextArea
+                // placeholder="Masukkan catatan"
+                required={true}
+                rows={2}
+                value={dataUpdateStatus.notes}
+                onChange={(event) => {
+                  setDataUpdateStatus({
+                    ...dataUpdateStatus,
+                    notes: event.target.value,
+                  });
+                }}
+              />
+              <p>
+                Apakah Anda yakin ingin mengubah status menjadi{" "}
+                <strong>{dataUpdateStatus.recruitment_status_name}</strong>?
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <p className="">
+                Anda telah melakukan perubahan pada kandidat{" "}
+                <strong>{dataUpdateStatus.name}</strong>
+                &nbsp;pada item berikut
+              </p>
+              <p className="font-bold">
+                {`Status ${dataUpdateStatus.prev_recruitment_status_name} → ${dataUpdateStatus.recruitment_status_name}`}
+              </p>
+              <p>Tambah catatan:</p>
+              <Input.TextArea
+                // placeholder="Masukkan catatan"
+                required={true}
+                rows={2}
+                value={dataUpdateStatus.notes}
+                onChange={(event) => {
+                  setDataUpdateStatus({
+                    ...dataUpdateStatus,
+                    notes: event.target.value,
+                  });
+                }}
+              />
+              <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+            </div>
+          )}
+        </ModalUbah>
       </AccessControl>
 
       {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
@@ -1168,13 +1554,23 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <ModalCore
           title={`Mengubah ${selectedRecruitments.length} Kandidat`}
           visible={modalBulk}
-          onCancel={() => setModalBulk(false)}
+          onCancel={() => {
+            setModalBulk(false);
+            // setDataUpdateStage({})
+          }}
           footer={
             <Spin spinning={loadingUpdate}>
               <div className="flex justify-end">
                 <ButtonSys
                   type={"primary"}
-                  // onClick={onOk}
+                  onClick={() => {
+                    {
+                      bulkMode === "stage"
+                        ? setModalUpdateStage(true)
+                        : setModalUpdateStatus(true);
+                    }
+                    setModalBulk(false);
+                  }}
                   // disabled={disabled}
                 >
                   <div className="flex flex-row space-x-2">
@@ -1196,17 +1592,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Table
                 rowKey={(record) => record.id}
                 className="border border-mono90 rounded-md"
-                rowSelection={{
-                  type: "checkbox",
-                  onChange: (selectedRowKeys, selectedRows) => {
-                    console.log(
-                      `selectedRowKeys: ${selectedRowKeys}`,
-                      "selectedRows: ",
-                      selectedRows
-                    );
-                    setSelectedRecruitments(selectedRows);
-                  },
-                }}
+                // rowSelection={{
+                //   type: "checkbox",
+                //   onChange: (selectedRowKeys, selectedRows) => {
+                //     console.log(
+                //       `selectedRowKeys: ${selectedRowKeys}`,
+                //       "selectedRows: ",
+                //       selectedRows
+                //     );
+                //     setSelectedRecruitments(selectedRows);
+                //   },
+                // }}
                 columns={[
                   {
                     title: "Nama Kandidat",
@@ -1227,23 +1623,26 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <p>Stage</p>
                 <Select
                   disabled={!isAllowedToGetRecruitmentStagesList}
+                  placeholder={"Pilih stage..."}
                   className={"border-none active:border-none"}
-                  value={selectedRecruitments[0]?.recruitment_stage_id}
+                  value={dataUpdateStage.recruitment_stage_id}
                   style={{ width: `100%` }}
-                  // onChange={(value) => {
-                  //   setDataUpdate
-                  //   console.log(event.target.value)
-                  //   setDataUpdate({
-                  //     id: record.id,
-                  //     name: record.name,
-                  //     email: record.email,
-                  //     university: record.university,
-                  //     recruitment_role_id: record.recruitment_role_id,
-                  //     recruitment_jalur_daftar_id: record.recruitment_jalur_daftar_id,
-                  //     recruitment_status_id: record.recruitment_status_id,
-                  //     recruitment_stage_id: value
-                  //   })
-                  // }}
+                  onChange={(value, option) => {
+                    let candidateNames = selectedRecruitments.map(
+                      (selected) => selected.name
+                    );
+                    let prevStageNames = selectedRecruitments.map(
+                      (selected) => selected.stage?.name
+                    );
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      id: selectedRecruitmentIds,
+                      name: candidateNames,
+                      prev_recruitment_stage_name: prevStageNames,
+                      recruitment_stage_name: option.children,
+                      recruitment_stage_id: value,
+                    });
+                  }}
                 >
                   {dataStageList.map((stage) => (
                     <Select.Option key={stage.id} value={stage.id}>
@@ -1257,23 +1656,26 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <p>Status</p>
                 <Select
                   disabled={!isAllowedToGetRecruitmentStatusesList}
+                  placeholder={"Pilih status..."}
                   className={"border-none active:border-none"}
-                  value={selectedRecruitments[0]?.recruitment_status_id}
+                  value={dataUpdateStatus.recruitment_status_id}
                   style={{ width: `100%` }}
-                  // onChange={(value) => {
-                  //   setDataUpdate
-                  //   console.log(event.target.value)
-                  //   setDataUpdate({
-                  //     id: record.id,
-                  //     name: record.name,
-                  //     email: record.email,
-                  //     university: record.university,
-                  //     recruitment_role_id: record.recruitment_role_id,
-                  //     recruitment_jalur_daftar_id: record.recruitment_jalur_daftar_id,
-                  //     recruitment_status_id: record.recruitment_status_id,
-                  //     recruitment_stage_id: value
-                  //   })
-                  // }}
+                  onChange={(value, option) => {
+                    let candidateNames = selectedRecruitments.map(
+                      (selected) => selected.name
+                    );
+                    let prevStatusNames = selectedRecruitments.map(
+                      (selected) => selected.status?.name
+                    );
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      id: selectedRecruitmentIds,
+                      name: candidateNames,
+                      prev_recruitment_status_name: prevStatusNames,
+                      recruitment_status_name: option.children,
+                      recruitment_status_id: value,
+                    });
+                  }}
                 >
                   {dataStatusList.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
