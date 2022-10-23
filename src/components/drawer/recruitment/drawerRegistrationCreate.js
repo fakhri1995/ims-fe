@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { permissionWarningNotification } from "../../../lib/helper";
 import DrawerCore from "../drawerCore";
 
-const DrawerStageCreate = ({
+const DrawerRegistrationCreate = ({
   visible,
   onvisible,
   initProps,
@@ -20,7 +20,7 @@ const DrawerStageCreate = ({
   const [instanceForm] = Form.useForm();
 
   // USESTATE
-  const [dataStage, setDataStage] = useState({
+  const [dataRegistration, setDataRegistration] = useState({
     id: null,
     name: "",
     description: "",
@@ -30,30 +30,30 @@ const DrawerStageCreate = ({
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataStage.name !== "") {
+    if (dataRegistration.name !== "") {
       setDisabledCreate(false);
     } else {
       setDisabledCreate(true);
     }
-  }, [dataStage]);
+  }, [dataRegistration]);
 
   //HANDLER
   const onChangeInput = (e) => {
-    setDataStage({
-      ...dataStage,
+    setDataRegistration({
+      ...dataRegistration,
       [e.target.name]: e.target.value,
     });
   };
 
   const clearData = () => {
-    setDataStage({
+    setDataRegistration({
       id: null,
       name: "",
       description: "",
     });
   };
 
-  const handleCreateStage = () => {
+  const handleCreateRegistration = () => {
     if (!isAllowedToAdd) {
       permissionWarningNotification("Menambah", "Jalur Daftar Rekrutmen");
       return;
@@ -65,7 +65,7 @@ const DrawerStageCreate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataStage),
+      body: JSON.stringify(dataRegistration),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -106,7 +106,7 @@ const DrawerStageCreate = ({
         onvisible(false);
       }}
       buttonOkText={"Simpan Jalur Daftar"}
-      onClick={handleCreateStage}
+      onClick={handleCreateRegistration}
       disabled={disabledCreate}
     >
       <Spin spinning={loadingCreate}>
@@ -132,7 +132,7 @@ const DrawerStageCreate = ({
             >
               <div>
                 <TextArea
-                  value={dataStage.name}
+                  value={dataRegistration.name}
                   name={"name"}
                   rows={3}
                   onChange={onChangeInput}
@@ -146,4 +146,4 @@ const DrawerStageCreate = ({
   );
 };
 
-export default DrawerStageCreate;
+export default DrawerRegistrationCreate;

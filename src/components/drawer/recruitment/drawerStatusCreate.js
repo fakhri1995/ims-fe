@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { permissionWarningNotification } from "../../../lib/helper";
 import DrawerCore from "../drawerCore";
 
-const DrawerStageCreate = ({
+const DrawerStatusCreate = ({
   visible,
   onvisible,
   initProps,
@@ -20,7 +20,7 @@ const DrawerStageCreate = ({
   const [instanceForm] = Form.useForm();
 
   // USESTATE
-  const [dataStage, setDataStage] = useState({
+  const [dataStatus, setDataStatus] = useState({
     id: null,
     name: "",
     description: "",
@@ -31,23 +31,23 @@ const DrawerStageCreate = ({
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataStage.name !== "" && dataStage.description !== "") {
+    if (dataStatus.name !== "" && dataStatus.description !== "") {
       setDisabledCreate(false);
     } else {
       setDisabledCreate(true);
     }
-  }, [dataStage]);
+  }, [dataStatus]);
 
   //HANDLER
   const onChangeInput = (e) => {
-    setDataStage({
-      ...dataStage,
+    setDataStatus({
+      ...dataStatus,
       [e.target.name]: e.target.value,
     });
   };
 
   const clearData = () => {
-    setDataStage({
+    setDataStatus({
       id: null,
       name: "",
       color: "#000000",
@@ -55,7 +55,7 @@ const DrawerStageCreate = ({
     });
   };
 
-  const handleCreateStage = () => {
+  const handleCreateStatus = () => {
     if (!isAllowedToAdd) {
       permissionWarningNotification("Menambah", "Status");
       return;
@@ -67,7 +67,7 @@ const DrawerStageCreate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataStage),
+      body: JSON.stringify(dataStatus),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -108,7 +108,7 @@ const DrawerStageCreate = ({
         onvisible(false);
       }}
       buttonOkText={"Simpan Status"}
-      onClick={handleCreateStage}
+      onClick={handleCreateStatus}
       disabled={disabledCreate}
     >
       <Spin spinning={loadingCreate}>
@@ -135,7 +135,7 @@ const DrawerStageCreate = ({
               >
                 <div>
                   <Input
-                    value={dataStage.name}
+                    value={dataStatus.name}
                     name={"name"}
                     onChange={onChangeInput}
                   />
@@ -154,12 +154,12 @@ const DrawerStageCreate = ({
               >
                 <div>
                   <Input
-                    value={dataStage.color}
+                    value={dataStatus.color}
                     name={"color"}
                     type={"color"}
                     onChange={(event) => {
-                      setDataStage({
-                        ...dataStage,
+                      setDataStatus({
+                        ...dataStatus,
                         color: event.target.value,
                       });
                     }}
@@ -180,7 +180,7 @@ const DrawerStageCreate = ({
             >
               <div>
                 <TextArea
-                  value={dataStage.description}
+                  value={dataStatus.description}
                   name={"description"}
                   type={"description"}
                   rows="4"
@@ -195,4 +195,4 @@ const DrawerStageCreate = ({
   );
 };
 
-export default DrawerStageCreate;
+export default DrawerStatusCreate;

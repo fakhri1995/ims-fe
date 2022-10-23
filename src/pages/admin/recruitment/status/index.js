@@ -1,5 +1,5 @@
 import { Input, Select, notification } from "antd";
-// import DrawerStageCreate from "../../../../components/drawer/recruitment/drawerStageCreate";
+// import DrawerStatusCreate from "../../../../components/drawer/recruitment/drawerStatusCreate";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
@@ -21,7 +21,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
-import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerStatusUpdate";
+import DrawerStatusUpdate from "../../../../components/drawer/recruitment/drawerStatusUpdate";
 import {
   EditIconSvg,
   LayoutGridAddSvg,
@@ -39,7 +39,7 @@ import { TableCustomRecruitmentStatus } from "../../../../components/table/table
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
-const DrawerStageCreate = dynamic(
+const DrawerStatusCreate = dynamic(
   () => {
     return import(
       "../../../../components/drawer/recruitment/drawerStatusCreate"
@@ -77,13 +77,13 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const pathArr = rt.pathname.split("/").slice(1);
 
   // 2. Use state
-  // 2.1. Table Stage
-  const [loadingStages, setLoadingStages] = useState(false);
-  const [loadingStageList, setLoadingStageList] = useState(false);
+  // 2.1. Table Status
+  const [loadingStatuss, setLoadingStatuss] = useState(false);
+  const [loadingStatusList, setLoadingStatusList] = useState(false);
 
-  const [dataStages, setDataStages] = useState([]);
-  const [dataStageList, setDataStageList] = useState([]);
-  const [dataRawStages, setDataRawStages] = useState({
+  const [dataStatuss, setDataStatuss] = useState([]);
+  const [dataStatusList, setDataStatusList] = useState([]);
+  const [dataRawStatuss, setDataRawStatuss] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -98,27 +98,27 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
 
-  const [pageStages, setPageStages] = useState(1);
-  const [rowsStages, setRowsStages] = useState(10);
-  const [sortingStages, setSortingStages] = useState({
+  const [pageStatuss, setPageStatuss] = useState(1);
+  const [rowsStatuss, setRowsStatuss] = useState(10);
+  const [sortingStatuss, setSortingStatuss] = useState({
     sort_by: "",
     sort_type: "",
   });
 
-  const [searchingFilterStages, setSearchingFilterStages] = useState("");
+  const [searchingFilterStatuss, setSearchingFilterStatuss] = useState("");
   const [refresh, setRefresh] = useState(-1);
 
-  // 2.2. Create Stage
+  // 2.2. Create Status
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
 
-  // 2.3. Update Stage
+  // 2.3. Update Status
   const [isUpdateDrawerShown, setUpdateDrawerShown] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const tempIdUpdate = useRef(-1);
   const [triggerUpdate, setTriggerUpdate] = useState(-1);
 
-  // 2.4. Delete Stage
+  // 2.4. Delete Status
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({
@@ -128,18 +128,18 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 3. UseEffect
-  // 3.1. Get Stages List
+  // 3.1. Get Statuss List
   useEffect(() => {
     if (!isAllowedToGetStatussList) {
       permissionWarningNotification(
         "Mendapatkan",
-        "Data Recruitment Stage List"
+        "Data Recruitment Status List"
       );
-      setLoadingStageList(false);
+      setLoadingStatusList(false);
       return;
     }
 
-    setLoadingStageList(true);
+    setLoadingStatusList(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
       method: `GET`,
       headers: {
@@ -149,14 +149,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataStageList(res2.data);
+          setDataStatusList(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStageList(false);
+        setLoadingStatusList(false);
       })
       .catch((err) => {
         // console.log(err);
@@ -164,19 +164,19 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStageList(false);
+        setLoadingStatusList(false);
       });
   }, [isAllowedToGetStatussList, refresh]);
 
-  // 3.2. Get Stages
+  // 3.2. Get Statuss
   useEffect(() => {
     if (!isAllowedToGetStatuss) {
       permissionWarningNotification("Mendapatkan", "Dafta");
-      setLoadingStages(false);
+      setLoadingStatuss(false);
       return;
     }
 
-    setLoadingStages(true);
+    setLoadingStatuss(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?rows=10`,
       {
@@ -189,30 +189,30 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
+          setDataRawStatuss(res2.data);
+          setDataStatuss(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStages(false);
+        setLoadingStatuss(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStages(false);
+        setLoadingStatuss(false);
       });
   }, [isAllowedToGetStatuss, refresh]);
 
   // 4. Event
-  const onFilterStage = () => {
-    setLoadingStages(true);
+  const onFilterStatus = () => {
+    setLoadingStatuss(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?sort_by=${sortingStages.sort_by}&sort_type=${sortingStages.sort_type}&keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?sort_by=${sortingStatuss.sort_by}&sort_type=${sortingStatuss.sort_type}&keyword=${searchingFilterStatuss}&rows=${rowsStatuss}&page=${pageStatuss}`,
       {
         method: `GET`,
         headers: {
@@ -223,26 +223,26 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
+          setDataRawStatuss(res2.data);
+          setDataStatuss(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStages(false);
+        setLoadingStatuss(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStages(false);
+        setLoadingStatuss(false);
       });
   };
 
-  const { onKeyPressHandler } = createKeyPressHandler(onFilterStage, "Enter");
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterStatus, "Enter");
 
   const onOpenDeleteModal = (data) => {
     setModalDelete(true);
@@ -255,7 +255,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const handleDelete = () => {
     if (!StatusisAllowedToDeleteStatus) {
-      permissionWarningNotification("Menghapus", "Stage Rekrutmen");
+      permissionWarningNotification("Menghapus", "Status Rekrutmen");
       return;
     }
     setLoadingDelete(true);
@@ -294,7 +294,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // Table's columns
-  const columnsStage = [
+  const columnsStatus = [
     {
       title: "No",
       dataIndex: "num",
@@ -302,7 +302,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex justify-center">
-              {dataRawStages?.from + index}
+              {dataRawStatuss?.from + index}
             </div>
           ),
         };
@@ -405,11 +405,11 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="grid grid-cols-5 px-5 gap-6">
           <SetupMenu menu={"4"} />
 
-          {/* Table Semua Stage */}
+          {/* Table Semua Status */}
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Stage ({dataStageList.length})
+                Semua Status ({dataStatusList.length})
               </h4>
 
               <ButtonSys
@@ -419,7 +419,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 <div className="flex flex-row space-x-2.5 items-center">
                   <LayoutGridAddSvg size={16} color="#35763B" />
-                  <p>Tambah Jalur Daftar</p>
+                  <p>Tambah Status</p>
                 </div>
               </ButtonSys>
             </div>
@@ -430,16 +430,18 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               <div className="w-11/12">
                 <Input
                   value={
-                    searchingFilterStages === "" ? null : searchingFilterStages
+                    searchingFilterStatuss === ""
+                      ? null
+                      : searchingFilterStatuss
                   }
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
-                      setSearchingFilterStages("");
+                      setSearchingFilterStatuss("");
                     } else {
-                      setSearchingFilterStages(e.target.value);
+                      setSearchingFilterStatuss(e.target.value);
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
@@ -449,7 +451,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
 
               <ButtonSys
                 type={`primary`}
-                onClick={onFilterStage}
+                onClick={onFilterStatus}
                 disabled={!isAllowedToGetStatuss}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
@@ -461,27 +463,27 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* End: Search criteria */}
 
             <TableCustomRecruitmentStatus
-              dataSource={dataStages}
-              setDataSource={setDataStages}
-              columns={columnsStage}
-              loading={loadingStages}
-              setpraloading={setLoadingStages}
-              pageSize={rowsStages}
-              total={dataRawStages?.total}
+              dataSource={dataStatuss}
+              setDataSource={setDataStatuss}
+              columns={columnsStatus}
+              loading={loadingStatuss}
+              setpraloading={setLoadingStatuss}
+              pageSize={rowsStatuss}
+              total={dataRawStatuss?.total}
               initProps={initProps}
-              setpage={setPageStages}
-              pagefromsearch={pageStages}
-              setdataraw={setDataRawStages}
-              setsorting={setSortingStages}
-              sorting={sortingStages}
-              searching={searchingFilterStages}
+              setpage={setPageStatuss}
+              pagefromsearch={pageStatuss}
+              setdataraw={setDataRawStatuss}
+              setsorting={setSortingStatuss}
+              sorting={sortingStatuss}
+              searching={searchingFilterStatuss}
             />
           </div>
         </div>
       </div>
 
       <AccessControl hasPermission={RECRUITMENT_STATUS_ADD}>
-        <DrawerStageCreate
+        <DrawerStatusCreate
           visible={isCreateDrawerShown}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
@@ -493,15 +495,15 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       <AccessControl hasPermission={RECRUITMENT_STATUS_UPDATE}>
-        <DrawerStageUpdate
+        <DrawerStatusUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
           initProps={initProps}
           onvisible={setUpdateDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetStage={isAllowedToGetStatus}
-          isAllowedToUpdateStage={isAllowedToUpdateStatus}
+          isAllowedToGetStatus={isAllowedToGetStatus}
+          isAllowedToUpdateStatus={isAllowedToUpdateStatus}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
@@ -517,12 +519,12 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"stage"}
+          itemName={"Status"}
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
           Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada stage
+          berada pada Status
           {"\n"}
           <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
           melanjutkan penghapusan?

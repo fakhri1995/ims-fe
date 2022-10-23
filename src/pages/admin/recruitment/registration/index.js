@@ -1,5 +1,5 @@
 import { Input, Select, notification } from "antd";
-// import DrawerStageCreate from "../../../../components/drawer/recruitment/drawerStageCreate";
+// import DrawerRegistrationCreate from "../../../../components/drawer/recruitment/drawerRegistrationCreate";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
@@ -21,7 +21,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
-import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerRegistrationUpdate";
+import DrawerRegistrationUpdate from "../../../../components/drawer/recruitment/drawerRegistrationUpdate";
 import {
   EditIconSvg,
   LayoutGridAddSvg,
@@ -39,7 +39,7 @@ import { TableCustomRecruitmentRegistration } from "../../../../components/table
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
-const DrawerStageCreate = dynamic(
+const DrawerRegistrationCreate = dynamic(
   () => {
     return import(
       "../../../../components/drawer/recruitment/drawerRegistrationCreate"
@@ -85,13 +85,13 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const pathArr = rt.pathname.split("/").slice(1);
 
   // 2. Use state
-  // 2.1. Table Stage
-  const [loadingStages, setLoadingStages] = useState(false);
-  const [loadingStageList, setLoadingStageList] = useState(false);
+  // 2.1. Table Registration
+  const [loadingRegistrations, setLoadingRegistrations] = useState(false);
+  const [loadingRegistrationList, setLoadingRegistrationList] = useState(false);
 
-  const [dataStages, setDataStages] = useState([]);
-  const [dataStageList, setDataStageList] = useState([]);
-  const [dataRawStages, setDataRawStages] = useState({
+  const [dataRegistrations, setDataRegistrations] = useState([]);
+  const [dataRegistrationList, setDataRegistrationList] = useState([]);
+  const [dataRawRegistrations, setDataRawRegistrations] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -106,27 +106,28 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
 
-  const [pageStages, setPageStages] = useState(1);
-  const [rowsStages, setRowsStages] = useState(10);
-  const [sortingStages, setSortingStages] = useState({
+  const [pageRegistrations, setPageRegistrations] = useState(1);
+  const [rowsRegistrations, setRowsRegistrations] = useState(10);
+  const [sortingRegistrations, setSortingRegistrations] = useState({
     sort_by: "",
     sort_type: "",
   });
 
-  const [searchingFilterStages, setSearchingFilterStages] = useState("");
+  const [searchingFilterRegistrations, setSearchingFilterRegistrations] =
+    useState("");
   const [refresh, setRefresh] = useState(-1);
 
-  // 2.2. Create Stage
+  // 2.2. Create Registration
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
 
-  // 2.3. Update Stage
+  // 2.3. Update Registration
   const [isUpdateDrawerShown, setUpdateDrawerShown] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const tempIdUpdate = useRef(-1);
   const [triggerUpdate, setTriggerUpdate] = useState(-1);
 
-  // 2.4. Delete Stage
+  // 2.4. Delete Registration
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({
@@ -136,18 +137,18 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 3. UseEffect
-  // 3.1. Get Stages List
+  // 3.1. Get Registrations List
   useEffect(() => {
     if (!isAllowedToGetResgistrationsList) {
       permissionWarningNotification(
         "Mendapatkan",
-        "Data Recruitment Stage List"
+        "Data Recruitment Registration List"
       );
-      setLoadingStageList(false);
+      setLoadingRegistrationList(false);
       return;
     }
 
-    setLoadingStageList(true);
+    setLoadingRegistrationList(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftarsList`,
       {
@@ -160,14 +161,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataStageList(res2.data);
+          setDataRegistrationList(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStageList(false);
+        setLoadingRegistrationList(false);
       })
       .catch((err) => {
         // console.log(err);
@@ -175,19 +176,19 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStageList(false);
+        setLoadingRegistrationList(false);
       });
   }, [isAllowedToGetResgistrationsList, refresh]);
 
-  // 3.2. Get Stages
+  // 3.2. Get Registrations
   useEffect(() => {
     if (!isAllowedToGetResgistrations) {
       permissionWarningNotification("Mendapatkan", "Dafta");
-      setLoadingStages(false);
+      setLoadingRegistrations(false);
       return;
     }
 
-    setLoadingStages(true);
+    setLoadingRegistrations(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?rows=10`,
       {
@@ -200,30 +201,30 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
+          setDataRawRegistrations(res2.data);
+          setDataRegistrations(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStages(false);
+        setLoadingRegistrations(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStages(false);
+        setLoadingRegistrations(false);
       });
   }, [isAllowedToGetResgistrations, refresh]);
 
   // 4. Event
-  const onFilterStage = () => {
-    setLoadingStages(true);
+  const onFilterRegistration = () => {
+    setLoadingRegistrations(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?sort_by=${sortingStages.sort_by}&sort_type=${sortingStages.sort_type}&keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?sort_by=${sortingRegistrations.sort_by}&sort_type=${sortingRegistrations.sort_type}&keyword=${searchingFilterRegistrations}&rows=${rowsRegistrations}&page=${pageRegistrations}`,
       {
         method: `GET`,
         headers: {
@@ -234,26 +235,29 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
+          setDataRawRegistrations(res2.data);
+          setDataRegistrations(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStages(false);
+        setLoadingRegistrations(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStages(false);
+        setLoadingRegistrations(false);
       });
   };
 
-  const { onKeyPressHandler } = createKeyPressHandler(onFilterStage, "Enter");
+  const { onKeyPressHandler } = createKeyPressHandler(
+    onFilterRegistration,
+    "Enter"
+  );
 
   const onOpenDeleteModal = (data) => {
     setModalDelete(true);
@@ -266,7 +270,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const handleDelete = () => {
     if (!isAllowedToDeleteSResgistration) {
-      permissionWarningNotification("Menghapus", "Stage Rekrutmen");
+      permissionWarningNotification("Menghapus", "Registration Rekrutmen");
       return;
     }
     setLoadingDelete(true);
@@ -305,7 +309,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // Table's columns
-  const columnsStage = [
+  const columnsRegistration = [
     {
       title: "No",
       dataIndex: "num",
@@ -313,7 +317,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex justify-center">
-              {dataRawStages?.from + index}
+              {dataRawRegistrations?.from + index}
             </div>
           ),
         };
@@ -393,11 +397,11 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="grid grid-cols-5 px-5 gap-6">
           <SetupMenu menu={"2"} />
 
-          {/* Table Semua Stage */}
+          {/* Table Semua Registration */}
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Stage ({dataStageList.length})
+                Semua Registration ({dataRegistrationList.length})
               </h4>
 
               <ButtonSys
@@ -418,16 +422,18 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               <div className="w-11/12">
                 <Input
                   value={
-                    searchingFilterStages === "" ? null : searchingFilterStages
+                    searchingFilterRegistrations === ""
+                      ? null
+                      : searchingFilterRegistrations
                   }
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
-                      setSearchingFilterStages("");
+                      setSearchingFilterRegistrations("");
                     } else {
-                      setSearchingFilterStages(e.target.value);
+                      setSearchingFilterRegistrations(e.target.value);
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
@@ -437,7 +443,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
 
               <ButtonSys
                 type={`primary`}
-                onClick={onFilterStage}
+                onClick={onFilterRegistration}
                 disabled={!isAllowedToGetResgistrations}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
@@ -449,27 +455,27 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* End: Search criteria */}
 
             <TableCustomRecruitmentRegistration
-              dataSource={dataStages}
-              setDataSource={setDataStages}
-              columns={columnsStage}
-              loading={loadingStages}
-              setpraloading={setLoadingStages}
-              pageSize={rowsStages}
-              total={dataRawStages?.total}
+              dataSource={dataRegistrations}
+              setDataSource={setDataRegistrations}
+              columns={columnsRegistration}
+              loading={loadingRegistrations}
+              setpraloading={setLoadingRegistrations}
+              pageSize={rowsRegistrations}
+              total={dataRawRegistrations?.total}
               initProps={initProps}
-              setpage={setPageStages}
-              pagefromsearch={pageStages}
-              setdataraw={setDataRawStages}
-              setsorting={setSortingStages}
-              sorting={sortingStages}
-              searching={searchingFilterStages}
+              setpage={setPageRegistrations}
+              pagefromsearch={pageRegistrations}
+              setdataraw={setDataRawRegistrations}
+              setsorting={setSortingRegistrations}
+              sorting={sortingRegistrations}
+              searching={searchingFilterRegistrations}
             />
           </div>
         </div>
       </div>
 
       <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_ADD}>
-        <DrawerStageCreate
+        <DrawerRegistrationCreate
           visible={isCreateDrawerShown}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
@@ -481,15 +487,15 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_UPDATE}>
-        <DrawerStageUpdate
+        <DrawerRegistrationUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
           initProps={initProps}
           onvisible={setUpdateDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetStage={true}
-          isAllowedToUpdateStage={true}
+          isAllowedToGetRegistration={true}
+          isAllowedToUpdateRegistration={true}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
@@ -505,12 +511,12 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"stage"}
+          itemName={"Registration"}
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
           Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada stage
+          berada pada Registration
           {"\n"}
           <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
           melanjutkan penghapusan?

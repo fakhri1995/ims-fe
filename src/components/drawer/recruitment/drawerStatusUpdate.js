@@ -6,15 +6,15 @@ import { permissionWarningNotification } from "../../../lib/helper";
 import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
-const DrawerStageUpdate = ({
+const DrawerStatusUpdate = ({
   id,
   visible,
   onvisible,
   initProps,
   trigger,
   setRefresh,
-  isAllowedToGetStage,
-  isAllowedToUpdateStage,
+  isAllowedToGetStatus,
+  isAllowedToUpdateStatus,
   setLoadingUpdate,
   loadingUpdate,
   onClickDelete,
@@ -26,35 +26,35 @@ const DrawerStageUpdate = ({
   const [instanceForm] = Form.useForm();
 
   // USESTATE
-  const [dataStage, setDataStage] = useState({
+  const [dataStatus, setDataStatus] = useState({
     id: null,
     name: "",
     description: "",
     recruitments_count: 0,
   });
-  const [loadingDataStage, setLoadingDataStage] = useState(false);
+  const [loadingDataStatus, setLoadingDataStatus] = useState(false);
   const [disabledUpdate, setDisabledUpdate] = useState(true);
 
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataStage.name !== "" && dataStage.description !== "") {
+    if (dataStatus.name !== "" && dataStatus.description !== "") {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
     }
-  }, [dataStage]);
+  }, [dataStatus]);
 
-  // Get stage data
+  // Get Status data
   useEffect(() => {
-    if (!isAllowedToGetStage) {
-      setLoadingDataStage(false);
+    if (!isAllowedToGetStatus) {
+      setLoadingDataStatus(false);
       permissionWarningNotification("Mendapatkan", "Data Status");
       return;
     }
 
     if (trigger !== -1) {
-      setLoadingDataStage(true);
+      setLoadingDataStatus(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatus?id=${id.current}`,
         {
@@ -66,7 +66,7 @@ const DrawerStageUpdate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          setDataStage((prev) => ({
+          setDataStatus((prev) => ({
             ...prev,
             id: res2.data.id,
             name: res2.data.name,
@@ -74,30 +74,30 @@ const DrawerStageUpdate = ({
             description: res2.data.description,
             recruitments_count: res2.data.recruitments_count,
           }));
-          setLoadingDataStage(false);
+          setLoadingDataStatus(false);
         });
     }
-  }, [trigger, isAllowedToGetStage]);
+  }, [trigger, isAllowedToGetStatus]);
 
   //HANDLER
   const onChangeInput = (e) => {
-    setDataStage({
-      ...dataStage,
+    setDataStatus({
+      ...dataStatus,
       [e.target.name]: e.target.value,
     });
   };
 
   const clearData = () => {
-    setDataStage({
+    setDataStatus({
       id: null,
       name: "",
       description: "",
     });
   };
 
-  const handleUpdateStage = () => {
-    if (!isAllowedToUpdateStage) {
-      permissionWarningNotification("Mengubah", "Stage Status");
+  const handleUpdateStatus = () => {
+    if (!isAllowedToUpdateStatus) {
+      permissionWarningNotification("Mengubah", "Status Status");
       return;
     }
     setLoadingUpdate(true);
@@ -107,7 +107,7 @@ const DrawerStageUpdate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataStage),
+      body: JSON.stringify(dataStatus),
     })
       .then((res) => res.json())
       .then((res2) => {
@@ -147,7 +147,7 @@ const DrawerStageUpdate = ({
         onvisible(false);
       }}
       buttonOkText={"Simpan Status"}
-      onClick={handleUpdateStage}
+      onClick={handleUpdateStatus}
       disabled={disabledUpdate}
       buttonCancelText={
         <div className="flex flex-row space-x-2 items-center">
@@ -156,7 +156,7 @@ const DrawerStageUpdate = ({
         </div>
       }
       onButtonCancelClicked={() => {
-        onClickDelete(dataStage);
+        onClickDelete(dataStatus);
         onvisible(false);
       }}
     >
@@ -184,7 +184,7 @@ const DrawerStageUpdate = ({
               >
                 <div>
                   <Input
-                    value={dataStage.name}
+                    value={dataStatus.name}
                     name={"name"}
                     onChange={onChangeInput}
                   />
@@ -203,12 +203,12 @@ const DrawerStageUpdate = ({
               >
                 <div>
                   <Input
-                    value={dataStage.color}
+                    value={dataStatus.color}
                     name={"color"}
                     type={"color"}
                     onChange={(event) => {
-                      setDataStage({
-                        ...dataStage,
+                      setDataStatus({
+                        ...dataStatus,
                         color: event.target.value,
                       });
                     }}
@@ -229,7 +229,7 @@ const DrawerStageUpdate = ({
             >
               <div>
                 <TextArea
-                  value={dataStage.description}
+                  value={dataStatus.description}
                   name={"description"}
                   type={"description"}
                   rows="4"
@@ -244,4 +244,4 @@ const DrawerStageUpdate = ({
   );
 };
 
-export default DrawerStageUpdate;
+export default DrawerStatusUpdate;

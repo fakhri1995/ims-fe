@@ -1,19 +1,20 @@
 import { Form, Input, Select, Spin, notification } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../lib/helper";
 import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
-const DrawerStageUpdate = ({
+const DrawerRegistrationUpdate = ({
   id,
   visible,
   onvisible,
   initProps,
   trigger,
   setRefresh,
-  isAllowedToGetStage,
-  isAllowedToUpdateStage,
+  isAllowedToGetRegistration,
+  isAllowedToUpdateRegistration,
   setLoadingUpdate,
   loadingUpdate,
   onClickDelete,
@@ -25,35 +26,35 @@ const DrawerStageUpdate = ({
   const [instanceForm] = Form.useForm();
 
   // USESTATE
-  const [dataStage, setDataStage] = useState({
+  const [dataRegistration, setDataRegistration] = useState({
     id: null,
     name: "",
     description: "",
     recruitments_count: 0,
   });
-  const [loadingDataStage, setLoadingDataStage] = useState(false);
+  const [loadingDataRegistration, setLoadingDataRegistration] = useState(false);
   const [disabledUpdate, setDisabledUpdate] = useState(true);
 
   // USEEFFECT
   // Validate input field
   useEffect(() => {
-    if (dataStage.name !== "") {
+    if (dataRegistration.name !== "") {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
     }
-  }, [dataStage]);
+  }, [dataRegistration]);
 
-  // Get stage data
+  // Get Registration data
   useEffect(() => {
-    if (!isAllowedToGetStage) {
-      setLoadingDataStage(false);
+    if (!isAllowedToGetRegistration) {
+      setLoadingDataRegistration(false);
       permissionWarningNotification("Mendapatkan", "Data Jalur Daftar");
       return;
     }
 
     if (trigger !== -1) {
-      setLoadingDataStage(true);
+      setLoadingDataRegistration(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftar?id=${id.current}`,
         {
@@ -65,37 +66,37 @@ const DrawerStageUpdate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          setDataStage((prev) => ({
+          setDataRegistration((prev) => ({
             ...prev,
             id: res2.data.id,
             name: res2.data.name,
             description: res2.data.description,
             recruitments_count: res2.data.recruitments_count,
           }));
-          setLoadingDataStage(false);
+          setLoadingDataRegistration(false);
         });
     }
-  }, [trigger, isAllowedToGetStage]);
+  }, [trigger, isAllowedToGetRegistration]);
 
   //HANDLER
   const onChangeInput = (e) => {
-    setDataStage({
-      ...dataStage,
+    setDataRegistration({
+      ...dataRegistration,
       [e.target.name]: e.target.value,
     });
   };
 
   const clearData = () => {
-    setDataStage({
+    setDataRegistration({
       id: null,
       name: "",
       description: "",
     });
   };
 
-  const handleUpdateStage = () => {
-    if (!isAllowedToUpdateStage) {
-      permissionWarningNotification("Mengubah", "Stage Jalur Daftar");
+  const handleUpdateRegistration = () => {
+    if (!isAllowedToUpdateRegistration) {
+      permissionWarningNotification("Mengubah", "Registration Jalur Daftar");
       return;
     }
     setLoadingUpdate(true);
@@ -107,7 +108,7 @@ const DrawerStageUpdate = ({
           Authorization: JSON.parse(initProps),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(dataStage),
+        body: JSON.stringify(dataRegistration),
       }
     )
       .then((res) => res.json())
@@ -148,16 +149,16 @@ const DrawerStageUpdate = ({
         onvisible(false);
       }}
       buttonOkText={"Simpan Jalur Daftar"}
-      onClick={handleUpdateStage}
+      onClick={handleUpdateRegistration}
       disabled={disabledUpdate}
       buttonCancelText={
         <div className="flex flex-row space-x-2 items-center">
           <TrashIconSvg size={16} color={"#BF4A40"} />
-          <p>Hapus Stage</p>
+          <p>Hapus Jalur Daftar</p>
         </div>
       }
       onButtonCancelClicked={() => {
-        onClickDelete(dataStage);
+        onClickDelete(dataRegistration);
         onvisible(false);
       }}
     >
@@ -183,9 +184,10 @@ const DrawerStageUpdate = ({
               className="col-span-2"
             >
               <div>
-                <Input
-                  value={dataStage.name}
+                <TextArea
+                  value={dataRegistration.name}
                   name={"name"}
+                  rows={3}
                   onChange={onChangeInput}
                 />
               </div>
@@ -197,4 +199,4 @@ const DrawerStageUpdate = ({
   );
 };
 
-export default DrawerStageUpdate;
+export default DrawerRegistrationUpdate;
