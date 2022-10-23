@@ -51,7 +51,7 @@ const SetupMenu = ({ menu }) => {
           icon={<ClickIconSvg color={"#808080"} />}
           title="Registration"
         >
-          <Link href="#">Jalur Daftar</Link>
+          <Link href="/admin/recruitment/registration">Jalur Daftar</Link>
         </Menu.Item>
       )}
 
@@ -71,7 +71,7 @@ const SetupMenu = ({ menu }) => {
           icon={<InfoSquareIconSvg color={"#808080"} />}
           title="Status"
         >
-          <Link href="#">Status</Link>
+          <Link href="/admin/recruitment/status">Status</Link>
         </Menu.Item>
       )}
 

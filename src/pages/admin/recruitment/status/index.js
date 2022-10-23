@@ -11,17 +11,17 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  RECRUITMENT_JALUR_DAFTARS_GET,
-  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
-  RECRUITMENT_JALUR_DAFTAR_ADD,
-  RECRUITMENT_JALUR_DAFTAR_DELETE,
-  RECRUITMENT_JALUR_DAFTAR_GET,
-  RECRUITMENT_JALUR_DAFTAR_UPDATE,
+  RECRUITMENT_STATUSES_GET,
+  RECRUITMENT_STATUSES_LIST_GET,
+  RECRUITMENT_STATUS_ADD,
+  RECRUITMENT_STATUS_DELETE,
+  RECRUITMENT_STATUS_GET,
+  RECRUITMENT_STATUS_UPDATE,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
-import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerRegistrationUpdate";
+import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerStatusUpdate";
 import {
   EditIconSvg,
   LayoutGridAddSvg,
@@ -35,14 +35,14 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import SetupMenu from "../../../../components/setupMenu";
-import { TableCustomRecruitmentRegistration } from "../../../../components/table/tableCustom";
+import { TableCustomRecruitmentStatus } from "../../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const DrawerStageCreate = dynamic(
   () => {
     return import(
-      "../../../../components/drawer/recruitment/drawerRegistrationCreate"
+      "../../../../components/drawer/recruitment/drawerStatusCreate"
     );
   },
   { ssr: false }
@@ -57,27 +57,19 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetResgistrationsList = hasPermission(
-    RECRUITMENT_JALUR_DAFTARS_LIST_GET
+  const isAllowedToGetStatussList = hasPermission(
+    RECRUITMENT_STATUSES_LIST_GET
   );
-  const isAllowedToGetResgistrations = hasPermission(
-    RECRUITMENT_JALUR_DAFTARS_GET
+  const isAllowedToGetStatuss = hasPermission(RECRUITMENT_STATUSES_GET);
+  const isAllowedToGetStatus = hasPermission(RECRUITMENT_STATUS_GET);
+  const isAllowedToAddStatus = hasPermission(RECRUITMENT_STATUS_ADD);
+  const isAllowedToUpdateStatus = hasPermission(RECRUITMENT_STATUS_UPDATE);
+  const StatusisAllowedToDeleteStatus = hasPermission(
+    RECRUITMENT_STATUS_DELETE
   );
-  const isAllowedToGetResgistration = hasPermission(
-    RECRUITMENT_JALUR_DAFTAR_GET
-  );
-  const isAllowedToAddResgistration = hasPermission(
-    RECRUITMENT_JALUR_DAFTAR_ADD
-  );
-  const isAllowedToUpdateResgistration = hasPermission(
-    RECRUITMENT_JALUR_DAFTAR_UPDATE
-  );
-  const isAllowedToDeleteSResgistration = hasPermission(
-    RECRUITMENT_JALUR_DAFTAR_DELETE
-  );
-  const canUpdateResgistration = hasPermission([
-    RECRUITMENT_JALUR_DAFTAR_UPDATE,
-    RECRUITMENT_JALUR_DAFTAR_GET,
+  const canUpdateStatus = hasPermission([
+    RECRUITMENT_STATUS_UPDATE,
+    RECRUITMENT_STATUS_GET,
   ]);
 
   // 1. Init
@@ -138,7 +130,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect
   // 3.1. Get Stages List
   useEffect(() => {
-    if (!isAllowedToGetResgistrationsList) {
+    if (!isAllowedToGetStatussList) {
       permissionWarningNotification(
         "Mendapatkan",
         "Data Recruitment Stage List"
@@ -148,15 +140,12 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingStageList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftarsList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -177,11 +166,11 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingStageList(false);
       });
-  }, [isAllowedToGetResgistrationsList, refresh]);
+  }, [isAllowedToGetStatussList, refresh]);
 
   // 3.2. Get Stages
   useEffect(() => {
-    if (!isAllowedToGetResgistrations) {
+    if (!isAllowedToGetStatuss) {
       permissionWarningNotification("Mendapatkan", "Dafta");
       setLoadingStages(false);
       return;
@@ -189,7 +178,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingStages(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?rows=10`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?rows=10`,
       {
         method: `GET`,
         headers: {
@@ -217,13 +206,13 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingStages(false);
       });
-  }, [isAllowedToGetResgistrations, refresh]);
+  }, [isAllowedToGetStatuss, refresh]);
 
   // 4. Event
   const onFilterStage = () => {
     setLoadingStages(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?sort_by=${sortingStages.sort_by}&sort_type=${sortingStages.sort_type}&keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?sort_by=${sortingStages.sort_by}&sort_type=${sortingStages.sort_type}&keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
       {
         method: `GET`,
         headers: {
@@ -265,13 +254,13 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   const handleDelete = () => {
-    if (!isAllowedToDeleteSResgistration) {
+    if (!StatusisAllowedToDeleteStatus) {
       permissionWarningNotification("Menghapus", "Stage Rekrutmen");
       return;
     }
     setLoadingDelete(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitmentJalurDaftar?id=${dataDelete.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitmentStatus?id=${dataDelete.id}`,
       {
         method: "DELETE",
         headers: {
@@ -296,7 +285,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus jalur daftar rekrutmen. ${err.response}`,
+          message: `Gagal menghapus status rekrutmen. ${err.response}`,
           duration: 3,
         });
         setLoadingDelete(false);
@@ -327,9 +316,32 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.name}</>,
         };
       },
-      sorter: isAllowedToGetResgistrations
+      sorter: isAllowedToGetStatuss
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
+    },
+    {
+      title: "Warna",
+      dataIndex: "color",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div
+              className={`w-6 h-6 rounded-sm`}
+              style={{ backgroundColor: `${record.color}` }}
+            ></div>
+          ),
+        };
+      },
+    },
+    {
+      title: "Deskripsi",
+      dataIndex: "description",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.description}</>,
+        };
+      },
     },
     {
       title: "Jumlah Kandidat",
@@ -339,7 +351,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.recruitments_count}</>,
         };
       },
-      sorter: isAllowedToGetResgistrations
+      sorter: isAllowedToGetStatuss
         ? (a, b) => a.recruitments_count > b.recruitments_count
         : false,
     },
@@ -351,8 +363,8 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex items-center space-x-2">
               <ButtonSys
-                type={canUpdateResgistration ? "default" : "primary"}
-                disabled={!canUpdateResgistration}
+                type={canUpdateStatus ? "default" : "primary"}
+                disabled={!canUpdateStatus}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -363,9 +375,9 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <EditIconSvg size={15} color={`#35763B`} />
               </ButtonSys>
               <ButtonSys
-                type={isAllowedToDeleteSResgistration ? "default" : "primary"}
+                type={StatusisAllowedToDeleteStatus ? "default" : "primary"}
                 color="danger"
-                disabled={!isAllowedToDeleteSResgistration}
+                disabled={!StatusisAllowedToDeleteStatus}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
@@ -391,7 +403,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="flex flex-col" id="mainWrapper">
         <div className="grid grid-cols-5 px-5 gap-6">
-          <SetupMenu menu={"2"} />
+          <SetupMenu menu={"4"} />
 
           {/* Table Semua Stage */}
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
@@ -401,9 +413,9 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               </h4>
 
               <ButtonSys
-                type={isAllowedToAddResgistration ? "default" : "primary"}
+                type={isAllowedToAddStatus ? "default" : "primary"}
                 onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddResgistration}
+                disabled={!isAllowedToAddStatus}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
                   <LayoutGridAddSvg size={16} color="#35763B" />
@@ -431,14 +443,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetResgistrations}
+                  disabled={!isAllowedToGetStatuss}
                 />
               </div>
 
               <ButtonSys
                 type={`primary`}
                 onClick={onFilterStage}
-                disabled={!isAllowedToGetResgistrations}
+                disabled={!isAllowedToGetStatuss}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -448,7 +460,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
             {/* End: Search criteria */}
 
-            <TableCustomRecruitmentRegistration
+            <TableCustomRecruitmentStatus
               dataSource={dataStages}
               setDataSource={setDataStages}
               columns={columnsStage}
@@ -468,19 +480,19 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
       </div>
 
-      <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_ADD}>
+      <AccessControl hasPermission={RECRUITMENT_STATUS_ADD}>
         <DrawerStageCreate
           visible={isCreateDrawerShown}
           initProps={initProps}
           onvisible={setCreateDrawerShown}
           setRefresh={setRefresh}
-          isAllowedToAdd={isAllowedToAddResgistration}
+          isAllowedToAdd={isAllowedToAddStatus}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_UPDATE}>
+      <AccessControl hasPermission={RECRUITMENT_STATUS_UPDATE}>
         <DrawerStageUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
@@ -488,15 +500,15 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setUpdateDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetStage={true}
-          isAllowedToUpdateStage={true}
+          isAllowedToGetStage={isAllowedToGetStatus}
+          isAllowedToUpdateStage={isAllowedToUpdateStatus}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_DELETE}>
+      <AccessControl hasPermission={RECRUITMENT_STATUS_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
