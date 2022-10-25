@@ -167,7 +167,7 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
         <div
           className="bg-gray-100 rounded-md overflow-hidden flex items-center justify-center"
           style={
-            window.innerWidth < 720
+            window.innerWidth > 768
               ? {
                   minWidth: `${WEBCAM_WIDTH}px`,
                   minHeight: `${WEBCAM_HEIGHT}px`,
