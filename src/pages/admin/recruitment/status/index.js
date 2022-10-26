@@ -21,6 +21,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
+import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerStatusUpdate from "../../../../components/drawer/recruitment/drawerStatusUpdate";
 import {
   EditIconSvg,
@@ -57,10 +58,10 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetStatussList = hasPermission(
+  const StatuisAllowedToGetStatusesList = hasPermission(
     RECRUITMENT_STATUSES_LIST_GET
   );
-  const isAllowedToGetStatuss = hasPermission(RECRUITMENT_STATUSES_GET);
+  const StatuisAllowedToGetStatuses = hasPermission(RECRUITMENT_STATUSES_GET);
   const isAllowedToGetStatus = hasPermission(RECRUITMENT_STATUS_GET);
   const isAllowedToAddStatus = hasPermission(RECRUITMENT_STATUS_ADD);
   const isAllowedToUpdateStatus = hasPermission(RECRUITMENT_STATUS_UPDATE);
@@ -75,15 +76,18 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  pathArr[pathArr.length - 1] = "Kelola Status";
 
   // 2. Use state
   // 2.1. Table Status
-  const [loadingStatuss, setLoadingStatuss] = useState(false);
+  const [loadingStatus, setLoadingStatus] = useState(false);
   const [loadingStatusList, setLoadingStatusList] = useState(false);
 
-  const [dataStatuss, setDataStatuss] = useState([]);
-  const [dataStatusList, setDataStatusList] = useState([]);
-  const [dataRawStatuss, setDataRawStatuss] = useState({
+  const [drawUpdate, setDrawUpdate] = useState(false);
+
+  const [dataStatuses, setdataStatuses] = useState([]);
+  const [dataStatusesList, setdataStatusesList] = useState([]);
+  const [dataRawStatus, setDataRawStatus] = useState({
     current_page: "",
     data: [],
     first_page_url: "",
@@ -98,14 +102,22 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
 
-  const [pageStatuss, setPageStatuss] = useState(1);
-  const [rowsStatuss, setRowsStatuss] = useState(10);
-  const [sortingStatuss, setSortingStatuss] = useState({
+  const [dataStatus, setDataStatus] = useState({
+    id: 0,
+    name: "",
+    color: "",
+    description: "",
+    recruitments_count: 0,
+  });
+
+  const [pageStatus, setPageStatus] = useState(1);
+  const [rowsStatus, setRowsStatus] = useState(10);
+  const [sortingStatus, setSortingStatus] = useState({
     sort_by: "",
     sort_type: "",
   });
 
-  const [searchingFilterStatuss, setSearchingFilterStatuss] = useState("");
+  const [searchingFilterStatus, setSearchingFilterStatus] = useState("");
   const [refresh, setRefresh] = useState(-1);
 
   // 2.2. Create Status
@@ -127,10 +139,13 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     recruitments_count: 0,
   });
 
+  // 2.5 READ FORM
+  const [drawread, setdrawread] = useState(false);
+
   // 3. UseEffect
-  // 3.1. Get Statuss List
+  // 3.1. Get Status List
   useEffect(() => {
-    if (!isAllowedToGetStatussList) {
+    if (!StatuisAllowedToGetStatusesList) {
       permissionWarningNotification(
         "Mendapatkan",
         "Data Recruitment Status List"
@@ -149,7 +164,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataStatusList(res2.data);
+          setdataStatusesList(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
@@ -166,17 +181,17 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingStatusList(false);
       });
-  }, [isAllowedToGetStatussList, refresh]);
+  }, [StatuisAllowedToGetStatusesList, refresh]);
 
-  // 3.2. Get Statuss
+  // 3.2. Get Status
   useEffect(() => {
-    if (!isAllowedToGetStatuss) {
+    if (!StatuisAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Dafta");
-      setLoadingStatuss(false);
+      setLoadingStatus(false);
       return;
     }
 
-    setLoadingStatuss(true);
+    setLoadingStatus(true);
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?rows=10`,
       {
@@ -189,30 +204,30 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStatuss(res2.data);
-          setDataStatuss(res2.data.data);
+          setDataRawStatus(res2.data);
+          setdataStatuses(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStatuss(false);
+        setLoadingStatus(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStatuss(false);
+        setLoadingStatus(false);
       });
-  }, [isAllowedToGetStatuss, refresh]);
+  }, [StatuisAllowedToGetStatuses, refresh]);
 
   // 4. Event
   const onFilterStatus = () => {
-    setLoadingStatuss(true);
+    setLoadingStatus(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?sort_by=${sortingStatuss.sort_by}&sort_type=${sortingStatuss.sort_type}&keyword=${searchingFilterStatuss}&rows=${rowsStatuss}&page=${pageStatuss}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?sort_by=${sortingStatus.sort_by}&sort_type=${sortingStatus.sort_type}&keyword=${searchingFilterStatus}&rows=${rowsStatus}&page=${pageStatus}`,
       {
         method: `GET`,
         headers: {
@@ -223,26 +238,38 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawStatuss(res2.data);
-          setDataStatuss(res2.data.data);
+          setDataRawStatus(res2.data);
+          setdataStatuses(res2.data.data);
         } else {
           notification.error({
             message: `${res2.message}`,
             duration: 3,
           });
         }
-        setLoadingStatuss(false);
+        setLoadingStatus(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingStatuss(false);
+        setLoadingStatus(false);
       });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterStatus, "Enter");
+
+  const onOpenReadDrawer = (data) => {
+    setdrawread(true);
+    setDataStatus((prev) => ({
+      ...prev,
+      id: parseInt(data.id),
+      name: data.name,
+      recruitments_count: parseInt(data.recruitments_count),
+      color: data.color,
+      description: data.description,
+    }));
+  };
 
   const onOpenDeleteModal = (data) => {
     setModalDelete(true);
@@ -302,7 +329,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex justify-center">
-              {dataRawStatuss?.from + index}
+              {dataRawStatus?.from + index}
             </div>
           ),
         };
@@ -313,10 +340,20 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "name",
       render: (text, record, index) => {
         return {
-          children: <>{record.name}</>,
+          children: (
+            <>
+              <h1
+                onClick={() => {
+                  onOpenReadDrawer(record);
+                }}
+              >
+                {record.name}
+              </h1>
+            </>
+          ),
         };
       },
-      sorter: isAllowedToGetStatuss
+      sorter: StatuisAllowedToGetStatuses
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
@@ -351,7 +388,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.recruitments_count}</>,
         };
       },
-      sorter: isAllowedToGetStatuss
+      sorter: StatuisAllowedToGetStatuses
         ? (a, b) => a.recruitments_count > b.recruitments_count
         : false,
     },
@@ -409,7 +446,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Status ({dataStatusList.length})
+                Semua Status ({dataStatusesList.length})
               </h4>
 
               <ButtonSys
@@ -430,29 +467,27 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               <div className="w-11/12">
                 <Input
                   value={
-                    searchingFilterStatuss === ""
-                      ? null
-                      : searchingFilterStatuss
+                    searchingFilterStatus === "" ? null : searchingFilterStatus
                   }
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
-                      setSearchingFilterStatuss("");
+                      setSearchingFilterStatus("");
                     } else {
-                      setSearchingFilterStatuss(e.target.value);
+                      setSearchingFilterStatus(e.target.value);
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetStatuss}
+                  disabled={!StatuisAllowedToGetStatuses}
                 />
               </div>
 
               <ButtonSys
                 type={`primary`}
                 onClick={onFilterStatus}
-                disabled={!isAllowedToGetStatuss}
+                disabled={!StatuisAllowedToGetStatuses}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -463,20 +498,21 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* End: Search criteria */}
 
             <TableCustomRecruitmentStatus
-              dataSource={dataStatuss}
-              setDataSource={setDataStatuss}
+              dataSource={dataStatuses}
+              setDataSource={setdataStatuses}
               columns={columnsStatus}
-              loading={loadingStatuss}
-              setpraloading={setLoadingStatuss}
-              pageSize={rowsStatuss}
-              total={dataRawStatuss?.total}
+              loading={loadingStatus}
+              setpraloading={setLoadingStatus}
+              pageSize={rowsStatus}
+              total={dataRawStatus?.total}
               initProps={initProps}
-              setpage={setPageStatuss}
-              pagefromsearch={pageStatuss}
-              setdataraw={setDataRawStatuss}
-              setsorting={setSortingStatuss}
-              sorting={sortingStatuss}
-              searching={searchingFilterStatuss}
+              setpage={setPageStatus}
+              pagefromsearch={pageStatus}
+              setdataraw={setDataRawStatus}
+              setsorting={setSortingStatus}
+              sorting={sortingStatus}
+              searching={searchingFilterStatus}
+              onOpenReadDrawer={onOpenReadDrawer}
             />
           </div>
         </div>
@@ -508,6 +544,70 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
         />
+      </AccessControl>
+
+      {/* Drawer Status Detail */}
+      <AccessControl hasPermission={RECRUITMENT_STATUS_GET}>
+        <DrawerCore
+          title={`${dataStatus.name}`}
+          visible={drawread}
+          onClose={() => {
+            setdrawread(false);
+          }}
+          width={380}
+          buttonUpdateText={
+            <div className="flex flex-row space-x-2 items-center">
+              <EditIconSvg size={16} color={"#35763B"} />
+              <p>Ubah Status</p>
+            </div>
+          }
+          onClick={() => {
+            tempIdUpdate.current = dataStatus.id;
+            setTriggerUpdate((prev) => prev + 1);
+            setUpdateDrawerShown(true);
+            setdrawread(false);
+          }}
+          buttonCancelText={"Hapus Form"}
+          onButtonCancelClicked={() => {
+            onOpenDeleteModal(dataStatus);
+            setdrawread(false);
+          }}
+        >
+          <div className="flex flex-col">
+            <div className="flex flex-row justify-between mb-5">
+              <div>
+                <p className="text-gray-400 mb-2">Nama</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <p>{dataStatus.name}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-gray-400 mb-2">Warna</p>
+                <div
+                  className="w-6 h-6 rounded-sm"
+                  style={{ backgroundColor: `${dataStatus.color}` }}
+                ></div>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col">
+            <div className="flex flex-row justify-between mb-5">
+              <div>
+                <p className="text-gray-400 mb-2">Jumlah Kandidat</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <p>{dataStatus.recruitments_count}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-gray-400 mb-2">Deskripsi</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <p>{dataStatus.description}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DrawerCore>
       </AccessControl>
 
       <AccessControl hasPermission={RECRUITMENT_STATUS_DELETE}>

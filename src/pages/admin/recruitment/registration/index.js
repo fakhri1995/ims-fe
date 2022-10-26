@@ -21,6 +21,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
+import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerRegistrationUpdate from "../../../../components/drawer/recruitment/drawerRegistrationUpdate";
 import {
   EditIconSvg,
@@ -83,6 +84,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  pathArr[pathArr.length - 1] = "Kelola Jalur Daftar";
 
   // 2. Use state
   // 2.1. Table Registration
@@ -135,6 +137,16 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     name: "",
     recruitments_count: 0,
   });
+
+  // 2.5 Data Registration
+  const [dataRegistration, setDataRegistration] = useState({
+    id: 0,
+    name: "",
+    recruitments_count: 0,
+  });
+
+  // 2.6 READ FORM
+  const [drawread, setdrawread] = useState(false);
 
   // 3. UseEffect
   // 3.1. Get Registrations List
@@ -259,6 +271,16 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
+  const onOpenReadDrawer = (data) => {
+    setdrawread(true);
+    setDataRegistration((prev) => ({
+      ...prev,
+      id: parseInt(data.id),
+      name: data.name,
+      recruitments_count: parseInt(data.recruitments_count),
+    }));
+  };
+
   const onOpenDeleteModal = (data) => {
     setModalDelete(true);
     setDataDelete({
@@ -328,7 +350,17 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "name",
       render: (text, record, index) => {
         return {
-          children: <>{record.name}</>,
+          children: (
+            <>
+              <h1
+                onClick={() => {
+                  onOpenReadDrawer(record);
+                }}
+              >
+                {record.name}
+              </h1>
+            </>
+          ),
         };
       },
       sorter: isAllowedToGetResgistrations
@@ -401,7 +433,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Registration ({dataRegistrationList.length})
+                Semua Jalur Daftar ({dataRegistrationList.length})
               </h4>
 
               <ButtonSys
@@ -500,6 +532,53 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
         />
+      </AccessControl>
+
+      {/* Drawer Status Detail */}
+      <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_GET}>
+        <DrawerCore
+          title={`${dataRegistration.name}`}
+          visible={drawread}
+          onClose={() => {
+            setdrawread(false);
+          }}
+          width={380}
+          buttonUpdateText={
+            <div className="flex flex-row space-x-2 items-center">
+              <EditIconSvg size={16} color={"#35763B"} />
+              <p>Ubah Status</p>
+            </div>
+          }
+          onClick={() => {
+            tempIdUpdate.current = dataRegistration.id;
+            setTriggerUpdate((prev) => prev + 1);
+            setUpdateDrawerShown(true);
+            setdrawread(false);
+          }}
+          buttonCancelText={"Hapus Form"}
+          onButtonCancelClicked={() => {
+            onOpenDeleteModal(dataRegistration);
+            setdrawread(false);
+          }}
+        >
+          <div className="flex flex-col">
+            <div className="flex flex-row justify-between mb-5">
+              <div>
+                <p className="text-gray-400 mb-2">Nama</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <p>{dataRegistration.name}</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-gray-400 mb-2">Jumlah Kandidat</p>
+                <div className="flex flex-row items-center space-x-3">
+                  <p>{dataRegistration.recruitments_count}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DrawerCore>
       </AccessControl>
 
       <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_DELETE}>
