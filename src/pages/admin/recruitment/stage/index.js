@@ -354,7 +354,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       render: (text, record, index) => {
         return {
           children: (
-            <div className="xl:w-60 text-ellipsis overflow-hidden whitespace-nowrap">
+            <div className="w-20 lg:w-40 xl:w-60 text-ellipsis overflow-hidden whitespace-nowrap">
               {record.description}
             </div>
           ),
