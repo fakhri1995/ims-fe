@@ -1,4 +1,3 @@
-import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
 import {
   Document,
   Font,
@@ -14,6 +13,7 @@ import {
   Input,
   Menu,
   Popover,
+  Select,
   Spin,
   Timeline,
   notification,
@@ -38,6 +38,8 @@ import {
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
+  RECRUITMENT_UPDATE_STAGE,
+  RECRUITMENT_UPDATE_STATUS,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
@@ -92,6 +94,9 @@ const RecruitmentDetailIndex = ({
     RECRUITMENT_LOG_NOTES_ADD
   );
 
+  const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
+  const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
+
   //INIT
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -126,6 +131,22 @@ const RecruitmentDetailIndex = ({
   });
   const [loadingActivities, setLoadingActivities] = useState([]);
   const [dataActivities, setDataActivities] = useState([]);
+
+  // 1.5. Update Stage & Status
+  const [modalUpdate, setModalUpdate] = useState(false);
+  const [modeUpdate, setModeUpdate] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [disableUpdate, setDisableUpdate] = useState(true);
+  const [dataUpdateStage, setDataUpdateStage] = useState({
+    id: Number(recruitmentId),
+    recruitment_stage_id: null,
+    notes: "",
+  });
+  const [dataUpdateStatus, setDataUpdateStatus] = useState({
+    id: Number(recruitmentId),
+    recruitment_status_id: null,
+    notes: "",
+  });
 
   // 2. USE EFFECT
   // 2.1 Get recruitment candidate detail
@@ -241,7 +262,7 @@ const RecruitmentDetailIndex = ({
       });
   }, [isAllowedToGetRecruitmentStatusesList, refresh]);
 
-  // 2.3. Get Activities
+  // 2.4. Get Activities
   useEffect(() => {
     if (!isAllowedToGetRecruitmentLog) {
       permissionWarningNotification("Mendapatkan", "Recruitment Activity Log");
@@ -280,10 +301,35 @@ const RecruitmentDetailIndex = ({
       });
   }, [isAllowedToGetRecruitmentLog, refresh]);
 
-  // 2.4. Disable add notes
+  // 2.5. Disable add notes
   useEffect(() => {
     dataNotes.notes ? setDisableAddNotes(false) : setDisableAddNotes(true);
   }, [dataNotes]);
+
+  // 2.6. Disable update stage and status
+  useEffect(() => {
+    let allFilled = Object.values(dataUpdateStage).every(
+      (value) => value !== "" && value !== null
+    );
+    // console.log(allFilled)
+    if (allFilled) {
+      setDisableUpdate(false);
+    } else {
+      setDisableUpdate(true);
+    }
+  }, [dataUpdateStage]);
+
+  useEffect(() => {
+    let allFilled = Object.values(dataUpdateStatus).every(
+      (value) => value !== "" && value !== null
+    );
+    // console.log(allFilled)
+    if (allFilled) {
+      setDisableUpdate(false);
+    } else {
+      setDisableUpdate(true);
+    }
+  }, [dataUpdateStatus]);
 
   // 3. Event
   const checkStageIsAvailable = (currrentStage) => {
@@ -388,6 +434,116 @@ const RecruitmentDetailIndex = ({
           duration: 3,
         });
         setLoadingAddNotes(false);
+      });
+  };
+
+  const handleUpdateStage = () => {
+    const payload = {
+      id: dataUpdateStage.id,
+      recruitment_stage_id: dataUpdateStage.recruitment_stage_id,
+      notes: dataUpdateStage.notes,
+    };
+
+    if (!canUpdateStage) {
+      permissionWarningNotification("Mengubah", "Stage Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitment/stage`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStage({
+              id: Number(recruitmentId),
+              recruitment_stage_id: null,
+              notes: "",
+            });
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah stage kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdate(false);
+        setModalUpdate(false);
+      })
+      .catch((err) => {
+        setLoadingUpdate(false);
+        notification["error"]({
+          message: `Gagal mengubah stage kandidat. ${err.message}`,
+          duration: 3,
+        });
+      });
+  };
+
+  const handleUpdateStatus = () => {
+    const payload = {
+      id: dataUpdateStatus.id,
+      recruitment_status_id: dataUpdateStatus.recruitment_status_id,
+      notes: dataUpdateStatus.notes,
+    };
+
+    if (!canUpdateStatus) {
+      permissionWarningNotification("Mengubah", "Status Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitment/status`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          setTimeout(() => {
+            setDataUpdateStatus({
+              id: Number(recruitmentId),
+              recruitment_status_id: null,
+              notes: "",
+            });
+          }, 1500);
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah status kandidat. ${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingUpdate(false);
+        setModalUpdate(false);
+      })
+      .catch((err) => {
+        setLoadingUpdate(false);
+        notification["error"]({
+          message: `Gagal mengubah status kandidat. ${err.message}`,
+          duration: 3,
+        });
       });
   };
 
@@ -534,8 +690,12 @@ const RecruitmentDetailIndex = ({
                       <Menu.Item key={"update_stage"}>
                         <button
                           className="flex flex-row space-x-2 items-center 
-													bg-transparent w-full"
-                          // onClick={}
+													bg-transparent w-full border-0"
+                          onClick={() => {
+                            setModalUpdate(true);
+                            setModeUpdate("stage");
+                          }}
+                          disabled={!canUpdateStage}
                         >
                           <EditIconSvg size={20} color="#4D4D4D" />
                           <p className="mig-caption--medium text-mono30">
@@ -590,7 +750,11 @@ const RecruitmentDetailIndex = ({
                         <button
                           className="flex flex-row space-x-2 items-center 
 													bg-transparent w-full"
-                          // onClick={}
+                          onClick={() => {
+                            setModalUpdate(true);
+                            setModeUpdate("status");
+                          }}
+                          disabled={!canUpdateStatus}
                         >
                           <EditIconSvg size={20} color="#4D4D4D" />
                           <p className="mig-caption--medium text-mono30">
@@ -801,6 +965,8 @@ const RecruitmentDetailIndex = ({
           </div>
         </div>
       </div>
+
+      {/* Drawer Update Recruitment Candidate */}
       <AccessControl hasPermission={RECRUITMENT_UPDATE}>
         <DrawerCandidateUpdate
           dataRecruitment={dataRecruitment}
@@ -816,6 +982,117 @@ const RecruitmentDetailIndex = ({
         />
       </AccessControl>
 
+      {/* Modal Update Stage */}
+      <AccessControl
+        hasPermission={[RECRUITMENT_UPDATE_STAGE, RECRUITMENT_UPDATE_STATUS]}
+      >
+        <ModalUbah
+          title={`Konfirmasi Perubahan`}
+          visible={modalUpdate}
+          onvisible={setModalUpdate}
+          onOk={modeUpdate === "stage" ? handleUpdateStage : handleUpdateStatus}
+          onCancel={() => {
+            setModalUpdate(false);
+            setDataUpdateStage({
+              id: Number(recruitmentId),
+              recruitment_stage_id: null,
+              notes: "",
+            });
+          }}
+          loading={loadingUpdate}
+          disabled={disableUpdate}
+        >
+          {modeUpdate === "stage" ? (
+            <div className="space-y-4">
+              <div className="flex flex-row items-center space-x-4 justify-between">
+                <p className="font-bold">
+                  {`Stage ${dataRecruitment?.stage?.name}`}
+                </p>
+                <p className="font-bold"> → </p>
+                <Select
+                  placeholder="Pilih Stage..."
+                  value={dataUpdateStage.recruitment_stage_id}
+                  style={{ width: `50%` }}
+                  onChange={(value) =>
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      recruitment_stage_id: value,
+                    })
+                  }
+                >
+                  {dataStageList.map((stage) => (
+                    <Select.Option key={stage.id} value={stage.id}>
+                      {stage.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              <p>Tambah catatan:</p>
+              <Input.TextArea
+                // placeholder="Masukkan catatan"
+                required={true}
+                rows={2}
+                value={dataUpdateStage.notes ? dataUpdateStage.notes : null}
+                onChange={(event) => {
+                  setDataUpdateStage({
+                    ...dataUpdateStage,
+                    notes: event.target.value,
+                  });
+                }}
+              />
+              <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="flex flex-row items-center space-x-4 justify-between">
+                <p className="font-bold">
+                  {`Status ${dataRecruitment?.status?.name}`}
+                </p>
+                <p className="font-bold"> → </p>
+                <Select
+                  placeholder="Pilih status..."
+                  value={dataUpdateStatus.recruitment_status_id}
+                  style={{ width: `50%` }}
+                  onChange={(value) =>
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      recruitment_status_id: value,
+                    })
+                  }
+                >
+                  {dataStatusList.map((status) => (
+                    <Select.Option key={status.id} value={status.id}>
+                      <div className="flex flex-row items-center space-x-2">
+                        <div
+                          className="rounded-full w-4 h-4"
+                          style={{ backgroundColor: `${status.color}` }}
+                        />
+                        <p>{status.name}</p>
+                      </div>
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              <p>Tambah catatan:</p>
+              <Input.TextArea
+                // placeholder="Masukkan catatan"
+                required={true}
+                rows={2}
+                value={dataUpdateStatus.notes ? dataUpdateStatus.notes : null}
+                onChange={(event) => {
+                  setDataUpdateStatus({
+                    ...dataUpdateStatus,
+                    notes: event.target.value,
+                  });
+                }}
+              />
+              <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
+            </div>
+          )}
+        </ModalUbah>
+      </AccessControl>
+
+      {/* Modal Delete Recruitment Candidate */}
       <AccessControl hasPermission={RECRUITMENT_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
@@ -833,6 +1110,7 @@ const RecruitmentDetailIndex = ({
         </ModalHapus2>
       </AccessControl>
 
+      {/* Modal Add Catatan */}
       <AccessControl hasPermission={RECRUITMENT_LOG_NOTES_ADD}>
         <ModalCore
           title={`Tambah Catatan`}
