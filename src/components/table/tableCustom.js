@@ -1585,6 +1585,7 @@ const TableCustomRecruitmentStatus = ({
   sorting,
   searching,
   roleTypeId,
+  onOpenReadDrawer,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -1679,6 +1680,20 @@ const TableCustomRecruitmentStatus = ({
               });
           }
         }
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: (event) => {
+            setrowstate(record.id);
+          },
+          onClick: (event) => {
+            onOpenReadDrawer(record);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
       }}
     />
   );
