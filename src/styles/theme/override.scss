@@ -57,6 +57,12 @@ ol {
   }
 }
 
+.ql-insert_name,
+.ql-insert_role {
+  @apply text-mono30 font-bold text-xs whitespace-nowrap
+  mr-3;
+}
+
 /* Spin */
 .ant-spin-dot-item,
 .ant-spin-text {

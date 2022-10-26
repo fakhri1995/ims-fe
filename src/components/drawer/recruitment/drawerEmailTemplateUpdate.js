@@ -1,17 +1,9 @@
 import { Form, Input, Select, Spin, notification } from "antd";
-import parse from "html-react-parser";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
-import { useAccessControl } from "contexts/access-control";
-
 import { permissionWarningNotification } from "../../../lib/helper";
-import ButtonSys from "../../button";
-import { TrashIconSvg } from "../../icon";
-import { InputRequired } from "../../input";
-import { Label } from "../../typography";
+import CustomTextEditor from "../../CustomTextEditor";
 import DrawerCore from "../drawerCore";
 
 const DrawerEmailTemplateUpdate = ({
@@ -154,25 +146,6 @@ const DrawerEmailTemplateUpdate = ({
       });
   };
 
-  // Text Editor Config
-  const modules = {
-    toolbar: [
-      ["bold", "italic", "underline"],
-      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
-      ["link"],
-    ],
-  };
-
-  const formats = [
-    "bold",
-    "italic",
-    "underline",
-    "list",
-    "bullet",
-    "indent",
-    "link",
-  ];
-
   return (
     <DrawerCore
       title={"Ubah Template"}
@@ -246,11 +219,9 @@ const DrawerEmailTemplateUpdate = ({
               className="col-span-2"
             >
               <>
-                <ReactQuill
-                  theme="snow"
+                <CustomTextEditor
+                  placeholder={""}
                   value={dataTemplate.body}
-                  modules={modules}
-                  formats={formats}
                   onChange={(content, delta, source, editor) => {
                     setDataTemplate((prev) => ({
                       ...prev,
@@ -258,7 +229,6 @@ const DrawerEmailTemplateUpdate = ({
                     }));
                     setTextEditorContent(editor.getText(content));
                   }}
-                  className="h-44 pb-10"
                 />
               </>
             </Form.Item>
