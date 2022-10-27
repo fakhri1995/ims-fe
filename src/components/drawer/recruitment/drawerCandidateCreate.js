@@ -106,7 +106,7 @@ const DrawerCandidateCreate = ({
     });
   };
 
-  const handleCreateForm = () => {
+  const handleCreateRecruitment = () => {
     if (!isAllowedToAddRecruitment) {
       permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
       return;
@@ -188,7 +188,7 @@ const DrawerCandidateCreate = ({
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
-      onClick={handleCreateForm}
+      onClick={handleCreateRecruitment}
       disabled={disabledcreate}
     >
       <Spin spinning={loadingCreate}>

@@ -1714,7 +1714,9 @@ const TableCustomRecruitmentStage = ({
   setsorting,
   sorting,
   searching,
+  onOpenReadDrawer,
 }) => {
+  const [rowstate, setrowstate] = useState(0);
   return (
     <Table
       dataSource={dataSource}
@@ -1806,6 +1808,20 @@ const TableCustomRecruitmentStage = ({
               });
           }
         }
+      }}
+      onRow={(record, rowIndex) => {
+        return {
+          onMouseOver: (event) => {
+            setrowstate(record.id);
+          },
+          onClick: (event) => {
+            onOpenReadDrawer(record);
+          },
+        };
+      }}
+      rowClassName={(record, idx) => {
+        return `${record.id === rowstate && `cursor-pointer`}
+        }`;
       }}
     />
   );

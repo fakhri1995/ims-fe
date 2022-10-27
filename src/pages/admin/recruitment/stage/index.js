@@ -21,6 +21,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
+import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerStageUpdate from "../../../../components/drawer/recruitment/drawerStageUpdate";
 import {
   EditIconSvg,
@@ -109,13 +110,23 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [loadingCreate, setLoadingCreate] = useState(false);
 
-  // 2.3. Update Stage
+  // 2.3. Read Stage
+  const [isReadDrawerShown, setReadDrawerShown] = useState(false);
+  const [loadingRead, setLoadingRead] = useState(false);
+  const [dataStage, setDataStage] = useState({
+    id: null,
+    name: "",
+    description: "",
+    recruitments_count: "",
+  });
+
+  // 2.4. Update Stage
   const [isUpdateDrawerShown, setUpdateDrawerShown] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const tempIdUpdate = useRef(-1);
   const [triggerUpdate, setTriggerUpdate] = useState(-1);
 
-  // 2.4. Delete Stage
+  // 2.5. Delete Stage
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataDelete, setDataDelete] = useState({
@@ -250,6 +261,26 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     });
   };
 
+  const onOpenReadDrawer = (record) => {
+    setReadDrawerShown(true);
+    setDataStage((prev) => ({
+      ...prev,
+      id: record.id,
+      name: record.name,
+      description: record.description,
+      recruitments_count: record.recruitments_count,
+    }));
+  };
+
+  const clearData = () => {
+    setDataStage({
+      id: null,
+      name: "",
+      description: "",
+      recruitments_count: "",
+    });
+  };
+
   const handleDelete = () => {
     if (!isAllowedToDeleteStage) {
       permissionWarningNotification("Menghapus", "Stage Rekrutmen");
@@ -322,7 +353,11 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "description",
       render: (text, record, index) => {
         return {
-          children: <div className="xl:w-60">{record.description}</div>,
+          children: (
+            <div className="w-20 lg:w-40 xl:w-60 text-ellipsis overflow-hidden whitespace-nowrap">
+              {record.description}
+            </div>
+          ),
         };
       },
     },
@@ -364,7 +399,6 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
-                  // setModalDelete(true);
                 }}
               >
                 <TrashIconSvg size={15} color={`#BF4A40`} />
@@ -458,10 +492,58 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               setsorting={setSortingStages}
               sorting={sortingStages}
               searching={searchingFilterStages}
+              onOpenReadDrawer={onOpenReadDrawer}
             />
           </div>
         </div>
       </div>
+
+      {/* Drawer Stage Detail */}
+      <AccessControl hasPermission={RECRUITMENT_STAGE_GET}>
+        <DrawerCore
+          title={dataStage.name}
+          visible={isReadDrawerShown}
+          onClose={() => {
+            setReadDrawerShown(false);
+            clearData();
+          }}
+          width={380}
+          buttonUpdateText={
+            <div className="flex flex-row space-x-2 items-center">
+              <EditIconSvg size={16} color={"#35763B"} />
+              <p>Ubah Stage</p>
+            </div>
+          }
+          onClick={() => {
+            tempIdUpdate.current = dataStage.id;
+            setTriggerUpdate((prev) => prev + 1);
+            setUpdateDrawerShown(true);
+            setReadDrawerShown(false);
+          }}
+          buttonCancelText={
+            <div className="flex flex-row space-x-2 items-center">
+              <TrashIconSvg size={16} color={"#BF4A40"} />
+              <p>Hapus Stage</p>
+            </div>
+          }
+          onButtonCancelClicked={() => {
+            onOpenDeleteModal(dataStage);
+            setReadDrawerShown(false);
+          }}
+          disabled={!isAllowedToUpdateStage}
+        >
+          <div className="flex flex-col space-y-6">
+            <div className="flex flex-col space-y-4">
+              <p className="mig-caption--medium text-mono80">Deskripsi</p>
+              <p>{dataStage.description}</p>
+            </div>
+            <div className="flex flex-col space-y-4">
+              <p className="mig-caption--medium text-mono80">Jumlah Kandidat</p>
+              <p>{dataStage.recruitments_count}</p>
+            </div>
+          </div>
+        </DrawerCore>
+      </AccessControl>
 
       <AccessControl hasPermission={RECRUITMENT_STAGE_ADD}>
         <DrawerStageCreate
@@ -502,7 +584,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           }}
           itemName={"stage"}
           loading={loadingDelete}
-          // disabled={candidateCount > 0}
+          disabled={!isAllowedToDeleteStage}
         >
           Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
           berada pada stage
