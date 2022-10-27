@@ -1320,16 +1320,15 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     "(Anda dapat mengubah data pada langkah selanjutnya)",
                 },
               }}
+              autoMapDistance={3}
               fields={[
                 {
                   label: "Nama",
                   key: "name",
                   alternateMatches: ["Nama", "nama"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
                     type: "input",
                   },
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "John Doe",
                   validations: [
                     {
@@ -1344,10 +1343,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   key: "email",
                   alternateMatches: ["email", "Email"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
                     type: "input",
                   },
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "someone@example-mail.com",
                   validations: [
                     {
@@ -1357,7 +1354,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     },
                     {
                       rule: "regex",
-                      // value: "/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/",
+                      value: "[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,3}",
                       errorMessage: "Email belum terisi dengan benar",
                       level: "warning",
                     },
@@ -1368,10 +1365,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   key: "university",
                   alternateMatches: ["Universitas", "universitas"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
                     type: "input",
                   },
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "Institut Teknologi Bandung",
                   validations: [
                     {
@@ -1386,12 +1381,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   key: "recruitment_role_id",
                   alternateMatches: ["Role", "role"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
                     type: "select",
                     options: dataOptions.role,
                   },
-
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "Product Manager",
                   validations: [
                     {
@@ -1406,12 +1398,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   key: "recruitment_jalur_daftar_id",
                   alternateMatches: ["jalur daftar", "Jalur Daftar"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
-                    // type: "input",
                     type: "select",
                     options: dataOptions.jalur_daftar,
                   },
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "Glints",
                   validations: [
                     {
@@ -1426,12 +1415,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   key: "recruitment_stage_id",
                   alternateMatches: ["Stage", "stage"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
-                    // type: "select",
                     type: "select",
                     options: dataOptions.stage,
                   },
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "Behavior Interview",
                   validations: [
                     {
@@ -1446,11 +1432,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   key: "recruitment_status_id",
                   alternateMatches: ["Status", "status"],
                   fieldType: {
-                    // There are 3 types - "input" / "checkbox" / "select".
                     type: "select",
                     options: dataOptions.status,
                   },
-                  // Used in the first step to provide an example of what data is expected in this field. Optional.
                   example: "On Hold",
                   validations: [
                     {
