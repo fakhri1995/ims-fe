@@ -12,6 +12,7 @@ import {
   Dropdown,
   Input,
   Menu,
+  Modal,
   Popover,
   Select,
   Spin,
@@ -131,6 +132,8 @@ const RecruitmentDetailIndex = ({
   });
   const [loadingActivities, setLoadingActivities] = useState([]);
   const [dataActivities, setDataActivities] = useState([]);
+  const [modalMore, setModalMore] = useState(false);
+  const [moreMode, setMoreMode] = useState("");
 
   // 1.5. Update Stage & Status
   const [modalUpdate, setModalUpdate] = useState(false);
@@ -643,6 +646,18 @@ const RecruitmentDetailIndex = ({
                   </div>
                 </div>
               ))}
+              {dataActivities.length > 5 && (
+                <p
+                  className="flex justify-end mig-caption hover:text-mono50 
+                  cursor-pointer"
+                  onClick={() => {
+                    setMoreMode("notes");
+                    setModalMore(true);
+                  }}
+                >
+                  Lihat Semua
+                </p>
+              )}
             </Spin>
           </div>
 
@@ -671,6 +686,18 @@ const RecruitmentDetailIndex = ({
                   </div>
                 </div>
               ))}
+              {dataActivities.length > 5 && (
+                <p
+                  className="flex justify-end mig-caption hover:text-mono50 
+                  cursor-pointer"
+                  onClick={() => {
+                    setMoreMode("activity");
+                    setModalMore(true);
+                  }}
+                >
+                  Lihat Semua
+                </p>
+              )}
             </Spin>
           </div>
         </div>
@@ -982,7 +1009,7 @@ const RecruitmentDetailIndex = ({
         />
       </AccessControl>
 
-      {/* Modal Update Stage */}
+      {/* Modal Update Stage & Status*/}
       <AccessControl
         hasPermission={[RECRUITMENT_UPDATE_STAGE, RECRUITMENT_UPDATE_STATUS]}
       >
@@ -993,11 +1020,17 @@ const RecruitmentDetailIndex = ({
           onOk={modeUpdate === "stage" ? handleUpdateStage : handleUpdateStatus}
           onCancel={() => {
             setModalUpdate(false);
-            setDataUpdateStage({
-              id: Number(recruitmentId),
-              recruitment_stage_id: null,
-              notes: "",
-            });
+            modeUpdate === "stage"
+              ? setDataUpdateStage({
+                  id: Number(recruitmentId),
+                  recruitment_stage_id: null,
+                  notes: "",
+                })
+              : setDataUpdateStatus({
+                  id: Number(recruitmentId),
+                  recruitment_status_id: null,
+                  notes: "",
+                });
           }}
           loading={loadingUpdate}
           disabled={disableUpdate}
@@ -1090,6 +1123,46 @@ const RecruitmentDetailIndex = ({
             </div>
           )}
         </ModalUbah>
+      </AccessControl>
+
+      {/* Modal Lihat Semua (View More) */}
+      <AccessControl hasPermission={RECRUITMENT_LOG_GET}>
+        <Modal
+          title={moreMode === "notes" ? "Semua Catatan" : "Semua Aktivitas"}
+          visible={modalMore}
+          onCancel={() => setModalMore(false)}
+          loading={loadingActivities}
+          destroyOnClose={true}
+          footer={null}
+        >
+          <div className="h-72 overflow-y-scroll pr-2">
+            {dataActivities?.map((activity) => (
+              <div key={activity.id} className="mb-6">
+                {moreMode === "notes" ? (
+                  <p className="text-md mb-2">{activity.notes}</p>
+                ) : (
+                  <p className="text-md mb-2">{activity.description}</p>
+                )}
+                <div className="flex flex-row justify-between flex-wrap items-center">
+                  <div className="flex flex-row text-wrap w-30">
+                    <img
+                      src="/default-users.jpeg"
+                      className="rounded-full w-5 h-5 mr-2"
+                    ></img>
+                    <p className="mig-caption--medium text-primary100 ">
+                      {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
+                    </p>
+                  </div>
+                  <p className="text-sm text-mono80">
+                    {/* {moment(activity.created_at).format('ll')},&nbsp;
+                    {moment(activity.created_at).format('LT')} */}
+                    {moment(activity.created_at).calendar()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Modal>
       </AccessControl>
 
       {/* Modal Delete Recruitment Candidate */}

@@ -3,6 +3,7 @@ import {
   DatePicker,
   Dropdown,
   Empty,
+  Form,
   Input,
   Menu,
   Select,
@@ -16,6 +17,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
@@ -28,6 +30,7 @@ import {
   RECRUITMENT_COUNT_GET,
   RECRUITMENT_DELETE,
   RECRUITMENT_GET,
+  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
   RECRUITMENT_LOG_GET,
   RECRUITMENT_LOG_NOTES_ADD,
   RECRUITMENT_ROLES_LIST_GET,
@@ -43,7 +46,9 @@ import { permissionWarningNotification } from "lib/helper";
 import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
+import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
+import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import {
   CheckIconSvg,
   DownIconSvg,
@@ -119,13 +124,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetRecruitmentStagesList = hasPermission(
     RECRUITMENT_STAGES_LIST_GET
   );
-  const canUpdateStage = hasPermission([RECRUITMENT_UPDATE_STAGE]);
-  const canUpdateStatus = hasPermission([RECRUITMENT_UPDATE_STATUS]);
+  const isAllowedToGetRecruitmentJalurDaftarsList = hasPermission(
+    RECRUITMENT_JALUR_DAFTARS_LIST_GET
+  );
+  const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
+  const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
 
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
+  const [instanceForm] = Form.useForm();
   // 2. Use state
   // 2.1. Role List & Candidate Count
   const [loadingDataCount, setLoadingDataCount] = useState(false);
@@ -141,6 +150,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataStageList, setDataStageList] = useState([]);
   const [loadingStatusList, setLoadingStatusList] = useState(false);
   const [dataStatusList, setDataStatusList] = useState([]);
+  const [loadingJalurDaftarList, setLoadingJalurDaftarList] = useState([]);
+  const [dataJalurDaftarList, setDataJalurDaftarList] = useState([]);
 
   const [loadingRecruitments, setLoadingRecruitments] = useState(true);
   const [dataRecruitments, setDataRecruitments] = useState([]);
@@ -175,33 +186,27 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedRecruitments, setSelectedRecruitments] = useState([]);
   const [selectedRecruitmentIds, setSelectedRecruitmentIds] = useState([]);
 
-  // 2.3. Drawer & Modal
-  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [refresh, setRefresh] = useState(-1);
+
+  // 2.3. Drawer/Modal Create, Delete, Bulk, Send Email, Import sheet
+  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
+  const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
 
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  const [modalUpdate, setModalUpdate] = useState(false);
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
-
   const [modalBulk, setModalBulk] = useState(false);
   const [bulkMode, setBulkMode] = useState("");
 
-  // 2.4. Update Recruitment
-  const [dataUpdate, setDataUpdate] = useState({
-    id: null,
-    name: "",
-    email: "",
-    university: "",
-    recruitment_role_id: null,
-    recruitment_jalur_daftar_id: null,
-    recruitment_stage_id: null,
-    recruitment_status_id: null,
-  });
+  const [modalSheetImport, setModalSheetImport] = useState(false);
+
+  // 2.4 Update Stage & Status
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
 
-  // 2.5. Update Stage
+  const [modalUpdateStage, setModalUpdateStage] = useState(false);
+  const [modalUpdateStatus, setModalUpdateStatus] = useState(false);
+
   const [dataUpdateStage, setDataUpdateStage] = useState({
     id: null,
     recruitment_stage_id: null,
@@ -210,9 +215,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     prev_recruitment_stage_name: "",
     recruitment_stage_name: "",
   });
-  const [modalUpdateStage, setModalUpdateStage] = useState(false);
 
-  // 2.6. Update Status
   const [dataUpdateStatus, setDataUpdateStatus] = useState({
     id: null,
     recruitment_status_id: null,
@@ -221,9 +224,19 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     prev_recruitment_status_name: "",
     recruitment_status_name: "",
   });
-  const [modalUpdateStatus, setModalUpdateStatus] = useState(false);
+
+  // 2.5 Create recruitments (import excel)
+  const [loadingCreate, setLoadingCreate] = useState(false);
+  const [dataCreateRecruitments, setDataCreateRecruitments] = useState([]);
+  const [dataOptions, setDataOptions] = useState({
+    role: [],
+    jalur_daftar: [],
+    stage: [],
+    status: [],
+  });
 
   // 3. UseEffect
+
   // 3.1. Get Recruitment Count
   useEffect(() => {
     if (!isAllowedToGetRecruitmentCount) {
@@ -408,6 +421,45 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRecruitmentStatusesList, refresh]);
 
+  // 3.5. Get Jalur Daftar List
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentJalurDaftarsList) {
+      permissionWarningNotification("Mendapatkan", "Jalur Daftar List");
+      setLoadingJalurDaftarList(false);
+      return;
+    }
+
+    setLoadingJalurDaftarList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftarsList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataJalurDaftarList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingJalurDaftarList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingJalurDaftarList(false);
+      });
+  }, [isAllowedToGetRecruitmentJalurDaftarsList, refresh]);
+
   // 3.6. Disable update stage or status if notes empty
   useEffect(() => {
     dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
@@ -416,6 +468,66 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   useEffect(() => {
     dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
   }, [dataUpdateStatus]);
+
+  // 3.7. Use for import excel
+  useEffect(() => {
+    if (modalSheetImport === true) {
+      let roleOptions = dataRoleList.map((role) => {
+        let newOption = {
+          label: role.name,
+          value: role.id,
+        };
+        return newOption;
+      });
+      setDataOptions({
+        ...dataOptions,
+        role: roleOptions,
+      });
+    }
+  }, [dataRoleList, modalSheetImport]);
+
+  useEffect(() => {
+    let jalurDaftarOptions = dataJalurDaftarList.map((jalur) => {
+      let newOption = {
+        label: jalur.name,
+        value: jalur.id,
+      };
+      return newOption;
+    });
+    // console.log(roleOptions)
+    setDataOptions({
+      ...dataOptions,
+      jalur_daftar: jalurDaftarOptions,
+    });
+  }, [dataJalurDaftarList]);
+
+  useEffect(() => {
+    let stageOptions = dataStageList.map((stage) => {
+      let newOption = {
+        label: stage.name,
+        value: stage.id,
+      };
+      return newOption;
+    });
+    setDataOptions({
+      ...dataOptions,
+      stage: stageOptions,
+    });
+  }, [dataStageList]);
+
+  useEffect(() => {
+    let statusOptions = dataStatusList.map((status) => {
+      let newOption = {
+        label: status.name,
+        value: status.id,
+      };
+      return newOption;
+    });
+    setDataOptions({
+      ...dataOptions,
+      status: statusOptions,
+    });
+  }, [dataStatusList]);
 
   // 4. Event
   const onManageRecruitmentButtonClicked = useCallback(() => {
@@ -461,57 +573,47 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.2. Update Recruitment
-  const handleUpdateRecruitment = () => {
-    if (!isAllowedToUpdateRecruitment) {
-      permissionWarningNotification("Mengubah", "Data Recruitment Kandidat");
-      setLoadingUpdate(false);
+  // 4.2. Create Recruitments
+  const handleCreateRecruitments = () => {
+    if (!isAllowedToAddRecruitment) {
+      permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
       return;
     }
-
-    setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateRecruitment`, {
-      method: "PUT",
+    setLoadingCreate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitments`, {
+      method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataUpdate),
+      body: JSON.stringify(dataCreateRecruitments),
     })
-      .then((res) => res.json())
-      .then((res2) => {
+      .then((response) => response.json())
+      .then((response2) => {
         setRefresh((prev) => prev + 1);
-        if (res2.success) {
-          setTimeout(() => {
-            setDataUpdate({
-              id: null,
-              name: "",
-              email: "",
-              university: "",
-              role: null,
-              jalur_daftar: null,
-              stage: null,
-              status: null,
-            });
-          }, 1500);
-          notification["success"]({
-            message: res2.message,
+        if (response2.success) {
+          notification.success({
+            message: `Kandidat berhasil ditambahkan.`,
             duration: 3,
           });
+          setTimeout(() => {
+            onvisible(false);
+            setDataCreateRecruitments([]);
+          }, 500);
         } else {
-          notification["error"]({
-            message: `Gagal mengubah kandidat. ${res2.message}`,
+          notification.error({
+            message: `Gagal menambahkan kandidat. ${response2.message}`,
             duration: 3,
           });
         }
-        setLoadingUpdate(false);
+        setLoadingCreate(false);
       })
       .catch((err) => {
-        setLoadingUpdate(false);
-        notification["error"]({
-          message: `Gagal mengubah kandidat. ${err.message}`,
+        notification.error({
+          message: `Gagal menambahkan kandidat. ${err.response}`,
           duration: 3,
         });
+        setLoadingCreate(false);
       });
   };
 
@@ -732,22 +834,24 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     setModalDelete(true);
   };
 
-  const handleDeleteRecruitment = () => {
+  const handleDeleteRecruitments = () => {
+    const payload = {
+      id: selectedRecruitmentIds,
+    };
+
     if (!isAllowedToDeleteRecruitment) {
       permissionWarningNotification("Menghapus", "Kandidat");
       return;
     }
     setLoadingDelete(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitment?id=${selectedRecruitments[0]?.id}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitments`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -792,6 +896,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center
 					bg-transparent w-full px-2.5 py-2"
+          onClick={() => setModalSheetImport(true)}
         >
           <FilePlusIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">Masukkan dari Excel</p>
@@ -1028,9 +1133,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 type={"default"}
                 // type={canUpdateRoleAssessment ? "default" : "primary"}
                 // disabled={!canUpdateRoleAssessment}
-                // onClick={(event) => {
-                //   event.stopPropagation();
-                // }}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setEmailDrawerShown(true);
+                }}
               >
                 <MailForwardIconSvg size={16} color={`#35763B`} />
               </ButtonSys>
@@ -1039,9 +1145,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
                 // color="danger"
                 // disabled={!isAllowedToDeleteRoleAssessment}
-                // onClick={(event) => {
-                //   event.stopPropagation();
-                // }}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
               >
                 <FileExportIconSvg size={16} color={`#00589F`} />
               </ButtonSys>
@@ -1055,6 +1161,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   // console.log(dataUpdateStage)
   // console.log(refresh)
   // console.log(selectedRecruitments)
+  // console.log(dataOptions)
+  // console.log(dataCreateRecruitments)
   return (
     <Layout
       tok={initProps}
@@ -1195,6 +1303,165 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // <div></div>
               )}
             </div>
+
+            {/* Import excel */}
+            <ReactSpreadsheetImport
+              isOpen={modalSheetImport}
+              onClose={() => setModalSheetImport(false)}
+              onSubmit={(data) => {
+                // console.log(data)
+                setDataCreateRecruitments(data);
+              }}
+              allowInvalidSubmit={false}
+              translations={{
+                uploadStep: {
+                  manifestTitle: "Data yang diharapkan:",
+                  manifestDescription:
+                    "(Anda dapat mengubah data pada langkah selanjutnya)",
+                },
+              }}
+              fields={[
+                {
+                  label: "Nama",
+                  key: "name",
+                  alternateMatches: ["Nama", "nama"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    type: "input",
+                  },
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "John Doe",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Nama wajib diisi",
+                      level: "error",
+                    },
+                  ],
+                },
+                {
+                  label: "Email",
+                  key: "email",
+                  alternateMatches: ["email", "Email"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    type: "input",
+                  },
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "someone@example-mail.com",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Email wajib diisi",
+                      level: "error",
+                    },
+                    {
+                      rule: "regex",
+                      // value: "/(\-)|(^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$)/",
+                      errorMessage: "Email belum terisi dengan benar",
+                      level: "warning",
+                    },
+                  ],
+                },
+                {
+                  label: "Universitas",
+                  key: "university",
+                  alternateMatches: ["Universitas", "universitas"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    type: "input",
+                  },
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "Institut Teknologi Bandung",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Universitas wajib diisi",
+                      level: "error",
+                    },
+                  ],
+                },
+                {
+                  label: "Role",
+                  key: "recruitment_role_id",
+                  alternateMatches: ["Role", "role"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    type: "select",
+                    options: dataOptions.role,
+                  },
+
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "Product Manager",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Role wajib diisi",
+                      level: "error",
+                    },
+                  ],
+                },
+                {
+                  label: "Jalur Daftar",
+                  key: "recruitment_jalur_daftar_id",
+                  alternateMatches: ["jalur daftar", "Jalur Daftar"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    // type: "input",
+                    type: "select",
+                    options: dataOptions.jalur_daftar,
+                  },
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "Glints",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Jalur Daftar wajib diisi",
+                      level: "error",
+                    },
+                  ],
+                },
+                {
+                  label: "Stage",
+                  key: "recruitment_stage_id",
+                  alternateMatches: ["Stage", "stage"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    // type: "select",
+                    type: "select",
+                    options: dataOptions.stage,
+                  },
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "Behavior Interview",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Stage wajib diisi",
+                      level: "error",
+                    },
+                  ],
+                },
+                {
+                  label: "Status",
+                  key: "recruitment_status_id",
+                  alternateMatches: ["Status", "status"],
+                  fieldType: {
+                    // There are 3 types - "input" / "checkbox" / "select".
+                    type: "select",
+                    options: dataOptions.status,
+                  },
+                  // Used in the first step to provide an example of what data is expected in this field. Optional.
+                  example: "On Hold",
+                  validations: [
+                    {
+                      rule: "required",
+                      errorMessage: "Status wajib diisi",
+                      level: "error",
+                    },
+                  ],
+                },
+              ]}
+            />
 
             {/* Start: Search criteria */}
             <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
@@ -1358,13 +1625,27 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         />
       </AccessControl>
 
-      {/* Drawer Hapus Kandidat */}
+      {/* Drawer Kirim Email */}
+      <AccessControl hasPermission={RECRUITMENT_ADD}>
+        <DrawerCandidateSendEmail
+          visible={isEmailDrawerShown}
+          initProps={initProps}
+          onvisible={setEmailDrawerShown}
+          setRefresh={setRefresh}
+          // isAllowedToAddRecruitment={isAllowedToAddRecruitment}
+          // dataRoleList={dataRoleList}
+          // dataStageList={dataStageList}
+          // dataStatusList={dataStatusList}
+        />
+      </AccessControl>
+
+      {/* Modal Hapus Kandidat */}
       <AccessControl hasPermission={RECRUITMENT_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
-          onOk={handleDeleteRecruitment}
+          onOk={handleDeleteRecruitments}
           onCancel={() => {
             setModalDelete(false);
           }}
@@ -1372,8 +1653,14 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
-          Apakah Anda yakin ingin menghapus kandidat{" "}
-          <strong>{selectedRecruitments[0]?.name}</strong>?
+          <p>Apakah Anda yakin ingin menghapus kandidat berikut?</p>
+          {selectedRecruitments.map((candidate, idx) => (
+            <p>
+              <strong>
+                {idx + 1}. {candidate.name}
+              </strong>
+            </p>
+          ))}
         </ModalHapus2>
       </AccessControl>
 
@@ -1527,28 +1814,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         </ModalUbah>
       </AccessControl>
 
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
-        <ModalUbah
-          title={`Konfirmasi Perubahan`}
-          visible={modalUpdate}
-          onvisible={setModalUpdate}
-          // onOk={handleUpdateRoleAssessment}
-          onCancel={() => {
-            setModalUpdate(false);
-          }}
-          loading={loadingUpdate}
-        >
-          <div className="space-y-4">
-            <p className="">
-                Anda telah melakukan perubahan pada kandidat <strong>{candidateName}</strong>
-                pada item berikut
-              </p>
-            <p className="font-bold">[perubahan]</p>
-            <p>Apakah Anda yakin ingin menyimpan perubahan tersebut?</p>
-          </div>
-        </ModalUbah>
-      </AccessControl> */}
-
       {/* Modal Bulk */}
       <AccessControl hasPermission={RECRUITMENT_UPDATE}>
         <ModalCore
@@ -1679,7 +1944,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 >
                   {dataStatusList.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
-                      {status.name}
+                      <div className="flex flex-row items-center space-x-2">
+                        <div
+                          className="rounded-full w-4 h-4"
+                          style={{ backgroundColor: `${status.color}` }}
+                        />
+                        <p>{status.name}</p>
+                      </div>
                     </Select.Option>
                   ))}
                 </Select>
