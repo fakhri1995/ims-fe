@@ -1,7 +1,5 @@
 import { Form, Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
-import ReactQuill, { Quill } from "react-quill";
-import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
