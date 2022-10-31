@@ -17,6 +17,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@chakra-ui/react": "^1.8.8",
+    "@emotion/styled": "^11.10.5",
     "@react-pdf/renderer": "^3.0.0",
     "@tailwindcss/line-clamp": "^0.3.1",
     "antd": "^4.17.4",
