@@ -17,8 +17,8 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
-// import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
 
@@ -1304,13 +1304,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Import excel */}
-            {/* <ReactSpreadsheetImport
+            <ReactSpreadsheetImport
               isOpen={modalSheetImport}
               onClose={() => setModalSheetImport(false)}
               onSubmit={(data) => {
                 setTimeout(() => {
-                  handleCreateRecruitments(data?.validData)
-                }, 1000);               
+                  handleCreateRecruitments(data?.validData);
+                }, 1000);
               }}
               allowInvalidSubmit={false}
               translations={{
@@ -1445,7 +1445,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   ],
                 },
               ]}
-            /> */}
+            />
 
             {/* Start: Search criteria */}
             <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
