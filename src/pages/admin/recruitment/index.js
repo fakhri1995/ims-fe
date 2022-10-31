@@ -17,22 +17,22 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
+// import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  RECRUITMENTS_ADD,
+  RECRUITMENTS_DELETE,
   RECRUITMENTS_GET,
   RECRUITMENT_ADD,
   RECRUITMENT_COUNT_GET,
   RECRUITMENT_DELETE,
   RECRUITMENT_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
-  RECRUITMENT_LOG_GET,
-  RECRUITMENT_LOG_NOTES_ADD,
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
@@ -106,8 +106,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
   const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
   const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
+  const isAllowedToAddRecruitments = hasPermission(RECRUITMENTS_ADD);
   const isAllowedToUpdateRecruitment = hasPermission(RECRUITMENT_UPDATE);
-  const isAllowedToDeleteRecruitment = hasPermission(RECRUITMENT_DELETE);
+  const isAllowedToDeleteRecruitments = hasPermission(RECRUITMENTS_DELETE);
   const isAllowedToGetRecruitmentCount = hasPermission(RECRUITMENT_COUNT_GET);
   const canUpdateRecruitment = hasPermission([
     RECRUITMENT_UPDATE,
@@ -228,12 +229,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.5 Create recruitments (import excel)
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [dataCreateRecruitments, setDataCreateRecruitments] = useState([]);
-  const [dataOptions, setDataOptions] = useState({
-    role: [],
-    jalur_daftar: [],
-    stage: [],
-    status: [],
-  });
+  const [dataRoleOptions, setDataRoleOptions] = useState([]);
+  const [dataJalurDaftarOptions, setDataJalurDaftarOptions] = useState([]);
+  const [dataStageOptions, setDataStageOptions] = useState([]);
+  const [dataStatusOptions, setDataStatusOptions] = useState([]);
 
   // 3. UseEffect
 
@@ -471,20 +470,16 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.7. Use for import excel
   useEffect(() => {
-    if (modalSheetImport === true) {
-      let roleOptions = dataRoleList.map((role) => {
-        let newOption = {
-          label: role.name,
-          value: role.id,
-        };
-        return newOption;
-      });
-      setDataOptions({
-        ...dataOptions,
-        role: roleOptions,
-      });
-    }
-  }, [dataRoleList, modalSheetImport]);
+    let roleOptions = dataRoleList.map((role) => {
+      let newOption = {
+        label: role.name,
+        value: role.id,
+      };
+      return newOption;
+    });
+    // console.log("role",roleOptions)
+    setDataRoleOptions(roleOptions);
+  }, [dataRoleList]);
 
   useEffect(() => {
     let jalurDaftarOptions = dataJalurDaftarList.map((jalur) => {
@@ -494,11 +489,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       };
       return newOption;
     });
+    setDataJalurDaftarOptions(jalurDaftarOptions);
+
     // console.log(roleOptions)
-    setDataOptions({
-      ...dataOptions,
-      jalur_daftar: jalurDaftarOptions,
-    });
   }, [dataJalurDaftarList]);
 
   useEffect(() => {
@@ -509,10 +502,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       };
       return newOption;
     });
-    setDataOptions({
-      ...dataOptions,
-      stage: stageOptions,
-    });
+    setDataStageOptions(stageOptions);
   }, [dataStageList]);
 
   useEffect(() => {
@@ -523,10 +513,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       };
       return newOption;
     });
-    setDataOptions({
-      ...dataOptions,
-      status: statusOptions,
-    });
+    setDataStatusOptions(statusOptions);
   }, [dataStatusList]);
 
   // 4. Event
@@ -574,8 +561,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4.2. Create Recruitments
-  const handleCreateRecruitments = () => {
-    if (!isAllowedToAddRecruitment) {
+  const handleCreateRecruitments = (data) => {
+    if (!isAllowedToAddRecruitments) {
       permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
       return;
     }
@@ -586,7 +573,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataCreateRecruitments),
+      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -596,10 +583,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             message: `Kandidat berhasil ditambahkan.`,
             duration: 3,
           });
-          setTimeout(() => {
-            onvisible(false);
-            setDataCreateRecruitments([]);
-          }, 500);
         } else {
           notification.error({
             message: `Gagal menambahkan kandidat. ${response2.message}`,
@@ -829,17 +812,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.7. Delete Recruitment
+  // 4.7. Delete Recruitments
   const onOpenDeleteModal = () => {
     setModalDelete(true);
   };
 
   const handleDeleteRecruitments = () => {
     const payload = {
-      id: selectedRecruitmentIds,
+      ids: selectedRecruitmentIds,
     };
 
-    if (!isAllowedToDeleteRecruitment) {
+    if (!isAllowedToDeleteRecruitments) {
       permissionWarningNotification("Menghapus", "Kandidat");
       return;
     }
@@ -854,17 +837,24 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
+        setRefresh((prev) => prev + 1);
         if (res2.success) {
           notification.success({
             message: res2.message,
             duration: 3,
           });
+          setTimeout(() => {
+            setModalDelete(false);
+            setBulk(false);
+            setSelectedRecruitmentIds([]);
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menghapus kandidat. ${response2.message}`,
+            duration: 3,
+          });
         }
-        setTimeout(() => {
-          setLoadingDelete(false);
-          setModalDelete(false);
-          setRefresh((prev) => prev + 1);
-        }, 500);
+        setLoadingDelete(false);
       })
       .catch((err) => {
         notification.error({
@@ -973,7 +963,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-1 py-1"
           onClick={onOpenDeleteModal}
-          disabled={!isAllowedToDeleteRecruitment}
+          disabled={!isAllowedToDeleteRecruitments}
         >
           <TrashIconSvg size={16} />
           <p className="mig-caption--medium text-mono30">Hapus Kandidat</p>
@@ -1158,10 +1148,19 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
+  // DEBUG
   // console.log(dataUpdateStage)
   // console.log(refresh)
   // console.log(selectedRecruitments)
-  // console.log(dataOptions)
+  // console.log(dataJalurDaftarList)
+  // console.log(dataRoleList)
+  // console.log(dataStageList)
+  // console.log(dataStatusList);
+  // console.log(dataJalurDaftarOptions)
+  // console.log(dataRoleOptions)
+  // console.log(dataStageOptions)
+  // console.log(dataStatusOptions)
+
   // console.log(dataCreateRecruitments)
   return (
     <Layout
@@ -1305,12 +1304,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Import excel */}
-            <ReactSpreadsheetImport
+            {/* <ReactSpreadsheetImport
               isOpen={modalSheetImport}
               onClose={() => setModalSheetImport(false)}
               onSubmit={(data) => {
-                // console.log(data)
-                setDataCreateRecruitments(data);
+                setTimeout(() => {
+                  handleCreateRecruitments(data?.validData)
+                }, 1000);               
               }}
               allowInvalidSubmit={false}
               translations={{
@@ -1382,7 +1382,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   alternateMatches: ["Role", "role"],
                   fieldType: {
                     type: "select",
-                    options: dataOptions.role,
+                    options: dataRoleOptions,
                   },
                   example: "Product Manager",
                   validations: [
@@ -1399,7 +1399,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   alternateMatches: ["jalur daftar", "Jalur Daftar"],
                   fieldType: {
                     type: "select",
-                    options: dataOptions.jalur_daftar,
+                    options: dataJalurDaftarOptions,
                   },
                   example: "Glints",
                   validations: [
@@ -1416,7 +1416,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   alternateMatches: ["Stage", "stage"],
                   fieldType: {
                     type: "select",
-                    options: dataOptions.stage,
+                    options: dataStageOptions,
                   },
                   example: "Behavior Interview",
                   validations: [
@@ -1433,7 +1433,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   alternateMatches: ["Status", "status"],
                   fieldType: {
                     type: "select",
-                    options: dataOptions.status,
+                    options: dataStatusOptions,
                   },
                   example: "On Hold",
                   validations: [
@@ -1445,7 +1445,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   ],
                 },
               ]}
-            />
+            /> */}
 
             {/* Start: Search criteria */}
             <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
@@ -1639,10 +1639,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         >
           <p>Apakah Anda yakin ingin menghapus kandidat berikut?</p>
           {selectedRecruitments.map((candidate, idx) => (
-            <p>
-              <strong>
-                {idx + 1}. {candidate.name}
-              </strong>
+            <p key={candidate.id} className="font-bold">
+              {idx + 1}. {candidate.name}
             </p>
           ))}
         </ModalHapus2>
