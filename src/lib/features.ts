@@ -30,6 +30,9 @@ export const SIDEBAR_TASK_MY = "SIDEBAR_TASK_MY";
 /** Ticket */
 export const SIDEBAR_TICKET = "SIDEBAR_TICKET";
 
+/** Lamaran Saya */
+export const SIDEBAR_MY_APPLICATION = "SIDEBAR_MY_APPLICATION";
+
 /** ------------------ Manajemen ------------------ */
 /** Asset */
 export const SIDEBAR_ASSET = "SIDEBAR_ASSET";
@@ -50,6 +53,7 @@ export const SIDEBAR_USER = "SIDEBAR_USER";
 export const SIDEBAR_USER_AGENT = "SIDEBAR_USER_AGENT";
 export const SIDEBAR_USER_REQUESTER = "SIDEBAR_USER_REQUESTER";
 export const SIDEBAR_USER_GROUP = "SIDEBAR_USER_GROUP";
+export const SIDEBAR_USER_GUEST = "SIDEBAR_USER_GUEST";
 
 /** CMS */
 export const SIDEBAR_CMS = "SIDEBAR_CMS";
@@ -180,8 +184,10 @@ export const RECRUITMENT_SETUP_TEMPLATE = "RECRUITMENT_SETUP_TEMPLATE";
 export const RECRUITMENTS_GET = "RECRUITMENTS_GET";
 export const RECRUITMENT_GET = "RECRUITMENT_GET";
 export const RECRUITMENT_ADD = "RECRUITMENT_ADD";
+export const RECRUITMENTS_ADD = "RECRUITMENTS_ADD";
 export const RECRUITMENT_UPDATE = "RECRUITMENT_UPDATE";
 export const RECRUITMENT_DELETE = "RECRUITMENT_DELETE";
+export const RECRUITMENTS_DELETE = "RECRUITMENTS_DELETE";
 export const RECRUITMENT_COUNT_GET = "RECRUITMENT_COUNT_GET";
 export const RECRUITMENT_UPDATE_STATUS = "RECRUITMENT_UPDATE_STATUS";
 export const RECRUITMENT_UPDATE_STAGE = "RECRUITMENT_UPDATE_STAGE";
@@ -425,6 +431,15 @@ export const REQUESTER_GROUP_UPDATE = "REQUESTER_GROUP_UPDATE";
  * - [x] /admin/groups
  */
 export const REQUESTER_GROUP_DELETE = "REQUESTER_GROUP_DELETE";
+
+/** User Management - Guests */
+export const GUESTS_GET = "GUESTS_GET";
+export const GUEST_GET = "GUEST_GET";
+export const GUEST_ADD = "GUEST_ADD";
+export const GUEST_STATUS = "GUEST_STATUS";
+export const GUEST_PASSWORD_UPDATE = "GUEST_PASSWORD_UPDATE";
+export const GUEST_UPDATE = "GUEST_UPDATE";
+export const GUEST_DELETE = "GUEST_DELETE";
 
 /**
  * Daftar feature untuk Company management.
