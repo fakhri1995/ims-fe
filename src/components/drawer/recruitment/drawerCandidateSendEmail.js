@@ -1,7 +1,9 @@
 import { Form, Input, Select, Spin, notification } from "antd";
 import parse from "html-react-parser";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -14,15 +16,16 @@ import { InputRequired } from "../../input";
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
 const DrawerCandidateSendEmail = ({
   visible,
   onvisible,
   initProps,
   setRefresh,
   isAllowedToAddRecruitment,
-  dataRoleList,
-  dataStageList,
-  dataStatusList,
+  dataCandidate,
 }) => {
   /**
    * Dependencies
@@ -45,10 +48,11 @@ const DrawerCandidateSendEmail = ({
   //USESTATE
   const [dataSendEmail, setDataSendEmail] = useState({
     email: "",
-    name: "",
+    name: "", //template name
     subject: "",
     body: "",
   });
+  const [textEditorContent, setTextEditorContent] = useState("");
   const [loadingSendEmail, setLoadingSendEmail] = useState(false);
   const [disabledSendEmail, setDisabledSendEmail] = useState(true);
 
@@ -57,7 +61,17 @@ const DrawerCandidateSendEmail = ({
   const [dataEmailTemplateList, setDataEmailTemplateList] = useState([]);
 
   // useEffect
-  // 3.1. Get Recruitment Email Template List
+  // 3.1. Autofill email input when drawer opened
+  useEffect(() => {
+    if (visible === true) {
+      setDataSendEmail({
+        ...dataSendEmail,
+        email: dataCandidate.email,
+      });
+    }
+  }, [visible]);
+
+  // 3.2. Get Recruitment Email Template List
   useEffect(() => {
     if (!isAllowedToGetEmailTemplateList) {
       permissionWarningNotification("Mendapatkan", "Daftar Template Email");
@@ -95,6 +109,45 @@ const DrawerCandidateSendEmail = ({
         setLoadingEmailTemplateList(false);
       });
   }, [isAllowedToGetEmailTemplateList]);
+
+  // 3.3. Auto replace candidate name and role name format
+  useEffect(() => {
+    const mapObj = {
+      "[role_name]": dataCandidate.role?.name,
+      "[candidate_name]": dataCandidate.name,
+    };
+    let finalSubject = dataSendEmail.subject?.replace(
+      /\[role_name\]|\[candidate_name\]/gi,
+      function (matched) {
+        return mapObj[matched];
+      }
+    );
+
+    let finalBody = dataSendEmail.body?.replace(
+      /\[role_name\]|\[candidate_name\]/gi,
+      function (matched) {
+        return mapObj[matched];
+      }
+    );
+
+    setDataSendEmail({
+      ...dataSendEmail,
+      subject: finalSubject,
+      body: finalBody,
+    });
+  }, [dataSendEmail.name]);
+
+  // 3.4. Check if all input is filled
+  useEffect(() => {
+    let allFilled = Object.values(dataSendEmail).every(
+      (value) => value !== "" && value !== null
+    );
+    if (allFilled && textEditorContent.length > 1) {
+      setDisabledSendEmail(false);
+    } else {
+      setDisabledSendEmail(true);
+    }
+  }, [dataSendEmail, textEditorContent]);
 
   //HANDLER
   const onChangeInput = (e) => {
@@ -147,28 +200,39 @@ const DrawerCandidateSendEmail = ({
       });
   };
 
-  // USEEFFECT
-  useEffect(() => {
-    let allFilled = Object.values(dataSendEmail).every(
-      (value) => value !== "" && value !== null
-    );
-    if (allFilled) {
-      setDisabledSendEmail(false);
-    } else {
-      setDisabledSendEmail(true);
-    }
-  }, [dataSendEmail]);
+  // Text Editor Config
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link"],
+    ],
+  };
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
 
   return (
     <DrawerCore
       title={"Kirim Email"}
       visible={visible}
       onClose={() => {
-        setDataSendEmail({});
+        setDataSendEmail({
+          email: "",
+          name: "", //template name
+          subject: "",
+          body: "",
+        });
         onvisible(false);
       }}
       buttonOkText={"Kirim Email"}
-      // onClick={handleSendEmail}
+      onClick={handleSendEmail}
       disabled={disabledSendEmail}
     >
       <Spin spinning={loadingSendEmail}>
@@ -202,6 +266,7 @@ const DrawerCandidateSendEmail = ({
                   value={dataSendEmail.email}
                   name={"email"}
                   onChange={onChangeInput}
+                  disabled={true}
                 />
               </div>
             </Form.Item>
@@ -232,6 +297,7 @@ const DrawerCandidateSendEmail = ({
                       subject: selectedTemplate.subject,
                       body: selectedTemplate.body,
                     });
+                    setTextEditorContent(selectedTemplate.body);
                   }}
                 >
                   {dataEmailTemplateList.map((template) => (
@@ -242,19 +308,54 @@ const DrawerCandidateSendEmail = ({
                 </Select>
               </div>
             </Form.Item>
+            <Form.Item
+              label="Subyek"
+              name={"subject"}
+              rules={[
+                {
+                  required: true,
+                  message: "Subyek wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <div>
+                <Input
+                  value={dataSendEmail.subject}
+                  name={"subject"}
+                  onChange={onChangeInput}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="Body"
+              name={"body"}
+              rules={[
+                {
+                  required: true,
+                  message: "Body wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <>
+                <ReactQuill
+                  theme="snow"
+                  value={dataSendEmail.body}
+                  onChange={(content, delta, source, editor) => {
+                    setDataSendEmail((prev) => ({
+                      ...prev,
+                      body: content,
+                    }));
+                    setTextEditorContent(editor.getText(content));
+                  }}
+                  modules={modules}
+                  formats={formats}
+                  className="h-44 pb-10"
+                />
+              </>
+            </Form.Item>
           </Form>
-          {dataSendEmail.name && (
-            <div className="flex flex-col space-y-6">
-              <div>
-                <p className="mig-caption--medium">Subject</p>
-                <p>{dataSendEmail.subject}</p>
-              </div>
-              <div>
-                <p className="mig-caption--medium">Body</p>
-                <p>{dataSendEmail.body ? parse(dataSendEmail.body) : null}</p>
-              </div>
-            </div>
-          )}
         </div>
       </Spin>
     </DrawerCore>

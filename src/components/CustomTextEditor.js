@@ -1,16 +1,20 @@
+import dynamic from "next/dynamic";
 import React from "react";
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+const NAME_FORMAT = "[candidate_name]";
+const ROLE_FORMAT = "[role_name]";
+
 function insertNameVar() {
-  const NAME_FORMAT = "[candidate_name]";
   const cursorPosition = this.quill.getSelection().index;
   this.quill.insertText(cursorPosition, NAME_FORMAT);
   this.quill.setSelection(cursorPosition + NAME_FORMAT.length);
 }
 
 function insertRoleVar() {
-  const ROLE_FORMAT = "[role_name]";
   const cursorPosition = this.quill.getSelection().index;
   this.quill.insertText(cursorPosition, ROLE_FORMAT);
   this.quill.setSelection(cursorPosition + ROLE_FORMAT.length);
