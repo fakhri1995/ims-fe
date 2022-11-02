@@ -360,22 +360,6 @@ function GuestDetail({
                   // <Button type="primary" loading={loadingupdate} onClick={instanceForm.submit}>Save</Button>
                 }
                 {
-                  // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                  <div className="w-full h-auto">
-                    <Button
-                      disabled={praloading || !isAllowedToUpdatePassword}
-                      type="primary"
-                      onClick={() => {
-                        rt.push(
-                          `/admin/guests/password/${data1.id}?name=${data1.name}`
-                        );
-                      }}
-                    >
-                      Ubah Password
-                    </Button>
-                  </div>
-                }
-                {
                   <div className="w-full h-auto">
                     <Button
                       disabled={!isAllowedToDeleteGuest}
@@ -463,9 +447,9 @@ function GuestDetail({
                   </div>
                 </div>
               </TabPane>
-              <TabPane tab="Relationship" key={`relationship`}>
+              {/* <TabPane tab="Relationship" key={`relationship`}>
                 <Relationship userid={userid} initProps={initProps} />
-              </TabPane>
+              </TabPane> */}
             </Tabs>
           </div>
           <div className=" block md:hidden">
