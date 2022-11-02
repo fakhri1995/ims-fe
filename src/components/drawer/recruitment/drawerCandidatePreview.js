@@ -28,7 +28,7 @@ const DrawerCandidatePreview = ({
   onvisible,
   initProps,
   setRefresh,
-  isAllowedToAddRecruitment,
+  isAllowedToGetRecruitment,
   trigger,
 }) => {
   /**
@@ -41,7 +41,6 @@ const DrawerCandidatePreview = ({
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
   // const isAllowedToGetRecruitmentLog = hasPermission(
   //   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET
   // );
@@ -167,7 +166,7 @@ const DrawerCandidatePreview = ({
       }}
       buttonUpdateText={"Lihat Detail"}
       onClick={() => rt.push(`/admin/recruitment/${id.current}`)}
-      // disabled={disabledSendEmail}
+      disabled={!isAllowedToGetRecruitment}
     >
       <Spin spinning={loadingDataPreview}>
         <div className="flex flex-col">
