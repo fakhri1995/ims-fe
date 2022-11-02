@@ -12,7 +12,6 @@ import { useAccessControl } from "contexts/access-control";
 import {
   GUEST_DELETE,
   GUEST_GET,
-  GUEST_PASSWORD_UPDATE,
   GUEST_STATUS,
   GUEST_UPDATE,
 } from "lib/features";
@@ -141,13 +140,7 @@ const Relationship = ({ userid, initProps }) => {
   );
 };
 
-function GuestDetail({
-  initProps,
-  dataProfile,
-  dataDetailRequester,
-  userid,
-  sidemenu,
-}) {
+function GuestDetail({ initProps, dataProfile, userid, sidemenu }) {
   /**
    * Dependencies
    */
@@ -159,7 +152,6 @@ function GuestDetail({
   const isAllowedToGetGuestDetail = hasPermission(GUEST_GET);
   const isAllowedToGuestActivation = hasPermission(GUEST_STATUS);
   const isAllowedToDeleteGuest = hasPermission(GUEST_DELETE);
-  const isAllowedToUpdatePassword = hasPermission(GUEST_PASSWORD_UPDATE);
   const isAllowedToUpdateGuest = hasPermission(GUEST_UPDATE);
 
   const rt = useRouter();
@@ -175,7 +167,6 @@ function GuestDetail({
     email: "",
     phone_number: "",
     profile_image: `/default-users.jpeg`,
-    position: "",
   });
   //data roles
   const [namarolearr, setnamarolearr] = useState([]);
@@ -199,6 +190,11 @@ function GuestDetail({
   const [praloading, setpraloading] = useState(true);
 
   const handleActivationRequesters = (status) => {
+    if (!isAllowedToGuestActivation) {
+      permissionWarningNotification("Mengubah", "Status Aktivasi Guest");
+      return;
+    }
+
     let keaktifan = false;
     if (status === "aktif") {
       keaktifan = false;
@@ -254,7 +250,7 @@ function GuestDetail({
   };
   const handleDeleteGuest = () => {
     if (!isAllowedToDeleteGuest) {
-      permissionWarningNotification("Menghapis", "Guest");
+      permissionWarningNotification("Menghapus", "Guest");
       return;
     }
 
@@ -314,7 +310,6 @@ function GuestDetail({
           //   res2.data.profile_image === "" || res2.data.profile_image === "-"
           //     ? `/default-users.jpeg`
           //     : res2.data.profile_image,
-          position: res2.data.position,
         };
         setisenabled(res2.data.is_enabled);
         setData1(temp);
@@ -463,7 +458,7 @@ function GuestDetail({
                       <div className="pt-1">
                         {isenabled ? (
                           <Switch
-                            disabled={praloading}
+                            disabled={praloading || !isAllowedToGuestActivation}
                             checked={true}
                             onChange={() => {
                               setVisible(true);
@@ -472,7 +467,7 @@ function GuestDetail({
                           ></Switch>
                         ) : (
                           <Switch
-                            disabled={praloading}
+                            disabled={praloading || !isAllowedToGuestActivation}
                             checked={false}
                             onChange={() => {
                               setVisiblenon(true);
@@ -505,14 +500,6 @@ function GuestDetail({
                         </h1>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">
-                          No. Handphone:
-                        </h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1.phone_number}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
@@ -526,9 +513,9 @@ function GuestDetail({
                   </div>
                 </div>
               </TabPane>
-              <TabPane tab="Relationship" key={`relationship`}>
+              {/* <TabPane tab="Relationship" key={`relationship`}>
                 <Relationship userid={userid} initProps={initProps} />
-              </TabPane>
+              </TabPane> */}
             </Tabs>
           </div>
 

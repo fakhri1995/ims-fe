@@ -20,7 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { COMPANY_BRANCHS_GET, GUEST_ADD, ROLES_GET } from "lib/features";
+import { GUEST_ADD, ROLES_GET } from "lib/features";
 import { getBase64 } from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
@@ -54,8 +54,8 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
     fullname: "",
     email: "",
     role_ids: [],
-    profile_image: "",
-    profile_image_file: null,
+    // profile_image: "",
+    // profile_image_file: null,
     // password: "",
     // confirm_password: "",
   });
@@ -66,7 +66,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
   //data roles
   const [dataroles, setdataroles] = useState([]);
   //is pra rendered loading
-  const [praloading, setpraloading] = useState(true);
+  // const [praloading, setpraloading] = useState(true);
 
   //handle CreataGuest
   const handleCreateGuest = () => {
@@ -76,13 +76,13 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
     }
     setLoadingsave(true);
 
-    const createPayload = {
-      ...newuser,
-      profile_image: newuser.profile_image_file,
-    };
-    if ("profile_image_file" in createPayload) {
-      delete createPayload["profile_image_file"];
-    }
+    // const createPayload = {
+    //   ...newuser,
+    //   profile_image: newuser.profile_image_file,
+    // };
+    // if ("profile_image_file" in createPayload) {
+    //   delete createPayload["profile_image_file"];
+    // }
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addGuestMember`, {
       method: "POST",
@@ -90,7 +90,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(createPayload),
+      body: JSON.stringify(newuser),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -177,6 +177,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
   //data Roles
   useEffect(() => {
     if (!isAllowedToAddGuest || !isAllowedToGetRolesList) {
+      permissionWarningNotification("Mendapatkan", "List Role");
       return;
     }
 
@@ -214,7 +215,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
                   <Button type="default">Batal</Button>
                 </Link>
                 <Button
-                  disabled={praloading || !isAllowedToAddGuest}
+                  disabled={!isAllowedToAddGuest}
                   type="primary"
                   loading={loadingsave}
                   onClick={instanceForm.submit}
@@ -231,7 +232,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
               Akun Guest - {newuser.fullname}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4">
-              <div className="p-3 col-span-1 md:col-span-1">
+              {/* <div className="p-3 col-span-1 md:col-span-1">
                 <Upload
                   name="profile_image"
                   listType="picture-card"
@@ -250,7 +251,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
                     uploadButton
                   )}
                 </Upload>
-              </div>
+              </div> */}
               <div className="p-3 col-span-1 md:col-span-3">
                 <Form
                   layout="vertical"
