@@ -1322,6 +1322,9 @@ const TableCustomRecruitmentCandidate = ({
   isBulk,
   setSelectedRecruitments,
   setSelectedRecruitmentIds,
+  setDrawerShown,
+  tempIdClicked,
+  setTriggerRowClicked,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -1444,7 +1447,9 @@ const TableCustomRecruitmentCandidate = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            !isBulk && rt.push(`/admin/recruitment/${record.id}`);
+            !isBulk && setDrawerShown(true);
+            tempIdClicked.current = record.id;
+            setTriggerRowClicked((prev) => prev + 1);
           },
         };
       }}

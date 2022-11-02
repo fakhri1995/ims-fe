@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
+import { useRef } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
@@ -48,9 +49,11 @@ import SettingsIcon from "assets/vectors/icon-settings.svg";
 import ButtonSys from "../../../components/button";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
+import DrawerCandidatePreview from "../../../components/drawer/recruitment/drawerCandidatePreview";
 import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import {
   CheckIconSvg,
+  CopyIconSvg,
   DownIconSvg,
   DownloadIconSvg,
   FileExportIconSvg,
@@ -188,10 +191,14 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedRecruitmentIds, setSelectedRecruitmentIds] = useState([]);
 
   const [refresh, setRefresh] = useState(-1);
+  const [dataRowClicked, setDataRowClicked] = useState({});
+  const tempIdClicked = useRef(-1);
+  const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
 
-  // 2.3. Drawer/Modal Create, Delete, Bulk, Send Email, Import sheet
+  // 2.3. Drawer/Modal Create, Delete, Bulk, Send Email, Import sheet, Preview, Verify access sent
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
+  const [isPreviewDrawerShown, setPreviewDrawerShown] = useState(false);
 
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -200,6 +207,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [bulkMode, setBulkMode] = useState("");
 
   const [modalSheetImport, setModalSheetImport] = useState(false);
+
+  const [modalVerif, setModalVerif] = useState(false);
+  const [isAccessSent, setIsAccessSent] = useState(false);
+  const [loadingVerif, setLoadingVerif] = useState(false);
 
   // 2.4 Update Stage & Status
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -977,6 +988,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     !isBulk
       ? {
           title: "No",
+          key: "number",
           dataIndex: "num",
           render: (text, record, index) => {
             return {
@@ -991,6 +1003,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       : {},
     {
       title: "Nama",
+      key: "name",
       dataIndex: "name",
       render: (text, record, index) => {
         return {
@@ -1005,6 +1018,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Role",
+      key: "role",
       dataIndex: "role",
       render: (text, record, index) => {
         return {
@@ -1018,6 +1032,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Stage",
+      key: "stage",
       dataIndex: "stage",
       render: (text, record, index) => {
         return {
@@ -1061,6 +1076,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Status",
+      key: "status",
       dataIndex: "status",
       render: (text, record, index) => {
         return {
@@ -1114,6 +1130,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
     {
+      title: "Aksi",
       key: "button_action",
       render: (text, record) => {
         return {
@@ -1125,6 +1142,18 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // disabled={!canUpdateRoleAssessment}
                 onClick={(event) => {
                   event.stopPropagation();
+                  rt.push(`/admin/recruitment/${record.id}`);
+                }}
+              >
+                <SearchIconSvg size={16} color={`#100F0F`} />
+              </ButtonSys>
+              <ButtonSys
+                type={"default"}
+                // type={canUpdateRoleAssessment ? "default" : "primary"}
+                // disabled={!canUpdateRoleAssessment}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setDataRowClicked(record);
                   setEmailDrawerShown(true);
                 }}
               >
@@ -1137,6 +1166,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // disabled={!isAllowedToDeleteRoleAssessment}
                 onClick={(event) => {
                   event.stopPropagation();
+                  setDataRowClicked(record);
+                  setModalVerif(true);
                 }}
               >
                 <FileExportIconSvg size={16} color={`#00589F`} />
@@ -1149,19 +1180,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   ];
 
   // DEBUG
-  // console.log(dataUpdateStage)
-  // console.log(refresh)
-  // console.log(selectedRecruitments)
-  // console.log(dataJalurDaftarList)
-  // console.log(dataRoleList)
-  // console.log(dataStageList)
-  // console.log(dataStatusList);
-  // console.log(dataJalurDaftarOptions)
-  // console.log(dataRoleOptions)
-  // console.log(dataStageOptions)
-  // console.log(dataStatusOptions)
 
-  // console.log(dataCreateRecruitments)
   return (
     <Layout
       tok={initProps}
@@ -1587,11 +1606,27 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 isBulk={isBulk}
                 setSelectedRecruitments={setSelectedRecruitments}
                 setSelectedRecruitmentIds={setSelectedRecruitmentIds}
+                setDrawerShown={setPreviewDrawerShown}
+                tempIdClicked={tempIdClicked}
+                setTriggerRowClicked={setTriggerRowClicked}
               />
             </div>
           </div>
         </div>
       </div>
+
+      {/* Drawer Preview Kandidat */}
+      <AccessControl hasPermission={RECRUITMENT_GET}>
+        <DrawerCandidatePreview
+          id={tempIdClicked}
+          visible={isPreviewDrawerShown}
+          initProps={initProps}
+          onvisible={setPreviewDrawerShown}
+          setRefresh={setRefresh}
+          trigger={triggerRowClicked}
+          // isAllowedToAddRecruitment={isAllowedToAddRecruitment}
+        />
+      </AccessControl>
 
       {/* Drawer Tambah Kandidat */}
       <AccessControl hasPermission={RECRUITMENT_ADD}>
@@ -1610,16 +1645,15 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Drawer Kirim Email */}
-      <AccessControl hasPermission={RECRUITMENT_ADD}>
+      {/* TODO: add access control for get email template & send email */}
+      <AccessControl hasPermission={RECRUITMENT_GET}>
         <DrawerCandidateSendEmail
           visible={isEmailDrawerShown}
           initProps={initProps}
           onvisible={setEmailDrawerShown}
           setRefresh={setRefresh}
+          dataCandidate={dataRowClicked}
           // isAllowedToAddRecruitment={isAllowedToAddRecruitment}
-          // dataRoleList={dataRoleList}
-          // dataStageList={dataStageList}
-          // dataStatusList={dataStatusList}
         />
       </AccessControl>
 
@@ -1839,17 +1873,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Table
                 rowKey={(record) => record.id}
                 className="border border-mono90 rounded-md"
-                // rowSelection={{
-                //   type: "checkbox",
-                //   onChange: (selectedRowKeys, selectedRows) => {
-                //     console.log(
-                //       `selectedRowKeys: ${selectedRowKeys}`,
-                //       "selectedRows: ",
-                //       selectedRows
-                //     );
-                //     setSelectedRecruitments(selectedRows);
-                //   },
-                // }}
                 columns={[
                   {
                     title: "Nama Kandidat",
@@ -1940,6 +1963,108 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             )}
           </div>
         </ModalCore>
+      </AccessControl>
+
+      {/* Modal/Drawer Verifikasi Akses Kandidat */}
+      <AccessControl hasPermission={RECRUITMENT_GET}>
+        {!isAccessSent ? (
+          <ModalCore
+            title={`Apakah Anda yakin ingin memberikan 
+            akses ke ${dataRowClicked.name}?`}
+            visible={modalVerif}
+            onCancel={() => {
+              setModalVerif(false);
+              // setDataUpdateStage({})
+            }}
+            footer={
+              <Spin spinning={loadingVerif}>
+                <div className="flex justify-end">
+                  <ButtonSys
+                    type={"primary"}
+                    // onClick={() => {
+                    //   {
+                    //     verifMode === "sent"
+                    //       ? setModalUpdateStage(true)
+                    //       : setModalUpdateStatus(true);
+                    //   }
+                    //   setModalBulk(false);
+                    // }}
+                    // disabled={disabled}
+                  >
+                    Ya, Saya Yakin
+                  </ButtonSys>
+                </div>
+              </Spin>
+            }
+          >
+            <div className="flex flex-col space-y-6">
+              <div className="grid grid-cols-2 ">
+                <p>Nama</p>
+                <p>: {dataRowClicked.name}</p>
+                <p>Role</p>
+                <p>: {dataRowClicked.role?.name}</p>
+                <p>Email</p>
+                <p>: {dataRowClicked.email}</p>
+                <p>Tautan Verifikasi</p>
+                <div className="flex flex-row items-center space-x-1">
+                  <a>: link</a>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText("link");
+                      notification.success({
+                        message: "Link berhasil disalin!",
+                        duration: 3,
+                      });
+                    }}
+                  >
+                    <CopyIconSvg size={12} color={"#30378F"} />
+                  </button>
+                </div>
+              </div>
+              <p className="text-center">
+                Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, tautan
+                verifikasi akan dikirimkan ke email&nbsp;
+                <strong>{dataRowClicked.name}</strong>
+              </p>
+            </div>
+          </ModalCore>
+        ) : (
+          <DrawerCore
+            title={`Tautan Verifikasi`}
+            visible={modalVerif}
+            onClose={() => {
+              setModalVerif(false);
+              // setDataUpdateStage({})
+            }}
+            footer={null}
+          >
+            <div className="flex flex-col space-y-6">
+              <div className="grid grid-cols-2 ">
+                <p>Nama</p>
+                <p>: {dataRowClicked.name}</p>
+                <p>Role</p>
+                <p>: {dataRowClicked.role?.name}</p>
+                <p>Email</p>
+                <p>: {dataRowClicked.email}</p>
+                <p>Tautan Verifikasi</p>
+                <div className="flex flex-row items-center space-x-1">
+                  <a>: link</a>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText("link");
+                      notification.success({
+                        message: "Link berhasil disalin!",
+                        duration: 3,
+                      });
+                    }}
+                  >
+                    <CopyIconSvg size={12} color={"#30378F"} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </DrawerCore>
+        )}
       </AccessControl>
     </Layout>
   );

@@ -41,6 +41,7 @@ import {
   SIDEBAR_FEATURE_MODULE,
   SIDEBAR_FEATURE_ROLE,
   SIDEBAR_ITEMS,
+  SIDEBAR_MY_APPLICATION,
   SIDEBAR_RECRUITMENT,
   SIDEBAR_RECRUITMENT_CANDIDATE,
   SIDEBAR_RECRUITMENT_SETUP,
@@ -54,6 +55,7 @@ import {
   SIDEBAR_USER,
   SIDEBAR_USER_AGENT,
   SIDEBAR_USER_GROUP,
+  SIDEBAR_USER_GUEST,
   SIDEBAR_USER_REQUESTER,
 } from "lib/features";
 
@@ -208,13 +210,20 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           )}
         </SubMenu>
       )}
+
+      {/* Lamaran Saya */}
+      {hasPermission(SIDEBAR_MY_APPLICATION) && (
+        <Menu.Item key="application" icon={<TaskIconSvg />} title="Items">
+          <Link href="/application">Lamaran Saya</Link>
+        </Menu.Item>
+      )}
     </>
   );
 
   const manajemenContent = (
     <>
       <p className={menuSectionLabelClassName}>MANAJEMEN</p>
-      {/* Pengguna: Agents, Requesters, Groups */}
+      {/* Pengguna: Agents, Requesters, Groups, Guests */}
       {hasPermission(SIDEBAR_USER) && (
         <SubMenu title="Pengguna" key="6" icon={<UserIconSvg />}>
           {hasPermission(SIDEBAR_USER_AGENT) && (
@@ -230,6 +239,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_USER_GROUP) && (
             <Menu.Item key="63">
               <Link href="/admin/groups">Groups</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_USER_GUEST) && (
+            <Menu.Item key="64">
+              <Link href="/admin/guests">Guests</Link>
             </Menu.Item>
           )}
         </SubMenu>
@@ -325,7 +339,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Recruitment Management */}
-      {/* {hasPermission(SIDEBAR_RECRUITMENT) && (
+      {hasPermission(SIDEBAR_RECRUITMENT) && (
         <SubMenu
           title="Recruitment"
           key="11"
@@ -343,7 +357,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )} */}
+      )}
     </>
   );
 
