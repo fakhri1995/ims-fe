@@ -50,7 +50,7 @@ const DrawerCandidatePreview = ({
     name: "",
     role: "",
     created_at: "",
-    stage_history: [],
+    recruitment_stage: [],
   });
 
   const [loadingDataPreview, setLoadingDataPreview] = useState(false);
@@ -67,7 +67,7 @@ const DrawerCandidatePreview = ({
     if (trigger !== -1) {
       setLoadingDataPreview(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitment?id=${id.current}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentPreviewStageStatus?id=${id.current}`,
         {
           method: `GET`,
           headers: {
@@ -83,7 +83,7 @@ const DrawerCandidatePreview = ({
               name: res2.data.name,
               role: res2.data.role?.name,
               created_at: res2.data.created_at,
-              // stage_history: ""
+              recruitment_stage: res2.data.recruitment_stage,
             }));
           } else {
             notification.error({
@@ -103,50 +103,6 @@ const DrawerCandidatePreview = ({
         });
     }
   }, [isAllowedToGetRecruitment, trigger]);
-
-  //HANDLER
-  const handleSendEmail = () => {
-    if (!isAllowedToSendEmail) {
-      permissionWarningNotification("Mengirim", "email kepada kandidat");
-      return;
-    }
-    setLoadingSendEmail(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendEmail`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(dataPreview),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        if (response2.success) {
-          notification.success({
-            message: `Email berhasil dikirim.`,
-            duration: 3,
-          });
-          setTimeout(() => {
-            onvisible(false);
-            setDataPreview({});
-          }, 500);
-        } else {
-          notification.error({
-            message: `Gagal mengirim email. ${response2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingSendEmail(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal mengirim email. ${err.response}`,
-          duration: 3,
-        });
-        setLoadingSendEmail(false);
-      });
-  };
 
   // console.log(trigger)
   // console.log(dataPreview)
@@ -178,8 +134,10 @@ const DrawerCandidatePreview = ({
             <div className="flex flex-col space-y-2">
               <p className="mig-caption--medium text-mono80">Tanggal Daftar</p>
               <p>
-                {moment(dataPreview.created_at).format("LL")},&nbsp;
-                {moment(dataPreview.created_at).format("LT")}
+                {dataPreview.created_at &&
+                  `${moment(dataPreview.created_at).format("LL")}, ${moment(
+                    dataPreview.created_at
+                  ).format("LT")}`}
               </p>
             </div>
           </div>
@@ -187,18 +145,15 @@ const DrawerCandidatePreview = ({
             <p className="mig-caption--medium text-mono80 mb-6">Stage</p>
             <Timeline>
               {/* loop stage history */}
-              <Timeline.Item color="#35763B">
-                <p>Technical Test</p>
-                <p className="mig-caption--medium text-mono80">
-                  12 Jan 2022, 16:00
-                </p>
-              </Timeline.Item>
-              <Timeline.Item color="#35763B">
-                <p>Technical Test</p>
-                <p className="mig-caption--medium text-mono80">
-                  12 Jan 2022, 16:00
-                </p>
-              </Timeline.Item>
+              {dataPreview.recruitment_stage?.map((stage) => (
+                <Timeline.Item color="#35763B">
+                  <p>{stage.name}</p>
+                  <p className="mig-caption--medium text-mono80">
+                    {moment(stage.updated_at).format("ll")},&nbsp;
+                    {moment(stage.updated_at).format("LT")}
+                  </p>
+                </Timeline.Item>
+              ))}
             </Timeline>
           </div>
         </div>

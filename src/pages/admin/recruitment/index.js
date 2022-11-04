@@ -31,6 +31,7 @@ import {
   RECRUITMENTS_GET,
   RECRUITMENT_ADD,
   RECRUITMENT_COUNT_GET,
+  RECRUITMENT_DOWNLOAD_TEMPLATE,
   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
@@ -142,6 +143,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToSendAccessRecruitment = hasPermission(
     RECRUITMENT_SEND_ACCESS
+  );
+
+  const isAllowedToDownloadTemplate = hasPermission(
+    RECRUITMENT_DOWNLOAD_TEMPLATE
   );
 
   // 1. Init
@@ -895,6 +900,44 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
+  // 4.8. Download Excel Template
+  const handleDownloadExcelTemplate = () => {
+    if (!isAllowedToDownloadTemplate) {
+      permissionWarningNotification("Mengunduh", "Template Excel");
+      return;
+    }
+    setLoadingCreate(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentExcelTemplate`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.blob())
+      .then((response2) => {
+        // console.log(response2)
+        const url = window.URL.createObjectURL(new Blob([response2]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `Template-Add Candidates.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengunduh template. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingCreate(false);
+      });
+  };
+
   // Dropdown Menu "Tambah Kandidat"
   const dropdownMenu = (
     <Menu>
@@ -926,6 +969,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-2.5 py-2"
+          onClick={handleDownloadExcelTemplate}
         >
           <DownloadIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">
@@ -1254,13 +1298,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 lg:grid-cols-3 px-5 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 md:px-5 gap-6">
           <div
             className="col-span-2 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
 						divide-x divide-gray-300"
           >
-            <div className="flex flex-row items-center justify-between w-full pr-8 ">
+            <div className="flex flex-col md:flex-row items-center md:justify-between w-full pr-8 ">
               <h4 className="font-semibold lg:mig-heading--4">Jumlah Role</h4>
               <Spin spinning={loadingDataCount}>
                 <p className="text-4xl lg:text-5xl text-primary100 pl-2">
@@ -1269,7 +1313,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </Spin>
             </div>
 
-            <div className="flex flex-row items-center justify-between w-full pl-8">
+            <div className="flex flex-col md:flex-row items-center justify-between w-full pl-8">
               <h4 className="font-semibold lg:mig-heading--4">
                 Total Kandidat
               </h4>
