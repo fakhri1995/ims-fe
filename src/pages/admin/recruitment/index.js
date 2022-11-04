@@ -31,10 +31,14 @@ import {
   RECRUITMENTS_GET,
   RECRUITMENT_ADD,
   RECRUITMENT_COUNT_GET,
-  RECRUITMENT_DELETE,
+  RECRUITMENT_DOWNLOAD_TEMPLATE,
+  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
+  RECRUITMENT_PREVIEW_GET,
   RECRUITMENT_ROLES_LIST_GET,
+  RECRUITMENT_SEND_ACCESS,
+  RECRUITMENT_SEND_EMAIL_TEMPLATE,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
@@ -134,6 +138,22 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
 
+  const isAllowedToSendEmailRecruitment = hasPermission(
+    RECRUITMENT_SEND_EMAIL_TEMPLATE
+  );
+
+  const isAllowedToSendAccessRecruitment = hasPermission(
+    RECRUITMENT_SEND_ACCESS
+  );
+
+  const isAllowedToDownloadTemplate = hasPermission(
+    RECRUITMENT_DOWNLOAD_TEMPLATE
+  );
+
+  const isAllowedToGetPreviewRecruitment = hasPermission(
+    RECRUITMENT_PREVIEW_GET
+  );
+
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -148,6 +168,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 2.2. Table Candidate Recruitment
+  // filter data
   const [loadingRoleList, setLoadingRoleList] = useState(false);
   const [dataRoleList, setDataRoleList] = useState([]);
   const [loadingStageList, setLoadingStageList] = useState(false);
@@ -157,6 +178,20 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [loadingJalurDaftarList, setLoadingJalurDaftarList] = useState([]);
   const [dataJalurDaftarList, setDataJalurDaftarList] = useState([]);
 
+  // filter search & selected options
+  const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
+    useState("");
+  const [selectedRoleId, setSelectedRoleId] = useState(0);
+  const [selectedStage, setSelectedStage] = useState(0);
+  const [selectedStatus, setSelectedStatus] = useState(0);
+
+  // sorting
+  const [sortingRecruitments, setSortingRecruitments] = useState({
+    sort_by: "",
+    sort_type: "",
+  });
+
+  // table data
   const [loadingRecruitments, setLoadingRecruitments] = useState(true);
   const [dataRecruitments, setDataRecruitments] = useState([]);
   const [dataRawRecruitments, setDataRawRecruitments] = useState({
@@ -173,19 +208,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     to: null,
     total: null,
   });
-
   const [pageRecruitments, setPageRecruitments] = useState(1);
   const [rowsRecruitment, setRowsRecruitments] = useState(10);
-  const [sortingRecruitments, setSortingRecruitments] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
-  const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
-    useState("");
-  const [selectedRoleId, setSelectedRoleId] = useState(0);
-  const [selectedStage, setSelectedStage] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState(0);
 
+  // bulk
   const [isBulk, setBulk] = useState(false);
   const [selectedRecruitments, setSelectedRecruitments] = useState([]);
   const [selectedRecruitmentIds, setSelectedRecruitmentIds] = useState([]);
@@ -195,7 +221,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const tempIdClicked = useRef(-1);
   const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
 
-  // 2.3. Drawer/Modal Create, Delete, Bulk, Send Email, Import sheet, Preview, Verify access sent
+  /**
+   * 2.3. Drawer/Modal For Create, Delete, Bulk, Send Email,
+   * Import sheet, Preview, send access verification
+   * */
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
   const [isPreviewDrawerShown, setPreviewDrawerShown] = useState(false);
@@ -239,14 +268,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2.5 Create recruitments (import excel)
   const [loadingCreate, setLoadingCreate] = useState(false);
-  const [dataCreateRecruitments, setDataCreateRecruitments] = useState([]);
   const [dataRoleOptions, setDataRoleOptions] = useState([]);
   const [dataJalurDaftarOptions, setDataJalurDaftarOptions] = useState([]);
   const [dataStageOptions, setDataStageOptions] = useState([]);
   const [dataStatusOptions, setDataStatusOptions] = useState([]);
 
   // 3. UseEffect
-
   // 3.1. Get Recruitment Count
   useEffect(() => {
     if (!isAllowedToGetRecruitmentCount) {
@@ -479,7 +506,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
   }, [dataUpdateStatus]);
 
-  // 3.7. Use for import excel
+  // 3.7. Set options in import excel
   useEffect(() => {
     let roleOptions = dataRoleList.map((role) => {
       let newOption = {
@@ -528,6 +555,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [dataStatusList]);
 
   // 4. Event
+
   const onManageRecruitmentButtonClicked = useCallback(() => {
     rt.push("/admin/recruitment/role");
   }, []);
@@ -571,7 +599,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.2. Create Recruitments
+  // 4.2. Create Recruitments (from excel import)
   const handleCreateRecruitments = (data) => {
     if (!isAllowedToAddRecruitments) {
       permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
@@ -611,7 +639,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.3. Update Stage
+  // 4.3. Update Stage per each candidate
   const handleUpdateStage = () => {
     const payload = {
       id: dataUpdateStage.id,
@@ -663,7 +691,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.4. Update Status
+  // 4.4. Update Status per each candidate
   const handleUpdateStatus = () => {
     const payload = {
       id: dataUpdateStatus.id,
@@ -877,7 +905,45 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // Dropdown Menu
+  // 4.8. Download Excel Template
+  const handleDownloadExcelTemplate = () => {
+    if (!isAllowedToDownloadTemplate) {
+      permissionWarningNotification("Mengunduh", "Template Excel");
+      return;
+    }
+    setLoadingCreate(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentExcelTemplate`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.blob())
+      .then((response2) => {
+        // console.log(response2)
+        const url = window.URL.createObjectURL(new Blob([response2]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `Template-Add Candidates.xlsx`);
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengunduh template. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingCreate(false);
+      });
+  };
+
+  // Dropdown Menu "Tambah Kandidat"
   const dropdownMenu = (
     <Menu>
       <Menu.Item key={"insert_candidate"}>
@@ -908,6 +974,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-2.5 py-2"
+          onClick={handleDownloadExcelTemplate}
         >
           <DownloadIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">
@@ -918,21 +985,33 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     </Menu>
   );
 
-  // Bulk Menu
+  /***
+   * Bulk Menu (Dropdown Aksi)
+   * (only active when "bulk action" is clicked,
+   * then at least 1 candidate is selected)
+   ***/
   const bulkMenu = (
     <Menu>
       <Menu.Item key={"stage"}>
         <button
-          className="flex flex-row space-x-2 items-center 
-					bg-transparent w-full px-1 py-1"
+          className={`flex flex-row space-x-2 
+          items-center bg-transparent w-full px-1 py-1`}
           onClick={() => {
             setModalBulk(true);
             setBulkMode("stage");
           }}
-          disabled={!isAllowedToUpdateRecruitment}
+          disabled={!canUpdateStage}
         >
           <TrendingUpIconSvg size={16} />
-          <p className="mig-caption--medium text-mono30">Ubah Stage</p>
+          <p
+            className={
+              canUpdateStage
+                ? `mig-caption--medium text-mono30`
+                : `mig-caption--medium text-gray-300`
+            }
+          >
+            Ubah Stage
+          </p>
         </button>
       </Menu.Item>
 
@@ -944,10 +1023,18 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             setModalBulk(true);
             setBulkMode("status");
           }}
-          disabled={!isAllowedToUpdateRecruitment}
+          disabled={!canUpdateStatus}
         >
           <InfoSquareIconSvg size={16} />
-          <p className="mig-caption--medium text-mono30">Ubah Status</p>
+          <p
+            className={
+              canUpdateStatus
+                ? `mig-caption--medium text-mono30`
+                : `mig-caption--medium text-gray-300`
+            }
+          >
+            Ubah Status
+          </p>
         </button>
       </Menu.Item>
 
@@ -955,18 +1042,37 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-1 py-1"
+          disabled={!isAllowedToSendEmailRecruitment}
         >
           <MailForwardIconSvg size={16} />
-          <p className="mig-caption--medium text-mono30">Kirim Email</p>
+          <p
+            className={
+              isAllowedToSendEmailRecruitment
+                ? `mig-caption--medium text-mono30`
+                : `mig-caption--medium text-gray-300`
+            }
+          >
+            Kirim Email
+          </p>
         </button>
       </Menu.Item>
       <Menu.Item key={"send_profile"}>
         <button
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-1 py-1"
+          //TODO: change to approprite access control
+          disabled={!isAllowedToSendEmailRecruitment}
         >
           <FileExportIconSvg size={16} />
-          <p className="mig-caption--medium text-mono30">Kirim Form Profil</p>
+          <p
+            className={
+              isAllowedToSendEmailRecruitment
+                ? `mig-caption--medium text-mono30`
+                : `mig-caption--medium text-gray-300`
+            }
+          >
+            Kirim Form Profil
+          </p>
         </button>
       </Menu.Item>
       <Menu.Item key={"delete"}>
@@ -977,13 +1083,21 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           disabled={!isAllowedToDeleteRecruitments}
         >
           <TrashIconSvg size={16} />
-          <p className="mig-caption--medium text-mono30">Hapus Kandidat</p>
+          <p
+            className={
+              isAllowedToDeleteRecruitments
+                ? `mig-caption--medium text-mono30`
+                : `mig-caption--medium text-gray-300`
+            }
+          >
+            Hapus Kandidat
+          </p>
         </button>
       </Menu.Item>
     </Menu>
   );
 
-  // Table's columns
+  // "Semua Kandidat" Table's columns
   const columnRecruitment = [
     !isBulk
       ? {
@@ -1137,9 +1251,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex flex-row space-x-2 justify-center">
               <ButtonSys
-                type={"default"}
-                // type={canUpdateRoleAssessment ? "default" : "primary"}
-                // disabled={!canUpdateRoleAssessment}
+                type={isAllowedToGetRecruitment ? "default" : "primary"}
+                disabled={!isAllowedToGetRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   rt.push(`/admin/recruitment/${record.id}`);
@@ -1148,9 +1261,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <SearchIconSvg size={16} color={`#100F0F`} />
               </ButtonSys>
               <ButtonSys
-                type={"default"}
-                // type={canUpdateRoleAssessment ? "default" : "primary"}
-                // disabled={!canUpdateRoleAssessment}
+                type={isAllowedToSendEmailRecruitment ? "default" : "primary"}
+                disabled={!isAllowedToSendEmailRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
@@ -1160,17 +1272,18 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <MailForwardIconSvg size={16} color={`#35763B`} />
               </ButtonSys>
               <ButtonSys
-                type={"default"}
-                // type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
-                // color="danger"
-                // disabled={!isAllowedToDeleteRoleAssessment}
+                type={isAllowedToSendAccessRecruitment ? "default" : "primary"}
+                disabled={!isAllowedToSendAccessRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
                   setModalVerif(true);
                 }}
               >
-                <FileExportIconSvg size={16} color={`#00589F`} />
+                <FileExportIconSvg
+                  size={16}
+                  color={isAccessSent ? "#DDB44A" : `#00589F`}
+                />
               </ButtonSys>
             </div>
           ),
@@ -1190,13 +1303,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 lg:grid-cols-3 px-5 gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 md:px-5 gap-6">
           <div
             className="col-span-2 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
 						divide-x divide-gray-300"
           >
-            <div className="flex flex-row items-center justify-between w-full pr-8 ">
+            <div className="flex flex-col md:flex-row items-center md:justify-between w-full pr-8 ">
               <h4 className="font-semibold lg:mig-heading--4">Jumlah Role</h4>
               <Spin spinning={loadingDataCount}>
                 <p className="text-4xl lg:text-5xl text-primary100 pl-2">
@@ -1205,7 +1318,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </Spin>
             </div>
 
-            <div className="flex flex-row items-center justify-between w-full pl-8">
+            <div className="flex flex-col md:flex-row items-center justify-between w-full pl-8">
               <h4 className="font-semibold lg:mig-heading--4">
                 Total Kandidat
               </h4>
@@ -1616,7 +1729,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
 
       {/* Drawer Preview Kandidat */}
-      <AccessControl hasPermission={RECRUITMENT_GET}>
+      <AccessControl hasPermission={RECRUITMENT_PREVIEW_GET}>
         <DrawerCandidatePreview
           id={tempIdClicked}
           visible={isPreviewDrawerShown}
@@ -1624,7 +1737,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setPreviewDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerRowClicked}
-          // isAllowedToAddRecruitment={isAllowedToAddRecruitment}
+          isAllowedToGetRecruitment={isAllowedToGetRecruitment}
+          isAllowedToGetPreviewRecruitment={isAllowedToGetPreviewRecruitment}
         />
       </AccessControl>
 
@@ -1645,20 +1759,23 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Drawer Kirim Email */}
-      {/* TODO: add access control for get email template & send email */}
-      <AccessControl hasPermission={RECRUITMENT_GET}>
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_SEND_EMAIL_TEMPLATE,
+          RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+        ]}
+      >
         <DrawerCandidateSendEmail
           visible={isEmailDrawerShown}
           initProps={initProps}
           onvisible={setEmailDrawerShown}
           setRefresh={setRefresh}
           dataCandidate={dataRowClicked}
-          // isAllowedToAddRecruitment={isAllowedToAddRecruitment}
         />
       </AccessControl>
 
       {/* Modal Hapus Kandidat */}
-      <AccessControl hasPermission={RECRUITMENT_DELETE}>
+      <AccessControl hasPermission={RECRUITMENTS_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
           visible={modalDelete}
@@ -1669,7 +1786,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           }}
           itemName={"kandidat"}
           loading={loadingDelete}
-          // disabled={candidateCount > 0}
+          disabled={!isAllowedToDeleteRecruitments}
         >
           <p>Apakah Anda yakin ingin menghapus kandidat berikut?</p>
           {selectedRecruitments.map((candidate, idx) => (
@@ -1831,7 +1948,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Modal Bulk */}
-      <AccessControl hasPermission={RECRUITMENT_UPDATE}>
+      <AccessControl
+        hasPermission={[RECRUITMENT_UPDATE_STAGE, RECRUITMENT_UPDATE_STATUS]}
+      >
         <ModalCore
           title={`Mengubah ${selectedRecruitments.length} Kandidat`}
           visible={modalBulk}
@@ -1965,8 +2084,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         </ModalCore>
       </AccessControl>
 
-      {/* Modal/Drawer Verifikasi Akses Kandidat */}
-      <AccessControl hasPermission={RECRUITMENT_GET}>
+      {/* Modal/Drawer Send Access Verification */}
+      <AccessControl hasPermission={RECRUITMENT_SEND_ACCESS}>
         {!isAccessSent ? (
           <ModalCore
             title={`Apakah Anda yakin ingin memberikan 
@@ -2002,6 +2121,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <p>Nama</p>
                 <p>: {dataRowClicked.name}</p>
                 <p>Role</p>
+                {/* TODO: change to role access (guest) */}
                 <p>: {dataRowClicked.role?.name}</p>
                 <p>Email</p>
                 <p>: {dataRowClicked.email}</p>

@@ -21,12 +21,7 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  RECRUITMENT_GET,
-  RECRUITMENT_STAGES_LIST_GET,
-  RECRUITMENT_STATUSES_LIST_GET,
-  RECRUITMENT_UPDATE,
-} from "lib/features";
+import { RECRUITMENT_GET, RESUME_GET, RESUME_UPDATE } from "lib/features";
 
 import ButtonSys from "../../components/button";
 import {
@@ -64,13 +59,8 @@ const CandidateRecruitmentDetailIndex = ({
   }
 
   const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
-  const isAllowedToUpdateRecruitment = hasPermission(RECRUITMENT_UPDATE);
-  const isAllowedToGetRecruitmentStatusesList = hasPermission(
-    RECRUITMENT_STATUSES_LIST_GET
-  );
-  const isAllowedToGetRecruitmentStagesList = hasPermission(
-    RECRUITMENT_STAGES_LIST_GET
-  );
+  const isAllowedToUpdateResume = hasPermission(RESUME_UPDATE);
+  const isAllowedToGetResume = hasPermission(RESUME_GET);
 
   //INIT
   const rt = useRouter();
@@ -82,11 +72,8 @@ const CandidateRecruitmentDetailIndex = ({
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [dataRecruitment, setDataRecruitment] = useState({});
+  const [dataResume, setDataResume] = useState({});
   const [refresh, setRefresh] = useState(-1);
-  const [dataStageList, setDataStageList] = useState([]);
-  const [dataStatusList, setDataStatusList] = useState([]);
-  const [loadingStageList, setLoadingStageList] = useState(false);
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
 
   // 2. USE EFFECT
   // 2.1 Get recruitment candidate detail
@@ -130,92 +117,7 @@ const CandidateRecruitmentDetailIndex = ({
   // 	}
   // }, [isAllowedToGetRecruitment, recruitmentId, refresh]);
 
-  // 2.2. Get Stage List
-  useEffect(() => {
-    if (!isAllowedToGetRecruitmentStagesList) {
-      permissionWarningNotification("Mendapatkan", "Recruitment Stages List");
-      setLoadingStageList(false);
-      return;
-    }
-
-    setLoadingStageList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStagesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStageList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingStageList(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingStageList(false);
-      });
-  }, [isAllowedToGetRecruitmentStagesList, refresh]);
-
-  // 2.3. Get Status List
-  useEffect(() => {
-    if (!isAllowedToGetRecruitmentStatusesList) {
-      permissionWarningNotification("Mendapatkan", "Recruitment Statuses List");
-      setLoadingStatusList(false);
-      return;
-    }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingStatusList(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetRecruitmentStatusesList, refresh]);
-
   // 3. Event
-  const checkStageIsAvailable = (currrentStage) => {
-    let isAvailable = dataStageList.some(
-      (stage) => stage.name == currrentStage
-    );
-    return isAvailable;
-  };
-
-  const checkStatusIsAvailable = (currentStatus) => {
-    let isAvailable = dataStatusList.some(
-      (status) => status.name == currentStatus
-    );
-    return isAvailable;
-  };
 
   return (
     <LayoutDashboard2
@@ -244,31 +146,25 @@ const CandidateRecruitmentDetailIndex = ({
             </div>
             <div className="space-y-2">
               <p className="mig-caption--medium text-mono80">
-                Role yang didaftarkan
+                Role yang Didaftarkan
               </p>
               <p className="text-md">{dataRecruitment.role?.name}</p>
             </div>
             <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Tipe role</p>
+              <p className="mig-caption--medium text-mono80">Tipe Role</p>
               <p className="text-md">{dataRecruitment.role?.type?.name}</p>
             </div>
             <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Jalur daftar</p>
+              <p className="mig-caption--medium text-mono80">Jalur Daftar</p>
               <p className="text-md">{dataRecruitment.jalur_daftar?.name}</p>
             </div>
             <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Tanggal daftar</p>
+              <p className="mig-caption--medium text-mono80">Tanggal Daftar</p>
               <p className="text-md">
                 {moment(dataRecruitment.created_at).format("LL")},&nbsp;
                 {moment(dataRecruitment.created_at).format("LT")}
               </p>
             </div>
-            <ButtonSys type={"primary"}>
-              <div className="flex flex-row space-x-3 items-center">
-                <MailForwardIconSvg size={16} color="#FFFFFF" />
-                <p>Kirim Email</p>
-              </div>
-            </ButtonSys>
           </div>
         </div>
 
@@ -277,7 +173,10 @@ const CandidateRecruitmentDetailIndex = ({
           <div className="shadow-lg rounded-md bg-white p-6 divide-y-2">
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
-              <ButtonSys type={"default"}>
+              <ButtonSys
+                type={isAllowedToUpdateResume ? "default" : "primary"}
+                disabled={!isAllowedToUpdateResume}
+              >
                 <div className="flex flex-row space-x-3 items-center">
                   <EditIconSvg size={16} color="#35763B" />
                   <p>Ubah Profil</p>
@@ -291,23 +190,22 @@ const CandidateRecruitmentDetailIndex = ({
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p className="text-md">John Doe</p>
+                  <p className="text-md">{dataResume.name}</p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Telepon
                   </p>
-                  <p className="text-md">1234567890</p>
+                  <p className="text-md">{dataResume.telp}</p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">Email</p>
-                  <p className="text-md">someone@example-mail.com</p>
+                  <p className="text-md">{dataResume.email}</p>
                 </div>
                 <div className="flex flex-col space-y-2 col-span-2">
                   <p className="mig-caption--medium text-mono80">Alamat</p>
                   <p className="text-md">
-                    Jalan Terang Bulan 20 blok C nomor III, Jakarta Selatan
-                    12345, Indonesia
+                    {`${dataResume.city}, ${dataResume.province}`}
                   </p>
                 </div>
               </div>
@@ -317,17 +215,20 @@ const CandidateRecruitmentDetailIndex = ({
                 Pengalaman Kerja
               </p>
               <Timeline className="pl-6">
-                <Timeline.Item color="#35763B">
-                  <p className="text-sm text-mono30 font-bold mb-1">
-                    Associate Product Manager
-                  </p>
-                  <p className="mig-caption text-mono50 mb-2">
-                    PT ABC, Internship
-                  </p>
-                  <p className="mig-caption text-mono80">
-                    Agustus 2021 - Sekarang
-                  </p>
-                </Timeline.Item>
+                {/* {dataResume.experiences(data => (
+                   <Timeline.Item color="#35763B">
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      Associate Product Manager
+                    </p>
+                    <p className="mig-caption text-mono50 mb-2">
+                      PT ABC, Internship
+                    </p>
+                    <p className="mig-caption text-mono80">
+                      Agustus 2021 - Sekarang
+                    </p>
+                  </Timeline.Item> 
+                ))} */}
+
                 <Timeline.Item color="#35763B">
                   <p className="text-sm text-mono30 font-bold mb-1">
                     Associate Product Manager
@@ -401,32 +302,6 @@ const CandidateRecruitmentDetailIndex = ({
                   Juara II, Competitive Programming
                 </p>
                 <p className="mig-caption text-mono50">Compfest, Juni 2025</p>
-              </div>
-            </div>
-            <div className="flex flex-col pt-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Pranala Luar
-              </p>
-              <div className="mb-4">
-                <p className="mb-2 mig-caption--medium text-mono80">
-                  Portofolio
-                </p>
-                <a href="#">bit.ly/AdaSesuatuDiSini</a>
-              </div>
-              <div className="">
-                <p className="mb-2 mig-caption--medium text-mono80">
-                  Media Sosial
-                </p>
-                <div className="flex flex-row items-center space-x-2 mb-2 pl-1">
-                  <LinkedinOutlined style={{ color: "#4D4D4D" }} />
-                  <a href="#">
-                    https://www.linkedin.com/in/john-doe-000000000/
-                  </a>
-                </div>
-                <div className="flex flex-row items-center space-x-2 mb-2 pl-1">
-                  <GithubOutlined style={{ color: "#4D4D4D" }} />
-                  <a href="#">https://github.com/johndoe00</a>
-                </div>
               </div>
             </div>
           </div>

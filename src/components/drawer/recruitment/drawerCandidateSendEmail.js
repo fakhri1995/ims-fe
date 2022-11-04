@@ -8,7 +8,10 @@ import "react-quill/dist/quill.snow.css";
 import { useAccessControl } from "contexts/access-control";
 
 import { ASSESSMENT_ADD } from "lib/features";
-import { RECRUITMENT_EMAIL_TEMPLATES_LIST_GET } from "lib/features";
+import {
+  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+  RECRUITMENT_SEND_EMAIL_TEMPLATE,
+} from "lib/features";
 
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
@@ -39,9 +42,7 @@ const DrawerCandidateSendEmail = ({
   const isAllowedToGetEmailTemplateList = hasPermission(
     RECRUITMENT_EMAIL_TEMPLATES_LIST_GET
   );
-  const isAllowedToSendEmail = hasPermission(
-    RECRUITMENT_EMAIL_TEMPLATES_LIST_GET
-  );
+  const isAllowedToSendEmail = hasPermission(RECRUITMENT_SEND_EMAIL_TEMPLATE);
 
   const [instanceForm] = Form.useForm();
 
@@ -158,18 +159,24 @@ const DrawerCandidateSendEmail = ({
   };
 
   const handleSendEmail = () => {
+    const payload = {
+      email: dataSendEmail.email,
+      subject: dataSendEmail.subject,
+      body: dataSendEmail.body,
+    };
+
     if (!isAllowedToSendEmail) {
       permissionWarningNotification("Mengirim", "email kepada kandidat");
       return;
     }
     setLoadingSendEmail(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendEmail`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendRecruitmentEmail`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataSendEmail),
+      body: JSON.stringify(payload),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -189,13 +196,14 @@ const DrawerCandidateSendEmail = ({
             duration: 3,
           });
         }
-        setLoadingSendEmail(false);
       })
       .catch((err) => {
         notification.error({
           message: `Gagal mengirim email. ${err.response}`,
           duration: 3,
         });
+      })
+      .finally(() => {
         setLoadingSendEmail(false);
       });
   };
@@ -233,7 +241,7 @@ const DrawerCandidateSendEmail = ({
       }}
       buttonOkText={"Kirim Email"}
       onClick={handleSendEmail}
-      disabled={disabledSendEmail}
+      disabled={disabledSendEmail || !isAllowedToSendEmail}
     >
       <Spin spinning={loadingSendEmail}>
         <div className="flex flex-col">

@@ -36,6 +36,7 @@ import {
   RECRUITMENT_GET,
   RECRUITMENT_LOG_GET,
   RECRUITMENT_LOG_NOTES_ADD,
+  RECRUITMENT_SEND_EMAIL_TEMPLATE,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
@@ -97,6 +98,9 @@ const RecruitmentDetailIndex = ({
 
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
+  const isAllowedToSendEmailRecruitment = hasPermission(
+    RECRUITMENT_SEND_EMAIL_TEMPLATE
+  );
 
   //INIT
   const rt = useRouter();
@@ -559,6 +563,7 @@ const RecruitmentDetailIndex = ({
       pathArr={pathArr}
     >
       <div className="flex flex-row gap-4 w-full">
+        {/* Left Column */}
         <div className="flex flex-col gap-4 w-1/3">
           {/* Card Primary Info */}
           <div className="flex flex-col shadow-lg rounded-md bg-white p-4 space-y-4">
@@ -566,7 +571,11 @@ const RecruitmentDetailIndex = ({
               <OneUserIconSvg size={32} color="#4D4D4D" />
               <h3 className="mig-heading--3">{dataRecruitment.name}</h3>
             </div>
-            <ButtonSys type={"default"} onClick={() => setDrawerUpdate(true)}>
+            <ButtonSys
+              type={isAllowedToUpdateRecruitment ? "default" : "primary"}
+              onClick={() => setDrawerUpdate(true)}
+              disabled={!isAllowedToUpdateRecruitment}
+            >
               <div className="flex flex-row space-x-3 items-center">
                 <EditIconSvg size={16} color="#35763B" />
                 <p>Ubah Kandidat</p>
@@ -605,7 +614,10 @@ const RecruitmentDetailIndex = ({
                 {moment(dataRecruitment.created_at).format("LT")}
               </p>
             </div>
-            <ButtonSys type={"primary"}>
+            <ButtonSys
+              type={"primary"}
+              disabled={!isAllowedToSendEmailRecruitment}
+            >
               <div className="flex flex-row space-x-3 items-center">
                 <MailForwardIconSvg size={16} color="#FFFFFF" />
                 <p>Kirim Email</p>
@@ -617,12 +629,14 @@ const RecruitmentDetailIndex = ({
           <div className="shadow-lg rounded-md bg-white p-4">
             <div className="flex flex-row justify-between items-center mb-6">
               <h4 className="mig-heading--4">Catatan</h4>
-              <button
-                className="bg-transparent"
-                onClick={() => setModalNotes(true)}
-              >
-                <PlusIconSvg size={24} color="#35763B" />
-              </button>
+              {isAllowedToAddRecruitmentLogNotes && (
+                <button
+                  className="bg-transparent"
+                  onClick={() => setModalNotes(true)}
+                >
+                  <PlusIconSvg size={24} color="#35763B" />
+                </button>
+              )}
             </div>
             <Spin spinning={loadingActivities}>
               {dataActivities?.slice(0, 5).map((activity) => (
@@ -702,6 +716,7 @@ const RecruitmentDetailIndex = ({
           </div>
         </div>
 
+        {/* Right Column */}
         <div className="flex flex-col gap-6 w-2/3">
           {/* Card Stage & Status */}
           <div
@@ -725,7 +740,13 @@ const RecruitmentDetailIndex = ({
                           disabled={!canUpdateStage}
                         >
                           <EditIconSvg size={20} color="#4D4D4D" />
-                          <p className="mig-caption--medium text-mono30">
+                          <p
+                            className={
+                              canUpdateStage
+                                ? `mig-caption--medium text-mono30`
+                                : `mig-caption--medium text-gray-300`
+                            }
+                          >
                             Ubah Stage
                           </p>
                         </button>
@@ -784,7 +805,13 @@ const RecruitmentDetailIndex = ({
                           disabled={!canUpdateStatus}
                         >
                           <EditIconSvg size={20} color="#4D4D4D" />
-                          <p className="mig-caption--medium text-mono30">
+                          <p
+                            className={
+                              canUpdateStatus
+                                ? `mig-caption--medium text-mono30`
+                                : `mig-caption--medium text-gray-300`
+                            }
+                          >
                             Ubah Status
                           </p>
                         </button>
@@ -963,32 +990,6 @@ const RecruitmentDetailIndex = ({
                 <p className="mig-caption text-mono50">Compfest, Juni 2025</p>
               </div>
             </div>
-            {/* <div className="flex flex-col pt-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Pranala Luar
-              </p>
-              <div className="mb-4">
-                <p className="mb-2 mig-caption--medium text-mono80">
-                  Portofolio
-                </p>
-                <a href="#">bit.ly/AdaSesuatuDiSini</a>
-              </div>
-              <div className="">
-                <p className="mb-2 mig-caption--medium text-mono80">
-                  Media Sosial
-                </p>
-                <div className="flex flex-row items-center space-x-2 mb-2 pl-1">
-                  <LinkedinOutlined style={{ color: "#4D4D4D" }} />
-                  <a href="#">
-                    https://www.linkedin.com/in/john-doe-000000000/
-                  </a>
-                </div>
-                <div className="flex flex-row items-center space-x-2 mb-2 pl-1">
-                  <GithubOutlined style={{ color: "#4D4D4D" }} />
-                  <a href="#">https://github.com/johndoe00</a>
-                </div>
-              </div>
-            </div> */}
           </div>
         </div>
       </div>
@@ -1195,14 +1196,6 @@ const RecruitmentDetailIndex = ({
           footer={
             <Spin spinning={loadingAddNotes}>
               <div className="flex justify-end">
-                {/* <ButtonSys
-									type="default"
-									onClick={() => {
-										setModalNotes(false);
-									}}
-								>
-									Batalkan
-								</ButtonSys> */}
                 <ButtonSys
                   type={"primary"}
                   onClick={handleAddNotes}
