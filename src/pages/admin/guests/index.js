@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Table, TreeSelect, notification } from "antd";
 import {
+  ArrayParam,
   NumberParam,
   StringParam,
   useQueryParams,
@@ -12,7 +13,7 @@ import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GUESTS_GET, GUEST_ADD } from "lib/features";
+import { GUESTS_GET, GUEST_ADD, GUEST_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 import { generateStaticAssetUrl } from "lib/helper";
 
@@ -21,7 +22,7 @@ import st from "../../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../../lib/helper";
 import httpcookie from "cookie";
 
-function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
+function Guests({ initProps, dataProfile, sidemenu }) {
   /**
    * Dependencies
    */
@@ -31,13 +32,14 @@ function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
     return null;
   }
   const isAllowedToGetGuestList = hasPermission(GUESTS_GET);
+  const isAllowedToGetGuest = hasPermission(GUEST_GET);
   const isAllowedToAddGuest = hasPermission(GUEST_ADD);
 
   const rt = useRouter();
 
   const [queryParams, setQueryParams] = useQueryParams({
     name: withDefault(StringParam, undefined),
-    role: withDefault(NumberParam, undefined),
+    roles: withDefault(ArrayParam, undefined),
     is_enabled: withDefault(NumberParam, undefined),
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -101,8 +103,20 @@ function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
       dataIndex: "email",
     },
     {
-      title: "Access Allowed",
-      dataIndex: "role",
+      title: "Role",
+      dataIndex: "roles",
+      render: (text, record, index) => {
+        return {
+          children: record.roles.length > 0 && (
+            <div
+              className=" p-1 rounded-md bg-primary100 bg-opacity-10 
+                text-primary100 w-auto text-center border border-primary100"
+            >
+              {record.roles[0]?.name}
+            </div>
+          ),
+        };
+      },
     },
     {
       title: "Status",
@@ -199,7 +213,7 @@ function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
               name: doc.name,
               email: doc.email,
               is_enabled: doc.is_enabled,
-              role: doc.role,
+              roles: doc.roles,
             };
           });
         }
@@ -229,7 +243,6 @@ function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
             <div className="font-semibold text-base w-auto">Guests</div>
           </div>
           {
-            // [109].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
             <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
               <Button
                 size="large"
@@ -271,13 +284,6 @@ function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
                             ? Boolean(queryParams.is_enabled)
                             : undefined
                         }
-                        // defaultValue={
-                        //   is_enabled1 === ""
-                        //     ? null
-                        //     : is_enabled1 === "true"
-                        //     ? true
-                        //     : false
-                        // }
                         placeholder="Pilih status guest"
                         style={{ width: `100%`, marginRight: `0.5rem` }}
                         onChange={onChangeStatus}
@@ -324,12 +330,12 @@ function Guests({ initProps, dataProfile, dataListAgent, sidemenu }) {
                       setrowstate(record.id);
                     },
                     onClick: (event) => {
-                      {
-                        // [107, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr)) ?
-                        rt.push(`/admin/guests/detail/${record.id}`);
-                        // :
-                        // null
-                      }
+                      isAllowedToGetGuest
+                        ? rt.push(`/admin/guests/detail/${record.id}`)
+                        : permissionWarningNotification(
+                            "Mendapatkan",
+                            "Detail Guest"
+                          );
                     },
                   };
                 }}
@@ -391,7 +397,6 @@ export async function getServerSideProps({ req, res }) {
     props: {
       initProps,
       dataProfile,
-      // dataListAgent,
       sidemenu: "64",
     },
   };

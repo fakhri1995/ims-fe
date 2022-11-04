@@ -20,7 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { COMPANY_BRANCHS_GET, GUEST_ADD, ROLES_GET } from "lib/features";
+import { GUEST_ADD, ROLES_GET } from "lib/features";
 import { getBase64 } from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
@@ -54,8 +54,9 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
     fullname: "",
     email: "",
     role_ids: [],
-    profile_image: "",
-    profile_image_file: null,
+    phone_number: "",
+    // profile_image: "",
+    // profile_image_file: null,
     // password: "",
     // confirm_password: "",
   });
@@ -65,8 +66,6 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
   const [loadingsave, setLoadingsave] = useState(false);
   //data roles
   const [dataroles, setdataroles] = useState([]);
-  //is pra rendered loading
-  const [praloading, setpraloading] = useState(true);
 
   //handle CreataGuest
   const handleCreateGuest = () => {
@@ -76,13 +75,13 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
     }
     setLoadingsave(true);
 
-    const createPayload = {
-      ...newuser,
-      profile_image: newuser.profile_image_file,
-    };
-    if ("profile_image_file" in createPayload) {
-      delete createPayload["profile_image_file"];
-    }
+    // const createPayload = {
+    //   ...newuser,
+    //   profile_image: newuser.profile_image_file,
+    // };
+    // if ("profile_image_file" in createPayload) {
+    //   delete createPayload["profile_image_file"];
+    // }
 
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addGuestMember`, {
       method: "POST",
@@ -90,7 +89,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(createPayload),
+      body: JSON.stringify(newuser),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -100,7 +99,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/admin/guests/detail/${res2.id}`);
+            rt.push(`/admin/guests/detail/${response2.id}`);
           }, 1000);
         } else {
           notification.error({
@@ -177,6 +176,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
   //data Roles
   useEffect(() => {
     if (!isAllowedToAddGuest || !isAllowedToGetRolesList) {
+      permissionWarningNotification("Mendapatkan", "List Role");
       return;
     }
 
@@ -214,7 +214,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
                   <Button type="default">Batal</Button>
                 </Link>
                 <Button
-                  disabled={praloading || !isAllowedToAddGuest}
+                  disabled={!isAllowedToAddGuest}
                   type="primary"
                   loading={loadingsave}
                   onClick={instanceForm.submit}
@@ -231,26 +231,6 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
               Akun Guest - {newuser.fullname}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4">
-              <div className="p-3 col-span-1 md:col-span-1">
-                <Upload
-                  name="profile_image"
-                  listType="picture-card"
-                  className="profileImage"
-                  showUploadList={false}
-                  beforeUpload={beforeUploadProfileImage}
-                  onChange={onChangeProfileImage}
-                >
-                  {newuser.profile_image ? (
-                    <img
-                      src={newuser.profile_image}
-                      alt="avatar"
-                      style={{ width: "100%" }}
-                    />
-                  ) : (
-                    uploadButton
-                  )}
-                </Upload>
-              </div>
               <div className="p-3 col-span-1 md:col-span-3">
                 <Form
                   layout="vertical"
@@ -297,53 +277,6 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
                       onChange={onChangeCreateGuest}
                     />
                   </Form.Item>
-                  {/* <Form.Item
-                    label="Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Password wajib diisi",
-                      },
-                      {
-                        pattern: /([A-z0-9]{8})/,
-                        message: "Password minimal 8 karakter",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      value={newuser.password}
-                      name={`password`}
-                      onChange={onChangeCreateGuest}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Konfirmasi Password"
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Confirm Password wajib diisi",
-                      },
-                      {
-                        pattern: /([A-z0-9]{8})/,
-                        message: "Confirm Password minimal 8 karakter",
-                      },
-                    ]}
-                  >
-                    <>
-                      <Input.Password
-                        value={newuser.confirm_password}
-                        name={`confirm_password`}
-                        onChange={onChangeCreateGuest}
-                      />
-                      {newuser.password !== newuser.confirm_password && (
-                        <p className=" text-red-500 mb-0">
-                          Confirm Password harus sesuai dengan password
-                        </p>
-                      )}
-                    </>
-                  </Form.Item> */}
                   <Form.Item label="Role" name="role">
                     <Select
                       mode="multiple"
@@ -351,7 +284,7 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
                       onChange={(value) => {
                         setNewuser({ ...newuser, role_ids: value });
                       }}
-                      /*defaultValue={idrole}*/ style={{ width: `100%` }}
+                      style={{ width: `100%` }}
                     >
                       {dataroles.map((doc, idx) => {
                         return (
