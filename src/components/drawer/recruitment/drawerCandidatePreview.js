@@ -10,7 +10,6 @@ import "react-quill/dist/quill.snow.css";
 import { useAccessControl } from "contexts/access-control";
 
 import { ASSESSMENT_ADD } from "lib/features";
-import { RECRUITMENT_GET } from "lib/features";
 
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
@@ -28,6 +27,7 @@ const DrawerCandidatePreview = ({
   onvisible,
   initProps,
   setRefresh,
+  isAllowedToGetPreviewRecruitment,
   isAllowedToGetRecruitment,
   trigger,
 }) => {
@@ -41,9 +41,6 @@ const DrawerCandidatePreview = ({
   if (isAccessControlPending) {
     return null;
   }
-  // const isAllowedToGetRecruitmentLog = hasPermission(
-  //   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET
-  // );
 
   //USESTATE
   const [dataPreview, setDataPreview] = useState({
@@ -58,8 +55,8 @@ const DrawerCandidatePreview = ({
   // useEffect
   // 3.1. Get Recruitment Preview Data
   useEffect(() => {
-    if (!isAllowedToGetRecruitment) {
-      permissionWarningNotification("Mendapatkan", "Data Recruitment");
+    if (!isAllowedToGetPreviewRecruitment) {
+      permissionWarningNotification("Mendapatkan", "Data Preview Recruitment");
       setLoadingDataPreview(false);
       return;
     }
@@ -102,7 +99,7 @@ const DrawerCandidatePreview = ({
           setLoadingDataPreview(false);
         });
     }
-  }, [isAllowedToGetRecruitment, trigger]);
+  }, [isAllowedToGetPreviewRecruitment, trigger]);
 
   // console.log(trigger)
   // console.log(dataPreview)

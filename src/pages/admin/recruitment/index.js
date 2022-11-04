@@ -35,6 +35,7 @@ import {
   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
+  RECRUITMENT_PREVIEW_GET,
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_SEND_ACCESS,
   RECRUITMENT_SEND_EMAIL_TEMPLATE,
@@ -149,6 +150,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     RECRUITMENT_DOWNLOAD_TEMPLATE
   );
 
+  const isAllowedToGetPreviewRecruitment = hasPermission(
+    RECRUITMENT_PREVIEW_GET
+  );
+
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -218,7 +223,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   /**
    * 2.3. Drawer/Modal For Create, Delete, Bulk, Send Email,
-   * Import sheet, Preview, Verify access sent
+   * Import sheet, Preview, send access verification
    * */
   const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
   const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
@@ -1724,7 +1729,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
 
       {/* Drawer Preview Kandidat */}
-      <AccessControl hasPermission={RECRUITMENT_GET}>
+      <AccessControl hasPermission={RECRUITMENT_PREVIEW_GET}>
         <DrawerCandidatePreview
           id={tempIdClicked}
           visible={isPreviewDrawerShown}
@@ -1733,6 +1738,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           setRefresh={setRefresh}
           trigger={triggerRowClicked}
           isAllowedToGetRecruitment={isAllowedToGetRecruitment}
+          isAllowedToGetPreviewRecruitment={isAllowedToGetPreviewRecruitment}
         />
       </AccessControl>
 
@@ -1753,7 +1759,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Drawer Kirim Email */}
-      {/* TODO: add access control for get email template & send email */}
       <AccessControl
         hasPermission={[
           RECRUITMENT_SEND_EMAIL_TEMPLATE,
@@ -2079,7 +2084,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         </ModalCore>
       </AccessControl>
 
-      {/* Modal/Drawer Verifikasi Akses Kandidat */}
+      {/* Modal/Drawer Send Access Verification */}
       <AccessControl hasPermission={RECRUITMENT_SEND_ACCESS}>
         {!isAccessSent ? (
           <ModalCore
@@ -2116,6 +2121,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <p>Nama</p>
                 <p>: {dataRowClicked.name}</p>
                 <p>Role</p>
+                {/* TODO: change to role access (guest) */}
                 <p>: {dataRowClicked.role?.name}</p>
                 <p>Email</p>
                 <p>: {dataRowClicked.email}</p>
