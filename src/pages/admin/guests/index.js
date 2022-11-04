@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Input, Select, Table, TreeSelect, notification } from "antd";
 import {
+  ArrayParam,
   NumberParam,
   StringParam,
   useQueryParams,
@@ -38,7 +39,7 @@ function Guests({ initProps, dataProfile, sidemenu }) {
 
   const [queryParams, setQueryParams] = useQueryParams({
     name: withDefault(StringParam, undefined),
-    role: withDefault(NumberParam, undefined),
+    roles: withDefault(ArrayParam, undefined),
     is_enabled: withDefault(NumberParam, undefined),
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -102,8 +103,20 @@ function Guests({ initProps, dataProfile, sidemenu }) {
       dataIndex: "email",
     },
     {
-      title: "Access Allowed",
-      dataIndex: "role",
+      title: "Role",
+      dataIndex: "roles",
+      render: (text, record, index) => {
+        return {
+          children: record.roles.length > 0 && (
+            <div
+              className=" p-1 rounded-md bg-primary100 bg-opacity-10 
+                text-primary100 w-auto text-center border border-primary100"
+            >
+              {record.roles[0]?.name}
+            </div>
+          ),
+        };
+      },
     },
     {
       title: "Status",
@@ -200,7 +213,7 @@ function Guests({ initProps, dataProfile, sidemenu }) {
               name: doc.name,
               email: doc.email,
               is_enabled: doc.is_enabled,
-              role: doc.role,
+              roles: doc.roles,
             };
           });
         }

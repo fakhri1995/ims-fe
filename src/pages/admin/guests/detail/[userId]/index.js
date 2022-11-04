@@ -432,7 +432,10 @@ function GuestDetail({ initProps, dataProfile, userid, sidemenu }) {
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2">
+                            <div
+                              key={idx}
+                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2"
+                            >
                               {doc.name}
                             </div>
                           ))}
@@ -503,7 +506,10 @@ function GuestDetail({ initProps, dataProfile, userid, sidemenu }) {
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
-                            <div className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2">
+                            <div
+                              key={idx}
+                              className=" p-2 rounded bg-primary100 bg-opacity-10 text-primary100 mr-2"
+                            >
                               {doc.name}
                             </div>
                           ))}
