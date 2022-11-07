@@ -1037,44 +1037,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           </p>
         </button>
       </Menu.Item>
-
-      <Menu.Item key={"send_email"}>
-        <button
-          className="flex flex-row space-x-2 items-center 
-					bg-transparent w-full px-1 py-1"
-          disabled={!isAllowedToSendEmailRecruitment}
-        >
-          <MailForwardIconSvg size={16} />
-          <p
-            className={
-              isAllowedToSendEmailRecruitment
-                ? `mig-caption--medium text-mono30`
-                : `mig-caption--medium text-gray-300`
-            }
-          >
-            Kirim Email
-          </p>
-        </button>
-      </Menu.Item>
-      <Menu.Item key={"send_profile"}>
-        <button
-          className="flex flex-row space-x-2 items-center 
-					bg-transparent w-full px-1 py-1"
-          //TODO: change to approprite access control
-          disabled={!isAllowedToSendEmailRecruitment}
-        >
-          <FileExportIconSvg size={16} />
-          <p
-            className={
-              isAllowedToSendEmailRecruitment
-                ? `mig-caption--medium text-mono30`
-                : `mig-caption--medium text-gray-300`
-            }
-          >
-            Kirim Form Profil
-          </p>
-        </button>
-      </Menu.Item>
       <Menu.Item key={"delete"}>
         <button
           className="flex flex-row space-x-2 items-center 
@@ -1453,6 +1415,21 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 },
               }}
               autoMapDistance={3}
+              // matchColumnsStepHook={(table, rawData, columns) => {
+              //   console.log(table, rawData, columns)
+              //   // try {
+              //   //   let isFilled = table.some(row => {
+              //   //     return ((row.recruitment_jalur_daftar_id !== undefined) &&
+              //   //       (row.recruitment_role_id !== undefined) &&
+              //   //       (row.recruitment_stage_id !== undefined) &&
+              //   //       (row.recruitment_status_id !== undefined))
+              //   //   })
+              //   //   console.log(isFilled);
+              //   // } catch(err) {
+              //   //   notification.err("Error")
+              //   // }
+
+              // }}
               fields={[
                 {
                   label: "Nama",

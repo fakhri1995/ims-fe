@@ -33,6 +33,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   RECRUITMENT_DELETE,
+  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
   RECRUITMENT_LOG_GET,
   RECRUITMENT_LOG_NOTES_ADD,
@@ -45,6 +46,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
+import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import DrawerCandidateUpdate from "../../../components/drawer/recruitment/drawerCandidateUpdate";
 import {
   DotsIconSvg,
@@ -154,6 +156,9 @@ const RecruitmentDetailIndex = ({
     recruitment_status_id: null,
     notes: "",
   });
+
+  // 1.6. Send Email
+  const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
 
   // 2. USE EFFECT
   // 2.1 Get recruitment candidate detail
@@ -616,6 +621,7 @@ const RecruitmentDetailIndex = ({
             </div>
             <ButtonSys
               type={"primary"}
+              onClick={() => setEmailDrawerShown(true)}
               disabled={!isAllowedToSendEmailRecruitment}
             >
               <div className="flex flex-row space-x-3 items-center">
@@ -1007,6 +1013,22 @@ const RecruitmentDetailIndex = ({
           isAllowedToUpdateRecruitment={isAllowedToUpdateRecruitment}
           isAllowedToDeleteRecruitment={isAllowedToDeleteRecruitment}
           setModalDelete={setModalDelete}
+        />
+      </AccessControl>
+
+      {/* Drawer Kirim Email */}
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_SEND_EMAIL_TEMPLATE,
+          RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+        ]}
+      >
+        <DrawerCandidateSendEmail
+          visible={isEmailDrawerShown}
+          initProps={initProps}
+          onvisible={setEmailDrawerShown}
+          setRefresh={setRefresh}
+          dataCandidate={dataRecruitment}
         />
       </AccessControl>
 
