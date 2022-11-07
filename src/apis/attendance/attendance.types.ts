@@ -153,6 +153,7 @@ export interface GetAttendanceUserData {
 export interface UserAttendanceDetailData {
   id: number;
   user_id: number;
+  name: string;
   check_in: Date;
   check_out: Date;
   long_check_in: string;
