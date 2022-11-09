@@ -53,6 +53,11 @@
   &--4 {
     @apply text-mono30 font-bold text-lg;
   }
+
+  /** H5 */
+  &--5 {
+    @apply text-mono30 font-medium text-sm;
+  }
 }
 .mig-caption {
   @apply text-xs;
