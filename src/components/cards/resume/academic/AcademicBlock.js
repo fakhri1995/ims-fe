@@ -86,6 +86,7 @@ const AcademicBlock = ({
             <DatePicker
               picker="year"
               placeholder="Graduation Year"
+              allowClear={false}
               className="w-1/2"
               value={moment(dataUpdateEdu.graduation_year)}
               onChange={(date) => {
