@@ -33,6 +33,7 @@ import {
   RECRUITMENT_COUNT_GET,
   RECRUITMENT_DOWNLOAD_TEMPLATE,
   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+  RECRUITMENT_GENERATE_ACCOUNT,
   RECRUITMENT_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
   RECRUITMENT_PREVIEW_GET,
@@ -51,6 +52,7 @@ import { permissionWarningNotification } from "lib/helper";
 import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
+import ButtonSysColor from "../../../components/buttonColor";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
 import DrawerCandidatePreview from "../../../components/drawer/recruitment/drawerCandidatePreview";
@@ -154,6 +156,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     RECRUITMENT_PREVIEW_GET
   );
 
+  const isAllowedToGenerateRecruitmentAccount = hasPermission(
+    RECRUITMENT_GENERATE_ACCOUNT
+  );
+
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -237,8 +243,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const [modalSheetImport, setModalSheetImport] = useState(false);
 
-  const [modalVerif, setModalVerif] = useState(false);
-  const [isAccessSent, setIsAccessSent] = useState(false);
+  const [modalSendAccess, setModalSendAccess] = useState(false);
   const [loadingVerif, setLoadingVerif] = useState(false);
 
   // 2.4 Update Stage & Status
@@ -943,6 +948,100 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
+  // 4.9. Generate Recruitment Account (automatically create guest and resume object)
+  const handleGenerateRecruitmentAccount = (currentId) => {
+    const payload = {
+      id: currentId,
+      role_ids: [],
+    };
+    if (!isAllowedToGenerateRecruitmentAccount) {
+      permissionWarningNotification("Membuat", "Resume Kandidat");
+      return;
+    }
+    setLoadingCreate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/generateRecruitmentAccount`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Akun rekrutmen berhasil dibuat.`,
+            duration: 3,
+          });
+          // setTimeout(() => {
+          //   handleSendAccess()
+          // }, 500)
+          setModalSendAccess(false);
+        } else {
+          notification.error({
+            message: `Gagal membuat akun rekrutmen. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal membuat akun rekrutmen ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingCreate(false);
+      });
+  };
+
+  // 4.10. Send access to candidate email
+  const handleSendAccess = () => {
+    const payload = {
+      email: dataRowClicked.email,
+    };
+    if (!isAllowedToSendAccessRecruitment) {
+      permissionWarningNotification("Mengirim", "Akses Kandidat");
+      return;
+    }
+    setLoadingVerif(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendAccess`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Tautan verifikasi berhasil dikirim.`,
+            duration: 3,
+          });
+          setModalSendAccess(false);
+        } else {
+          notification.error({
+            message: `Gagal mengirim tautan verifikasi. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengirim tautan verifikasi. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingVerif(false);
+      });
+  };
+
   // Dropdown Menu "Tambah Kandidat"
   const dropdownMenu = (
     <Menu>
@@ -1212,41 +1311,44 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div className="flex flex-row space-x-2 justify-center">
-              <ButtonSys
-                type={isAllowedToGetRecruitment ? "default" : "primary"}
+              <ButtonSysColor
+                type={"default"}
                 disabled={!isAllowedToGetRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   rt.push(`/admin/recruitment/${record.id}`);
                 }}
+                color={"mono30"}
               >
                 <SearchIconSvg size={16} color={`#100F0F`} />
-              </ButtonSys>
-              <ButtonSys
-                type={isAllowedToSendEmailRecruitment ? "default" : "primary"}
+              </ButtonSysColor>
+              <ButtonSysColor
+                type={"default"}
                 disabled={!isAllowedToSendEmailRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
                   setEmailDrawerShown(true);
                 }}
+                color={"primary100"}
               >
                 <MailForwardIconSvg size={16} color={`#35763B`} />
-              </ButtonSys>
-              <ButtonSys
-                type={isAllowedToSendAccessRecruitment ? "default" : "primary"}
+              </ButtonSysColor>
+              <ButtonSysColor
+                type={"default"}
                 disabled={!isAllowedToSendAccessRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
-                  setModalVerif(true);
+                  setModalSendAccess(true);
                 }}
+                color={record.owner_id ? "state2" : "secondary100"}
               >
                 <FileExportIconSvg
                   size={16}
-                  color={isAccessSent ? "#DDB44A" : `#00589F`}
+                  color={record.owner_id ? "#DDB44A" : "#00589F"}
                 />
-              </ButtonSys>
+              </ButtonSysColor>
             </div>
           ),
         };
@@ -2063,29 +2165,25 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
       {/* Modal/Drawer Send Access Verification */}
       <AccessControl hasPermission={RECRUITMENT_SEND_ACCESS}>
-        {!isAccessSent ? (
+        {dataRowClicked.owner_id === null ? (
           <ModalCore
             title={`Apakah Anda yakin ingin memberikan 
             akses ke ${dataRowClicked.name}?`}
-            visible={modalVerif}
+            visible={modalSendAccess}
             onCancel={() => {
-              setModalVerif(false);
+              setModalSendAccess(false);
               // setDataUpdateStage({})
             }}
             footer={
-              <Spin spinning={loadingVerif}>
+              <Spin spinning={loadingCreate}>
                 <div className="flex justify-end">
                   <ButtonSys
                     type={"primary"}
-                    // onClick={() => {
-                    //   {
-                    //     verifMode === "sent"
-                    //       ? setModalUpdateStage(true)
-                    //       : setModalUpdateStatus(true);
-                    //   }
-                    //   setModalBulk(false);
-                    // }}
-                    // disabled={disabled}
+                    onClick={() => {
+                      handleGenerateRecruitmentAccount(dataRowClicked.id);
+                      // handleSendAccess(dataRowClicked.email)
+                    }}
+                    disabled={!isAllowedToGenerateRecruitmentAccount}
                   >
                     Ya, Saya Yakin
                   </ButtonSys>
@@ -2098,25 +2196,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <p>Nama</p>
                 <p>: {dataRowClicked.name}</p>
                 <p>Role</p>
-                {/* TODO: change to role access (guest) */}
                 <p>: {dataRowClicked.role?.name}</p>
                 <p>Email</p>
                 <p>: {dataRowClicked.email}</p>
-                <p>Tautan Verifikasi</p>
-                <div className="flex flex-row items-center space-x-1">
-                  <a>: link</a>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText("link");
-                      notification.success({
-                        message: "Link berhasil disalin!",
-                        duration: 3,
-                      });
-                    }}
-                  >
-                    <CopyIconSvg size={12} color={"#30378F"} />
-                  </button>
-                </div>
               </div>
               <p className="text-center">
                 Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, tautan
@@ -2128,9 +2210,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         ) : (
           <DrawerCore
             title={`Tautan Verifikasi`}
-            visible={modalVerif}
+            visible={modalSendAccess}
             onClose={() => {
-              setModalVerif(false);
+              setModalSendAccess(false);
               // setDataUpdateStage({})
             }}
             footer={null}
