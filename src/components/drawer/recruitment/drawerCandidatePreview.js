@@ -142,8 +142,8 @@ const DrawerCandidatePreview = ({
             <p className="mig-caption--medium text-mono80 mb-6">Stage</p>
             <Timeline>
               {/* loop stage history */}
-              {dataPreview.recruitment_stage?.map((stage) => (
-                <Timeline.Item color="#35763B">
+              {dataPreview.recruitment_stage?.map((stage, idx) => (
+                <Timeline.Item key={idx} color="#35763B">
                   <p>{stage.name}</p>
                   <p className="mig-caption--medium text-mono80">
                     {moment(stage.updated_at).format("ll")},&nbsp;

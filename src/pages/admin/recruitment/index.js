@@ -29,6 +29,7 @@ import {
   RECRUITMENTS_ADD,
   RECRUITMENTS_DELETE,
   RECRUITMENTS_GET,
+  RECRUITMENT_ACCOUNT_TOKEN_GET,
   RECRUITMENT_ADD,
   RECRUITMENT_COUNT_GET,
   RECRUITMENT_DOWNLOAD_TEMPLATE,
@@ -160,6 +161,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     RECRUITMENT_GENERATE_ACCOUNT
   );
 
+  const isAllowedToGetRecruitmentVerification = hasPermission(
+    RECRUITMENT_ACCOUNT_TOKEN_GET
+  );
+
   // 1. Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -244,7 +249,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modalSheetImport, setModalSheetImport] = useState(false);
 
   const [modalSendAccess, setModalSendAccess] = useState(false);
-  const [loadingVerif, setLoadingVerif] = useState(false);
+  const [loadingSendVerifEmail, setLoadingSendVerifEmail] = useState(false);
+
+  const [loadingLink, setLoadingLink] = useState(false);
+  const [verificationLink, setVerificationLink] = useState("");
 
   // 2.4 Update Stage & Status
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -501,6 +509,47 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         setLoadingJalurDaftarList(false);
       });
   }, [isAllowedToGetRecruitmentJalurDaftarsList, refresh]);
+
+  // 3.6. Get Recruitment Verification Link
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentVerification) {
+      permissionWarningNotification("Mendapatkan", "Link Verifikasi Rekrutmen");
+      setLoadingLink(false);
+      return;
+    }
+    if (dataRowClicked.owner_id && modalSendAccess) {
+      setLoadingLink(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentAccountToken?id=${dataRowClicked.id}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setVerificationLink(res2.data?.reset_password_url);
+          } else {
+            notification.error({
+              message: `Gagal mendapatkan link verifikasi. ${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal mendapatkan link verifikasi. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingLink(false);
+        });
+    }
+  }, [isAllowedToGetRecruitmentVerification, modalSendAccess, refresh]);
 
   // 3.6. Disable update stage or status if notes empty
   useEffect(() => {
@@ -1006,7 +1055,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       permissionWarningNotification("Mengirim", "Akses Kandidat");
       return;
     }
-    setLoadingVerif(true);
+    setLoadingSendVerifEmail(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendAccess`, {
       method: "POST",
       headers: {
@@ -1038,7 +1087,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
       })
       .finally(() => {
-        setLoadingVerif(false);
+        setLoadingSendVerifEmail(false);
       });
   };
 
@@ -2181,7 +2230,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     type={"primary"}
                     onClick={() => {
                       handleGenerateRecruitmentAccount(dataRowClicked.id);
-                      // handleSendAccess(dataRowClicked.email)
                     }}
                     disabled={!isAllowedToGenerateRecruitmentAccount}
                   >
@@ -2213,34 +2261,48 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             visible={modalSendAccess}
             onClose={() => {
               setModalSendAccess(false);
-              // setDataUpdateStage({})
+              setVerificationLink("");
             }}
             footer={null}
           >
             <div className="flex flex-col space-y-6">
-              <div className="grid grid-cols-2 ">
-                <p>Nama</p>
-                <p>: {dataRowClicked.name}</p>
-                <p>Role</p>
-                <p>: {dataRowClicked.role?.name}</p>
-                <p>Email</p>
-                <p>: {dataRowClicked.email}</p>
-                <p>Tautan Verifikasi</p>
-                <div className="flex flex-row items-center space-x-1">
-                  <a>: link</a>
-                  <button
-                    onClick={() => {
-                      navigator.clipboard.writeText("link");
-                      notification.success({
-                        message: "Link berhasil disalin!",
-                        duration: 3,
-                      });
-                    }}
-                  >
-                    <CopyIconSvg size={12} color={"#30378F"} />
-                  </button>
+              <Spin spinning={loadingLink}>
+                <div className="grid grid-cols-2 ">
+                  <p>Nama</p>
+                  <p>: {dataRowClicked.name}</p>
+                  <p>Role</p>
+                  <p>: {dataRowClicked.role?.name}</p>
+                  <p>Email</p>
+                  <p>: {dataRowClicked.email}</p>
+                  <p>Tautan Verifikasi</p>
+                  {verificationLink.length !== 0 ? (
+                    <>
+                      <div className="flex flex-row items-center space-x-1">
+                        <a
+                          href={verificationLink}
+                          target="_blank"
+                          className={"truncate "}
+                        >
+                          : {verificationLink}
+                        </a>
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(verificationLink);
+                            notification.success({
+                              message: "Link berhasil disalin!",
+                              duration: 3,
+                            });
+                          }}
+                        >
+                          <CopyIconSvg size={12} color={"#30378F"} />
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <p>: Token sudah hangus, kandidat sudah set password.</p>
+                  )}
                 </div>
-              </div>
+              </Spin>
             </div>
           </DrawerCore>
         )}
