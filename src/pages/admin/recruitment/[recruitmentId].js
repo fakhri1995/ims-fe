@@ -329,7 +329,7 @@ const RecruitmentDetailIndex = ({
       return;
     }
     // console.log(resumeId)
-    if (resumeId !== 0) {
+    if (resumeId) {
       setLoadingDataResume(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${resumeId}`, {
         method: `GET`,
@@ -973,8 +973,9 @@ const RecruitmentDetailIndex = ({
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
               <ButtonSys
-                type={"default"}
+                type={!resumeId ? "primary" : "default"}
                 onClick={() => setOpenDownloadModal(true)}
+                disabled={!resumeId}
                 // disabled={!isAllowedToGetResume || dataRecruitment.is_enabled === false}
               >
                 <div className="flex flex-row space-x-2">
@@ -1411,7 +1412,7 @@ const RecruitmentDetailIndex = ({
       {/* Modal Unduh Profil */}
       <AccessControl hasPermission={RESUME_GET}>
         <ModalCore
-          title={"Unduh Profil"}
+          title={"Apakah Anda yakin ingin mengunduh profil?"}
           visible={openDownloadModal}
           onCancel={() => setOpenDownloadModal(false)}
           footer={
@@ -1423,7 +1424,7 @@ const RecruitmentDetailIndex = ({
                 type={"default"}
                 // onClick={handleUpdateCandidateAccess}
               >
-                Ya, unduh profil dan hapus akses kandidat
+                Ya, Saya Yakin
               </ButtonSys>
             </PDFDownloadLink>
           }
@@ -1432,15 +1433,10 @@ const RecruitmentDetailIndex = ({
             {isOnClient && (
               <div className="flex flex-col space-y-5">
                 <p className="text-center">
-                  Anda akan mengunduh resume kandidat dengan nama&nbsp;
-                  <strong>{dataResume.name}</strong>
-                </p>
-                <p className="text-center">
-                  Setelah menekan tombol di bawah, resume akan terunduh dan{" "}
-                  <strong>
-                    akses kandidat ke resume builder akan terhapus.
-                  </strong>
-                  &nbsp; Apakah Anda yakin?
+                  Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, profil
+                  akan terunduh dan akses kandidat dengan nama&nbsp;
+                  <strong>{dataResume.name}</strong> ke resume builder akan
+                  terhapus.
                 </p>
               </div>
             )}
