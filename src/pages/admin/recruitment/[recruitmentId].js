@@ -643,16 +643,17 @@ const RecruitmentDetailIndex = ({
             message: res2.message,
             duration: 3,
           });
+          setOpenDownloadModal(false);
         } else {
           notification["error"]({
-            message: `Gagal mengubah status akses kandidat ${res2.message.errorInfo.status_detail}`,
+            message: `Gagal mengubah status akses kandidat ${res2.message}`,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification["error"]({
-          message: `Gagal mengubah status akses kandidat. ${err.message.errorInfo.status_detail}`,
+          message: `Gagal mengubah status akses kandidat. ${err.message}`,
           duration: 3,
         });
       })
@@ -973,10 +974,19 @@ const RecruitmentDetailIndex = ({
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
               <ButtonSys
-                type={!resumeId ? "primary" : "default"}
+                type={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                    ? "primary"
+                    : "default"
+                }
                 onClick={() => setOpenDownloadModal(true)}
-                disabled={!resumeId}
-                // disabled={!isAllowedToGetResume || dataRecruitment.is_enabled === false}
+                disabled={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                }
               >
                 <div className="flex flex-row space-x-2">
                   <DownloadIconSvg size={16} color={"#35763B"} />
@@ -1419,10 +1429,26 @@ const RecruitmentDetailIndex = ({
             <PDFDownloadLink
               document={<ResumePDFTemplate dataResume={dataResume} />}
               fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+              disabled={
+                !resumeId ||
+                !isAllowedToGetResume ||
+                dataRecruitment.user?.is_enabled === 0
+              }
             >
               <ButtonSys
-                type={"default"}
-                // onClick={handleUpdateCandidateAccess}
+                onClick={handleUpdateCandidateAccess}
+                type={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                    ? "primary"
+                    : "default"
+                }
+                disabled={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                }
               >
                 Ya, Saya Yakin
               </ButtonSys>
