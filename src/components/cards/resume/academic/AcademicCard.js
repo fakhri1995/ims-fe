@@ -133,6 +133,7 @@ const AcademicCard = ({
             <DatePicker
               picker="year"
               placeholder="Graduation Year"
+              allowClear={false}
               className="w-1/2"
               value={dataUpdateEdu.graduation_year}
               onChange={(date) => {
