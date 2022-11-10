@@ -1367,7 +1367,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   event.stopPropagation();
                   rt.push(`/admin/recruitment/${record.id}`);
                 }}
-                color={"mono30"}
+                color={"border-mono30"}
               >
                 <SearchIconSvg size={16} color={`#100F0F`} />
               </ButtonSysColor>
@@ -1379,7 +1379,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setDataRowClicked(record);
                   setEmailDrawerShown(true);
                 }}
-                color={"primary100"}
+                color={"border-primary100"}
               >
                 <MailForwardIconSvg size={16} color={`#35763B`} />
               </ButtonSysColor>
@@ -1391,7 +1391,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setDataRowClicked(record);
                   setModalSendAccess(true);
                 }}
-                color={record.owner_id ? "state2" : "secondary100"}
+                color={
+                  record.owner_id ? "border-state2" : "border-secondary100"
+                }
               >
                 <FileExportIconSvg
                   size={16}
@@ -2266,24 +2268,36 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             footer={null}
           >
             <div className="flex flex-col space-y-6">
-              <Spin spinning={loadingLink}>
+              {loadingLink ? (
+                <Spin />
+              ) : (
                 <div className="grid grid-cols-2 ">
                   <p>Nama</p>
-                  <p>: {dataRowClicked.name}</p>
+                  <div className="flex flex-row space-x-3">
+                    <p>:</p>
+                    <p>{dataRowClicked.name}</p>
+                  </div>
                   <p>Role</p>
-                  <p>: {dataRowClicked.role?.name}</p>
+                  <div className="flex flex-row space-x-3">
+                    <p>:</p>
+                    <p>{dataRowClicked.role?.name}</p>
+                  </div>
                   <p>Email</p>
-                  <p>: {dataRowClicked.email}</p>
+                  <div className="flex flex-row space-x-3">
+                    <p>:</p>
+                    <p className="break-all">{dataRowClicked.email}</p>
+                  </div>
                   <p>Tautan Verifikasi</p>
                   {verificationLink.length !== 0 ? (
                     <>
                       <div className="flex flex-row items-center space-x-1">
+                        <p className="mr-2">:</p>
                         <a
                           href={verificationLink}
                           target="_blank"
                           className={"truncate "}
                         >
-                          : {verificationLink}
+                          {verificationLink}
                         </a>
                         <button
                           onClick={() => {
@@ -2299,10 +2313,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                       </div>
                     </>
                   ) : (
-                    <p>: Token sudah hangus, kandidat sudah set password.</p>
+                    <div className="flex flex-row ">
+                      <p className="mr-3">:</p>
+                      <p>Token sudah hangus, kandidat sudah set password.</p>
+                    </div>
                   )}
                 </div>
-              </Spin>
+              )}
             </div>
           </DrawerCore>
         )}
