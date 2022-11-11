@@ -1516,22 +1516,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     "(Anda dapat mengubah data pada langkah selanjutnya)",
                 },
               }}
-              autoMapDistance={3}
-              // matchColumnsStepHook={(table, rawData, columns) => {
-              //   console.log(table, rawData, columns)
-              //   // try {
-              //   //   let isFilled = table.some(row => {
-              //   //     return ((row.recruitment_jalur_daftar_id !== undefined) &&
-              //   //       (row.recruitment_role_id !== undefined) &&
-              //   //       (row.recruitment_stage_id !== undefined) &&
-              //   //       (row.recruitment_status_id !== undefined))
-              //   //   })
-              //   //   console.log(isFilled);
-              //   // } catch(err) {
-              //   //   notification.err("Error")
-              //   // }
-
-              // }}
+              autoMapDistance={3}             
               fields={[
                 {
                   label: "Nama",
