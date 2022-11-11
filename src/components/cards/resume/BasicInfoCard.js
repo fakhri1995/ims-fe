@@ -47,12 +47,12 @@ const BasicInfoCard = ({
   praloading,
   assessmentRoles,
   handleDelete,
-  isAllowedToGetAssessmentList,
   isAllowedToDeleteCandidate,
   isAllowedToUpdateCandidate,
   loadingUpdate,
   loadingDelete,
   isCreateForm,
+  isGuest,
 }) => {
   const rt = useRouter();
   const [instanceForm] = Form.useForm();
@@ -171,8 +171,9 @@ const BasicInfoCard = ({
                   assessment_id: value,
                 });
               }}
+              disabled={isGuest}
             >
-              {assessmentRoles.map((role) => (
+              {assessmentRoles?.map((role) => (
                 <Select.Option key={role.id} value={role.id}>
                   {role.name}
                 </Select.Option>
@@ -279,18 +280,20 @@ const BasicInfoCard = ({
         </div>
 
         <div className="flex flex-row space-x-6">
-          <ButtonSys
-            type={isAllowedToDeleteCandidate ? "default" : "primary"}
-            color="danger"
-            disabled={!isAllowedToDeleteCandidate}
-            onClick={() => setModalDelete(true)}
-          >
-            <div className="flex flex-row space-x-2">
-              <TrashIconSvg size={16} color={`#BF4A40`} />
-              <p>Remove Candidate</p>
-            </div>
-          </ButtonSys>
-          {isOnClient && (
+          {!isGuest && (
+            <ButtonSys
+              type={isAllowedToDeleteCandidate ? "default" : "primary"}
+              color="danger"
+              disabled={!isAllowedToDeleteCandidate}
+              onClick={() => setModalDelete(true)}
+            >
+              <div className="flex flex-row space-x-2">
+                <TrashIconSvg size={16} color={`#BF4A40`} />
+                <p>Remove Candidate</p>
+              </div>
+            </ButtonSys>
+          )}
+          {!isGuest && isOnClient && (
             <PDFDownloadLink
               document={<ResumePDFTemplate dataResume={dataDisplay} />}
               fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
@@ -302,6 +305,17 @@ const BasicInfoCard = ({
                 </div>
               </ButtonSys>
             </PDFDownloadLink>
+          )}
+          {isGuest && (
+            <ButtonSys
+              type={"primary"}
+              onClick={() => rt.push("/myApplication")}
+            >
+              <div className="flex flex-row space-x-2 items-center">
+                <CheckIconSvg size={16} color={"white"} />
+                <p>Selesai</p>
+              </div>
+            </ButtonSys>
           )}
         </div>
       </div>

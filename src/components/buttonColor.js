@@ -23,9 +23,7 @@ const ButtonSysColor = ({
     "btn text-white font-semibold px-6 border"
   );
 
-  const buttonOutlineColorsClassName = clsx(
-    `text-${color} hover:opacity-75 border-${color}`
-  );
+  const buttonOutlineColorsClassName = clsx(`hover:opacity-75 ${color}`);
 
   const defaultButtonClassName = clsx(
     commonButtonClassName,

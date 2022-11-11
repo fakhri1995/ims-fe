@@ -28,11 +28,11 @@ import { useAccessControl } from "contexts/access-control";
 import {
   GUEST_STATUS,
   RECRUITMENT_DELETE,
+  RECRUITMENT_EMAIL_SEND,
   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
   RECRUITMENT_LOG_GET,
   RECRUITMENT_LOG_NOTES_ADD,
-  RECRUITMENT_SEND_EMAIL_TEMPLATE,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
@@ -97,9 +97,7 @@ const RecruitmentDetailIndex = ({
 
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
-  const isAllowedToSendEmailRecruitment = hasPermission(
-    RECRUITMENT_SEND_EMAIL_TEMPLATE
-  );
+  const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
   const isAllowedToGetResume = hasPermission(RESUME_GET);
   const isAllowedToUpdateCandidateAccess = hasPermission(GUEST_STATUS);
 
@@ -1193,7 +1191,7 @@ const RecruitmentDetailIndex = ({
       {/* Drawer Kirim Email */}
       <AccessControl
         hasPermission={[
-          RECRUITMENT_SEND_EMAIL_TEMPLATE,
+          RECRUITMENT_EMAIL_SEND,
           RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
         ]}
       >
