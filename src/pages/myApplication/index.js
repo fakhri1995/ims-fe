@@ -1,39 +1,18 @@
-import { GithubOutlined, LinkedinOutlined } from "@ant-design/icons";
-import {
-  Document,
-  Font,
-  Image,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-} from "@react-pdf/renderer";
-import { Button, Popover, Timeline, notification } from "antd";
+import { Tag, Timeline, notification } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import Html from "react-pdf-html";
-
-import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { RECRUITMENT_GET, RESUME_GET, RESUME_UPDATE } from "lib/features";
 
 import ButtonSys from "../../components/button";
-import {
-  DotsIconSvg,
-  DownloadIconSvg,
-  EditIconSvg,
-  ExternalLinkIconSvg,
-  InfoCircleIconSvg,
-  MailForwardIconSvg,
-  OneUserIconSvg,
-  PlusIconSvg,
-} from "../../components/icon";
+import { EditIconSvg } from "../../components/icon";
 import LayoutDashboard2 from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
 import { permissionWarningNotification } from "../../lib/helper";
@@ -218,9 +197,17 @@ const CandidateRecruitmentDetailIndex = ({
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
               <ButtonSys
-                type={isAllowedToUpdateResume ? "default" : "primary"}
-                // disabled={!isAllowedToUpdateResume || dataRecruitment.is_enabled === false}
-                // onClick={() => rt.push(`/candidates/${dataRecruitment.resume?.id}`)}
+                type={
+                  !isAllowedToUpdateResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                    ? "primary"
+                    : "default"
+                }
+                disabled={
+                  !isAllowedToUpdateResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                }
+                onClick={() => rt.push(`/myApplication/edit`)}
               >
                 <div className="flex flex-row space-x-3 items-center">
                   <EditIconSvg size={16} color="#35763B" />
@@ -387,23 +374,6 @@ const CandidateRecruitmentDetailIndex = ({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Hasil Technical Assessment
-              </p>
-              <ul>
-                {dataResume.assessment_results?.map((result) => (
-                  <li key={result.id}>
-                    <div className="flex flex-row justify-between mb-1">
-                      <p className="text-mono50 mr-2">{result.criteria}</p>
-                      <p className="text-primary100 font-bold">
-                        {result.value}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
       </div>
@@ -413,6 +383,7 @@ const CandidateRecruitmentDetailIndex = ({
 
 export async function getServerSideProps({ req, res, params }) {
   // const recruitmentId = params.recruitmentId;
+  const recruitmentId = 42;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -449,7 +420,7 @@ export async function getServerSideProps({ req, res, params }) {
       initProps,
       dataProfile,
       sidemenu: "application",
-      // recruitmentId,
+      recruitmentId,
     },
   };
 }
