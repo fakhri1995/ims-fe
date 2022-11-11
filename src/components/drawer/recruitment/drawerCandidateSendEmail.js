@@ -9,8 +9,8 @@ import { useAccessControl } from "contexts/access-control";
 
 import { ASSESSMENT_ADD } from "lib/features";
 import {
+  RECRUITMENT_EMAIL_SEND,
   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
-  RECRUITMENT_SEND_EMAIL_TEMPLATE,
 } from "lib/features";
 
 import ButtonSys from "../../button";
@@ -42,7 +42,7 @@ const DrawerCandidateSendEmail = ({
   const isAllowedToGetEmailTemplateList = hasPermission(
     RECRUITMENT_EMAIL_TEMPLATES_LIST_GET
   );
-  const isAllowedToSendEmail = hasPermission(RECRUITMENT_SEND_EMAIL_TEMPLATE);
+  const isAllowedToSendEmail = hasPermission(RECRUITMENT_EMAIL_SEND);
 
   const [instanceForm] = Form.useForm();
 

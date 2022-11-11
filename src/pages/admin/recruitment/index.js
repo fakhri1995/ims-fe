@@ -29,18 +29,17 @@ import {
   RECRUITMENTS_ADD,
   RECRUITMENTS_DELETE,
   RECRUITMENTS_GET,
+  RECRUITMENT_ACCOUNT_GENERATE,
   RECRUITMENT_ACCOUNT_TOKEN_GET,
   RECRUITMENT_ADD,
   RECRUITMENT_COUNT_GET,
-  RECRUITMENT_DOWNLOAD_TEMPLATE,
+  RECRUITMENT_EMAIL_SEND,
   RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
-  RECRUITMENT_GENERATE_ACCOUNT,
+  RECRUITMENT_EXCEL_TEMPLATE_GET,
   RECRUITMENT_GET,
   RECRUITMENT_JALUR_DAFTARS_LIST_GET,
   RECRUITMENT_PREVIEW_GET,
   RECRUITMENT_ROLES_LIST_GET,
-  RECRUITMENT_SEND_ACCESS,
-  RECRUITMENT_SEND_EMAIL_TEMPLATE,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
@@ -141,16 +140,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
 
-  const isAllowedToSendEmailRecruitment = hasPermission(
-    RECRUITMENT_SEND_EMAIL_TEMPLATE
-  );
-
-  const isAllowedToSendAccessRecruitment = hasPermission(
-    RECRUITMENT_SEND_ACCESS
-  );
+  const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
 
   const isAllowedToDownloadTemplate = hasPermission(
-    RECRUITMENT_DOWNLOAD_TEMPLATE
+    RECRUITMENT_EXCEL_TEMPLATE_GET
   );
 
   const isAllowedToGetPreviewRecruitment = hasPermission(
@@ -158,7 +151,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   const isAllowedToGenerateRecruitmentAccount = hasPermission(
-    RECRUITMENT_GENERATE_ACCOUNT
+    RECRUITMENT_ACCOUNT_GENERATE
   );
 
   const isAllowedToGetRecruitmentVerification = hasPermission(
@@ -997,7 +990,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.9. Generate Recruitment Account (automatically create guest and resume object)
+  /**
+   * 4.9. Generate Recruitment Account
+   * (automatically create guest and resume object, then send
+   * access email to candidate)
+   *  */
   const handleGenerateRecruitmentAccount = (currentId) => {
     const payload = {
       id: currentId,
@@ -1021,12 +1018,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         setRefresh((prev) => prev + 1);
         if (response2.success) {
           notification.success({
-            message: `Akun rekrutmen berhasil dibuat.`,
+            message: `Akun rekrutmen berhasil dibuat dan email telah dikirim.`,
             duration: 3,
           });
-          // setTimeout(() => {
-          //   handleSendAccess()
-          // }, 500)
           setModalSendAccess(false);
         } else {
           notification.error({
@@ -1043,51 +1037,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .finally(() => {
         setLoadingCreate(false);
-      });
-  };
-
-  // 4.10. Send access to candidate email
-  const handleSendAccess = () => {
-    const payload = {
-      email: dataRowClicked.email,
-    };
-    if (!isAllowedToSendAccessRecruitment) {
-      permissionWarningNotification("Mengirim", "Akses Kandidat");
-      return;
-    }
-    setLoadingSendVerifEmail(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/sendAccess`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        if (response2.success) {
-          notification.success({
-            message: `Tautan verifikasi berhasil dikirim.`,
-            duration: 3,
-          });
-          setModalSendAccess(false);
-        } else {
-          notification.error({
-            message: `Gagal mengirim tautan verifikasi. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal mengirim tautan verifikasi. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingSendVerifEmail(false);
       });
   };
 
@@ -1385,7 +1334,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </ButtonSysColor>
               <ButtonSysColor
                 type={"default"}
-                disabled={!isAllowedToSendAccessRecruitment}
+                disabled={!isAllowedToGenerateRecruitmentAccount}
                 onClick={(event) => {
                   event.stopPropagation();
                   setDataRowClicked(record);
@@ -1891,7 +1840,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       {/* Drawer Kirim Email */}
       <AccessControl
         hasPermission={[
-          RECRUITMENT_SEND_EMAIL_TEMPLATE,
+          RECRUITMENT_EMAIL_SEND,
           RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
         ]}
       >
@@ -2215,7 +2164,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Modal/Drawer Send Access Verification */}
-      <AccessControl hasPermission={RECRUITMENT_SEND_ACCESS}>
+      <AccessControl hasPermission={RECRUITMENT_ACCOUNT_GENERATE}>
         {dataRowClicked.owner_id === null ? (
           <ModalCore
             title={`Apakah Anda yakin ingin memberikan 
@@ -2223,7 +2172,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             visible={modalSendAccess}
             onCancel={() => {
               setModalSendAccess(false);
-              // setDataUpdateStage({})
             }}
             footer={
               <Spin spinning={loadingCreate}>
