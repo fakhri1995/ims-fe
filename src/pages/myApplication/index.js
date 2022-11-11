@@ -24,7 +24,6 @@ const CandidateRecruitmentDetailIndex = ({
   initProps,
   dataProfile,
   sidemenu,
-  recruitmentId,
 }) => {
   /**
    * Dependencies
@@ -66,40 +65,35 @@ const CandidateRecruitmentDetailIndex = ({
       setpraloading(false);
       return;
     }
-
-    if (recruitmentId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitment?id=${recruitmentId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataRecruitment(response2.data);
-            setResumeId(response2.data.resume?.id);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-          setpraloading(false);
-        })
-        .catch((err) => {
+    setpraloading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitment`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setDataRecruitment(response2.data);
+          setResumeId(response2.data.resume?.id);
+        } else {
           notification.error({
-            message: `${err.response}`,
+            message: `${response2.message}`,
             duration: 3,
           });
-          setpraloading(false);
+        }
+        setpraloading(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
         });
-    }
-  }, [isAllowedToGetRecruitment, recruitmentId, refresh]);
+        setpraloading(false);
+      });
+  }, [isAllowedToGetRecruitment, refresh]);
+  // console.log(dataRecruitment)
 
   // 2.5. Get resume data (use for "Profil Kandidat")
   useEffect(() => {
@@ -207,7 +201,7 @@ const CandidateRecruitmentDetailIndex = ({
                   !isAllowedToUpdateResume ||
                   dataRecruitment.user?.is_enabled === 0
                 }
-                onClick={() => rt.push(`/myApplication/edit`)}
+                onClick={() => rt.push(`/myApplication/edit/${resumeId}`)}
               >
                 <div className="flex flex-row space-x-3 items-center">
                   <EditIconSvg size={16} color="#35763B" />
@@ -382,8 +376,6 @@ const CandidateRecruitmentDetailIndex = ({
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  // const recruitmentId = params.recruitmentId;
-  const recruitmentId = 42;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -420,7 +412,6 @@ export async function getServerSideProps({ req, res, params }) {
       initProps,
       dataProfile,
       sidemenu: "application",
-      recruitmentId,
     },
   };
 }

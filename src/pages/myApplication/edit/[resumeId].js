@@ -28,7 +28,7 @@ import st from "../../../components/layout-dashboard.module.css";
 import { permissionWarningNotification } from "../../../lib/helper";
 import httpcookie from "cookie";
 
-const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
+const CandidateDetail = ({ initProps, dataProfile, sidemenu, resumeId }) => {
   /**
    * Dependencies
    */
@@ -101,17 +101,14 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
       return;
     }
 
-    if (candidateId) {
+    if (resumeId) {
       setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${candidateId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${resumeId}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
@@ -132,13 +129,13 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           setpraloading(false);
         });
     }
-  }, [isAllowedToGetCandidateDetail, candidateId, refresh]);
+  }, [isAllowedToGetCandidateDetail, resumeId, refresh]);
 
   // 3. HANDLER
   // 3.1. Section
   const handleAddSection = (sectionName, data) => {
     const payload = {
-      id: Number(candidateId),
+      id: Number(resumeId),
       [sectionName]: data,
     };
 
@@ -171,8 +168,6 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           });
         }
         setLoadingUpdate(false);
-        // setData({ id: null, name: "", add: [{ criteria: "" }] });
-        // rt.push(`/admin/candidates/${candidateId}`);
       })
       .catch((err) => {
         notification.error({
@@ -185,7 +180,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
   const handleUpdateSection = (sectionName, data) => {
     const payload = {
-      id: Number(candidateId),
+      id: Number(resumeId),
       [sectionName]: data,
     };
 
@@ -230,7 +225,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
   const handleDeleteSection = (sectionName, sectionId) => {
     const payload = {
-      id: Number(candidateId),
+      id: Number(resumeId),
       [sectionName + "_id"]: sectionId,
     };
 
@@ -392,8 +387,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  // const candidateId = params.candidateId;
-  const candidateId = 44;
+  const resumeId = params.resumeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -430,7 +424,7 @@ export async function getServerSideProps({ req, res, params }) {
       initProps,
       dataProfile,
       sidemenu: "application",
-      candidateId,
+      resumeId,
     },
   };
 }
