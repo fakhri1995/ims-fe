@@ -242,7 +242,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modalSheetImport, setModalSheetImport] = useState(false);
 
   const [modalSendAccess, setModalSendAccess] = useState(false);
-  const [loadingSendVerifEmail, setLoadingSendVerifEmail] = useState(false);
 
   const [loadingLink, setLoadingLink] = useState(false);
   const [verificationLink, setVerificationLink] = useState("");
@@ -364,12 +363,15 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingRecruitments(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=10`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=10&page=${pageRecruitments}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -1516,7 +1518,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     "(Anda dapat mengubah data pada langkah selanjutnya)",
                 },
               }}
-              autoMapDistance={3}             
+              autoMapDistance={3}
               fields={[
                 {
                   label: "Nama",
