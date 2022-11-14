@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { Button, Tooltip, notification } from "antd";
 import { useCallback, useRef } from "react";
 
 import clsx from "clsx";
@@ -13,6 +13,7 @@ const ButtonSysColor = ({
   form,
   disabled,
   fullWidth,
+  tooltipTitle,
 }) => {
   const commonButtonClassName = clsx(
     {
@@ -23,7 +24,10 @@ const ButtonSysColor = ({
     "btn text-white font-semibold px-6 border"
   );
 
-  const buttonOutlineColorsClassName = clsx(`hover:opacity-75 ${color}`);
+  const buttonOutlineColorsClassName = clsx(`
+    hover:opacity-75 ${color}
+
+  `);
 
   const defaultButtonClassName = clsx(
     commonButtonClassName,
@@ -45,6 +49,22 @@ const ButtonSysColor = ({
         >
           {children}
         </button>
+      );
+      break;
+
+    case "tooltip":
+      buttonElement = (
+        <Tooltip placement="bottom" title={tooltipTitle} color="#35763B">
+          <Button
+            disabled={disabled}
+            form={form}
+            onClick={onClick}
+            type={buttonType}
+            className={defaultButtonClassName}
+          >
+            {children}
+          </Button>
+        </Tooltip>
       );
       break;
   }

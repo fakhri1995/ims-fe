@@ -9,7 +9,6 @@ import {
   Select,
   Spin,
   Table,
-  TreeSelect,
   notification,
 } from "antd";
 import { useRouter } from "next/router";
@@ -1335,7 +1334,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <MailForwardIconSvg size={16} color={`#35763B`} />
               </ButtonSysColor>
               <ButtonSysColor
-                type={"default"}
+                type={"tooltip"}
                 disabled={!isAllowedToGenerateRecruitmentAccount}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -1343,7 +1342,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setModalSendAccess(true);
                 }}
                 color={
-                  record.owner_id ? "border-state2" : "border-secondary100"
+                  record.owner_id
+                    ? "border-state2 hover:border-state2"
+                    : "border-secondary100 hover:border-secondary100"
+                }
+                tooltipTitle={
+                  record.owner_id ? "Sudah diberi akses" : "Belum diberi akses"
                 }
               >
                 <FileExportIconSvg
