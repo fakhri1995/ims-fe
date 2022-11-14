@@ -214,7 +214,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       {/* Lamaran Saya */}
       {hasPermission(SIDEBAR_MY_APPLICATION) && (
         <Menu.Item key="application" icon={<TaskIconSvg />} title="Items">
-          <Link href="/application">Lamaran Saya</Link>
+          <Link href="/myApplication">Lamaran Saya</Link>
         </Menu.Item>
       )}
     </>

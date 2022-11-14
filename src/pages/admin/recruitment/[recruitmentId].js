@@ -1,12 +1,4 @@
-import {
-  Document,
-  Font,
-  Image,
-  Page,
-  StyleSheet,
-  Text,
-  View,
-} from "@react-pdf/renderer";
+import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
   Dropdown,
@@ -16,9 +8,11 @@ import {
   Popover,
   Select,
   Spin,
+  Tag,
   Timeline,
   notification,
 } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
@@ -32,19 +26,23 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  GUEST_STATUS,
   RECRUITMENT_DELETE,
+  RECRUITMENT_EMAIL_SEND,
+  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
   RECRUITMENT_LOG_GET,
   RECRUITMENT_LOG_NOTES_ADD,
-  RECRUITMENT_SEND_EMAIL_TEMPLATE,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
   RECRUITMENT_UPDATE_STAGE,
   RECRUITMENT_UPDATE_STATUS,
+  RESUME_GET,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
+import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import DrawerCandidateUpdate from "../../../components/drawer/recruitment/drawerCandidateUpdate";
 import {
   DotsIconSvg,
@@ -61,6 +59,7 @@ import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
 import { permissionWarningNotification } from "../../../lib/helper";
+import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import httpcookie from "cookie";
 
 moment.locale("id");
@@ -98,9 +97,9 @@ const RecruitmentDetailIndex = ({
 
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
-  const isAllowedToSendEmailRecruitment = hasPermission(
-    RECRUITMENT_SEND_EMAIL_TEMPLATE
-  );
+  const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
+  const isAllowedToGetResume = hasPermission(RESUME_GET);
+  const isAllowedToUpdateCandidateAccess = hasPermission(GUEST_STATUS);
 
   //INIT
   const rt = useRouter();
@@ -112,6 +111,11 @@ const RecruitmentDetailIndex = ({
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [dataRecruitment, setDataRecruitment] = useState({});
+
+  const [resumeId, setResumeId] = useState(0);
+  const [dataResume, setDataResume] = useState({});
+  const [loadingDataResume, setLoadingDataResume] = useState(true);
+
   const [refresh, setRefresh] = useState(-1);
   const [dataStageList, setDataStageList] = useState([]);
   const [dataStatusList, setDataStatusList] = useState([]);
@@ -155,6 +159,12 @@ const RecruitmentDetailIndex = ({
     notes: "",
   });
 
+  // 1.6. Send Email
+  const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
+
+  // 1.7. Download Profile/Resume
+  const [openDownloadModal, setOpenDownloadModal] = useState(false);
+
   // 2. USE EFFECT
   // 2.1 Get recruitment candidate detail
   useEffect(() => {
@@ -179,6 +189,7 @@ const RecruitmentDetailIndex = ({
         .then((response2) => {
           if (response2.success) {
             setDataRecruitment(response2.data);
+            setResumeId(response2.data.resume?.id);
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -308,12 +319,51 @@ const RecruitmentDetailIndex = ({
       });
   }, [isAllowedToGetRecruitmentLog, refresh]);
 
-  // 2.5. Disable add notes
+  // 2.5. Get resume data (use for "Profil Kandidat")
+  useEffect(() => {
+    if (!isAllowedToGetResume) {
+      permissionWarningNotification("Mendapatkan", "Data Resume Kandidat");
+      setLoadingDataResume(false);
+      return;
+    }
+    // console.log(resumeId)
+    if (resumeId) {
+      setLoadingDataResume(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${resumeId}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataResume(response2.data);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingDataResume(false);
+        });
+    }
+  }, [isAllowedToGetResume, resumeId, refresh]);
+
+  // 2.6. Disable add notes
   useEffect(() => {
     dataNotes.notes ? setDisableAddNotes(false) : setDisableAddNotes(true);
   }, [dataNotes]);
 
-  // 2.6. Disable update stage and status
+  // 2.7. Disable update stage and status
   useEffect(() => {
     let allFilled = Object.values(dataUpdateStage).every(
       (value) => value !== "" && value !== null
@@ -337,6 +387,14 @@ const RecruitmentDetailIndex = ({
       setDisableUpdate(true);
     }
   }, [dataUpdateStatus]);
+
+  /** State to only renders `<PDFDownloadLink>` component after this page mount (client-side) */
+  const [isOnClient, setIsOnClient] = useState(false);
+  useEffect(() => {
+    if (Object.keys(dataResume).length !== 0) {
+      setIsOnClient(true);
+    }
+  }, [dataResume]);
 
   // 3. Event
   const checkStageIsAvailable = (currrentStage) => {
@@ -554,6 +612,54 @@ const RecruitmentDetailIndex = ({
       });
   };
 
+  const handleUpdateCandidateAccess = () => {
+    const payload = {
+      user_id: dataRecruitment.owner_id,
+      is_enabled: false,
+    };
+
+    if (!isAllowedToUpdateCandidateAccess) {
+      permissionWarningNotification("Mengubah", "Status Akses Kandidat");
+      setLoadingUpdate(false);
+      return;
+    }
+
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/guestActivation`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          notification["success"]({
+            message: res2.message,
+            duration: 3,
+          });
+          setOpenDownloadModal(false);
+        } else {
+          notification["error"]({
+            message: `Gagal mengubah status akses kandidat ${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification["error"]({
+          message: `Gagal mengubah status akses kandidat. ${err.message}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
+  };
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -616,6 +722,7 @@ const RecruitmentDetailIndex = ({
             </div>
             <ButtonSys
               type={"primary"}
+              onClick={() => setEmailDrawerShown(true)}
               disabled={!isAllowedToSendEmailRecruitment}
             >
               <div className="flex flex-row space-x-3 items-center">
@@ -864,9 +971,23 @@ const RecruitmentDetailIndex = ({
           <div className="shadow-lg rounded-md bg-white p-4 divide-y-2">
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
-              <ButtonSys type={"default"}>
-                <div className="flex flex-row space-x-3 items-center">
-                  <DownloadIconSvg size={16} color="#35763B" />
+              <ButtonSys
+                type={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                    ? "primary"
+                    : "default"
+                }
+                onClick={() => setOpenDownloadModal(true)}
+                disabled={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                }
+              >
+                <div className="flex flex-row space-x-2">
+                  <DownloadIconSvg size={16} color={"#35763B"} />
                   <p>Unduh Profil</p>
                 </div>
               </ButtonSys>
@@ -878,117 +999,174 @@ const RecruitmentDetailIndex = ({
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p className="text-md">John Doe</p>
+                  <p className="text-md">{dataResume.name}</p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Telepon
                   </p>
-                  <p className="text-md">1234567890</p>
+                  <p className="text-md">{dataResume.telp}</p>
                 </div>
                 <div className="flex flex-col space-y-2">
                   <p className="mig-caption--medium text-mono80">Email</p>
-                  <p className="text-md">someone@example-mail.com</p>
+                  <p className="text-md">{dataResume.email}</p>
                 </div>
                 <div className="flex flex-col space-y-2 col-span-2">
                   <p className="mig-caption--medium text-mono80">Alamat</p>
                   <p className="text-md">
-                    Jalan Terang Bulan 20 blok C nomor III, Jakarta Selatan
-                    12345, Indonesia
+                    {`${dataResume.city}, ${dataResume.province}`}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="flex flex-col pt-4 pb-2">
+            <div className="flex flex-col pt-4 pb-4">
               <p className="text-sm font-bold text-primary100 mb-9">
                 Pengalaman Kerja
               </p>
               <Timeline className="pl-6">
-                <Timeline.Item color="#35763B">
-                  <p className="text-sm text-mono30 font-bold mb-1">
-                    Associate Product Manager
-                  </p>
-                  <p className="mig-caption text-mono50 mb-2">
-                    PT ABC, Internship
-                  </p>
-                  <p className="mig-caption text-mono80">
-                    Agustus 2021 - Sekarang
-                  </p>
-                </Timeline.Item>
-                <Timeline.Item color="#35763B">
-                  <p className="text-sm text-mono30 font-bold mb-1">
-                    Associate Product Manager
-                  </p>
-                  <p className="mig-caption text-mono50 mb-2">
-                    PT ABC, Internship
-                  </p>
-                  <p className="mig-caption text-mono80">
-                    Agustus 2021 - Sekarang
-                  </p>
-                </Timeline.Item>
+                {dataResume.experiences?.map((experience) => (
+                  <Timeline.Item color="#35763B" key={experience.id}>
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      {experience.role}
+                    </p>
+                    <div className="flex flex-row">
+                      <p className="mig-caption text-mono50 mb-2">
+                        {experience.company},&nbsp;
+                      </p>
+                      <p className="mig-caption text-mono80">
+                        {moment(experience.start_date).format("MMMM YYYY")}{" "}
+                        -&nbsp;
+                        {moment(experience.end_date).format("MMMM YYYY")}
+                      </p>
+                    </div>
+                    <p className="mig-caption text-mono50">
+                      {parse(experience.description || "")}
+                    </p>
+                  </Timeline.Item>
+                ))}
               </Timeline>
             </div>
-            <div className="flex flex-col pt-4 pb-2">
+            <div className="flex flex-col pt-4 pb-4">
               <p className="text-sm font-bold text-primary100 mb-9">
                 Riwayat Pendidikan
               </p>
               <Timeline className="pl-6">
-                <Timeline.Item color="#35763B">
-                  <p className="text-sm text-mono30 font-bold mb-1">
-                    Institut Teknologi Bandung
-                  </p>
-                  <p className="mig-caption text-mono50 mb-2">S2, Manajemen</p>
-                  <p className="mig-caption text-mono80">
-                    Agustus 2021 - Sekarang
-                  </p>
-                </Timeline.Item>
+                {dataResume.educations?.map((edu) => (
+                  <Timeline.Item color="#35763B" key={edu.id}>
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      {edu.university}
+                    </p>
+                    <div className="flex flex-row">
+                      <p className="mig-caption text-mono50 mb-2">
+                        {edu.major},&nbsp;
+                      </p>
+                      <p className="mig-caption text-mono80">
+                        {moment(edu.graduation_year).format("YYYY")}
+                      </p>
+                    </div>
+                  </Timeline.Item>
+                ))}
               </Timeline>
             </div>
-            <div className="flex flex-col pt-4 pb-2">
-              <p className="text-sm font-bold text-primary100 mb-9">
-                Pengalaman Organisasi/Relawan
+            <div className="flex flex-col pt-4 pb-4">
+              <p className="text-sm font-bold text-primary100 mb-4">Skill</p>
+              <div className="flex flex-wrap">
+                {dataResume.skills?.map((skill) => (
+                  <Tag
+                    key={skill.id}
+                    color="#35763B1A"
+                    className="text-primary100 mb-3"
+                  >
+                    {skill.name}
+                  </Tag>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col pt-4 pb-4">
+              <p className="text-sm font-bold text-primary100 mb-4">Proyek</p>
+              <div className="flex flex-col space-y-4">
+                {dataResume.projects?.map((proj) => (
+                  <div key={proj.id}>
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      {proj.name}
+                    </p>
+                    <p className="mig-caption text-mono50 mb-2">
+                      {proj.description}
+                    </p>
+                    <p className="mig-caption text-mono80">
+                      {moment(proj.year).format("YYYY")}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col pt-4 pb-4">
+              <p className="text-sm font-bold text-primary100 mb-4">
+                Pelatihan
               </p>
-              <Timeline className="pl-6">
-                <Timeline.Item color="#35763B">
-                  <p className="text-sm text-mono30 font-bold mb-1">
-                    Anggota Divisi Intrakampus
-                  </p>
-                  <p className="mig-caption text-mono50 mb-2">
-                    Himpunan Mahasiswa Teknik Informatika (HMIF) ITB
-                  </p>
-                  <p className="mig-caption text-mono80">
-                    Agustus 2021 - Sekarang
-                  </p>
-                </Timeline.Item>
-              </Timeline>
+              <div className="flex flex-col space-y-4">
+                {dataResume.trainings?.map((train) => (
+                  <div key={train.id}>
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      {train.name}
+                    </p>
+                    <p className="mig-caption text-mono50 mb-2">
+                      {train.organizer}, {moment(train.year).format("YYYY")}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-col py-4">
+            <div className="flex flex-col pt-4 pb-4">
               <p className="text-sm font-bold text-primary100 mb-4">
                 Lisensi dan Sertifikasi
               </p>
-              <div className="flex flex-col space-y-2">
-                <p className="mig-caption--bold text-mono30">
-                  Machine Learning
-                </p>
-                <p className="mig-caption text-mono50">
-                  Kaggle, berlaku sampai Juni 2025
-                </p>
-                <div className="flex items-center space-x-2">
-                  <p className="mig-caption text-mono50">0000-0000-0000</p>
-                  <ExternalLinkIconSvg size={16} color={"#808080"} />
-                </div>
+              <div className="flex flex-col space-y-4">
+                {dataResume.certificates?.map((certif) => (
+                  <div key={certif.id}>
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      {certif.name}
+                    </p>
+                    <p className="mig-caption text-mono50 mb-2">
+                      {certif.organizer}, {moment(certif.year).format("YYYY")}
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="flex flex-col py-4">
+            <div className="flex flex-col pt-4 pb-4">
               <p className="text-sm font-bold text-primary100 mb-4">
                 Penghargaan
               </p>
-              <div className="flex flex-col space-y-2">
-                <p className="mig-caption--bold text-mono30">
-                  Juara II, Competitive Programming
-                </p>
-                <p className="mig-caption text-mono50">Compfest, Juni 2025</p>
+              <div className="flex flex-col space-y-4">
+                {dataResume.achievements?.map((achiev) => (
+                  <div key={achiev.id}>
+                    <p className="text-sm text-mono30 font-bold mb-1">
+                      {achiev.name}
+                    </p>
+                    <p className="mig-caption text-mono50 mb-2">
+                      {achiev.organizer}, {moment(achiev.year).format("YYYY")}
+                    </p>
+                  </div>
+                ))}
               </div>
+            </div>
+            <div className="flex flex-col pt-4 pb-4">
+              <p className="text-sm font-bold text-primary100 mb-4">
+                Hasil Technical Assessment
+              </p>
+              <ul>
+                {dataResume.assessment_results?.map((result) => (
+                  <li key={result.id}>
+                    <div className="flex flex-row justify-between mb-1">
+                      <p className="text-mono50 mr-2">{result.criteria}</p>
+                      <p className="text-primary100 font-bold">
+                        {result.value}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </div>
@@ -1007,6 +1185,22 @@ const RecruitmentDetailIndex = ({
           isAllowedToUpdateRecruitment={isAllowedToUpdateRecruitment}
           isAllowedToDeleteRecruitment={isAllowedToDeleteRecruitment}
           setModalDelete={setModalDelete}
+        />
+      </AccessControl>
+
+      {/* Drawer Kirim Email */}
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_EMAIL_SEND,
+          RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+        ]}
+      >
+        <DrawerCandidateSendEmail
+          visible={isEmailDrawerShown}
+          initProps={initProps}
+          onvisible={setEmailDrawerShown}
+          setRefresh={setRefresh}
+          dataCandidate={dataRecruitment}
         />
       </AccessControl>
 
@@ -1220,6 +1414,57 @@ const RecruitmentDetailIndex = ({
               });
             }}
           />
+        </ModalCore>
+      </AccessControl>
+
+      {/* Modal Unduh Profil */}
+      <AccessControl hasPermission={RESUME_GET}>
+        <ModalCore
+          title={"Apakah Anda yakin ingin mengunduh profil?"}
+          visible={openDownloadModal}
+          onCancel={() => setOpenDownloadModal(false)}
+          footer={
+            <PDFDownloadLink
+              document={<ResumePDFTemplate dataResume={dataResume} />}
+              fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+              disabled={
+                !resumeId ||
+                !isAllowedToGetResume ||
+                dataRecruitment.user?.is_enabled === 0
+              }
+            >
+              <ButtonSys
+                onClick={handleUpdateCandidateAccess}
+                type={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                    ? "primary"
+                    : "default"
+                }
+                disabled={
+                  !resumeId ||
+                  !isAllowedToGetResume ||
+                  dataRecruitment.user?.is_enabled === 0
+                }
+              >
+                Ya, Saya Yakin
+              </ButtonSys>
+            </PDFDownloadLink>
+          }
+        >
+          <Spin spinning={loadingDataResume}>
+            {isOnClient && (
+              <div className="flex flex-col space-y-5">
+                <p className="text-center">
+                  Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, profil
+                  akan terunduh dan akses kandidat dengan nama&nbsp;
+                  <strong>{dataResume.name}</strong> ke resume builder akan
+                  terhapus.
+                </p>
+              </div>
+            )}
+          </Spin>
         </ModalCore>
       </AccessControl>
     </LayoutDashboard>

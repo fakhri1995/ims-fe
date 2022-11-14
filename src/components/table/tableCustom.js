@@ -1332,11 +1332,6 @@ const TableCustomRecruitmentCandidate = ({
     onChange: (selectedRowKeys, selectedRows) => {
       setSelectedRecruitments(selectedRows);
       setSelectedRecruitmentIds(selectedRowKeys);
-      // console.log(
-      //   `selectedRowKeys: ${selectedRowKeys}`,
-      //   "selectedRows: ",
-      //   selectedRows
-      // );
     },
   };
   return (

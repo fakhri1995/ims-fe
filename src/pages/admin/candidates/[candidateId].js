@@ -596,7 +596,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 };
 
 export const ResumePDFTemplate = ({ dataResume }) => {
-  const isAllResultEmpty = dataResume.assessment_results.every(
+  const isAllResultEmpty = dataResume.assessment_results?.every(
     (result) => result.value === ""
   );
 

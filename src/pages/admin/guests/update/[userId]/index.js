@@ -355,6 +355,12 @@ function GuestUpdate({
                         }}
                         defaultValue={defaultRoles}
                         style={{ width: `100%` }}
+                        optionFilterProp="children"
+                        filterOption={(input, option) =>
+                          option.children
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
                       >
                         {dataRoles.data.map((doc, idx) => {
                           return (

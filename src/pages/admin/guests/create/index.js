@@ -285,6 +285,12 @@ function GuestCreate({ initProps, dataProfile, sidemenu }) {
                         setNewuser({ ...newuser, role_ids: value });
                       }}
                       style={{ width: `100%` }}
+                      optionFilterProp="children"
+                      filterOption={(input, option) =>
+                        option.children
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
                     >
                       {dataroles.map((doc, idx) => {
                         return (

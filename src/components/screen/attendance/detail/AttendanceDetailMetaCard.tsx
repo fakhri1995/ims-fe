@@ -48,7 +48,7 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
         enabled: !isAllowedToGet ? false : !!attendanceId,
         select: (response) => {
           const attendanceMeta = response.data.data.user_attendance;
-
+          console.log("response data ", response.data.data);
           const attendanceCheckInDate = new Date(attendanceMeta.check_in);
           const attendanceComparableTime = new Date(
             attendanceCheckInDate.getFullYear(),
@@ -71,6 +71,11 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
           );
 
           const contentData = [
+            {
+              label: "Nama",
+              content: attendanceMeta?.name || "-",
+            },
+
             {
               label: "Waktu Check In",
               content: formatDateToLocale(
