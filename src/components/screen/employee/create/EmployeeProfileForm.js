@@ -1,38 +1,25 @@
-import { ArrowRightOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
   Form,
   Input,
   Select,
-  Tabs,
   Upload,
   notification,
 } from "antd";
-import { useRouter } from "next/router";
+import moment from "moment";
 import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 
-import ButtonSys from "../../../../components/button";
-import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
-import {
-  CloudUploadIconSvg,
-  UploadIconSvg,
-  XIconSvg,
-} from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
-import { H1, H2 } from "../../../../components/typography";
+import { UploadIconSvg } from "../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
   permissionWarningNotification,
 } from "../../../../lib/helper";
-import httpcookie from "cookie";
 
 const EmployeeProfileForm = () => {
   /**
@@ -52,7 +39,7 @@ const EmployeeProfileForm = () => {
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [dataAddEmployee, setDataAddEmployee] = useState({
+  const [dataProfile, setDataProfile] = useState({
     id_photo: "",
     name: "",
     nip: "",
@@ -73,110 +60,16 @@ const EmployeeProfileForm = () => {
     bpjsk: "",
     bpjstk: "",
     rek_bukopin: "",
-    other: "",
+    rek_other: "",
   });
-
-  const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [assessmentRoles, setAssessmentRoles] = useState([]);
-  const [roleName, setRoleName] = useState("");
-
-  // 2. USE EFFECT
-  // 2.1. Get Role List
-  // useEffect(() => {
-  //   if (!isAllowedToGetAssessmentList) {
-  //     permissionWarningNotification("Mendapatkan", "Daftar Role");
-  //     setLoadingRoleList(false);
-  //     return;
-  //   }
-
-  //   setLoadingRoleList(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       if (res2.success) {
-  //         setAssessmentRoles(res2.data);
-  //       } else {
-  //         notification.error({
-  //           message: `${res2.message}`,
-  //           duration: 3,
-  //         });
-  //       }
-  //       setLoadingRoleList(false);
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setLoadingRoleList(false);
-  //     });
-  // }, [isAllowedToGetAssessmentList]);
 
   // 3. HANDLER
   const onChangeInput = (e) => {
-    setDataAddEmployee({
-      ...dataAddEmployee,
+    setDataProfile({
+      ...dataProfile,
       [e.target.name]: e.target.value,
     });
   };
-
-  // const handleCreateCandidate = () => {
-  //   if (!isAllowedToCreateCandidate) {
-  //     permissionWarningNotification("Menambah", "Kandidat");
-  //     return;
-  //   }
-  //   setLoadingCreate(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResume`, {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(dataAddEmployee),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((response2) => {
-  //       if (response2.success) {
-  //         notification.success({
-  //           message: `Kandidat berhasil ditambahkan.`,
-  //           duration: 3,
-  //         });
-  //         setTimeout(() => {
-  //           setLoadingCreate(false);
-  //           setDataAddEmployee({
-  //             name: "",
-  //             telp: "",
-  //             email: "",
-  //             city: "",
-  //             province: "",
-  //             assessment_id: "",
-  //           });
-  //           rt.push(`/admin/candidates/${response2.id}`);
-  //         }, 500);
-  //       } else {
-  //         notification.error({
-  //           message: `Gagal menambahkan kandidat. ${response2.message}`,
-  //           duration: 3,
-  //         });
-  //         setTimeout(() => {
-  //           setLoadingCreate(false);
-  //         }, 500);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menambahkan kandidat. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setLoadingCreate(false);
-  //     });
-  // };
 
   return (
     <Form
@@ -184,42 +77,45 @@ const EmployeeProfileForm = () => {
       form={instanceForm}
       className="grid grid-cols-2 gap-x-8  px-1"
     >
-      <Form.Item label="ID Card" name={"id_card"} className="col-span-2 w-full">
-        <div className="flex flex-col space-y-2">
-          <p className="text-mono50 italic">Unggah File JPEG (Maksimal 5 MB)</p>
-          <Upload
-            accept=".png, .jpg, .jpeg"
-            listType="picture"
-            maxCount={1}
-            beforeUpload={(file) => {
-              const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-              const isReachedMaxFileSize =
-                checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-              const isImage =
-                file.type === `image/png` ||
-                file.type === `image/jpg` ||
-                file.type === `image/jpeg`;
-              if (!isImage) {
-                notification.error({
-                  message: "File harus berupa gambar",
-                });
-              }
-              const allowedUpload = !isReachedMaxFileSize && isImage;
-              return allowedUpload || Upload.LIST_IGNORE;
-            }}
-            // disabled={true}
+      <Form.Item
+        label="ID Card"
+        name={"id_card"}
+        className="relative col-span-2 w-full"
+      >
+        <em className="text-mono50 mr-10">Unggah File JPEG (Maksimal 5 MB)</em>
+        <Upload
+          accept=".png, .jpg, .jpeg"
+          listType="picture"
+          maxCount={1}
+          beforeUpload={(file) => {
+            const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+            const isReachedMaxFileSize =
+              checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
+            const isImage =
+              file.type === `image/png` ||
+              file.type === `image/jpg` ||
+              file.type === `image/jpeg`;
+            if (!isImage) {
+              notification.error({
+                message: "File harus berupa gambar",
+              });
+            }
+            const allowedUpload = !isReachedMaxFileSize && isImage;
+            return allowedUpload || Upload.LIST_IGNORE;
+          }}
+          // disabled={true}
+          // onChange={}
+        >
+          <Button
+            className="btn-sm btn text-white font-semibold px-6 border
+            text-primary100 hover:bg-primary75 border-primary100 
+            hover:border-primary75 hover:text-white bg-white space-x-2
+            focus:border-primary75 focus:text-primary100"
           >
-            <Button
-              className="btn-sm btn text-white font-semibold px-6 border
-              text-primary100 hover:bg-primary75 border-primary100 
-              hover:border-primary75 hover:text-white bg-white space-x-2
-              focus:border-primary75 focus:text-primary100"
-            >
-              <UploadIconSvg size={16} color="#35763B" />
-              <p>Unggah File</p>
-            </Button>
-          </Upload>
-        </div>
+            <UploadIconSvg size={16} color="#35763B" />
+            <p>Unggah File</p>
+          </Button>
+        </Upload>
       </Form.Item>
       <Form.Item
         label="Nama"
@@ -234,7 +130,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.name}
             name={"name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama"
@@ -254,7 +150,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.nip}
             name={"nip"}
             onChange={onChangeInput}
             placeholder="Masukkan nama"
@@ -273,7 +169,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.nik}
             name={"nik"}
             onChange={onChangeInput}
             placeholder="Masukkan NIK"
@@ -292,7 +188,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.alias}
             name={"alias"}
             onChange={onChangeInput}
             placeholder="Masukkan alias"
@@ -316,7 +212,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.email_office}
             name={"office_email"}
             onChange={onChangeInput}
             placeholder="Masukkan email kantor"
@@ -340,7 +236,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.email_personal}
             name={"personal_email"}
             onChange={onChangeInput}
             placeholder="Masukkan email pribadi"
@@ -350,7 +246,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Domisili" name={"domisili"}>
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.domicile}
             name={"domisili"}
             onChange={onChangeInput}
             placeholder="Masukkan domisili"
@@ -369,7 +265,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.telp}
             name={"phone"}
             onChange={onChangeInput}
             placeholder="Masukkan nomor telepon"
@@ -388,7 +284,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataProfile.birth_place}
             name={"birth_place"}
             onChange={onChangeInput}
             placeholder="Masukkan tempat lahir"
@@ -405,14 +301,21 @@ const EmployeeProfileForm = () => {
           },
         ]}
       >
-        <div>
-          <Input
-            // value={dataUpdateBasic.name}
-            name={"birth_date"}
-            onChange={onChangeInput}
-            placeholder="Masukkan tanggal lahir"
-          />
-        </div>
+        <DatePicker
+          name="birth_date"
+          placeholder="Pilih tanggal lahir"
+          className="w-full"
+          value={[
+            dataProfile.birth_date ? moment(dataProfile.birth_date) : null,
+          ]}
+          onChange={(value, datestring) => {
+            let selectedDate = datestring[0];
+            setDataProfile((prev) => ({
+              ...prev,
+              birth_date: selectedDate,
+            }));
+          }}
+        />
       </Form.Item>
 
       <Form.Item
@@ -425,74 +328,65 @@ const EmployeeProfileForm = () => {
           },
         ]}
       >
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih jenis kelamin"
-          >
-            {["Laki-laki", "Perempuan"].map((option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        <Select
+          value={dataProfile.gender}
+          onChange={(value) => {
+            setDataProfile({
+              ...dataProfile,
+              gender: value,
+            });
+          }}
+          placeholder="Pilih jenis kelamin"
+        >
+          {["Laki-laki", "Perempuan"].map((option, idx) => (
+            <Select.Option key={idx} value={option}>
+              {option}
+            </Select.Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item label="Golongan Darah" name={"blood_type"}>
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih jenis kelamin"
-          >
-            {["A", "B", "AB", "O"].map((option, idx) => (
+        <Select
+          value={dataProfile.blood_type}
+          onChange={(value) => {
+            setDataProfile({
+              ...dataProfile,
+              blood_type: value,
+            });
+          }}
+          placeholder="Pilih jenis kelamin"
+        >
+          {["A", "B", "AB", "O"].map((option, idx) => (
+            <Select.Option key={idx} value={option}>
+              {option}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+      <Form.Item label="Status Kawin" name={"marital_status"}>
+        <Select
+          value={dataProfile.marital_status}
+          onChange={(value) => {
+            setDataProfile({
+              ...dataProfile,
+              marital_status: value,
+            });
+          }}
+          placeholder="Pilih status kawin"
+        >
+          {["Belum kawin", "Kawin", "Cerai hidup", "Cerai mati"].map(
+            (option, idx) => (
               <Select.Option key={idx} value={option}>
                 {option}
               </Select.Option>
-            ))}
-          </Select>
-        </div>
-      </Form.Item>
-      <Form.Item label="Status Kawin" name={"marital_status"}>
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih status kawin"
-          >
-            {["Belum kawin", "Kawin", "Cerai hidup", "Cerai mati"].map(
-              (option, idx) => (
-                <Select.Option key={idx} value={option}>
-                  {option}
-                </Select.Option>
-              )
-            )}
-          </Select>
-        </div>
+            )
+          )}
+        </Select>
       </Form.Item>
       <Form.Item label="Jumlah Anak" name={"child_total"}>
         <div>
           <Input
-            // value={dataUpdateBasic.telp}
+            value={dataProfile.child_total}
             name={"child_total"}
             onChange={onChangeInput}
             placeholder="Masukkan jumlah anak"
@@ -506,7 +400,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.telp}
+            value={dataProfile.mother_name}
             name={"mother_name"}
             placeholder="Masukkan nama ibu kandung"
             onChange={onChangeInput}
@@ -516,7 +410,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor NPWP" name={"npwp"} className="col-span-2">
         <div className="flex flex-row space-x-3">
           <Input
-            // value={dataUpdateBasic.city}
+            value={dataProfile.npwp}
             name={"npwp"}
             placeholder="Masukkan nomor NPWP"
             onChange={onChangeInput}
@@ -526,7 +420,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor BPJS Kesehatan" name={"bpjsk"}>
         <div className="flex flex-row space-x-3">
           <Input
-            // value={dataUpdateBasic.city}
+            value={dataProfile.bpjsk}
             name={"bpjsk"}
             placeholder="Masukkan nomor BPJS Kesehatan"
             onChange={onChangeInput}
@@ -536,7 +430,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor BPJS Ketenagakerjaan" name={"bpjstk"}>
         <div className="flex flex-row space-x-3">
           <Input
-            // value={dataUpdateBasic.city}
+            value={dataProfile.bpjstk}
             name={"bpjstk"}
             placeholder="Masukkan nomor BPJS Ketenagakerjaan"
             onChange={onChangeInput}
@@ -546,7 +440,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor Rekening Bank KB Bukopin" name={"rek_bukopin"}>
         <div className="flex flex-row space-x-3">
           <Input
-            // value={dataUpdateBasic.city}
+            value={dataProfile.rek_bukopin}
             name={"rek_bukopin"}
             placeholder="Masukkan nomor rekening Bank KB Bukopin"
             onChange={onChangeInput}
@@ -556,7 +450,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor Rekening Bank Lainnya" name={"rek_other"}>
         <div className="flex flex-row space-x-3">
           <Input
-            // value={dataUpdateBasic.city}
+            value={dataProfile.rek_other}
             name={"rek_other"}
             placeholder="Masukkan nomor rekening bank lainnya"
             onChange={onChangeInput}
