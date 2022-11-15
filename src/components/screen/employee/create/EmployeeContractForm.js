@@ -1,41 +1,46 @@
-import { ArrowRightOutlined, UploadOutlined } from "@ant-design/icons";
 import {
   Button,
+  Checkbox,
   DatePicker,
   Form,
   Input,
+  Modal,
   Select,
+  Spin,
+  Switch,
   Tabs,
   Upload,
   notification,
 } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
+import {
+  COMPANY_LISTS_GET,
+  RECRUITMENT_ROLES_LIST_GET,
+  RECRUITMENT_ROLE_TYPES_LIST_GET,
+} from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
 import {
-  CheckIconSvg,
-  CloudUploadIconSvg,
+  CircleCheckIconSvg,
+  SquarePlusIconSvg,
   UploadIconSvg,
-  XIconSvg,
 } from "../../../../components/icon";
-import LayoutDashboard from "../../../../components/layout-dashboard";
-import st from "../../../../components/layout-dashboard.module.css";
-import { H1, H2 } from "../../../../components/typography";
 import {
   beforeUploadFileMaxSize,
   permissionWarningNotification,
 } from "../../../../lib/helper";
-import httpcookie from "cookie";
 
-const EmployeeContractForm = () => {
+const EmployeeContractForm = ({ initProps }) => {
   /**
    * Dependencies
    */
@@ -47,140 +52,168 @@ const EmployeeContractForm = () => {
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+  const isAllowedToGetRoleTypeList = hasPermission(
+    RECRUITMENT_ROLE_TYPES_LIST_GET
+  );
 
   const rt = useRouter();
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [dataAddEmployee, setDataAddEmployee] = useState({
-    id_photo: "",
-    name: "",
-    nip: "",
-    nik: "",
-    alias: "",
-    telp: "",
-    email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    mother_name: "",
-    npwp: "",
-    bpjsk: "",
-    bpjstk: "",
-    rek_bukopin: "",
-    other: "",
+  const [dataContract, setDataContract] = useState({
+    contract_name: "",
+    contract_status: "",
+    position: "",
+    employee_status: false,
+    contract_doc: "",
+    pkwt: "",
+    contract_starts: "",
+    contract_ends: "",
+    placement: "",
+    new_office: "",
+    resign_date: "",
+    benefits: {},
   });
 
-  const [addMode, setAddMode] = useState("");
+  const [modalSalaryVar, setModalSalaryVar] = useState(false);
+  const [isInputVar, setInputVar] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
 
   const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [assessmentRoles, setAssessmentRoles] = useState([]);
-  const [roleName, setRoleName] = useState("");
+
+  const [loadingPositonList, setLoadingPositionList] = useState(false);
+  const [dataPositionList, setDataPositionList] = useState([]);
+
+  const [loadingCompanyList, setLoadingCompanyList] = useState(false);
+  const [dataCompanyList, setDataCompanyList] = useState([]);
+
+  const [loadingRoleTypeList, setLoadingRoleTypeList] = useState(false);
+  const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
 
   // 2. USE EFFECT
-  // 2.1. Get Role List
-  // useEffect(() => {
-  //   if (!isAllowedToGetAssessmentList) {
-  //     permissionWarningNotification("Mendapatkan", "Daftar Role");
-  //     setLoadingRoleList(false);
-  //     return;
-  //   }
+  // 2.1. Get Position List
+  useEffect(() => {
+    if (!isAllowedToGetRoleList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Role");
+      setLoadingPositionList(false);
+      return;
+    }
 
-  //   setLoadingRoleList(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       if (res2.success) {
-  //         setAssessmentRoles(res2.data);
-  //       } else {
-  //         notification.error({
-  //           message: `${res2.message}`,
-  //           duration: 3,
-  //         });
-  //       }
-  //       setLoadingRoleList(false);
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setLoadingRoleList(false);
-  //     });
-  // }, [isAllowedToGetAssessmentList]);
+    setLoadingPositionList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataPositionList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingPositionList(false);
+      });
+  }, [isAllowedToGetRoleList]);
+
+  // 2.2. Get Company Client List
+  useEffect(() => {
+    if (!isAllowedToGetCompanyList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      setLoadingCompanyList(false);
+      return;
+    }
+
+    setLoadingCompanyList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataCompanyList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingCompanyList(false);
+      });
+  }, [isAllowedToGetCompanyList]);
+
+  // 2.3. Get Role/Position Type List
+  useEffect(() => {
+    if (!isAllowedToGetRoleTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
+      setLoadingRoleTypeList(false);
+      return;
+    }
+
+    setLoadingRoleTypeList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataRoleTypeList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingRoleTypeList(false);
+      });
+  }, [isAllowedToGetRoleTypeList]);
 
   // 3. HANDLER
   const onChangeInput = (e) => {
-    setDataAddEmployee({
-      ...dataAddEmployee,
+    setDataCompanyList({
+      ...dataCompanyList,
       [e.target.name]: e.target.value,
     });
   };
-
-  // const handleCreateCandidate = () => {
-  //   if (!isAllowedToCreateCandidate) {
-  //     permissionWarningNotification("Menambah", "Kandidat");
-  //     return;
-  //   }
-  //   setLoadingCreate(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addResume`, {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(dataAddEmployee),
-  //   })
-  //     .then((response) => response.json())
-  //     .then((response2) => {
-  //       if (response2.success) {
-  //         notification.success({
-  //           message: `Kandidat berhasil ditambahkan.`,
-  //           duration: 3,
-  //         });
-  //         setTimeout(() => {
-  //           setLoadingCreate(false);
-  //           setDataAddEmployee({
-  //             name: "",
-  //             telp: "",
-  //             email: "",
-  //             city: "",
-  //             province: "",
-  //             assessment_id: "",
-  //           });
-  //           rt.push(`/admin/candidates/${response2.id}`);
-  //         }, 500);
-  //       } else {
-  //         notification.error({
-  //           message: `Gagal menambahkan kandidat. ${response2.message}`,
-  //           duration: 3,
-  //         });
-  //         setTimeout(() => {
-  //           setLoadingCreate(false);
-  //         }, 500);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menambahkan kandidat. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setLoadingCreate(false);
-  //     });
-  // };
 
   return (
     <Form
@@ -190,6 +223,30 @@ const EmployeeContractForm = () => {
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item
+        label="Status Karyawan"
+        name={"employee_status"}
+        rules={[
+          {
+            required: true,
+            message: "Status karyawan wajib diisi",
+          },
+        ]}
+        className="col-span-2"
+      >
+        {/* TODO: ubah jadi toggle */}
+        <div className="flex flex-row space-x-4">
+          <Switch
+            onChange={(checked) => {
+              setDataContract({
+                ...dataContract,
+                employee_status: checked,
+              });
+            }}
+          />
+          {dataContract.employee_status ? <p>Aktif</p> : <p>Tidak AKtif</p>}
+        </div>
+      </Form.Item>
+      <Form.Item
         label="Nama Kontrak"
         name={"contract_name"}
         rules={[
@@ -198,46 +255,15 @@ const EmployeeContractForm = () => {
             message: "Nama kontrak wajib diisi",
           },
         ]}
-        className="col-span-1"
+        className="col-span-2"
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataContract.contract_name}
             name={"contract_name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama kontrak"
           />
-        </div>
-      </Form.Item>
-      <Form.Item
-        label="Status Kontrak"
-        name={"contract_status"}
-        rules={[
-          {
-            required: true,
-            message: "Status kontrak wajib diisi",
-          },
-        ]}
-        className="col-span-1"
-      >
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih status kontrak"
-          >
-            {["Laki-laki", "Perempuan"].map((option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-          </Select>
         </div>
       </Form.Item>
       <Form.Item
@@ -250,56 +276,51 @@ const EmployeeContractForm = () => {
           },
         ]}
       >
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih posisi"
-          >
-            {["Laki-laki", "Perempuan"].map((option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        <Select
+          value={dataContract.position}
+          onChange={(value) => {
+            setDataContract({
+              ...dataContract,
+              position: value,
+            });
+          }}
+          placeholder="Pilih posisi"
+        >
+          {dataPositionList.map((option) => (
+            <Select.Option key={option.id} value={option.id}>
+              {option.name}
+            </Select.Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item
-        label="Status Karyawan"
-        name={"employee_status"}
+        label="Status Kontrak"
+        name={"contract_status"}
         rules={[
           {
             required: true,
-            message: "Status karyawan wajib diisi",
+            message: "Status kontrak wajib diisi",
           },
         ]}
       >
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih status karyawan"
-          >
-            {["Laki-laki", "Perempuan"].map((option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        <Select
+          value={dataContract.contract_status}
+          onChange={(value) => {
+            setDataContract({
+              ...dataContract,
+              contract_status: value,
+            });
+          }}
+          placeholder="Pilih status kontrak"
+        >
+          {dataRoleTypeList.map((option) => (
+            <Select.Option key={option.id} value={option.name}>
+              {option.name}
+            </Select.Option>
+          ))}
+        </Select>
       </Form.Item>
+
       <Form.Item
         label="Dokumen Kontrak"
         name={"contract_doc"}
@@ -311,8 +332,8 @@ const EmployeeContractForm = () => {
           },
         ]}
       >
-        <div className="flex flex-col space-y-2">
-          <p className="text-mono50 italic">Unggah File PDF (Maksimal 5 MB)</p>
+        <div className="relative">
+          <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
           <Upload
             accept=".pdf"
             listType="picture"
@@ -357,7 +378,7 @@ const EmployeeContractForm = () => {
       >
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataContract.pkwt}
             name={"pkwt"}
             onChange={onChangeInput}
             placeholder="Masukkan PKWT"
@@ -374,28 +395,23 @@ const EmployeeContractForm = () => {
           },
         ]}
       >
-        <div>
-          <DatePicker
-            name="contract_start"
-            placeholder="Pilih tanggal awal kontrak"
-            className="w-full"
-            // value={[
-            //   dataUpdateExp.start_date
-            //     ? moment(dataUpdateExp.start_date)
-            //     : null,
-            //   dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
-            // ]}
-            // onChange={(value, datestring) => {
-            //   let startDate = datestring[0];
-            //   let endDate = datestring[1];
-            //   setDataUpdateExp((prev) => ({
-            //     ...prev,
-            //     start_date: startDate,
-            //     end_date: endDate,
-            //   }));
-            // }}
-          />
-        </div>
+        <DatePicker
+          name="contract_start"
+          placeholder="Pilih tanggal awal kontrak"
+          className="w-full"
+          value={[
+            dataContract.contract_starts
+              ? moment(dataContract.contract_starts)
+              : null,
+          ]}
+          onChange={(value, datestring) => {
+            let selectedDate = datestring[0];
+            setDataContract((prev) => ({
+              ...prev,
+              contract_starts: selectedDate,
+            }));
+          }}
+        />
       </Form.Item>
       <Form.Item
         label="Akhir Kontrak"
@@ -407,54 +423,46 @@ const EmployeeContractForm = () => {
           },
         ]}
       >
-        <div>
-          <DatePicker
-            name="contract_ends"
-            placeholder="Pilih tanggal akhir kontrak"
-            className="w-full"
-            // value={[
-            //   dataUpdateExp.start_date
-            //     ? moment(dataUpdateExp.start_date)
-            //     : null,
-            //   dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
-            // ]}
-            // onChange={(value, datestring) => {
-            //   let startDate = datestring[0];
-            //   let endDate = datestring[1];
-            //   setDataUpdateExp((prev) => ({
-            //     ...prev,
-            //     start_date: startDate,
-            //     end_date: endDate,
-            //   }));
-            // }}
-          />
-        </div>
+        <DatePicker
+          name="contract_ends"
+          placeholder="Pilih tanggal akhir kontrak"
+          className="w-full"
+          value={[
+            dataContract.contract_ends
+              ? moment(dataContract.contract_ends)
+              : null,
+          ]}
+          onChange={(value, datestring) => {
+            let selectedDate = datestring[0];
+            setDataContract((prev) => ({
+              ...prev,
+              contract_ends: selectedDate,
+            }));
+          }}
+        />
       </Form.Item>
       <Form.Item label="Penempatan" name={"placement"}>
-        <div>
-          <Select
-            // defaultValue={dataUpdateBasic.assessment_id}
-            // onChange={(value) => {
-            //   // console.log(value)
-            //   setDataUpdateBasic({
-            //     ...dataUpdateBasic,
-            //     assessment_id: value,
-            //   });
-            // }}
-            placeholder="Pilih penempatan"
-          >
-            {["Laki-laki", "Perempuan"].map((option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            ))}
-          </Select>
-        </div>
+        <Select
+          value={dataContract.placement}
+          onChange={(value) => {
+            setDataContract({
+              ...dataContract,
+              placement: value,
+            });
+          }}
+          placeholder="Pilih penempatan"
+        >
+          {dataCompanyList.map((option) => (
+            <Select.Option key={option.id} value={option.id}>
+              {option.name}
+            </Select.Option>
+          ))}
+        </Select>
       </Form.Item>
       <Form.Item label="Kantor Baru" name={"new_office"}>
         <div>
           <Input
-            // value={dataUpdateBasic.name}
+            value={dataContract.new_office}
             name={"new_office"}
             onChange={onChangeInput}
             placeholder="Masukkan kantor baru"
@@ -466,30 +474,24 @@ const EmployeeContractForm = () => {
         name={"resign_date"}
         className="col-span-2"
       >
-        <div>
-          <DatePicker
-            name="resign_date"
-            placeholder="Pilih tanggal resign"
-            className="w-full"
-            // value={[
-            //   dataUpdateExp.start_date
-            //     ? moment(dataUpdateExp.start_date)
-            //     : null,
-            //   dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
-            // ]}
-            // onChange={(value, datestring) => {
-            //   let startDate = datestring[0];
-            //   let endDate = datestring[1];
-            //   setDataUpdateExp((prev) => ({
-            //     ...prev,
-            //     start_date: startDate,
-            //     end_date: endDate,
-            //   }));
-            // }}
-          />
-        </div>
+        <DatePicker
+          name="resign_date"
+          placeholder="Pilih tanggal resign"
+          className="w-full"
+          value={[
+            dataContract.resign_date ? moment(dataContract.resign_date) : null,
+          ]}
+          onChange={(value, datestring) => {
+            let selectedDate = datestring[0];
+            setDataContract((prev) => ({
+              ...prev,
+              resign_date: selectedDate,
+            }));
+          }}
+        />
       </Form.Item>
 
+      {/* TODO: ubah value input benefit */}
       <div className="flex flex-col space-y-3">
         <p className="mig-heading--5">BENEFIT PENERIMAAN</p>
         <Form.Item
@@ -521,55 +523,6 @@ const EmployeeContractForm = () => {
             />
           </div>
         </Form.Item>
-        {addMode === "allowance" ? (
-          <div className="flex flex-col space-y-2 pt-1">
-            <div className="flex flex-row space-x-4">
-              <Input
-                // value={dataUpdateBasic.name}
-                // name={"meal_allowance"}
-                // onChange={onChangeInput}
-                placeholder="Nama Benefit"
-              />
-              <button
-                // onClick={() => {
-                // 	handleAddSection("experience", dataUpdateExp);
-                // 	setIsAdd(false);
-                // 	clearDataUpdate();
-                // }}
-                className="bg-transparent"
-              >
-                <CheckIconSvg size={24} color={"#35763B"} />
-              </button>
-              <button
-                onClick={() => {
-                  setAddMode("");
-                  // clearDataUpdate();
-                }}
-                className="bg-transparent"
-              >
-                <XIconSvg size={24} color={"#BF4A40"} />
-              </button>
-            </div>
-            {/* <Input
-							// value={dataUpdateBasic.name}
-							// name={"meal_allowance"}
-							// onChange={onChangeInput}
-							placeholder="Nilai Benefit"
-						/> */}
-          </div>
-        ) : (
-          <ButtonSys
-            type={"dashed"}
-            onClick={() => {
-              // clearDataUpdate();
-              setAddMode("allowance");
-            }}
-          >
-            <p className="text-primary100 hover:text-primary75">
-              + Tambah Variable Penerimaan
-            </p>
-          </ButtonSys>
-        )}
       </div>
 
       <div className="flex flex-col space-y-3">
@@ -584,56 +537,97 @@ const EmployeeContractForm = () => {
             />
           </div>
         </Form.Item>
-        {addMode === "deduction" ? (
-          <div className="flex flex-col space-y-2 pt-1">
-            <div className="flex flex-row space-x-4">
-              <Input
-                // value={dataUpdateBasic.name}
-                // name={"meal_allowance"}
-                // onChange={onChangeInput}
-                placeholder="Nama Benefit"
-              />
-              <button
-                // onClick={() => {
-                // 	handleAddSection("experience", dataUpdateExp);
-                // 	setIsAdd(false);
-                // 	clearDataUpdate();
-                // }}
-                className="bg-transparent"
-              >
-                <CheckIconSvg size={24} color={"#35763B"} />
-              </button>
-              <button
-                onClick={() => {
-                  setAddMode("");
-                  // clearDataUpdate();
-                }}
-                className="bg-transparent"
-              >
-                <XIconSvg size={24} color={"#BF4A40"} />
-              </button>
-            </div>
-            {/* <Input
-							// value={dataUpdateBasic.name}
-							// name={"meal_allowance"}
-							// onChange={onChangeInput}
-							placeholder="Nilai Benefit"
-						/> */}
-          </div>
-        ) : (
-          <ButtonSys
-            type={"dashed"}
-            onClick={() => {
-              // clearDataUpdate();
-              setAddMode("deduction");
-            }}
-          >
-            <p className="text-primary100 hover:text-primary75">
-              + Tambah Variable Pengurangan
-            </p>
-          </ButtonSys>
-        )}
       </div>
+      <div className="col-span-2 mt-3">
+        <ButtonSys
+          type={"dashed"}
+          onClick={() => {
+            // clearDataUpdate();
+            setModalSalaryVar(true);
+          }}
+        >
+          <p className="text-primary100 hover:text-primary75">
+            + Tambah Variable Gaji
+          </p>
+        </ButtonSys>
+      </div>
+
+      {/* Modal Add Salary Variable */}
+      {/* TODO: change hasPermission */}
+      <AccessControl hasPermission={RECRUITMENT_ROLES_LIST_GET}>
+        <Modal
+          title={
+            <div className="flex flex-row justify-between items-center">
+              <p>Tambah Variabel Gaji</p>
+              <CircleCheckIconSvg size={32} color={"#35763B"} />
+            </div>
+          }
+          visible={modalSalaryVar}
+          // onCancel={() => setModalSalaryVar(false)}
+          closable={false}
+          footer={
+            <Spin spinning={loadingSave}>
+              <div className="flex flex-row justify-between my-2">
+                <ButtonSys
+                  type={"default"}
+                  onClick={() => setModalSalaryVar(false)}
+                >
+                  Batalkan
+                </ButtonSys>
+                <ButtonSys type={"primary"}>Simpan</ButtonSys>
+              </div>
+            </Spin>
+          }
+          loading={loadingSave}
+        >
+          <div className="flex flex-row space-x-8">
+            <div className="w-full space-y-2">
+              <h5 className="mig-heading--5">PENERIMAAN</h5>
+              {/* TODO: Loop variabel */}
+              <Checkbox
+                className="ml-1"
+                // onChange={}
+              >
+                Gaji Pokok
+              </Checkbox>
+              {isInputVar ? (
+                <div className="flex flex-row items-center space-x-1">
+                  <button
+                    onClick={() => {
+                      setInputVar(false);
+                    }}
+                    className="bg-transparent hover:opacity-75"
+                  >
+                    <SquarePlusIconSvg color={"#35763B"} size={24} />
+                  </button>
+
+                  <Input
+                    size="small"
+                    placeholder="Masukkan variabel"
+                    autoFocus
+                  ></Input>
+                </div>
+              ) : (
+                <button
+                  className="flex flex-row items-center bg-transparent hover:opacity-75"
+                  onClick={() => setInputVar(true)}
+                >
+                  <SquarePlusIconSvg color={"#35763B"} size={24} />
+                  <p className="text-primary100 ml-1">Tambah</p>
+                </button>
+              )}
+            </div>
+            <div className="w-full space-y-2">
+              <h5 className="mig-heading--5">PENGURANGAN</h5>
+              <Checkbox
+              // onChange={}
+              >
+                PPh 21
+              </Checkbox>
+            </div>
+          </div>
+        </Modal>
+      </AccessControl>
     </Form>
   );
 };
