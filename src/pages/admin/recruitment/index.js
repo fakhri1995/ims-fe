@@ -9,7 +9,6 @@ import {
   Select,
   Spin,
   Table,
-  TreeSelect,
   notification,
 } from "antd";
 import { useRouter } from "next/router";
@@ -1310,7 +1309,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       render: (text, record) => {
         return {
           children: (
-            <div className="flex flex-row space-x-2 justify-center">
+            <div className="grid grid-rows-3 lg:grid-rows-1 grid-cols-1 lg:grid-cols-3 gap-3">
               <ButtonSysColor
                 type={"default"}
                 disabled={!isAllowedToGetRecruitment}
@@ -1334,23 +1333,36 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 <MailForwardIconSvg size={16} color={`#35763B`} />
               </ButtonSysColor>
-              <ButtonSysColor
-                type={"default"}
-                disabled={!isAllowedToGenerateRecruitmentAccount}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setDataRowClicked(record);
-                  setModalSendAccess(true);
-                }}
-                color={
-                  record.owner_id ? "border-state2" : "border-secondary100"
-                }
-              >
-                <FileExportIconSvg
-                  size={16}
-                  color={record.owner_id ? "#DDB44A" : "#00589F"}
-                />
-              </ButtonSysColor>
+
+              {record.user?.is_enabled === 0 ? (
+                <></>
+              ) : (
+                <ButtonSysColor
+                  type={"tooltip"}
+                  disabled={!isAllowedToGenerateRecruitmentAccount}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setDataRowClicked(record);
+                    setModalSendAccess(true);
+                  }}
+                  color={
+                    record.owner_id
+                      ? "border-state2 hover:border-state2"
+                      : "border-secondary100 hover:border-secondary100"
+                  }
+                  tooltipTitle={
+                    record.owner_id
+                      ? "Sudah diberi akses"
+                      : "Belum diberi akses"
+                  }
+                  tooltipColor={record.owner_id ? "#DDB44A" : "#00589F"}
+                >
+                  <FileExportIconSvg
+                    size={16}
+                    color={record.owner_id ? "#DDB44A" : "#00589F"}
+                  />
+                </ButtonSysColor>
+              )}
             </div>
           ),
         };
