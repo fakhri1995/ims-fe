@@ -2170,6 +2170,70 @@ const UploadIconSvg = ({ size, color }) => {
   return <Icon component={uploadIconSvg}></Icon>;
 };
 
+const RightIconSvg = ({ size, color }) => {
+  const rightIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-chevron-right"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <polyline points="9 6 15 12 9 18" />
+    </svg>
+  );
+  return <Icon component={rightIconSvg}></Icon>;
+};
+
+const LeftIconSvg = ({ size, color }) => {
+  const leftIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-chevron-left"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <polyline points="15 6 9 12 15 18" />
+    </svg>
+  );
+  return <Icon component={leftIconSvg}></Icon>;
+};
+
+const CircleCheckIconSvg = ({ size, color }) => {
+  const circleCheckIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon icon-tabler icon-tabler-circle-check"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <circle cx="12" cy="12" r="9" />
+      <path d="M9 12l2 2l4 -4" />
+    </svg>
+  );
+  return <Icon component={circleCheckIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -2259,4 +2323,7 @@ export {
   UserCheckIconSvg,
   CirclePlusIconSvg,
   UploadIconSvg,
+  RightIconSvg,
+  LeftIconSvg,
+  CircleCheckIconSvg,
 };

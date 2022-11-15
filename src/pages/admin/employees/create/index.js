@@ -1,40 +1,46 @@
 import { ArrowRightOutlined, UploadOutlined } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Tabs,
-  Upload,
-  notification,
-} from "antd";
+import { Tabs } from "antd";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
-import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
 import {
+  CheckIconSvg,
   CloudUploadIconSvg,
+  LeftIconSvg,
+  RightIconSvg,
   UploadIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import EmployeeContractForm from "../../../../components/screen/employee/create/EmployeeContractForm";
-import EmployeeProfileForm from "../../../../components/screen/employee/create/EmployeeProfileForm";
-import { H1, H2 } from "../../../../components/typography";
-import {
-  beforeUploadFileMaxSize,
-  permissionWarningNotification,
-} from "../../../../lib/helper";
 import httpcookie from "cookie";
+
+const EmployeeProfileForm = dynamic(
+  () =>
+    import("../../../../components/screen/employee/create/EmployeeProfileForm"),
+  { ssr: false }
+);
+const EmployeeContractForm = dynamic(
+  () =>
+    import(
+      "../../../../components/screen/employee/create/EmployeeContractForm"
+    ),
+  { ssr: false }
+);
+const EmployeeInventoryForm = dynamic(
+  () =>
+    import(
+      "../../../../components/screen/employee/create/EmployeeInventoriesForm"
+    ),
+  { ssr: false }
+);
 
 const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
   /**
@@ -52,80 +58,17 @@ const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
 
   const rt = useRouter();
-  const [instanceForm] = Form.useForm();
 
-  const tok = initProps;
   const pathArr = rt.pathname.split("/").slice(1);
   // pathArr.splice(2, 1);
   // console.log(rt)
   pathArr[pathArr.length - 1] = "Tambah Karyawan";
 
   // 1. USE STATE
-  // const [dataAddEmployee, setDataAddEmployee] = useState({
-  //   id_photo: "",
-  //   name: "",
-  //   nip: "",
-  //   nik: "",
-  //   alias: "",
-  //   telp: "",
-  //   email_office: "",
-  //   email_personal: "",
-  //   domicile: "",
-  //   birth_place: "",
-  //   birth_date: "",
-  //   gender: "",
-  //   blood_type: "",
-  //   marital_status: "",
-  //   child_total: "",
-  //   mother_name: "",
-  //   npwp: "",
-  //   bpjsk: "",
-  //   bpjstk: "",
-  //   rek_bukopin: "",
-  //   other: "",
-  // });
-
   const [loadingCreate, setLoadingCreate] = useState(false);
-  const [loadingRoleList, setLoadingRoleList] = useState(false);
-  const [assessmentRoles, setAssessmentRoles] = useState([]);
-  const [roleName, setRoleName] = useState("");
+  const [currentTab, setCurrentTab] = useState("1");
 
   // 2. USE EFFECT
-  // 2.1. Get Role List
-  // useEffect(() => {
-  //   if (!isAllowedToGetAssessmentList) {
-  //     permissionWarningNotification("Mendapatkan", "Daftar Role");
-  //     setLoadingRoleList(false);
-  //     return;
-  //   }
-
-  //   setLoadingRoleList(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessmentList`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       if (res2.success) {
-  //         setAssessmentRoles(res2.data);
-  //       } else {
-  //         notification.error({
-  //           message: `${res2.message}`,
-  //           duration: 3,
-  //         });
-  //       }
-  //       setLoadingRoleList(false);
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `${err.response}`,
-  //         duration: 3,
-  //       });
-  //       setLoadingRoleList(false);
-  //     });
-  // }, [isAllowedToGetAssessmentList]);
 
   // 3. HANDLER
 
@@ -193,52 +136,73 @@ const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
         <div className="flex flex-row items-center justify-between mb-4 px-1">
           <h3 className="mig-heading--3">Tambah Karyawan</h3>
           <div className="flex flex-row space-x-6">
-            <ButtonSys
-              type={"default"}
-              color={"danger"}
-              className="flex flex-row"
-              // onClick={() => {
-              //   isCreateForm
-              //     ? rt.back()
-              //     : setDataUpdateBasic({
-              //         name: dataDisplay.name,
-              //         telp: dataDisplay.telp,
-              //         email: dataDisplay.email,
-              //         assessment_id: dataDisplay.assessment_id,
-              //         city: dataDisplay.city,
-              //         province: dataDisplay.province,
-              //       });
-              //   setIsShowInput(false);
-              // }}
-            >
-              <XIconSvg size={16} color={`#BF4A40`} />
-              <p>Batalkan</p>
-            </ButtonSys>
-            <ButtonSys
-              type={"primary"}
-              className="flex flex-row"
-              // onClick={() => {
-              //   isCreateForm
-              //     ? handleUpdate()
-              //     : handleUpdate("basic_information", dataUpdateBasic);
-              //   setIsShowInput(false);
-              // }}
-              disabled={loadingCreate}
-            >
-              <p>Selanjutnya</p>
-              <ArrowRightOutlined />
-            </ButtonSys>
+            {currentTab == "1" ? (
+              <ButtonSys
+                type={"default"}
+                color={"danger"}
+                className="flex flex-row"
+                onClick={() => {
+                  rt.push("/admin/employees");
+                }}
+              >
+                <XIconSvg size={18} color={`#BF4A40`} />
+                <p className="ml-2">Batalkan</p>
+              </ButtonSys>
+            ) : (
+              <ButtonSys
+                type={"default"}
+                className="flex flex-row"
+                onClick={() => {
+                  let numTab = Number(currentTab);
+                  currentTab <= 3 && setCurrentTab(String(numTab - 1));
+                }}
+              >
+                <LeftIconSvg size={18} color={`#35763B`} />
+                <p className="ml-2">Kembali</p>
+              </ButtonSys>
+            )}
+            {currentTab == "3" ? (
+              <ButtonSys
+                type={"primary"}
+                className="flex flex-row"
+                onClick={() => {
+                  // rt.push('/admin/employees')
+                }}
+              >
+                <CheckIconSvg size={18} color={`white`} />
+                <p className="ml-2">Simpan Karyawan</p>
+              </ButtonSys>
+            ) : (
+              <ButtonSys
+                type={"primary"}
+                className="flex flex-row"
+                onClick={() => {
+                  let numTab = Number(currentTab);
+                  currentTab < 3 && setCurrentTab(String(numTab + 1));
+                }}
+                disabled={loadingCreate}
+              >
+                <p className="mr-2">Selanjutnya</p>
+                <RightIconSvg size={18} color={`white`} />
+              </ButtonSys>
+            )}
           </div>
         </div>
-        <Tabs defaultActiveKey="1" tabBarGutter={60} className="px-1 pb-6">
+        <Tabs
+          defaultActiveKey="1"
+          tabBarGutter={60}
+          className="px-1"
+          activeKey={currentTab}
+          onTabClick={(key) => setCurrentTab(key)}
+        >
           <Tabs.TabPane tab="Profil Karyawan" key="1">
             <EmployeeProfileForm />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Kontrak Karyawan" key="2">
-            <EmployeeContractForm />
+            <EmployeeContractForm initProps={initProps} />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Inventaris & Piranti" key="3">
-            Content of Tab Pane 3
+            <EmployeeInventoryForm initProps={initProps} />
           </Tabs.TabPane>
         </Tabs>
       </div>
