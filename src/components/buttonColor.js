@@ -14,6 +14,7 @@ const ButtonSysColor = ({
   disabled,
   fullWidth,
   tooltipTitle,
+  tooltipColor,
 }) => {
   const commonButtonClassName = clsx(
     {
@@ -54,7 +55,7 @@ const ButtonSysColor = ({
 
     case "tooltip":
       buttonElement = (
-        <Tooltip placement="bottom" title={tooltipTitle} color="#35763B">
+        <Tooltip placement="bottom" title={tooltipTitle} color={tooltipColor}>
           <Button
             disabled={disabled}
             form={form}
