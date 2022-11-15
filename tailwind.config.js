@@ -45,8 +45,10 @@ module.exports = {
         lightgreen: "#DCEEE4",
         lightgrey: "#E0DCEB",
         green15: "#188E4D26",
+        accentblue: "#0059A0",
         bgfooter: "#E5E7E6",
         bgjoinmig: "#F4F4F4",
+        greenTrans20: "rgba(24, 142, 77, 0.2)",
       },
       borderColor: {
         primary: "#1890ff",
