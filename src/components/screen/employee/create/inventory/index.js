@@ -15,9 +15,9 @@ import {
 import {
   beforeUploadFileMaxSize,
   permissionWarningNotification,
-} from "../../../../lib/helper";
-import ButtonSys from "../../../button";
-import InventoryForm from "./inventoryForm/inventoryForm";
+} from "../../../../../lib/helper";
+import ButtonSys from "../../../../button";
+import InventoryForm from "./inventoryForm";
 
 const EmployeeInventoryForm = ({ initProps }) => {
   /**
