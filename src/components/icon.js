@@ -1210,7 +1210,7 @@ const FileTextIconSvg = ({ size, color }) => {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth="1.0"
       stroke={color}
       fill="none"
       strokeLinecap="round"
@@ -2105,7 +2105,7 @@ const UserCheckIconSvg = ({ size, color }) => {
   const userCheckIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-user-check"
+      className="icon icon-tabler icon-tabler-user-check"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2128,7 +2128,7 @@ const CirclePlusIconSvg = ({ size, color }) => {
   const circlePlusIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-circle-plus"
+      className="icon icon-tabler icon-tabler-circle-plus"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2151,7 +2151,7 @@ const UploadIconSvg = ({ size, color }) => {
   const uploadIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-upload"
+      className="icon icon-tabler icon-tabler-upload"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2174,7 +2174,7 @@ const RightIconSvg = ({ size, color }) => {
   const rightIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-chevron-right"
+      className="icon icon-tabler icon-tabler-chevron-right"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2195,7 +2195,7 @@ const LeftIconSvg = ({ size, color }) => {
   const leftIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-chevron-left"
+      className="icon icon-tabler icon-tabler-chevron-left"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
@@ -2216,7 +2216,7 @@ const CircleCheckIconSvg = ({ size, color }) => {
   const circleCheckIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-circle-check"
+      className="icon icon-tabler icon-tabler-circle-check"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"

@@ -23,22 +23,15 @@ import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
 const EmployeeProfileForm = dynamic(
-  () =>
-    import("../../../../components/screen/employee/create/EmployeeProfileForm"),
+  () => import("../../../../components/screen/employee/create/profile"),
   { ssr: false }
 );
 const EmployeeContractForm = dynamic(
-  () =>
-    import(
-      "../../../../components/screen/employee/create/EmployeeContractForm"
-    ),
+  () => import("../../../../components/screen/employee/create/contract"),
   { ssr: false }
 );
 const EmployeeInventoryForm = dynamic(
-  () =>
-    import(
-      "../../../../components/screen/employee/create/EmployeeInventoriesForm"
-    ),
+  () => import("../../../../components/screen/employee/create/inventory"),
   { ssr: false }
 );
 
