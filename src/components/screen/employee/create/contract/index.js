@@ -28,17 +28,16 @@ import {
   RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
 
-import ButtonSys from "../../../../components/button";
-import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
+import {
+  beforeUploadFileMaxSize,
+  permissionWarningNotification,
+} from "../../../../../lib/helper";
+import ButtonSys from "../../../../button";
 import {
   CircleCheckIconSvg,
   SquarePlusIconSvg,
   UploadIconSvg,
-} from "../../../../components/icon";
-import {
-  beforeUploadFileMaxSize,
-  permissionWarningNotification,
-} from "../../../../lib/helper";
+} from "../../../../icon";
 
 const EmployeeContractForm = ({ initProps }) => {
   /**
@@ -219,7 +218,7 @@ const EmployeeContractForm = ({ initProps }) => {
     <Form
       layout="vertical"
       form={instanceForm}
-      className="grid grid-cols-2 gap-x-8 px-1"
+      className="grid grid-cols-2 gap-x-8"
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item

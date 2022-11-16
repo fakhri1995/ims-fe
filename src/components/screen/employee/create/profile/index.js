@@ -15,11 +15,11 @@ import { useAccessControl } from "contexts/access-control";
 
 import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 
-import { UploadIconSvg } from "../../../../components/icon";
+import { UploadIconSvg } from "../../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
   permissionWarningNotification,
-} from "../../../../lib/helper";
+} from "../../../../../lib/helper";
 
 const EmployeeProfileForm = () => {
   /**
@@ -75,7 +75,7 @@ const EmployeeProfileForm = () => {
     <Form
       layout="vertical"
       form={instanceForm}
-      className="grid grid-cols-2 gap-x-8  px-1"
+      className="grid grid-cols-2 gap-x-8"
     >
       <Form.Item
         label="ID Card"
