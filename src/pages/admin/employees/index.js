@@ -1,5 +1,6 @@
 import {
   Button,
+  Collapse,
   DatePicker,
   Dropdown,
   Empty,
@@ -8,6 +9,7 @@ import {
   Menu,
   Select,
   Spin,
+  Switch,
   Table,
   TreeSelect,
   notification,
@@ -26,6 +28,7 @@ import { AddNewFormButton } from "components/screen/resume";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  COMPANY_LISTS_GET,
   EMPLOYEES_GET,
   EMPLOYEE_ADD,
   EMPLOYEE_DELETE,
@@ -38,6 +41,7 @@ import { permissionWarningNotification } from "lib/helper";
 import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
+import ButtonSysColor from "../../../components/buttonColor";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
 import DrawerCandidatePreview from "../../../components/drawer/recruitment/drawerCandidatePreview";
@@ -69,6 +73,7 @@ import {
   TableCustomEmployeeList,
   TableCustomRecruitmentCandidate,
 } from "../../../components/table/tableCustom";
+import { H1 } from "../../../components/typography";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
   ArcElement,
@@ -105,34 +110,46 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
-  const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
   const canUpdateEmployee = hasPermission([EMPLOYEE_UPDATE, EMPLOYEE_GET]);
 
   // TODO: change variable and constant to appropriate feature
-  const isAllowedToGetRecruitmentRolesList = hasPermission(
-    RECRUITMENT_ROLES_LIST_GET
-  );
-  const isAllowedToGetRecruitmentStatusesList = hasPermission(
-    RECRUITMENT_ROLES_LIST_GET
-  );
+  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+
+  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+  const isAllowedToGetRoleTypeList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
   // 1. Init
+  const [instanceForm] = Form.useForm();
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
 
-  const [instanceForm] = Form.useForm();
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 1, "Daftar Karyawan");
+
   // 2. Use state
+  // 2.1. Charts
+  const [loadingChart, setLoadingChart] = useState(false);
 
   // 2.2. Table Employee List
   // filter data
+  const [activeEmployeeSwitch, setActiveEmployeeSwitch] = useState(false);
+
+  const [loadingCompanyList, setLoadingCompanyList] = useState(false);
+  const [dataCompanyList, setDataCompanyList] = useState([]);
+
   const [loadingRoleList, setLoadingRoleList] = useState(false);
   const [dataRoleList, setDataRoleList] = useState([]);
+
   const [loadingContractStatusList, setLoadingContractStatusList] =
     useState(false);
   const [dataContractStatusList, setDataContractStatusList] = useState([]);
 
   // filter search & selected options
   const [searchingFilterEmployees, setSearchingFilterEmployees] = useState("");
+  const [selectedCompanyId, setSelectedCompanyId] = useState(0);
   const [selectedRoleId, setSelectedRoleId] = useState(0);
   const [selectedContractStatus, setSelectedContractStatus] = useState(0);
 
@@ -167,28 +184,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const tempIdClicked = useRef(-1);
   const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
 
-  /**
-   * 2.3. Drawer/Modal For Create, Delete, Bulk, Send Email,
-   * Import sheet, Preview, send access verification
-   * */
-  const [isCreateDrawerShown, setCreateDrawerShown] = useState(false);
-  const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
-  const [isPreviewDrawerShown, setPreviewDrawerShown] = useState(false);
-
-  const [modalDelete, setModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-
-  const [modalBulk, setModalBulk] = useState(false);
-  const [bulkMode, setBulkMode] = useState("");
-
-  const [modalSheetImport, setModalSheetImport] = useState(false);
-
-  const [modalVerif, setModalVerif] = useState(false);
-  const [isAccessSent, setIsAccessSent] = useState(false);
-  const [loadingVerif, setLoadingVerif] = useState(false);
-
   // 3. UseEffect
-  // 3.3. Get Employees
+  // 3.1. Get Employees
   useEffect(() => {
     if (!isAllowedToGetEmployees) {
       permissionWarningNotification("Mendapatkan", "Daftar Employee");
@@ -226,9 +223,46 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetEmployees, refresh]);
 
-  // 3.2. Get Employee Role List
+  // 3.2. Get Company Client List
   useEffect(() => {
-    if (!isAllowedToGetRecruitmentRolesList) {
+    if (!isAllowedToGetCompanyList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Company Client");
+      setLoadingCompanyList(false);
+      return;
+    }
+
+    setLoadingCompanyList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataCompanyList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingCompanyList(false);
+      });
+  }, [isAllowedToGetCompanyList]);
+
+  // 3.3. Get Employee Role List
+  useEffect(() => {
+    if (!isAllowedToGetRoleList) {
       permissionWarningNotification("Mendapatkan", "Data Employee Role List");
       setLoadingRoleList(false);
       return;
@@ -261,23 +295,26 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingRoleList(false);
       });
-  }, [isAllowedToGetRecruitmentRolesList, refresh]);
+  }, [isAllowedToGetRoleList, refresh]);
 
-  // 3.5. Get Status List
+  // 3.4. Get Contract Status/Role Type List
   useEffect(() => {
-    if (!isAllowedToGetRecruitmentStatusesList) {
-      permissionWarningNotification("Mendapatkan", "Contract Status List");
+    if (!isAllowedToGetRoleTypeList) {
+      permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
       setLoadingContractStatusList(false);
       return;
     }
 
     setLoadingContractStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeStatusList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoleTypesList`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -298,7 +335,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingContractStatusList(false);
       });
-  }, [isAllowedToGetRecruitmentStatusesList, refresh]);
+  }, [isAllowedToGetRoleTypeList]);
 
   // 4. Event
   const onAddEmployeeButtonClicked = useCallback(() => {
@@ -380,6 +417,16 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
+      title: "Penempatan",
+      key: "placement",
+      dataIndex: "placement",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.placement ? record.placement : ""}</>,
+        };
+      },
+    },
+    {
       title: "Status Kontrak",
       key: "status",
       dataIndex: "status",
@@ -415,9 +462,20 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "days_left",
       render: (text, record, index) => {
         return {
-          children: <>{record.days_left ? record.days_left : ""}</>,
+          children: (
+            <>
+              {record.days_left < 30 ? (
+                <p className="text-warning">{record.days_left} hari</p>
+              ) : (
+                <p>{record.days_left} hari</p>
+              )}
+            </>
+          ),
         };
       },
+      sorter: isAllowedToGetEmployees
+        ? (a, b) => a.days_left > b.days_left
+        : false,
     },
     {
       title: "Aksi",
@@ -425,31 +483,34 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       render: (text, record) => {
         return {
           children: (
-            <div className="flex flex-col space-x-2 justify-center">
-              <ButtonSys
-                type={isAllowedToGetEmployee ? "default" : "primary"}
-                disabled={!isAllowedToGetEmployee}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  // rt.push(`/admin/recruitment/${record.id}`);
-                }}
-              >
-                <EditIconSvg size={12} color={`#35763B`} />
-                <p>Edit Kontrak</p>
-              </ButtonSys>
-              <ButtonSys
-                type={isAllowedToUpdateEmployee ? "default" : "primary"}
-                disabled={!isAllowedToUpdateEmployee}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  // setDataRowClicked(record);
-                  // setEmailDrawerShown(true);
-                }}
-              >
-                <CirclePlusIconSvg size={12} color={`#35763B`} />
-                <p>Tambah Kontrak</p>
-              </ButtonSys>
-            </div>
+            <>
+              {record.is_draft ? (
+                <ButtonSysColor
+                  type={"default"}
+                  // disabled={!isAllowedToEditDraft}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    // rt.push(`/admin/recruitment/${record.id}`);
+                  }}
+                  color={"border-notice text-notice"}
+                >
+                  <EditIconSvg size={12} color={`#DDB44A`} />
+                  <p>Edit Draft</p>
+                </ButtonSysColor>
+              ) : (
+                <ButtonSys
+                  type={isAllowedToGetEmployee ? "default" : "primary"}
+                  disabled={!isAllowedToGetEmployee}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    // rt.push(`/admin/recruitment/${record.id}`);
+                  }}
+                >
+                  <EditIconSvg size={12} color={`#35763B`} />
+                  <p>Edit Kontrak</p>
+                </ButtonSys>
+              )}
+            </>
           ),
         };
       },
@@ -465,18 +526,128 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       sidemenu={sidemenu}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 lg:grid-cols-3 md:px-5 gap-6">
-          {/* Table Karyawan */}
-          <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
-            <div className="flex items-center justify-between mb-6">
-              <h4 className="mig-heading--4 ">Semua Karyawan</h4>
+        <Collapse className="col-span-3 mb-5" bordered={false} ghost={true}>
+          <Collapse.Panel>
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* CHART PENEMPATAN KARYAWAN */}
+              {loadingChart ? (
+                <>
+                  <Spin />
+                </>
+              ) : (
+                <div className="flex flex-col shadow-md rounded-md bg-white p-5 ">
+                  <div className="flex items-center justify-between mb-4">
+                    <H1>Penempatan Karyawan</H1>
+                  </div>
+                  <div className=" w-full flex justify-center">
+                    {/* <Doughnut
+                      data={{
+                        labels: topCompanyCount.map((doc) => doc.name),
+                        datasets: [
+                          {
+                            data: topCompanyCount.map((doc) => doc.resumes_count),
+                            backgroundColor: topCompanyCount.map(
+                              (doc, idx) =>
+                                dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                            ),
+                            borderColor: topCompanyCount.map(
+                              (doc, idx) =>
+                                dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                            ),
+                            borderWidth: 1,
+                          },
+                        ],
+                      }}
+                      options={{
+                        title: {
+                          display: false,
+                        },
+                        legend: {
+                          display: false,
+                        },
+                        maintainAspectRatio: false,
+                        cutout: 55,
+                        spacing: 5,
+                      }}
+                    /> */}
+                  </div>
+
+                  {/* <div className="flex flex-col w-full mt-5">
+                    {topCompanyCount.map((doc, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center mb-1"
+                      >
+                        <div className="flex">
+                          <div
+                            className=" w-1 mr-2"
+                            style={{
+                              backgroundColor: `${
+                                dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                              }`,
+                            }}
+                          ></div>
+                          <Text>{doc.name}</Text>
+                        </div>
+                        <div className="flex">
+                          <H2>{doc.resumes_count}</H2>
+                        </div>
+                      </div>
+                    ))}
+                  </div> */}
+                </div>
+              )}
+              {/* CHART POSISI */}
+              {loadingChart ? (
+                <>
+                  <Spin />
+                </>
+              ) : (
+                <div className="flex flex-col shadow-md rounded-md bg-white p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <H1>Posisi</H1>
+                  </div>
+                  <div className=" w-full flex justify-center"></div>
+                </div>
+              )}
+              {/* CHART STATUS KARYAWAN */}
+              {loadingChart ? (
+                <>
+                  <Spin />
+                </>
+              ) : (
+                <div className="flex flex-col shadow-md rounded-md bg-white p-5">
+                  <div className="flex items-center justify-between mb-4">
+                    <H1>Status Karyawan</H1>
+                  </div>
+                  <div className=" w-full flex justify-center"></div>
+                </div>
+              )}
+            </div>
+          </Collapse.Panel>
+        </Collapse>
+
+        {/* Table Karyawan */}
+        <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <h4 className="mig-heading--4 ">Daftar Karyawan</h4>
+            <div className="flex flex-row items-center space-x-6">
+              <div className="flex flex-row items-center space-x-2 text-primary100">
+                <Switch
+                  checked={activeEmployeeSwitch}
+                  onClick={() => setActiveEmployeeSwitch(!activeEmployeeSwitch)}
+                />
+                <p>Karyawan Aktif</p>
+              </div>
+
               <Button
                 type={"primary"}
                 className="btn btn-sm text-white font-semibold px-6 border 
-										bg-primary100 hover:bg-primary75 border-primary100 
-										hover:border-primary75 focus:bg-primary100 focus:border-primary100"
+                    bg-primary100 hover:bg-primary75 border-primary100 
+                    hover:border-primary75 focus:bg-primary100 focus:border-primary100"
                 icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                 onClick={onAddEmployeeButtonClicked}
                 // disabled
@@ -484,123 +655,140 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 Tambah Karyawan
               </Button>
             </div>
+          </div>
 
-            {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full items-center mb-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="w-4/12">
-                <Input
-                  value={
-                    searchingFilterEmployees === ""
-                      ? null
-                      : searchingFilterEmployees
+          {/* Start: Search criteria */}
+          <div className="flex flex-row justify-between w-full items-center mb-4">
+            {/* Search by keyword (kata kunci) */}
+            <div className="w-4/12">
+              <Input
+                value={
+                  searchingFilterEmployees === ""
+                    ? null
+                    : searchingFilterEmployees
+                }
+                style={{ width: `100%` }}
+                placeholder="Kata Kunci.."
+                allowClear
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    setSearchingFilterEmployees("");
+                  } else {
+                    setSearchingFilterEmployees(e.target.value);
                   }
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterEmployees("");
-                    } else {
-                      setSearchingFilterEmployees(e.target.value);
-                    }
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetEmployees}
-                />
-              </div>
-
-              {/* Filter by role (dropdown) */}
-              <div className="w-3/12">
-                <Select
-                  value={selectedRoleId === 0 ? null : selectedRoleId}
-                  allowClear
-                  name={`role`}
-                  disabled={!isAllowedToGetRecruitmentRolesList}
-                  placeholder="Semua Role"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setSelectedRoleId(0)
-                      : setSelectedRoleId(value);
-                  }}
-                >
-                  {/* <Select.Option value={0}>Semua Role</Select.Option> */}
-                  {dataRoleList.map((role) => (
-                    <Select.Option key={role.id} value={role.id}>
-                      {role.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-
-              {/* Search by status (dropdown) */}
-              <div className="w-3/12">
-                <Select
-                  value={
-                    selectedContractStatus === 0 ? null : selectedContractStatus
-                  }
-                  allowClear
-                  name={`status`}
-                  disabled={!isAllowedToGetRecruitmentStatusesList}
-                  placeholder="Semua Status"
-                  defaultValue={0}
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setSelectedContractStatus(0)
-                      : setSelectedContractStatus(value);
-                  }}
-                >
-                  <Select.Option value={0}>Semua Status</Select.Option>
-                  {dataContractStatusList.map((status) => (
-                    <Select.Option key={status.id} value={status.id}>
-                      <div className="flex items-center">
-                        <div
-                          className="rounded-full w-4 h-4 mr-2"
-                          style={{ backgroundColor: `${status.color}` }}
-                        />
-                        <p className="truncate">{status.name}</p>
-                      </div>
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterEmployees}
+                }}
+                onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetEmployees}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
-                </div>
-              </ButtonSys>
-            </div>
-            {/* End: Search criteria */}
-            <div>
-              <TableCustomEmployeeList
-                dataSource={dataEmployees}
-                setDataSource={setDataEmployees}
-                columns={columnEmployee}
-                loading={loadingEmployees}
-                setpraloading={setLoadingEmployees}
-                pageSize={rowsEmployees}
-                total={dataRawEmployees?.total}
-                initProps={initProps}
-                setpage={setPageEmployees}
-                pagefromsearch={pageEmployees}
-                setdataraw={setDataRawEmployees}
-                setsorting={setSortingEmployees}
-                sorting={sortingEmployees}
-                searching={searchingFilterEmployees}
-                selectedRoleId={selectedRoleId}
-                selectedContractStatus={selectedContractStatus}
-                tempIdClicked={tempIdClicked}
-                setTriggerRowClicked={setTriggerRowClicked}
               />
             </div>
+
+            {/* Filter by company (dropdown) */}
+            <div className="w-2/12">
+              <Select
+                value={selectedCompanyId === 0 ? null : selectedCompanyId}
+                allowClear
+                name={`role`}
+                disabled={!isAllowedToGetRoleList}
+                placeholder="Semua Penempatan"
+                style={{ width: `100%` }}
+                onChange={(value) => {
+                  typeof value === "undefined"
+                    ? setSelectedCompanyId(0)
+                    : setSelectedCompanyId(value);
+                }}
+              >
+                {/* <Select.Option value={0}>Semua Role</Select.Option> */}
+                {dataCompanyList.map((company) => (
+                  <Select.Option key={company.id} value={company.id}>
+                    {company.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+
+            {/* Filter by position (dropdown) */}
+            <div className="w-2/12">
+              <Select
+                value={selectedRoleId === 0 ? null : selectedRoleId}
+                allowClear
+                name={`role`}
+                disabled={!isAllowedToGetRoleList}
+                placeholder="Semua Posisi"
+                style={{ width: `100%` }}
+                onChange={(value) => {
+                  typeof value === "undefined"
+                    ? setSelectedRoleId(0)
+                    : setSelectedRoleId(value);
+                }}
+              >
+                {/* <Select.Option value={0}>Semua Role</Select.Option> */}
+                {dataRoleList.map((role) => (
+                  <Select.Option key={role.id} value={role.id}>
+                    {role.name}
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+
+            {/* Filter by contract status (dropdown) */}
+            <div className="w-2/12">
+              <Select
+                value={
+                  selectedContractStatus === 0 ? null : selectedContractStatus
+                }
+                allowClear
+                name={`status`}
+                disabled={!isAllowedToGetRoleTypeList}
+                placeholder="Semua Status Kontrak"
+                defaultValue={0}
+                style={{ width: `100%` }}
+                onChange={(value) => {
+                  typeof value === "undefined"
+                    ? setSelectedContractStatus(0)
+                    : setSelectedContractStatus(value);
+                }}
+              >
+                {dataContractStatusList.map((status) => (
+                  <Select.Option key={status.id} value={status.id}>
+                    <p>{status.name}</p>
+                  </Select.Option>
+                ))}
+              </Select>
+            </div>
+
+            <ButtonSys
+              type={`primary`}
+              onClick={onFilterEmployees}
+              disabled={!isAllowedToGetEmployees}
+            >
+              <div className="flex flex-row space-x-2.5 w-full items-center">
+                <SearchIconSvg size={15} color={`#ffffff`} />
+                <p>Cari</p>
+              </div>
+            </ButtonSys>
+          </div>
+          {/* End: Search criteria */}
+          <div>
+            <TableCustomEmployeeList
+              dataSource={dataEmployees}
+              setDataSource={setDataEmployees}
+              columns={columnEmployee}
+              loading={loadingEmployees}
+              setpraloading={setLoadingEmployees}
+              pageSize={rowsEmployees}
+              total={dataRawEmployees?.total}
+              initProps={initProps}
+              setpage={setPageEmployees}
+              pagefromsearch={pageEmployees}
+              setdataraw={setDataRawEmployees}
+              setsorting={setSortingEmployees}
+              sorting={sortingEmployees}
+              searching={searchingFilterEmployees}
+              selectedRoleId={selectedRoleId}
+              selectedContractStatus={selectedContractStatus}
+              tempIdClicked={tempIdClicked}
+              setTriggerRowClicked={setTriggerRowClicked}
+            />
           </div>
         </div>
       </div>
