@@ -81,7 +81,7 @@ const InventoryForm = ({ idx, deviceList, setDeviceList, dataPICList }) => {
     <Form
       layout="vertical"
       form={instanceForm}
-      className="grid grid-cols-2 gap-x-8 px-1 mt-6"
+      className="grid grid-cols-2 gap-x-8 mt-6"
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">PIRANTI {idx + 1}</h5>
       <Form.Item
