@@ -34,7 +34,10 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeInventoryDetail = ({ employeeId }) => {
+const EmployeeInventoryDetail = ({
+  employeeId,
+  isAllowedToUpdateInventory,
+}) => {
   /**
    * Dependencies
    */
@@ -77,6 +80,7 @@ const EmployeeInventoryDetail = ({ employeeId }) => {
     rek_other: "",
   });
   const [inventoryId, setInventoryId] = useState(0);
+  const [inventoryList, setInventoryList] = useState(["test"]);
 
   // 3. HANDLER
   const onChangeInput = (e) => {
@@ -88,96 +92,102 @@ const EmployeeInventoryDetail = ({ employeeId }) => {
 
   return (
     <section className="">
-      <Collapse
-        bordered={false}
-        defaultActiveKey={["1"]}
-        expandIconPosition={"right"}
-        expandIcon={({ isActive }) => (
-          <UpOutlined rotate={isActive ? 180 : 0} />
-        )}
-      >
-        {/* TODO: Loop devices */}
-        <Collapse.Panel
-          key={"1"}
-          header={
-            <div className="flex flex-row space-x-3 items-center">
-              <p className="text-md font-bold">Laptop</p>
-              <button
-                className="bg-transparent hover:opacity-70"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  rt.push(`${employeeId}/editInventory?id=${inventoryId}`);
-                }}
-              >
-                <EditIconSvg color={"#35763B"} size={20} />
-              </button>
-            </div>
-          }
+      {inventoryList.length > 0 ? (
+        <Collapse
+          bordered={false}
+          defaultActiveKey={["1"]}
+          expandIconPosition={"right"}
+          expandIcon={({ isActive }) => (
+            <UpOutlined rotate={isActive ? 180 : 0} />
+          )}
         >
-          <div className="grid grid-cols-2">
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">ID</p>
-              <p>1211342423</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">
-                Referensi Inventaris
-              </p>
-              <p>12345678</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">Tipe</p>
-              <p>Asus Vivobook</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">Nomor Serial</p>
-              <p>12345678</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">
-                Tanggal Penyerahan
-              </p>
-              <p>27 Oktober 2022</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">
-                Tanggal Pengembalian
-              </p>
-              <p>27 Oktober 2024</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">
-                Penanggung Jawab Penyerahan
-              </p>
-              <p>John Watson</p>
-            </div>
-            <div className="space-y-1 mb-2">
-              <p className="mig-caption--medium text-mono80">
-                Penanggung Jawab Pengembalian
-              </p>
-              <p>John Watson</p>
-            </div>
-            <div className="space-y-1 mb-3">
-              <p className="mig-caption--medium text-mono80">
-                Dokumen Penyerahan
-              </p>
-              <div className="flex flex-row space-x-3 items-center ">
-                <FileTextIconSvg size={48} color={"black"} />
-                <a>DokumenPenyerahan-Yasmin.pdf</a>
+          {/* TODO: Loop devices */}
+          <Collapse.Panel
+            key={"1"}
+            header={
+              <div className="flex flex-row space-x-3 items-center">
+                <p className="text-md font-bold">Laptop</p>
+                {isAllowedToUpdateInventory && (
+                  <button
+                    className="bg-transparent hover:opacity-70"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      rt.push(`${employeeId}/editInventory?id=${inventoryId}`);
+                    }}
+                  >
+                    <EditIconSvg color={"#35763B"} size={20} />
+                  </button>
+                )}
+              </div>
+            }
+          >
+            <div className="grid grid-cols-2">
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">ID</p>
+                <p>1211342423</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">
+                  Referensi Inventaris
+                </p>
+                <p>12345678</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">Tipe</p>
+                <p>Asus Vivobook</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">Nomor Serial</p>
+                <p>12345678</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">
+                  Tanggal Penyerahan
+                </p>
+                <p>27 Oktober 2022</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">
+                  Tanggal Pengembalian
+                </p>
+                <p>27 Oktober 2024</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">
+                  Penanggung Jawab Penyerahan
+                </p>
+                <p>John Watson</p>
+              </div>
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">
+                  Penanggung Jawab Pengembalian
+                </p>
+                <p>John Watson</p>
+              </div>
+              <div className="space-y-1 mb-3">
+                <p className="mig-caption--medium text-mono80">
+                  Dokumen Penyerahan
+                </p>
+                <div className="flex flex-row space-x-3 items-center ">
+                  <FileTextIconSvg size={48} color={"black"} />
+                  <a>DokumenPenyerahan-Yasmin.pdf</a>
+                </div>
+              </div>
+              <div className="space-y-1 mb-3">
+                <p className="mig-caption--medium text-mono80">
+                  Dokumen Pengembalian
+                </p>
+                <div className="flex flex-row space-x-3 items-center ">
+                  <FileTextIconSvg size={48} color={"black"} />
+                  <a>DokumenPengembalian-Yasmin.pdf</a>
+                </div>
               </div>
             </div>
-            <div className="space-y-1 mb-3">
-              <p className="mig-caption--medium text-mono80">
-                Dokumen Pengembalian
-              </p>
-              <div className="flex flex-row space-x-3 items-center ">
-                <FileTextIconSvg size={48} color={"black"} />
-                <a>DokumenPengembalian-Yasmin.pdf</a>
-              </div>
-            </div>
-          </div>
-        </Collapse.Panel>
-      </Collapse>
+          </Collapse.Panel>
+        </Collapse>
+      ) : (
+        <p>Tidak ada inventaris & piranti pada Yasmin Adelia Puti C</p>
+      )}
     </section>
   );
 };

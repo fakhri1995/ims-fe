@@ -25,7 +25,7 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeContractDetail = ({ employeeId }) => {
+const EmployeeContractDetail = ({ employeeId, isAllowedToUpdateContract }) => {
   /**
    * Dependencies
    */
@@ -102,15 +102,17 @@ const EmployeeContractDetail = ({ employeeId }) => {
               >
                 Aktif
               </Tag>
-              <button
-                className="bg-transparent hover:opacity-70"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  rt.push(`${employeeId}/editContract?id=${contractId}`);
-                }}
-              >
-                <EditIconSvg color={"#35763B"} size={20} />
-              </button>
+              {isAllowedToUpdateContract && (
+                <button
+                  className="bg-transparent hover:opacity-70"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    rt.push(`${employeeId}/editContract?id=${contractId}`);
+                  }}
+                >
+                  <EditIconSvg color={"#35763B"} size={20} />
+                </button>
+              )}
             </div>
           }
         >
