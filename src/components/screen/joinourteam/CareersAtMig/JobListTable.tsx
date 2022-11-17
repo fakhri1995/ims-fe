@@ -137,7 +137,7 @@ export const JobListTable: FC = () => {
         })}
       />
       {data && (
-        <div className="flex flex-col justify-center items-center space-y-8">
+        <div className="flex flex-col justify-center items-center space-y-4">
           <p>
             Showing <strong>{data?.to}</strong> out of{" "}
             <strong>{data?.total} jobs</strong>

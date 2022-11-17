@@ -236,7 +236,12 @@ function layout({ children }) {
             </Link>
             <Link href="/joinourteam">
               <a className="text-lg gilroy-medium menu-underlined mx-4 hover:text-green-500">
-                Join Our Team
+                Career in MIG
+              </a>
+            </Link>
+            <Link href="/blog">
+              <a className="text-lg gilroy-medium menu-underlined mx-4 hover:text-green-500">
+                Blog
               </a>
             </Link>
             <Link href="/contactus">
@@ -306,7 +311,12 @@ function layout({ children }) {
               </Menu.Item>
               <Menu.Item key="5">
                 <Link href="/joinourteam">
-                  <a className="text-lg gilroy-medium">Join Our Team</a>
+                  <a className="text-lg gilroy-medium">Career in MIG</a>
+                </Link>
+              </Menu.Item>
+              <Menu.Item key="6">
+                <Link href="/blog">
+                  <a className="text-lg gilroy-medium">Blog</a>
                 </Link>
               </Menu.Item>
               {/* <Menu.Item key='6'
@@ -477,7 +487,25 @@ function layout({ children }) {
                         "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
-                      Join&nbsp;Our&nbsp;Team
+                      Career&nbsp;in&nbsp;MIG
+                    </p>
+                  </Link>
+                  <Link href="/blog">
+                    <p
+                      className={
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                      }
+                    >
+                      Blog
+                    </p>
+                  </Link>
+                  <Link href="/contactus">
+                    <p
+                      className={
+                        "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                      }
+                    >
+                      Customer Stories
                     </p>
                   </Link>
                 </div>
@@ -578,7 +606,7 @@ function layout({ children }) {
                           "gilroy-regular cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        Join&nbsp;Our&nbsp;Team
+                        Career&nbsp;in&nbsp;Mig
                       </p>
                     </Link>
                   </div>

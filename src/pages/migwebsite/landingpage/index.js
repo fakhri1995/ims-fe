@@ -198,7 +198,7 @@ function LandingPage({}) {
             />
           </div>
           <div className={"flex-col center"}>
-            <div className={"text-center"}>
+            <div className={"grid justify-items-center text-center"}>
               <Linkk href="/hardware">
                 <button
                   className={
@@ -214,7 +214,7 @@ function LandingPage({}) {
             <div className={"mx-auto"}>
               <Link
                 activeClass="active"
-                to="youronestop"
+                to="youronestopmobile"
                 spy={true}
                 smooth={true}
                 offset={-70}
@@ -413,7 +413,7 @@ function LandingPage({}) {
       {/*section it resource mobile */}
       <section
         className={
-          "youronestop md:hidden px-4 mt-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
+          "youronestopmobile md:hidden px-4 mt-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
         }
       >
         <div className={"container mx-auto"}>
@@ -572,19 +572,11 @@ function LandingPage({}) {
           </div>
         </Slider>
       </section>
-      <section
-        className={"youronestop hidden md:block md:relative md:bottom-32 flex"}
-      >
-        <div className={"justify-start"}>
-          <img
-            style={{ width: "215px", height: "300px" }}
-            src="/image/landingpage/image-left.png"
-          />
-        </div>
+      <section className={"youronestop hidden md:block md:bottom-32"}>
         <div className={"container mx-auto"}>
           <p
             className={
-              "text-xl md:text-2xl text-center md:text-4xl gilroy-bold py-8 md:py-0"
+              "text-3xl text-center md:text-4xl gilroy-bold py-8 md:py-0"
             }
           >
             A trusted partner after 15+ years of experience across Indonesia!
@@ -673,11 +665,19 @@ function LandingPage({}) {
             </div>
           </div>
         </div>
-        <div className={"justify-end"}>
-          <img
-            style={{ width: "215px", height: "300px" }}
-            src="/image/landingpage/image-right.png"
-          />
+        <div className={"flex justify-between -mt-48"}>
+          <div className={"justify-start"}>
+            <img
+              style={{ width: "185px", height: "275px" }}
+              src="/image/landingpage/image-left.png"
+            />
+          </div>
+          <div className={"justify-end"}>
+            <img
+              style={{ width: "185px", height: "275px" }}
+              src="/image/landingpage/image-right.png"
+            />
+          </div>
         </div>
       </section>
       <section
@@ -771,7 +771,7 @@ function LandingPage({}) {
       </section>
       <section
         className={
-          "youronestop py-4 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
+          "youronestop py-4 md:mt-40 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
         }
       >
         <div className={"container mx-auto"}>
