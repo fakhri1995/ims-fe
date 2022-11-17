@@ -50,12 +50,15 @@ const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
 
+  // INIT
   const rt = useRouter();
-
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
-  // pathArr.splice(2, 1);
-  // console.log(rt)
-  pathArr[pathArr.length - 1] = "Tambah Karyawan";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 2);
+  pathTitleArr.splice(1, 2, "Daftar Karyawan", "Tambah Karyawan");
 
   // 1. USE STATE
   const [loadingCreate, setLoadingCreate] = useState(false);
@@ -124,6 +127,7 @@ const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className=" shadow-lg rounded-md bg-white py-7 px-4">
         <div className="flex flex-row items-center justify-between mb-4 px-1">

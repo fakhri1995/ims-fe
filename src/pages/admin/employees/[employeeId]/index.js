@@ -1,74 +1,34 @@
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Modal,
-  Popover,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
-import parse from "html-react-parser";
-import moment from "moment";
-import "moment/locale/id";
+import { Tabs, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import Html from "react-pdf-html";
 
 import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  GUEST_STATUS,
   RECRUITMENT_DELETE,
-  RECRUITMENT_EMAIL_SEND,
-  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
   RECRUITMENT_GET,
-  RECRUITMENT_LOG_GET,
-  RECRUITMENT_LOG_NOTES_ADD,
-  RECRUITMENT_STAGES_LIST_GET,
-  RECRUITMENT_STATUSES_LIST_GET,
   RECRUITMENT_UPDATE,
-  RECRUITMENT_UPDATE_STAGE,
-  RECRUITMENT_UPDATE_STATUS,
-  RESUME_GET,
 } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import {
   CirclePlusIconSvg,
-  DotsIconSvg,
-  DownloadIconSvg,
   EditIconSvg,
-  ExternalLinkIconSvg,
-  InfoCircleIconSvg,
-  MailForwardIconSvg,
   OneUserIconSvg,
-  PlusIconSvg,
   TrashIconSvg,
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import ModalCore from "../../../../components/modal/modalCore";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
+import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
 import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
 import { permissionWarningNotification } from "../../../../lib/helper";
 import httpcookie from "cookie";
-
-moment.locale("id");
 
 const EmployeeDetailIndex = ({
   initProps,
@@ -90,12 +50,18 @@ const EmployeeDetailIndex = ({
   const isAllowedToGetEmployee = hasPermission(RECRUITMENT_GET);
   const isAllowedToUpdateEmployee = hasPermission(RECRUITMENT_UPDATE);
   const isAllowedToDeleteEmployee = hasPermission(RECRUITMENT_DELETE);
+  const isAllowedToUpdateContract = hasPermission(RECRUITMENT_UPDATE);
+  const isAllowedToUpdateInventory = hasPermission(RECRUITMENT_UPDATE);
 
   //INIT
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
-  // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Yasmin Adelia Puti C";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 2);
+  pathTitleArr.splice(1, 2, "Daftar Karyawan", "Yasmin Adelia Puti C");
 
   // 1. STATE
   // 1.1. display
@@ -255,11 +221,19 @@ const EmployeeDetailIndex = ({
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div>
         <div className="flex flex-row gap-5 w-full">
           {/* Left Column - ID Card Photo */}
-          <div className="w-1/4">{/* <img /> */}</div>
+          <div
+            className="w-1/4 bg-white rounded-md shadow-lg flex flex-col items-center 
+            justify-center space-y-2 p-4"
+          >
+            <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
+            <h4 className="mig-heading--4 text-center">Yasmin Adelia Puti C</h4>
+            {/* <img /> */}
+          </div>
           {/* Right column */}
           <div className="flex flex-col w-3/4 gap-5">
             {/* Employee Status */}
@@ -334,14 +308,20 @@ const EmployeeDetailIndex = ({
             onTabClick={(key) => setCurrentTab(key)}
             tabBarExtraContent={tabButton()}
           >
-            <Tabs.TabPane tab="Profil Karyawan" key="1">
+            <Tabs.TabPane tab="Detail Profil" key="1">
               <EmployeeProfileDetail />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Kontrak Karyawan" key="2">
-              <EmployeeContractDetail employeeId={employeeId} />
+              <EmployeeContractDetail
+                employeeId={employeeId}
+                isAllowedToUpdateContract={isAllowedToUpdateContract}
+              />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
-              <EmployeeInventoryDetail employeeId={employeeId} />
+              <EmployeeInventoryDetail
+                employeeId={employeeId}
+                isAllowedToUpdateInventory={isAllowedToUpdateInventory}
+              />
             </Tabs.TabPane>
           </Tabs>
         </div>
