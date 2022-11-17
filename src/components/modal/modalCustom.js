@@ -1,8 +1,16 @@
-import { Spin } from "antd";
+import { Checkbox, Form, Input, Modal, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 
 import ButtonSys from "../button";
-import { AlertIconSvg, CheckIconSvg, TrashIconSvg, XIconSvg } from "../icon";
+import {
+  AlertIconSvg,
+  CheckIconSvg,
+  CircleCheckIconSvg,
+  DownloadIconSvg,
+  SquarePlusIconSvg,
+  TrashIconSvg,
+  XIconSvg,
+} from "../icon";
 import {
   TextAreaNotRequired,
   TextAreaRequired,
@@ -851,6 +859,149 @@ const ModalUbah = ({
   );
 };
 
+const ModalAddSalaryVar = ({
+  visible,
+  onvisible,
+  onOk,
+  loading,
+  disabled,
+  setInputVar,
+  isInputVar,
+}) => {
+  return (
+    <Modal
+      title={
+        <div className="flex flex-row justify-between items-center">
+          <p>Tambah Variabel Gaji</p>
+          <CircleCheckIconSvg size={32} color={"#35763B"} />
+        </div>
+      }
+      visible={visible}
+      closable={false}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex flex-row justify-between my-2">
+            <ButtonSys type={"default"} onClick={() => onvisible(false)}>
+              Batalkan
+            </ButtonSys>
+            <ButtonSys type={"primary"} onClick={onOk}>
+              Simpan
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      <div className="flex flex-row space-x-8">
+        <div className="w-full space-y-2">
+          <h5 className="mig-heading--5">PENERIMAAN</h5>
+          {/* TODO: Loop variabel */}
+          <Checkbox
+            className="ml-1"
+            // onChange={}
+          >
+            Gaji Pokok
+          </Checkbox>
+          {isInputVar ? (
+            <div className="flex flex-row items-center space-x-1">
+              <button
+                onClick={() => {
+                  setInputVar(false);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <SquarePlusIconSvg color={"#35763B"} size={24} />
+              </button>
+
+              <Input
+                size="small"
+                placeholder="Masukkan variabel"
+                autoFocus
+              ></Input>
+            </div>
+          ) : (
+            <button
+              className="flex flex-row items-center bg-transparent hover:opacity-75"
+              onClick={() => setInputVar(true)}
+            >
+              <SquarePlusIconSvg color={"#35763B"} size={24} />
+              <p className="text-primary100 ml-1">Tambah</p>
+            </button>
+          )}
+        </div>
+        <div className="w-full space-y-2">
+          <h5 className="mig-heading--5">PENGURANGAN</h5>
+          <Checkbox
+          // onChange={}
+          >
+            PPh 21
+          </Checkbox>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+const ModalDownloadPayslip = ({
+  visible,
+  onvisible,
+  onOk,
+  loading,
+  disabled,
+  downloadPass,
+  setDownloadPass,
+  instanceForm,
+  monthOfPayslip,
+}) => {
+  return (
+    <Modal
+      title={"Konfirmasi"}
+      visible={visible}
+      closable={false}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex flex-row justify-between my-2">
+            <ButtonSys type={"default"} onClick={() => onvisible(false)}>
+              Batalkan
+            </ButtonSys>
+            <ButtonSys type={"primary"} onClick={onOk} disabled={disabled}>
+              <div className="flex flex-row space-x-2 items-center">
+                <DownloadIconSvg color={"white"} size={16} />
+                <p>Unduh Slip Gaji</p>
+              </div>
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      <Form layout="vertical" form={instanceForm}>
+        <p className="mb-4">
+          Silahkan masukkan kata sandi Anda untuk mengunduh slip gaji{" "}
+          <strong>{monthOfPayslip}</strong>
+        </p>
+        <Form.Item
+          label="Kata Sandi"
+          name={"password"}
+          rules={[
+            {
+              required: true,
+              message: "Kata sandi wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            value={downloadPass}
+            name={"password"}
+            onChange={(e) => setDownloadPass(e.target.value)}
+            placeholder="Masukkan kata sandi"
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
 export {
   ModalEdit,
   ModalHapus,
@@ -869,4 +1020,6 @@ export {
   ModalReleaseItemTiket,
   ModalHapus2,
   ModalUbah,
+  ModalAddSalaryVar,
+  ModalDownloadPayslip,
 };

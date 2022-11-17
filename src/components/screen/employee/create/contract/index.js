@@ -38,6 +38,7 @@ import {
   SquarePlusIconSvg,
   UploadIconSvg,
 } from "../../../../icon";
+import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
 
 const EmployeeContractForm = ({ initProps }) => {
   /**
@@ -232,7 +233,6 @@ const EmployeeContractForm = ({ initProps }) => {
         ]}
         className="col-span-2"
       >
-        {/* TODO: ubah jadi toggle */}
         <div className="flex flex-row space-x-4">
           <Switch
             onChange={(checked) => {
@@ -242,7 +242,7 @@ const EmployeeContractForm = ({ initProps }) => {
               });
             }}
           />
-          {dataContract.employee_status ? <p>Aktif</p> : <p>Tidak AKtif</p>}
+          {dataContract.employee_status ? <p>Aktif</p> : <p>Tidak Aktif</p>}
         </div>
       </Form.Item>
       <Form.Item
@@ -554,78 +554,15 @@ const EmployeeContractForm = ({ initProps }) => {
       {/* Modal Add Salary Variable */}
       {/* TODO: change hasPermission */}
       <AccessControl hasPermission={RECRUITMENT_ROLES_LIST_GET}>
-        <Modal
-          title={
-            <div className="flex flex-row justify-between items-center">
-              <p>Tambah Variabel Gaji</p>
-              <CircleCheckIconSvg size={32} color={"#35763B"} />
-            </div>
-          }
+        <ModalAddSalaryVar
           visible={modalSalaryVar}
-          // onCancel={() => setModalSalaryVar(false)}
-          closable={false}
-          footer={
-            <Spin spinning={loadingSave}>
-              <div className="flex flex-row justify-between my-2">
-                <ButtonSys
-                  type={"default"}
-                  onClick={() => setModalSalaryVar(false)}
-                >
-                  Batalkan
-                </ButtonSys>
-                <ButtonSys type={"primary"}>Simpan</ButtonSys>
-              </div>
-            </Spin>
-          }
+          onvisible={setModalSalaryVar}
           loading={loadingSave}
-        >
-          <div className="flex flex-row space-x-8">
-            <div className="w-full space-y-2">
-              <h5 className="mig-heading--5">PENERIMAAN</h5>
-              {/* TODO: Loop variabel */}
-              <Checkbox
-                className="ml-1"
-                // onChange={}
-              >
-                Gaji Pokok
-              </Checkbox>
-              {isInputVar ? (
-                <div className="flex flex-row items-center space-x-1">
-                  <button
-                    onClick={() => {
-                      setInputVar(false);
-                    }}
-                    className="bg-transparent hover:opacity-75"
-                  >
-                    <SquarePlusIconSvg color={"#35763B"} size={24} />
-                  </button>
-
-                  <Input
-                    size="small"
-                    placeholder="Masukkan variabel"
-                    autoFocus
-                  ></Input>
-                </div>
-              ) : (
-                <button
-                  className="flex flex-row items-center bg-transparent hover:opacity-75"
-                  onClick={() => setInputVar(true)}
-                >
-                  <SquarePlusIconSvg color={"#35763B"} size={24} />
-                  <p className="text-primary100 ml-1">Tambah</p>
-                </button>
-              )}
-            </div>
-            <div className="w-full space-y-2">
-              <h5 className="mig-heading--5">PENGURANGAN</h5>
-              <Checkbox
-              // onChange={}
-              >
-                PPh 21
-              </Checkbox>
-            </div>
-          </div>
-        </Modal>
+          setInputVar={setInputVar}
+          isInputVar={isInputVar}
+          // onOk={}
+          // disabled
+        />
       </AccessControl>
     </Form>
   );
