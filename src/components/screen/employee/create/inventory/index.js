@@ -43,7 +43,7 @@ const EmployeeInventoryForm = ({ initProps }) => {
 
   // 1. USE STATE
   const [isOwn, setIsOwn] = useState(false);
-  const [deviceList, setDeviceList] = useState([]);
+  const [inventoryList, setInventoryList] = useState([]);
 
   const [addMode, setAddMode] = useState(false);
 
@@ -91,8 +91,8 @@ const EmployeeInventoryForm = ({ initProps }) => {
   }, [isAllowedToGetPICList]);
 
   // 3. HANDLER
-  const handleAddNewDevice = () => {
-    let newDataDevice = {
+  const handleAddNewInventory = () => {
+    let newDataInventory = {
       id: -1,
       device_name: "",
       reference: "",
@@ -104,23 +104,25 @@ const EmployeeInventoryForm = ({ initProps }) => {
       return_pic: "",
       assign_doc: "",
       return_doc: "",
+      device_list: [],
     };
-    setDeviceList([...deviceList, newDataDevice]);
+    setInventoryList([...inventoryList, newDataInventory]);
   };
 
-  const handleRemoveDevice = (idx) => {
-    let data = [...deviceList];
+  const handleRemoveInventory = (idx) => {
+    let data = [...inventoryList];
     data.splice(idx, 1);
-    setDeviceList(data);
+    setInventoryList(data);
   };
 
+  // console.log(inventoryList);
   return (
     <>
       <Checkbox
         value={isOwn}
         onChange={(e) => {
           setIsOwn(e.target.checked);
-          isOwn ? setDeviceList([]) : handleAddNewDevice();
+          isOwn ? setInventoryList([]) : handleAddNewInventory();
         }}
       >
         Memiliki inventaris & piranti
@@ -128,19 +130,19 @@ const EmployeeInventoryForm = ({ initProps }) => {
 
       {isOwn && (
         <>
-          {/* TODO: loop deviceList */}
-          {deviceList.map((device, idx) => (
+          {/* TODO: loop inventoryList */}
+          {inventoryList.map((inventory, idx) => (
             <InventoryForm
               key={idx}
               idx={idx}
-              deviceList={deviceList}
-              setDeviceList={setDeviceList}
+              inventoryList={inventoryList}
+              setInventoryList={setInventoryList}
               dataPICList={dataPICList}
             />
           ))}
-          <ButtonSys type={"dashed"} onClick={handleAddNewDevice}>
+          <ButtonSys type={"dashed"} onClick={handleAddNewInventory}>
             <p className="text-primary100 hover:text-primary75">
-              + Tambah Piranti
+              + Tambah Inventaris
             </p>
           </ButtonSys>
         </>
