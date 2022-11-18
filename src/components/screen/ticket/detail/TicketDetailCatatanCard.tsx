@@ -51,9 +51,9 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
   fetchAsAdmin,
 }) => {
   const parsedTicketId = parseInt(ticketId as string);
-  if (parsedTicketId == NaN) {
-    return null;
-  }
+  // if (parsedTicketId == NaN) {
+  //   return null;
+  // }
 
   /**
    * Dependencies
