@@ -41,6 +41,7 @@ module.exports = {
         bgBackdropOverdue: `#f9edec`,
         disabled: "#d4d5d7",
         notice: "#DDB44A",
+        warning: '#BF4A40',
       },
       borderColor: {
         primary: "#1890ff",
@@ -70,6 +71,7 @@ module.exports = {
         closed: `#808080`,
         disabled: "#d4d5d7",
         notice: "#DDB44A",
+        warning: '#BF4A40',
       },
       textColor: {
         primary: "#1890ff",
@@ -98,6 +100,7 @@ module.exports = {
         canceled: `#F46780`,
         closed: `#808080`,
         notice: "#DDB44A",
+        warning: '#BF4A40',
       },
       gradientColorStops: {
         state1: `#799F0C`,

@@ -58,7 +58,7 @@ import {
   TrashIconSvg,
   UsersIconSvg,
 } from "../../components/icon";
-import LayoutDashboard from "../../components/layout-dashboard";
+import LayoutDashboard2 from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
 import {
   ModalDownloadPayslip,
@@ -162,7 +162,7 @@ const EmployeeViewProfileIndex = ({
   // 3. Event
 
   return (
-    <LayoutDashboard
+    <LayoutDashboard2
       dataProfile={dataProfile}
       sidemenu={sidemenu}
       tok={initProps}
@@ -301,7 +301,7 @@ const EmployeeViewProfileIndex = ({
           monthOfPayslip={"Oktober 2022"}
         />
       </AccessControl>
-    </LayoutDashboard>
+    </LayoutDashboard2>
   );
 };
 
