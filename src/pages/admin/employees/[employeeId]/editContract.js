@@ -97,10 +97,19 @@ const EmployeeContractEditIndex = ({
 
   //INIT
   const rt = useRouter();
-  const pathArr = rt.asPath.split("/").slice(1);
-  // console.log(rt);
-  // pathArr[pathArr.length - 2] = "[Employee Name]";
-  pathArr[pathArr.length - 1] = "Edit Kontrak";
+  // Breadcrumb url
+  const pathArr = rt.pathname.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 3);
+  pathTitleArr.splice(
+    1,
+    3,
+    "Daftar Karyawan",
+    "Yasmin Adelia Puti C",
+    "Edit Kontrak"
+  );
 
   const { query } = useRouter();
   // console.log(query)
@@ -174,6 +183,7 @@ const EmployeeContractEditIndex = ({
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="shadow-lg rounded-md bg-white py-7 px-5">
         <div className="flex flex-row items-center justify-between mb-7">

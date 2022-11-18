@@ -97,10 +97,19 @@ const EmployeeContractAddIndex = ({
 
   //INIT
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
-  // console.log(rt);
-  // pathArr[pathArr.length - 2] = "[Employee Name]";
-  pathArr[pathArr.length - 1] = "Tambah Kontrak";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 3);
+  pathTitleArr.splice(
+    1,
+    3,
+    "Daftar Karyawan",
+    "Yasmin Adelia Puti C",
+    "Tambah Kontrak"
+  );
 
   // 1. STATE
   // 1.1. display
@@ -171,6 +180,7 @@ const EmployeeContractAddIndex = ({
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="shadow-lg rounded-md bg-white py-7 px-5">
         <div className="flex flex-row items-center justify-between mb-7">
@@ -217,7 +227,8 @@ const EmployeeContractAddIndex = ({
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  const employeeId = params.employeeId;
+  // const employeeId = params.employeeId;
+  const employeeId = 1;
   var initProps = {};
   if (!req.headers.cookie) {
     return {

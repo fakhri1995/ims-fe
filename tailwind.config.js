@@ -44,6 +44,7 @@ module.exports = {
         bgBackdropOverdue: `#f9edec`,
         disabled: "#d4d5d7",
         notice: "#DDB44A",
+        warning: '#BF4A40',
         lightblue: "#E0EEFA",
         lightgreen: "#DCEEE4",
         lightgrey: "#E0DCEB",
@@ -83,6 +84,7 @@ module.exports = {
         closed: `#808080`,
         disabled: "#d4d5d7",
         notice: "#DDB44A",
+        warning: '#BF4A40',
       },
       textColor: {
         primary: "#1890ff",
@@ -111,6 +113,7 @@ module.exports = {
         canceled: `#F46780`,
         closed: `#808080`,
         notice: "#DDB44A",
+        warning: '#BF4A40',
         accentblue: "#0059A0",
         darkgreen: "#0E6033",
         accentpurple: "#655299",

@@ -96,10 +96,19 @@ const EmployeeProfileEditIndex = ({
 
   //INIT
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
-  // console.log(rt);
-  // pathArr[pathArr.length - 2] = "[Employee Name]";
-  pathArr[pathArr.length - 1] = "Edit Profil";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 3);
+  pathTitleArr.splice(
+    1,
+    3,
+    "Daftar Karyawan",
+    "Yasmin Adelia Puti C",
+    "Edit Profil"
+  );
 
   // 1. STATE
   // 1.1. display
@@ -170,6 +179,7 @@ const EmployeeProfileEditIndex = ({
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="shadow-lg rounded-md bg-white py-7 px-5">
         <div className="flex flex-row items-center justify-between mb-7">
