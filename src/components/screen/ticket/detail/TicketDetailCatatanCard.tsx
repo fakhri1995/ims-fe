@@ -48,7 +48,7 @@ export interface ITicketDetailCatatanCard {
  */
 export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
   ticketId,
-  fetchAsAdmin = false,
+  fetchAsAdmin,
 }) => {
   const parsedTicketId = parseInt(ticketId as string);
   if (parsedTicketId === NaN) {
