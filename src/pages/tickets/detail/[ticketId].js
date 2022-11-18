@@ -1282,7 +1282,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   <>
                     <TicketDetailCatatanCard
                       ticketId={ticketid}
-                      fetchAsAdmin={dataProfile.data.role === 1}
+                      fetchAsAdmin={
+                        dataProfile.data.role === 1 ? "true" : "false"
+                      }
                     />
                   </>
                 )}
@@ -1292,7 +1294,9 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 {!isClient && (
                   <TicketDetailCatatanCard
                     ticketId={ticketid}
-                    fetchAsAdmin={dataProfile.data.role === 1}
+                    fetchAsAdmin={
+                      dataProfile.data.role === 1 ? "true" : "false"
+                    }
                   />
                 )}
                 {/* {dataProfile.data.role === 1 && (

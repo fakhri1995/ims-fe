@@ -1,6 +1,7 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Badge, Card, Col, Row, Space } from "antd";
+import Head from "next/head";
 import Linkk from "next/link";
 import React, { useEffect, useState } from "react";
 import CountUp from "react-countup";
@@ -16,6 +17,9 @@ function Blog({}) {
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
+      <Head>
+        <title>Blog</title>
+      </Head>
       <section
         className={
           "section1landingpage md:relative md:-top-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
@@ -92,12 +96,10 @@ function Blog({}) {
         </div>
         {/* ---------- */}
         {/* Phone View */}
-        <div className={"block md:hidden pt-8"}>
+        <div className={"block md:hidden py-8 mb-4"}>
           <div className={"flex-col center"}>
             <div className={"text-center"}>
-              <p className={"text-4xl gilroy-bold"}>
-                Focus on your best, we take care of the rest
-              </p>
+              <p className={"text-4xl gilroy-bold"}>Welcome to MIG Blog!</p>
             </div>
           </div>
           <div className={"flex-col"}>
@@ -106,70 +108,47 @@ function Blog({}) {
               src="/image/landingpage/image-section1.png"
             />
           </div>
+          <p className={" text-base text-center text-black gilroy-regular"}>
+            MIG catalyzes your core business with{" "}
+            <span style={{ fontWeight: "bold" }}>IT hardware solutions</span>,
+            <span style={{ fontWeight: "bold" }}>software development</span>,
+            and <span style={{ fontWeight: "bold" }}>tech talents</span>. We
+            serve you the best resource with efficient cost, but high
+            maintenance.
+          </p>
           <div className={"flex-col center"}>
             <div className={"grid justify-items-center text-center"}>
-              <Linkk href="/hardware">
-                <button
-                  className={
-                    "flex text-xl text-white border-2 bg-green-600 border-green-600 px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
-                  }
-                >
-                  <p className={"pl-4 pr-8"}>Get Free Consultation</p>
-                </button>
-              </Linkk>
-            </div>
-          </div>
-          <div className={"flex-col center"}>
-            <div className={"mx-auto"}>
               <Link
                 activeClass="active"
-                to="youronestopmobile"
+                to="section2blog"
                 spy={true}
                 smooth={true}
                 offset={-70}
                 duration={500}
               >
-                <div className="grid justify-items-center text-center">
-                  <button
-                    className={
-                      "flex text-xl text-green-600 px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
-                    }
-                  >
-                    <p className={""}>Explore Solutions</p>
+                <button
+                  className={
+                    "text-sm text-center text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  }
+                >
+                  <div className={"flex flex-row justify-between"}>
+                    <p className={"px-1 text-base"}>Explore Articles</p>
                     <img
-                      className={"mt-1 ml-1"}
+                      className={"m-1"}
                       style={{ width: "20px" }}
-                      src="/image/landingpage/arrow-down-green.png"
+                      src="/image/landingpage/arrow-circle-down.png"
                     />
-                  </button>
-                </div>
+                  </div>
+                </button>
               </Link>
-            </div>
-          </div>
-          <div className={"container mx-auto mt-2"}>
-            <div className={"border rounded-lg shadow-lg p-4 bg-green15"}>
-              <div className={"flex flex-row"}>
-                <img
-                  className={"pr-1"}
-                  src="/image/landingpage/info.png"
-                  style={{ width: "30px", height: "30px" }}
-                />
-                <p className={"text-base gilroy-semi-bold"}>
-                  <span style={{ fontWeight: "bold" }}>Trusted </span>
-                  in more than
-                  <span style={{ fontWeight: "bold" }}> 45+ cities</span> and
-                  <span style={{ fontWeight: "bold" }}> 10+ companies </span>
-                  in providing their
-                  <span style={{ fontWeight: "bold" }}> IT & Business </span>
-                  needs!
-                </p>
-              </div>
             </div>
           </div>
         </div>
         {/* ------------ */}
       </section>
-      <section className={"section2blog -mt-28 mb-5 p-2 md:p-12 bg-bgjoinmig "}>
+      <section
+        className={"section2blog mt-4 md:-mt-28 p-2 md:p-12 bg-bgjoinmig "}
+      >
         <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
           Most Popular
         </p>
@@ -268,108 +247,103 @@ function Blog({}) {
           </div>
         </div>
       </section>
-      <section
-        className={
-          "youronestop py-4 md:mt-40 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
-        }
-      >
-        <div className={"container mx-auto"}>
-          <p className={"text-xl md:text-2xl gilroy-bold py-8 md:py-0"}>
-            Why you should{" "}
-            <span
-              style={{
-                borderBottom: "solid 3px #188E4D",
-                paddingBottom: "2.5px",
-              }}
-            >
-              work with us
-            </span>{" "}
-            ?
-          </p>
-        </div>
-        <div className="md:flex flex-row items-center md:py-10 justify-around">
-          <a
-            href="#"
-            class="flex md:mt-0 mt-4 items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
+      <section className={"allarticles p-2 md:p-12"}>
+        <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
+          All Articles
+        </p>
+        <div className={"grid md:grid-cols-4 justify-items-center  mt-4"}>
+          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
             <img
-              className="p-4"
-              style={{ height: "111px" }}
-              src="/image/landingpage/on_demand.png"
-              alt=""
+              className={"m-1"}
+              style={{ width: "260px", height: "184px" }}
+              src="/image/landingpage/Hardware.png"
             />
-            <div className="flex flex-col items-start px-2">
-              <h5 className="mb-2 text-sm md:text-xl text-black font-bold tracking-tight md:text-primarygreen dark:text-white">
-                On Demand Services
-              </h5>
-              <p className="mb-3 text-left text-sm md:text-base font-normal text-black dark:text-gray-400">
-                Transform your business with our custom solutions to optimize
-                your cost and productivity
+            <div className={"pl-1 w-[260px]"}>
+              <p className={"text-xs text-darkgrey"}>
+                by <span className={"font-bold"}>Mayfa Shadrina </span>
+                on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
+              <p className={"font-bold text-blackmig text-base"}>
+                This is a Title This is a Title This is a Title This is a Title
+              </p>
+              <p className={" text-blackmig gilroy-regular text-xs"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                Hardware
+              </span>
             </div>
-          </a>
-          <a
-            href="#"
-            class="flex md:mt-0 mt-4 items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
+          </div>
+          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
             <img
-              className="p-4"
-              src="/image/landingpage/reliable_partner.png"
-              alt=""
-              style={{ height: "111px" }}
+              className={"m-1"}
+              style={{ width: "260px", height: "184px" }}
+              src="/image/landingpage/Hardware.png"
             />
-            <div className="flex flex-col items-start px-2">
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-primarygreen dark:text-white">
-                Reliable Partner
-              </h5>
-              <p className="mb-3 text-left text-sm md:text-base text-black font-normal text-gray-700 dark:text-gray-400">
-                A partner you can trust, with more than 15 years of
-                experiences-we’re here for the long run
+            <div className={"pl-1"}>
+              <p className={"text-xs text-darkgrey"}>
+                by <span className={"font-bold"}>Mayfa Shadrina </span>
+                on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
+              <p className={"font-bold text-blackmig text-base"}>
+                This is a Title This is a Title This is a Title This is a Title
+              </p>
+              <p className={" text-blackmig gilroy-regular text-xs"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                Hardware
+              </span>
             </div>
-          </a>
-        </div>
-        <div className="md:flex flex-row items-center md:py-10 justify-around">
-          <a
-            href="#"
-            class="flex  md:mt-0 mt-4 items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
+          </div>
+          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
             <img
-              className="p-4"
-              src="/image/landingpage/competitive_rates.png"
-              style={{ height: "111px" }}
-              alt=""
+              className={"m-1"}
+              style={{ width: "260px", height: "184px" }}
+              src="/image/landingpage/Hardware.png"
             />
-            <div className="flex flex-col items-start px-2">
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-primarygreen dark:text-white">
-                Competitive Rate
-              </h5>
-              <p className="mb-3 text-left text-sm md:text-base font-normal text-black dark:text-gray-400">
-                We offer the best services with the best price tailored to your
-                needs
+            <div className={"pl-1"}>
+              <p className={"text-xs text-darkgrey"}>
+                by <span className={"font-bold"}>Mayfa Shadrina </span>
+                on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
+              <p className={"font-bold text-blackmig text-base"}>
+                This is a Title This is a Title This is a Title This is a Title
+              </p>
+              <p className={" text-blackmig gilroy-regular text-xs"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                Hardware
+              </span>
             </div>
-          </a>
-          <a
-            href="#"
-            class="flex md:mt-0 mt-4 items-center bg-white rounded-lg border shadow-md md:flex-row md:max-w-xl hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700"
-          >
+          </div>
+          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
             <img
-              className="p-4"
-              src="/image/landingpage/cost_efficient.png"
-              style={{ height: "111px" }}
-              alt=""
+              className={"m-1"}
+              style={{ width: "260px", height: "184px" }}
+              src="/image/landingpage/Hardware.png"
             />
-            <div className="flex flex-col items-start px-2">
-              <h5 className="mb-2 text-xl font-bold tracking-tight text-primarygreen dark:text-white">
-                Cost Efficient
-              </h5>
-              <p className="mb-3 text-left text-sm md:text-base text-black font-normal text-gray-700 dark:text-gray-400">
-                We help you grow and offer solutions to help optimized your
-                bussiness
+            <div className={"pl-1"}>
+              <p className={"text-xs text-darkgrey"}>
+                by <span className={"font-bold"}>Mayfa Shadrina </span>
+                on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
+              <p className={"font-bold text-blackmig text-base"}>
+                This is a Title This is a Title This is a Title This is a Title
+              </p>
+              <p className={" text-blackmig gilroy-regular text-xs"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                Hardware
+              </span>
             </div>
-          </a>
+          </div>
         </div>
       </section>
       {/* <section className={'section3landingpage md:relative md:bottom-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20'} style={{backgroundColor:'white'}}>
@@ -395,101 +369,10 @@ function Blog({}) {
                 </section> */}
       {/* testimonial */}
       {/* client */}
-      <section
-        className={
-          "youronestop py-4 px-4 mt-0 md:mt-24 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
-        }
-      >
-        <div className={"container mx-auto"}>
-          <p
-            className={
-              "text-sm md:text-m text-darkgrey gilroy-bold py-8 md:py-0"
-            }
-          >
-            Join hundreds of our clients and partners in fulfilling your needs
-          </p>
-        </div>
-        <div className={"flex flex-row py-5 px-5"}>
-          <img
-            className={"py-1 px-4"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client1.png"
-          />
-          <img
-            className={"py-1 px-4"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client2.png"
-          />
-          <img
-            className={"py-1 px-4"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client3.png"
-          />
-          <img
-            className={"py-1 px-4"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client4.png"
-          />
-          <img
-            className={"py-1 px-4"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client1.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client2.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client3.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client4.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client1.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client2.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client3.png"
-          />
-          <img
-            className={"py-1 px-4 hidden md:block"}
-            style={{ width: "80px", height: "40px" }}
-            src="/image/landingpage/client4.png"
-          />
-        </div>
-        <div className="md:hidden">
-          <a href="#">
-            <div className="flex mt-5 justify-center">
-              <p className="text-base mr-2 text-primarygreen font-semibold gilroy-semibold">
-                Read More
-              </p>
-              <img
-                className={"py-1"}
-                style={{ width: "8px" }}
-                src="/image/landingpage/arrow-forward-ios.png"
-              />
-            </div>
-          </a>
-        </div>
-      </section>
       {/*section join mig*/}
       <section
         className={
-          "section2landingpagebrowser bg-bgjoinmig md:bottom-16 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section2landingpagebrowser bg-bgjoinmig mt-10 md:bottom-16 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"container mx-auto"}>
@@ -504,7 +387,7 @@ function Blog({}) {
             <div className={"w-2/5 justify-self-start"}>
               <div className="flex flex-col items-start px-10">
                 <h4 className="mb-2 text-2xl font-bold tracking-tight text-black dark:text-white">
-                  Interested in joining MIG?
+                  Hear what our customers said about us!
                 </h4>
                 <div className="flex flex-row py-5">
                   <div className="w-11">
@@ -637,21 +520,21 @@ function Blog({}) {
         <div className={"container mx-auto"}>
           <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-20  -mt-24 py-4 px-8">
             <p className={"text-2xl font-bold"}>
-              Fulfill your IT needs easily!
+              Want help on providing your IT needs?
             </p>
             <p className={"py-5 text-base"}>
               Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+              hardware, software, or even talent hiring? Learn more about what
+              service can we offer to you and your company!
             </p>
-            <Linkk href="/hardware">
+            <Linkk href="/contactus">
               <button
                 className={
                   "text-sm text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
+                  <p className={"px-1"}>Learn More</p>
                   <img
                     className={"py-1 px-1"}
                     style={{ width: "15px" }}
