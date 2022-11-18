@@ -1,3 +1,4 @@
+import { UpOutlined } from "@ant-design/icons";
 import {
   Button,
   Collapse,
@@ -464,7 +465,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.days_left < 30 ? (
+              {record.days_left <= 30 ? (
                 <p className="text-warning">{record.days_left} hari</p>
               ) : (
                 <p>{record.days_left} hari</p>
@@ -529,8 +530,18 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <Collapse className="col-span-3 mb-5" bordered={false} ghost={true}>
-          <Collapse.Panel>
+        <Collapse
+          className="col-span-3 mb-5"
+          bordered={false}
+          ghost={true}
+          expandIconPosition={"right"}
+          expandIcon={({ isActive }) => (
+            <UpOutlined rotate={isActive ? 180 : 0} />
+          )}
+        >
+          <Collapse.Panel
+            header={<h4 className="mig-heading--4">Statistik</h4>}
+          >
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
               {/* CHART PENEMPATAN KARYAWAN */}
               {loadingChart ? (
@@ -631,7 +642,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         </Collapse>
 
         {/* Table Karyawan */}
-        <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+        <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex items-center justify-between mb-6">
             <h4 className="mig-heading--4 ">Daftar Karyawan</h4>
             <div className="flex flex-row items-center space-x-6">
