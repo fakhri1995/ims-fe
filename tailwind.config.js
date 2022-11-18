@@ -11,6 +11,9 @@ module.exports = {
       fontFamily: {
         mont: ["Montserrat"],
       },
+      boxShadow: {
+        migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
+      },
       backgroundColor: {
         primary: "#1890ff",
         secondary: "#60A5FA",
@@ -42,6 +45,16 @@ module.exports = {
         disabled: "#d4d5d7",
         notice: "#DDB44A",
         warning: '#BF4A40',
+        lightblue: "#E0EEFA",
+        lightgreen: "#DCEEE4",
+        lightgrey: "#E0DCEB",
+        green15: "#188E4D26",
+        accentblue: "#0059A0",
+        bgfooter: "#E5E7E6",
+        bgjoinmig: "#F4F4F4",
+        greenTrans20: "rgba(24, 142, 77, 0.2)",
+        trans60: "#F4F4F499",
+        primarygreen: "#188E4D",
       },
       borderColor: {
         primary: "#1890ff",
@@ -101,6 +114,13 @@ module.exports = {
         closed: `#808080`,
         notice: "#DDB44A",
         warning: '#BF4A40',
+        accentblue: "#0059A0",
+        darkgreen: "#0E6033",
+        accentpurple: "#655299",
+        notice: "#DDB44A",
+        primarygreen: "#188E4D",
+        blackmig: "#262626",
+        darkgrey: "#585858",
       },
       gradientColorStops: {
         state1: `#799F0C`,

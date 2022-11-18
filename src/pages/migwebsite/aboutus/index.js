@@ -2,8 +2,10 @@ import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Button, Card } from "antd";
 import Head from "next/head";
 import Link from "next/link";
+import Linkk from "next/link";
 import React from "react";
 
+import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
 import Layout from "../../../components/migwebsite/layout.js";
 
 function AboutUs({}) {
@@ -14,16 +16,16 @@ function AboutUs({}) {
       </Head>
       <section
         className={
-          "section2people px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 py-8 md:py-32 text-center justify-center "
+          "section2people px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 py-8 md:py-10 text-center justify-center "
         }
       >
         <div className={"pb-8"}>
-          <p className={"text-3xl md:text-4xl gilroy-bold"}>
+          <p className={"text-3xl md:text-4xl gilroy-semibold font-semibold"}>
             Operate your business, more efficient and more agile
           </p>
         </div>
-        <div className={"pb-12"}>
-          <p className={"text-xl w-full gilroy-regular"}>
+        <div className={"pb-2"}>
+          <p className={"text-base text-black w-full gilroy-regular"}>
             Mitramas Infosys global is supporting you staff augmentation &
             delivering software and hardware managed services. We have served
             multiple industries, bringing the best solutions to financial
@@ -36,10 +38,10 @@ function AboutUs({}) {
           "block md:flex px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
-        <div className={"flex-col w-full py-4 md:py-4 pr-0 md:pr-10 m-auto"}>
+        <div className={"flex-col w-full py-1 md:py-1 pr-0 md:pr-10 m-auto"}>
           <p
             className={
-              "gilroy-bold text-left pb-0 md:pb-8 text-2xl md:text-3xl"
+              "gilroy-semibold font-semibold text-left pb-0 md:pb-8 text-xl md:text-2xl"
             }
           >
             Who we are
@@ -47,7 +49,7 @@ function AboutUs({}) {
           {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
-          <p className={"pb-8 gilroy-regular text-xl"}>
+          <p className={"pb-8 gilroy-regular text-base"}>
             Founded in 2003, Mitramas Infosys Global (MIG) directly partner with
             global providers and collaborate with local IT talents to offer you
             a seamless technology experience. Experienced across archipelago for
@@ -57,7 +59,7 @@ function AboutUs({}) {
             goals.
           </p>
 
-          <p className={"pb-8 text-xl"}>
+          <p className={"pb-8 text-base gilroy-regular"}>
             <Link href="joinourteam">
               <em className={"cursor-pointer text-green-500 underline"}>
                 Careers
@@ -71,12 +73,12 @@ function AboutUs({}) {
         className={"py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"}
       >
         <div className={"pb-4"}>
-          <p className={"text-2xl md:text-3xl gilroy-bold"}>
+          <p className={"text-xl md:text-2xl gilroy-semibold"}>
             Support your business efficiently
           </p>
         </div>
         <div>
-          <p className={"text-xl w-full md:w-2/5 gilroy-medium"}>
+          <p className={"text-base w-full gilroy-regular"}>
             One stop seamless technology solution to help you achieve business
             goals and optimize your cost{" "}
           </p>
@@ -87,21 +89,27 @@ function AboutUs({}) {
               "flex-col flex bg-white mr-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg"
             }
           >
-            <div className={"min-h-full relative pb-8"} style={{}}>
+            <div className={"min-h-full relative pb-4"} style={{}}>
               <img
                 style={{ height: "40px", width: "auto" }}
                 src="/image/navbar/hardware.svg"
               ></img>
-              <p className={"text-left py-3 gilroy-bold text-xl"}>Hardware</p>
-              <p className={"gilroy-regular text-xl"}>
+              <p
+                className={
+                  "text-left py-3 gilroy-semibold text-black text-base"
+                }
+              >
+                Hardware
+              </p>
+              <p className={"gilroy-regular text-base"}>
                 Optimize your cost by leasing and maintenances variety of
                 electronic equipments
               </p>
-              <div className={"absolute bottom-0"}>
+              <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/hardware" }}>
                   <a
                     className={
-                      "gilroy-bold text-xl text-green-800 hover:text-green-800 focus:text-green-800"
+                      "gilroy-semibold font-semibold text-base text-primarygreen hover:text-green-800 focus:text-primarygreen "
                     }
                   >
                     Get yours&nbsp;{" "}
@@ -119,21 +127,27 @@ function AboutUs({}) {
               "flex-col bg-white my-5 md:my-0 mx-0 md:mx-5 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg"
             }
           >
-            <div className={"min-h-full relative pb-8"} style={{}}>
+            <div className={"min-h-full relative pb-4"} style={{}}>
               <img
                 style={{ height: "40px", width: "auto", position: "relative" }}
                 src="/image/navbar/software.svg"
               ></img>
-              <p className={"text-left py-3 gilroy-bold text-xl"}>Software</p>
-              <p className={"gilroy-regular text-xl"}>
+              <p
+                className={
+                  "text-left py-3 gilroy-semibold text-black text-base"
+                }
+              >
+                Software
+              </p>
+              <p className={"gilroy-regular text-base"}>
                 We support your companies to simplify and automate the process
                 through digitalization
               </p>
-              <div className={"absolute bottom-0"}>
+              <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/software" }}>
                   <a
                     className={
-                      "gilroy-bold text-green-800 text-xl hover:text-green-800 focus:text-green-800"
+                      "gilroy-semibold font-semibold text-base text-primarygreen hover:text-green-800 focus:text-primarygreen"
                     }
                   >
                     Build now&nbsp;{" "}
@@ -151,20 +165,26 @@ function AboutUs({}) {
               "flex-col bg-white mdl-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg"
             }
           >
-            <div className={"min-h-full relative pb-8"} style={{}}>
+            <div className={"min-h-full relative pb-4"} style={{}}>
               <img
                 style={{ height: "40px", width: "auto", position: "relative" }}
                 src="/image/navbar/talents.svg"
               ></img>
-              <p className={"text-left py-3 gilroy-bold text-xl"}>Talents</p>
-              <p className={"gilroy-regular text-xl"}>
+              <p
+                className={
+                  "text-left py-3 gilroy-semibold text-black text-base"
+                }
+              >
+                Talents
+              </p>
+              <p className={"gilroy-regular text-base"}>
                 We help you reduce complexity in talent sourcing and management
               </p>
-              <div className={"absolute bottom-0"}>
+              <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/talents" }}>
                   <a
                     className={
-                      "gilroy-bold text-green-800 text-xl hover:text-green-800 focus:text-green-800"
+                      "gilroy-semibold font-semibold text-base text-primarygreen hover:text-green-800 focus:text-primarygreen"
                     }
                   >
                     Setup your team&nbsp;{" "}
@@ -182,26 +202,43 @@ function AboutUs({}) {
 
       <section
         className={
-          "px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 py-8 md:py-16"
+          "px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 pt-4 md:pb-10 md:py-4"
         }
         style={{ background: "#F8F8F8" }}
       >
         <div>
-          <p className={"gilroy-bold text-2xl md:text-3xl pb-4"}>
+          <p
+            className={
+              "gilroy-medium font-semibold text-xl text-black md:text-2xl pb-2"
+            }
+          >
             MIG Locations
           </p>
-          <p className={"gilroy-bold pb-4 text-xl"}>Headquarters</p>
-          <p className={"text-xl"}>Tebet raya no. 42</p>
-          <p className={"pb-4 text-lg"}>South Jakarta, DKI Jakarta,12820</p>
-          <Link href={{ pathname: "/contactus" }}>
-            <Button
-              className={"hover:text-white hover:bg-black text-xl h-auto"}
-              style={{ paddingLeft: "2rem", paddingRight: "2rem" }}
+          <p className={"gilroy-medium font-semibold pb-2 text-xl"}>
+            Headquarters
+          </p>
+          <p className={"text-base font-semibold text-black"}>
+            Location: Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
+          </p>
+
+          <div className={"flex flex-row"}>
+            <p className={"font-semibold text-base"}>Phone:&nbsp;</p>
+            <p className={"text-accentblue text-base underline"}>
+              +62-21-831-4522
+            </p>
+          </div>
+          <div className={"flex flex-row"}>
+            <p className={"font-semibold text-base"}>Email:&nbsp;</p>
+            <a
+              href="mailto:help@mitrasolusi.group"
+              className={"text-accentblue text-base underline"}
             >
-              Contact Us
-            </Button>
-          </Link>
-          <p className={"gilroy-bold py-4 text-xl"}>Coverages</p>
+              help@mitrasolusi.group
+            </a>
+          </div>
+          <p className={"gilroy-bold py-4 text-black font-semibold text-xl"}>
+            Coverages
+          </p>
           <div
             className={"bg-white p-4"}
             style={{ boxShadow: "0 10px 20px rgb(0 0 0 / 20%)" }}
@@ -346,19 +383,7 @@ function AboutUs({}) {
           </div>
         </div>
       </section>
-      {/* <section className={'section5landingpage'} style={{backgroundColor:'#93D9B5'}}>
-                <div className={' md:flex relative justify-between px-4 md:px-20 lg:px-28 xl:px-40'}style={{top:'40%'}}>
-                    <div className={'flex-col text-2xl md:text-3xl text-white font-bold -top-4 md:top-0 relative'} style={{}}>
-                        <p>Let’s be better together</p>
-                    </div>
-                    <div className={'flex-col w-auto'}>
-                        <button className={'text-white flex border-2 text-base md:text-lg border-white px-4 mt-1 focus:outline-none'}>Contact Sales &nbsp;
-                            <ArrowRightOutlined className={'pt-1'}/>
-                        </button>
-
-                    </div>
-                </div>
-            </section> */}
+      <LayoutFormContactUs />
     </Layout>
   );
 }
