@@ -1936,7 +1936,7 @@ const DownloadIconSvg = ({ size, color }) => {
   return <Icon component={downloadIconSvg}></Icon>;
 };
 
-const OneUserIconSvg = ({ size, color }) => {
+const OneUserIconSvg = ({ size, color, strokeWidth }) => {
   const oneUserIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -1944,7 +1944,7 @@ const OneUserIconSvg = ({ size, color }) => {
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth={strokeWidth ? strokeWidth : "1.5"}
       stroke={color ? color : "#597e8d"}
       fill="none"
       strokeLinecap="round"
