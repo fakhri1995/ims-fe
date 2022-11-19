@@ -54,6 +54,8 @@ module.exports = {
         greenTrans20: "rgba(24, 142, 77, 0.2)",
         trans60: "#F4F4F499",
         primarygreen: "#188E4D",
+        darkgreen: "#0E6033",
+        divider: "#E5E7E6",
       },
       borderColor: {
         primary: "#1890ff",
@@ -83,6 +85,7 @@ module.exports = {
         closed: `#808080`,
         disabled: "#d4d5d7",
         notice: "#DDB44A",
+        primarygreen: "#188E4D",
       },
       textColor: {
         primary: "#1890ff",
@@ -118,6 +121,8 @@ module.exports = {
         primarygreen: "#188E4D",
         blackmig: "#262626",
         darkgrey: "#585858",
+        redmig: "#FF3D3F",
+        lightgrey: "#B8B8B8",
       },
       gradientColorStops: {
         state1: `#799F0C`,

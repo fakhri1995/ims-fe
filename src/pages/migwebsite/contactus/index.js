@@ -88,7 +88,12 @@ function ContactUs({}) {
           <LeftContactUs />
         </div>
       </section>
-      <LayoutFormContactUs />
+      <LayoutFormContactUs
+        description={`Need help in providing your needs? Whether they related to
+              hardware, software, or even talent hiring? Contact us and hear
+              what service can we offer to you and your company!`}
+        button_title={"Contact Us"}
+      />
     </Layout>
   );
 }
