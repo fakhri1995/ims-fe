@@ -73,12 +73,7 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeViewProfileIndex = ({
-  initProps,
-  dataProfile,
-  sidemenu,
-  employeeId,
-}) => {
+const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   /**
    * Dependencies
    */
@@ -164,7 +159,6 @@ const EmployeeViewProfileIndex = ({
   return (
     <LayoutDashboard2
       dataProfile={dataProfile}
-      sidemenu={sidemenu}
       tok={initProps}
       st={st}
       pathArr={pathArr}
@@ -343,7 +337,6 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "employee-list",
       employeeId,
     },
   };
