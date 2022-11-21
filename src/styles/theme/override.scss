@@ -357,14 +357,17 @@ ol {
     }
   }
 }
-.slick-prev:before {
-  content: "<";
-  color: red;
-  font-size: 30px;
+.ant-input {
+  border-color: #b8b8b8;
+  outline: 0;
 }
-
-.slick-next:before {
-  content: "->";
-  color: red;
-  font-size: 30px;
+.ant-input lg {
+  border-color: #b8b8b8;
+  outline: 0;
+}
+.ant-input:focus {
+  border-color: #b8b8b8;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
+  box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
 }
