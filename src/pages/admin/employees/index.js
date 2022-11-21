@@ -43,6 +43,7 @@ import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
 import ButtonSysColor from "../../../components/buttonColor";
+import { ChartDoughnut } from "../../../components/chart/chartCustom";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
 import DrawerCandidatePreview from "../../../components/drawer/recruitment/drawerCandidatePreview";
@@ -74,7 +75,7 @@ import {
   TableCustomEmployeeList,
   TableCustomRecruitmentCandidate,
 } from "../../../components/table/tableCustom";
-import { H1 } from "../../../components/typography";
+import { H1, H2, Text } from "../../../components/typography";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
   ArcElement,
@@ -133,6 +134,18 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2. Use state
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
+  const [topCompanyCount, setTopCompanyCount] = useState([
+    {
+      name: "Bank Bukopin",
+      employee_count: 5,
+    },
+    {
+      name: "Mitramas",
+      employee_count: 10,
+    },
+  ]);
+  const [topPositionCount, setTopPositionCount] = useState([]);
+  const [statusCount, setStatusCount] = useState([]);
 
   // 2.2. Table Employee List
   // filter data
@@ -382,6 +395,17 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
+  // 4.2. Show active employees only
+  const handleSwitchActiveEmployee = () => {
+    if (activeEmployeeSwitch === true) {
+      // fetch all emmployees
+    } else {
+      // fetch active employee only
+    }
+
+    setActiveEmployeeSwitch(!activeEmployeeSwitch);
+  };
+
   // "Daftar Karyawan" Table's columns
   const columnEmployee = [
     {
@@ -545,97 +569,36 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
               {/* CHART PENEMPATAN KARYAWAN */}
               {loadingChart ? (
-                <>
-                  <Spin />
-                </>
+                <Spin />
               ) : (
-                <div className="flex flex-col shadow-md rounded-md bg-white p-5 ">
-                  <div className="flex items-center justify-between mb-4">
-                    <H1>Penempatan Karyawan</H1>
-                  </div>
-                  <div className=" w-full flex justify-center">
-                    {/* <Doughnut
-                      data={{
-                        labels: topCompanyCount.map((doc) => doc.name),
-                        datasets: [
-                          {
-                            data: topCompanyCount.map((doc) => doc.resumes_count),
-                            backgroundColor: topCompanyCount.map(
-                              (doc, idx) =>
-                                dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                            ),
-                            borderColor: topCompanyCount.map(
-                              (doc, idx) =>
-                                dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                            ),
-                            borderWidth: 1,
-                          },
-                        ],
-                      }}
-                      options={{
-                        title: {
-                          display: false,
-                        },
-                        legend: {
-                          display: false,
-                        },
-                        maintainAspectRatio: false,
-                        cutout: 55,
-                        spacing: 5,
-                      }}
-                    /> */}
-                  </div>
-
-                  {/* <div className="flex flex-col w-full mt-5">
-                    {topCompanyCount.map((doc, idx) => (
-                      <div
-                        key={idx}
-                        className="flex justify-between items-center mb-1"
-                      >
-                        <div className="flex">
-                          <div
-                            className=" w-1 mr-2"
-                            style={{
-                              backgroundColor: `${
-                                dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                              }`,
-                            }}
-                          ></div>
-                          <Text>{doc.name}</Text>
-                        </div>
-                        <div className="flex">
-                          <H2>{doc.resumes_count}</H2>
-                        </div>
-                      </div>
-                    ))}
-                  </div> */}
-                </div>
+                <ChartDoughnut
+                  title={"Penempatan Karyawan"}
+                  dataChart={topCompanyCount}
+                  objName={"name"}
+                  value={"employee_count"}
+                />
               )}
               {/* CHART POSISI */}
               {loadingChart ? (
-                <>
-                  <Spin />
-                </>
+                <Spin />
               ) : (
-                <div className="flex flex-col shadow-md rounded-md bg-white p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <H1>Posisi</H1>
-                  </div>
-                  <div className=" w-full flex justify-center"></div>
-                </div>
+                <ChartDoughnut
+                  title={"Posisi"}
+                  dataChart={topCompanyCount}
+                  objName={"name"}
+                  value={"employee_count"}
+                />
               )}
               {/* CHART STATUS KARYAWAN */}
               {loadingChart ? (
-                <>
-                  <Spin />
-                </>
+                <Spin />
               ) : (
-                <div className="flex flex-col shadow-md rounded-md bg-white p-5">
-                  <div className="flex items-center justify-between mb-4">
-                    <H1>Status Karyawan</H1>
-                  </div>
-                  <div className=" w-full flex justify-center"></div>
-                </div>
+                <ChartDoughnut
+                  title={"Status Karyawan"}
+                  dataChart={topCompanyCount}
+                  objName={"name"}
+                  value={"employee_count"}
+                />
               )}
             </div>
           </Collapse.Panel>
@@ -649,7 +612,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               <div className="flex flex-row items-center space-x-2 text-primary100">
                 <Switch
                   checked={activeEmployeeSwitch}
-                  onClick={() => setActiveEmployeeSwitch(!activeEmployeeSwitch)}
+                  onClick={handleSwitchActiveEmployee}
                 />
                 <p>Karyawan Aktif</p>
               </div>
