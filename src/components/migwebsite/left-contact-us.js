@@ -5,11 +5,15 @@ import React from "react";
 
 function LeftContactUs({ children }) {
   return (
-    <div className={"w-full md:w-1/2"}>
-      <p className={"text-3xl font-bold pb-8 pt-10"}>
+    <div className={"w-full md:w-2/5"}>
+      <p
+        className={
+          "text-2xl font-semibold text-blackmig gilroy-semibold pb-8 pt-10"
+        }
+      >
         We’d love to hear from you
       </p>
-      <p className={"text-lg pb-4"}>
+      <p className={"text-sm gilroy-regular pb-4 w-[400px]"}>
         Have questions about our products, features, or company? Our teams will
         help you.
       </p>
@@ -26,17 +30,21 @@ function LeftContactUs({ children }) {
         ></iframe>
       </div>
       <div className={"flex flex-row"}>
-        <p className={"font-semibold text-base"}>Location:&nbsp;</p>
-        <p classNamme={"text-base text-black"}>
+        <p className={"font-semibold text-base text-blackmig"}>
+          Location:&nbsp;
+        </p>
+        <p classNamme={"text-base text-blackmig gilroy-regular"}>
           Tebet raya no. 72 South Jakarta, DKI Jakarta,12820
         </p>
       </div>
       <div className={"flex flex-row"}>
-        <p className={"font-semibold text-base"}>Contact:&nbsp;</p>
+        <p className={"font-semibold text-base text-blackmig"}>
+          Contact:&nbsp;
+        </p>
         <p className={"text-accentblue text-base underline"}>+62-21-831-4522</p>
       </div>
       <div className={"flex flex-row"}>
-        <p className={"font-semibold text-base"}>Email:&nbsp;</p>
+        <p className={"font-semibold text-base text-blackmig"}>Email:&nbsp;</p>
         <a
           href="mailto:help@mitrasolusi.group"
           className={"text-accentblue text-base underline"}
@@ -46,7 +54,7 @@ function LeftContactUs({ children }) {
       </div>
 
       <div className={"mt-10"}>
-        <p className={"text-sm text-black font-bold gilroy-bold"}>
+        <p className={"text-sm text-blackmig font-semibold gilroy-semibold"}>
           Or reach us through:
         </p>
         <div className={"flex flex-row mt-4"}>

@@ -41,6 +41,7 @@ function Hardware({}) {
     interested_in: "hardware",
     message: null,
   });
+  const [email, setEmail] = useState(null);
   const [feedback, setFeedback] = useState(true);
   const [heightt, setHeightt] = useState("");
   useEffect(() => {
@@ -94,50 +95,83 @@ function Hardware({}) {
 
       <section
         className={
-          "md:pt-60 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
-        }
-      >
-        <div className={"container mx-auto"}>
-          <p className={"text-3xl md:text-4xl gilroy-bold py-8 md:py-0"}>
-            Nation-wide managed service model for your IT hardwares
-          </p>
-        </div>
-      </section>
-
-      <section
-        className={
-          "section2hardware py-8 md:py-0 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section2hardware py-8 md:py-4 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"hidden md:flex container mx-auto"}>
           <div className={"flex-col w-1/2 my-auto"}>
             <p className={"text-3xl pb-4 gilroy-bold"}>
-              Managing IT infrastructures is{" "}
-              <span
-                style={{
-                  borderBottom: "solid 3px #188E4D",
-                  paddingBottom: "2.5px",
-                }}
-              >
-                challenging
-              </span>
+              Nation-wide managed service model for your IT hardwares
             </p>
             <p className={"mr-20 pb-4 gilroy-medium text-xl"}>
               Rapid pace of change, uncertainty on scalability, and heavy
               capital requirements might break your focus from executing your
               core business.
             </p>
-            <p className={"mr-20 gilroy-medium text-xl"}>
-              Let us help you to scale and manage your IT infrastructure with :
-            </p>
-            <ul className={"list-inside list-disc"}>
-              <li className={"gilroy-medium text-xl"}>
-                <span className={"gilroy-bold"}>predictable</span> monthly cost{" "}
-              </li>
-              <li className={"gilroy-medium text-xl"}>
-                <span className={"gilroy-bold"}>guaranteed</span> service level
-              </li>
-            </ul>
+            <div className={"my-6"}>
+              <p className={"mr-20 gilroy-bold text-primarygreen text-xl"}>
+                Reach us to get more information
+              </p>
+              <div className={"flex flex-row items-center my-4"}>
+                <Input
+                  name={"email"}
+                  className={"w-1/2 h-[40px]"}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                  placeholder="Enter your email here."
+                />
+                <button
+                  className={
+                    "text-base text-center ml-4 -mt-1 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  }
+                >
+                  <div className={"flex flex-row justify-between"}>
+                    <p className={"px-1"}>Let's talk!</p>
+                    <img
+                      className={"py-1 px-1"}
+                      style={{ width: "15px" }}
+                      src="/image/landingpage/arrow-forward.png"
+                    />
+                  </div>
+                </button>
+              </div>
+              <div
+                className={
+                  "my-4 w-3/4 border rounded-lg shadow-lg p-4 bg-green15"
+                }
+              >
+                <div className={"flex flex-row"}>
+                  <img
+                    className={"pr-1"}
+                    src="/image/landingpage/info.png"
+                    style={{ width: "30px", height: "30px" }}
+                  />
+                  <div>
+                    <p className={"text-sm text-blackmig gilroy-regular"}>
+                      Let us help you to scale and manage your IT infrastructure
+                      with :
+                    </p>
+                    <ul>
+                      <li>
+                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                          {""}
+                          <span className={"font-bold"}>predictable</span>{" "}
+                          monthly cost
+                        </p>
+                      </li>
+                      <li>
+                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                          {""}
+                          <span className={"font-bold"}>guaranteed</span>{" "}
+                          service level
+                        </p>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
           <div className={"flex-col w-1/2 my-auto"}>
             <img src="/image/hardware/Hardware-Solution.png"></img>
@@ -178,7 +212,307 @@ function Hardware({}) {
           </div>
         </div>
       </section>
-
+      {/* section jenis hardware */}
+      <section
+        className={
+          "section2somehardwarebrowser bg-bgjoinmig mt-20 pt-10 md:bottom-16 md:relative py-8 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+        }
+      >
+        <div className={"container text-center mx-auto px-10"}>
+          <p className={"text-xl md:text-2xl gilroy-bold py-8 md:py-0"}>
+            Let’s see what{" "}
+            <span
+              style={{
+                borderBottom: "solid 3px #188E4D",
+                paddingBottom: "2.5px",
+              }}
+            >
+              IT hardwares
+            </span>{" "}
+            we can offer
+          </p>
+          <div className={"grid md:grid-cols-4 justify-items-center mt-10"}>
+            <div className={"w-[252px] bg-lightblue pt-6"}>
+              <div className={"px-2"}>
+                <p className={"text-2xl Gilroy-bold font-bold text-accentblue"}>
+                  Banking Machinery
+                </p>
+                <p
+                  className={
+                    "py-4 text-sm text-blackmig gilroy-semibold italic"
+                  }
+                >
+                  Help you to grow your financial business domestically
+                </p>
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/Hardware.png"
+                    alt=""
+                    className="w-[189px] h-[110px]"
+                  />
+                </div>
+                <div className={"py-6 grid justify-items-center"}>
+                  <button
+                    className={
+                      "text-base text-center -mt-1 text-white border-2 bg-accentblue border-accentblue px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                    }
+                  >
+                    <div className={"flex flex-row justify-between"}>
+                      <p className={"px-1"}>See catalogs</p>
+                      <img
+                        className={"py-1 px-1"}
+                        style={{ width: "15px" }}
+                        src="/image/landingpage/arrow-forward.png"
+                      />
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div className={"w-[252px] py-4 bg-divider"}>
+                <p
+                  className={
+                    "text-left text-xs font-semibold text-blackmig ml-4"
+                  }
+                >
+                  Product:
+                </p>
+                <div
+                  className={
+                    "grid md:grid-cols-2 text-left ml-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  <ul>
+                    <li>Laptop</li>
+                  </ul>
+                  <ul>
+                    <li>Dekstop</li>
+                  </ul>
+                  <ul>
+                    <li>Smartphone</li>
+                  </ul>
+                  <ul>
+                    <li>Tablet</li>
+                  </ul>
+                  <ul>
+                    <li>TV</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className={"w-[252px]  bg-lightgreen px-2 pt-6"}>
+              <div className={"px-2"}>
+                <p className={"text-2xl Gilroy-bold font-bold text-darkgreen"}>
+                  Workstation
+                </p>
+                <p
+                  className={
+                    "py-4 text-sm text-blackmig gilroy-semibold italic"
+                  }
+                >
+                  Help you to grow your financial business domestically
+                </p>
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/career-mig.png"
+                    alt=""
+                    className="w-[189px] h-[110px]"
+                  />
+                </div>
+                <div className={"py-6 grid justify-items-center"}>
+                  <button
+                    className={
+                      "text-base text-center -mt-1 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                    }
+                  >
+                    <div className={"flex flex-row justify-between"}>
+                      <p className={"px-1"}>See catalogs</p>
+                      <img
+                        className={"py-1 px-1"}
+                        style={{ width: "15px" }}
+                        src="/image/landingpage/arrow-forward.png"
+                      />
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div className={"w-[252px] py-4 bg-divider"}>
+                <p
+                  className={
+                    "text-left text-xs font-semibold text-blackmig ml-4"
+                  }
+                >
+                  Product:
+                </p>
+                <div
+                  className={
+                    "grid md:grid-cols-2 text-left ml-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  <ul>
+                    <li>Laptop</li>
+                  </ul>
+                  <ul>
+                    <li>Dekstop</li>
+                  </ul>
+                  <ul>
+                    <li>Smartphone</li>
+                  </ul>
+                  <ul>
+                    <li>Tablet</li>
+                  </ul>
+                  <ul>
+                    <li>TV</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className={"w-[252px]  bg-lightgrey pt-6"}>
+              <div className={"px-2"}>
+                <p
+                  className={"text-2xl Gilroy-bold font-bold text-accentpurple"}
+                >
+                  Server & Hosting
+                </p>
+                <p
+                  className={
+                    "py-4 text-sm text-blackmig gilroy-semibold italic"
+                  }
+                >
+                  Help you to grow your financial business domestically
+                </p>
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-software.png"
+                    alt=""
+                    className="w-[189px] h-[110px]"
+                  />
+                </div>
+                <div className={"py-6 grid justify-items-center"}>
+                  <button
+                    className={
+                      "text-base text-center -mt-1 text-white border-2 bg-accentpurple border-accentpurple px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                    }
+                  >
+                    <div className={"flex flex-row justify-between"}>
+                      <p className={"px-1"}>See catalogs</p>
+                      <img
+                        className={"py-1 px-1"}
+                        style={{ width: "15px" }}
+                        src="/image/landingpage/arrow-forward.png"
+                      />
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div className={"w-[252px] py-4 bg-divider"}>
+                <p
+                  className={
+                    "text-left text-xs font-semibold text-blackmig ml-4"
+                  }
+                >
+                  Product:
+                </p>
+                <div
+                  className={
+                    "grid md:grid-cols-2 text-left ml-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  <ul>
+                    <li>Laptop</li>
+                  </ul>
+                  <ul>
+                    <li>Dekstop</li>
+                  </ul>
+                  <ul>
+                    <li>Smartphone</li>
+                  </ul>
+                  <ul>
+                    <li>Tablet</li>
+                  </ul>
+                  <ul>
+                    <li>TV</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div className={"w-[252px]  bg-lightpink pt-6"}>
+              <div className={"px-2"}>
+                <p className={"text-2xl Gilroy-bold font-bold text-redmig2"}>
+                  UPS
+                </p>
+                <p
+                  className={
+                    "py-4 text-sm text-blackmig gilroy-semibold italic"
+                  }
+                >
+                  Help you to grow your financial business domestically
+                </p>
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-talent.png"
+                    alt=""
+                    className="w-[189px] h-[110px]"
+                  />
+                </div>
+                <div className={"py-6 grid justify-items-center"}>
+                  <button
+                    className={
+                      "text-base text-center -mt-1 text-white border-2 bg-redmig border-redmig px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                    }
+                  >
+                    <div className={"flex flex-row justify-between"}>
+                      <p className={"px-1"}>See catalogs</p>
+                      <img
+                        className={"py-1 px-1"}
+                        style={{ width: "15px" }}
+                        src="/image/landingpage/arrow-forward.png"
+                      />
+                    </div>
+                  </button>
+                </div>
+              </div>
+              <div className={"w-[252px] py-4 bg-divider"}>
+                <p
+                  className={
+                    "text-left text-xs font-semibold text-blackmig ml-4"
+                  }
+                >
+                  Product:
+                </p>
+                <div
+                  className={
+                    "grid md:grid-cols-2 text-left ml-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  <ul>
+                    <li>Laptop</li>
+                  </ul>
+                  <ul>
+                    <li>Dekstop</li>
+                  </ul>
+                  <ul>
+                    <li>Smartphone</li>
+                  </ul>
+                  <ul>
+                    <li>Tablet</li>
+                  </ul>
+                  <ul>
+                    <li>TV</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={"pt-6 pb-4 text-center px-72"}>
+            <p className={"font-regular gilroy-regular text-base"}>
+              <span className={"font-semibold"}>
+                Didn’t find what you were looking for?
+              </span>{" "}
+              Reach us to get your orders customized based on your IT needs
+            </p>
+          </div>
+        </div>
+      </section>
       <section
         className={
           "section3hardware py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"

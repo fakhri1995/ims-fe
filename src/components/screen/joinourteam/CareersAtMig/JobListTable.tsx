@@ -139,8 +139,14 @@ export const JobListTable: FC = () => {
       {data && (
         <div className="flex flex-col justify-center items-center space-y-4">
           <p>
-            Showing <strong>{data?.to}</strong> out of{" "}
-            <strong>{data?.total} jobs</strong>
+            Showing{" "}
+            <span className={"text-base text-blackmig font-semibold"}>
+              {data?.to}
+            </span>{" "}
+            out of{" "}
+            <span className={"text-base text-blackmig font-semibold"}>
+              {data?.total} jobs
+            </span>
           </p>
 
           <Button
