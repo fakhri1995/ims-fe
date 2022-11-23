@@ -76,9 +76,19 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
   //INIT
   const rt = useRouter();
-  const pathArr = rt.pathname.split("/")?.slice(1);
-  // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Detail Kandidat";
+  // Breadcrumb url
+  const pathArr = rt.asPath.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+
+  // use when this page comes from Recruitment Detail
+  // url path: `/admin/recruitment/:recruitmentId/:resumeId` (config in next.config.js)
+  if (pathTitleArr.length === 4) {
+    pathTitleArr[pathTitleArr.length - 2] = "Detail Kandidat";
+  }
+
+  pathTitleArr[pathTitleArr.length - 1] = "Resume Kandidat";
 
   // 1. STATE
   // 1.1. display
@@ -473,6 +483,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col gap-6">
         {/* SECTION BASIC INFO */}
