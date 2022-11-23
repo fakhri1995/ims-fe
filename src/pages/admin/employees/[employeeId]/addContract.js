@@ -115,7 +115,20 @@ const EmployeeContractAddIndex = ({
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
-  const [dataEmployee, setDataEmployee] = useState({});
+  const [dataContract, setDataContract] = useState({
+    contract_name: "",
+    contract_status: "",
+    position: "",
+    employee_status: false,
+    contract_doc: "",
+    pkwt: "",
+    contract_starts: "",
+    contract_ends: "",
+    placement: "",
+    new_office: "",
+    resign_date: "",
+    benefits: {},
+  });
 
   const [resumeId, setResumeId] = useState(0);
 
@@ -204,7 +217,11 @@ const EmployeeContractAddIndex = ({
             </ButtonSys>
           </div>
         </div>
-        <EmployeeContractForm initProps={initProps} />
+        <EmployeeContractForm
+          initProps={initProps}
+          dataContract={dataContract}
+          setDataContract={setDataContract}
+        />
       </div>
 
       {/* Drawer Update Recruitment Candidate */}

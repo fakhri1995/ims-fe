@@ -35,7 +35,7 @@ const EmployeeInventoryForm = dynamic(
   { ssr: false }
 );
 
-const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
@@ -63,6 +63,46 @@ const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
   // 1. USE STATE
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [currentTab, setCurrentTab] = useState("1");
+  const [dataEmployeeProfile, setDataEmployeeProfile] = useState({
+    id_photo: "",
+    name: "",
+    nip: "",
+    nik: "",
+    alias: "",
+    telp: "",
+    email_office: "",
+    email_personal: "",
+    domicile: "",
+    birth_place: "",
+    birth_date: "",
+    gender: "",
+    blood_type: "",
+    marital_status: "",
+    child_total: "",
+    mother_name: "",
+    npwp: "",
+    bpjsk: "",
+    bpjstk: "",
+    rek_bukopin: "",
+    rek_other: "",
+  });
+
+  const [dataContract, setDataContract] = useState({
+    contract_name: "",
+    contract_status: "",
+    position: "",
+    employee_status: false,
+    contract_doc: "",
+    pkwt: "",
+    contract_starts: "",
+    contract_ends: "",
+    placement: "",
+    new_office: "",
+    resign_date: "",
+    benefits: {},
+  });
+
+  const [inventoryList, setInventoryList] = useState([]);
 
   // 2. USE EFFECT
 
@@ -193,13 +233,24 @@ const EmployeeCreate = ({ initProps, dataProfile, sidemenu }) => {
           onTabClick={(key) => setCurrentTab(key)}
         >
           <Tabs.TabPane tab="Profil Karyawan" key="1">
-            <EmployeeProfileForm />
+            <EmployeeProfileForm
+              dataEmployeeProfile={dataEmployeeProfile}
+              setDataEmployeeProfile={setDataEmployeeProfile}
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Kontrak Karyawan" key="2">
-            <EmployeeContractForm initProps={initProps} />
+            <EmployeeContractForm
+              initProps={initProps}
+              dataContract={dataContract}
+              setDataContract={setDataContract}
+            />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Inventaris & Piranti" key="3">
-            <EmployeeInventoryForm initProps={initProps} />
+            <EmployeeInventoryForm
+              initProps={initProps}
+              inventoryList={inventoryList}
+              setInventoryList={setInventoryList}
+            />
           </Tabs.TabPane>
         </Tabs>
       </div>
@@ -248,4 +299,4 @@ export async function getServerSideProps({ req, res }) {
   };
 }
 
-export default EmployeeCreate;
+export default EmployeeCreateIndex;

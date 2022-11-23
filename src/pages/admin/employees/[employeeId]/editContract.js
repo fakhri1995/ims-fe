@@ -98,7 +98,7 @@ const EmployeeContractEditIndex = ({
   //INIT
   const rt = useRouter();
   // Breadcrumb url
-  const pathArr = rt.pathname.split("/").slice(1);
+  const pathArr = rt.asPath.split("/").slice(1);
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
@@ -118,7 +118,20 @@ const EmployeeContractEditIndex = ({
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
-  const [dataEmployee, setDataEmployee] = useState({});
+  const [dataContract, setDataContract] = useState({
+    contract_name: "",
+    contract_status: "",
+    position: "",
+    employee_status: false,
+    contract_doc: "",
+    pkwt: "",
+    contract_starts: "",
+    contract_ends: "",
+    placement: "",
+    new_office: "",
+    resign_date: "",
+    benefits: {},
+  });
 
   const [resumeId, setResumeId] = useState(0);
 
@@ -133,7 +146,7 @@ const EmployeeContractEditIndex = ({
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // 2. USE EFFECT
-  // 2.1 Get employee detail
+  // 2.1 Get employee contract detail
   // useEffect(() => {
   //   if (!isAllowedToGetEmployee) {
   //     permissionWarningNotification("Mendapatkan", "Detail Karyawan");
@@ -155,7 +168,7 @@ const EmployeeContractEditIndex = ({
   //       .then((response) => response.json())
   //       .then((response2) => {
   //         if (response2.success) {
-  //           setDataEmployee(response2.data);
+  //           setDataDisplay(response2.data);
   //           setResumeId(response2.data.resume?.id);
   //         } else {
   //           notification.error({
@@ -207,7 +220,11 @@ const EmployeeContractEditIndex = ({
             </ButtonSys>
           </div>
         </div>
-        <EmployeeContractForm initProps={initProps} />
+        <EmployeeContractForm
+          initProps={initProps}
+          dataContract={dataContract}
+          setDataContract={setDataContract}
+        />
       </div>
 
       {/* Drawer Update Recruitment Candidate */}

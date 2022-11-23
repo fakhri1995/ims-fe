@@ -115,7 +115,7 @@ const EmployeeInventoryAddIndex = ({
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
-  const [dataEmployee, setDataEmployee] = useState({});
+  const [inventoryList, setInventoryList] = useState([]);
 
   const [resumeId, setResumeId] = useState(0);
 
@@ -204,7 +204,12 @@ const EmployeeInventoryAddIndex = ({
             </ButtonSys>
           </div>
         </div>
-        <EmployeeInventoryForm initProps={initProps} />
+        <EmployeeInventoryForm
+          initProps={initProps}
+          isAdd={true}
+          inventoryList={inventoryList}
+          setInventoryList={setInventoryList}
+        />
       </div>
 
       {/* Drawer Update Recruitment Candidate */}

@@ -114,7 +114,29 @@ const EmployeeProfileEditIndex = ({
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
-  const [dataEmployee, setDataEmployee] = useState({});
+  const [dataEmployeeProfile, setDataEmployeeProfile] = useState({
+    id_photo: "",
+    name: "",
+    nip: "",
+    nik: "",
+    alias: "",
+    telp: "",
+    email_office: "",
+    email_personal: "",
+    domicile: "",
+    birth_place: "",
+    birth_date: "",
+    gender: "",
+    blood_type: "",
+    marital_status: "",
+    child_total: "",
+    mother_name: "",
+    npwp: "",
+    bpjsk: "",
+    bpjstk: "",
+    rek_bukopin: "",
+    rek_other: "",
+  });
 
   const [resumeId, setResumeId] = useState(0);
 
@@ -203,7 +225,10 @@ const EmployeeProfileEditIndex = ({
             </ButtonSys>
           </div>
         </div>
-        <EmployeeProfileForm />
+        <EmployeeProfileForm
+          dataEmployeeProfile={dataEmployeeProfile}
+          setDataEmployeeProfile={setDataEmployeeProfile}
+        />
       </div>
 
       {/* Drawer Update Recruitment Candidate */}

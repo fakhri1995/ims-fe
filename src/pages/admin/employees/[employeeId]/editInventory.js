@@ -66,6 +66,7 @@ import {
 } from "../../../../components/modal/modalCustom";
 import EmployeeContractForm from "../../../../components/screen/employee/create/contract";
 import EmployeeInventoryForm from "../../../../components/screen/employee/create/inventory";
+import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
 import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
@@ -113,7 +114,7 @@ const EmployeeInventoryEditIndex = ({
   );
 
   const { query } = useRouter();
-  // console.log(query)
+  console.log(query);
 
   // 1. STATE
   // 1.1. display
@@ -121,7 +122,8 @@ const EmployeeInventoryEditIndex = ({
   const [currentTab, setCurrentTab] = useState("1");
   const [dataEmployee, setDataEmployee] = useState({});
 
-  const [resumeId, setResumeId] = useState(0);
+  const [inventoryList, setInventoryList] = useState([]);
+  const [dataPICList, setDataPICList] = useState([]);
 
   const [refresh, setRefresh] = useState(-1);
 
@@ -208,7 +210,13 @@ const EmployeeInventoryEditIndex = ({
             </ButtonSys>
           </div>
         </div>
-        <EmployeeInventoryForm initProps={initProps} />
+        {/* <InventoryForm
+          idx={query.id}
+          idx={1}
+          inventoryList={inventoryList}
+          setInventoryList={setInventoryList}
+          dataPICList={dataPICList}
+        /> */}
       </div>
 
       {/* Drawer Update Recruitment Candidate */}
