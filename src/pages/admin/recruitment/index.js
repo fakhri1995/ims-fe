@@ -28,6 +28,8 @@ import {
   RECRUITMENTS_ADD,
   RECRUITMENTS_DELETE,
   RECRUITMENTS_GET,
+  RECRUITMENTS_UPDATE_STAGE,
+  RECRUITMENTS_UPDATE_STATUS,
   RECRUITMENT_ACCOUNT_GENERATE,
   RECRUITMENT_ACCOUNT_TOKEN_GET,
   RECRUITMENT_ADD,
@@ -41,7 +43,6 @@ import {
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
-  RECRUITMENT_UPDATE,
   RECRUITMENT_UPDATE_STAGE,
   RECRUITMENT_UPDATE_STATUS,
   SIDEBAR_RECRUITMENT_SETUP,
@@ -115,13 +116,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
   const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
   const isAllowedToAddRecruitments = hasPermission(RECRUITMENTS_ADD);
-  const isAllowedToUpdateRecruitment = hasPermission(RECRUITMENT_UPDATE);
   const isAllowedToDeleteRecruitments = hasPermission(RECRUITMENTS_DELETE);
   const isAllowedToGetRecruitmentCount = hasPermission(RECRUITMENT_COUNT_GET);
-  const canUpdateRecruitment = hasPermission([
-    RECRUITMENT_UPDATE,
-    RECRUITMENT_GET,
-  ]);
 
   const isAllowedToGetRecruitmentRolesList = hasPermission(
     RECRUITMENT_ROLES_LIST_GET
@@ -138,6 +134,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
+
+  const canUpdateStages = hasPermission(RECRUITMENTS_UPDATE_STAGE);
+  const canUpdateStatuses = hasPermission(RECRUITMENTS_UPDATE_STATUS);
 
   const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
 
@@ -799,7 +798,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       notes: dataUpdateStage.notes,
     };
 
-    if (!canUpdateStage) {
+    if (!canUpdateStages) {
       permissionWarningNotification("Mengubah", "Stage Kandidat");
       setLoadingUpdate(false);
       return;
@@ -853,7 +852,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       notes: dataUpdateStatus.notes,
     };
 
-    if (!canUpdateStatus) {
+    if (!canUpdateStatuses) {
       permissionWarningNotification("Mengubah", "Status Kandidat");
       setLoadingUpdate(false);
       return;
@@ -1051,6 +1050,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           onClick={() => {
             setCreateDrawerShown(true);
           }}
+          disabled={!isAllowedToAddRecruitment}
         >
           <PlusIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">Tambah Perorangan</p>
@@ -1062,6 +1062,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           className="flex flex-row space-x-2 items-center
 					bg-transparent w-full px-2.5 py-2"
           onClick={() => setModalSheetImport(true)}
+          disabled={!isAllowedToAddRecruitments}
         >
           <FilePlusIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">Masukkan dari Excel</p>
@@ -1073,6 +1074,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-2.5 py-2"
           onClick={handleDownloadExcelTemplate}
+          disabled={!isAllowedToDownloadTemplate}
         >
           <DownloadIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">
@@ -1098,12 +1100,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             setModalBulk(true);
             setBulkMode("stage");
           }}
-          disabled={!canUpdateStage}
+          disabled={!canUpdateStages}
         >
           <TrendingUpIconSvg size={16} />
           <p
             className={
-              canUpdateStage
+              canUpdateStages
                 ? `mig-caption--medium text-mono30`
                 : `mig-caption--medium text-gray-300`
             }
@@ -1121,12 +1123,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             setModalBulk(true);
             setBulkMode("status");
           }}
-          disabled={!canUpdateStatus}
+          disabled={!canUpdateStatuses}
         >
           <InfoSquareIconSvg size={16} />
           <p
             className={
-              canUpdateStatus
+              canUpdateStatuses
                 ? `mig-caption--medium text-mono30`
                 : `mig-caption--medium text-gray-300`
             }
@@ -1876,7 +1878,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Modal Update Stage */}
-      <AccessControl hasPermission={RECRUITMENT_UPDATE_STAGE}>
+      <AccessControl
+        hasPermission={[RECRUITMENT_UPDATE_STAGE, RECRUITMENTS_UPDATE_STAGE]}
+      >
         <ModalUbah
           title={`Konfirmasi Perubahan`}
           visible={modalUpdateStage}
@@ -1991,10 +1995,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   });
                 }}
               />
-              <p>
-                Apakah Anda yakin ingin mengubah status menjadi{" "}
+              <div className="flex flex-wrap space-x-1">
+                <p>Apakah Anda yakin ingin mengubah status menjadi</p>
                 <strong>{dataUpdateStatus.recruitment_status_name}</strong>?
-              </p>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -2049,7 +2053,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                     setModalBulk(false);
                   }}
-                  // disabled={disabled}
+                  disabled={
+                    bulkMode === "stage"
+                      ? !dataUpdateStage.recruitment_stage_id
+                      : !dataUpdateStatus.recruitment_status_id
+                  }
                 >
                   <div className="flex flex-row space-x-2">
                     <CheckIconSvg size={16} color={`white`} />
@@ -2163,7 +2171,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Modal/Drawer Send Access Verification */}
-      <AccessControl hasPermission={RECRUITMENT_ACCOUNT_GENERATE}>
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_ACCOUNT_GENERATE,
+          RECRUITMENT_ACCOUNT_TOKEN_GET,
+        ]}
+      >
         {dataRowClicked.owner_id === null ? (
           <ModalCore
             title={`Apakah Anda yakin ingin memberikan 
