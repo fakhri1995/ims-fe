@@ -7,7 +7,9 @@ function LayoutFormContactUs({ title, description, button_title }) {
   return (
     <div>
       <section
-        className={"youronestop mt-10 hidden md:block md:flex bg-bgfooter pt-8"}
+        className={
+          "youronestop mt-10 hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-8"
+        }
       >
         <div className={"justify-start self-end bg-red"}>
           <img
@@ -15,7 +17,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
             src="/image/landingpage/footer-left.png"
           />
         </div>
-        <div className={"container w-1/2"}>
+        <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
             <p className={"text-2xl font-semibold text-black"}>
               Fulfill your IT needs easily!

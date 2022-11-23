@@ -222,7 +222,7 @@ function Blog({}) {
         <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
           Most Popular
         </p>
-        <div className={"grid md:grid-cols-2 mt-4"}>
+        <div className={"grid md:grid-cols-2 mt-4 md:justify-items-center"}>
           <Linkk href="/blog/1">
             <div
               className={
@@ -669,7 +669,9 @@ function Blog({}) {
       </section>
       <div className={"h-30 bg-bgjoinmig"}></div>
       <section
-        className={"youronestop mt-10 hidden md:block md:flex bg-bgfooter pt-8"}
+        className={
+          "youronestop mt-10 hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-8"
+        }
       >
         <div className={"justify-start self-end bg-red"}>
           <img
@@ -677,8 +679,8 @@ function Blog({}) {
             src="/image/landingpage/footer-left.png"
           />
         </div>
-        <div className={"container w-1/2"}>
-          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
+        <div className={"container w-1/2 mx-auto"}>
+          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-20 py-4 px-8">
             <p className={"text-2xl font-semibold text-blackmig"}>
               Want help on providing your IT needs?
             </p>
