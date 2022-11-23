@@ -399,66 +399,6 @@ const DrawerCandidateUpdate = ({
                 </Select>
               </div>
             </Form.Item>
-
-            {/* <Form.Item
-              label="Stage"
-              name={"stage"}
-              rules={[
-                {
-                  required: true,
-                  message: "Stage wajib diisi",
-                },
-              ]}
-            >
-              <div>
-                <Select
-                  placeholder="Pilih stage..."
-                  defaultValue={dataUpdate.recruitment_stage_id}
-                  onChange={(value) => {
-                    setDataUpdate({
-                      ...dataUpdate,
-                      recruitment_stage_id: value,
-                    });
-                  }}
-                >
-                  {dataStageList?.map((stage) => (
-                    <Select.Option key={stage.id} value={stage.id}>
-                      {stage.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-            </Form.Item> */}
-
-            {/* <Form.Item
-              label="Status"
-              name={"status"}
-              rules={[
-                {
-                  required: true,
-                  message: "Status wajib diisi",
-                },
-              ]}
-            >
-              <div>
-                <Select
-                  placeholder="Pilih status..."
-                  defaultValue={dataUpdate.recruitment_status_id}
-                  onChange={(value) => {
-                    setDataUpdate({
-                      ...dataUpdate,
-                      recruitment_status_id: value,
-                    });
-                  }}
-                >
-                  {dataStatusList?.map((status) => (
-                    <Select.Option key={status.id} value={status.id}>
-                      {status.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-            </Form.Item> */}
           </Form>
         </div>
       </Spin>
