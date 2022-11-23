@@ -1181,9 +1181,7 @@ const RecruitmentDetailIndex = ({
           onvisible={setDrawerUpdate}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetRecruitment={isAllowedToGetRecruitment}
           isAllowedToUpdateRecruitment={isAllowedToUpdateRecruitment}
-          isAllowedToDeleteRecruitment={isAllowedToDeleteRecruitment}
           setModalDelete={setModalDelete}
         />
       </AccessControl>
