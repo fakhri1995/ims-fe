@@ -75,7 +75,10 @@ export const SearchAndFilter: FC = () => {
     >
       {/* Search */}
       <Form.Item noStyle name="keyword">
-        <Input placeholder="Search jobs..." />
+        <Input
+          style={{ height: "37px", border: "1px solid #B8B8B8" }}
+          placeholder="Search jobs..."
+        />
       </Form.Item>
 
       {/* Filter: Employment type */}
@@ -95,7 +98,12 @@ export const SearchAndFilter: FC = () => {
       </div>
 
       {/* Button search */}
-      <Button className={styles.ctaButton} onClick={onSearchButtonClicked}>
+      <Button
+        className={
+          "bg-primarygreen rounded text-white text-base w-[85px] h-[40px]"
+        }
+        onClick={onSearchButtonClicked}
+      >
         Search
       </Button>
     </Form>

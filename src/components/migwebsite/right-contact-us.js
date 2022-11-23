@@ -7,7 +7,7 @@ import React from "react";
 
 function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
   return (
-    <div className={"w-full md:w-1/2"}>
+    <div className={"w-full md:w-3/5"}>
       <div className={"w-full"}>
         <p className={"text-3xl font-bold pb-8 pt-10"}>
           Send us your questions
@@ -63,6 +63,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
                 rules={[{ required: true }]}
               >
                 <Input
+                  style={{ border: "1px solid #B8B8B8" }}
                   name={"Company Name"}
                   onChange={(e) => {
                     setDataContactUs({
@@ -80,6 +81,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
                 rules={[{ required: true, type: "email" }]}
               >
                 <Input
+                  style={{ border: "1px solid #B8B8B8" }}
                   name={"Email"}
                   onChange={(e) => {
                     setDataContactUs({
@@ -99,6 +101,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
                 rules={[{ required: true }]}
               >
                 <Input
+                  style={{ border: "1px solid #B8B8B8" }}
                   name={"Contact Name"}
                   onChange={(e) => {
                     setDataContactUs({
@@ -122,6 +125,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
                 ]}
               >
                 <Input
+                  style={{ border: "1px solid #B8B8B8" }}
                   addonBefore="+62"
                   name={"Phone Number"}
                   onChange={(e) => {
@@ -142,6 +146,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
             rules={[{ required: true }]}
           >
             <Select
+              style={{ border: "1px solid #B8B8B8" }}
               dropdownStyle={{ backgroundColor: "green" }}
               name="Interest"
               onChange={(value) => {
@@ -165,6 +170,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
             rules={[{ required: true }]}
           >
             <Input.TextArea
+              style={{ border: "1px solid #B8B8B8" }}
               name="Message"
               onChange={(e) => {
                 setDataContactUs({
@@ -198,14 +204,14 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
               <button
                 type={"submit"}
                 className={
-                  "text-sm text-center text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-center rounded w-[113px] h-[40px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1 text-base"}>Submit</p>
+                  <p className={"text-base font-semibold"}>Submit</p>
                   <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
+                    className={"self-center"}
+                    style={{ width: "8px", height: "15px" }}
                     src="/image/landingpage/arrow-forward.png"
                   />
                 </div>

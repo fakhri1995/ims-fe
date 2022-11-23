@@ -20,7 +20,11 @@ function AboutUs({}) {
         }
       >
         <div className={"pb-8"}>
-          <p className={"text-3xl md:text-4xl gilroy-semibold font-semibold"}>
+          <p
+            className={
+              "text-xl md:text-3xl gilroy-semibold font-semibold text-blackmig"
+            }
+          >
             Operate your business, more efficient and more agile
           </p>
         </div>
@@ -35,7 +39,7 @@ function AboutUs({}) {
       </section>
       <section
         className={
-          "block md:flex px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "block bg-transp60 pt-4 md:flex px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"flex-col w-full py-1 md:py-1 pr-0 md:pr-10 m-auto"}>
@@ -61,7 +65,7 @@ function AboutUs({}) {
 
           <p className={"pb-8 text-base gilroy-regular"}>
             <Link href="joinourteam">
-              <em className={"cursor-pointer text-green-500 underline"}>
+              <em className={"cursor-pointer text-primarygreen underline"}>
                 Careers
               </em>
             </Link>{" "}
@@ -73,7 +77,7 @@ function AboutUs({}) {
         className={"py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"}
       >
         <div className={"pb-4"}>
-          <p className={"text-xl md:text-2xl gilroy-semibold"}>
+          <p className={"text-xl md:text-2xl font-semibold text-blackmig"}>
             Support your business efficiently
           </p>
         </div>
@@ -96,7 +100,7 @@ function AboutUs({}) {
               ></img>
               <p
                 className={
-                  "text-left py-3 gilroy-semibold text-black text-base"
+                  "text-left py-3 font-semibold text-blackmig text-base"
                 }
               >
                 Hardware
@@ -107,11 +111,7 @@ function AboutUs({}) {
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/hardware" }}>
-                  <a
-                    className={
-                      "gilroy-semibold font-semibold text-base text-primarygreen hover:text-green-800 focus:text-primarygreen "
-                    }
-                  >
+                  <a className={"font-semibold text-base text-primarygreen"}>
                     Get yours&nbsp;{" "}
                     <ArrowRightOutlined
                       className={"relative"}
@@ -134,7 +134,7 @@ function AboutUs({}) {
               ></img>
               <p
                 className={
-                  "text-left py-3 gilroy-semibold text-black text-base"
+                  "text-left py-3 font-semibold text-blackmig text-base"
                 }
               >
                 Software
@@ -145,11 +145,7 @@ function AboutUs({}) {
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/software" }}>
-                  <a
-                    className={
-                      "gilroy-semibold font-semibold text-base text-primarygreen hover:text-green-800 focus:text-primarygreen"
-                    }
-                  >
+                  <a className={"font-semibold text-base text-primarygreen"}>
                     Build now&nbsp;{" "}
                     <ArrowRightOutlined
                       className={"relative"}
@@ -172,7 +168,7 @@ function AboutUs({}) {
               ></img>
               <p
                 className={
-                  "text-left py-3 gilroy-semibold text-black text-base"
+                  "text-left py-3 font-semibold text-blackmig text-base"
                 }
               >
                 Talents
@@ -182,11 +178,7 @@ function AboutUs({}) {
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/talents" }}>
-                  <a
-                    className={
-                      "gilroy-semibold font-semibold text-base text-primarygreen hover:text-green-800 focus:text-primarygreen"
-                    }
-                  >
+                  <a className={"font-semibold text-base text-primarygreen"}>
                     Setup your team&nbsp;{" "}
                     <ArrowRightOutlined
                       className={"relative"}
@@ -200,35 +192,30 @@ function AboutUs({}) {
         </div>
       </section>
 
-      <section
-        className={
-          "px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 pt-4 md:pb-10 md:py-4"
-        }
-        style={{ background: "#F8F8F8" }}
-      >
+      <section className={"px-4 sm:px-10 md:px-10 pt-4 md:pb-10 bg-transp60"}>
         <div>
-          <p
-            className={
-              "gilroy-medium font-semibold text-xl text-black md:text-2xl pb-2"
-            }
-          >
-            MIG Locations
+          <p className={"font-semibold text-xl text-blackmig md:text-2xl pb-2"}>
+            MIG Location
           </p>
-          <p className={"gilroy-medium font-semibold pb-2 text-xl"}>
-            Headquarters
+          <p className={"font-semibold pb-2 text-xl text-blackmig"}>
+            Headquarter
           </p>
-          <p className={"text-base font-semibold text-black"}>
+          <p className={"text-base font-semibold text-darkgrey"}>
             Location: Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
           </p>
 
-          <div className={"flex flex-row"}>
-            <p className={"font-semibold text-base"}>Phone:&nbsp;</p>
+          <div className={"flex flex-row mt-3"}>
+            <p className={"font-semibold text-base text-darkgrey"}>
+              Phone:&nbsp;
+            </p>
             <p className={"text-accentblue text-base underline"}>
               +62-21-831-4522
             </p>
           </div>
-          <div className={"flex flex-row"}>
-            <p className={"font-semibold text-base"}>Email:&nbsp;</p>
+          <div className={"flex flex-row mt-3"}>
+            <p className={"font-semibold text-base text-darkgrey"}>
+              Email:&nbsp;
+            </p>
             <a
               href="mailto:help@mitrasolusi.group"
               className={"text-accentblue text-base underline"}
@@ -236,7 +223,7 @@ function AboutUs({}) {
               help@mitrasolusi.group
             </a>
           </div>
-          <p className={"gilroy-bold py-4 text-black font-semibold text-xl"}>
+          <p className={"py-4 text-blackmig font-semibold text-xl"}>
             Coverages
           </p>
           <div
@@ -383,6 +370,7 @@ function AboutUs({}) {
           </div>
         </div>
       </section>
+      <div className={"h-20 bg-transp60 -mb-24"}></div>
       <LayoutFormContactUs />
     </Layout>
   );

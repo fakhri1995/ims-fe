@@ -30,7 +30,71 @@ function JoinOurTeam({ dataCareers, empData }) {
       <Head>
         <title>Join Our Team</title>
       </Head>
-
+      <section
+        className={
+          "section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50"
+        }
+        style={{ background: "#F4F4F4" }}
+      >
+        <div className={"block md:flex"}>
+          <div className={"flex py-4"}>
+            <Link
+              activeClass="active"
+              to="section3careers"
+              spy={true}
+              smooth={true}
+              offset={-120}
+              className={"mr-12"}
+              duration={500}
+            >
+              <button
+                className={
+                  "gilroy-regular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                }
+                style={{}}
+              >
+                Our Values
+              </button>
+            </Link>
+            <Link
+              activeClass="active"
+              to="section6careers"
+              spy={true}
+              smooth={true}
+              offset={-120}
+              className={"mr-12"}
+              duration={500}
+            >
+              <button
+                className={
+                  "gilroy-regular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                }
+                style={{}}
+              >
+                Benefits
+              </button>
+            </Link>
+            <Link
+              activeClass="active"
+              to="section7careers"
+              spy={true}
+              smooth={true}
+              offset={-150}
+              className={"mr-12"}
+              duration={500}
+            >
+              <button
+                className={
+                  "gilroy-regular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                }
+                style={{}}
+              >
+                Careers
+              </button>
+            </Link>
+          </div>
+        </div>
+      </section>
       <section
         className={
           "section1careers py-4 md:py-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
@@ -41,7 +105,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             <div className={""}>
               <p
                 className={
-                  "text-3xl md:text-4xl pb-6 text-center md:text-left gilroy-bold"
+                  "text-2xl md:text-3xl pb-4 text-center md:text-left font-semibold text-blackmig"
                 }
               >
                 Careers at MIG
@@ -52,7 +116,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                   src="/image/joinourteam/joinourteam_image.png"
                 />
               </div>
-              <p className={"text-xl gilroy-medium pb-4"}>
+              <p className={"text-base gilroy-regular text-blackmig pb-4"}>
                 We are currently looking to expand our team! Our team comprises
                 of highly motivated, positive and hardworking individuals.
               </p>
@@ -60,13 +124,13 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <Link href="/section7careers">
                   <button
                     className={
-                      "flex text-xl text-white border-2 bg-primarygreen border-green-600 px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                      "flex flex-row justify-between text-xl w-[294px] h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-semibold"
                     }
                   >
-                    <p className={"pl-4 pr-4"}>Explore Open Positions</p>
+                    <p className={"self-center"}>Explore Open Positions</p>
                     <img
-                      className={"items-center self-center"}
-                      style={{ width: "20px" }}
+                      className={"self-center"}
+                      style={{ width: "20px", height: "20px" }}
                       src="/image/landingpage/arrow-circle-down.png"
                     />
                   </button>
@@ -74,9 +138,9 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
             </div>
           </div>
-          <div className={"flex-col hidden md:flex ml-4"}>
+          <div className={"flex-col hidden md:flex"}>
             <img
-              style={{ width: "1000px", height: "auto" }}
+              style={{ width: "514px", height: "335px" }}
               src="/image/joinourteam/joinourteam_image.png"
             />
           </div>
@@ -97,41 +161,34 @@ function JoinOurTeam({ dataCareers, empData }) {
           <div>
             <p
               className={
-                "text-2xl md:text-3xl gilroy-semibold font-semibold text-black text-center pb-8"
+                "text-2xl md:text-3xl gilroy-semibold font-semibold text-blackmig text-center pb-8"
               }
             >
               Our Values
             </p>
           </div>
 
-          <div className={"md:flex justify-between"}>
+          <div className={"md:flex md:flex-row justify-between"}>
             <div
               className={
-                "flex-col flex text-center bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
+                "flex-col flex text-center w-[384px] h-[180px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4 mb-4"
               }
             >
               <div className={""}>
                 <div className={"grid justify-items-center"}>
-                  <div
-                    class="rounded-full mx-4 bg-lightgreen h-12 w-12
-                flex items-center justify-center self-center"
-                  >
-                    <img
-                      style={{ width: "29px", height: "`4px`" }}
-                      src="/image/joinourteam/values-1.png"
-                    />
-                  </div>
+                  <img
+                    style={{ width: "60px", height: "60px" }}
+                    src="/image/joinourteam/values-1.png"
+                  />
                 </div>
                 <p
                   className={
-                    "text-lg md:text-xl mt-2 md:mt-4 font-semibold text-black"
+                    "text-lg md:text-xl mt-2 font-semibold text-blackmig"
                   }
                 >
                   Agility
                 </p>
-
-                <br></br>
-                <p className={"text-black text-sm md:text-base"}>
+                <p className={"text-blackmig text-sm md:text-base mt-2"}>
                   We are adapting to fast-changing environments.
                 </p>
               </div>
@@ -139,62 +196,49 @@ function JoinOurTeam({ dataCareers, empData }) {
 
             <div
               className={
-                "flex-col flex text-center bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
+                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
               }
             >
               <div className={""}>
                 <div className={"grid justify-items-center"}>
-                  <div
-                    class="rounded-full mx-4 bg-lightgreen h-12 w-12
-                flex items-center justify-center self-center"
-                  >
-                    <img
-                      style={{ width: "29px", height: "`4px`" }}
-                      src="/image/joinourteam/values-2.png"
-                    />
-                  </div>
+                  <img
+                    style={{ width: "60px", height: "60px`" }}
+                    src="/image/joinourteam/values-2.png"
+                  />
                 </div>
                 <p
                   className={
-                    "text-lg md:text-xl mt-2 md:mt-4 font-semibold text-black"
+                    "text-lg md:text-xl mt-2 font-semibold text-blackmig"
                   }
                 >
                   Perseverance
                 </p>
-
-                <br></br>
-                <p className={"text-black text-sm md:text-base"}>
+                <p className={"text-black text-sm md:text-base mt-2"}>
                   We aim high and constantly strive for excellence.
                 </p>
               </div>
             </div>
             <div
               className={
-                "flex-col flex text-center bg-white mr-0 md:mr-10 p-4 w-auto border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
+                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
               }
             >
               <div className={""}>
                 <div className={"grid justify-items-center"}>
-                  <div
-                    class="rounded-full mx-4 bg-lightgreen h-12 w-12
-                flex items-center justify-center self-center"
-                  >
-                    <img
-                      style={{ width: "29px", height: "`4px`" }}
-                      src="/image/joinourteam/values-3.png"
-                    />
-                  </div>
+                  <img
+                    style={{ width: "60px", height: "60px`" }}
+                    src="/image/joinourteam/values-3.png"
+                  />
                 </div>
                 <p
                   className={
-                    "text-lg md:text-xl mt-2 md:mt-4 font-semibold text-black"
+                    "text-lg md:text-xl mt-2 font-semibold text-blackmig"
                   }
                 >
                   Integrity
                 </p>
 
-                <br></br>
-                <p className={"text-black text-sm md:text-base"}>
+                <p className={"text-blackmig mt-2 text-sm md:text-base"}>
                   We are dedicated to adhering to positive ethical values.
                 </p>
               </div>
@@ -254,7 +298,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         <div className={"justify-center"}>
           <p
             className={
-              "text-center text-black font-semibold text-2xl md:text-3xl pb-8"
+              "text-center text-blackmig font-semibold text-2xl md:text-3xl pb-8"
             }
           >
             Benefits
@@ -277,15 +321,10 @@ function JoinOurTeam({ dataCareers, empData }) {
               className={"block md:flex md:flex-col justify-center md:w-1/2"}
             >
               <div className={"pb-6 flex-row flex "}>
-                <div
-                  class="rounded-full bg-bgjoinmig h-12 w-12
-                flex items-center justify-center self-center"
-                >
-                  <img
-                    src="/image/joinourteam/benefit_1.png"
-                    style={{ height: "20px" }}
-                  ></img>
-                </div>
+                <img
+                  src="/image/joinourteam/benefit_1.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
 
                 <p
                   className={
@@ -297,15 +336,10 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
-                <div
-                  class="rounded-full bg-bgjoinmig h-12 w-12
-                flex items-center justify-center self-center"
-                >
-                  <img
-                    src="/image/joinourteam/benefit_2.png"
-                    style={{ height: "20px" }}
-                  ></img>
-                </div>
+                <img
+                  src="/image/joinourteam/benefit_2.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
                 <p
                   className={
                     "flex-row my-auto pl-4 text-base text-black gilroy-regular"
@@ -315,15 +349,10 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
-                <div
-                  class="rounded-full bg-bgjoinmig h-12 w-12
-                flex items-center justify-center self-center"
-                >
-                  <img
-                    src="/image/joinourteam/benefit_3.png"
-                    style={{ height: "20px" }}
-                  ></img>
-                </div>
+                <img
+                  src="/image/joinourteam/benefit_3.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
                 <p
                   className={
                     "flex-row my-auto pl-4 text-base text-black gilroy-regular"
@@ -338,15 +367,10 @@ function JoinOurTeam({ dataCareers, empData }) {
               className={"block md:flex md:flex-col justify-center md:w-1/2"}
             >
               <div className={"pb-6 flex-row flex"}>
-                <div
-                  class="rounded-full bg-bgjoinmig h-12 w-12
-                flex items-center justify-center self-center"
-                >
-                  <img
-                    src="/image/joinourteam/benefit_4.png"
-                    style={{ height: "20px" }}
-                  ></img>
-                </div>
+                <img
+                  src="/image/joinourteam/benefit_4.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
                 <p
                   className={
                     "flex-row my-auto pl-4 text-base text-black gilroy-regular"
@@ -357,15 +381,10 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
-                <div
-                  class="rounded-full bg-bgjoinmig h-12 w-12
-                flex items-center justify-center self-center"
-                >
-                  <img
-                    src="/image/joinourteam/benefit_5.png"
-                    style={{ height: "20px" }}
-                  ></img>
-                </div>
+                <img
+                  src="/image/joinourteam/benefit_5.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
                 <p
                   className={
                     "flex-row my-auto pl-4 text-base text-black gilroy-regular"
@@ -376,15 +395,10 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
-                <div
-                  class="rounded-full bg-bgjoinmig h-12 w-12
-                flex items-center justify-center self-center"
-                >
-                  <img
-                    src="/image/joinourteam/benefit_6.png"
-                    style={{ height: "20px" }}
-                  ></img>
-                </div>
+                <img
+                  src="/image/joinourteam/benefit_6.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
                 <p
                   className={
                     "flex-row my-auto pl-4 text-base text-black gilroy-regular"
