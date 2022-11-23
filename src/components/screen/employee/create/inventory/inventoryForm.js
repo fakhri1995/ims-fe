@@ -13,6 +13,7 @@ import {
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
+import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -24,6 +25,7 @@ import {
 
 import {
   beforeUploadFileMaxSize,
+  getBase64,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
@@ -53,6 +55,17 @@ const InventoryForm = ({
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [deviceList, setDeviceList] = useState([]);
 
+  const [assignFileList, setAssignFileList] = useState([]);
+  const [returnFileList, setReturnFileList] = useState([]);
+
+  const [uploadAssignDocumentLoading, setUploadAssignDocumentLoading] =
+    useState(false);
+  const [uploadReturnDocumentLoading, setUploadReturnDocumentLoading] =
+    useState(false);
+
+  const [uploadedAssignDocument, setUploadedAssignDocument] = useState(null);
+  const [uploadedReturnDocument, setUploadedReturnDocument] = useState(null);
+
   // 3. HANDLER
   const onChangeInput = (e) => {
     let data = [...inventoryList];
@@ -75,6 +88,108 @@ const InventoryForm = ({
     dataInventories[idx].device_list = newDeviceList;
     setInventoryList(dataInventories);
   };
+
+  const beforeUploadAssignDocument = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = "application/pdf";
+
+    if (uploadedFile.type !== allowedFileTypes) {
+      notification.error({
+        message: "File harus memilki format .pdf",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedAssignDocument(uploadedFile);
+
+    let data = [...inventoryList];
+    data[idx]["assign_doc"] = uploadedFile;
+    setInventoryList(data);
+
+    // const blobFile = e.target.files[0];
+
+    // const base64Data = getBase64(uploadedFile);
+    // console.log(base64Data)
+
+    // const newFiles = [...datapayload.files, base64Data];
+    // const newAttachments = [...datapayload.attachments, blobFile];
+  }, []);
+
+  const beforeUploadReturnDocument = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = "application/pdf";
+
+    if (uploadedFile.type !== allowedFileTypes) {
+      notification.error({
+        message: "File harus memilki format .pdf",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedReturnDocument(uploadedFile);
+
+    let data = [...inventoryList];
+    data[idx]["return_doc"] = uploadedFile;
+    setInventoryList(data);
+
+    // const blobFile = e.target.files[0];
+
+    // const base64Data = getBase64(uploadedFile);
+    // console.log(base64Data)
+
+    // const newFiles = [...datapayload.files, base64Data];
+    // const newAttachments = [...datapayload.attachments, blobFile];
+  }, []);
+
+  console.log(inventoryList);
+
+  const onUploadAssignChange = useCallback(({ file }) => {
+    setUploadAssignDocumentLoading(file.status === "uploading");
+
+    if (file.status !== "removed") {
+      setAssignFileList([file]);
+    }
+  }, []);
+
+  const onUploadReturnChange = useCallback(({ file }) => {
+    setUploadReturnDocumentLoading(file.status === "uploading");
+
+    if (file.status !== "removed") {
+      setReturnFileList([file]);
+    }
+  }, []);
+
+  const onUploadAssignRemove = useCallback(() => {
+    setAssignFileList([]);
+    setUploadAssignDocumentLoading(null);
+
+    let data = [...inventoryList];
+    data[idx]["assign_doc"] = "";
+    setInventoryList(data);
+  }, []);
+
+  const onUploadReturnRemove = useCallback(() => {
+    setReturnFileList([]);
+    setUploadReturnDocumentLoading(null);
+
+    let data = [...inventoryList];
+    data[idx]["return_doc"] = "";
+    setInventoryList(data);
+  }, []);
+
+  // console.log(fileList, uploadedDocument)
 
   // const onChangeFile = async (e) => {
   //   if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
@@ -296,20 +411,11 @@ const InventoryForm = ({
               accept=".pdf"
               listType="picture"
               maxCount={1}
-              beforeUpload={(file) => {
-                const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-                const isReachedMaxFileSize =
-                  checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-                const isPDF = file.type === `application/pdf`;
-                if (!isPDF) {
-                  notification.error({
-                    message: "File harus memilki format .pdf",
-                  });
-                }
-                const allowedUpload = !isReachedMaxFileSize && isPDF;
-                return allowedUpload || Upload.LIST_IGNORE;
-              }}
-              // disabled={true}
+              beforeUpload={beforeUploadAssignDocument}
+              onChange={onUploadAssignChange}
+              onRemove={onUploadAssignRemove}
+              disabled={uploadAssignDocumentLoading}
+              fileList={assignFileList}
             >
               <Button
                 className="btn-sm btn text-white font-semibold px-6 border
@@ -336,20 +442,11 @@ const InventoryForm = ({
               accept=".pdf"
               listType="picture"
               maxCount={1}
-              beforeUpload={(file) => {
-                const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-                const isReachedMaxFileSize =
-                  checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-                const isPDF = file.type === `application/pdf`;
-                if (!isPDF) {
-                  notification.error({
-                    message: "File harus memilki format .pdf",
-                  });
-                }
-                const allowedUpload = !isReachedMaxFileSize && isPDF;
-                return allowedUpload || Upload.LIST_IGNORE;
-              }}
-              // disabled={true}
+              beforeUpload={beforeUploadReturnDocument}
+              onChange={onUploadReturnChange}
+              onRemove={onUploadReturnRemove}
+              disabled={uploadReturnDocumentLoading}
+              fileList={returnFileList}
             >
               <Button
                 className="btn-sm btn text-white font-semibold px-6 border

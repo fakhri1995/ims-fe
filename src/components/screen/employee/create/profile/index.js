@@ -10,6 +10,7 @@ import {
 import moment from "moment";
 import React from "react";
 import { useState } from "react";
+import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -21,7 +22,10 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeProfileForm = () => {
+const EmployeeProfileForm = ({
+  dataEmployeeProfile,
+  setDataEmployeeProfile,
+}) => {
   /**
    * Dependencies
    */
@@ -39,37 +43,50 @@ const EmployeeProfileForm = () => {
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [dataProfile, setDataProfile] = useState({
-    id_photo: "",
-    name: "",
-    nip: "",
-    nik: "",
-    alias: "",
-    telp: "",
-    email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    mother_name: "",
-    npwp: "",
-    bpjsk: "",
-    bpjstk: "",
-    rek_bukopin: "",
-    rek_other: "",
-  });
+  const [fileList, setFileList] = useState([]);
+  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
+  const [uploadedIDCardPicture, setUploadedIDCardPicture] = useState(null);
 
   // 3. HANDLER
   const onChangeInput = (e) => {
-    setDataProfile({
-      ...dataProfile,
+    setDataEmployeeProfile({
+      ...dataEmployeeProfile,
       [e.target.name]: e.target.value,
     });
   };
+
+  const beforeUploadIDCardPicture = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
+
+    if (!allowedFileTypes.includes(uploadedFile.type)) {
+      notification.error({
+        message: "File harus berupa gambar",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedIDCardPicture(uploadedFile);
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadPictureLoading(file.status === "uploading");
+
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setUploadedIDCardPicture(null);
+  }, []);
 
   return (
     <Form
@@ -77,34 +94,17 @@ const EmployeeProfileForm = () => {
       form={instanceForm}
       className="grid grid-cols-2 gap-x-8"
     >
-      <Form.Item
-        label="ID Card"
-        name={"id_card"}
-        className="relative col-span-2 w-full"
-      >
+      <Form.Item label="ID Card" className="relative col-span-2 w-full">
         <em className="text-mono50 mr-10">Unggah File JPEG (Maksimal 5 MB)</em>
         <Upload
           accept=".png, .jpg, .jpeg"
           listType="picture"
           maxCount={1}
-          beforeUpload={(file) => {
-            const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-            const isReachedMaxFileSize =
-              checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-            const isImage =
-              file.type === `image/png` ||
-              file.type === `image/jpg` ||
-              file.type === `image/jpeg`;
-            if (!isImage) {
-              notification.error({
-                message: "File harus berupa gambar",
-              });
-            }
-            const allowedUpload = !isReachedMaxFileSize && isImage;
-            return allowedUpload || Upload.LIST_IGNORE;
-          }}
-          // disabled={true}
-          // onChange={}
+          beforeUpload={beforeUploadIDCardPicture}
+          onChange={onUploadChange}
+          onRemove={onUploadRemove}
+          disabled={uploadPictureLoading}
+          fileList={fileList}
         >
           <Button
             className="btn-sm btn text-white font-semibold px-6 border
@@ -130,7 +130,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.name}
+            value={dataEmployeeProfile.name}
             name={"name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama"
@@ -150,10 +150,10 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.nip}
+            value={dataEmployeeProfile.nip}
             name={"nip"}
             onChange={onChangeInput}
-            placeholder="Masukkan nama"
+            placeholder="Masukkan NIP"
           />
         </div>
       </Form.Item>
@@ -169,7 +169,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.nik}
+            value={dataEmployeeProfile.nik}
             name={"nik"}
             onChange={onChangeInput}
             placeholder="Masukkan NIK"
@@ -188,7 +188,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.alias}
+            value={dataEmployeeProfile.alias}
             name={"alias"}
             onChange={onChangeInput}
             placeholder="Masukkan alias"
@@ -212,7 +212,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.email_office}
+            value={dataEmployeeProfile.email_office}
             name={"office_email"}
             onChange={onChangeInput}
             placeholder="Masukkan email kantor"
@@ -236,7 +236,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.email_personal}
+            value={dataEmployeeProfile.email_personal}
             name={"personal_email"}
             onChange={onChangeInput}
             placeholder="Masukkan email pribadi"
@@ -246,7 +246,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Domisili" name={"domisili"}>
         <div>
           <Input
-            value={dataProfile.domicile}
+            value={dataEmployeeProfile.domicile}
             name={"domisili"}
             onChange={onChangeInput}
             placeholder="Masukkan domisili"
@@ -265,7 +265,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.telp}
+            value={dataEmployeeProfile.telp}
             name={"phone"}
             onChange={onChangeInput}
             placeholder="Masukkan nomor telepon"
@@ -284,7 +284,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.birth_place}
+            value={dataEmployeeProfile.birth_place}
             name={"birth_place"}
             onChange={onChangeInput}
             placeholder="Masukkan tempat lahir"
@@ -306,11 +306,13 @@ const EmployeeProfileForm = () => {
           placeholder="Pilih tanggal lahir"
           className="w-full"
           value={[
-            dataProfile.birth_date ? moment(dataProfile.birth_date) : null,
+            dataEmployeeProfile.birth_date
+              ? moment(dataEmployeeProfile.birth_date)
+              : null,
           ]}
           onChange={(value, datestring) => {
             let selectedDate = datestring[0];
-            setDataProfile((prev) => ({
+            setDataEmployeeProfile((prev) => ({
               ...prev,
               birth_date: selectedDate,
             }));
@@ -329,10 +331,10 @@ const EmployeeProfileForm = () => {
         ]}
       >
         <Select
-          value={dataProfile.gender}
+          value={dataEmployeeProfile.gender}
           onChange={(value) => {
-            setDataProfile({
-              ...dataProfile,
+            setDataEmployeeProfile({
+              ...dataEmployeeProfile,
               gender: value,
             });
           }}
@@ -347,10 +349,10 @@ const EmployeeProfileForm = () => {
       </Form.Item>
       <Form.Item label="Golongan Darah" name={"blood_type"}>
         <Select
-          value={dataProfile.blood_type}
+          value={dataEmployeeProfile.blood_type}
           onChange={(value) => {
-            setDataProfile({
-              ...dataProfile,
+            setDataEmployeeProfile({
+              ...dataEmployeeProfile,
               blood_type: value,
             });
           }}
@@ -365,10 +367,10 @@ const EmployeeProfileForm = () => {
       </Form.Item>
       <Form.Item label="Status Kawin" name={"marital_status"}>
         <Select
-          value={dataProfile.marital_status}
+          value={dataEmployeeProfile.marital_status}
           onChange={(value) => {
-            setDataProfile({
-              ...dataProfile,
+            setDataEmployeeProfile({
+              ...dataEmployeeProfile,
               marital_status: value,
             });
           }}
@@ -386,7 +388,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Jumlah Anak" name={"child_total"}>
         <div>
           <Input
-            value={dataProfile.child_total}
+            value={dataEmployeeProfile.child_total}
             name={"child_total"}
             onChange={onChangeInput}
             placeholder="Masukkan jumlah anak"
@@ -400,7 +402,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.mother_name}
+            value={dataEmployeeProfile.mother_name}
             name={"mother_name"}
             placeholder="Masukkan nama ibu kandung"
             onChange={onChangeInput}
@@ -410,7 +412,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor NPWP" name={"npwp"} className="col-span-2">
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.npwp}
+            value={dataEmployeeProfile.npwp}
             name={"npwp"}
             placeholder="Masukkan nomor NPWP"
             onChange={onChangeInput}
@@ -420,7 +422,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor BPJS Kesehatan" name={"bpjsk"}>
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.bpjsk}
+            value={dataEmployeeProfile.bpjsk}
             name={"bpjsk"}
             placeholder="Masukkan nomor BPJS Kesehatan"
             onChange={onChangeInput}
@@ -430,7 +432,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor BPJS Ketenagakerjaan" name={"bpjstk"}>
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.bpjstk}
+            value={dataEmployeeProfile.bpjstk}
             name={"bpjstk"}
             placeholder="Masukkan nomor BPJS Ketenagakerjaan"
             onChange={onChangeInput}
@@ -440,7 +442,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor Rekening Bank KB Bukopin" name={"rek_bukopin"}>
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.rek_bukopin}
+            value={dataEmployeeProfile.rek_bukopin}
             name={"rek_bukopin"}
             placeholder="Masukkan nomor rekening Bank KB Bukopin"
             onChange={onChangeInput}
@@ -450,7 +452,7 @@ const EmployeeProfileForm = () => {
       <Form.Item label="Nomor Rekening Bank Lainnya" name={"rek_other"}>
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.rek_other}
+            value={dataEmployeeProfile.rek_other}
             name={"rek_other"}
             placeholder="Masukkan nomor rekening bank lainnya"
             onChange={onChangeInput}

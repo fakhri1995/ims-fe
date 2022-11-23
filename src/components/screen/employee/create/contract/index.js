@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useCallback } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -40,7 +41,7 @@ import {
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
 
-const EmployeeContractForm = ({ initProps }) => {
+const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
   /**
    * Dependencies
    */
@@ -62,20 +63,6 @@ const EmployeeContractForm = ({ initProps }) => {
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [dataContract, setDataContract] = useState({
-    contract_name: "",
-    contract_status: "",
-    position: "",
-    employee_status: false,
-    contract_doc: "",
-    pkwt: "",
-    contract_starts: "",
-    contract_ends: "",
-    placement: "",
-    new_office: "",
-    resign_date: "",
-    benefits: {},
-  });
 
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [isInputVar, setInputVar] = useState(false);
@@ -91,6 +78,10 @@ const EmployeeContractForm = ({ initProps }) => {
 
   const [loadingRoleTypeList, setLoadingRoleTypeList] = useState(false);
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
+
+  const [fileList, setFileList] = useState([]);
+  const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
+  const [uploadedDocument, setUploadedDocument] = useState(null);
 
   // 2. USE EFFECT
   // 2.1. Get Position List
@@ -215,6 +206,39 @@ const EmployeeContractForm = ({ initProps }) => {
     });
   };
 
+  const beforeUploadDocument = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = "application/pdf";
+
+    if (uploadedFile.type !== allowedFileTypes) {
+      notification.error({
+        message: "File harus memilki format .pdf",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedDocument(uploadedFile);
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadDocumentLoading(file.status === "uploading");
+
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setUploadedDocument(null);
+  }, []);
+
   return (
     <Form
       layout="vertical"
@@ -322,7 +346,6 @@ const EmployeeContractForm = ({ initProps }) => {
 
       <Form.Item
         label="Dokumen Kontrak"
-        name={"contract_doc"}
         className="col-span-2 w-full"
         rules={[
           {
@@ -337,20 +360,11 @@ const EmployeeContractForm = ({ initProps }) => {
             accept=".pdf"
             listType="picture"
             maxCount={1}
-            beforeUpload={(file) => {
-              const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-              const isReachedMaxFileSize =
-                checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-              const isPDF = file.type === `application/pdf`;
-              if (!isPDF) {
-                notification.error({
-                  message: "File harus memilki format .pdf",
-                });
-              }
-              const allowedUpload = !isReachedMaxFileSize && isPDF;
-              return allowedUpload || Upload.LIST_IGNORE;
-            }}
-            // disabled={true}
+            beforeUpload={beforeUploadDocument}
+            onChange={onUploadChange}
+            onRemove={onUploadRemove}
+            disabled={uploadDocumentLoading}
+            fileList={fileList}
           >
             <Button
               className="btn-sm btn text-white font-semibold px-6 border
