@@ -19,7 +19,12 @@ import {
 import ButtonSys from "../../../../button";
 import InventoryForm from "./inventoryForm";
 
-const EmployeeInventoryForm = ({ initProps }) => {
+const EmployeeInventoryForm = ({
+  initProps,
+  isAdd,
+  inventoryList,
+  setInventoryList,
+}) => {
   /**
    * Dependencies
    */
@@ -43,8 +48,6 @@ const EmployeeInventoryForm = ({ initProps }) => {
 
   // 1. USE STATE
   const [isOwn, setIsOwn] = useState(false);
-  const [inventoryList, setInventoryList] = useState([]);
-
   const [addMode, setAddMode] = useState(false);
 
   const [loadingCreate, setLoadingCreate] = useState(false);
@@ -90,6 +93,13 @@ const EmployeeInventoryForm = ({ initProps }) => {
       });
   }, [isAllowedToGetPICList]);
 
+  // 2.2. Auto add new inventory form when it's use in add inventory
+  useEffect(() => {
+    if (isAdd) {
+      handleAddNewInventory();
+    }
+  }, [isAdd]);
+
   // 3. HANDLER
   const handleAddNewInventory = () => {
     let newDataInventory = {
@@ -118,17 +128,19 @@ const EmployeeInventoryForm = ({ initProps }) => {
   // console.log(inventoryList);
   return (
     <>
-      <Checkbox
-        value={isOwn}
-        onChange={(e) => {
-          setIsOwn(e.target.checked);
-          isOwn ? setInventoryList([]) : handleAddNewInventory();
-        }}
-      >
-        Memiliki inventaris & piranti
-      </Checkbox>
+      {!isAdd && (
+        <Checkbox
+          checked={isOwn}
+          onChange={(e) => {
+            setIsOwn(e.target.checked);
+            isOwn ? setInventoryList([]) : handleAddNewInventory();
+          }}
+        >
+          Memiliki inventaris & piranti
+        </Checkbox>
+      )}
 
-      {isOwn && (
+      {(isOwn || isAdd) && (
         <>
           {/* TODO: loop inventoryList */}
           {inventoryList.map((inventory, idx) => (
