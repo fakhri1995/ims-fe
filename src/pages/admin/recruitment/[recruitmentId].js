@@ -39,6 +39,7 @@ import {
   RECRUITMENT_UPDATE_STAGE,
   RECRUITMENT_UPDATE_STATUS,
   RESUME_GET,
+  RESUME_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
@@ -99,6 +100,7 @@ const RecruitmentDetailIndex = ({
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
   const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
   const isAllowedToGetResume = hasPermission(RESUME_GET);
+  const isAllowedToUpdateResume = hasPermission(RESUME_UPDATE);
   const isAllowedToUpdateCandidateAccess = hasPermission(GUEST_STATUS);
 
   //INIT
@@ -971,26 +973,49 @@ const RecruitmentDetailIndex = ({
           <div className="shadow-lg rounded-md bg-white p-4 divide-y-2">
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
-              <ButtonSys
-                type={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                    ? "primary"
-                    : "default"
-                }
-                onClick={() => setOpenDownloadModal(true)}
-                disabled={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                }
+              <div
+                className="space-x-2 flex lg:flex-row md:flex-col 
+                md:space-y-2 lg:space-y-0"
               >
-                <div className="flex flex-row space-x-2">
-                  <DownloadIconSvg size={16} color={"#35763B"} />
-                  <p>Unduh Profil</p>
-                </div>
-              </ButtonSys>
+                <ButtonSys
+                  type={
+                    !resumeId ||
+                    !isAllowedToGetResume ||
+                    dataRecruitment.user?.is_enabled === 0
+                      ? "primary"
+                      : "default"
+                  }
+                  onClick={() => setOpenDownloadModal(true)}
+                  disabled={
+                    !resumeId ||
+                    !isAllowedToGetResume ||
+                    dataRecruitment.user?.is_enabled === 0
+                  }
+                >
+                  <div className="flex flex-row space-x-2">
+                    <DownloadIconSvg size={16} color={"#35763B"} />
+                    <p>Unduh Resume</p>
+                  </div>
+                </ButtonSys>
+                <ButtonSys
+                  type={
+                    !isAllowedToUpdateResume ||
+                    dataRecruitment.user?.is_enabled === 0
+                      ? "primary"
+                      : "default"
+                  }
+                  disabled={
+                    !isAllowedToUpdateResume ||
+                    dataRecruitment.user?.is_enabled === 0
+                  }
+                  onClick={() => rt.push(`${recruitmentId}/${resumeId}`)}
+                >
+                  <div className="flex flex-row space-x-3 items-center">
+                    <EditIconSvg size={16} color="#35763B" />
+                    <p>Ubah Resume</p>
+                  </div>
+                </ButtonSys>
+              </div>
             </div>
             <div className="flex flex-col pt-4 pb-8">
               <p className="text-sm font-bold text-primary100 mb-4">

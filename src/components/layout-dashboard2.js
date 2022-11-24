@@ -17,16 +17,26 @@ function LayoutDashboard2({
   tok,
   dataProfile,
   pathArr,
+  pathTitleArr,
   sidemenu,
   st,
 }) {
   const rt = useRouter();
   var childBreacrumb = [];
-  if (pathArr) {
-    for (var i = 0; i < pathArr.length; i++) {
-      childBreacrumb.push(pathArr[i]);
+  let breadcrumbTitleArr = [];
+
+  if (pathTitleArr) {
+    breadcrumbTitleArr = pathTitleArr;
+  } else if (pathArr) {
+    breadcrumbTitleArr = pathArr;
+  }
+
+  if (breadcrumbTitleArr) {
+    for (var i = 0; i < breadcrumbTitleArr.length; i++) {
+      childBreacrumb.push(breadcrumbTitleArr[i]);
     }
   }
+
   const childBreacrumbCC = childBreacrumb.map((doc, idx) => {
     return doc[0].toUpperCase() + doc.slice(1);
   });

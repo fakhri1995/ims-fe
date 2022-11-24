@@ -50,9 +50,14 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, resumeId }) => {
 
   //INIT
   const rt = useRouter();
-  const pathArr = rt.pathname.split("/")?.slice(1);
-  // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Detail Kandidat";
+  // Breadcrumb url
+  const pathArr = rt.asPath.split("/").slice(1);
+  pathArr.splice(1, 1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr[pathTitleArr.length - 2] = "Lamaran Saya";
+  pathTitleArr[pathTitleArr.length - 1] = "Edit Profil";
 
   // 1. STATE
   // 1.1. display
@@ -279,6 +284,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, resumeId }) => {
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col gap-6">
         {/* SECTION BASIC INFO */}
