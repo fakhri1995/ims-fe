@@ -9,10 +9,10 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
   return (
     <div className={"w-full md:w-3/5"}>
       <div className={"w-full"}>
-        <p className={"text-3xl font-bold pb-8 pt-10"}>
+        <p className={"text-3xl font-semibold text-blackmig"}>
           Send us your questions
         </p>
-        <p className={"text-lg pb-4"}>
+        <p className={"text-sm mt-3 text-blackmig mb-5"}>
           Fill in your contact information, and our sales team will contact you
           shortly.
         </p>
@@ -200,7 +200,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
             </Checkbox>
           </Form.Item>
           <Form.Item>
-            <div className={"w-full flex justify-start pb-8"}>
+            <div className={"w-full flex justify-start mt-2"}>
               <button
                 type={"submit"}
                 className={

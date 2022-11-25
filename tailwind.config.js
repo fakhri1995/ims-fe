@@ -64,6 +64,7 @@ module.exports = {
         lightpink: "#F7E3EC",
         transp60: "rgba(244, 244, 244, 0.6)",
         bgIcon:"#D1E8DB",
+        bgtalents:"#F8F8F8"
       },
       borderColor: {
         primary: "#1890ff",
@@ -97,8 +98,9 @@ module.exports = {
         primarygreen: "#188E4D",
         redmig: "#D66B42",
         lightpink: "#F7E3EC",
-        divider: "#E5E7E6",
+        dividermig: "#E5E7E6",
         lightgrey:"#B8B8B8",
+        transp45:"rgba(24, 142, 77, 0.45)"
       },
       textColor: {
         primary: "#1890ff",
@@ -138,6 +140,7 @@ module.exports = {
         redmig: "#FF3D3F",
         lightgrey: "#B8B8B8",
         redmig2: "#D66B42",
+        accentpink:"#BE658A",
       },
       gradientColorStops: {
         state1: `#799F0C`,

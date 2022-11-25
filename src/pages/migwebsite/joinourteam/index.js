@@ -96,16 +96,14 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
       <section
-        className={
-          "section1careers py-4 md:py-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
-        }
+        className={"section1careers py-4 md:py-16 mx-auto md:w-[1216px]"}
       >
         <div className={"block md:flex"}>
-          <div className={"flex-col m-auto"}>
+          <div className={"flex-col m-auto w-[660px]"}>
             <div className={""}>
               <p
                 className={
-                  "text-2xl md:text-3xl pb-4 text-center md:text-left font-semibold text-blackmig"
+                  "text-2xl md:text-[32px] text-center md:text-left font-semibold text-blackmig"
                 }
               >
                 Careers at MIG
@@ -116,7 +114,11 @@ function JoinOurTeam({ dataCareers, empData }) {
                   src="/image/joinourteam/joinourteam_image.png"
                 />
               </div>
-              <p className={"text-base gilroy-regular text-blackmig pb-4"}>
+              <p
+                className={
+                  "text-base gilroy-regular text-blackmig my-4 md:my-8"
+                }
+              >
                 We are currently looking to expand our team! Our team comprises
                 of highly motivated, positive and hardworking individuals.
               </p>
@@ -124,7 +126,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <Link href="/section7careers">
                   <button
                     className={
-                      "flex flex-row justify-between text-xl w-[294px] h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-semibold"
+                      "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-semibold"
                     }
                   >
                     <p className={"self-center"}>Explore Open Positions</p>
@@ -150,28 +152,23 @@ function JoinOurTeam({ dataCareers, empData }) {
       <section className={"h-8 hidden md:block"}></section>
 
       <section className={"section3careers bg-trans60 bg-opacity-60"}>
-        <div
-          className={"py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"}
-        >
-          <span
-            className={"relative"}
-            style={{ top: "-140px" }}
-            id="ourvalues"
-          ></span>
-          <div>
-            <p
-              className={
-                "text-2xl md:text-3xl gilroy-semibold font-semibold text-blackmig text-center pb-8"
-              }
-            >
-              Our Values
-            </p>
-          </div>
+        <div className={"py-4 md:py-6"}>
+          <p
+            className={
+              "text-2xl md:text-3xl gilroy-semibold font-semibold text-blackmig text-center "
+            }
+          >
+            Our Values
+          </p>
 
-          <div className={"md:flex md:flex-row justify-between"}>
+          <div
+            className={
+              "md:flex md:flex-row mx-auto justify-between w-[1216px] mt-6"
+            }
+          >
             <div
               className={
-                "flex-col flex text-center w-[384px] h-[180px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4 mb-4"
+                "flex-col flex text-center w-[384px] h-[180px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4"
               }
             >
               <div className={""}>
@@ -196,7 +193,7 @@ function JoinOurTeam({ dataCareers, empData }) {
 
             <div
               className={
-                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
+                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
               }
             >
               <div className={""}>
@@ -220,7 +217,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             </div>
             <div
               className={
-                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg mb-4"
+                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
               }
             >
               <div className={""}>
@@ -285,38 +282,23 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section> */}
 
-      <section
-        className={
-          "section6careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto"
-        }
-      >
-        <span
-          className={"relative"}
-          style={{ top: "-140px" }}
-          id="benefits"
-        ></span>
-        <div className={"justify-center"}>
-          <p
-            className={
-              "text-center text-blackmig font-semibold text-2xl md:text-3xl pb-8"
-            }
-          >
-            Benefits
-          </p>
-          <p
-            className={"pb-8 text-justify text-base gilroy-regular text-black"}
-          >
+      <section className={"section6careers py-8 md:py-16"}>
+        <p
+          className={
+            "text-center text-blackmig font-semibold text-2xl md:text-3xl"
+          }
+        >
+          Benefits
+        </p>
+        <div className={"w-[1216px] mx-auto mt-4"}>
+          <p className={"text-base gilroy-regular text-blackmig"}>
             Mitramas is a people-centric business with a foundation to gives
             working opportunities for motivated individuals at all levels. Our
             long-term sustainable business which has been running for +15 years
             and operated across 45 cities have a strong commitment to offer
             pleasant experience for our team, communities, and clients.
           </p>
-          <div
-            className={
-              "block md:flex md:flex-row justify-center object-scale-down text-base"
-            }
-          >
+          <div className={"block md:flex md:flex-row justify-center mt-4"}>
             <div
               className={"block md:flex md:flex-col justify-center md:w-1/2"}
             >
@@ -413,69 +395,9 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
 
-      {/* <section
-        className={
-          "section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto bg-red-400"
-        }>
-        <span
-          className={"relative"}
-          style={{ top: "-150px" }}
-          id="vacancies"></span>
-        <div className={"block md:flex justify-between"}>
-          <div className={"flex-row left-column-section7careers pr-0 md:pr-8"}>
-            <p className={"text-3xl gilroy-bold pb-8"}>Careers at MIG</p>
-            <p className={"pb-8 text-xl"}>
-              Want to advance your career with us ? See our job openings below
-              for our current financial services and government projects.
-            </p>
-            <div className={"w-5/12 border-t-8 border-green-700 pb-8"}></div>
-            <p className={"pb-8 text-xl"}>
-              Didn't find the role that best describes your skills ? Send your
-              CV to{" "}
-              <span className={"gilroy-bold"}>
-                recruitment@mitrasolusi.group
-              </span>{" "}
-              for potential opportunities
-            </p>
-          </div>
-          <div className={"flex-row w-full"}>
-            <Collapse
-              accordion
-              defaultActiveKey={["0"]}
-              expandIconPosition={"right"}>
-              {careers.map((item, idx) => {
-                return (
-                  <Panel
-                    className={"text-base"}
-                    header={item.position_name}
-                    key={idx}>
-                    <div>
-                      <div className={"text-base pb-4"}>
-                        <p className={"gilroy-bold text-base"}>
-                          Job Description:
-                        </p>
-                        <p className={"text-base"}>{item.job_description}</p>
-                      </div>
-                      <a
-                        className={"text-base hover:text-green-500"}
-                        href={item.register_link}
-                        target="_blank"
-                        rel="noopener noreferrer">
-                        Apply Now
-                        <ArrowRightOutlined
-                          className={"pl-2 relative -top-0.5"}
-                        />
-                      </a>
-                    </div>
-                  </Panel>
-                );
-              })}
-            </Collapse>
-          </div>
-        </div>
-      </section> */}
-
-      <CareersAtMig />
+      <section className={"section7careers"}>
+        <CareersAtMig />
+      </section>
       <LayoutFormContactUs />
     </Layout>
   );
