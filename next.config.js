@@ -9,6 +9,10 @@ const nextConfig = {
   rewrites: async () => [
     { source: "/advantages", destination: "/migwebsite/advantages" },
     { source: "/hardware", destination: "/migwebsite/hardware" },
+    {
+      source: "/hardware/:hardware_id",
+      destination: "/migwebsite/hardware/[hardware_id]",
+    },
     { source: "/software", destination: "/migwebsite/software" },
     { source: "/talents", destination: "/migwebsite/talents" },
     { source: "/aboutus", destination: "/migwebsite/aboutus" },
