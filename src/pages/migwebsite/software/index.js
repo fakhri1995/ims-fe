@@ -141,7 +141,7 @@ function Software({}) {
 
       <section
         className={
-          "section2software py-4 md:py-8 mt-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section2software py-4 md:py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"hidden md:flex container mx-auto"}>
@@ -226,44 +226,86 @@ function Software({}) {
             <img src="/image/landingpage/Software.png"></img>
           </div>
         </div>
-        <div className={"block md:hidden"}>
-          <div className={"my-auto"}>
-            <div className={"my-auto"}>
-              <img src="/image/hardware/Hardware-Solution.png"></img>
-            </div>
-            <p className={"text-2xl pb-4 gilroy-bold"}>
-              Managing IT infrastructures is{" "}
-              <span
-                style={{
-                  borderBottom: "solid 3px #188E4D",
-                  paddingBottom: "2.5px",
+        <div className={"block md:hidden py-9 px-4"}>
+          <div className={"px-3"}>
+            <p className={"text-blackmig text-xl text-center font-semibold"}>
+              Simplify and automate the process through digitalization
+            </p>
+            <img
+              src="/image/hardware/Hardware-Solution.png"
+              className={"w-[304px] h-[174px]"}
+            ></img>
+            <p
+              className={
+                "py-6 text-center text-base gilroy-regular text-blackmig"
+              }
+            >
+              High competition, need transformation, and slow operations force
+              you to be more effective and efficient in order to grow rapidly.
+            </p>
+          </div>
+          <div>
+            <p className={"font-semibold text-primarygreen text-sm"}>
+              Reach us to get more information
+            </p>
+            <div className={"flex flex-row items-center mt-1"}>
+              <Input
+                name={"email"}
+                className={"w-[241px] h-[37px]"}
+                onChange={(e) => {
+                  setEmail(e.target.value);
                 }}
+                placeholder="Enter your email here."
+              />
+              <button
+                className={
+                  "py-2 px-[29.5px] rounded ml-2 w-[79px] h-[36px]  border-2 bg-primarygreen border-primarygreen"
+                }
               >
-                challenging
-              </span>{" "}
-            </p>
-            <p className={"pb-4 pt-2 gilroy-medium text-xl"}>
-              Rapid pace of change, uncertainty on scalability, and heavy
-              capital requirements might break your focus from executing your
-              core business.
-            </p>
-            <p className={"gilroy-medium text-xl"}>
-              Let us help you to scale and manage your IT infrastructure with :
-            </p>
-            <ul className={"list-inside list-disc"}>
-              <li className={"gilroy-medium text-xl"}>
-                <span className={"gilroy-bold"}>predictable</span> monthly cost{" "}
-              </li>
-              <li className={"gilroy-medium text-xl"}>
-                <span className={"gilroy-bold"}>guaranteed</span> service level
-              </li>
-            </ul>
+                <img
+                  className={"w-[16px] h-[16px]"}
+                  src="/image/landingpage/arrow-circle-right.png"
+                />
+              </button>
+            </div>
+          </div>
+          <div
+            className={"mt-6 w-[328px] border rounded-lg p-2 bg-greentrans15"}
+          >
+            <div className={"flex flex-row"}>
+              <img
+                className={"w-[20px] h-[20px] mr-1"}
+                src="/image/landingpage/info.png"
+              />
+              <div>
+                <p className={"text-sm text-blackmig gilroy-regular"}>
+                  Let us help you to achieve business goals with :
+                </p>
+                <ul className={""}>
+                  <li className={"mt-1"}>
+                    <p className={"text-sm text-blackmig gilroy-regular"}>
+                      {""}
+                      <span className={"font-bold"}>Customized</span> software
+                      solutions
+                    </p>
+                  </li>
+                  <li className={"mt-1"}>
+                    <p className={"text-sm text-blackmig gilroy-regular"}>
+                      {""}
+                      <span className={"font-bold"}>Automated</span> business
+                      operations
+                    </p>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+      {/*section software portofolio */}
       <section
         className={
-          "section3software bg-bgjoinmig pt-4 pb-8 md:pt-8 md:pb-20 mt-10"
+          "section3software hidden md:block bg-bgjoinmig pt-4 pb-8 md:pt-8 md:pb-20 mt-10"
         }
       >
         <p
@@ -283,7 +325,7 @@ function Software({}) {
           in digitalizing businesses
         </p>
         <div className={"flex flex-row"}>
-          <button onClick={() => slider?.current?.slickPrev()}>
+          <button onClick={() => slider2?.current?.slickPrev()}>
             <div
               className={
                 "self-center flex items-center justify-center  absolute left-[100px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
@@ -392,7 +434,7 @@ function Software({}) {
               </div>
             </Slider>
           </div>
-          <button onClick={() => slider?.current?.slickNext()}>
+          <button onClick={() => slider2?.current?.slickNext()}>
             <div
               className={
                 "self-center flex items-center justify-center  absolute right-[100px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
@@ -407,9 +449,104 @@ function Software({}) {
           </button>
         </div>
       </section>
-
+      {/*section portofolio mobile */}
       <section
-        className={"px-4 mt-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"}
+        className={
+          "section3software block md:hidden bg-bgjoinmig px-6 pt-9 pb-[72px]"
+        }
+      >
+        <p className={"text-xl text-center gilroy-semibold font-semibold"}>
+          Let’s see what{" "}
+          <span
+            style={{
+              borderBottom: "solid 3px #188E4D",
+              paddingBottom: "2.5px",
+            }}
+          >
+            IT softwares
+          </span>{" "}
+          we can offer
+        </p>
+        <div className={"mt-7"}>
+          <Slider {...sliderSettingsPhone}>
+            <div className={"py-8 px-[16.25px] h-[445px] bg-white rounded-lg"}>
+              <img
+                className={"w-full h-[159px]"}
+                // style={{ width: "284.29px", height: "159px" }}
+                src="/image/software/migsys.png"
+              />
+              <div className={"mt-3 flex flex-row justify-between"}>
+                <p className={"gilroy-bold text-blackmig text-sm"}>MIGSys</p>
+                <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
+                  <p className={"text-primarygreen gilroy-regular text-xs"}>
+                    Website Development
+                  </p>
+                </div>
+              </div>
+              <div className={"mt-1"}>
+                <p className={"gilroy-regular text-blackmig text-sm"}>
+                  An enterprise resource planning that built to enhance
+                  employee’s performance and productivity:{" "}
+                </p>
+                <ul className={"gilroy-regular text-blackmig text-sm"}>
+                  <li>Task & Recruitment Process</li>
+                  <li>Warehouse Managed Service</li>
+                  <li>Contract, Order, and Service for Assets</li>
+                  <li>Attendance Tracking</li>
+                  <li>Tickets, and more</li>
+                </ul>
+              </div>
+            </div>
+            <div className={"py-8 px-[16.25px] h-[445px] bg-white rounded-lg"}>
+              <img
+                className={"w-full h-[159px]"}
+                // style={{ width: "284.29px", height: "159px" }}
+                src="/image/software/lms.png"
+              />
+              <div className={"mt-3 flex flex-row justify-between"}>
+                <p className={"gilroy-bold text-blackmig text-sm"}>MIGSys</p>
+                <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
+                  <p className={"text-primarygreen gilroy-regular text-xs"}>
+                    Website Development
+                  </p>
+                </div>
+              </div>
+              <div className={"mt-1"}>
+                <p className={"gilroy-regular text-blackmig text-sm"}>
+                  A web-based educational platform (learning management system)
+                  that built to digitalize learning programs; plan, implement
+                  and assess learning programs at AQL Islamic Center.
+                </p>
+              </div>
+            </div>
+            <div className={"py-8 px-[16.25px] h-[445px] bg-white rounded-lg"}>
+              <img
+                className={"w-full h-[159px]"}
+                // style={{ width: "284.29px", height: "159px" }}
+                src="/image/software/warung-lebaran.png"
+              />
+              <div className={"mt-3 flex flex-row justify-between"}>
+                <p className={"gilroy-bold text-blackmig text-sm"}>MIGSys</p>
+                <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
+                  <p className={"text-primarygreen gilroy-regular text-xs"}>
+                    Website Development
+                  </p>
+                </div>
+              </div>
+              <div className={"mt-1"}>
+                <p className={"gilroy-regular text-blackmig text-sm"}>
+                  A web-based hardware managed service to enhance the efficiency
+                  of distributions between seller and consumer.
+                </p>
+              </div>
+            </div>
+          </Slider>
+        </div>
+      </section>
+      <section
+        className={
+          "px-4 py-9 mt-10 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+        }
       >
         <div className={"container mx-auto text-center"}>
           <div className={"pb-12"}>
@@ -423,77 +560,99 @@ function Software({}) {
             </p>
           </div>
           <img className={"m-auto w-full"} src="/image-software.png"></img>
+          <div className={"mt-4 md:hidden"}>
+            <Link href="/contactus">
+              <button
+                className={
+                  "text-sm md:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
+                }
+              >
+                <p className={"text-base gilroy-semibold font-semibold mr-2"}>
+                  Contact our sales team
+                </p>
+              </button>
+            </Link>
+          </div>
         </div>
       </section>
-      <section
-        className={
-          "section2landingpagebrowser bg-bgjoinmig md:relative py-8 hidden md:block px-4 md:px-10 "
-        }
-      >
-        <div className={"container mx-auto"}>
-          <div className={"flex flex-row justify-center"}>
-            <div className={"w-2/5 flex justify-end"}>
-              <img
-                src="/image/people/People-Solution.png"
-                className={"w-[477px] h-[282px]"}
-                alt=""
-              />
-            </div>
-            <div className={"w-3/5 justify-self-start"}>
-              <div className="flex flex-col items-start px-10">
-                <h4 className="mb-2 text-2xl font-semibold text-blackmig">
-                  Why you should trust us in building your IT projects?
-                </h4>
-                <div className="flex flex-row items-center mt-5">
-                  <div className="w-11">
-                    <img
-                      src="/image/landingpage/career-icon1.png"
-                      className="w-[42px] h-[42px]"
-                    />
-                  </div>
-                  <div>
-                    <h5 className="px-5 text-sm md:text-base font-semibold text-blackmig">
-                      Build Software Based on Your Needs
-                    </h5>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
-                      Giving you customization software to simplify and automate
-                      your business.
-                    </p>
-                  </div>
+      <section className={"section3softwarebrowser bg-transp60"}>
+        <div
+          className={
+            "flex md:flex-row md:justify-center py-9 md:py-0 px-4 md:px-0"
+          }
+        >
+          <div className={"hidden md:block py-12 "}>
+            <img
+              src="/image/people/People-Solution.png"
+              className={"w-[477px] h-[282px]"}
+              alt=""
+            />
+          </div>
+          <div className={"md:ml-10 md:py-[53px]"}>
+            <div className="flex flex-col md:w-[662px]">
+              <h4 className="mb-2 text-2xl text-center font-semibold text-blackmig">
+                Why you should{" "}
+                <span
+                  style={{
+                    borderBottom: "solid 3px #188E4D",
+                    paddingBottom: "2.5px",
+                  }}
+                >
+                  trust us
+                </span>{" "}
+                in taking care of your softwares?
+              </h4>
+              <div className={"block md:hidden mx-auto my-[17px]"}>
+                <img
+                  src="/image/people/People-Solution.png"
+                  className={"w-[253px] h-[150px]"}
+                  alt=""
+                />
+              </div>
+              <div className="flex flex-row mt-5">
+                <img
+                  src="/image/landingpage/career-icon1.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    Build Software Based on Your Needs
+                  </h5>
+                  <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    We provide guaranteed level of IT operation services to
+                    support your business
+                  </p>
                 </div>
-                <div className="flex flex-row items-center mt-3">
-                  <div className="w-11">
-                    <img
-                      src="/image/landingpage/career-icon2.png"
-                      className="w-[42px] h-[42px]"
-                    />
-                  </div>
-                  <div>
-                    <h5 className="px-5 text-sm md:text-base font-semibold text-blackmig">
-                      Excellent Talent Support
-                    </h5>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
-                      We develops software to help you achieve business process
-                      automation with our IT talent pool
-                    </p>
-                  </div>
+              </div>
+              <div className="flex flex-row mt-[17px]">
+                <img
+                  src="/image/landingpage/career-icon2.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    Excellent Talent Support
+                  </h5>
+                  <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    We transform a heavy capital IT hardware infrastructure,
+                    that requires large upfront investment into managed services
+                    model
+                  </p>
                 </div>
-                <div className="flex flex-row items-center mt-3">
-                  <div className="w-11">
-                    <img
-                      src="/image/landingpage/career-icon3.png"
-                      className="w-[42px] h-[42px]"
-                    />
-                  </div>
-                  <div>
-                    <h5 className="px-5 text-sm md:text-base font-semibold text-blackmig">
-                      Enhance Productivity & Efficiency
-                    </h5>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
-                      We can discuss about project also provide the best cost
-                      with a mutual agreement based on time, and complexity
-                    </p>
-                  </div>
+              </div>
+              <div className="flex flex-row mt-[17px]">
+                <img
+                  src="/image/landingpage/career-icon3.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    Enhance Productivity & Efficiency
+                  </h5>
+                  <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    We provide strong local knowledge and network to help your
+                    business strive across Indonesia
+                  </p>
                 </div>
               </div>
             </div>
@@ -592,14 +751,75 @@ function Software({}) {
           </div>
         </div>
       </section>
+      {/*section how it work mobile */}
+      <section
+        className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
+      >
+        <p className="mb-2 text-2xl text-center font-semibold text-blackmig">
+          How{" "}
+          <span
+            style={{
+              borderBottom: "solid 3px #188E4D",
+              paddingBottom: "2.5px",
+            }}
+          >
+            it works
+          </span>{" "}
+          ?
+        </p>
+        <div className={"mt-4 flex flex-row"}>
+          <img
+            src="/image/hardware/how-it-work-mobile-1.png"
+            className="w-[44px] h-[44px]"
+          />
+          <div className={"ml-3"}>
+            <p className={"text-sm text-blackmig font-semibold"}>
+              Custom project-based collaboration
+            </p>
+            <p className={"text-sm text-blackmig gilroy-regular"}>
+              One-stop service to develop tailored products
+            </p>
+          </div>
+        </div>
+        <div className={"mt-4 flex flex-row"}>
+          <img
+            src="/image/hardware/how-it-work-mobile-2.png"
+            className="w-[44px] h-[44px]"
+          />
+          <div className={"ml-3"}>
+            <p className={"text-sm text-blackmig font-semibold"}>
+              Providing all the resources you’ll need
+            </p>
+            <p className={"text-sm text-blackmig gilroy-regular"}>
+              We have extensive talents and technologies tobuild the best
+              project for you and your companies
+            </p>
+          </div>
+        </div>
+        <div className={"mt-4 flex flex-row"}>
+          <img
+            src="/image/hardware/how-it-work-mobile-3.png"
+            className="w-[44px] h-[44px]"
+          />
+          <div className={"ml-3"}>
+            <p className={"text-sm text-blackmig font-semibold"}>
+              Clear and detailed project development
+            </p>
+            <p className={"text-sm text-blackmig gilroy-regular"}>
+              We do multiple iterations and input before you’re receiving the
+              end-product
+            </p>
+          </div>
+        </div>
+      </section>
       <section
         className={
-          "section3landingpageadvantages bg-bgjoinmig pt-8 pb-60 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section3landingpageadvantages hidden md:block bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
         }
       >
         <p
           className={
-            "text-xl md:text-3xl text-center gilroy-semibold font-semibold py-8 md:py-0 mb-10"
+            "text-xl md:text-3xl text-center gilroy-semibold font-semibold mb-[42px]"
           }
         >
           What they say{" "}
@@ -614,7 +834,7 @@ function Software({}) {
           ?
         </p>
         <div
-          className={"center md:content-around block md:hidden mt-30"}
+          className={"center md:content-around block md:hidden"}
           style={{ maxWidth: 1000 }}
         >
           <Slider {...sliderSettingsPhone}>
@@ -768,7 +988,7 @@ function Software({}) {
           <button onClick={() => slider?.current?.slickPrev()}>
             <div
               className={
-                "self-center flex items-center justify-center  absolute left-[100px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                "self-center flex items-center justify-center  absolute left-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
               }
             >
               <img
@@ -782,185 +1002,256 @@ function Software({}) {
             className={"center md:content-around hidden md:block"}
             style={{ maxWidth: 1000 }}
           >
-            <Slider {...sliderSettings2} ref={slider2}>
-              <div className={"rounded-lg"}>
-                <Card
-                  bordered
-                  style={{
-                    boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <div className="">
-                    <div className="flex flex-row justify-between">
-                      <p className="text-3xl text-darkgrey italic gilroy-semibold font-semibold">
-                        "
+            <Slider {...sliderSettings2} ref={slider}>
+              <div
+                className="pt-6 pb-8 md:px-16 bg-white rounded-lg"
+                style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+              >
+                <div className="flex flex-row justify-between">
+                  <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                    "
+                  </p>
+                  <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                    "
+                  </p>
+                </div>
+                <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                  I had a{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    wonderful experience
+                  </span>{" "}
+                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
+                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    tempor incididunt
+                  </span>{" "}
+                  ut labore et dolore magna aliqua.
+                </p>
+                <div
+                  className={
+                    "border-solid border-2 border-dividermig mt-6 mx-auto w-[417px] h-0"
+                  }
+                ></div>
+                <div className="flex flex-col items-center mt-6">
+                  <div className="flex justify-center">
+                    <img
+                      className="rounded-full mr-4"
+                      src="/image/landingpage/testimonial-user.png"
+                      style={{ height: "68px", width: "68px" }}
+                      alt=""
+                    />
+                    <div className="self-center">
+                      <p className={"text-blackmig font-semibold text-base"}>
+                        Fachri Fauzan
                       </p>
-                      <p className="text-3xl text-darkgrey italic gilroy-semibold font-semibold">
-                        "
+                      <p className={"text-darkgrey font-semibold text-sm"}>
+                        Talent Acquisition at Bukopin
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-left">
-                      I had a{" "}
-                      <span className={"font-bold"}>wonderful experience</span>{" "}
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"font-semibold"}>tempor incididunt</span>{" "}
-                      ut labore et dolore magna aliqua.
-                    </p>
-                    <div
-                      className={
-                        "border-solid border-2 border-divider mt-5 mx-auto w-[417px]"
-                      }
-                    ></div>
-                    <div className="flex flex-col items-center mt-5">
-                      <div className="flex justify-center mt-10">
-                        <img
-                          className="rounded-full mr-4"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "68px", width: "102px" }}
-                          alt=""
-                        />
-                        <div className="self-center">
-                          <p
-                            className={"text-blackmig font-semibold text-base"}
-                          >
-                            Fachri Fauzan
-                          </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                        <div className="ml-4">
-                          <img
-                            style={{ height: "68px", width: "81px" }}
-                            src="/image/landingpage/testimonial-client.png"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-around mt-10">
-                        <div className="bg-greenTrans20 mx-10 py-2 px-4 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
-                            Banking
-                          </p>
-                        </div>
-                        <div className="bg-lightblue mx-10 py-2 px-4 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
-                            Hardware, Talents
-                          </p>
-                        </div>
-                      </div>
-                      <a href="#">
-                        <div className="flex justify-center items-center mt-10">
-                          <p className="text-base mr-5 text-primarygreen font-semibold gilroy-semibold">
-                            Read more
-                          </p>
-                          <img
-                            className={"items-center"}
-                            style={{ width: "8px", height: "15px" }}
-                            src="/image/landingpage/arrow-forward-ios.png"
-                          />
-                        </div>
-                      </a>
+                    <div className="ml-6">
+                      <img
+                        style={{ height: "68px", width: "81px" }}
+                        src="/image/landingpage/testimonial-client.png"
+                        alt=""
+                      />
                     </div>
                   </div>
-                </Card>
+                  <div className="flex flex-row justify-center mx-2 mt-6">
+                    <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
+                      <p className="text-sm text-primarygreen gilroy-regular">
+                        <span className={"font-semibold"}>Industry : </span>
+                        Banking
+                      </p>
+                    </div>
+                    <div className="bg-lightblue px-2 py-2 rounded-[20px]">
+                      <p className="text-sm text-primarygreen gilroy-regular">
+                        <span className={"font-semibold"}>Service : </span>
+                        Hardware, Talents
+                      </p>
+                    </div>
+                  </div>
+                  <a href="#">
+                    <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
+                      <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                        Read more
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ width: "8px", height: "15px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </a>
+                </div>
               </div>
-              <div className={"rounded-lg"}>
-                <Card
-                  bordered
-                  style={{
-                    boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
-                    borderRadius: "8px",
-                  }}
-                >
-                  <div className="">
-                    <div className="flex flex-row justify-between">
-                      <p className="text-3xl text-darkgrey italic gilroy-semibold font-semibold">
-                        "
+              <div
+                className="pt-6 pb-8 md:px-16 bg-white rounded-lg"
+                style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+              >
+                <div className="flex flex-row justify-between">
+                  <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                    "
+                  </p>
+                  <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                    "
+                  </p>
+                </div>
+                <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                  I had a{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    wonderful experience
+                  </span>{" "}
+                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
+                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    tempor incididunt
+                  </span>{" "}
+                  ut labore et dolore magna aliqua.
+                </p>
+                <div
+                  className={
+                    "border-solid border-2 border-dividermig mt-6 mx-auto w-[417px] h-0"
+                  }
+                ></div>
+                <div className="flex flex-col items-center mt-6">
+                  <div className="flex justify-center">
+                    <img
+                      className="rounded-full mr-4"
+                      src="/image/landingpage/testimonial-user.png"
+                      style={{ height: "68px", width: "68px" }}
+                      alt=""
+                    />
+                    <div className="self-center">
+                      <p className={"text-blackmig font-semibold text-base"}>
+                        Fachri Fauzan
                       </p>
-                      <p className="text-3xl text-darkgrey italic gilroy-semibold font-semibold">
-                        "
+                      <p className={"text-darkgrey font-semibold text-sm"}>
+                        Talent Acquisition at Bukopin
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-left">
-                      I had a{" "}
-                      <span className={"font-bold"}>wonderful experience</span>{" "}
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"font-semibold"}>tempor incididunt</span>{" "}
-                      ut labore et dolore magna aliqua.
-                    </p>
-                    <div
-                      className={
-                        "border-solid border-2 border-divider mt-5 mx-auto w-[417px]"
-                      }
-                    ></div>
-                    <div className="flex flex-col items-center mt-5">
-                      <div className="flex justify-center mt-10">
-                        <img
-                          className="rounded-full mr-4"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "68px", width: "102px" }}
-                          alt=""
-                        />
-                        <div className="self-center">
-                          <p
-                            className={"text-blackmig font-semibold text-base"}
-                          >
-                            Fachri Fauzan
-                          </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                        <div className="ml-4">
-                          <img
-                            style={{ height: "68px", width: "81px" }}
-                            src="/image/landingpage/testimonial-client.png"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                      <div className="flex justify-around mt-10">
-                        <div className="bg-greenTrans20 mx-10 py-2 px-4 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
-                            Banking
-                          </p>
-                        </div>
-                        <div className="bg-lightblue mx-10 py-2 px-4 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
-                            Hardware, Talents
-                          </p>
-                        </div>
-                      </div>
-                      <a href="#">
-                        <div className="flex justify-center items-center mt-10">
-                          <p className="text-base mr-5 text-primarygreen font-semibold gilroy-semibold">
-                            Read more
-                          </p>
-                          <img
-                            className={"items-center"}
-                            style={{ width: "8px", height: "15px" }}
-                            src="/image/landingpage/arrow-forward-ios.png"
-                          />
-                        </div>
-                      </a>
+                    <div className="ml-6">
+                      <img
+                        style={{ height: "68px", width: "81px" }}
+                        src="/image/landingpage/testimonial-client.png"
+                        alt=""
+                      />
                     </div>
                   </div>
-                </Card>
+                  <div className="flex flex-row justify-center mx-2 mt-6">
+                    <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
+                      <p className="text-sm text-primarygreen gilroy-regular">
+                        <span className={"font-semibold"}>Industry : </span>
+                        Banking
+                      </p>
+                    </div>
+                    <div className="bg-lightblue px-2 py-2 rounded-[20px]">
+                      <p className="text-sm text-primarygreen gilroy-regular">
+                        <span className={"font-semibold"}>Service : </span>
+                        Hardware, Talents
+                      </p>
+                    </div>
+                  </div>
+                  <a href="#">
+                    <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
+                      <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                        Read more
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ width: "8px", height: "15px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </a>
+                </div>
+              </div>
+              <div
+                className="pt-6 pb-8 md:px-16 bg-white rounded-lg"
+                style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+              >
+                <div className="flex flex-row justify-between">
+                  <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                    "
+                  </p>
+                  <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                    "
+                  </p>
+                </div>
+                <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                  I had a{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    wonderful experience
+                  </span>{" "}
+                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
+                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    tempor incididunt
+                  </span>{" "}
+                  ut labore et dolore magna aliqua.
+                </p>
+                <div
+                  className={
+                    "border-solid border-2 border-dividermig mt-6 mx-auto w-[417px] h-0"
+                  }
+                ></div>
+                <div className="flex flex-col items-center mt-6">
+                  <div className="flex justify-center">
+                    <img
+                      className="rounded-full mr-4"
+                      src="/image/landingpage/testimonial-user.png"
+                      style={{ height: "68px", width: "68px" }}
+                      alt=""
+                    />
+                    <div className="self-center">
+                      <p className={"text-blackmig font-semibold text-base"}>
+                        Fachri Fauzan
+                      </p>
+                      <p className={"text-darkgrey font-semibold text-sm"}>
+                        Talent Acquisition at Bukopin
+                      </p>
+                    </div>
+                    <div className="ml-6">
+                      <img
+                        style={{ height: "68px", width: "81px" }}
+                        src="/image/landingpage/testimonial-client.png"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                  <div className="flex flex-row justify-center mx-2 mt-6">
+                    <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
+                      <p className="text-sm text-primarygreen gilroy-regular">
+                        <span className={"font-semibold"}>Industry : </span>
+                        Banking
+                      </p>
+                    </div>
+                    <div className="bg-lightblue px-2 py-2 rounded-[20px]">
+                      <p className="text-sm text-primarygreen gilroy-regular">
+                        <span className={"font-semibold"}>Service : </span>
+                        Hardware, Talents
+                      </p>
+                    </div>
+                  </div>
+                  <a href="#">
+                    <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
+                      <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                        Read more
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ width: "8px", height: "15px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </a>
+                </div>
               </div>
             </Slider>
           </div>
           <button onClick={() => slider?.current?.slickNext()}>
             <div
               className={
-                "self-center flex items-center justify-center  absolute right-[100px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                "self-center flex items-center justify-center  absolute right-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
               }
             >
               <img
@@ -972,48 +1263,187 @@ function Software({}) {
           </button>
         </div>
       </section>
+      {/* testimonial mobile */}
       <section
         className={
-          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
+          "sectiontestimonialmobile block md:hidden bg-bgjoinmig pt-8 pb-[178px] px-[30px] md:px-10"
         }
       >
-        <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-            <p className={"text-xl font-semibold"}>
-              Fulfill your IT needs easily!
-            </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
-            </p>
-            <Link href="/hardware">
-              <button
+        <p
+          className={
+            "text-xl md:text-3xl text-center gilroy-semibold font-semibold md:py-0 mb-7 md:mb-10"
+          }
+        >
+          What they say{" "}
+          <span
+            style={{
+              borderBottom: "solid 3px #188E4D",
+              paddingBottom: "2.5px",
+            }}
+          >
+            about us
+          </span>{" "}
+          ?
+        </p>
+        <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
+          <Slider {...sliderSettingsPhone}>
+            <div
+              className="py-4 px-8 bg-white rounded-lg"
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
+              <div className="">
+                <p className="text-sm text italic gilroy-semibold font-semibold">
+                  "
+                </p>
+
+                <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                  I had a{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    wonderful experience{" "}
+                  </span>
+                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
+                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    tempor incididunt{" "}
+                  </span>
+                  ut labore et dolore magna aliqua.
+                  <br className="hidden xl:block"></br> optimize your cost and
+                  productivity
+                </p>
+                <p className="text-sm text italic gilroy-semibold font-semibold">
+                  "
+                </p>
+                <div className="flex flex-col">
+                  <div className="flex flex-row mt-2">
+                    <img
+                      className="rounded-full"
+                      src="/image/landingpage/testimonial-user.png"
+                      style={{ height: "40px", width: "60px" }}
+                      alt=""
+                    />
+                    <div className="self-center ml-[6.8px]">
+                      <p className="text-xs font-semibold Gilroy-semibold text-black">
+                        Fachri Fauzan
+                      </p>
+                      <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                        Talent Acquisition at Bukopin
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className="py-4 px-8 bg-white rounded-lg"
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
+              <div className="">
+                <p className="text-sm text italic gilroy-semibold font-semibold">
+                  "
+                </p>
+
+                <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                  I had a{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    wonderful experience{" "}
+                  </span>
+                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
+                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    tempor incididunt{" "}
+                  </span>
+                  ut labore et dolore magna aliqua.
+                  <br className="hidden xl:block"></br> optimize your cost and
+                  productivity
+                </p>
+                <p className="text-sm text italic gilroy-semibold font-semibold">
+                  "
+                </p>
+                <div className="flex flex-col">
+                  <div className="flex flex-row mt-2">
+                    <img
+                      className="rounded-full"
+                      src="/image/landingpage/testimonial-user.png"
+                      style={{ height: "40px", width: "60px" }}
+                      alt=""
+                    />
+                    <div className="self-center ml-[6.8px]">
+                      <p className="text-xs font-semibold Gilroy-semibold text-black">
+                        Fachri Fauzan
+                      </p>
+                      <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                        Talent Acquisition at Bukopin
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              className="py-4 px-8 bg-white rounded-lg"
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
+              <div className="">
+                <p className="text-sm text italic gilroy-semibold font-semibold">
+                  "
+                </p>
+
+                <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                  I had a{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    wonderful experience{" "}
+                  </span>
+                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
+                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
+                  <span className={"text-primarygreen font-semibold"}>
+                    tempor incididunt{" "}
+                  </span>
+                  ut labore et dolore magna aliqua.
+                  <br className="hidden xl:block"></br> optimize your cost and
+                  productivity
+                </p>
+                <p className="text-sm text italic gilroy-semibold font-semibold">
+                  "
+                </p>
+                <div className="flex flex-col">
+                  <div className="flex flex-row mt-2">
+                    <img
+                      className="rounded-full"
+                      src="/image/landingpage/testimonial-user.png"
+                      style={{ height: "40px", width: "60px" }}
+                      alt=""
+                    />
+                    <div className="self-center ml-[6.8px]">
+                      <p className="text-xs font-semibold Gilroy-semibold text-black">
+                        Fachri Fauzan
+                      </p>
+                      <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                        Talent Acquisition at Bukopin
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Slider>
+        </div>
+        <div className={"block md:hidden mt-16 flex justify-center"}>
+          <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
+            <div className={"flex flex-row justify-around"}>
+              <p
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-base text-primarygreen gilroy-semibold font-semibold"
                 }
               >
-                <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
-                  <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Link>
-          </div>
-        </div>
-        <div className={"flex justify-between self-end"}>
-          <img
-            style={{ width: "160px", height: "69px" }}
-            src="/image/landingpage/footer-left.png"
-          />
-          <img
-            style={{ width: "160px", height: "69px" }}
-            src="/image/landingpage/footer-right.png"
-          />
+                Read More
+              </p>
+              <img
+                className={"self-center"}
+                style={{ height: "15.64px", width: "8.95px" }}
+                src="/image/landingpage/arrow-forward-ios.png"
+              />
+            </div>
+          </button>
         </div>
       </section>
       <section
@@ -1064,13 +1494,14 @@ function Software({}) {
           />
         </div>
       </section>
+      {/*section contact us mobile */}
       <section
         className={
-          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
+          "contactusphone md:relative block md:hidden md:flex bg-bgfooter pt-8 h-[205px]"
         }
       >
         <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-[102px] py-4 px-8">
             <p className={"text-xl font-semibold"}>
               Fulfill your IT needs easily!
             </p>
