@@ -31,6 +31,11 @@ const nextConfig = {
     { source: "/privacy", destination: "/migwebsite/privacy" },
     { source: "/contactus", destination: "/migwebsite/contactus" },
     { source: "/dashboard/clients", destination: "/company/clients" },
+
+    { 
+      source: "/admin/recruitment/:recruitment_id/:resume_id", 
+      destination: "/admin/candidates/:resume_id" 
+    },
   ],
   webpack: (config) => {
     config.module.rules.push({

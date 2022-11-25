@@ -111,8 +111,8 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [pageResume, setPageResume] = useState(1);
   const [rowsResume, setRowsResume] = useState(10);
   const [sortingResume, setSortingResume] = useState({
-    sort_by: "name",
-    sort_type: "desc",
+    sort_by: "",
+    sort_type: "",
   });
   const [assessmentIds, setAssessmentIds] = useState([]);
 
