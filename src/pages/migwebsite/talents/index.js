@@ -695,13 +695,19 @@ function Talents({}) {
             className={"w-[63px] h-[63px]"}
             src="/image/people/engineering.png"
           />
-          <div className={"ml-12 flex flex-col justify-between"}>
+          <div className={"ml-12  flex flex-col justify-between"}>
             <div>
-              <p>Engineering</p>
+              <p className={"text-2xl gilroy-bold text-blackmig"}>
+                Engineering
+              </p>
             </div>
-            <div>
-              <p>Pilihan Masa Kontrak</p>
-              <p>1 minggu - 5 tahun</p>
+            <div className={"mt-3"}>
+              <p className={"text-sm text-darkgrey font-semibold"}>
+                Pilihan Masa Kontrak
+              </p>
+              <p className={"text-base gilroy-regular text-blackmig"}>
+                1 minggu - 5 tahun
+              </p>
             </div>
           </div>
         </div>
@@ -716,20 +722,24 @@ function Talents({}) {
         </div>
         <div className={"text-darkgrey"}>
           <div className={"mt-8 md:hidden"}>
-            <p className={"text-xs font-semibold"}>Pilihan Masa Kontrak</p>
-            <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
+            <p className={"text-xs text-darkgrey font-semibold"}>
+              Pilihan Masa Kontrak
+            </p>
+            <p className={"text-sm gilroy-regular text-blackmig"}>
+              1 minggu - 5 tahun
+            </p>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Roles</p>
-            <ul>
+            <p className={"text-sm font-semibold"}>Typical Roles</p>
+            <ul className={"text-base text-blackmig gilroy-regular"}>
               <li>Web Developer</li>
               <li>Mobile App Developer</li>
               <li>Quality Assurance Engineer, etc.</li>
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Skills</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Skills</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>Bachelor's degree in Computer Science, </li>
               <li>
                 Knowledge of primary coding languages including C++, HTML5, and
@@ -742,8 +752,8 @@ function Talents({}) {
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Deliverables</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Deliverables</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>
                 Integration of user-facing elements developed by front-end
                 developers,
@@ -836,11 +846,15 @@ function Talents({}) {
           <img className={"w-[63px] h-[63px]"} src="/image/people/data.png" />
           <div className={"ml-12 flex flex-col justify-between"}>
             <div>
-              <p>Data</p>
+              <p className={" text-2xl gilroy-bold text-blackmig"}>Data</p>
             </div>
-            <div>
-              <p>Pilihan Masa Kontrak</p>
-              <p>1 minggu - 5 tahun</p>
+            <div className={"mt-3"}>
+              <p className={"text-xs text-darkgrey font-semibold"}>
+                Pilihan Masa Kontrak
+              </p>
+              <p className={"text-sm gilroy-regular text-blackmig"}>
+                1 minggu - 5 tahun
+              </p>
             </div>
           </div>
         </div>
@@ -856,16 +870,16 @@ function Talents({}) {
             <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Roles</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Roles</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>Data Analyst</li>
               <li> Data Scientist</li>
               <li>Business Intelligence Analyst, etc.</li>
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Skills</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Skills</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>A high level of mathematical ability,</li>
               <li>Programming languages, such as SQL, Oracle and Python, </li>
               <li>The ability to analyze, model and interpret data, </li>
@@ -875,8 +889,8 @@ function Talents({}) {
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Deliverables</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Deliverables</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>Examines information using data analysis tools.</li>
               <li>
                 Generate meaningful results that pulled from the raw data and
@@ -898,7 +912,7 @@ function Talents({}) {
           <div className={"flex flex-row justify-end mr-4"}>
             <p
               className={
-                "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
               }
             >
               Interested with our talents?
@@ -925,7 +939,7 @@ function Talents({}) {
             <div className={"text-center"}>
               <p
                 className={
-                  "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                  "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
                 }
               >
                 Interested with our talents?
@@ -970,13 +984,19 @@ function Talents({}) {
             className={"w-[63px] h-[63px]"}
             src="/image/people/product.png"
           />
-          <div className={"ml-12 flex flex-col justify-between"}>
+          <div className={"ml-12  flex flex-col justify-between"}>
             <div>
-              <p>Product</p>
+              <p className={"text-2xl gilroy-bold text-blackmig"}>Product</p>
             </div>
             <div>
-              <p>Pilihan Masa Kontrak</p>
-              <p>1 minggu - 5 tahun</p>
+              <div className={"mt-3"}>
+                <p className={"text-xs text-darkgrey font-semibold"}>
+                  Pilihan Masa Kontrak
+                </p>
+                <p className={"text-sm gilroy-regular text-blackmig"}>
+                  1 minggu - 5 tahun
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -995,15 +1015,15 @@ function Talents({}) {
             <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Roles</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Roles</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>Product Manager</li>
               <li>Product Analyst, etc.</li>
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Skills</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Skills</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>
                 Proven experience with rapid prototyping tools and techniques,
                 such as story mapping, design sprints, and product methodology.
@@ -1017,8 +1037,8 @@ function Talents({}) {
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Deliverables</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Deliverables</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>
                 Doing the research and analysis of the competitive landscape,
                 product metrics, and latest internet trends to identify and fill
@@ -1044,7 +1064,7 @@ function Talents({}) {
           <div className={"flex flex-row justify-end mr-4"}>
             <p
               className={
-                "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
               }
             >
               Interested with our talents?
@@ -1071,7 +1091,7 @@ function Talents({}) {
             <div className={"text-center"}>
               <p
                 className={
-                  "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                  "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
                 }
               >
                 Interested with our talents?
@@ -1112,13 +1132,17 @@ function Talents({}) {
       >
         <div className={"hidden md:flex  flex-row"}>
           <img className={"w-[63px] h-[63px]"} src="/image/people/design.png" />
-          <div className={"ml-12 flex flex-col justify-between"}>
+          <div className={"ml-12  flex flex-col justify-between"}>
             <div>
-              <p>Design</p>
+              <p className={"text-2xl gilroy-bold text-blackmig"}>Design</p>
             </div>
-            <div>
-              <p>Pilihan Masa Kontrak</p>
-              <p>1 minggu - 5 tahun</p>
+            <div className={"mt-3"}>
+              <p className={"text-xs text-darkgrey font-semibold"}>
+                Pilihan Masa Kontrak
+              </p>
+              <p className={"text-sm gilroy-regular text-blackmig"}>
+                1 minggu - 5 tahun
+              </p>
             </div>
           </div>
         </div>
@@ -1137,16 +1161,16 @@ function Talents({}) {
             <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Roles</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Roles</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>Graphic Designer,</li>
               <li>Product Designer,</li>
               <li>UI/UX Designer, etc.</li>
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Skills</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Skills</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>
                 Proven experience with rapid prototyping tools and techniques,
                 such as story mapping, design sprints, and product methodology.
@@ -1160,8 +1184,8 @@ function Talents({}) {
             </ul>
           </div>
           <div className={"mt-8"}>
-            <p>Typical Deliverables</p>
-            <ul>
+            <p className={"font-semibold text-sm"}>Typical Deliverables</p>
+            <ul className={"text-base gilroy-regular text-blackmig"}>
               <li>Conceptualizing visuals based on client’s requirements</li>
               <li>
                 Ensure final graphics and layouts are visually appealing and
@@ -1186,7 +1210,7 @@ function Talents({}) {
           <div className={"flex flex-row justify-end mr-4"}>
             <p
               className={
-                "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
               }
             >
               Interested with our talents?
@@ -1213,7 +1237,7 @@ function Talents({}) {
             <div className={"text-center"}>
               <p
                 className={
-                  "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                  "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
                 }
               >
                 Interested with our talents?

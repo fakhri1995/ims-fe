@@ -20,12 +20,14 @@ function LayoutFormContactUs({ title, description, button_title }) {
         <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
             <p className={"text-2xl font-semibold text-black"}>
-              Fulfill your IT needs easily!
+              {title ? title : "Fulfill your IT needs easily!"}
             </p>
             <p className={"py-5 text-base gilroy-regular text-black"}>
-              Need help in providing your needs? Whether they related to
+              {description
+                ? description
+                : `Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+              what service can we offer to you and your company!`}
             </p>
             <Linkk href="/contactus">
               <button
@@ -35,7 +37,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
               >
                 <div className={"flex flex-row justify-between"}>
                   <p className={"text-base gilroy-semibold font-semibold mr-2"}>
-                    Contact Us
+                    {button_title ? button_title : `Contact Us`}
                   </p>
                   <img
                     className={"self-center"}
@@ -64,15 +66,23 @@ function LayoutFormContactUs({ title, description, button_title }) {
             <p className={"text-xl font-semibold"}>
               {title ? title : "Fulfill your IT needs easily!"}
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>{description}</p>
+            <p className={"py-5 text-sm Gilroy-regular"}>
+              {description
+                ? description
+                : `Need help in providing your needs? Whether they related to
+              hardware, software, or even talent hiring? Contact us and hear
+              what service can we offer to you and your company!`}
+            </p>
             <Linkk href="/contactus">
               <button
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-base text-center -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>{button_title}</p>
+                  <p className={"px-1"}>
+                    {button_title ? button_title : "Contact Us"}
+                  </p>
                   <img
                     className={"py-1 px-1"}
                     style={{ width: "15px" }}
