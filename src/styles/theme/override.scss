@@ -363,12 +363,15 @@ ol {
   -webkit-box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
   box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
 }
+// .slick-dots li button:before {
+//   background-color: "#D9D9D9";
+//   color:#D9D9D9;
+//   overflow: hidden;
+// }
+// #D9D9D9
+.slick-dots li.slick-active button:before {
+  color: #b8b8b8 !important;
+}
 .slick-dots li button:before {
-  margin-top: 10px;
-  background-color: #b8b8b8;
-  height: 4px;
-  border-radius: 100px;
-  width: 4px;
-  text-indent: -9999px;
-  overflow: hidden;
+  color: #d9d9d9 !important;
 }
