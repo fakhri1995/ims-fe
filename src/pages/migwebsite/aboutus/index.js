@@ -192,7 +192,9 @@ function AboutUs({}) {
         </div>
       </section>
 
-      <section className={"px-4 sm:px-10 md:px-10 pt-4 md:pb-10 bg-transp60"}>
+      <section
+        className={"px-4 sm:px-10 md:px-10 pt-4 md:pb-[130px] bg-transp60"}
+      >
         <div>
           <p className={"font-semibold text-xl text-blackmig md:text-2xl pb-2"}>
             MIG Location
@@ -370,8 +372,108 @@ function AboutUs({}) {
           </div>
         </div>
       </section>
-      <div className={"h-20 bg-transp60 -mb-24"}></div>
-      <LayoutFormContactUs />
+      <section
+        className={
+          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+        }
+      >
+        <div className={"justify-start self-end"}>
+          <img
+            style={{ width: "332px", height: "142px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+        </div>
+        <div className={"container w-1/2 mx-auto"}>
+          <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
+            <p className={"text-2xl font-semibold text-black"}>
+              Fulfill your IT needs easily!
+            </p>
+            <div
+              className={
+                "mt-3.5 text-base gilroy-regular text-center text-black"
+              }
+            >
+              <p>
+                Need help in providing your needs? Whether they related to
+                hardware,{" "}
+              </p>
+              <p>software, or even talent hiring?</p>
+              <p>
+                Contact us and hear what service can we offer to you and your
+                company!
+              </p>
+            </div>
+            <Link href="/contactus">
+              <button
+                className={
+                  "text-sm w-[145px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
+                }
+              >
+                <div className={"flex flex-row justify-between"}>
+                  <p className={"text-base gilroy-semibold font-semibold"}>
+                    Contact Us
+                  </p>
+                  <img
+                    className={"self-center"}
+                    style={{ height: "15px", width: "8px" }}
+                    src="/image/landingpage/arrow-forward.png"
+                  />
+                </div>
+              </button>
+            </Link>
+          </div>
+        </div>
+        <div className={"justify-end  self-end"}>
+          <img
+            className={"w-[332px] h-[142px]"}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
+      <section
+        className={
+          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
+        }
+      >
+        <div className={"container mx-auto"}>
+          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+            <p className={"text-xl font-semibold"}>
+              Fulfill your IT needs easily!
+            </p>
+            <p className={"py-5 text-sm Gilroy-regular"}>
+              Need help in providing your needs? Whether they related to
+              hardware, software, or even talent hiring? Contact us and hear
+              what service can we offer to you and your company!
+            </p>
+            <Link href="/hardware">
+              <button
+                className={
+                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                }
+              >
+                <div className={"flex flex-row justify-between"}>
+                  <p className={"px-1"}>Contact Us</p>
+                  <img
+                    className={"py-1 px-1"}
+                    style={{ width: "15px" }}
+                    src="/image/landingpage/arrow-forward.png"
+                  />
+                </div>
+              </button>
+            </Link>
+          </div>
+        </div>
+        <div className={"flex justify-between self-end"}>
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
     </Layout>
   );
 }

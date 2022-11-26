@@ -259,7 +259,7 @@ function layout({ children }) {
           type="checkbox"
           id={`menutoggle`}
         />
-        <section className={"md:hidden w-full h-auto pt-16"}>
+        <section className={"md:hidden w-full h-auto mt-3 pt-16"}>
           <div
             theme="light"
             style={{ lineHeight: "3.9rem" }}

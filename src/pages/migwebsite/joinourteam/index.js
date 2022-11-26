@@ -32,7 +32,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       </Head>
       <section
         className={
-          "section2careers hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50"
+          "section2careers  px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50"
         }
         style={{ background: "#F4F4F4" }}
       >
@@ -96,7 +96,9 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
       <section
-        className={"section1careers py-4 md:py-16 mx-auto md:w-[1216px]"}
+        className={
+          "section1careers hidden md:block py-4 md:py-16 mx-auto md:w-[1216px]"
+        }
       >
         <div className={"block md:flex"}>
           <div className={"flex-col m-auto w-[660px]"}>
@@ -148,22 +150,55 @@ function JoinOurTeam({ dataCareers, empData }) {
           </div>
         </div>
       </section>
-
+      {/* section career1 mobile */}
+      <section className={"section1careers md:hidden py-12 px-4"}>
+        <p className={"text-2xl text-center font-semibold text-blackmig"}>
+          Careers at MIG
+        </p>
+        <div className={"mt-12"}>
+          <img
+            src="/image/joinourteam/joinourteam_image.png"
+            className={"w-[328px] h-auto"}
+          />
+        </div>
+        <div className={"py-12"}>
+          <p className={"text-base text-center gilroy-regular text-blackmig"}>
+            We are currently looking to expand our team! Our team comprises of
+            highly motivated, positive and hardworking individuals.
+          </p>
+        </div>
+        <div className={"flex justify-center"}>
+          <Link href="/section7careers">
+            <button
+              className={
+                "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-semibold"
+              }
+            >
+              <p className={"self-center"}>Explore Open Positions</p>
+              <img
+                className={"self-center"}
+                style={{ width: "20px", height: "20px" }}
+                src="/image/landingpage/arrow-circle-down.png"
+              />
+            </button>
+          </Link>
+        </div>
+      </section>
       <section className={"h-8 hidden md:block"}></section>
 
-      <section className={"section3careers bg-trans60 bg-opacity-60"}>
-        <div className={"py-4 md:py-6"}>
+      <section className={"section3careers bg-transp60"}>
+        <div className={"py-4 md:py-6 px-4 md:px-12"}>
           <p
             className={
-              "text-2xl md:text-3xl gilroy-semibold font-semibold text-blackmig text-center "
+              "text-xl md:text-3xl gilroy-semibold font-semibold text-blackmig text-center "
             }
           >
             Our Values
           </p>
-
+          {/*tampilan dekstpp */}
           <div
             className={
-              "md:flex md:flex-row mx-auto justify-between w-[1216px] mt-6"
+              "hidden md:flex md:flex-row mx-auto md:justify-between w-[1216px] mt-6"
             }
           >
             <div
@@ -241,48 +276,71 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
             </div>
           </div>
+          {/*tampilan mobile */}
+          <div className={"mt-7"}>
+            <div
+              className={
+                "flex flex-row bg-white border-2 border-black-300 shadow-lg rounded-lg h-[91px] px-4 py-3"
+              }
+            >
+              <div className={" justify-center self-center w-1/5"}>
+                <img
+                  className={"w-[60px] h-[60px]"}
+                  src="/image/joinourteam/values-1.png"
+                />
+              </div>
+              <div className={" w-4/5 ml-4"}>
+                <p className={"text-sm font-semibold text-blackmig"}>Agility</p>
+                <p className={"text-blackmig text-sm mt-1"}>
+                  We are adapting to fast-changing environments.
+                </p>
+              </div>
+            </div>
+            <div
+              className={
+                "flex flex-row bg-white border-2 border-black-300 shadow-lg rounded-lg h-[91px] px-4 py-3 mt-4"
+              }
+            >
+              <div className={" justify-center self-center w-1/5"}>
+                <img
+                  className={"w-[60px] h-[60px]"}
+                  src="/image/joinourteam/values-1.png"
+                />
+              </div>
+              <div className={" w-4/5 ml-4"}>
+                <p className={"text-sm font-semibold text-blackmig"}>
+                  Perseverance
+                </p>
+                <p className={"text-blackmig text-sm mt-1"}>
+                  We aim high and constantly strive for excellence.
+                </p>
+              </div>
+            </div>
+            <div
+              className={
+                "flex flex-row bg-white border-2 border-black-300 shadow-lg rounded-lg h-[91px] mt-4 px-4 py-3"
+              }
+            >
+              <div className={" justify-center self-center w-1/5"}>
+                <img
+                  className={"w-[60px] h-[60px]"}
+                  src="/image/joinourteam/values-3.png"
+                />
+              </div>
+              <div className={" w-4/5 ml-4"}>
+                <p className={"text-sm font-semibold text-blackmig"}>
+                  Integrity
+                </p>
+                <p className={"text-blackmig text-sm mt-1"}>
+                  We are dedicated to adhering to positive ethical values.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* <section
-        className={
-          "section8careers py-10 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 h-auto"
-        }
-      >
-        <div className={"justify-center"}>
-          <p className={"text-center gilroy-bold text-3xl md:text-4xl pb-8"}>
-            Employee Stories
-          </p>
-        </div>
-        <div className="bg-green-600 h-auto">
-          <Slider {...sliderSettings2}>
-            {empData.map((data, idx) => {
-              return (
-                <div key={idx}>
-                  <div
-                    className={"h-auto py-8 lg:py-14 grid justify-items-center"}
-                  >
-                    <p
-                      className={
-                        "w-3/4 lg:w-2/3 xl:w-1/2 mb-10 text-white text-center text-ld md:text-xl gilroy-bold"
-                      }
-                    >
-                      {data.story}
-                    </p>
-                    <div
-                      className={"h-14 w-14 mb-2 bg-gray-500 rounded-full"}
-                    ></div>
-                    <p className={"text-white font-bold"}>{data.name}</p>
-                    <p className={"text-white font-bold"}>{data.role}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </Slider>
-        </div>
-      </section> */}
-
-      <section className={"section6careers py-8 md:py-16"}>
+      <section className={"section6careers hidden md:block py-8 md:py-16"}>
         <p
           className={
             "text-center text-blackmig font-semibold text-2xl md:text-3xl"
@@ -394,11 +452,124 @@ function JoinOurTeam({ dataCareers, empData }) {
           </div>
         </div>
       </section>
+      {/*section 6 careers mobile view */}
+      <section className={"section6careers md:hidden pt-12 pb-[150px] px-4"}>
+        <p className={"text-center text-blackmig font-semibold text-xl"}>
+          Benefits
+        </p>
+        <div className={"mt-2"}>
+          <p className={"text-base gilroy-regular text-center text-blackmig"}>
+            Mitramas is a people-centric business with a foundation to gives
+            working opportunities for motivated individuals at all levels. Our
+            long-term sustainable business which has been running for +15 years
+            and operated across 45 cities have a strong commitment to offer
+            pleasant experience for our team, communities, and clients.
+          </p>
+          <div className={"block md:flex md:flex-row justify-center mt-4"}>
+            <div
+              className={"block md:flex md:flex-col justify-center md:w-1/2"}
+            >
+              <div className={"pb-6 flex-row flex "}>
+                <img
+                  src="/image/joinourteam/benefit_1.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
 
+                <p
+                  className={
+                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  We love to empower our team members to solve problems that
+                  matter
+                </p>
+              </div>
+              <div className={"pb-6 flex-row flex"}>
+                <img
+                  src="/image/joinourteam/benefit_2.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
+                <p
+                  className={
+                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  We offer diverse industry exposures and hands-on experience
+                </p>
+              </div>
+              <div className={"pb-6 flex-row flex"}>
+                <img
+                  src="/image/joinourteam/benefit_3.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
+                <p
+                  className={
+                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  We support personal growth through constant experiment and
+                  learning
+                </p>
+              </div>
+            </div>
+            <div
+              className={"block md:flex md:flex-col justify-center md:w-1/2"}
+            >
+              <div className={"pb-6 flex-row flex"}>
+                <img
+                  src="/image/joinourteam/benefit_4.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
+                <p
+                  className={
+                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  We provide unique and competitive packages to launch your
+                  career
+                </p>
+              </div>
+              <div className={"pb-6 flex-row flex"}>
+                <img
+                  src="/image/joinourteam/benefit_5.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
+                <p
+                  className={
+                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  We value informal social bonding to offer a enjoyable working
+                  environment
+                </p>
+              </div>
+              <div className={"pb-6 flex-row flex"}>
+                <img
+                  src="/image/joinourteam/benefit_6.png"
+                  style={{ height: "44px", width: "44px" }}
+                ></img>
+                <p
+                  className={
+                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                  }
+                >
+                  We create engaging environment and believe everyone has a
+                  voice at the table
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
       <section className={"section7careers"}>
         <CareersAtMig />
       </section>
-      <LayoutFormContactUs />
+      <LayoutFormContactUs
+        description={`Need help in providing your needs? Whether they related to
+              hardware, software, or even talent hiring? Contact us and hear
+              what service can we offer to you and your company!`}
+        button_title={"Contact Us"}
+      />
     </Layout>
   );
 }
