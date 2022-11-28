@@ -100,6 +100,17 @@ const EmployeeInventoryForm = ({
     }
   }, [isAdd]);
 
+  // inventory data for api
+  // id : null,
+  // employee_id : null,
+  // id_number : null,
+  // device_name : "",
+  // referance_invertory : "",
+  // device_type : "",
+  // serial_number : "",
+  // pic_delivery : "",
+  // pic_taking : ""
+
   // 3. HANDLER
   const handleAddNewInventory = () => {
     let newDataInventory = {
@@ -125,7 +136,6 @@ const EmployeeInventoryForm = ({
     setInventoryList(data);
   };
 
-  // console.log(inventoryList);
   return (
     <>
       {!isAdd && (

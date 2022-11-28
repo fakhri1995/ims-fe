@@ -54,15 +54,17 @@ const DeviceForm = ({
   const [loadingCreate, setLoadingCreate] = useState(false);
 
   // 3. HANDLER
-  const onChangeDeviceInput = (e, idxDev) => {
+  const onChangeDeviceInput = (e) => {
     let dataDevices = [...deviceList];
     dataDevices[idxDev][e.target.name] = e.target.value;
     setDeviceList(dataDevices);
 
     let dataInventories = [...inventoryList];
-    dataInventories[idxInv].device_list = dataDevices;
+    dataInventories[idxInv].devices = dataDevices;
     setInventoryList(dataInventories);
   };
+
+  // console.log(deviceList)
 
   // const onChangeFile = async (e) => {
   //   if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
@@ -100,7 +102,7 @@ const DeviceForm = ({
       </h5>
       <Form.Item
         label="ID"
-        name={"id_2"}
+        name={"id_number"}
         rules={[
           {
             required: true,
@@ -110,16 +112,16 @@ const DeviceForm = ({
       >
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.id_2}
-            name={"id_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.id_number}
+            name={"id_number"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan ID"
           />
         </div>
       </Form.Item>
       <Form.Item
         label="Nama Piranti"
-        name={"device_name_2"}
+        name={"device_name"}
         rules={[
           {
             required: true,
@@ -129,29 +131,29 @@ const DeviceForm = ({
       >
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.device_name_2}
-            name={"device_name_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.device_name}
+            name={"device_name"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan nama piranti"
           />
         </div>
       </Form.Item>
-      <Form.Item label="Tipe" name={"type_2"}>
+      <Form.Item label="Tipe" name={"device_type"}>
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.type_2}
-            name={"type_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.device_type}
+            name={"device_type"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan tipe"
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor Serial" name={"serial_num_2"}>
+      <Form.Item label="Nomor Serial" name={"serial_number"}>
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.serial_num_2}
-            name={"serial_num_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.serial_number}
+            name={"serial_number"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan nomor serial"
           />
         </div>
