@@ -92,7 +92,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
   // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Yasmin Adelia Puti C";
+  pathArr[pathArr.length - 1] = "Karyawan";
 
   const [instanceForm] = Form.useForm();
 
@@ -171,7 +171,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             justify-center space-y-2 p-4"
           >
             <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
-            <h4 className="mig-heading--4 text-center">Yasmin Adelia Puti C</h4>
+            <h4 className="mig-heading--4 text-center">[Nama Karyawan]</h4>
             {/* <img /> */}
           </div>
           {/* Right column */}
@@ -208,15 +208,15 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p>Yasmin Adelia Puti C</p>
+                  <p>[Nama karyawan]</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">NIP</p>
-                  <p>71231922</p>
+                  <p>[nip]</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>Frontend Engineer</p>
+                  <p>[posisi]</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
@@ -226,7 +226,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">E-mail</p>
-                  <p>yasmin@mitrasolusi.group</p>
+                  <p>emailkaryawan@mitrasolusi.group</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
