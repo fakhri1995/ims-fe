@@ -71,10 +71,7 @@ import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
-import {
-  TableCustomEmployeeList,
-  TableCustomRecruitmentCandidate,
-} from "../../../components/table/tableCustom";
+import { TableCustomEmployeeList } from "../../../components/table/tableCustom";
 import { H1, H2, Text } from "../../../components/typography";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
@@ -113,6 +110,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
   const canUpdateEmployee = hasPermission([EMPLOYEE_UPDATE, EMPLOYEE_GET]);
+  const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
 
   // TODO: change variable and constant to appropriate feature
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
@@ -163,9 +161,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // filter search & selected options
   const [searchingFilterEmployees, setSearchingFilterEmployees] = useState("");
-  const [selectedCompanyId, setSelectedCompanyId] = useState(0);
+  const [selectedPlacement, setSelectedPlacement] = useState(0);
   const [selectedRoleId, setSelectedRoleId] = useState(0);
-  const [selectedContractStatus, setSelectedContractStatus] = useState(0);
+  const [selectedContractStatusId, setSelectedContractStatusId] = useState(0);
 
   // sorting
   const [sortingEmployees, setSortingEmployees] = useState({
@@ -197,6 +195,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataRowClicked, setDataRowClicked] = useState({});
   const tempIdClicked = useRef(-1);
   const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
+
+  // 2.3. Add employee
+  const [loadingAdd, setLoadingAdd] = useState(false);
+
+  // 2.4. Delete employee
+  const [modalDelete, setModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
 
   // 3. UseEffect
   // 3.1. Get Employees
@@ -353,14 +358,96 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 4. Event
   const onAddEmployeeButtonClicked = useCallback(() => {
-    rt.push("/admin/employees/create");
+    handleAddEmployee();
   }, []);
+
+  const handleAddEmployee = () => {
+    if (!isAllowedToAddEmployee) {
+      permissionWarningNotification("Menambah", "Karyawan");
+      return;
+    }
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployee`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTimeout(() => {
+            setLoadingAdd(false);
+            rt.push(`/admin/employees/create?id=${response2.data?.id}`);
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan karyawan. ${response2.message}`,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setLoadingAdd(false);
+          }, 500);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan karyawan. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingAdd(false);
+      });
+  };
+
+  const handleDeleteEmployee = (employeeId) => {
+    if (!isAllowedToDeleteEmployee) {
+      permissionWarningNotification("Menghapus", "Karyawan");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployee?id=${employeeId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: response2.message,
+            duration: 3,
+          });
+          setModalDelete(false);
+        } else {
+          notification.error({
+            message: `Gagal menghapus karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
+  };
 
   // 4.1. Filter Table
   const onFilterEmployees = () => {
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedContractStatus}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedContractStatusId}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
       {
         method: `GET`,
         headers: {
@@ -410,7 +497,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const columnEmployee = [
     {
       title: "No.",
-      key: "number",
       dataIndex: "num",
       render: (text, record, index) => {
         return {
@@ -420,70 +506,48 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Nama",
-      key: "name",
       dataIndex: "name",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.name ? record.name : ""}</>,
-        };
-      },
       sorter: isAllowedToGetEmployees
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
     {
       title: "NIP",
-      key: "nip",
       dataIndex: "nip",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.nip ? record.nip : ""}</>,
-        };
-      },
     },
     {
       title: "Penempatan",
-      key: "placement",
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record.placement ? record.placement : ""}</>,
+          children: <>{record.contracts[0]?.placement}</>,
         };
       },
     },
     {
       title: "Status Kontrak",
-      key: "status",
-      dataIndex: "status",
+      dataIndex: "contract_status",
       render: (text, record, index) => {
         return {
-          children: <>{record.status ? record.status : ""}</>,
+          children: <>{record.contracts[0]?.contract_status_id}</>,
         };
       },
     },
     {
       title: "Posisi",
-      key: "role",
-      dataIndex: "role",
+      dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record.role?.name}</>,
+          children: <>{record.contracts[0]?.role_id}</>,
         };
       },
     },
     {
       title: "No. Telepon",
-      key: "phone",
-      dataIndex: "phone",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.phone ? record.phone : ""}</>,
-        };
-      },
+      dataIndex: "phone_number",
     },
     {
       title: "Sisa Hari Kerja",
-      key: "days_left",
       dataIndex: "days_left",
       render: (text, record, index) => {
         return {
@@ -509,31 +573,69 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.is_draft ? (
-                <ButtonSysColor
-                  type={"default"}
-                  // disabled={!isAllowedToEditDraft}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    // rt.push(`/admin/recruitment/${record.id}`);
-                  }}
-                  color={"border-notice text-notice"}
-                >
-                  <EditIconSvg size={12} color={`#DDB44A`} />
-                  <p>Edit Draft</p>
-                </ButtonSysColor>
+              {record.is_posted ? (
+                <div className="flex flex-col space-y-2">
+                  <ButtonSys
+                    type={isAllowedToGetEmployee ? "default" : "primary"}
+                    disabled={!isAllowedToGetEmployee}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(`/admin/employees/${record.id}/editContract`);
+                    }}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <EditIconSvg size={16} color={`#35763B`} />
+                      <p className="whitespace-nowrap">Edit Kontrak</p>
+                    </div>
+                  </ButtonSys>
+                  <ButtonSys
+                    type={isAllowedToGetEmployee ? "default" : "primary"}
+                    disabled={!isAllowedToGetEmployee}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(`/admin/employees/${record.id}/editContract`);
+                    }}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <CirclePlusIconSvg size={16} color={`#35763B`} />
+                      <p className="whitespace-nowrap">Tambah Kontrak</p>
+                    </div>
+                  </ButtonSys>
+                </div>
               ) : (
-                <ButtonSys
-                  type={isAllowedToGetEmployee ? "default" : "primary"}
-                  disabled={!isAllowedToGetEmployee}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    // rt.push(`/admin/recruitment/${record.id}`);
-                  }}
-                >
-                  <EditIconSvg size={12} color={`#35763B`} />
-                  <p>Edit Kontrak</p>
-                </ButtonSys>
+                <div className="flex flex-col space-y-2">
+                  <ButtonSysColor
+                    type={"default"}
+                    // disabled={!isAllowedToEditDraft}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(`/admin/employees/create?id=${record.id}`);
+                    }}
+                    color={"border-notice text-notice bg-notice bg-opacity-10"}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <EditIconSvg size={16} color={`#DDB44A`} />
+                      <p className="whitespace-nowrap">Edit Draft</p>
+                    </div>
+                  </ButtonSysColor>
+                  <ButtonSysColor
+                    type={"default"}
+                    disabled={!isAllowedToDeleteEmployee}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setDataRowClicked(record);
+                      setModalDelete(true);
+                    }}
+                    color={
+                      "border-warning text-warning bg-warning bg-opacity-10"
+                    }
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <TrashIconSvg size={16} color={`#BF4A40`} />
+                      <p className="whitespace-nowrap">Hapus Draft</p>
+                    </div>
+                  </ButtonSysColor>
+                </div>
               )}
             </>
           ),
@@ -659,7 +761,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by company (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={selectedCompanyId === 0 ? null : selectedCompanyId}
+                value={selectedPlacement === 0 ? null : selectedPlacement}
                 allowClear
                 name={`role`}
                 disabled={!isAllowedToGetRoleList}
@@ -667,8 +769,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   typeof value === "undefined"
-                    ? setSelectedCompanyId(0)
-                    : setSelectedCompanyId(value);
+                    ? setSelectedPlacement(0)
+                    : setSelectedPlacement(value);
                 }}
               >
                 {/* <Select.Option value={0}>Semua Role</Select.Option> */}
@@ -708,7 +810,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="w-2/12">
               <Select
                 value={
-                  selectedContractStatus === 0 ? null : selectedContractStatus
+                  selectedContractStatusId === 0
+                    ? null
+                    : selectedContractStatusId
                 }
                 allowClear
                 name={`status`}
@@ -718,8 +822,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   typeof value === "undefined"
-                    ? setSelectedContractStatus(0)
-                    : setSelectedContractStatus(value);
+                    ? setSelectedContractStatusId(0)
+                    : setSelectedContractStatusId(value);
                 }}
               >
                 {dataContractStatusList.map((status) => (
@@ -759,13 +863,32 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               sorting={sortingEmployees}
               searching={searchingFilterEmployees}
               selectedRoleId={selectedRoleId}
-              selectedContractStatus={selectedContractStatus}
-              tempIdClicked={tempIdClicked}
-              setTriggerRowClicked={setTriggerRowClicked}
+              selectedContractStatusId={selectedContractStatusId}
             />
           </div>
         </div>
       </div>
+
+      {/* Modal Hapus Karyawan */}
+      <AccessControl hasPermission={EMPLOYEE_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => handleDeleteEmployee(dataRowClicked.id)}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"kandidat"}
+          loading={loadingDelete}
+          disabled={!isAllowedToDeleteEmployee}
+        >
+          <p>
+            Apakah Anda yakin ingin melanjutkan penghapusan draft karyawan
+            dengan nama <strong>{dataRowClicked.name}?</strong>
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </Layout>
   );
 };
