@@ -17,6 +17,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useCallback } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -40,7 +41,7 @@ import {
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
 
-const EmployeeContractForm = ({ initProps }) => {
+const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
   /**
    * Dependencies
    */
@@ -62,20 +63,6 @@ const EmployeeContractForm = ({ initProps }) => {
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [dataContract, setDataContract] = useState({
-    contract_name: "",
-    contract_status: "",
-    position: "",
-    employee_status: false,
-    contract_doc: "",
-    pkwt: "",
-    contract_starts: "",
-    contract_ends: "",
-    placement: "",
-    new_office: "",
-    resign_date: "",
-    benefits: {},
-  });
 
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [isInputVar, setInputVar] = useState(false);
@@ -91,6 +78,27 @@ const EmployeeContractForm = ({ initProps }) => {
 
   const [loadingRoleTypeList, setLoadingRoleTypeList] = useState(false);
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
+
+  const [fileList, setFileList] = useState([]);
+  const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
+  const [uploadedDocument, setUploadedDocument] = useState(null);
+
+  // const [dataContract, setDataContract] = useState({
+  //   id: null,
+  //   is_employee_active: 0,
+  //   contract_name: "",
+  //   contract_status_id: "",
+  //   role_id: "",
+  //   employee_status: false,
+  //   contract_doc: "",
+  //   pkwt_reference: "",
+  //   contract_starts_at: "",
+  //   contract_ends_at: "",
+  //   placement: "",
+  //   new_office: "",
+  //   resign_at: "",
+  //   benefit: {},
+  // });
 
   // 2. USE EFFECT
   // 2.1. Get Position List
@@ -209,11 +217,44 @@ const EmployeeContractForm = ({ initProps }) => {
 
   // 3. HANDLER
   const onChangeInput = (e) => {
-    setDataCompanyList({
-      ...dataCompanyList,
+    setDataContract({
+      ...dataContract,
       [e.target.name]: e.target.value,
     });
   };
+
+  const beforeUploadDocument = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = "application/pdf";
+
+    if (uploadedFile.type !== allowedFileTypes) {
+      notification.error({
+        message: "File harus memilki format .pdf",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedDocument(uploadedFile);
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadDocumentLoading(file.status === "uploading");
+
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setUploadedDocument(null);
+  }, []);
 
   return (
     <Form
@@ -224,7 +265,7 @@ const EmployeeContractForm = ({ initProps }) => {
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item
         label="Status Karyawan"
-        name={"employee_status"}
+        name={"is_employee_active"}
         rules={[
           {
             required: true,
@@ -235,14 +276,15 @@ const EmployeeContractForm = ({ initProps }) => {
       >
         <div className="flex flex-row space-x-4">
           <Switch
+            checked={dataContract.is_employee_active}
             onChange={(checked) => {
               setDataContract({
                 ...dataContract,
-                employee_status: checked,
+                is_employee_active: checked,
               });
             }}
           />
-          {dataContract.employee_status ? <p>Aktif</p> : <p>Tidak Aktif</p>}
+          {dataContract.is_employee_active ? <p>Aktif</p> : <p>Tidak Aktif</p>}
         </div>
       </Form.Item>
       <Form.Item
@@ -267,7 +309,7 @@ const EmployeeContractForm = ({ initProps }) => {
       </Form.Item>
       <Form.Item
         label="Posisi"
-        name={"position"}
+        name={"role_id"}
         rules={[
           {
             required: true,
@@ -276,25 +318,27 @@ const EmployeeContractForm = ({ initProps }) => {
         ]}
       >
         <Select
-          value={dataContract.position}
+          value={dataContract.role_id}
           onChange={(value) => {
             setDataContract({
               ...dataContract,
-              position: value,
+              role_id: value,
             });
           }}
           placeholder="Pilih posisi"
         >
-          {dataPositionList.map((option) => (
-            <Select.Option key={option.id} value={option.id}>
-              {option.name}
-            </Select.Option>
-          ))}
+          <>
+            {dataPositionList.map((option) => (
+              <Select.Option key={option.id} value={option.id}>
+                {option.name}
+              </Select.Option>
+            ))}
+          </>
         </Select>
       </Form.Item>
       <Form.Item
         label="Status Kontrak"
-        name={"contract_status"}
+        name={"contract_status_id"}
         rules={[
           {
             required: true,
@@ -303,26 +347,27 @@ const EmployeeContractForm = ({ initProps }) => {
         ]}
       >
         <Select
-          value={dataContract.contract_status}
+          value={dataContract.contract_status_id}
           onChange={(value) => {
             setDataContract({
               ...dataContract,
-              contract_status: value,
+              contract_status_id: value,
             });
           }}
           placeholder="Pilih status kontrak"
         >
-          {dataRoleTypeList.map((option) => (
-            <Select.Option key={option.id} value={option.name}>
-              {option.name}
-            </Select.Option>
-          ))}
+          <>
+            {dataRoleTypeList.map((option) => (
+              <Select.Option key={option.id} value={option.id}>
+                {option.name}
+              </Select.Option>
+            ))}
+          </>
         </Select>
       </Form.Item>
 
       <Form.Item
         label="Dokumen Kontrak"
-        name={"contract_doc"}
         className="col-span-2 w-full"
         rules={[
           {
@@ -337,20 +382,11 @@ const EmployeeContractForm = ({ initProps }) => {
             accept=".pdf"
             listType="picture"
             maxCount={1}
-            beforeUpload={(file) => {
-              const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-              const isReachedMaxFileSize =
-                checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-              const isPDF = file.type === `application/pdf`;
-              if (!isPDF) {
-                notification.error({
-                  message: "File harus memilki format .pdf",
-                });
-              }
-              const allowedUpload = !isReachedMaxFileSize && isPDF;
-              return allowedUpload || Upload.LIST_IGNORE;
-            }}
-            // disabled={true}
+            beforeUpload={beforeUploadDocument}
+            onChange={onUploadChange}
+            onRemove={onUploadRemove}
+            disabled={uploadDocumentLoading}
+            fileList={fileList}
           >
             <Button
               className="btn-sm btn text-white font-semibold px-6 border
@@ -366,7 +402,7 @@ const EmployeeContractForm = ({ initProps }) => {
       </Form.Item>
       <Form.Item
         label="Referensi PKWT"
-        name={"pkwt"}
+        name={"pkwt_reference"}
         rules={[
           {
             required: true,
@@ -377,8 +413,8 @@ const EmployeeContractForm = ({ initProps }) => {
       >
         <div>
           <Input
-            value={dataContract.pkwt}
-            name={"pkwt"}
+            value={dataContract.pkwt_reference}
+            name={"pkwt_reference"}
             onChange={onChangeInput}
             placeholder="Masukkan PKWT"
           />
@@ -386,7 +422,7 @@ const EmployeeContractForm = ({ initProps }) => {
       </Form.Item>
       <Form.Item
         label="Awal Kontrak"
-        name={"contract_starts"}
+        name={"contract_start_at"}
         rules={[
           {
             required: true,
@@ -395,26 +431,25 @@ const EmployeeContractForm = ({ initProps }) => {
         ]}
       >
         <DatePicker
-          name="contract_start"
+          name="contract_start_at"
           placeholder="Pilih tanggal awal kontrak"
           className="w-full"
           value={[
-            dataContract.contract_starts
-              ? moment(dataContract.contract_starts)
+            dataContract.contract_start_at
+              ? moment(dataContract.contract_start_at)
               : null,
           ]}
           onChange={(value, datestring) => {
-            let selectedDate = datestring[0];
             setDataContract((prev) => ({
               ...prev,
-              contract_starts: selectedDate,
+              contract_start_at: datestring,
             }));
           }}
         />
       </Form.Item>
       <Form.Item
         label="Akhir Kontrak"
-        name={"contract_ends"}
+        name={"contract_end_at"}
         rules={[
           {
             required: true,
@@ -423,40 +458,41 @@ const EmployeeContractForm = ({ initProps }) => {
         ]}
       >
         <DatePicker
-          name="contract_ends"
+          name="contract_end_at"
           placeholder="Pilih tanggal akhir kontrak"
           className="w-full"
           value={[
-            dataContract.contract_ends
-              ? moment(dataContract.contract_ends)
+            dataContract.contract_end_at
+              ? moment(dataContract.contract_end_at)
               : null,
           ]}
           onChange={(value, datestring) => {
-            let selectedDate = datestring[0];
             setDataContract((prev) => ({
               ...prev,
-              contract_ends: selectedDate,
+              contract_end_at: datestring,
             }));
           }}
         />
       </Form.Item>
       <Form.Item label="Penempatan" name={"placement"}>
-        <Select
-          value={dataContract.placement}
-          onChange={(value) => {
-            setDataContract({
-              ...dataContract,
-              placement: value,
-            });
-          }}
-          placeholder="Pilih penempatan"
-        >
-          {dataCompanyList.map((option) => (
-            <Select.Option key={option.id} value={option.id}>
-              {option.name}
-            </Select.Option>
-          ))}
-        </Select>
+        <>
+          <Select
+            value={dataContract.placement}
+            onChange={(value) => {
+              setDataContract({
+                ...dataContract,
+                placement: value,
+              });
+            }}
+            placeholder="Pilih penempatan"
+          >
+            {dataCompanyList.map((option) => (
+              <Select.Option key={option.id} value={option.id}>
+                {option.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </>
       </Form.Item>
       <Form.Item label="Kantor Baru" name={"new_office"}>
         <div>
@@ -470,21 +506,20 @@ const EmployeeContractForm = ({ initProps }) => {
       </Form.Item>
       <Form.Item
         label="Tanggal Resign"
-        name={"resign_date"}
+        name={"resign_at"}
         className="col-span-2"
       >
         <DatePicker
-          name="resign_date"
+          name="resign_at"
           placeholder="Pilih tanggal resign"
           className="w-full"
           value={[
-            dataContract.resign_date ? moment(dataContract.resign_date) : null,
+            dataContract.resign_at ? moment(dataContract.resign_at) : null,
           ]}
           onChange={(value, datestring) => {
-            let selectedDate = datestring[0];
             setDataContract((prev) => ({
               ...prev,
-              resign_date: selectedDate,
+              resign_at: datestring,
             }));
           }}
         />

@@ -36,7 +36,8 @@ import {
 
 const EmployeeInventoryDetail = ({
   employeeId,
-  isAllowedToUpdateInventory,
+  isAllowedToUpdateEmployeeInventory,
+  dataEmployee,
 }) => {
   /**
    * Dependencies
@@ -92,101 +93,109 @@ const EmployeeInventoryDetail = ({
 
   return (
     <section className="">
-      {inventoryList.length > 0 ? (
+      {dataEmployee?.inventories?.length > 0 ? (
         <Collapse
           bordered={false}
-          defaultActiveKey={["1"]}
+          defaultActiveKey={dataEmployee?.inventories[0]?.id}
           expandIconPosition={"right"}
           expandIcon={({ isActive }) => (
             <UpOutlined rotate={isActive ? 180 : 0} />
           )}
+          accordion={true}
         >
-          {/* TODO: Loop devices */}
-          <Collapse.Panel
-            key={"1"}
-            header={
-              <div className="flex flex-row space-x-3 items-center">
-                <p className="text-md font-bold">Laptop</p>
-                {isAllowedToUpdateInventory && (
-                  <button
-                    className="bg-transparent hover:opacity-70"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      rt.push(`${employeeId}/editInventory?id=${inventoryId}`);
-                    }}
-                  >
-                    <EditIconSvg color={"#35763B"} size={20} />
-                  </button>
-                )}
-              </div>
-            }
-          >
-            <div className="grid grid-cols-2">
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">ID</p>
-                <p>1211342423</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Referensi Inventaris
-                </p>
-                <p>12345678</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Tipe</p>
-                <p>Asus Vivobook</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Nomor Serial</p>
-                <p>12345678</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Tanggal Penyerahan
-                </p>
-                <p>27 Oktober 2022</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Tanggal Pengembalian
-                </p>
-                <p>27 Oktober 2024</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Penanggung Jawab Penyerahan
-                </p>
-                <p>John Watson</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Penanggung Jawab Pengembalian
-                </p>
-                <p>John Watson</p>
-              </div>
-              <div className="space-y-1 mb-3">
-                <p className="mig-caption--medium text-mono80">
-                  Dokumen Penyerahan
-                </p>
-                <div className="flex flex-row space-x-3 items-center ">
-                  <FileTextIconSvg size={48} color={"black"} />
-                  <a>DokumenPenyerahan-Yasmin.pdf</a>
+          {dataEmployee?.inventories?.map((inventory, idx) => (
+            <Collapse.Panel
+              key={inventory.id}
+              header={
+                <div className="flex flex-row space-x-3 items-center">
+                  <p className="text-md font-bold">
+                    {inventory.device_name || "-"}
+                  </p>
+                  {isAllowedToUpdateEmployeeInventory && (
+                    <button
+                      className="bg-transparent hover:opacity-70"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        rt.push(
+                          `${employeeId}/editInventory?id=${inventory.id}`
+                        );
+                      }}
+                    >
+                      <EditIconSvg color={"#35763B"} size={20} />
+                    </button>
+                  )}
+                </div>
+              }
+            >
+              <div className="grid grid-cols-2">
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">ID</p>
+                  <p>{inventory.id_number || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Referensi Inventaris
+                  </p>
+                  <p>{inventory.referance_invertory || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">Tipe</p>
+                  <p>{inventory.device_type || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Nomor Serial
+                  </p>
+                  <p>{inventory.serial_number || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Tanggal Penyerahan
+                  </p>
+                  <p>{inventory.date_delivery || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Tanggal Pengembalian
+                  </p>
+                  <p>{inventory.date_taking || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Penanggung Jawab Penyerahan
+                  </p>
+                  <p>{inventory.pic_delivery || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Penanggung Jawab Pengembalian
+                  </p>
+                  <p>{inventory.pic_taking || "-"}</p>
+                </div>
+                <div className="space-y-1 mb-3">
+                  <p className="mig-caption--medium text-mono80">
+                    Dokumen Penyerahan
+                  </p>
+                  <div className="flex flex-row space-x-3 items-center ">
+                    <FileTextIconSvg size={48} color={"black"} />
+                    <a>DokumenPenyerahan-Yasmin.pdf</a>
+                  </div>
+                </div>
+                <div className="space-y-1 mb-3">
+                  <p className="mig-caption--medium text-mono80">
+                    Dokumen Pengembalian
+                  </p>
+                  <div className="flex flex-row space-x-3 items-center ">
+                    <FileTextIconSvg size={48} color={"black"} />
+                    <a>DokumenPengembalian-Yasmin.pdf</a>
+                  </div>
                 </div>
               </div>
-              <div className="space-y-1 mb-3">
-                <p className="mig-caption--medium text-mono80">
-                  Dokumen Pengembalian
-                </p>
-                <div className="flex flex-row space-x-3 items-center ">
-                  <FileTextIconSvg size={48} color={"black"} />
-                  <a>DokumenPengembalian-Yasmin.pdf</a>
-                </div>
-              </div>
-            </div>
-          </Collapse.Panel>
+            </Collapse.Panel>
+          ))}
         </Collapse>
       ) : (
-        <p>Tidak ada inventaris & piranti pada Yasmin Adelia Puti C</p>
+        <p>Tidak ada inventaris & piranti pada {dataEmployee?.name}</p>
       )}
     </section>
   );

@@ -27,36 +27,13 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  GUEST_STATUS,
-  RECRUITMENT_DELETE,
-  RECRUITMENT_EMAIL_SEND,
-  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
-  RECRUITMENT_GET,
-  RECRUITMENT_LOG_GET,
-  RECRUITMENT_LOG_NOTES_ADD,
-  RECRUITMENT_STAGES_LIST_GET,
-  RECRUITMENT_STATUSES_LIST_GET,
-  RECRUITMENT_UPDATE,
-  RECRUITMENT_UPDATE_STAGE,
-  RECRUITMENT_UPDATE_STATUS,
-  RESUME_GET,
+  EMPLOYEE_INVENTORY_DELETE,
+  EMPLOYEE_INVENTORY_GET,
+  EMPLOYEE_INVENTORY_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import {
-  CheckIconSvg,
-  CirclePlusIconSvg,
-  DotsIconSvg,
-  DownloadIconSvg,
-  EditIconSvg,
-  ExternalLinkIconSvg,
-  InfoCircleIconSvg,
-  MailForwardIconSvg,
-  OneUserIconSvg,
-  PlusIconSvg,
-  TrashIconSvg,
-  XIconSvg,
-} from "../../../../components/icon";
+import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../../components/modal/modalCore";
@@ -66,6 +43,7 @@ import {
 } from "../../../../components/modal/modalCustom";
 import EmployeeContractForm from "../../../../components/screen/employee/create/contract";
 import EmployeeInventoryForm from "../../../../components/screen/employee/create/inventory";
+import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
 import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
@@ -75,12 +53,7 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeInventoryEditIndex = ({
-  initProps,
-  dataProfile,
-  sidemenu,
-  employeeId,
-}) => {
+const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
@@ -92,91 +65,144 @@ const EmployeeInventoryEditIndex = ({
     return null;
   }
 
-  const isAllowedToGetEmployee = hasPermission(RECRUITMENT_GET);
-  const isAllowedToUpdateEmployee = hasPermission(RECRUITMENT_UPDATE);
-  const isAllowedToDeleteEmployee = hasPermission(RECRUITMENT_DELETE);
+  const isAllowedToGetEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_GET);
+  const isAllowedToUpdateEmployeeInventory = hasPermission(
+    EMPLOYEE_INVENTORY_UPDATE
+  );
+  const isAllowedToDeleteEmployeeInventory = hasPermission(
+    EMPLOYEE_INVENTORY_DELETE
+  );
 
   //INIT
   const rt = useRouter();
+  const { id: inventoryId, employeeId } = rt.query;
+
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(
-    1,
-    3,
-    "Daftar Karyawan",
-    "Yasmin Adelia Puti C",
-    "Edit Piranti"
-  );
-
-  const { query } = useRouter();
-  // console.log(query)
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Piranti");
 
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("1");
-  const [dataEmployee, setDataEmployee] = useState({});
 
-  const [resumeId, setResumeId] = useState(0);
+  const [dataInventory, setDataInventory] = useState([
+    {
+      id: null,
+      employee_id: null,
+      id_number: "",
+      device_name: "",
+      referance_invertory: "",
+      device_type: "",
+      serial_number: "",
+      pic_delivery: "",
+      pic_taking: "",
+    },
+  ]);
+  const [dataPICList, setDataPICList] = useState([]);
 
   const [refresh, setRefresh] = useState(-1);
 
   // 1.2 Update
-  const [drawerUpdate, setDrawerUpdate] = useState(false);
-  const [triggerUpdate, setTriggerUpdate] = useState(-1);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
 
   // 1.3. Delete
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // 2. USE EFFECT
-  // 2.1 Get employee detail
-  // useEffect(() => {
-  //   if (!isAllowedToGetEmployee) {
-  //     permissionWarningNotification("Mendapatkan", "Detail Karyawan");
-  //     setpraloading(false);
-  //     return;
-  //   }
+  // 2.1 Get employee inventory detail
+  useEffect(() => {
+    if (!isAllowedToGetEmployeeInventory) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Detail Inventaris Karyawan"
+      );
+      setpraloading(false);
+      return;
+    }
+    if (inventoryId) {
+      setpraloading(true);
 
-  //   if (employeeId) {
-  //     setpraloading(true);
-  //     fetch(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitment?id=${employeeId}`,
-  //       {
-  //         method: `GET`,
-  //         headers: {
-  //           Authorization: JSON.parse(initProps),
-  //         },
-  //       }
-  //     )
-  //       .then((response) => response.json())
-  //       .then((response2) => {
-  //         if (response2.success) {
-  //           setDataEmployee(response2.data);
-  //           setResumeId(response2.data.resume?.id);
-  //         } else {
-  //           notification.error({
-  //             message: `${response2.message}`,
-  //             duration: 3,
-  //           });
-  //         }
-  //         setpraloading(false);
-  //       })
-  //       .catch((err) => {
-  //         notification.error({
-  //           message: `${err.response}`,
-  //           duration: 3,
-  //         });
-  //         setpraloading(false);
-  //       });
-  //   }
-  // }, [isAllowedToGetEmployee, employeeId, refresh]);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeInventory?id=${inventoryId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataInventory([response2.data]);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setpraloading(false));
+    }
+  }, [isAllowedToGetEmployeeInventory, inventoryId, refresh]);
 
   // 3. Event
+  // Save Employee Inventory
+  const handleSaveInventory = () => {
+    if (!isAllowedToUpdateEmployeeInventory) {
+      permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
+      return;
+    }
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataInventory[0]),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          rt.push(`/admin/employees/${employeeId}`);
+          setTimeout(() => {
+            notification.success({
+              message: `Inventaris karyawan berhasil diubah.`,
+              duration: 3,
+            });
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal mengubah inventaris karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah inventaris karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
+  };
+
+  // console.log(dataInventory);
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -193,14 +219,18 @@ const EmployeeInventoryEditIndex = ({
             <ButtonSys
               color={"danger"}
               type={"default"}
-              onClick={() => rt.push(`/admin/employees/${employeeId}`)}
+              onClick={() => rt.back()}
             >
               <div className="flex flex-row space-x-2">
                 <XIconSvg color={"#BF4A40"} size={16} />
                 <p>Batalkan</p>
               </div>
             </ButtonSys>
-            <ButtonSys type={"primary"}>
+            <ButtonSys
+              type={"primary"}
+              onClick={handleSaveInventory}
+              disabled={!isAllowedToUpdateEmployeeInventory}
+            >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
                 <p>Simpan</p>
@@ -208,7 +238,15 @@ const EmployeeInventoryEditIndex = ({
             </ButtonSys>
           </div>
         </div>
-        <EmployeeInventoryForm initProps={initProps} />
+        <InventoryForm
+          initProps={initProps}
+          idx={0}
+          inventoryList={dataInventory}
+          setInventoryList={setDataInventory}
+          dataPICList={dataPICList}
+          inventoryId={inventoryId}
+          setRefresh={setRefresh}
+        />
       </div>
 
       {/* Drawer Update Recruitment Candidate */}

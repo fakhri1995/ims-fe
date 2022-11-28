@@ -1,17 +1,24 @@
-import ExportOutlined from "@ant-design/icons/ExportOutlined";
 import { Dropdown } from "antd";
+import { useRouter } from "next/router";
 
 import { Notification } from "components/features/Notification";
 
 import { generateStaticAssetUrl } from "lib/helper";
 
-import { NotifIconSvg, SearchIconSvg } from "./icon";
+import {
+  LogoutIconSvg,
+  NotifIconSvg,
+  SearchIconSvg,
+  UsercircleIconSvg,
+} from "./icon";
 
 function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
+  const rt = useRouter();
+
   const menuProfile2 = () => {
     return (
       <div className="w-auto h-auto flex flex-col shadow-md rounded bg-white space-y-4 px-10 py-5">
-        <div className="flex justify-center space-x-3">
+        <div className="flex items-center justify-center space-x-3">
           <div className="w-10 h-10 rounded-full bg-blue-500 flex text-white text-center justify-center items-center">
             <img
               src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
@@ -20,10 +27,8 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-lg font-semibold mb-1">
-              {dataProfile.data.name}
-            </h2>
-            <h2 className="text-sm font-normal mb-1">
+            <h2 className="text-sm font-bold mb-1">{dataProfile.data.name}</h2>
+            <h2 className="text-xs font-normal text-mono50">
               {dataProfile.data.email}
             </h2>
             {/* <Linkheader href={`/profile`} ref="noreferrer">
@@ -31,9 +36,24 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             </Linkheader> */}
           </div>
         </div>
-        <div>
-          <a target="_blank" rel="noopener noreferrer" onClick={handleLogout}>
-            <ExportOutlined /> Logout
+        <div className="space-y-2">
+          <button
+            // target="_blank"
+            // rel="noopener noreferrer"
+            onClick={() => rt.push("/employeeProfile")}
+            className="flex flex-row items-center space-x-2 bg-transparent hover:opacity-70"
+          >
+            <UsercircleIconSvg size={20} color={"black"} />
+            <p>Profil</p>
+          </button>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={handleLogout}
+            className="flex flex-row items-center space-x-2 hover:opacity-70"
+          >
+            <LogoutIconSvg size={20} color={"#BF4A40"} />
+            <p className="text-warning">Logout</p>
           </a>
         </div>
       </div>

@@ -2081,8 +2081,6 @@ const TableCustomEmployeeList = ({
   searching,
   selectedRoleId,
   selectedContractStatus,
-  tempIdClicked,
-  setTriggerRowClicked,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -2183,8 +2181,7 @@ const TableCustomEmployeeList = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            tempIdClicked.current = record.id;
-            setTriggerRowClicked((prev) => prev + 1);
+            rt.push(`/admin/employees/${record.id}`);
           },
         };
       }}
