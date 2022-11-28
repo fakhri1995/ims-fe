@@ -22,10 +22,7 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeProfileForm = ({
-  dataEmployeeProfile,
-  setDataEmployeeProfile,
-}) => {
+const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
   /**
    * Dependencies
    */
@@ -49,8 +46,8 @@ const EmployeeProfileForm = ({
 
   // 3. HANDLER
   const onChangeInput = (e) => {
-    setDataEmployeeProfile({
-      ...dataEmployeeProfile,
+    setDataEmployee({
+      ...dataEmployee,
       [e.target.name]: e.target.value,
     });
   };
@@ -130,7 +127,7 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.name}
+            value={dataEmployee.name}
             name={"name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama"
@@ -150,7 +147,7 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.nip}
+            value={dataEmployee.nip}
             name={"nip"}
             onChange={onChangeInput}
             placeholder="Masukkan NIP"
@@ -169,7 +166,7 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.nik}
+            value={dataEmployee.nik}
             name={"nik"}
             onChange={onChangeInput}
             placeholder="Masukkan NIK"
@@ -188,7 +185,7 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.alias}
+            value={dataEmployee.alias}
             name={"alias"}
             onChange={onChangeInput}
             placeholder="Masukkan alias"
@@ -197,7 +194,7 @@ const EmployeeProfileForm = ({
       </Form.Item>
       <Form.Item
         label="Email Kantor"
-        name={"office_email"}
+        name={"email_office"}
         rules={[
           {
             required: true,
@@ -212,8 +209,8 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.email_office}
-            name={"office_email"}
+            value={dataEmployee.email_office}
+            name={"email_office"}
             onChange={onChangeInput}
             placeholder="Masukkan email kantor"
           />
@@ -221,7 +218,7 @@ const EmployeeProfileForm = ({
       </Form.Item>
       <Form.Item
         label="Email Pribadi"
-        name={"personal_email"}
+        name={"email_personal"}
         rules={[
           {
             required: true,
@@ -236,18 +233,18 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.email_personal}
-            name={"personal_email"}
+            value={dataEmployee.email_personal}
+            name={"email_personal"}
             onChange={onChangeInput}
             placeholder="Masukkan email pribadi"
           />
         </div>
       </Form.Item>
-      <Form.Item label="Domisili" name={"domisili"}>
+      <Form.Item label="Domisili" name={"domicile"}>
         <div>
           <Input
-            value={dataEmployeeProfile.domicile}
-            name={"domisili"}
+            value={dataEmployee.domicile}
+            name={"domicile"}
             onChange={onChangeInput}
             placeholder="Masukkan domisili"
           />
@@ -255,7 +252,7 @@ const EmployeeProfileForm = ({
       </Form.Item>
       <Form.Item
         label="Nomor Telepon"
-        name={"phone"}
+        name={"phone_number"}
         rules={[
           {
             required: true,
@@ -265,8 +262,8 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.telp}
-            name={"phone"}
+            value={dataEmployee.phone_number}
+            name={"phone_number"}
             onChange={onChangeInput}
             placeholder="Masukkan nomor telepon"
           />
@@ -284,7 +281,7 @@ const EmployeeProfileForm = ({
       >
         <div>
           <Input
-            value={dataEmployeeProfile.birth_place}
+            value={dataEmployee.birth_place}
             name={"birth_place"}
             onChange={onChangeInput}
             placeholder="Masukkan tempat lahir"
@@ -301,23 +298,23 @@ const EmployeeProfileForm = ({
           },
         ]}
       >
+        {/* <div> */}
         <DatePicker
           name="birth_date"
           placeholder="Pilih tanggal lahir"
           className="w-full"
+          format={"DD/MM/YYYY"}
           value={[
-            dataEmployeeProfile.birth_date
-              ? moment(dataEmployeeProfile.birth_date)
-              : null,
+            dataEmployee.birth_date ? moment(dataEmployee.birth_date) : null,
           ]}
           onChange={(value, datestring) => {
-            let selectedDate = datestring[0];
-            setDataEmployeeProfile((prev) => ({
+            setDataEmployee((prev) => ({
               ...prev,
-              birth_date: selectedDate,
+              birth_date: datestring,
             }));
           }}
         />
+        {/* </div> */}
       </Form.Item>
 
       <Form.Item
@@ -330,65 +327,91 @@ const EmployeeProfileForm = ({
           },
         ]}
       >
-        <Select
-          value={dataEmployeeProfile.gender}
-          onChange={(value) => {
-            setDataEmployeeProfile({
-              ...dataEmployeeProfile,
-              gender: value,
-            });
-          }}
-          placeholder="Pilih jenis kelamin"
-        >
-          {["Laki-laki", "Perempuan"].map((option, idx) => (
-            <Select.Option key={idx} value={option}>
-              {option}
-            </Select.Option>
-          ))}
-        </Select>
+        <>
+          <Select
+            value={dataEmployee.gender}
+            onChange={(value) => {
+              setDataEmployee({
+                ...dataEmployee,
+                gender: value,
+              });
+            }}
+            placeholder="Pilih jenis kelamin"
+            options={[
+              {
+                value: "Laki-laki",
+              },
+              {
+                value: "Perempuan",
+              },
+            ]}
+          />
+        </>
       </Form.Item>
       <Form.Item label="Golongan Darah" name={"blood_type"}>
-        <Select
-          value={dataEmployeeProfile.blood_type}
-          onChange={(value) => {
-            setDataEmployeeProfile({
-              ...dataEmployeeProfile,
-              blood_type: value,
-            });
-          }}
-          placeholder="Pilih jenis kelamin"
-        >
-          {["A", "B", "AB", "O"].map((option, idx) => (
-            <Select.Option key={idx} value={option}>
-              {option}
-            </Select.Option>
-          ))}
-        </Select>
+        <>
+          <Select
+            value={dataEmployee.blood_type}
+            onChange={(value) => {
+              setDataEmployee({
+                ...dataEmployee,
+                blood_type: value,
+              });
+            }}
+            placeholder="Pilih jenis kelamin"
+            options={[
+              {
+                value: "A",
+              },
+              {
+                value: "B",
+              },
+              {
+                value: "AB",
+              },
+              {
+                value: "O",
+              },
+            ]}
+          />
+        </>
       </Form.Item>
       <Form.Item label="Status Kawin" name={"marital_status"}>
-        <Select
-          value={dataEmployeeProfile.marital_status}
-          onChange={(value) => {
-            setDataEmployeeProfile({
-              ...dataEmployeeProfile,
-              marital_status: value,
-            });
-          }}
-          placeholder="Pilih status kawin"
-        >
-          {["Belum kawin", "Kawin", "Cerai hidup", "Cerai mati"].map(
-            (option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            )
-          )}
-        </Select>
+        <>
+          <Select
+            value={dataEmployee.marital_status}
+            onChange={(value) => {
+              setDataEmployee({
+                ...dataEmployee,
+                marital_status: value,
+              });
+            }}
+            placeholder="Pilih status kawin"
+            options={[
+              {
+                value: 0,
+                label: "Belum kawin",
+              },
+              {
+                value: 1,
+                label: "Kawin",
+              },
+              {
+                value: 2,
+                label: "Cerai hidup",
+              },
+              {
+                value: 3,
+                label: "Cerai mati",
+              },
+            ]}
+          />
+        </>
       </Form.Item>
       <Form.Item label="Jumlah Anak" name={"child_total"}>
         <div>
           <Input
-            value={dataEmployeeProfile.child_total}
+            value={dataEmployee.child_total}
             name={"child_total"}
             onChange={onChangeInput}
             placeholder="Masukkan jumlah anak"
@@ -397,13 +420,13 @@ const EmployeeProfileForm = ({
       </Form.Item>
       <Form.Item
         label="Nama Ibu Kandung"
-        name={"mother_name"}
+        name={"bio_mother_name"}
         className="col-span-2"
       >
         <div>
           <Input
-            value={dataEmployeeProfile.mother_name}
-            name={"mother_name"}
+            value={dataEmployee.bio_mother_name}
+            name={"bio_mother_name"}
             placeholder="Masukkan nama ibu kandung"
             onChange={onChangeInput}
           />
@@ -412,48 +435,57 @@ const EmployeeProfileForm = ({
       <Form.Item label="Nomor NPWP" name={"npwp"} className="col-span-2">
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployeeProfile.npwp}
+            value={dataEmployee.npwp}
             name={"npwp"}
             placeholder="Masukkan nomor NPWP"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor BPJS Kesehatan" name={"bpjsk"}>
+      <Form.Item label="Nomor BPJS Kesehatan" name={"bpjs_kesehatan"}>
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployeeProfile.bpjsk}
-            name={"bpjsk"}
+            value={dataEmployee.bpjs_kesehatan}
+            name={"bpjs_kesehatan"}
             placeholder="Masukkan nomor BPJS Kesehatan"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor BPJS Ketenagakerjaan" name={"bpjstk"}>
+      <Form.Item
+        label="Nomor BPJS Ketenagakerjaan"
+        name={"bpjs_ketenagakerjaan"}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployeeProfile.bpjstk}
-            name={"bpjstk"}
+            value={dataEmployee.bpjs_ketenagakerjaan}
+            name={"bpjs_ketenagakerjaan"}
             placeholder="Masukkan nomor BPJS Ketenagakerjaan"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor Rekening Bank KB Bukopin" name={"rek_bukopin"}>
+      <Form.Item
+        label="Nomor Rekening Bank KB Bukopin"
+        name={"acc_number_bukopin"}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployeeProfile.rek_bukopin}
-            name={"rek_bukopin"}
+            value={dataEmployee.acc_number_bukopin}
+            name={"acc_number_bukopin"}
             placeholder="Masukkan nomor rekening Bank KB Bukopin"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor Rekening Bank Lainnya" name={"rek_other"}>
+      <Form.Item
+        label="Nomor Rekening Bank Lainnya"
+        name={"acc_number_another"}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataEmployeeProfile.rek_other}
-            name={"rek_other"}
+            value={dataEmployee.acc_number_another}
+            name={"acc_number_another"}
             placeholder="Masukkan nomor rekening bank lainnya"
             onChange={onChangeInput}
           />
