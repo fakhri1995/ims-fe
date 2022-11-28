@@ -265,7 +265,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item
         label="Status Karyawan"
-        name={"employee_status"}
+        name={"is_employee_active"}
         rules={[
           {
             required: true,
@@ -276,6 +276,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       >
         <div className="flex flex-row space-x-4">
           <Switch
+            checked={dataContract.is_employee_active}
             onChange={(checked) => {
               setDataContract({
                 ...dataContract,

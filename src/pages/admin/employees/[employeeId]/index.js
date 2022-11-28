@@ -44,7 +44,6 @@ const EmployeeDetailIndex = ({
   /**
    * Dependencies
    */
-  console.log("id", employeeId);
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -214,7 +213,7 @@ const EmployeeDetailIndex = ({
       employee_id: employeeId,
     };
 
-    if (!isAllowedToAddEmployeeContract) {
+    if (!isAllowedToAddEmployeeInventory) {
       permissionWarningNotification("Menambah", "Inventaris Karyawan");
       return;
     }
@@ -347,7 +346,6 @@ const EmployeeDetailIndex = ({
     return renderedButton;
   };
 
-  console.log(dataEmployee);
   return (
     <LayoutDashboard
       dataProfile={dataProfile}

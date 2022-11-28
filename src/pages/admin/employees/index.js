@@ -400,6 +400,48 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
+  const handleAddEmployeeContract = (employeeId) => {
+    const payload = {
+      employee_id: employeeId,
+    };
+
+    if (!isAllowedToAddEmployee) {
+      permissionWarningNotification("Menambah", "Kontrak Karyawan");
+      return;
+    }
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeContract`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTimeout(() => {
+            rt.push(
+              `/admin/employees/${employeeId}/addContract?id=${response2.data?.id}`
+            );
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan kontrak karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingAdd(false));
+  };
+
   const handleDeleteEmployee = (employeeId) => {
     if (!isAllowedToDeleteEmployee) {
       permissionWarningNotification("Menghapus", "Karyawan");
@@ -580,7 +622,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToGetEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
-                      rt.push(`/admin/employees/${record.id}/editContract`);
+                      rt.push(
+                        `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
+                      );
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -593,7 +637,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToGetEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
-                      rt.push(`/admin/employees/${record.id}/editContract`);
+                      handleAddEmployeeContract(record.id);
+                      // rt.push(`/admin/employees/${record.id}/editContract`);
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
