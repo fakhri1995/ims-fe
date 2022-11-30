@@ -15,14 +15,22 @@ import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
+import { EMPLOYEE_CONTRACT_GET } from "lib/features";
 
-import { EditIconSvg, UploadIconSvg } from "../../../../../components/icon";
+import {
+  EditIconSvg,
+  FileTextIconSvg,
+  UploadIconSvg,
+} from "../../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
+  generateStaticAssetUrl,
+  getFileName,
+  momentFormatDate,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
@@ -30,6 +38,7 @@ const EmployeeContractDetail = ({
   employeeId,
   isAllowedToUpdateEmployeeContract,
   dataEmployee,
+  initProps,
 }) => {
   /**
    * Dependencies
@@ -42,22 +51,66 @@ const EmployeeContractDetail = ({
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
 
   const [instanceForm] = Form.useForm();
   const rt = useRouter();
 
   // 1. USE STATE
+  const [loadingData, setLoadingData] = useState(false);
+  const [dataContract, setDataContract] = useState({});
+  const [benefitObject, setBenefitObject] = useState({});
 
-  // 3. HANDLER
-  const onChangeInput = (e) => {
-    setDataProfile({
-      ...dataProfile,
-      [e.target.name]: e.target.value,
-    });
+  // 2. USE EFFECT
+  useEffect(() => {
+    handleGetEmployeeContract(dataEmployee.contracts[0]?.id);
+  }, [isAllowedToGetEmployeeContract]);
+
+  // 3. EVENT HANDLER
+  // 3.1. Get Employee Contract Data
+  const handleGetEmployeeContract = (contractId) => {
+    if (!isAllowedToGetEmployeeContract) {
+      permissionWarningNotification("Mendapatkan", "Data Kontrak Employee");
+      setLoadingData(false);
+      return;
+    }
+
+    if (contractId) {
+      setLoadingData(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${contractId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataContract(res2.data);
+            setBenefitObject(JSON.parse(res2.data?.benefit));
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingData(false);
+        });
+    }
   };
 
+  console.log(dataContract);
   return (
     <section>
       <Collapse
@@ -68,6 +121,7 @@ const EmployeeContractDetail = ({
           <UpOutlined rotate={isActive ? 180 : 0} />
         )}
         accordion={true}
+        onChange={(contractId) => handleGetEmployeeContract(contractId)}
       >
         {dataEmployee?.contracts?.map((contract, idx) => (
           <Collapse.Panel
@@ -77,7 +131,7 @@ const EmployeeContractDetail = ({
                 <p className="text-sm font-bold">
                   {contract.contract_name || "-"}
                 </p>
-                {contract.is_employee_active ? (
+                {Number(contract.is_employee_active) ? (
                   <Tag
                     color="#35763B1A"
                     className="text-primary100 px-4 py-1 rounded-md"
@@ -86,8 +140,8 @@ const EmployeeContractDetail = ({
                   </Tag>
                 ) : (
                   <Tag
-                    color="#BF4A401A"
-                    className="text-primary100 px-4 py-1 rounded-md"
+                    color="#4D4D4D1A"
+                    className="text-mono30 px-4 py-1 rounded-md"
                   >
                     Tidak Aktif
                   </Tag>
@@ -111,79 +165,82 @@ const EmployeeContractDetail = ({
               <h5 className="mig-heading--5 col-span-2 mb-2">INFORMASI UMUM</h5>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">Posisi</p>
-                <p>{contract.role_name || "-"}</p>
+                <p>{dataContract.role?.name || "-"}</p>
               </div>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">
                   Status Kontrak
                 </p>
-                <p>{contract.contract_status_name || "-"}</p>
+                <p>{dataContract.contract_status?.name || "-"}</p>
               </div>
               <div className="space-y-1 col-span-2 mb-2">
                 <p className="mig-caption--medium text-mono80">
                   Dokumen Kontrak
                 </p>
-                <p>{contract.contract_doc || "-"}</p>
+                {dataContract.contract_file?.link ? (
+                  <div className="flex space-x-2 items-center">
+                    <FileTextIconSvg size={48} color={"black"} />
+                    <a
+                      href={generateStaticAssetUrl(
+                        dataContract.contract_file?.link
+                      )}
+                      target="_blank"
+                      className="text-secondary100"
+                    >
+                      {getFileName(dataContract.contract_file?.link)}
+                    </a>
+                  </div>
+                ) : (
+                  "-"
+                )}
               </div>
               <div className="space-y-1 col-span-2 mb-2">
                 <p className="mig-caption--medium text-mono80">
                   Referensi PKWT
                 </p>
-                <p>{contract.pkwt_reference || "-"}</p>
+                <p>{dataContract.pkwt_reference || "-"}</p>
               </div>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">Awal Kontrak</p>
-                <p>
-                  {contract.contract_start_at
-                    ? moment(contract.contract_starts_at).format("DD MMMM YYYY")
-                    : "-"}
-                </p>
+                <p>{momentFormatDate(dataContract.contract_start_at, "-")}</p>
               </div>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">Akhir Kontrak</p>
-                <p>
-                  {contract.contract_end_at
-                    ? moment(contract.contract_ends_at).format("DD MMMM YYYY")
-                    : "-"}
-                </p>
+                <p>{momentFormatDate(dataContract.contract_end_at, "-")}</p>
               </div>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">Penempatan</p>
-                <p>{contract.placement || "-"}</p>
+                <p>{dataContract.placement || "-"}</p>
               </div>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">Kantor Baru</p>
-                <p>{contract.new_office || "-"}</p>
+                <p>{dataContract.new_office || "-"}</p>
               </div>
               <div className="space-y-1 col-span-2 mb-3">
                 <p className="mig-caption--medium text-mono80">
                   Tanggal Resign
                 </p>
-                <p>
-                  {contract.resign_at
-                    ? moment(contract.resign_at).format("DD MMMM YYYY")
-                    : "-"}
-                </p>
+                <p>{momentFormatDate(dataContract.resign_at, "-")}</p>
               </div>
               {/* TODO: change benefit data */}
               <div className="mb-3">
                 <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
                 <div className="space-y-1 col-span-2">
                   <p className="mig-caption--medium text-mono80">Gaji Pokok</p>
-                  <p>Rp3.500.000</p>
+                  <p>{benefitObject?.main_salary || "-"}</p>
                 </div>
                 <div className="space-y-1 col-span-2">
                   <p className="mig-caption--medium text-mono80">
                     Tunjangan Uang Makan
                   </p>
-                  <p>Rp550.000</p>
+                  <p>{benefitObject?.meal_allowance || "-"}</p>
                 </div>
               </div>
               <div className="mb-3">
                 <p className="mig-heading--5 mb-2">BENEFIT PENGURANGAN</p>
                 <div className="space-y-1 col-span-2">
                   <p className="mig-caption--medium text-mono80">PPh 21</p>
-                  <p>Rp0</p>
+                  <p>{benefitObject?.income_tax || "-"}</p>
                 </div>
               </div>
             </div>
