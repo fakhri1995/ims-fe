@@ -18,26 +18,39 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
+import { useEffect } from "react";
+
+import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
+import {
+  EMPLOYEE_INVENTORY_DELETE,
+  EMPLOYEE_INVENTORY_GET,
+} from "lib/features";
 
 import {
   DownIconSvg,
   EditIconSvg,
   FileTextIconSvg,
+  TrashIconSvg,
   UploadIconSvg,
 } from "../../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
+  generateStaticAssetUrl,
+  getFileName,
+  momentFormatDate,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
+import { ModalHapus2 } from "../../../../modal/modalCustom";
 
 const EmployeeInventoryDetail = ({
+  initProps,
   employeeId,
   isAllowedToUpdateEmployeeInventory,
   dataEmployee,
+  setRefresh,
 }) => {
   /**
    * Dependencies
@@ -50,45 +63,113 @@ const EmployeeInventoryDetail = ({
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const isAllowedToGetEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_GET);
+  const isAllowedToDeleteEmployeeInventory = hasPermission(
+    EMPLOYEE_INVENTORY_DELETE
+  );
 
   const [instanceForm] = Form.useForm();
   const rt = useRouter();
 
   // 1. USE STATE
-  const [dataProfile, setDataProfile] = useState({
-    id_photo: "",
-    name: "",
-    nip: "",
-    nik: "",
-    alias: "",
-    telp: "",
-    email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    mother_name: "",
-    npwp: "",
-    bpjsk: "",
-    bpjstk: "",
-    rek_bukopin: "",
-    rek_other: "",
-  });
-  const [inventoryId, setInventoryId] = useState(0);
-  const [inventoryList, setInventoryList] = useState(["test"]);
+  // Detail inventory
+  const [loadingData, setLoadingData] = useState(false);
+  const [dataInventory, setDataInventory] = useState({});
 
-  // 3. HANDLER
-  const onChangeInput = (e) => {
-    setDataProfile({
-      ...dataProfile,
-      [e.target.name]: e.target.value,
-    });
+  // Delete inventory
+  const [modalDelete, setModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [dataModalDelete, setDataModalDelete] = useState({
+    inventoryId: null,
+    inventoryName: "",
+  });
+  // 2. USE EFFECT
+  useEffect(() => {
+    handleGetEmployeeInventory(dataEmployee.inventories[0]?.id);
+  }, [isAllowedToGetEmployeeInventory]);
+
+  // 3. EVENT HANDLER
+  // 3.1. Get Employee Contract Data
+  const handleGetEmployeeInventory = (inventoryId) => {
+    if (!isAllowedToGetEmployeeInventory) {
+      permissionWarningNotification("Mendapatkan", "Data Inventaris Employee");
+      setLoadingData(false);
+      return;
+    }
+
+    if (inventoryId) {
+      setLoadingData(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeInventory?id=${inventoryId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataInventory(res2.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingData(false);
+        });
+    }
+  };
+
+  const handleDeleteInventory = () => {
+    if (!isAllowedToDeleteEmployeeInventory) {
+      permissionWarningNotification("Menghapus", "Inventaris Karyawan");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeeInventory?id=${dataModalDelete.inventoryId}&employee_id=${employeeId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setModalDelete(false);
+        } else {
+          notification.error({
+            message: `Gagal menghapus inventaris karyawan. ${res2.response}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus inventaris karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
   };
 
   return (
@@ -102,6 +183,7 @@ const EmployeeInventoryDetail = ({
             <UpOutlined rotate={isActive ? 180 : 0} />
           )}
           accordion={true}
+          onChange={(inventoryId) => handleGetEmployeeInventory(inventoryId)}
         >
           {dataEmployee?.inventories?.map((inventory, idx) => (
             <Collapse.Panel
@@ -111,84 +193,125 @@ const EmployeeInventoryDetail = ({
                   <p className="text-md font-bold">
                     {inventory.device_name || "-"}
                   </p>
-                  {isAllowedToUpdateEmployeeInventory && (
-                    <button
-                      className="bg-transparent hover:opacity-70"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        rt.push(
-                          `${employeeId}/editInventory?id=${inventory.id}`
-                        );
-                      }}
-                    >
-                      <EditIconSvg color={"#35763B"} size={20} />
-                    </button>
-                  )}
+                  <div className="space-x-1">
+                    {isAllowedToUpdateEmployeeInventory && (
+                      <button
+                        className="bg-transparent hover:opacity-70"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          rt.push(
+                            `${employeeId}/editInventory?id=${inventory.id}`
+                          );
+                        }}
+                      >
+                        <EditIconSvg color={"#35763B"} size={20} />
+                      </button>
+                    )}
+                    {isAllowedToDeleteEmployeeInventory && (
+                      <button
+                        className="bg-transparent hover:opacity-70"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDataModalDelete({
+                            inventoryId: inventory.id,
+                            inventoryName: inventory.device_name || "-",
+                          });
+                          setModalDelete(true);
+                        }}
+                      >
+                        <TrashIconSvg color={"#BF4A40"} size={20} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               }
             >
               <div className="grid grid-cols-2">
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">ID</p>
-                  <p>{inventory.id_number || "-"}</p>
+                  <p>{dataInventory.id_number || "-"}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">
                     Referensi Inventaris
                   </p>
-                  <p>{inventory.referance_invertory || "-"}</p>
+                  <p>{dataInventory.referance_invertory || "-"}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">Tipe</p>
-                  <p>{inventory.device_type || "-"}</p>
+                  <p>{dataInventory.device_type || "-"}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Serial
                   </p>
-                  <p>{inventory.serial_number || "-"}</p>
+                  <p>{dataInventory.serial_number || "-"}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">
                     Tanggal Penyerahan
                   </p>
-                  <p>{inventory.date_delivery || "-"}</p>
+                  <p>{momentFormatDate(dataInventory.delivery_date, "-")}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">
                     Tanggal Pengembalian
                   </p>
-                  <p>{inventory.date_taking || "-"}</p>
+                  <p>{momentFormatDate(dataInventory.return_date, "-")}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">
                     Penanggung Jawab Penyerahan
                   </p>
-                  <p>{inventory.pic_delivery || "-"}</p>
+                  <p>{dataInventory.pic_delivery || "-"}</p>
                 </div>
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">
                     Penanggung Jawab Pengembalian
                   </p>
-                  <p>{inventory.pic_taking || "-"}</p>
+                  <p>{dataInventory.pic_return || "-"}</p>
                 </div>
                 <div className="space-y-1 mb-3">
                   <p className="mig-caption--medium text-mono80">
                     Dokumen Penyerahan
                   </p>
-                  <div className="flex flex-row space-x-3 items-center ">
-                    <FileTextIconSvg size={48} color={"black"} />
-                    <a>DokumenPenyerahan-Yasmin.pdf</a>
-                  </div>
+                  {dataInventory.delivery_file?.link ? (
+                    <div className="flex space-x-2 items-center">
+                      <FileTextIconSvg size={48} color={"black"} />
+                      <a
+                        href={generateStaticAssetUrl(
+                          dataInventory.delivery_file?.link
+                        )}
+                        target="_blank"
+                        className="text-secondary100"
+                      >
+                        {getFileName(dataInventory.delivery_file?.link)}
+                      </a>
+                    </div>
+                  ) : (
+                    "-"
+                  )}
                 </div>
                 <div className="space-y-1 mb-3">
                   <p className="mig-caption--medium text-mono80">
                     Dokumen Pengembalian
                   </p>
-                  <div className="flex flex-row space-x-3 items-center ">
-                    <FileTextIconSvg size={48} color={"black"} />
-                    <a>DokumenPengembalian-Yasmin.pdf</a>
-                  </div>
+                  {dataInventory.return_file?.link ? (
+                    <div className="flex space-x-2 items-center">
+                      <FileTextIconSvg size={48} color={"black"} />
+                      <a
+                        href={generateStaticAssetUrl(
+                          dataInventory.return_file?.link
+                        )}
+                        target="_blank"
+                        className="text-secondary100"
+                      >
+                        {getFileName(dataInventory.return_file?.link)}
+                      </a>
+                    </div>
+                  ) : (
+                    "-"
+                  )}
                 </div>
               </div>
             </Collapse.Panel>
@@ -197,6 +320,27 @@ const EmployeeInventoryDetail = ({
       ) : (
         <p>Tidak ada inventaris & piranti pada {dataEmployee?.name}</p>
       )}
+
+      {/* Modal Delete Inventory */}
+      <AccessControl hasPermission={EMPLOYEE_INVENTORY_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={handleDeleteInventory}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"inventaris"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan inventaris&nbsp;
+            <strong>{dataModalDelete.inventoryName}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
+      {console.log(dataModalDelete)}
     </section>
   );
 };

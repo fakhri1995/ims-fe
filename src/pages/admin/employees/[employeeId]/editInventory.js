@@ -48,7 +48,10 @@ import EmployeeProfileForm from "../../../../components/screen/employee/create/p
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
 import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
-import { permissionWarningNotification } from "../../../../lib/helper";
+import {
+  objectToFormData,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 moment.locale("id");
@@ -98,12 +101,14 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
       referance_invertory: "",
       device_type: "",
       serial_number: "",
+      delivery_date: "",
+      return_date: "",
       pic_delivery: "",
-      pic_taking: "",
+      pic_return: "",
+      delivery_file: "",
+      return_file: "",
     },
   ]);
-  const [dataPICList, setDataPICList] = useState([]);
-
   const [refresh, setRefresh] = useState(-1);
 
   // 1.2 Update
@@ -160,18 +165,19 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3. Event
   // Save Employee Inventory
   const handleSaveInventory = () => {
+    const payloadFormData = objectToFormData(dataInventory[0]);
+
     if (!isAllowedToUpdateEmployeeInventory) {
       permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
       return;
     }
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataInventory[0]),
+      body: payloadFormData,
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -243,7 +249,6 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           idx={0}
           inventoryList={dataInventory}
           setInventoryList={setDataInventory}
-          dataPICList={dataPICList}
           inventoryId={inventoryId}
           setRefresh={setRefresh}
         />
