@@ -1,25 +1,9 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Upload,
-  notification,
-} from "antd";
 import moment from "moment";
 import React from "react";
-import { useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
-
-import { UploadIconSvg } from "../../../../../components/icon";
-import {
-  beforeUploadFileMaxSize,
-  permissionWarningNotification,
-} from "../../../../../lib/helper";
+moment.locale("id");
 
 const EmployeeProfileDetail = ({ dataEmployee }) => {
   /**
@@ -33,20 +17,30 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const maritalStatusList = [
+    {
+      value: 0,
+      label: "Belum kawin",
+    },
+    {
+      value: 1,
+      label: "Kawin",
+    },
+    {
+      value: 2,
+      label: "Cerai hidup",
+    },
+    {
+      value: 3,
+      label: "Cerai mati",
+    },
+  ];
 
-  const [instanceForm] = Form.useForm();
-
-  // 1. USE STATE
-
-  // 3. HANDLER
-  const onChangeInput = (e) => {
-    setDataProfile({
-      ...dataProfile,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // Mapping marital status ID to label
+  const mappingMaritalStatus = () =>
+    maritalStatusList.find(
+      (status) => status.value === dataEmployee?.marital_status
+    ).label;
 
   return (
     <section className="flex flex-row space-x-4">
@@ -82,7 +76,7 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Status Kawin</p>
-          <p>{dataEmployee?.marital_status || "-"}</p>
+          <p>{dataEmployee?.marital_status ? mappingMaritalStatus() : "-"}</p>
         </div>
       </div>
 
@@ -118,7 +112,11 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Tanggal Lahir</p>
-          <p>{dataEmployee?.birth_date || "-"}</p>
+          <p>
+            {dataEmployee?.birth_date
+              ? moment(dataEmployee?.birth_date).format("LL")
+              : "-"}
+          </p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Golongan Darah</p>
@@ -126,7 +124,7 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Jumlah Anak</p>
-          <p>{dataEmployee?.total_child || "-"}</p>
+          <p>{dataEmployee?.number_of_children || "-"}</p>
         </div>
       </div>
     </section>
