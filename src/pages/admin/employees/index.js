@@ -2,17 +2,12 @@ import { UpOutlined } from "@ant-design/icons";
 import {
   Button,
   Collapse,
-  DatePicker,
-  Dropdown,
-  Empty,
   Form,
   Input,
   Menu,
   Select,
   Spin,
   Switch,
-  Table,
-  TreeSelect,
   notification,
 } from "antd";
 import { useRouter } from "next/router";
@@ -20,11 +15,8 @@ import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
 import { useRef } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
-import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
 import { AccessControl } from "components/features/AccessControl";
-import { AddNewFormButton } from "components/screen/resume";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -44,35 +36,16 @@ import SettingsIcon from "assets/vectors/icon-settings.svg";
 import ButtonSys from "../../../components/button";
 import ButtonSysColor from "../../../components/buttonColor";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
-import DrawerCore from "../../../components/drawer/drawerCore";
-import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
-import DrawerCandidatePreview from "../../../components/drawer/recruitment/drawerCandidatePreview";
-import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import {
-  CheckIconSvg,
-  CirclePlusIconSvg,
-  CopyIconSvg,
-  DownIconSvg,
-  DownloadIconSvg,
   EditIconSvg,
-  FileExportIconSvg,
-  FilePlusIconSvg,
-  InfoSquareIconSvg,
-  LayoutGridSvg,
-  MailForwardIconSvg,
-  PlusIconSvg,
   SearchIconSvg,
   TrashIconSvg,
-  TrendingUpIconSvg,
   UserPlusIconSvg,
-  XIconSvg,
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import ModalCore from "../../../components/modal/modalCore";
 import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
 import { TableCustomEmployeeList } from "../../../components/table/tableCustom";
-import { H1, H2, Text } from "../../../components/typography";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
   ArcElement,
@@ -108,18 +81,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetEmployees = hasPermission(EMPLOYEES_GET);
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
-  const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
-  const canUpdateEmployee = hasPermission([EMPLOYEE_UPDATE, EMPLOYEE_GET]);
   const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
 
-  // TODO: change variable and constant to appropriate feature
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
-
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoleTypeList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
   // 1. Init
-  const [instanceForm] = Form.useForm();
   const rt = useRouter();
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
@@ -147,7 +115,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2.2. Table Employee List
   // filter data
-  const [activeEmployeeSwitch, setActiveEmployeeSwitch] = useState(false);
+  const [isEmployeeActive, setIsEmployeeActive] = useState(1);
 
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
   const [dataCompanyList, setDataCompanyList] = useState([]);
@@ -193,8 +161,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
-  const tempIdClicked = useRef(-1);
-  const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
 
   // 2.3. Add employee
   const [loadingAdd, setLoadingAdd] = useState(false);
@@ -213,12 +179,15 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingEmployees(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employe_active=${isEmployeeActive}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -240,7 +209,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingEmployees(false);
       });
-  }, [isAllowedToGetEmployees, refresh]);
+  }, [isAllowedToGetEmployees, isEmployeeActive, refresh]);
 
   // 3.2. Get Company Client List
   useEffect(() => {
@@ -400,48 +369,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  const handleAddEmployeeContract = (employeeId) => {
-    const payload = {
-      employee_id: employeeId,
-    };
-
-    if (!isAllowedToAddEmployee) {
-      permissionWarningNotification("Menambah", "Kontrak Karyawan");
-      return;
-    }
-    setLoadingAdd(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeContract`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          setTimeout(() => {
-            rt.push(
-              `/admin/employees/${employeeId}/addContract?id=${response2.data?.id}`
-            );
-          }, 500);
-        } else {
-          notification.error({
-            message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan kontrak karyawan. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingAdd(false));
-  };
-
   const handleDeleteEmployee = (employeeId) => {
     if (!isAllowedToDeleteEmployee) {
       permissionWarningNotification("Menghapus", "Karyawan");
@@ -489,7 +416,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterEmployees = () => {
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedContractStatusId}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedContractStatusId}&is_employe_active=${isEmployeeActive}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
       {
         method: `GET`,
         headers: {
@@ -526,13 +453,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 4.2. Show active employees only
   const handleSwitchActiveEmployee = () => {
-    if (activeEmployeeSwitch === true) {
+    if (isEmployeeActive === 1) {
       // fetch all emmployees
+      setIsEmployeeActive(0);
     } else {
       // fetch active employee only
+      setIsEmployeeActive(1);
     }
-
-    setActiveEmployeeSwitch(!activeEmployeeSwitch);
   };
 
   // "Daftar Karyawan" Table's columns
@@ -632,20 +559,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <p className="whitespace-nowrap">Edit Kontrak</p>
                     </div>
                   </ButtonSys>
-                  <ButtonSys
-                    type={isAllowedToGetEmployee ? "default" : "primary"}
-                    disabled={!isAllowedToGetEmployee}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      handleAddEmployeeContract(record.id);
-                      // rt.push(`/admin/employees/${record.id}/editContract`);
-                    }}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <CirclePlusIconSvg size={16} color={`#35763B`} />
-                      <p className="whitespace-nowrap">Tambah Kontrak</p>
-                    </div>
-                  </ButtonSys>
                 </div>
               ) : (
                 <div className="flex flex-col space-y-2">
@@ -702,7 +615,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="flex flex-col" id="mainWrapper">
         <Collapse
-          className="col-span-3 mb-5"
+          className="col-span-3 mb-5 shadow-md rounded-md bg-white"
           bordered={false}
           ghost={true}
           expandIconPosition={"right"}
@@ -758,12 +671,15 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex flex-row items-center space-x-6">
               <div className="flex flex-row items-center space-x-2 text-primary100">
                 <Switch
-                  checked={activeEmployeeSwitch}
+                  checked={isEmployeeActive}
                   onClick={handleSwitchActiveEmployee}
                 />
-                <p>Karyawan Aktif</p>
+                {isEmployeeActive ? (
+                  <p>Karyawan Aktif</p>
+                ) : (
+                  <p>Karyawan Tidak Aktif</p>
+                )}
               </div>
-
               <Button
                 type={"primary"}
                 className="btn btn-sm text-white font-semibold px-6 border 
@@ -909,6 +825,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               searching={searchingFilterEmployees}
               selectedRoleId={selectedRoleId}
               selectedContractStatusId={selectedContractStatusId}
+              selectedPlacement={selectedPlacement}
+              isEmployeeActive={isEmployeeActive}
             />
           </div>
         </div>
@@ -924,7 +842,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"kandidat"}
+          itemName={"draft"}
           loading={loadingDelete}
           disabled={!isAllowedToDeleteEmployee}
         >
