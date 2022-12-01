@@ -170,7 +170,13 @@ export const objectToFormData = <T extends Object>(entry: T) => {
       continue;
     }
 
-    formData.append(k, v);
+    // prevent null object converted to string
+    let value: any = v;
+    if (v === null) {
+      value = "";
+    }
+
+    formData.append(k, value);
   }
 
   return formData;

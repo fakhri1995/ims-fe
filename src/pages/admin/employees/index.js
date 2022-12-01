@@ -10,6 +10,7 @@ import {
   Switch,
   notification,
 } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -44,7 +45,7 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import { ModalHapus2, ModalUbah } from "../../../components/modal/modalCustom";
+import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomEmployeeList } from "../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
@@ -412,7 +413,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.1. Filter Table
   const onFilterEmployees = () => {
     setLoadingEmployees(true);
     fetch(
@@ -451,7 +451,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.2. Show active employees only
   const handleSwitchActiveEmployee = () => {
     if (isEmployeeActive === 1) {
       // fetch all emmployees
@@ -460,6 +459,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       // fetch active employee only
       setIsEmployeeActive(1);
     }
+  };
+
+  // Count "Sisa Hari Kerja" in table
+  const todayDate = moment();
+  const countWorkDaysLeft = (datestring) => {
+    let lastdayDate = moment(datestring);
+    return lastdayDate.diff(todayDate, "days") + 1;
   };
 
   // "Daftar Karyawan" Table's columns
@@ -519,13 +525,16 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Sisa Hari Kerja",
       dataIndex: "days_left",
       render: (text, record, index) => {
+        let workDaysLeft = countWorkDaysLeft(
+          record.contracts[0]?.contract_end_at
+        );
         return {
           children: (
             <>
-              {record.days_left <= 30 ? (
-                <p className="text-warning">{record.days_left} hari</p>
+              {workDaysLeft <= 30 ? (
+                <p className="text-warning">{workDaysLeft} hari</p>
               ) : (
-                <p>{record.days_left} hari</p>
+                <p>{workDaysLeft} hari</p>
               )}
             </>
           ),
