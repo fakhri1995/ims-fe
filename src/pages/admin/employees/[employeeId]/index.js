@@ -390,7 +390,7 @@ const EmployeeDetailIndex = ({
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
-                {dataEmployee?.contracts?.is_employee_active ? (
+                {dataEmployee?.contracts[0]?.is_employee_active ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-primary100"></div>
                     <h4 className="mig-heading--4">Aktif</h4>

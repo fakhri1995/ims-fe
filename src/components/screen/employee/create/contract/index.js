@@ -270,7 +270,7 @@ const EmployeeContractForm = ({
       >
         <div className="flex flex-row space-x-4">
           <Switch
-            checked={Number(dataContract.is_employee_active)}
+            checked={Number(dataContract?.is_employee_active)}
             onChange={(checked) => {
               setDataContract({
                 ...dataContract,
@@ -278,7 +278,7 @@ const EmployeeContractForm = ({
               });
             }}
           />
-          {dataContract.is_employee_active ? <p>Aktif</p> : <p>Tidak Aktif</p>}
+          {dataContract?.is_employee_active ? <p>Aktif</p> : <p>Tidak Aktif</p>}
         </div>
       </Form.Item>
       <Form.Item
@@ -294,7 +294,7 @@ const EmployeeContractForm = ({
       >
         <div>
           <Input
-            value={dataContract.contract_name}
+            value={dataContract?.contract_name}
             name={"contract_name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama kontrak"
@@ -313,7 +313,7 @@ const EmployeeContractForm = ({
       >
         <>
           <Select
-            value={Number(dataContract.role_id)}
+            value={Number(dataContract?.role_id)}
             onChange={(value) => {
               setDataContract({
                 ...dataContract,
@@ -344,7 +344,7 @@ const EmployeeContractForm = ({
       >
         <>
           <Select
-            value={Number(dataContract.contract_status_id)}
+            value={Number(dataContract?.contract_status_id)}
             onChange={(value) => {
               setDataContract({
                 ...dataContract,
@@ -412,7 +412,7 @@ const EmployeeContractForm = ({
       >
         <div>
           <Input
-            value={dataContract.pkwt_reference}
+            value={dataContract?.pkwt_reference}
             name={"pkwt_reference"}
             onChange={onChangeInput}
             placeholder="Masukkan PKWT"
@@ -435,8 +435,8 @@ const EmployeeContractForm = ({
             placeholder="Pilih tanggal awal kontrak"
             className="w-full"
             value={
-              moment(dataContract.contract_start_at).isValid()
-                ? moment(dataContract.contract_start_at)
+              moment(dataContract?.contract_start_at).isValid()
+                ? moment(dataContract?.contract_start_at)
                 : null
             }
             format={"YYYY-MM-DD"}
@@ -465,8 +465,8 @@ const EmployeeContractForm = ({
             placeholder="Pilih tanggal akhir kontrak"
             className="w-full"
             value={
-              moment(dataContract.contract_end_at).isValid()
-                ? moment(dataContract.contract_end_at)
+              moment(dataContract?.contract_end_at).isValid()
+                ? moment(dataContract?.contract_end_at)
                 : null
             }
             onChange={(value, datestring) => {
@@ -481,7 +481,7 @@ const EmployeeContractForm = ({
       <Form.Item label="Penempatan" name={"placement"}>
         <>
           <Select
-            value={dataContract.placement}
+            value={dataContract?.placement}
             onChange={(value) => {
               setDataContract({
                 ...dataContract,
@@ -501,7 +501,7 @@ const EmployeeContractForm = ({
       <Form.Item label="Kantor Baru" name={"new_office"}>
         <div>
           <Input
-            value={dataContract.new_office}
+            value={dataContract?.new_office}
             name={"new_office"}
             onChange={onChangeInput}
             placeholder="Masukkan kantor baru"
@@ -519,8 +519,8 @@ const EmployeeContractForm = ({
             placeholder="Pilih tanggal resign"
             className="w-full"
             value={
-              moment(dataContract.resign_at).isValid()
-                ? moment(dataContract.resign_at)
+              moment(dataContract?.resign_at).isValid()
+                ? moment(dataContract?.resign_at)
                 : null
             }
             onChange={(value, datestring) => {
