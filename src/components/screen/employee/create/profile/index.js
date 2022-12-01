@@ -3,6 +3,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Select,
   Upload,
   notification,
@@ -19,6 +20,7 @@ import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 import { UploadIconSvg } from "../../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
+  generateStaticAssetUrl,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
@@ -34,17 +36,16 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
-
   const [instanceForm] = Form.useForm();
+
+  // const currentFileName = dataEmployee?.id_card_photo?.link?.split('/')[2];
 
   // 1. USE STATE
   const [fileList, setFileList] = useState([]);
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [uploadedIDCardPicture, setUploadedIDCardPicture] = useState(null);
 
-  // 3. HANDLER
+  // 2. HANDLER
   const onChangeInput = (e) => {
     setDataEmployee({
       ...dataEmployee,
@@ -69,7 +70,11 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       return Upload.LIST_IGNORE;
     }
 
-    setUploadedIDCardPicture(uploadedFile);
+    // setUploadedIDCardPicture(uploadedFile);
+    setDataEmployee((prev) => ({
+      ...prev,
+      id_card_photo: uploadedFile,
+    }));
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {
@@ -82,7 +87,11 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
 
   const onUploadRemove = useCallback(() => {
     setFileList([]);
-    setUploadedIDCardPicture(null);
+    // setUploadedIDCardPicture(null);
+    setDataEmployee((prev) => ({
+      ...prev,
+      id_card_photo: null,
+    }));
   }, []);
 
   return (
@@ -142,6 +151,10 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
             required: true,
             message: "NIP karyawan wajib diisi",
           },
+          {
+            pattern: /[0-9]+/,
+            message: "NIP hanya boleh diisi dengan angka",
+          },
         ]}
         className="col-span-2"
       >
@@ -161,6 +174,10 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
           {
             required: true,
             message: "NIK karyawan wajib diisi",
+          },
+          {
+            pattern: /[0-9]+/,
+            message: "NIK hanya boleh diisi dengan angka",
           },
         ]}
       >
@@ -258,6 +275,10 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
             required: true,
             message: "Nomor telepon wajib diisi",
           },
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor HP hanya boleh diisi dengan angka",
+          },
         ]}
       >
         <div>
@@ -298,23 +319,24 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
           },
         ]}
       >
-        {/* <div> */}
-        <DatePicker
-          name="birth_date"
-          placeholder="Pilih tanggal lahir"
-          className="w-full"
-          format={"DD/MM/YYYY"}
-          value={[
-            dataEmployee.birth_date ? moment(dataEmployee.birth_date) : null,
-          ]}
-          onChange={(value, datestring) => {
-            setDataEmployee((prev) => ({
-              ...prev,
-              birth_date: datestring,
-            }));
-          }}
-        />
-        {/* </div> */}
+        <>
+          <DatePicker
+            name="birth_date"
+            placeholder="Pilih tanggal lahir"
+            className="w-full"
+            value={
+              moment(dataEmployee.birth_date).isValid()
+                ? moment(dataEmployee.birth_date)
+                : null
+            }
+            onChange={(value, datestring) => {
+              setDataEmployee((prev) => ({
+                ...prev,
+                birth_date: datestring,
+              }));
+            }}
+          />
+        </>
       </Form.Item>
 
       <Form.Item
@@ -408,13 +430,20 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
           />
         </>
       </Form.Item>
-      <Form.Item label="Jumlah Anak" name={"child_total"}>
+      <Form.Item label="Jumlah Anak" name={"number_of_children"}>
         <div>
-          <Input
-            value={dataEmployee.child_total}
-            name={"child_total"}
-            onChange={onChangeInput}
+          <InputNumber
+            min={0}
+            value={dataEmployee.number_of_children}
+            name={"number_of_children"}
+            onChange={(value) =>
+              setDataEmployee({
+                ...dataEmployee,
+                number_of_children: value,
+              })
+            }
             placeholder="Masukkan jumlah anak"
+            className="w-full"
           />
         </div>
       </Form.Item>
@@ -432,7 +461,17 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor NPWP" name={"npwp"} className="col-span-2">
+      <Form.Item
+        label="Nomor NPWP"
+        name={"npwp"}
+        className="col-span-2"
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor NPWP hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
             value={dataEmployee.npwp}
@@ -442,7 +481,16 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor BPJS Kesehatan" name={"bpjs_kesehatan"}>
+      <Form.Item
+        label="Nomor BPJS Kesehatan"
+        name={"bpjs_kesehatan"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor BPJS Kesehatan hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
             value={dataEmployee.bpjs_kesehatan}
@@ -455,6 +503,13 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       <Form.Item
         label="Nomor BPJS Ketenagakerjaan"
         name={"bpjs_ketenagakerjaan"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message:
+              "Nomor BPJS Ketenagakerjaan hanya boleh diisi dengan angka",
+          },
+        ]}
       >
         <div className="flex flex-row space-x-3">
           <Input
@@ -468,6 +523,12 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       <Form.Item
         label="Nomor Rekening Bank KB Bukopin"
         name={"acc_number_bukopin"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor rekening hanya boleh diisi dengan angka",
+          },
+        ]}
       >
         <div className="flex flex-row space-x-3">
           <Input
@@ -481,6 +542,12 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       <Form.Item
         label="Nomor Rekening Bank Lainnya"
         name={"acc_number_another"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor rekening hanya boleh diisi dengan angka",
+          },
+        ]}
       >
         <div className="flex flex-row space-x-3">
           <Input

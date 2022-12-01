@@ -2,6 +2,9 @@ import { Upload, notification } from "antd";
 import type { UploadProps } from "antd/es/upload/interface";
 import type { RcFile } from "antd/lib/upload";
 import { format } from "date-fns";
+import moment from "moment";
+
+moment.locale("id");
 
 /**
  * A high order helper function to create `KeyboardEvent` handler.
@@ -246,4 +249,32 @@ export const isValidDate = (dateValue: any) => {
   }
 
   return new Date(dateValue).toString().toLowerCase() !== "invalid date";
+};
+
+/**
+ * Return formatted date "DD MMMM YYYYY" using moment
+ *
+ * @param dateValue Received date value from backend
+ * @param emptyValue Desired value if date is empty
+ */
+export const momentFormatDate = (dateValue: string, emptyValue: string) => {
+  if (moment(dateValue).isValid()) {
+    return moment(dateValue).format("DD MMMM YYYY");
+  } else {
+    return emptyValue;
+  }
+};
+
+/**
+ * Get file name from a path string
+ *
+ * @example
+ * ```typescript
+ * const fileName = getFileName("staging/EmployeeContract/CV-Flutter-Developer-Michael-Roni.pdf");
+ * assert(fileName, "CV-Flutter-Developer-Michael-Roni.pdf");
+ * ```
+ */
+export const getFileName = (pathString: string) => {
+  const splittedArr = pathString.split("/");
+  return splittedArr[splittedArr.length - 1];
 };

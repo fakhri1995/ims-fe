@@ -41,7 +41,10 @@ import EmployeeProfileForm from "../../../../components/screen/employee/create/p
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
 import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
-import { permissionWarningNotification } from "../../../../lib/helper";
+import {
+  objectToFormData,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 moment.locale("id");
@@ -156,18 +159,19 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3. Event
   // 3.1. Save employee profile
   const handleSaveEmployee = () => {
+    const payloadFormData = objectToFormData(dataEmployee);
+
     if (!isAllowedToUpdateEmployee) {
       permissionWarningNotification("Menyimpan", "Profil Karyawan");
       return;
     }
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployee`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataEmployee),
+      body: payloadFormData,
     })
       .then((response) => response.json())
       .then((response2) => {

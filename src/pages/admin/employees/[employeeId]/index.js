@@ -32,7 +32,10 @@ import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
 import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
-import { permissionWarningNotification } from "../../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const EmployeeDetailIndex = ({
@@ -338,7 +341,7 @@ const EmployeeDetailIndex = ({
           >
             <div className="flex flex-row items-center space-x-2">
               <CirclePlusIconSvg color={"#35763B"} size={16} />
-              <p>Tambah Piranti</p>
+              <p>Tambah Inventaris</p>
             </div>
           </ButtonSys>
         );
@@ -358,16 +361,26 @@ const EmployeeDetailIndex = ({
       <div>
         <div className="flex flex-row gap-5 w-full">
           {/* Left Column - ID Card Photo */}
-          <div
-            className="w-1/4 bg-white rounded-md shadow-lg flex flex-col items-center 
-            justify-center space-y-2 p-4"
-          >
-            <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
-            <h4 className="mig-heading--4 text-center">{dataEmployee?.name}</h4>
-            {/* <img /> */}
-          </div>
+          {dataEmployee.id_card_photo ? (
+            <img
+              src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
+              alt={dataEmployee.id_card_photo?.description}
+              className="w-1/5 bg-cover object-cover rounded-md shadow-lg"
+            />
+          ) : (
+            <div
+              className="w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
+                justify-center space-y-2 p-4"
+            >
+              <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
+              <h4 className="mig-heading--4 text-center">
+                {dataEmployee?.name}
+              </h4>
+            </div>
+          )}
+
           {/* Right column */}
-          <div className="flex flex-col w-3/4 gap-5">
+          <div className="flex flex-col w-4/5 gap-5">
             {/* Employee Status */}
             <div
               className="shadow-lg rounded-md bg-white px-6 py-3 flex flex-row 
@@ -377,7 +390,7 @@ const EmployeeDetailIndex = ({
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
-                {dataEmployee?.contracts?.is_employee_active ? (
+                {dataEmployee?.contracts[0]?.is_employee_active ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-primary100"></div>
                     <h4 className="mig-heading--4">Aktif</h4>
@@ -401,7 +414,7 @@ const EmployeeDetailIndex = ({
             </div>
 
             {/* Profile summary */}
-            <div className="shadow-lg rounded-md bg-white py-4 px-6 divide-y-2">
+            <div className="shadow-lg rounded-md bg-white py-4 px-6 divide-y-2 h-full">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
@@ -452,6 +465,7 @@ const EmployeeDetailIndex = ({
             </Tabs.TabPane>
             <Tabs.TabPane tab="Kontrak Karyawan" key="2">
               <EmployeeContractDetail
+                initProps={initProps}
                 employeeId={employeeId}
                 isAllowedToUpdateEmployeeContract={
                   isAllowedToUpdateEmployeeContract
@@ -461,32 +475,18 @@ const EmployeeDetailIndex = ({
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
               <EmployeeInventoryDetail
+                initProps={initProps}
                 employeeId={employeeId}
                 isAllowedToUpdateEmployeeInventory={
                   isAllowedToUpdateEmployeeInventory
                 }
                 dataEmployee={dataEmployee}
+                setRefresh={setRefresh}
               />
             </Tabs.TabPane>
           </Tabs>
         </div>
       </div>
-
-      {/* Drawer Update Recruitment Candidate */}
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
-        <DrawerCandidateUpdate
-          dataEmployee={dataEmployee}
-          visible={drawerUpdate}
-          initProps={initProps}
-          onvisible={setDrawerUpdate}
-          setRefresh={setRefresh}
-          trigger={triggerUpdate}
-          isAllowedToGetEmployee={isAllowedToGetEmployee}
-          isAllowedToUpdateEmployee={isAllowedToUpdateEmployee}
-          isAllowedToDeleteEmployee={isAllowedToDeleteEmployee}
-          setModalDelete={setModalDelete}
-        />
-      </AccessControl> */}
 
       {/* Modal Delete Employee */}
       <AccessControl hasPermission={EMPLOYEE_DELETE}>

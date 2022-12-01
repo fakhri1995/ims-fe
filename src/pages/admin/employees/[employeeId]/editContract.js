@@ -42,7 +42,10 @@ import EmployeeProfileForm from "../../../../components/screen/employee/create/p
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
 import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
-import { permissionWarningNotification } from "../../../../lib/helper";
+import {
+  objectToFormData,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 moment.locale("id");
@@ -77,19 +80,19 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Kontrak");
 
   const { query } = useRouter();
-  // console.log(query)
 
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [dataContract, setDataContract] = useState({
     id: null,
+    employee_id: null,
+    contract_file: null,
     is_employee_active: 0,
     contract_name: "",
-    contract_status_id: "",
-    role_id: "",
+    contract_status_id: null,
+    role_id: null,
     employee_status: false,
-    contract_doc: "",
     pkwt_reference: "",
     contract_start_at: "",
     contract_end_at: "",
@@ -151,18 +154,23 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3. Event
   // 3.1. Save Employee Contract
   const handleSaveContract = () => {
+    const payload = {
+      ...dataContract,
+      benefit: JSON.stringify(dataContract.benefit),
+    };
+    const payloadFormData = objectToFormData(payload);
+
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
       return;
     }
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataContract),
+      body: payloadFormData,
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -231,6 +239,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           initProps={initProps}
           dataContract={dataContract}
           setDataContract={setDataContract}
+          setRefresh={setRefresh}
         />
       </div>
 

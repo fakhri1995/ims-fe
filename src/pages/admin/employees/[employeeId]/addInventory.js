@@ -42,11 +42,15 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import EmployeeInventoryForm from "../../../../components/screen/employee/create/inventory";
+import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
 import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
 import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
 import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
-import { permissionWarningNotification } from "../../../../lib/helper";
+import {
+  objectToFormData,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 moment.locale("id");
@@ -81,18 +85,34 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Tambah Piranti");
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Tambah Inventaris");
 
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("1");
-  const [inventoryList, setInventoryList] = useState([]);
+  const [dataInventory, setDataInventory] = useState([
+    {
+      id: null,
+      employee_id: null,
+      id_number: "",
+      device_name: "",
+      referance_invertory: "",
+      device_type: "",
+      serial_number: "",
+      delivery_date: "",
+      return_date: "",
+      pic_delivery: "",
+      pic_return: "",
+      delivery_file: "",
+      return_file: "",
+    },
+  ]);
 
   const [refresh, setRefresh] = useState(-1);
 
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [modalSave, setModalSave] = useState(false);
 
   // 1.3. Delete
   const [modalDelete, setModalDelete] = useState(false);
@@ -123,7 +143,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setInventoryList([...inventoryList, response2.data]);
+            setDataInventory([response2.data]);
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -144,29 +164,28 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 3. Event
   // Save Employee Inventory
   const handleSaveInventory = () => {
+    const payloadFormData = objectToFormData(dataInventory[0]);
     if (!isAllowedToUpdateEmployeeInventory) {
       permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
       return;
     }
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
-      method: "PUT",
+      method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
       },
-      body: JSON.stringify(inventoryList[0]),
+      body: payloadFormData,
     })
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
+          setModalSave(false);
+          notification.success({
+            message: `Inventaris karyawan berhasil ditambahkan.`,
+            duration: 3,
+          });
           rt.push(`/admin/employees/${employeeId}`);
-          setTimeout(() => {
-            notification.success({
-              message: `Inventaris karyawan berhasil ditambahkan.`,
-              duration: 3,
-            });
-          }, 500);
         } else {
           notification.error({
             message: `Gagal menyimpan inventaris karyawan. ${response2.message}`,
@@ -185,9 +204,6 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   };
 
-  // console.log(inventoryList);
-  // 3. Event
-
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -199,7 +215,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
     >
       <div className="shadow-lg rounded-md bg-white py-7 px-5">
         <div className="flex flex-row items-center justify-between mb-7">
-          <h4 className="mig-heading--4">Tambah Piranti</h4>
+          <h4 className="mig-heading--4">Tambah Inventaris</h4>
           <div className="space-x-6">
             <ButtonSys
               color={"danger"}
@@ -213,7 +229,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             </ButtonSys>
             <ButtonSys
               type={"primary"}
-              onClick={handleSaveInventory}
+              onClick={() => setModalSave(true)}
               disabled={!isAllowedToUpdateEmployeeInventory}
             >
               <div className="flex flex-row space-x-2">
@@ -223,29 +239,46 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             </ButtonSys>
           </div>
         </div>
-        <EmployeeInventoryForm
+        <InventoryForm
           initProps={initProps}
-          isAdd={true}
-          inventoryList={inventoryList}
-          setInventoryList={setInventoryList}
+          idx={0}
+          inventoryList={dataInventory}
+          setInventoryList={setDataInventory}
+          inventoryId={inventoryId}
+          setRefresh={setRefresh}
         />
       </div>
 
-      {/* Drawer Update Recruitment Candidate */}
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
-        <DrawerCandidateUpdate
-          dataEmployee={dataEmployee}
-          visible={drawerUpdate}
-          initProps={initProps}
-          onvisible={setDrawerUpdate}
-          setRefresh={setRefresh}
-          trigger={triggerUpdate}
-          isAllowedToGetEmployee={isAllowedToGetEmployee}
-          isAllowedToUpdateEmployee={isAllowedToUpdateEmployee}
-          isAllowedToDeleteEmployee={isAllowedToDeleteEmployee}
-          setModalDelete={setModalDelete}
-        />
-      </AccessControl> */}
+      {/* Modal Save Inventory */}
+      <AccessControl hasPermission={EMPLOYEE_INVENTORY_UPDATE}>
+        <ModalCore
+          title={"Konfirmasi Penambahan Inventaris"}
+          visible={modalSave}
+          onCancel={() => setModalSave(false)}
+          footer={
+            <Spin spinning={loadingUpdate}>
+              <div className="flex justify-between items-center">
+                <ButtonSys type="default" onClick={() => setModalSave(false)}>
+                  Batalkan
+                </ButtonSys>
+                <ButtonSys
+                  type={"primary"}
+                  onClick={handleSaveInventory}
+                  disabled={!isAllowedToUpdateEmployeeInventory}
+                >
+                  <div className="flex flex-row space-x-2">
+                    <CheckIconSvg size={16} color={`white`} />
+                    <p>Ya, saya yakin</p>
+                  </div>
+                </ButtonSys>
+              </div>
+            </Spin>
+          }
+        >
+          Apakah Anda yakin ingin menambahkan Inventaris&nbsp;
+          <strong>{dataInventory[0].device_name}?</strong>
+        </ModalCore>
+      </AccessControl>
     </LayoutDashboard>
   );
 };

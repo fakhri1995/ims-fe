@@ -34,14 +34,12 @@ const InventoryForm = ({
   idx,
   inventoryList,
   setInventoryList,
-  dataPICList,
   inventoryId,
   setRefresh,
 }) => {
   /**
    * Dependencies
    */
-
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -76,12 +74,13 @@ const InventoryForm = ({
   // const [refresh, setRefresh] = useState(-1);
 
   // 2. USE EFFECT
-  // Fill
+  // Fill devices
   useEffect(() => {
     if (inventoryList[0]?.devices) {
       setDeviceList(inventoryList[0]?.devices);
     }
   }, [inventoryList]);
+
   // 2.1 Get employee devices
   // useEffect(() => {
   //   if (!isAllowedToGetEmployeeInventoryDevices) {
@@ -165,10 +164,8 @@ const InventoryForm = ({
       })
         .then((response) => response.json())
         .then((response2) => {
-          if (response2.success) {
-            setRefresh((prev) => prev + 1);
-            // rt.push(`${employeeId}/addInventory?id=${response2.data?.id}`);
-          } else {
+          setRefresh((prev) => prev + 1);
+          if (!response2.success) {
             notification.error({
               message: `Gagal menambahkan piranti karyawan. ${response2.message}`,
               duration: 3,
@@ -202,16 +199,15 @@ const InventoryForm = ({
       return Upload.LIST_IGNORE;
     }
 
-    setUploadedAssignDocument(uploadedFile);
+    // setUploadedAssignDocument(uploadedFile);
 
     let data = [...inventoryList];
-    data[idx]["assign_doc"] = uploadedFile;
+    data[idx]["delivery_file"] = uploadedFile;
     setInventoryList(data);
 
     // const blobFile = e.target.files[0];
 
     // const base64Data = getBase64(uploadedFile);
-    // console.log(base64Data)
 
     // const newFiles = [...datapayload.files, base64Data];
     // const newAttachments = [...datapayload.attachments, blobFile];
@@ -234,16 +230,15 @@ const InventoryForm = ({
       return Upload.LIST_IGNORE;
     }
 
-    setUploadedReturnDocument(uploadedFile);
+    // setUploadedReturnDocument(uploadedFile);
 
     let data = [...inventoryList];
-    data[idx]["return_doc"] = uploadedFile;
+    data[idx]["return_file"] = uploadedFile;
     setInventoryList(data);
 
     // const blobFile = e.target.files[0];
 
     // const base64Data = getBase64(uploadedFile);
-    // console.log(base64Data)
 
     // const newFiles = [...datapayload.files, base64Data];
     // const newAttachments = [...datapayload.attachments, blobFile];
@@ -270,7 +265,7 @@ const InventoryForm = ({
     setUploadAssignDocumentLoading(null);
 
     let data = [...inventoryList];
-    data[idx]["assign_doc"] = "";
+    data[idx]["delivery_file"] = "";
     setInventoryList(data);
   }, []);
 
@@ -279,11 +274,9 @@ const InventoryForm = ({
     setUploadReturnDocumentLoading(null);
 
     let data = [...inventoryList];
-    data[idx]["return_doc"] = "";
+    data[idx]["return_file"] = "";
     setInventoryList(data);
   }, []);
-
-  // console.log(fileList, uploadedDocument)
 
   // const onChangeFile = async (e) => {
   //   if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
@@ -309,8 +302,7 @@ const InventoryForm = ({
 
   //   setloadingfile(false);
   // };
-  // console.log("inventoryList", inventoryList);
-  // console.log(deviceList)
+
   return (
     <div>
       <Form
@@ -333,7 +325,7 @@ const InventoryForm = ({
         >
           <div>
             <Input
-              value={inventoryList[idx].id_number}
+              value={inventoryList[idx]?.id_number}
               name={"id_number"}
               onChange={onChangeInput}
               placeholder="Masukkan ID"
@@ -352,7 +344,7 @@ const InventoryForm = ({
         >
           <div>
             <Input
-              value={inventoryList[idx].device_name}
+              value={inventoryList[idx]?.device_name}
               name={"device_name"}
               onChange={onChangeInput}
               placeholder="Masukkan nama piranti"
@@ -372,7 +364,7 @@ const InventoryForm = ({
         >
           <div>
             <Input
-              value={inventoryList[idx].referance_invertory}
+              value={inventoryList[idx]?.referance_invertory}
               name={"referance_invertory"}
               onChange={onChangeInput}
               placeholder="Masukkan referensi inventaris"
@@ -382,7 +374,7 @@ const InventoryForm = ({
         <Form.Item label="Tipe" name={"device_type"}>
           <div>
             <Input
-              value={inventoryList[idx].device_type}
+              value={inventoryList[idx]?.device_type}
               name={"device_type"}
               onChange={onChangeInput}
               placeholder="Masukkan tipe"
@@ -392,7 +384,7 @@ const InventoryForm = ({
         <Form.Item label="Nomor Serial" name={"serial_number"}>
           <div>
             <Input
-              value={inventoryList[idx].serial_number}
+              value={inventoryList[idx]?.serial_number}
               name={"serial_number"}
               onChange={onChangeInput}
               placeholder="Masukkan nomor serial"
@@ -402,7 +394,7 @@ const InventoryForm = ({
 
         <Form.Item
           label="Tanggal Penyerahan"
-          name={"date_delivery"}
+          name={"delivery_date"}
           rules={[
             {
               required: true,
@@ -410,42 +402,42 @@ const InventoryForm = ({
             },
           ]}
         >
-          <DatePicker
-            name="date_delivery"
-            placeholder="Pilih tanggal penyerahan"
-            className="w-full"
-            value={[
-              inventoryList[idx].date_delivery
-                ? moment(inventoryList[idx].date_delivery)
-                : null,
-            ]}
-            onChange={(value, datestring) => {
-              let selectedDate = datestring;
-
-              let data = [...inventoryList];
-              data[idx].date_delivery = selectedDate;
-              setInventoryList(data);
-            }}
-          />
+          <>
+            <DatePicker
+              name="delivery_date"
+              placeholder="Pilih tanggal penyerahan"
+              className="w-full"
+              value={
+                moment(inventoryList[idx]?.delivery_date).isValid()
+                  ? moment(inventoryList[idx]?.delivery_date)
+                  : null
+              }
+              onChange={(value, datestring) => {
+                let data = [...inventoryList];
+                data[idx].delivery_date = datestring;
+                setInventoryList(data);
+              }}
+            />
+          </>
         </Form.Item>
 
-        <Form.Item label="Tanggal Pengembalian" name={"date_taking"}>
-          <DatePicker
-            placeholder="Pilih tanggal pengembalian"
-            className="w-full"
-            value={[
-              inventoryList[idx].date_taking
-                ? moment(inventoryList[idx].date_taking)
-                : null,
-            ]}
-            onChange={(value, datestring) => {
-              let selectedDate = datestring;
-
-              let data = [...inventoryList];
-              data[idx].date_taking = selectedDate;
-              setInventoryList(data);
-            }}
-          />
+        <Form.Item label="Tanggal Pengembalian" name={"return_date"}>
+          <>
+            <DatePicker
+              placeholder="Pilih tanggal pengembalian"
+              className="w-full"
+              value={
+                moment(inventoryList[idx]?.return_date).isValid()
+                  ? moment(inventoryList[idx]?.return_date)
+                  : null
+              }
+              onChange={(value, datestring) => {
+                let data = [...inventoryList];
+                data[idx].return_date = datestring;
+                setInventoryList(data);
+              }}
+            />
+          </>
         </Form.Item>
 
         <Form.Item
@@ -460,7 +452,7 @@ const InventoryForm = ({
         >
           <div>
             <Input
-              value={inventoryList[idx].pic_delivery}
+              value={inventoryList[idx]?.pic_delivery}
               name={"pic_delivery"}
               onChange={onChangeInput}
               placeholder="Masukkan penanggung jawab penyerahan"
@@ -468,11 +460,11 @@ const InventoryForm = ({
           </div>
         </Form.Item>
 
-        <Form.Item label="Penanggung Jawab Pengembalian" name={"pic_taking"}>
+        <Form.Item label="Penanggung Jawab Pengembalian" name={"pic_return"}>
           <div>
             <Input
-              value={inventoryList[idx].pic_taking}
-              name={"pic_taking"}
+              value={inventoryList[idx]?.pic_return}
+              name={"pic_return"}
               onChange={onChangeInput}
               placeholder="Masukkan penanggung jawab pengembalian"
             />
@@ -481,7 +473,7 @@ const InventoryForm = ({
 
         <Form.Item
           label="Dokumen Penyerahan"
-          name={"assign_doc"}
+          name={"delivery_file"}
           className="w-full"
         >
           <div className="relative">
@@ -512,7 +504,7 @@ const InventoryForm = ({
         </Form.Item>
         <Form.Item
           label="Dokumen Pengembalian"
-          name={"return_doc"}
+          name={"return_file"}
           className="w-full"
         >
           <div className="relative">
@@ -544,7 +536,7 @@ const InventoryForm = ({
       </Form>
 
       {/* Add Device Form */}
-      {deviceList.map((device, idxDev) => (
+      {inventoryList[idx]?.devices?.map((device, idxDev) => (
         <DeviceForm
           key={idxDev}
           idxInv={idx}

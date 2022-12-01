@@ -41,7 +41,12 @@ import {
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
 
-const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
+const EmployeeContractForm = ({
+  initProps,
+  dataContract,
+  setDataContract,
+  setRefresh,
+}) => {
   /**
    * Dependencies
    */
@@ -82,23 +87,6 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
   const [fileList, setFileList] = useState([]);
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState(null);
-
-  // const [dataContract, setDataContract] = useState({
-  //   id: null,
-  //   is_employee_active: 0,
-  //   contract_name: "",
-  //   contract_status_id: "",
-  //   role_id: "",
-  //   employee_status: false,
-  //   contract_doc: "",
-  //   pkwt_reference: "",
-  //   contract_starts_at: "",
-  //   contract_ends_at: "",
-  //   placement: "",
-  //   new_office: "",
-  //   resign_at: "",
-  //   benefit: {},
-  // });
 
   // 2. USE EFFECT
   // 2.1. Get Position List
@@ -240,7 +228,10 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       return Upload.LIST_IGNORE;
     }
 
-    setUploadedDocument(uploadedFile);
+    setDataContract((prev) => ({
+      ...prev,
+      contract_file: uploadedFile,
+    }));
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {
@@ -253,7 +244,10 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
 
   const onUploadRemove = useCallback(() => {
     setFileList([]);
-    setUploadedDocument(null);
+    setDataContract((prev) => ({
+      ...prev,
+      contract_file: null,
+    }));
   }, []);
 
   return (
@@ -276,7 +270,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       >
         <div className="flex flex-row space-x-4">
           <Switch
-            checked={dataContract.is_employee_active}
+            checked={Number(dataContract?.is_employee_active)}
             onChange={(checked) => {
               setDataContract({
                 ...dataContract,
@@ -284,7 +278,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
               });
             }}
           />
-          {dataContract.is_employee_active ? <p>Aktif</p> : <p>Tidak Aktif</p>}
+          {dataContract?.is_employee_active ? <p>Aktif</p> : <p>Tidak Aktif</p>}
         </div>
       </Form.Item>
       <Form.Item
@@ -300,7 +294,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       >
         <div>
           <Input
-            value={dataContract.contract_name}
+            value={dataContract?.contract_name}
             name={"contract_name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama kontrak"
@@ -317,24 +311,26 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
           },
         ]}
       >
-        <Select
-          value={dataContract.role_id}
-          onChange={(value) => {
-            setDataContract({
-              ...dataContract,
-              role_id: value,
-            });
-          }}
-          placeholder="Pilih posisi"
-        >
-          <>
-            {dataPositionList.map((option) => (
-              <Select.Option key={option.id} value={option.id}>
-                {option.name}
-              </Select.Option>
-            ))}
-          </>
-        </Select>
+        <>
+          <Select
+            value={Number(dataContract?.role_id)}
+            onChange={(value) => {
+              setDataContract({
+                ...dataContract,
+                role_id: value,
+              });
+            }}
+            placeholder="Pilih posisi"
+          >
+            <>
+              {dataPositionList.map((option) => (
+                <Select.Option key={option.id} value={option.id}>
+                  {option.name}
+                </Select.Option>
+              ))}
+            </>
+          </Select>
+        </>
       </Form.Item>
       <Form.Item
         label="Status Kontrak"
@@ -346,28 +342,31 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
           },
         ]}
       >
-        <Select
-          value={dataContract.contract_status_id}
-          onChange={(value) => {
-            setDataContract({
-              ...dataContract,
-              contract_status_id: value,
-            });
-          }}
-          placeholder="Pilih status kontrak"
-        >
-          <>
-            {dataRoleTypeList.map((option) => (
-              <Select.Option key={option.id} value={option.id}>
-                {option.name}
-              </Select.Option>
-            ))}
-          </>
-        </Select>
+        <>
+          <Select
+            value={Number(dataContract?.contract_status_id)}
+            onChange={(value) => {
+              setDataContract({
+                ...dataContract,
+                contract_status_id: value,
+              });
+            }}
+            placeholder="Pilih status kontrak"
+          >
+            <>
+              {dataRoleTypeList.map((option) => (
+                <Select.Option key={option.id} value={option.id}>
+                  {option.name}
+                </Select.Option>
+              ))}
+            </>
+          </Select>
+        </>
       </Form.Item>
 
       <Form.Item
         label="Dokumen Kontrak"
+        name={"contract_file"}
         className="col-span-2 w-full"
         rules={[
           {
@@ -413,7 +412,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       >
         <div>
           <Input
-            value={dataContract.pkwt_reference}
+            value={dataContract?.pkwt_reference}
             name={"pkwt_reference"}
             onChange={onChangeInput}
             placeholder="Masukkan PKWT"
@@ -430,22 +429,25 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
           },
         ]}
       >
-        <DatePicker
-          name="contract_start_at"
-          placeholder="Pilih tanggal awal kontrak"
-          className="w-full"
-          value={[
-            dataContract.contract_start_at
-              ? moment(dataContract.contract_start_at)
-              : null,
-          ]}
-          onChange={(value, datestring) => {
-            setDataContract((prev) => ({
-              ...prev,
-              contract_start_at: datestring,
-            }));
-          }}
-        />
+        <>
+          <DatePicker
+            name="contract_start_at"
+            placeholder="Pilih tanggal awal kontrak"
+            className="w-full"
+            value={
+              moment(dataContract?.contract_start_at).isValid()
+                ? moment(dataContract?.contract_start_at)
+                : null
+            }
+            format={"YYYY-MM-DD"}
+            onChange={(value, datestring) => {
+              setDataContract((prev) => ({
+                ...prev,
+                contract_start_at: datestring,
+              }));
+            }}
+          />
+        </>
       </Form.Item>
       <Form.Item
         label="Akhir Kontrak"
@@ -457,27 +459,29 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
           },
         ]}
       >
-        <DatePicker
-          name="contract_end_at"
-          placeholder="Pilih tanggal akhir kontrak"
-          className="w-full"
-          value={[
-            dataContract.contract_end_at
-              ? moment(dataContract.contract_end_at)
-              : null,
-          ]}
-          onChange={(value, datestring) => {
-            setDataContract((prev) => ({
-              ...prev,
-              contract_end_at: datestring,
-            }));
-          }}
-        />
+        <>
+          <DatePicker
+            name="contract_end_at"
+            placeholder="Pilih tanggal akhir kontrak"
+            className="w-full"
+            value={
+              moment(dataContract?.contract_end_at).isValid()
+                ? moment(dataContract?.contract_end_at)
+                : null
+            }
+            onChange={(value, datestring) => {
+              setDataContract((prev) => ({
+                ...prev,
+                contract_end_at: datestring,
+              }));
+            }}
+          />
+        </>
       </Form.Item>
       <Form.Item label="Penempatan" name={"placement"}>
         <>
           <Select
-            value={dataContract.placement}
+            value={dataContract?.placement}
             onChange={(value) => {
               setDataContract({
                 ...dataContract,
@@ -487,7 +491,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
             placeholder="Pilih penempatan"
           >
             {dataCompanyList.map((option) => (
-              <Select.Option key={option.id} value={option.id}>
+              <Select.Option key={option.id} value={option.name}>
                 {option.name}
               </Select.Option>
             ))}
@@ -497,7 +501,7 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
       <Form.Item label="Kantor Baru" name={"new_office"}>
         <div>
           <Input
-            value={dataContract.new_office}
+            value={dataContract?.new_office}
             name={"new_office"}
             onChange={onChangeInput}
             placeholder="Masukkan kantor baru"
@@ -509,20 +513,24 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
         name={"resign_at"}
         className="col-span-2"
       >
-        <DatePicker
-          name="resign_at"
-          placeholder="Pilih tanggal resign"
-          className="w-full"
-          value={[
-            dataContract.resign_at ? moment(dataContract.resign_at) : null,
-          ]}
-          onChange={(value, datestring) => {
-            setDataContract((prev) => ({
-              ...prev,
-              resign_at: datestring,
-            }));
-          }}
-        />
+        <>
+          <DatePicker
+            name="resign_at"
+            placeholder="Pilih tanggal resign"
+            className="w-full"
+            value={
+              moment(dataContract?.resign_at).isValid()
+                ? moment(dataContract?.resign_at)
+                : null
+            }
+            onChange={(value, datestring) => {
+              setDataContract((prev) => ({
+                ...prev,
+                resign_at: datestring,
+              }));
+            }}
+          />
+        </>
       </Form.Item>
 
       {/* TODO: ubah value input benefit */}
@@ -540,9 +548,14 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
         >
           <div>
             <Input
-              // value={dataUpdateBasic.name}
+              value={dataContract?.benefit?.main_salary}
               name={"main_salary"}
-              onChange={onChangeInput}
+              onChange={(e) => {
+                setDataContract((prev) => ({
+                  ...prev,
+                  benefit: { ...prev.benefit, main_salary: e.target.value },
+                }));
+              }}
               placeholder="Masukkan gaji pokok"
             />
           </div>
@@ -550,9 +563,14 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
         <Form.Item label="Tunjangan Uang Makan" name={"meal_allowance"}>
           <div>
             <Input
-              // value={dataUpdateBasic.name}
+              value={dataContract?.benefit?.meal_allowance}
               name={"meal_allowance"}
-              onChange={onChangeInput}
+              onChange={(e) => {
+                setDataContract((prev) => ({
+                  ...prev,
+                  benefit: { ...prev.benefit, meal_allowance: e.target.value },
+                }));
+              }}
               placeholder="Masukkan tunjangan uang makan"
             />
           </div>
@@ -564,9 +582,14 @@ const EmployeeContractForm = ({ initProps, dataContract, setDataContract }) => {
         <Form.Item label="PPh 21" name={"income_tax"}>
           <div>
             <Input
-              // value={dataUpdateBasic.name}
+              value={dataContract?.benefit?.income_tax}
               name={"income_tax"}
-              onChange={onChangeInput}
+              onChange={(e) => {
+                setDataContract((prev) => ({
+                  ...prev,
+                  benefit: { ...prev.benefit, income_tax: e.target.value },
+                }));
+              }}
               placeholder="Masukkan pajak penghasilan"
             />
           </div>

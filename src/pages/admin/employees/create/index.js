@@ -16,6 +16,7 @@ import {
   EMPLOYEE_GET,
   EMPLOYEE_INVENTORIES_GET,
   EMPLOYEE_INVENTORY_ADD,
+  EMPLOYEE_INVENTORY_UPDATE,
   EMPLOYEE_UPDATE,
 } from "lib/features";
 
@@ -31,6 +32,7 @@ import {
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
+import { objectToFormData } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 const EmployeeProfileForm = dynamic(
@@ -69,6 +71,10 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     EMPLOYEE_INVENTORIES_GET
   );
   const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
+  const isAllowedToUpdateEmployeeInventory = hasPermission(
+    EMPLOYEE_INVENTORY_UPDATE
+  );
+
   const isAllowedToGetEmployeeDevices = hasPermission(EMPLOYEE_DEVICES_GET);
   const isAllowedToAddEmployeeDevice = hasPermission(EMPLOYEE_DEVICE_ADD);
 
@@ -92,8 +98,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const [currentTab, setCurrentTab] = useState("1");
   const [dataEmployee, setDataEmployee] = useState({
-    // id_photo: "",
-    id: 0,
+    id: null,
+    id_card_photo: null,
     name: "",
     nip: "",
     nik: "",
@@ -107,7 +113,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     gender: "",
     blood_type: "",
     marital_status: "",
-    child_total: "",
+    number_of_children: "",
     bio_mother_name: "",
     npwp: "",
     bpjs_kesehatan: "",
@@ -121,12 +127,13 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const [dataContract, setDataContract] = useState({
     id: null,
+    employee_id: null,
     is_employee_active: 0,
     contract_name: "",
-    contract_status_id: "",
-    role_id: "",
+    contract_file: null,
+    contract_status_id: null,
+    role_id: null,
     employee_status: false,
-    contract_doc: "",
     pkwt_reference: "",
     contract_start_at: "",
     contract_end_at: "",
@@ -137,7 +144,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   const [inventoryList, setInventoryList] = useState([]);
-  console.log(dataEmployee);
+
   // 2. USE EFFECT
   // 2.1. Get Employee Data
   useEffect(() => {
@@ -162,6 +169,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((res2) => {
           if (res2.success) {
             setDataEmployee(res2.data);
+            setDataContract(res2.data?.contracts[0]);
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -182,53 +190,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   }, [isAllowedToGetEmployee, refresh]);
 
   // 3. HANDLER
-  // Save as draft or posted
-  const handleSaveEmployee = (isPosted) => {
-    if (!isAllowedToUpdateEmployee) {
-      permissionWarningNotification("Menyimpan", "Draft Karyawan");
-      return;
-    }
-    setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployee`, {
-      method: "PUT",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ ...dataEmployee, is_posted: isPosted }),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        if (response2.success) {
-          notification.success({
-            message: `Draft karyawan berhasil disimpan.`,
-            duration: 3,
-          });
-          if (isPosted === 1) {
-            setTimeout(() => {
-              setDataEmployee({});
-              rt.push(`/admin/employees`);
-            }, 500);
-          }
-        } else {
-          notification.error({
-            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menyimpan draft karyawan. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingUpdate(false);
-      });
-  };
-
   const handleAddEmployeeContract = () => {
     const payload = {
       employee_id: employeeId,
@@ -267,6 +228,138 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
         .finally(() => setLoadingAdd(false));
     }
+  };
+
+  // Save profile as draft or posted
+  const handleSaveProfile = (isPosted) => {
+    const payloadFormData = objectToFormData(dataEmployee);
+
+    if (!isAllowedToUpdateEmployee) {
+      permissionWarningNotification("Menyimpan", "Draft Karyawan");
+      return;
+    }
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployee`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+      body: payloadFormData,
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Draft karyawan berhasil disimpan.`,
+            duration: 3,
+          });
+          if (isPosted === 1) {
+            setTimeout(() => {
+              setDataEmployee({});
+              rt.push(`/admin/employees`);
+            }, 500);
+          }
+        } else {
+          notification.error({
+            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menyimpan draft karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
+  };
+
+  // Save contract
+  const handleSaveContract = () => {
+    const payloadFormData = objectToFormData(dataContract);
+
+    if (!isAllowedToUpdateEmployeeContract) {
+      permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
+      return;
+    }
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+      body: payloadFormData,
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Draft karyawan berhasil disimpan.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menyimpan draft karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
+  };
+
+  // Save inventory
+  const handleSaveInventory = () => {
+    const payloadFormData = objectToFormData(inventoryList[0]);
+
+    if (!isAllowedToUpdateEmployeeInventory) {
+      permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
+      return;
+    }
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+      body: payloadFormData,
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Draft karyawan berhasil disimpan.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menyimpan draft karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
   };
 
   return (
@@ -310,7 +403,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"default"}
               className="flex flex-row"
-              onClick={() => handleSaveEmployee(0)}
+              onClick={() => {
+                handleSaveProfile(0);
+                dataEmployee.contracts.length !== 0 && handleSaveContract();
+                dataEmployee.inventories.length !== 0 && handleSaveInventory();
+              }}
             >
               <ClipboardListIconSvg size={18} color={`#35763B`} />
               <p className="ml-2">Simpan Draft</p>
@@ -319,7 +416,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               <ButtonSys
                 type={"primary"}
                 className="flex flex-row"
-                onClick={() => handleSaveEmployee(1)}
+                onClick={() => {
+                  handleSaveProfile(1);
+                  dataEmployee.contracts.length !== 0 && handleSaveContract();
+                  dataEmployee.inventories.length !== 0 &&
+                    handleSaveInventory();
+                }}
               >
                 <CheckIconSvg size={18} color={`white`} />
                 <p className="ml-2">Simpan Karyawan</p>
@@ -371,6 +473,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               initProps={initProps}
               inventoryList={inventoryList}
               setInventoryList={setInventoryList}
+              employeeId={employeeId}
             />
           </Tabs.TabPane>
         </Tabs>

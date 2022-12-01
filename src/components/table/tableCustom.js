@@ -2080,7 +2080,9 @@ const TableCustomEmployeeList = ({
   sorting,
   searching,
   selectedRoleId,
-  selectedContractStatus,
+  selectedContractStatusId,
+  selectedPlacement,
+  isEmployeeActive,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -2099,7 +2101,7 @@ const TableCustomEmployeeList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_status_id=${selectedContractStatus}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedContractStatusId}&is_employe_active=${isEmployeeActive}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2126,7 +2128,7 @@ const TableCustomEmployeeList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_status_id=${selectedContractStatus}&sort_by=${
+              }/getEmployees?role_id=${selectedRoleId}&contract_status_id=${selectedContractStatusId}&placement=${selectedPlacement}&is_employe_active=${isEmployeeActive}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -2158,7 +2160,7 @@ const TableCustomEmployeeList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_status_id=${selectedContractStatus}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?role_id=${selectedRoleId}&contract_status_id=${selectedContractStatusId}&placement=${selectedPlacement}&is_employe_active=${isEmployeeActive}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
