@@ -4,6 +4,7 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Modal,
   Select,
   Spin,
@@ -45,7 +46,7 @@ const EmployeeContractForm = ({
   initProps,
   dataContract,
   setDataContract,
-  setRefresh,
+  debouncedApiCall,
 }) => {
   /**
    * Dependencies
@@ -209,6 +210,13 @@ const EmployeeContractForm = ({
       ...dataContract,
       [e.target.name]: e.target.value,
     });
+
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataContract,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const beforeUploadDocument = useCallback((uploadedFile) => {
@@ -274,11 +282,15 @@ const EmployeeContractForm = ({
             onChange={(checked) => {
               setDataContract({
                 ...dataContract,
-                is_employee_active: checked,
+                is_employee_active: Number(checked),
               });
             }}
           />
-          {dataContract?.is_employee_active ? <p>Aktif</p> : <p>Tidak Aktif</p>}
+          {Number(dataContract?.is_employee_active) ? (
+            <p>Aktif</p>
+          ) : (
+            <p>Tidak Aktif</p>
+          )}
         </div>
       </Form.Item>
       <Form.Item
@@ -363,7 +375,6 @@ const EmployeeContractForm = ({
           </Select>
         </>
       </Form.Item>
-
       <Form.Item
         label="Dokumen Kontrak"
         name={"contract_file"}
@@ -508,11 +519,24 @@ const EmployeeContractForm = ({
           />
         </div>
       </Form.Item>
-      <Form.Item
-        label="Tanggal Resign"
-        name={"resign_at"}
-        className="col-span-2"
-      >
+      <Form.Item label="Cuti Tahunan" name={"annual_leave"}>
+        <div>
+          <InputNumber
+            min={0}
+            value={dataContract?.annual_leave}
+            name={"annual_leave"}
+            onChange={(value) =>
+              setDataContract({
+                ...dataContract,
+                annual_leave: value,
+              })
+            }
+            placeholder="Masukkan jumlah hari cuti"
+            className="w-full"
+          />
+        </div>
+      </Form.Item>
+      <Form.Item label="Tanggal Resign" name={"resign_at"}>
         <>
           <DatePicker
             name="resign_at"

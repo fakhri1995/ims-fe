@@ -15,8 +15,6 @@ import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
-
 import { UploadIconSvg } from "../../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
@@ -24,7 +22,11 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
+const EmployeeProfileForm = ({
+  dataEmployee,
+  setDataEmployee,
+  debouncedApiCall,
+}) => {
   /**
    * Dependencies
    */
@@ -51,6 +53,13 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       ...dataEmployee,
       [e.target.name]: e.target.value,
     });
+
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
   const beforeUploadIDCardPicture = useCallback((uploadedFile) => {
@@ -70,7 +79,6 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       return Upload.LIST_IGNORE;
     }
 
-    // setUploadedIDCardPicture(uploadedFile);
     setDataEmployee((prev) => ({
       ...prev,
       id_card_photo: uploadedFile,
@@ -87,7 +95,6 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
 
   const onUploadRemove = useCallback(() => {
     setFileList([]);
-    // setUploadedIDCardPicture(null);
     setDataEmployee((prev) => ({
       ...prev,
       id_card_photo: null,
