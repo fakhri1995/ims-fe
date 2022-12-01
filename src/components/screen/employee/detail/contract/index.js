@@ -110,7 +110,6 @@ const EmployeeContractDetail = ({
     }
   };
 
-  console.log(dataContract);
   return (
     <section>
       <Collapse

@@ -40,7 +40,6 @@ const InventoryForm = ({
   /**
    * Dependencies
    */
-  console.log(inventoryList);
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -209,7 +208,6 @@ const InventoryForm = ({
     // const blobFile = e.target.files[0];
 
     // const base64Data = getBase64(uploadedFile);
-    // console.log(base64Data)
 
     // const newFiles = [...datapayload.files, base64Data];
     // const newAttachments = [...datapayload.attachments, blobFile];
@@ -241,7 +239,6 @@ const InventoryForm = ({
     // const blobFile = e.target.files[0];
 
     // const base64Data = getBase64(uploadedFile);
-    // console.log(base64Data)
 
     // const newFiles = [...datapayload.files, base64Data];
     // const newAttachments = [...datapayload.attachments, blobFile];
@@ -305,8 +302,7 @@ const InventoryForm = ({
 
   //   setloadingfile(false);
   // };
-  // console.log("inventoryList", inventoryList);
-  // console.log(deviceList)
+
   return (
     <div>
       <Form

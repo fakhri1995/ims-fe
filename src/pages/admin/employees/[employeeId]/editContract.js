@@ -80,7 +80,6 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Kontrak");
 
   const { query } = useRouter();
-  // console.log(query)
 
   // 1. STATE
   // 1.1. display
@@ -152,7 +151,6 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployeeContract, contractId, refresh]);
 
-  console.log(dataContract);
   // 3. Event
   // 3.1. Save Employee Contract
   const handleSaveContract = () => {

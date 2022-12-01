@@ -204,8 +204,6 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   };
 
-  console.log(dataInventory);
-
   return (
     <LayoutDashboard
       dataProfile={dataProfile}

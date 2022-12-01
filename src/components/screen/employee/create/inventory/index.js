@@ -221,7 +221,6 @@ const EmployeeInventoryForm = ({
     setInventoryList(data);
   };
 
-  console.log(employeeId);
   return (
     <>
       {!isAdd && (
@@ -235,8 +234,6 @@ const EmployeeInventoryForm = ({
           Memiliki inventaris & piranti
         </Checkbox>
       )}
-
-      {console.log(inventoryList)}
 
       {(isOwn || isAdd) && (
         <>

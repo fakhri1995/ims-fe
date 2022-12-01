@@ -64,8 +64,6 @@ const DeviceForm = ({
     setInventoryList(dataInventories);
   };
 
-  // console.log(deviceList)
-
   // const onChangeFile = async (e) => {
   //   if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
   //     notification.warning({

@@ -340,7 +340,6 @@ const EmployeeInventoryDetail = ({
           </p>
         </ModalHapus2>
       </AccessControl>
-      {console.log(dataModalDelete)}
     </section>
   );
 };

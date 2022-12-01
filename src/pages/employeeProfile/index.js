@@ -91,7 +91,6 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   //INIT
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-  // console.log(pathArr);
   pathArr[pathArr.length - 1] = "Karyawan";
 
   const [instanceForm] = Form.useForm();
