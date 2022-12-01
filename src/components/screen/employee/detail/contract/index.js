@@ -17,13 +17,16 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
+import { AccessControl } from "components/features/AccessControl";
+
 import { useAccessControl } from "contexts/access-control";
 
-import { EMPLOYEE_CONTRACT_GET } from "lib/features";
+import { EMPLOYEE_CONTRACT_DELETE, EMPLOYEE_CONTRACT_GET } from "lib/features";
 
 import {
   EditIconSvg,
   FileTextIconSvg,
+  TrashIconSvg,
   UploadIconSvg,
 } from "../../../../../components/icon";
 import {
@@ -33,12 +36,14 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
+import { ModalHapus2 } from "../../../../modal/modalCustom";
 
 const EmployeeContractDetail = ({
   employeeId,
   isAllowedToUpdateEmployeeContract,
   dataEmployee,
   initProps,
+  setRefresh,
 }) => {
   /**
    * Dependencies
@@ -52,14 +57,26 @@ const EmployeeContractDetail = ({
   }
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
+  const isAllowedToDeleteEmployeeContract = hasPermission(
+    EMPLOYEE_CONTRACT_DELETE
+  );
 
   const [instanceForm] = Form.useForm();
   const rt = useRouter();
 
   // 1. USE STATE
+  // Display data contract
   const [loadingData, setLoadingData] = useState(false);
   const [dataContract, setDataContract] = useState({});
   const [benefitObject, setBenefitObject] = useState({});
+
+  // Delete contract
+  const [modalDelete, setModalDelete] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [dataModalDelete, setDataModalDelete] = useState({
+    contractId: null,
+    contractName: "",
+  });
 
   // 2. USE EFFECT
   useEffect(() => {
@@ -90,7 +107,9 @@ const EmployeeContractDetail = ({
         .then((res2) => {
           if (res2.success) {
             setDataContract(res2.data);
-            setBenefitObject(JSON.parse(res2.data?.benefit));
+            if (res2.data?.benefit) {
+              setBenefitObject(JSON.parse(res2.data.benefit));
+            }
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -108,6 +127,53 @@ const EmployeeContractDetail = ({
           setLoadingData(false);
         });
     }
+  };
+
+  const handleDeleteContract = () => {
+    if (!isAllowedToDeleteEmployeeContract) {
+      permissionWarningNotification("Menghapus", "Kontrak");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/deleteEmployeeContract?id=${Number(
+        dataModalDelete?.contractId
+      )}&employee_id=${Number(employeeId)}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setModalDelete(false);
+        } else {
+          notification.error({
+            message: `Gagal menghapus kontrak karyawan. ${res2.response}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus kontrak karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
   };
 
   return (
@@ -145,18 +211,34 @@ const EmployeeContractDetail = ({
                     Tidak Aktif
                   </Tag>
                 )}
-
-                {isAllowedToUpdateEmployeeContract && (
-                  <button
-                    className="bg-transparent hover:opacity-70"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      rt.push(`${employeeId}/editContract?id=${contract.id}`);
-                    }}
-                  >
-                    <EditIconSvg color={"#35763B"} size={20} />
-                  </button>
-                )}
+                <div className="space-x-1">
+                  {isAllowedToUpdateEmployeeContract && (
+                    <button
+                      className="bg-transparent hover:opacity-70"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        rt.push(`${employeeId}/editContract?id=${contract.id}`);
+                      }}
+                    >
+                      <EditIconSvg color={"#35763B"} size={20} />
+                    </button>
+                  )}
+                  {isAllowedToDeleteEmployeeContract && (
+                    <button
+                      className="bg-transparent hover:opacity-70"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setDataModalDelete({
+                          contractId: contract?.id,
+                          contractName: contract?.contract_name || "-",
+                        });
+                        setModalDelete(true);
+                      }}
+                    >
+                      <TrashIconSvg color={"#BF4A40"} size={20} />
+                    </button>
+                  )}
+                </div>
               </div>
             }
           >
@@ -215,7 +297,11 @@ const EmployeeContractDetail = ({
                 <p className="mig-caption--medium text-mono80">Kantor Baru</p>
                 <p>{dataContract.new_office || "-"}</p>
               </div>
-              <div className="space-y-1 col-span-2 mb-3">
+              <div className="space-y-1 mb-2">
+                <p className="mig-caption--medium text-mono80">Cuti Tahunan</p>
+                <p>{dataContract.annual_leave || "-"} hari</p>
+              </div>
+              <div className="space-y-1 mb-3">
                 <p className="mig-caption--medium text-mono80">
                   Tanggal Resign
                 </p>
@@ -246,6 +332,26 @@ const EmployeeContractDetail = ({
           </Collapse.Panel>
         ))}
       </Collapse>
+
+      {/* Modal Delete Contract */}
+      <AccessControl hasPermission={EMPLOYEE_CONTRACT_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={handleDeleteContract}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"kontrak"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan kontrak&nbsp;
+            <strong>{dataModalDelete.contractName}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </section>
   );
 };

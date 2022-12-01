@@ -254,12 +254,12 @@ const EmployeeDetailIndex = ({
 
   const handleDeleteEmployee = () => {
     if (!isAllowedToDeleteEmployee) {
-      permissionWarningNotification("Menghapus", "Kandidat");
+      permissionWarningNotification("Menonaktifkan", "Karyawan");
       return;
     }
     setLoadingDelete(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitment?id=${Number(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployee?id=${Number(
         employeeId
       )}`,
       {
@@ -277,24 +277,22 @@ const EmployeeDetailIndex = ({
             message: res2.message,
             duration: 3,
           });
+          setModalDelete(false);
+          rt.push("/admin/employees");
         } else {
           notification.error({
-            message: `Gagal menghapus kandidat. ${res2.response}`,
+            message: `Gagal menonaktifkan karyawan. ${res2.response}`,
             duration: 3,
           });
         }
-        rt.push("/admin/recruitment");
-        setTimeout(() => {
-          setLoadingDelete(false);
-          setModalDelete(false);
-          setDataEmployee({});
-        }, 500);
       })
       .catch((err) => {
         notification.error({
           message: `Gagal menghapus kandidat. ${err.response}`,
           duration: 3,
         });
+      })
+      .finally(() => {
         setLoadingDelete(false);
         setModalDelete(false);
       });
@@ -471,6 +469,7 @@ const EmployeeDetailIndex = ({
                   isAllowedToUpdateEmployeeContract
                 }
                 dataEmployee={dataEmployee}
+                setRefresh={setRefresh}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
@@ -494,12 +493,12 @@ const EmployeeDetailIndex = ({
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
-          // onOk={handleDeleteEmployee}
+          onOk={handleDeleteEmployee}
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"karyawan"}
           loading={loadingDelete}
+          okButtonText={"Ya, saya yakin"}
         >
           Apakah Anda yakin ingin menonaktifkan karyawan{" "}
           <strong>{dataEmployee?.name}</strong>?
