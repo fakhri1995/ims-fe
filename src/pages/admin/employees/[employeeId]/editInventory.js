@@ -1,19 +1,4 @@
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Modal,
-  Popover,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
-import parse from "html-react-parser";
+import { notification } from "antd";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
@@ -36,18 +21,7 @@ import ButtonSys from "../../../../components/button";
 import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import ModalCore from "../../../../components/modal/modalCore";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
-import EmployeeContractForm from "../../../../components/screen/employee/create/contract";
-import EmployeeInventoryForm from "../../../../components/screen/employee/create/inventory";
 import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
-import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
-import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
-import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
-import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
 import {
   objectToFormData,
   permissionWarningNotification,
@@ -86,7 +60,7 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Piranti");
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Inventaris");
 
   // 1. STATE
   // 1.1. display
@@ -218,7 +192,7 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
     >
       <div className="shadow-lg rounded-md bg-white py-7 px-5">
         <div className="flex flex-row items-center justify-between mb-7">
-          <h4 className="mig-heading--4">Edit Piranti</h4>
+          <h4 className="mig-heading--4">Edit Inventaris</h4>
           <div className="space-x-6">
             <ButtonSys
               color={"danger"}
