@@ -10,8 +10,6 @@ import {
   COMPANY_LISTS_GET,
   EMPLOYEE_INVENTORIES_GET,
   EMPLOYEE_INVENTORY_ADD,
-  RECRUITMENT_ROLES_LIST_GET,
-  RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
 
 import {
@@ -26,8 +24,8 @@ const EmployeeInventoryForm = ({
   isAdd,
   inventoryList,
   setInventoryList,
-  inventoryId,
   employeeId,
+  debouncedApiCall,
 }) => {
   /**
    * Dependencies
@@ -147,7 +145,7 @@ const EmployeeInventoryForm = ({
           setLoadingInventories(false);
         });
     }
-  }, [isAllowedToGetEmployeeInventories, refresh]);
+  }, [isAllowedToGetEmployeeInventories, employeeId, refresh]);
 
   // 2.2. Auto add new inventory form when it's use in add inventory
   useEffect(() => {
@@ -247,6 +245,8 @@ const EmployeeInventoryForm = ({
               dataPICList={dataPICList}
               // inventoryId={inventoryId}
               inventoryId={inventory.id}
+              debouncedApiCall={debouncedApiCall}
+              setRefresh={setRefresh}
             />
           ))}
           <ButtonSys type={"dashed"} onClick={handleAddNewInventory}>

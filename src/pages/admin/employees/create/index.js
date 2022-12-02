@@ -1,9 +1,10 @@
-import { ArrowRightOutlined, UploadOutlined } from "@ant-design/icons";
 import { Tabs, notification } from "antd";
+import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -135,6 +136,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     role_id: null,
     employee_status: false,
     pkwt_reference: "",
+    annual_leave: 0,
     contract_start_at: "",
     contract_end_at: "",
     placement: "",
@@ -190,6 +192,27 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   }, [isAllowedToGetEmployee, refresh]);
 
   // 3. HANDLER
+
+  // Debounce function for auto save draft
+  const debouncedSaveProfile = useCallback(
+    debounce((data) => {
+      handleSaveProfile(0, data);
+    }, 10000),
+    []
+  );
+  const debouncedSaveContract = useCallback(
+    debounce((data) => {
+      handleSaveContract(data);
+    }, 10000),
+    []
+  );
+  const debouncedSaveInventory = useCallback(
+    debounce((data) => {
+      handleSaveInventory(data);
+    }, 10000),
+    []
+  );
+
   const handleAddEmployeeContract = () => {
     const payload = {
       employee_id: employeeId,
@@ -231,8 +254,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   // Save profile as draft or posted
-  const handleSaveProfile = (isPosted) => {
-    const payloadFormData = objectToFormData(dataEmployee);
+  const handleSaveProfile = (isPosted, employeeProfileData) => {
+    const payloadFormData = objectToFormData({
+      ...employeeProfileData,
+      is_posted: isPosted,
+    });
 
     if (!isAllowedToUpdateEmployee) {
       permissionWarningNotification("Menyimpan", "Draft Karyawan");
@@ -279,8 +305,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   // Save contract
-  const handleSaveContract = () => {
-    const payloadFormData = objectToFormData(dataContract);
+  const handleSaveContract = (contractData) => {
+    const payloadFormData = objectToFormData(contractData);
 
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
@@ -321,8 +347,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   // Save inventory
-  const handleSaveInventory = () => {
-    const payloadFormData = objectToFormData(inventoryList[0]);
+  const handleSaveInventory = (inventoryData) => {
+    const payloadFormData = objectToFormData(inventoryData);
 
     if (!isAllowedToUpdateEmployeeInventory) {
       permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
@@ -400,27 +426,28 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <p className="ml-2">Kembali</p>
               </ButtonSys>
             )}
-            <ButtonSys
+            {/* <ButtonSys
               type={"default"}
               className="flex flex-row"
               onClick={() => {
-                handleSaveProfile(0);
-                dataEmployee.contracts.length !== 0 && handleSaveContract();
-                dataEmployee.inventories.length !== 0 && handleSaveInventory();
+                handleSaveProfile(0, dataEmployee);
+                dataEmployee.contracts.length !== 0 && handleSaveContract(dataContract);
+                dataEmployee.inventories.length !== 0 && handleSaveInventory(inventoryList);
               }}
             >
               <ClipboardListIconSvg size={18} color={`#35763B`} />
               <p className="ml-2">Simpan Draft</p>
-            </ButtonSys>
+            </ButtonSys> */}
             {currentTab == "3" ? (
               <ButtonSys
                 type={"primary"}
                 className="flex flex-row"
                 onClick={() => {
-                  handleSaveProfile(1);
-                  dataEmployee.contracts.length !== 0 && handleSaveContract();
+                  handleSaveProfile(1, dataEmployee);
+                  dataEmployee.contracts.length !== 0 &&
+                    handleSaveContract(dataContract);
                   dataEmployee.inventories.length !== 0 &&
-                    handleSaveInventory();
+                    handleSaveInventory(inventoryList);
                 }}
               >
                 <CheckIconSvg size={18} color={`white`} />
@@ -459,6 +486,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             <EmployeeProfileForm
               dataEmployee={dataEmployee}
               setDataEmployee={setDataEmployee}
+              debouncedApiCall={debouncedSaveProfile}
             />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Kontrak Karyawan" key="2">
@@ -466,6 +494,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               initProps={initProps}
               dataContract={dataContract}
               setDataContract={setDataContract}
+              debouncedApiCall={debouncedSaveContract}
             />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Inventaris & Piranti" key="3">
@@ -474,6 +503,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               inventoryList={inventoryList}
               setInventoryList={setInventoryList}
               employeeId={employeeId}
+              debouncedApiCall={debouncedSaveInventory}
             />
           </Tabs.TabPane>
         </Tabs>

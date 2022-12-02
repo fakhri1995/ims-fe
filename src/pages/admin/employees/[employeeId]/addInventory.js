@@ -1,18 +1,4 @@
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Modal,
-  Popover,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
+import { Spin, notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";
 import "moment/locale/id";
@@ -37,16 +23,7 @@ import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../../components/modal/modalCore";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
-import EmployeeInventoryForm from "../../../../components/screen/employee/create/inventory";
 import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
-import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
-import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
-import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
-import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
 import {
   objectToFormData,
   permissionWarningNotification,
@@ -204,6 +181,49 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   };
 
+  // Delete Employee Inventory
+  const handleDeleteInventory = () => {
+    if (!isAllowedToDeleteEmployeeInventory) {
+      permissionWarningNotification("Menghapus", "Inventaris Karyawan");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/deleteEmployeeInventory?id=${Number(
+        dataInventory[0].id
+      )}&employee_id=${Number(employeeId)}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          rt.back();
+        } else {
+          notification.error({
+            message: `Gagal menghapus inventaris karyawan. ${res2.response}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus inventaris karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
+  };
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -220,7 +240,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               color={"danger"}
               type={"default"}
-              onClick={() => rt.back()}
+              onClick={handleDeleteInventory}
             >
               <div className="flex flex-row space-x-2">
                 <XIconSvg color={"#BF4A40"} size={16} />

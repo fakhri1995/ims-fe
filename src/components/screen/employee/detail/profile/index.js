@@ -3,6 +3,8 @@ import React from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { momentFormatDate } from "../../../../../lib/helper";
+
 moment.locale("id");
 
 const EmployeeProfileDetail = ({ dataEmployee }) => {
@@ -112,11 +114,7 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Tanggal Lahir</p>
-          <p>
-            {dataEmployee?.birth_date
-              ? moment(dataEmployee?.birth_date).format("LL")
-              : "-"}
-          </p>
+          <p>{momentFormatDate(dataEmployee?.birth_date, "-")}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Golongan Darah</p>

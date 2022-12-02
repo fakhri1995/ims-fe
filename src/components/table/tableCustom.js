@@ -2183,7 +2183,9 @@ const TableCustomEmployeeList = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            rt.push(`/admin/employees/${record.id}`);
+            record?.is_posted === 1
+              ? rt.push(`/admin/employees/${record.id}`)
+              : rt.push(`/admin/employees/create?id=${record.id}`);
           },
         };
       }}

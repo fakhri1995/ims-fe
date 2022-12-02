@@ -1,19 +1,4 @@
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  Button,
-  Dropdown,
-  Form,
-  Input,
-  Menu,
-  Modal,
-  Popover,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
+import { Form, Tabs, notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";
 import "moment/locale/id";
@@ -27,44 +12,14 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  GUEST_STATUS,
-  RECRUITMENT_DELETE,
-  RECRUITMENT_EMAIL_SEND,
-  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
-  RECRUITMENT_GET,
-  RECRUITMENT_LOG_GET,
-  RECRUITMENT_LOG_NOTES_ADD,
-  RECRUITMENT_STAGES_LIST_GET,
-  RECRUITMENT_STATUSES_LIST_GET,
-  RECRUITMENT_UPDATE,
-  RECRUITMENT_UPDATE_STAGE,
-  RECRUITMENT_UPDATE_STATUS,
-  RESUME_GET,
-} from "lib/features";
+import { RECRUITMENT_DELETE, RECRUITMENT_GET } from "lib/features";
 
 import { permissionWarningNotification } from "../..//lib/helper";
 import ButtonSys from "../../components/button";
-import {
-  CirclePlusIconSvg,
-  DotsIconSvg,
-  DownloadIconSvg,
-  EditIconSvg,
-  ExternalLinkIconSvg,
-  InfoCircleIconSvg,
-  MailForwardIconSvg,
-  OneUserIconSvg,
-  PlusIconSvg,
-  TrashIconSvg,
-  UsersIconSvg,
-} from "../../components/icon";
+import { DownloadIconSvg, OneUserIconSvg } from "../../components/icon";
 import LayoutDashboard2 from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
-import {
-  ModalDownloadPayslip,
-  ModalHapus2,
-  ModalUbah,
-} from "../../components/modal/modalCustom";
+import { ModalDownloadPayslip } from "../../components/modal/modalCustom";
 import EmployeeContractDetail from "../../components/screen/employee/detail/contract";
 import EmployeeInventoryDetail from "../../components/screen/employee/detail/inventory";
 import EmployeePayslipDetail from "../../components/screen/employee/detail/payslip";

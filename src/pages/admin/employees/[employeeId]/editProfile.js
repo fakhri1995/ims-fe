@@ -1,18 +1,4 @@
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Modal,
-  Popover,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
+import { notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";
 import "moment/locale/id";
@@ -32,15 +18,7 @@ import ButtonSys from "../../../../components/button";
 import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import ModalCore from "../../../../components/modal/modalCore";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
 import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
-import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
-import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
-import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
 import {
   objectToFormData,
   permissionWarningNotification,

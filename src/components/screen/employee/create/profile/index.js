@@ -9,13 +9,11 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
-
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 
 import { UploadIconSvg } from "../../../../../components/icon";
 import {
@@ -24,7 +22,11 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
+const EmployeeProfileForm = ({
+  dataEmployee,
+  setDataEmployee,
+  debouncedApiCall,
+}) => {
   /**
    * Dependencies
    */
@@ -38,21 +40,53 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
 
   const [instanceForm] = Form.useForm();
 
-  // const currentFileName = dataEmployee?.id_card_photo?.link?.split('/')[2];
-
   // 1. USE STATE
   const [fileList, setFileList] = useState([]);
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
   const [uploadedIDCardPicture, setUploadedIDCardPicture] = useState(null);
 
-  // 2. HANDLER
+  // 2. USE EFFECT
+  // 2.1. Display id card filename when available in draft
+  useEffect(() => {
+    if (dataEmployee?.id_card_photo?.link) {
+      const currentFileName = dataEmployee?.id_card_photo?.link?.split("/")[2];
+      setFileList([{ name: currentFileName }]);
+    }
+  }, [dataEmployee]);
+
+  // 3. HANDLER
+  // 3.1. Handle input change and auto save in "Tambah Karyawan"
   const onChangeInput = (e) => {
     setDataEmployee({
       ...dataEmployee,
       [e.target.name]: e.target.value,
     });
+
+    // use for auto save in
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
 
+  const onChangeSelect = (value, attributeName) => {
+    setDataEmployee({
+      ...dataEmployee,
+      [attributeName]: value,
+    });
+
+    // use for auto save in
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        [attributeName]: value,
+      });
+    }
+  };
+
+  // 3.2. Handle upload file
   const beforeUploadIDCardPicture = useCallback((uploadedFile) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
@@ -70,16 +104,23 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
       return Upload.LIST_IGNORE;
     }
 
-    // setUploadedIDCardPicture(uploadedFile);
     setDataEmployee((prev) => ({
       ...prev,
       id_card_photo: uploadedFile,
     }));
+
+    // use for auto save in "Tambah Karyawan"
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        id_card_photo: uploadedFile,
+      });
+    }
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {
     setUploadPictureLoading(file.status === "uploading");
-
+    console.log(file);
     if (file.status !== "removed") {
       setFileList([file]);
     }
@@ -87,11 +128,18 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
 
   const onUploadRemove = useCallback(() => {
     setFileList([]);
-    // setUploadedIDCardPicture(null);
     setDataEmployee((prev) => ({
       ...prev,
       id_card_photo: null,
     }));
+
+    // use for auto save in "Tambah Karyawan"
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        id_card_photo: null,
+      });
+    }
   }, []);
 
   return (
@@ -334,6 +382,13 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
                 ...prev,
                 birth_date: datestring,
               }));
+
+              if (debouncedApiCall) {
+                debouncedApiCall({
+                  ...dataEmployee,
+                  birth_date: datestring,
+                });
+              }
             }}
           />
         </>
@@ -352,12 +407,7 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
         <>
           <Select
             value={dataEmployee.gender}
-            onChange={(value) => {
-              setDataEmployee({
-                ...dataEmployee,
-                gender: value,
-              });
-            }}
+            onChange={(value) => onChangeSelect(value, "gender")}
             placeholder="Pilih jenis kelamin"
             options={[
               {
@@ -374,12 +424,7 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
         <>
           <Select
             value={dataEmployee.blood_type}
-            onChange={(value) => {
-              setDataEmployee({
-                ...dataEmployee,
-                blood_type: value,
-              });
-            }}
+            onChange={(value) => onChangeSelect(value, "blood_type")}
             placeholder="Pilih jenis kelamin"
             options={[
               {
@@ -402,12 +447,7 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
         <>
           <Select
             value={dataEmployee.marital_status}
-            onChange={(value) => {
-              setDataEmployee({
-                ...dataEmployee,
-                marital_status: value,
-              });
-            }}
+            onChange={(value) => onChangeSelect(value, "marital_status")}
             placeholder="Pilih status kawin"
             options={[
               {
@@ -436,12 +476,7 @@ const EmployeeProfileForm = ({ dataEmployee, setDataEmployee }) => {
             min={0}
             value={dataEmployee.number_of_children}
             name={"number_of_children"}
-            onChange={(value) =>
-              setDataEmployee({
-                ...dataEmployee,
-                number_of_children: value,
-              })
-            }
+            onChange={(value) => onChangeSelect(value, "number_of_children")}
             placeholder="Masukkan jumlah anak"
             className="w-full"
           />

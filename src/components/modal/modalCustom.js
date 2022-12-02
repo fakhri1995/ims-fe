@@ -777,6 +777,7 @@ const ModalHapus2 = ({
   itemName,
   disabled,
   children,
+  okButtonText,
 }) => {
   return (
     <ModalCore
@@ -803,7 +804,11 @@ const ModalHapus2 = ({
             >
               <div className="flex flex-row space-x-2">
                 <TrashIconSvg size={16} color={`white`} />
-                <p>Ya, saya yakin dan hapus {itemName}</p>
+                {okButtonText ? (
+                  <p>{okButtonText}</p>
+                ) : (
+                  <p>Ya, saya yakin dan hapus {itemName}</p>
+                )}
               </div>
             </ButtonSys>
           </div>
@@ -826,6 +831,7 @@ const ModalUbah = ({
   itemName,
   disabled,
   children,
+  okButtonText,
 }) => {
   return (
     <ModalCore
@@ -846,7 +852,11 @@ const ModalUbah = ({
             <ButtonSys type={"primary"} onClick={onOk} disabled={disabled}>
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg size={16} color={`white`} />
-                <p>Ya, saya yakin dan akan menyimpan perubahan</p>
+                {okButtonText ? (
+                  <p>{okButtonText}</p>
+                ) : (
+                  <p>Ya, saya yakin dan akan menyimpan perubahan</p>
+                )}
               </div>
             </ButtonSys>
           </div>

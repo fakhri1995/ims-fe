@@ -1,26 +1,10 @@
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import {
-  Button,
-  Dropdown,
-  Input,
-  Menu,
-  Modal,
-  Popover,
-  Select,
-  Spin,
-  Tabs,
-  Tag,
-  Timeline,
-  notification,
-} from "antd";
-import parse from "html-react-parser";
+import { notification } from "antd";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import Html from "react-pdf-html";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -32,16 +16,7 @@ import ButtonSys from "../../../../components/button";
 import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import ModalCore from "../../../../components/modal/modalCore";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
 import EmployeeContractForm from "../../../../components/screen/employee/create/contract";
-import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
-import EmployeeContractDetail from "../../../../components/screen/employee/detail/contract";
-import EmployeeInventoryDetail from "../../../../components/screen/employee/detail/inventory";
-import EmployeeProfileDetail from "../../../../components/screen/employee/detail/profile";
 import {
   objectToFormData,
   permissionWarningNotification,
@@ -87,13 +62,14 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [dataContract, setDataContract] = useState({
     id: null,
     employee_id: null,
-    contract_file: null,
     is_employee_active: 0,
     contract_name: "",
+    contract_file: null,
     contract_status_id: null,
     role_id: null,
     employee_status: false,
     pkwt_reference: "",
+    annual_leave: 0,
     contract_start_at: "",
     contract_end_at: "",
     placement: "",
@@ -239,25 +215,8 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           initProps={initProps}
           dataContract={dataContract}
           setDataContract={setDataContract}
-          setRefresh={setRefresh}
         />
       </div>
-
-      {/* Drawer Update Recruitment Candidate */}
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
-        <DrawerCandidateUpdate
-          dataEmployee={dataEmployee}
-          visible={drawerUpdate}
-          initProps={initProps}
-          onvisible={setDrawerUpdate}
-          setRefresh={setRefresh}
-          trigger={triggerUpdate}
-          isAllowedToGetEmployee={isAllowedToGetEmployee}
-          isAllowedToUpdateEmployee={isAllowedToUpdateEmployee}
-          isAllowedToDeleteEmployee={isAllowedToDeleteEmployee}
-          setModalDelete={setModalDelete}
-        />
-      </AccessControl> */}
     </LayoutDashboard>
   );
 };
