@@ -31,9 +31,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         <title>Join Our Team</title>
       </Head>
       <section
-        className={
-          "section2careers  px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 z-50"
-        }
+        className={"section2careers  px-4 md:px-[112px] z-50"}
         style={{ background: "#F4F4F4" }}
       >
         <div className={"block md:flex"}>
@@ -97,11 +95,11 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
       <section
         className={
-          "section1careers hidden md:block py-4 md:py-16 mx-auto md:w-[1216px]"
+          "section1careers hidden md:block py-4 md:py-16 md:px-[112px]"
         }
       >
         <div className={"block md:flex"}>
-          <div className={"flex-col m-auto w-[660px]"}>
+          <div className={"flex-col w-1/2 self-center"}>
             <div className={""}>
               <p
                 className={
@@ -110,12 +108,6 @@ function JoinOurTeam({ dataCareers, empData }) {
               >
                 Careers at MIG
               </p>
-              <div className={"flex-col block md:hidden pb-6"}>
-                <img
-                  style={{ width: "1000px", height: "auto" }}
-                  src="/image/joinourteam/joinourteam_image.png"
-                />
-              </div>
               <p
                 className={
                   "text-base gilroy-regular text-blackmig my-4 md:my-8"
@@ -142,9 +134,9 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
             </div>
           </div>
-          <div className={"flex-col hidden md:flex"}>
+          <div className={"flex-col hidden md:flex w-1/2"}>
             <img
-              style={{ width: "514px", height: "335px" }}
+              className={"w-full h-auto"}
               src="/image/joinourteam/joinourteam_image.png"
             />
           </div>
@@ -187,23 +179,19 @@ function JoinOurTeam({ dataCareers, empData }) {
       <section className={"h-8 hidden md:block"}></section>
 
       <section className={"section3careers bg-transp60"}>
-        <div className={"py-4 md:py-6 px-4 md:px-12"}>
+        <div className={"py-4 md:py-6 px-4 md:px-[112px]"}>
           <p
             className={
-              "text-xl md:text-3xl gilroy-semibold font-semibold text-blackmig text-center "
+              "text-xl md:text-[32px] gilroy-semibold font-semibold text-blackmig text-center "
             }
           >
             Our Values
           </p>
           {/*tampilan dekstpp */}
-          <div
-            className={
-              "hidden md:flex md:flex-row mx-auto md:justify-between w-[1216px] mt-6"
-            }
-          >
+          <div className={"hidden md:flex md:flex-row md:justify-between mt-6"}>
             <div
               className={
-                "flex-col flex text-center w-[384px] h-[180px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4"
+                "flex-col flex text-center w-[300px] md:w-[384px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4"
               }
             >
               <div className={""}>
@@ -228,7 +216,7 @@ function JoinOurTeam({ dataCareers, empData }) {
 
             <div
               className={
-                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
+                "flex-col flex text-center w-[300px] md:w-[384px] md:mx-8 bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
               }
             >
               <div className={""}>
@@ -252,7 +240,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             </div>
             <div
               className={
-                "flex-col flex text-center w-[384px] h-[180px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
+                "flex-col flex text-center w-[300px] md:w-[384px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
               }
             >
               <div className={""}>
@@ -277,7 +265,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             </div>
           </div>
           {/*tampilan mobile */}
-          <div className={"mt-7"}>
+          <div className={"mt-7 md:hidden"}>
             <div
               className={
                 "flex flex-row bg-white border-2 border-black-300 shadow-lg rounded-lg h-[91px] px-4 py-3"
@@ -343,12 +331,12 @@ function JoinOurTeam({ dataCareers, empData }) {
       <section className={"section6careers hidden md:block py-8 md:py-16"}>
         <p
           className={
-            "text-center text-blackmig font-semibold text-2xl md:text-3xl"
+            "text-center text-blackmig font-semibold text-2xl md:text-[32px]"
           }
         >
           Benefits
         </p>
-        <div className={"w-[1216px] mx-auto mt-4"}>
+        <div className={"px-4 md:px-[112px] mt-4"}>
           <p className={"text-base gilroy-regular text-blackmig"}>
             Mitramas is a people-centric business with a foundation to gives
             working opportunities for motivated individuals at all levels. Our

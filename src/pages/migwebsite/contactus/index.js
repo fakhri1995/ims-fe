@@ -56,13 +56,19 @@ function ContactUs({}) {
       <Head>
         <title>Contact Us</title>
       </Head>
-      <section className={"hidden md:block px-4 py-16"}>
-        <div className={"container mx-auto  md:flex"}>
+      <section
+        className={
+          "hidden md:block px-4 py-16 sm:py-8 sm:px-[61px] md:py-16 md:px-[112px]"
+        }
+      >
+        <div className={"container md:flex "}>
           <LeftContactUs />
           <RightContactUs
             feedback={feedback}
             heightt={heightt}
             form={form}
+            dataContactUs={dataContactUs}
+            setDataContactUs={setDataContactUs}
             handleSubmit={handleSubmit}
             Option={Option}
           />
@@ -78,6 +84,8 @@ function ContactUs({}) {
             feedback={feedback}
             heightt={heightt}
             form={form}
+            dataContactUs={dataContactUs}
+            setDataContactUs={setDataContactUs}
             handleSubmit={handleSubmit}
             Option={Option}
           />

@@ -60,14 +60,14 @@ function BlogDetail({}) {
       </Head>
       <section
         className={
-          "section1landingpage hidden md:block md:relative md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[74px]"
         }
       >
-        <div className={"w-5/6 py-2"}>
-          <p className={"text-2xl md:text-3xl text-blackmig font-semibold"}>
+        <div className={"w-5/6"}>
+          <p className={"text-2xl md:text-[32px] text-blackmig font-semibold"}>
             This is a Title This is a Title This is a Title
           </p>
-          <div className={"flex flex-row justify-between py-2"}>
+          <div className={"flex flex-row justify-between my-[17px]"}>
             <p className={"text-xs text-darkgrey"}>
               by <span className={"font-bold"}>Mayfa Shadrina </span>
               on <span className={"font-bold"}>August 8th, 2022</span>
@@ -115,10 +115,103 @@ function BlogDetail({}) {
             />
           </div>
         </div>
+        {/* section web article */}
+        <div className={"flex flex-row mt-16"}>
+          <div className={"w-1/5"}>
+            <div
+              className={"bg-white p-4 rounded"}
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
+              <p className={"text-blackmig text-base font-semibold"}>
+                TABLE OF CONTENT
+              </p>
+              <div className={"border border-dividermig mt-2"}></div>
+              <div className={"mt-1"}>
+                <ul class="">
+                  <li class={"text-primarygreen text-sm font-semibold"}>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing eli.
+                  </li>
+                  <li
+                    class={"text-blackmig text-sm font-regular gilroy-regular"}
+                  >
+                    Sed do eiusmod tempor incididunt ut labore et dolore magna
+                    aliqua
+                  </li>
+                  <li
+                    class={"text-blackmig text-sm font-regular gilroy-regular"}
+                  >
+                    Ut enim ad minim veniam, quis nostrud exercitation.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className={"w-3/5 ml-12"}>
+            <p className={"indent-5 text-base gilroy-regular"}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <p className={"indent-5 text-base gilroy-regular"}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <p className={"indent-5 text-base gilroy-regular"}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <div className={"grid justify-items-center pt-4"}>
+              <img
+                src="/image/blog.png"
+                style={{ width: "515px", height: "289px" }}
+                alt=""
+              />
+              <p
+                className={
+                  "text-xs text-darkgrey gilroy-regular font-regular pt-2 mb-4"
+                }
+              >
+                This is a caption for the image above
+              </p>
+            </div>
+            <p className={"indent-5 text-base gilroy-regular"}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+            <p className={"indent-5 text-base gilroy-regular"}>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+              enim ad minim veniam, quis nostrud exercitation ullamco laboris
+              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+              reprehenderit in voluptate velit esse cillum dolore eu fugiat
+              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
+              sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </p>
+          </div>
+        </div>
       </section>
       <section
         className={
-          "section1articlepagephone block md:hidden md:relative md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section1articlepagephone block md:hidden md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"px-2 py-2"}>
@@ -164,94 +257,6 @@ function BlogDetail({}) {
           <div className={"items-end"}></div>
           <p className={"text-sm text-darkgrey gilroy-regular"}>
             9 MINUTE READ
-          </p>
-        </div>
-      </section>
-      <section
-        className={
-          "section2articlepage hidden md:block flex flex-row md:relative md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
-        }
-      >
-        <div className={"w-2/6 py-2 pr-8"}>
-          <div className={"bg-white p-2 shadow-lg"}>
-            <p className={"text-blackmig text-base font-semibold mt-2"}>
-              TABLE OF CONTENT
-            </p>
-            <div className={"p-2 mt-4"}>
-              <ul class="list-disc">
-                <li class={"text-primarygreen text-sm font-semibold"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing eli.
-                </li>
-                <li class={"text-blackmig text-sm font-regular gilroy-regular"}>
-                  Sed do eiusmod tempor incididunt ut labore et dolore magna
-                  aliqua
-                </li>
-                <li class={"text-blackmig text-sm font-regular gilroy-regular"}>
-                  Ut enim ad minim veniam, quis nostrud exercitation.
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className={"w-3/6 py-2"}>
-          <p className={"indent-5 text-base gilroy-regular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-base gilroy-regular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-base gilroy-regular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <div className={"grid justify-items-center pt-4"}>
-            <img
-              src="/image/blog.png"
-              style={{ width: "515px", height: "289px" }}
-              alt=""
-            />
-            <p
-              className={
-                "text-xs text-darkgrey gilroy-regular font-regular pt-2 mb-4"
-              }
-            >
-              This is a caption for the image above
-            </p>
-          </div>
-          <p className={"indent-5 text-base gilroy-regular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-base gilroy-regular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
           </p>
         </div>
       </section>
@@ -420,7 +425,7 @@ function BlogDetail({}) {
       </section>
       <section
         className={
-          "section2blog hidden md:block mt-4 md:mt-8 p-2 md:p-12 bg-bgjoinmig "
+          "section2blog hidden md:block md:pt-[25px] md:px-[112px] md:pb-6 bg-bgjoinmig "
         }
       >
         <div className={"flex flex-row justify-between"}>
@@ -435,79 +440,91 @@ function BlogDetail({}) {
             See More
           </p>
         </div>
-        <div className={"grid md:grid-cols-4 justify-items-center  mt-4"}>
-          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
-            <img className={"w-full"} src="/image/blog.png" />
-            <div className={"pl-1 mt-2"}>
+        <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
+          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
+            <img
+              className={"w-full h-[184px] rounded-lg"}
+              src="/image/blog.png"
+            />
+            <div className={"mt-3"}>
               <p className={"text-xs text-darkgrey"}>
                 by <span className={"font-bold"}>Mayfa Shadrina </span>
                 on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
-              <p className={"font-bold text-blackmig text-base py-2"}>
+              <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs pb-2"}>
+              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
           </div>
-          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
-            <img className={"w-full"} src="/image/blog.png" />
-            <div className={"pl-1 mt-2"}>
+          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
+            <img
+              className={"w-full h-[184px] rounded-lg"}
+              src="/image/blog.png"
+            />
+            <div className={"mt-3"}>
               <p className={"text-xs text-darkgrey"}>
                 by <span className={"font-bold"}>Mayfa Shadrina </span>
                 on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
-              <p className={"font-bold text-blackmig text-base py-2"}>
+              <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs pb-2"}>
+              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
           </div>
-          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
-            <img className={"w-full"} src="/image/blog.png" />
-            <div className={"pl-1 mt-2"}>
+          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
+            <img
+              className={"w-full h-[184px] rounded-lg"}
+              src="/image/blog.png"
+            />
+            <div className={"mt-3"}>
               <p className={"text-xs text-darkgrey"}>
                 by <span className={"font-bold"}>Mayfa Shadrina </span>
                 on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
-              <p className={"font-bold text-blackmig text-base py-2"}>
+              <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs pb-2"}>
+              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
           </div>
-          <div className={"mx-2 bg-white w-[260px] mt-2 p-4"}>
-            <img className={"w-full"} src="/image/blog.png" />
-            <div className={"pl-1 mt-2"}>
+          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
+            <img
+              className={"w-full h-[184px] rounded-lg"}
+              src="/image/blog.png"
+            />
+            <div className={"mt-3"}>
               <p className={"text-xs text-darkgrey"}>
                 by <span className={"font-bold"}>Mayfa Shadrina </span>
                 on <span className={"font-bold"}>August 8th, 2022</span>
               </p>
-              <p className={"font-bold text-blackmig text-base py-2"}>
+              <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs pb-2"}>
+              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
@@ -640,12 +657,18 @@ function BlogDetail({}) {
                     company_name: e.target.value,
                   });
                 }}
-                prefix={<UserOutlined />}
+                prefix={
+                  <img
+                    src="/image/person.png"
+                    className={"w-[24px] h-[24px]"}
+                  />
+                }
               />
             </div>
             <div className="mt-4">
               <Input
                 size="large"
+                className={"border-sm"}
                 placeholder="Email"
                 onChange={(e) => {
                   setDataContactUs({
@@ -653,7 +676,9 @@ function BlogDetail({}) {
                     company_name: e.target.value,
                   });
                 }}
-                prefix={<UserOutlined />}
+                prefix={
+                  <img src="/image/email.png" className={"w-[24px] h-[24px]"} />
+                }
               />
             </div>
             <div className="mt-4">
@@ -679,7 +704,7 @@ function BlogDetail({}) {
                 <button
                   type={"submit"}
                   className={
-                    "text-sm text-center text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                    "text-sm text-center text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4 rounded bg-white"
                   }
                 >
                   <p className={"px-1 text-base"}>Share</p>
@@ -688,10 +713,8 @@ function BlogDetail({}) {
             </Form.Item>
           </Form>
         </div>
-        <div className="mt-6">
-          <span class="h-1 w-full bg-divider lg:w-1/3"></span>
-        </div>
-        <div className="p-4 md:p-6">
+        <div className={"mt-8 border border-dividermig"}></div>
+        <div className="mt-8 p-4 md:px-4 md:pt-4 md:pb-[19px] border-2 border-bordermig rounded-lg">
           <p className={"text-sm text-blackmig font-semibold"}>
             Mayfa Shadrina
           </p>
@@ -724,7 +747,7 @@ function BlogDetail({}) {
           </div>
           <div className={"mt-4"}>
             <img
-              src="/image/Icon-reply.png"
+              src="/image/icon-reply.png"
               style={{ width: "27px", height: "23px" }}
               alt=""
             />

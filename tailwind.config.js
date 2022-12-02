@@ -10,6 +10,7 @@ module.exports = {
       },
       fontFamily: {
         mont: ["Montserrat"],
+        gilroysemibold:["Gilroy-semibold"],
       },
       boxShadow: {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",
@@ -64,7 +65,9 @@ module.exports = {
         lightpink: "#F7E3EC",
         transp60: "rgba(244, 244, 244, 0.6)",
         bgIcon:"#D1E8DB",
-        bgtalents:"#F8F8F8"
+        bgtalents:"#F8F8F8",
+        redmig:"#FF3D3F",
+        transp45:"rgba(24, 142, 77, 0.45)",
       },
       borderColor: {
         primary: "#1890ff",
@@ -100,7 +103,9 @@ module.exports = {
         lightpink: "#F7E3EC",
         dividermig: "#E5E7E6",
         lightgrey:"#B8B8B8",
-        transp45:"rgba(24, 142, 77, 0.45)"
+        transp45:"rgba(24, 142, 77, 0.45)",
+        bordermig:"#F4F4F4",
+        borderProduct:"#BABABA",
       },
       textColor: {
         primary: "#1890ff",

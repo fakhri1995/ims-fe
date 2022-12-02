@@ -5,7 +5,15 @@ import Link from "next/link";
 import Linkk from "next/link";
 import React from "react";
 
-function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
+function RightContactUs({
+  feedback,
+  heightt,
+  form,
+  handleSubmit,
+  Option,
+  dataContactUs,
+  setDataContactUs,
+}) {
   return (
     <div className={"w-full md:w-3/5"}>
       <div className={"w-full"}>
@@ -125,7 +133,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
                 ]}
               >
                 <Input
-                  style={{ border: "1px solid #B8B8B8" }}
+                  // style={{ border: "1px solid #B8B8B8" }}
                   addonBefore="+62"
                   name={"Phone Number"}
                   onChange={(e) => {
@@ -146,7 +154,7 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
             rules={[{ required: true }]}
           >
             <Select
-              style={{ border: "1px solid #B8B8B8" }}
+              // style={{ border: "1px solid #B8B8B8" }}
               dropdownStyle={{ backgroundColor: "green" }}
               name="Interest"
               onChange={(value) => {
