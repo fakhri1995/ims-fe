@@ -181,6 +181,49 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   };
 
+  // Delete Employee Inventory
+  const handleDeleteInventory = () => {
+    if (!isAllowedToDeleteEmployeeInventory) {
+      permissionWarningNotification("Menghapus", "Inventaris Karyawan");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/deleteEmployeeInventory?id=${Number(
+        dataInventory[0].id
+      )}&employee_id=${Number(employeeId)}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          rt.back();
+        } else {
+          notification.error({
+            message: `Gagal menghapus inventaris karyawan. ${res2.response}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus inventaris karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDelete(false);
+      });
+  };
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -197,7 +240,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               color={"danger"}
               type={"default"}
-              onClick={() => rt.back()}
+              onClick={handleDeleteInventory}
             >
               <div className="flex flex-row space-x-2">
                 <XIconSvg color={"#BF4A40"} size={16} />

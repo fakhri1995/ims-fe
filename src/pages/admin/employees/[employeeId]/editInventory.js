@@ -225,22 +225,6 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           setRefresh={setRefresh}
         />
       </div>
-
-      {/* Drawer Update Recruitment Candidate */}
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
-        <DrawerCandidateUpdate
-          dataEmployee={dataEmployee}
-          visible={drawerUpdate}
-          initProps={initProps}
-          onvisible={setDrawerUpdate}
-          setRefresh={setRefresh}
-          trigger={triggerUpdate}
-          isAllowedToGetEmployee={isAllowedToGetEmployee}
-          isAllowedToUpdateEmployee={isAllowedToUpdateEmployee}
-          isAllowedToDeleteEmployee={isAllowedToDeleteEmployee}
-          setModalDelete={setModalDelete}
-        />
-      </AccessControl> */}
     </LayoutDashboard>
   );
 };

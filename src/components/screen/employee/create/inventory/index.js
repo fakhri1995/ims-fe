@@ -145,7 +145,7 @@ const EmployeeInventoryForm = ({
           setLoadingInventories(false);
         });
     }
-  }, [isAllowedToGetEmployeeInventories, refresh]);
+  }, [isAllowedToGetEmployeeInventories, employeeId, refresh]);
 
   // 2.2. Auto add new inventory form when it's use in add inventory
   useEffect(() => {

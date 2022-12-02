@@ -495,7 +495,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.placement}</>,
+          children: <>{record.contracts[0]?.placement || "-"}</>,
         };
       },
     },
@@ -504,7 +504,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "contract_status",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.contract_status_id}</>,
+          children: <>{record.contracts[0]?.contract_status_id || "-"}</>,
         };
       },
     },
@@ -513,7 +513,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.role_id}</>,
+          children: <>{record.contracts[0]?.role_id || "-"}</>,
         };
       },
     },
@@ -525,9 +525,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Sisa Hari Kerja",
       dataIndex: "days_left",
       render: (text, record, index) => {
-        let workDaysLeft = countWorkDaysLeft(
-          record.contracts[0]?.contract_end_at
-        );
+        let workDaysLeft =
+          countWorkDaysLeft(record.contracts[0]?.contract_end_at) || "-";
         return {
           children: (
             <>
