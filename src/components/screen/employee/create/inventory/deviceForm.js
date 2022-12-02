@@ -34,6 +34,7 @@ const DeviceForm = ({
   setDeviceList,
   setDataModalDelete,
   setModalDelete,
+  debouncedApiCall,
   isAllowedToDeleteDevice,
 }) => {
   /**
@@ -61,6 +62,11 @@ const DeviceForm = ({
     let dataInventories = [...inventoryList];
     dataInventories[idxInv].devices = dataDevices;
     setInventoryList(dataInventories);
+
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall(dataInventories[idxInv]);
+    }
   };
 
   return (

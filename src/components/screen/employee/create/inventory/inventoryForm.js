@@ -85,8 +85,6 @@ const InventoryForm = ({
     deviceName: "",
   });
 
-  // const [refresh, setRefresh] = useState(-1);
-
   // 2. USE EFFECT
   // Fill devices
   useEffect(() => {
@@ -140,6 +138,17 @@ const InventoryForm = ({
     data[idx][e.target.name] = e.target.value;
     setInventoryList(data);
 
+    if (debouncedApiCall) {
+      debouncedApiCall(data[idx]);
+    }
+  };
+
+  const onChangeDatePicker = (datestring, attributeName) => {
+    let data = [...inventoryList];
+    data[idx][attributeName] = datestring;
+    setInventoryList(data);
+
+    // use for auto save
     if (debouncedApiCall) {
       debouncedApiCall(data[idx]);
     }
@@ -263,18 +272,23 @@ const InventoryForm = ({
       return Upload.LIST_IGNORE;
     }
 
-    // setUploadedAssignDocument(uploadedFile);
+    if (inventoryList.length > 1) {
+      let data = [...inventoryList];
+      data[idx]["delivery_file"] = uploadedFile;
+      setInventoryList(data);
+    } else {
+      setInventoryList((prev) => [
+        {
+          ...prev[idx],
+          delivery_file: uploadedFile,
+        },
+      ]);
+    }
 
-    let data = [...inventoryList];
-    data[idx]["delivery_file"] = uploadedFile;
-    setInventoryList(data);
-
-    // const blobFile = e.target.files[0];
-
-    // const base64Data = getBase64(uploadedFile);
-
-    // const newFiles = [...datapayload.files, base64Data];
-    // const newAttachments = [...datapayload.attachments, blobFile];
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall(data[idx]);
+    }
   }, []);
 
   const beforeUploadReturnDocument = useCallback((uploadedFile) => {
@@ -296,16 +310,24 @@ const InventoryForm = ({
 
     // setUploadedReturnDocument(uploadedFile);
 
-    let data = [...inventoryList];
-    data[idx]["return_file"] = uploadedFile;
-    setInventoryList(data);
+    if (inventoryList.length > 1) {
+      let data = [...inventoryList];
+      data[idx]["return_file"] = uploadedFile;
+      setInventoryList(data);
+    } else {
+      setInventoryList((prev) => [
+        {
+          ...prev[idx],
+          return_file: uploadedFile,
+        },
+      ]);
+    }
 
-    // const blobFile = e.target.files[0];
-
-    // const base64Data = getBase64(uploadedFile);
-
-    // const newFiles = [...datapayload.files, base64Data];
-    // const newAttachments = [...datapayload.attachments, blobFile];
+    console.log(debouncedApiCall);
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall(data[idx]);
+    }
   }, []);
 
   const onUploadAssignChange = useCallback(({ file }) => {
@@ -331,6 +353,11 @@ const InventoryForm = ({
     let data = [...inventoryList];
     data[idx]["delivery_file"] = "";
     setInventoryList(data);
+
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall(data[idx]);
+    }
   }, []);
 
   const onUploadReturnRemove = useCallback(() => {
@@ -340,32 +367,12 @@ const InventoryForm = ({
     let data = [...inventoryList];
     data[idx]["return_file"] = "";
     setInventoryList(data);
+
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall(data[idx]);
+    }
   }, []);
-
-  // const onChangeFile = async (e) => {
-  //   if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
-  //     notification.warning({
-  //       message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
-  //     });
-  //     return;
-  //   }
-
-  //   setloadingfile(true);
-
-  //   const blobFile = e.target.files[0];
-  //   const base64Data = await getBase64(blobFile);
-
-  //   const newFiles = [...datapayload.files, base64Data];
-  //   const newAttachments = [...datapayload.attachments, blobFile];
-
-  //   setdatapayload({
-  //     ...datapayload,
-  //     files: newFiles,
-  //     attachments: newAttachments,
-  //   });
-
-  //   setloadingfile(false);
-  // };
 
   return (
     <>
@@ -477,11 +484,9 @@ const InventoryForm = ({
                     ? moment(inventoryList[idx]?.delivery_date)
                     : null
                 }
-                onChange={(value, datestring) => {
-                  let data = [...inventoryList];
-                  data[idx].delivery_date = datestring;
-                  setInventoryList(data);
-                }}
+                onChange={(value, datestring) =>
+                  onChangeDatePicker(datestring, "delivery_date")
+                }
               />
             </>
           </Form.Item>
@@ -496,11 +501,9 @@ const InventoryForm = ({
                     ? moment(inventoryList[idx]?.return_date)
                     : null
                 }
-                onChange={(value, datestring) => {
-                  let data = [...inventoryList];
-                  data[idx].return_date = datestring;
-                  setInventoryList(data);
-                }}
+                onChange={(value, datestring) =>
+                  onChangeDatePicker(datestring, "return_date")
+                }
               />
             </>
           </Form.Item>
@@ -612,6 +615,7 @@ const InventoryForm = ({
             setDeviceList={setDeviceList}
             setDataModalDelete={setDataModalDelete}
             setModalDelete={setModalDelete}
+            debouncedApiCall={debouncedApiCall}
             isAllowedToDeleteDevice={isAllowedToDeleteDevice}
           />
         ))}

@@ -205,6 +205,7 @@ const EmployeeContractForm = ({
   }, [isAllowedToGetRoleTypeList]);
 
   // 3. HANDLER
+  // 3.1. Handle input change and auto save in "Tambah Karyawan"
   const onChangeInput = (e) => {
     setDataContract({
       ...dataContract,
@@ -219,6 +220,37 @@ const EmployeeContractForm = ({
     }
   };
 
+  const onChangeSelect = (value, attributeName) => {
+    setDataContract({
+      ...dataContract,
+      [attributeName]: value,
+    });
+
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataContract,
+        [attributeName]: value,
+      });
+    }
+  };
+
+  const onChangeDatePicker = (datestring, attributeName) => {
+    setDataContract((prev) => ({
+      ...prev,
+      [attributeName]: datestring,
+    }));
+
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataContract,
+        [attributeName]: datestring,
+      });
+    }
+  };
+
+  // 3.2. Handle upload file
   const beforeUploadDocument = useCallback((uploadedFile) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
@@ -240,6 +272,14 @@ const EmployeeContractForm = ({
       ...prev,
       contract_file: uploadedFile,
     }));
+
+    // use for auto save in "Tambah Karyawan"
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataContract,
+        contract_file: uploadedFile,
+      });
+    }
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {
@@ -256,6 +296,14 @@ const EmployeeContractForm = ({
       ...prev,
       contract_file: null,
     }));
+
+    // use for auto save in "Tambah Karyawan"
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataContract,
+        contract_file: null,
+      });
+    }
   }, []);
 
   return (
@@ -284,6 +332,14 @@ const EmployeeContractForm = ({
                 ...dataContract,
                 is_employee_active: Number(checked),
               });
+
+              // use for auto save in "Tambah Karyawan"
+              if (debouncedApiCall) {
+                debouncedApiCall({
+                  ...dataContract,
+                  is_employee_active: Number(checked),
+                });
+              }
             }}
           />
           {Number(dataContract?.is_employee_active) ? (
@@ -326,12 +382,7 @@ const EmployeeContractForm = ({
         <>
           <Select
             value={Number(dataContract?.role_id)}
-            onChange={(value) => {
-              setDataContract({
-                ...dataContract,
-                role_id: value,
-              });
-            }}
+            onChange={(value) => onChangeSelect(value, "role_id")}
             placeholder="Pilih posisi"
           >
             <>
@@ -357,12 +408,7 @@ const EmployeeContractForm = ({
         <>
           <Select
             value={Number(dataContract?.contract_status_id)}
-            onChange={(value) => {
-              setDataContract({
-                ...dataContract,
-                contract_status_id: value,
-              });
-            }}
+            onChange={(value) => onChangeSelect(value, "contract_status_id")}
             placeholder="Pilih status kontrak"
           >
             <>
@@ -452,10 +498,7 @@ const EmployeeContractForm = ({
             }
             format={"YYYY-MM-DD"}
             onChange={(value, datestring) => {
-              setDataContract((prev) => ({
-                ...prev,
-                contract_start_at: datestring,
-              }));
+              onChangeDatePicker(datestring, "contract_start_at");
             }}
           />
         </>
@@ -481,10 +524,7 @@ const EmployeeContractForm = ({
                 : null
             }
             onChange={(value, datestring) => {
-              setDataContract((prev) => ({
-                ...prev,
-                contract_end_at: datestring,
-              }));
+              onChangeDatePicker(datestring, "contract_end_at");
             }}
           />
         </>
@@ -493,12 +533,7 @@ const EmployeeContractForm = ({
         <>
           <Select
             value={dataContract?.placement}
-            onChange={(value) => {
-              setDataContract({
-                ...dataContract,
-                placement: value,
-              });
-            }}
+            onChange={(value) => onChangeSelect(value, "placement")}
             placeholder="Pilih penempatan"
           >
             {dataCompanyList.map((option) => (
@@ -525,12 +560,7 @@ const EmployeeContractForm = ({
             min={0}
             value={dataContract?.annual_leave}
             name={"annual_leave"}
-            onChange={(value) =>
-              setDataContract({
-                ...dataContract,
-                annual_leave: value,
-              })
-            }
+            onChange={(value) => onChangeSelect(value, "annual_leave")}
             placeholder="Masukkan jumlah hari cuti"
             className="w-full"
           />
@@ -548,10 +578,7 @@ const EmployeeContractForm = ({
                 : null
             }
             onChange={(value, datestring) => {
-              setDataContract((prev) => ({
-                ...prev,
-                resign_at: datestring,
-              }));
+              onChangeDatePicker(datestring, "resign_at");
             }}
           />
         </>
