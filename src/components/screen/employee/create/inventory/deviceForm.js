@@ -16,18 +16,14 @@ import { useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  COMPANY_LISTS_GET,
-  RECRUITMENT_ROLES_LIST_GET,
-  RECRUITMENT_ROLE_TYPES_LIST_GET,
-} from "lib/features";
+import { EMPLOYEE_DEVICE_DELETE } from "lib/features";
 
 import {
   beforeUploadFileMaxSize,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import { UploadIconSvg } from "../../../../icon";
+import { TrashIconSvg, UploadIconSvg } from "../../../../icon";
 
 const DeviceForm = ({
   idxInv,
@@ -36,6 +32,10 @@ const DeviceForm = ({
   setInventoryList,
   deviceList,
   setDeviceList,
+  setDataModalDelete,
+  setModalDelete,
+  debouncedApiCall,
+  isAllowedToDeleteDevice,
 }) => {
   /**
    * Dependencies
@@ -54,40 +54,20 @@ const DeviceForm = ({
   const [loadingCreate, setLoadingCreate] = useState(false);
 
   // 3. HANDLER
-  const onChangeDeviceInput = (e, idxDev) => {
+  const onChangeDeviceInput = (e) => {
     let dataDevices = [...deviceList];
     dataDevices[idxDev][e.target.name] = e.target.value;
     setDeviceList(dataDevices);
 
     let dataInventories = [...inventoryList];
-    dataInventories[idxInv].device_list = dataDevices;
+    dataInventories[idxInv].devices = dataDevices;
     setInventoryList(dataInventories);
+
+    // use for auto save
+    if (debouncedApiCall) {
+      debouncedApiCall(dataInventories[idxInv]);
+    }
   };
-
-  // const onChangeFile = async (e) => {
-  //   if (datapayload.files.length === MAX_FILE_UPLOAD_COUNT) {
-  //     notification.warning({
-  //       message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
-  //     });
-  //     return;
-  //   }
-
-  //   setloadingfile(true);
-
-  //   const blobFile = e.target.files[0];
-  //   const base64Data = await getBase64(blobFile);
-
-  //   const newFiles = [...datapayload.files, base64Data];
-  //   const newAttachments = [...datapayload.attachments, blobFile];
-
-  //   setdatapayload({
-  //     ...datapayload,
-  //     files: newFiles,
-  //     attachments: newAttachments,
-  //   });
-
-  //   setloadingfile(false);
-  // };
 
   return (
     <Form
@@ -95,12 +75,29 @@ const DeviceForm = ({
       form={instanceForm}
       className="grid grid-cols-2 gap-x-8"
     >
-      <h5 className="mig-heading--5 col-span-2 mb-3">
-        INVENTARIS {idxInv + 1}/PIRANTI {idxDev + 2}
-      </h5>
+      <div className="flex flex-row items-center space-x-1 col-span-2 mb-3">
+        <h5 className="mig-heading--5 ">
+          INVENTARIS {idxInv + 1}/PIRANTI {idxDev + 2}
+        </h5>
+        {isAllowedToDeleteDevice && (
+          <Button
+            className="bg-transparent hover:opacity-70 border-0"
+            onClick={(e) => {
+              e.stopPropagation();
+              setDataModalDelete({
+                deviceId: inventoryList[idxInv]?.devices[idxDev]?.id,
+                deviceName:
+                  inventoryList[idxInv]?.devices[idxDev]?.device_name || "-",
+              });
+              setModalDelete(true);
+            }}
+            icon={<TrashIconSvg color={"#BF4A40"} size={20} />}
+          />
+        )}
+      </div>
       <Form.Item
         label="ID"
-        name={"id_2"}
+        name={"id_number"}
         rules={[
           {
             required: true,
@@ -110,16 +107,16 @@ const DeviceForm = ({
       >
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.id_2}
-            name={"id_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.id_number}
+            name={"id_number"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan ID"
           />
         </div>
       </Form.Item>
       <Form.Item
         label="Nama Piranti"
-        name={"device_name_2"}
+        name={"device_name"}
         rules={[
           {
             required: true,
@@ -129,29 +126,29 @@ const DeviceForm = ({
       >
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.device_name_2}
-            name={"device_name_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.device_name}
+            name={"device_name"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan nama piranti"
           />
         </div>
       </Form.Item>
-      <Form.Item label="Tipe" name={"type_2"}>
+      <Form.Item label="Tipe" name={"device_type"}>
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.type_2}
-            name={"type_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.device_type}
+            name={"device_type"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan tipe"
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor Serial" name={"serial_num_2"}>
+      <Form.Item label="Nomor Serial" name={"serial_number"}>
         <div>
           <Input
-            value={inventoryList[idxInv]?.device_list[idxDev]?.serial_num_2}
-            name={"serial_num_2"}
-            onChange={(e) => onChangeDeviceInput(e, idxDev)}
+            value={inventoryList[idxInv]?.devices[idxDev]?.serial_number}
+            name={"serial_number"}
+            onChange={(e) => onChangeDeviceInput(e)}
             placeholder="Masukkan nomor serial"
           />
         </div>

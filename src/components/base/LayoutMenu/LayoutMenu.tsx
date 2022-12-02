@@ -12,6 +12,7 @@ import {
   ResumeIconSvg,
   TaskIconSvg,
   TicketIconSvg,
+  UserCheckIconSvg,
   UserIconSvg,
   UserPlusIconSvg,
 } from "components/icon";
@@ -37,6 +38,9 @@ import {
   SIDEBAR_COMPANY,
   SIDEBAR_COMPANY_PROFILE,
   SIDEBAR_DASHBOARD,
+  SIDEBAR_EMPLOYEE,
+  SIDEBAR_EMPLOYEE_LIST,
+  SIDEBAR_EMPLOYEE_SALARY,
   SIDEBAR_FEATURE,
   SIDEBAR_FEATURE_MODULE,
   SIDEBAR_FEATURE_ROLE,
@@ -244,6 +248,21 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_USER_GUEST) && (
             <Menu.Item key="64">
               <Link href="/admin/guests">Guests</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {hasPermission(SIDEBAR_EMPLOYEE) && (
+        <SubMenu title="Karyawan" key="employee" icon={<UserCheckIconSvg />}>
+          {hasPermission(SIDEBAR_EMPLOYEE_LIST) && (
+            <Menu.Item key="employee-list">
+              <Link href="/admin/employees">Daftar Karyawan</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_EMPLOYEE_SALARY) && (
+            <Menu.Item key="employee-salary">
+              <Link href="/admin/employees/salary">Slip Gaji</Link>
             </Menu.Item>
           )}
         </SubMenu>

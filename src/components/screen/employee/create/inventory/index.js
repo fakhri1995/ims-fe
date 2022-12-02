@@ -8,8 +8,8 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_LISTS_GET,
-  RECRUITMENT_ROLES_LIST_GET,
-  RECRUITMENT_ROLE_TYPES_LIST_GET,
+  EMPLOYEE_INVENTORIES_GET,
+  EMPLOYEE_INVENTORY_ADD,
 } from "lib/features";
 
 import {
@@ -19,7 +19,14 @@ import {
 import ButtonSys from "../../../../button";
 import InventoryForm from "./inventoryForm";
 
-const EmployeeInventoryForm = ({ initProps }) => {
+const EmployeeInventoryForm = ({
+  initProps,
+  isAdd,
+  inventoryList,
+  setInventoryList,
+  employeeId,
+  debouncedApiCall,
+}) => {
   /**
    * Dependencies
    */
@@ -33,24 +40,24 @@ const EmployeeInventoryForm = ({ initProps }) => {
 
   // TODO: change constant
   const isAllowedToGetPICList = hasPermission(COMPANY_LISTS_GET);
-  const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
-  const isAllowedToGetRoleTypeList = hasPermission(
-    RECRUITMENT_ROLE_TYPES_LIST_GET
+  const isAllowedToGetEmployeeInventories = hasPermission(
+    EMPLOYEE_INVENTORIES_GET
   );
+  const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
 
   const rt = useRouter();
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
   const [isOwn, setIsOwn] = useState(false);
-  const [inventoryList, setInventoryList] = useState([]);
-
   const [addMode, setAddMode] = useState(false);
 
-  const [loadingCreate, setLoadingCreate] = useState(false);
-
+  const [loadingInventories, setLoadingInventories] = useState(false);
+  const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingPICList, setLoadingPICList] = useState(false);
+
   const [dataPICList, setDataPICList] = useState([]);
+  const [refresh, setRefresh] = useState(-1);
 
   // 2. USE EFFECT
   // 2.1. Get PIC List
@@ -90,23 +97,120 @@ const EmployeeInventoryForm = ({ initProps }) => {
       });
   }, [isAllowedToGetPICList]);
 
+  // 2.1. Get Employee Inventories Data
+  useEffect(() => {
+    if (!isAllowedToGetEmployeeInventories) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Inventaris Employee"
+      );
+      setLoadingInventories(false);
+      return;
+    }
+
+    if (employeeId) {
+      setLoadingInventories(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeInventories?employee_id=${employeeId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            if (res2.data.length !== 0) {
+              setInventoryList(res2.data);
+              setIsOwn(true);
+            } else {
+              setIsOwn(false);
+            }
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingInventories(false);
+        });
+    }
+  }, [isAllowedToGetEmployeeInventories, employeeId, refresh]);
+
+  // 2.2. Auto add new inventory form when it's use in add inventory
+  useEffect(() => {
+    if (isAdd) {
+      handleAddNewInventory();
+    }
+  }, [isAdd]);
+
   // 3. HANDLER
   const handleAddNewInventory = () => {
-    let newDataInventory = {
-      id: -1,
-      device_name: "",
-      reference: "",
-      type: "",
-      serial_num: "",
-      assign_date: "",
-      return_date: "",
-      assign_pic: "",
-      return_pic: "",
-      assign_doc: "",
-      return_doc: "",
-      device_list: [],
+    // let newDataInventory = {
+    //   id: null,
+    //   employee_id: null,
+    //   id_number: null,
+    //   device_name: "",
+    //   referance_invertory: "",
+    //   device_type: "",
+    //   serial_number: "",
+    //   delivery_date: "",
+    //   return_date: "",
+    //   pic_delivery: "",
+    //   pic_return: "",
+    //   delivery_file: "",
+    //   return_file: "",
+    //   device_list: [],
+    // };
+    // setInventoryList([...inventoryList, newDataInventory]);
+    const payload = {
+      employee_id: employeeId,
     };
-    setInventoryList([...inventoryList, newDataInventory]);
+
+    if (!isAllowedToAddEmployeeInventory) {
+      permissionWarningNotification("Menambah", "Inventaris Karyawan");
+      return;
+    }
+
+    if (employeeId) {
+      setLoadingAdd(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeInventory`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setRefresh((prev) => prev + 1);
+          } else {
+            notification.error({
+              message: `Gagal menambahkan inventaris karyawan. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal menambahkan inventaris karyawan. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingAdd(false));
+    }
   };
 
   const handleRemoveInventory = (idx) => {
@@ -115,29 +219,34 @@ const EmployeeInventoryForm = ({ initProps }) => {
     setInventoryList(data);
   };
 
-  // console.log(inventoryList);
   return (
     <>
-      <Checkbox
-        value={isOwn}
-        onChange={(e) => {
-          setIsOwn(e.target.checked);
-          isOwn ? setInventoryList([]) : handleAddNewInventory();
-        }}
-      >
-        Memiliki inventaris & piranti
-      </Checkbox>
+      {!isAdd && (
+        <Checkbox
+          checked={isOwn}
+          onChange={(e) => {
+            setIsOwn(e.target.checked);
+            isOwn ? setInventoryList([]) : handleAddNewInventory();
+          }}
+        >
+          Memiliki inventaris & piranti
+        </Checkbox>
+      )}
 
-      {isOwn && (
+      {(isOwn || isAdd) && (
         <>
-          {/* TODO: loop inventoryList */}
           {inventoryList.map((inventory, idx) => (
             <InventoryForm
               key={idx}
               idx={idx}
+              initProps={initProps}
               inventoryList={inventoryList}
               setInventoryList={setInventoryList}
               dataPICList={dataPICList}
+              // inventoryId={inventoryId}
+              inventoryId={inventory.id}
+              debouncedApiCall={debouncedApiCall}
+              setRefresh={setRefresh}
             />
           ))}
           <ButtonSys type={"dashed"} onClick={handleAddNewInventory}>

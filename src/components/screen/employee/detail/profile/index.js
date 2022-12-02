@@ -1,27 +1,13 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Upload,
-  notification,
-} from "antd";
 import moment from "moment";
 import React from "react";
-import { useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
+import { momentFormatDate } from "../../../../../lib/helper";
 
-import { UploadIconSvg } from "../../../../../components/icon";
-import {
-  beforeUploadFileMaxSize,
-  permissionWarningNotification,
-} from "../../../../../lib/helper";
+moment.locale("id");
 
-const EmployeeProfileDetail = () => {
+const EmployeeProfileDetail = ({ dataEmployee }) => {
   /**
    * Dependencies
    */
@@ -33,43 +19,30 @@ const EmployeeProfileDetail = () => {
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const maritalStatusList = [
+    {
+      value: 0,
+      label: "Belum kawin",
+    },
+    {
+      value: 1,
+      label: "Kawin",
+    },
+    {
+      value: 2,
+      label: "Cerai hidup",
+    },
+    {
+      value: 3,
+      label: "Cerai mati",
+    },
+  ];
 
-  const [instanceForm] = Form.useForm();
-
-  // 1. USE STATE
-  const [dataProfile, setDataProfile] = useState({
-    id_photo: "",
-    name: "",
-    nip: "",
-    nik: "",
-    alias: "",
-    telp: "",
-    email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    mother_name: "",
-    npwp: "",
-    bpjsk: "",
-    bpjstk: "",
-    rek_bukopin: "",
-    rek_other: "",
-  });
-
-  // 3. HANDLER
-  const onChangeInput = (e) => {
-    setDataProfile({
-      ...dataProfile,
-      [e.target.name]: e.target.value,
-    });
-  };
+  // Mapping marital status ID to label
+  const mappingMaritalStatus = () =>
+    maritalStatusList.find(
+      (status) => status.value === dataEmployee?.marital_status
+    ).label;
 
   return (
     <section className="flex flex-row space-x-4">
@@ -77,35 +50,35 @@ const EmployeeProfileDetail = () => {
       <div className="space-y-2 w-full">
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">NIK</p>
-          <p>012345678123000</p>
+          <p>{dataEmployee?.nik || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Alias</p>
-          <p>Yasmin</p>
+          <p>{dataEmployee?.alias || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Domisili</p>
-          <p>Jakarta</p>
+          <p>{dataEmployee?.domicile || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Email Pribadi</p>
-          <p>yasmin@gmail.com</p>
+          <p>{dataEmployee?.email_personal || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Nama Ibu Kandung</p>
-          <p>Jane Doe</p>
+          <p>{dataEmployee?.bio_mother_name || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Tempat Lahir</p>
-          <p>Jakarta Selatan</p>
+          <p>{dataEmployee?.birth_place || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Jenis Kelamin</p>
-          <p>Perempuan</p>
+          <p>{dataEmployee?.gender || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Status Kawin</p>
-          <p>Belum Kawin</p>
+          <p>{dataEmployee?.marital_status ? mappingMaritalStatus() : "-"}</p>
         </div>
       </div>
 
@@ -113,43 +86,43 @@ const EmployeeProfileDetail = () => {
       <div className="space-y-2 w-full">
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Nomor NPWP</p>
-          <p>012345678123000</p>
+          <p>{dataEmployee?.npwp || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">
             Nomor Rekening Bank KB Bukopin
           </p>
-          <p>1234567890</p>
+          <p>{dataEmployee?.acc_number_bukopin || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">
             Nomor BPJS Kesehatan
           </p>
-          <p>1234567890</p>
+          <p>{dataEmployee?.bpjs_kesehatan || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">
             Nomor BPJS Ketenagakerjaan
           </p>
-          <p>1234567890</p>
+          <p>{dataEmployee?.bpjs_ketenagakerjaan || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">
             Nomor Rekening Bank Lainnya
           </p>
-          <p>1234567890</p>
+          <p>{dataEmployee?.acc_number_another || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Tanggal Lahir</p>
-          <p>11 November 2000</p>
+          <p>{momentFormatDate(dataEmployee?.birth_date, "-")}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Golongan Darah</p>
-          <p>A</p>
+          <p>{dataEmployee?.blood_type || "-"}</p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Jumlah Anak</p>
-          <p>0</p>
+          <p>{dataEmployee?.number_of_children || "-"}</p>
         </div>
       </div>
     </section>

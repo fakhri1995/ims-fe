@@ -3,25 +3,30 @@ import {
   DatePicker,
   Form,
   Input,
+  InputNumber,
   Select,
   Upload,
   notification,
 } from "antd";
 import moment from "moment";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
+import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
-
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
 
 import { UploadIconSvg } from "../../../../../components/icon";
 import {
   beforeUploadFileMaxSize,
+  generateStaticAssetUrl,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 
-const EmployeeProfileForm = () => {
+const EmployeeProfileForm = ({
+  dataEmployee,
+  setDataEmployee,
+  debouncedApiCall,
+}) => {
   /**
    * Dependencies
    */
@@ -33,43 +38,108 @@ const EmployeeProfileForm = () => {
     return null;
   }
 
-  const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
-  const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
-
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [dataProfile, setDataProfile] = useState({
-    id_photo: "",
-    name: "",
-    nip: "",
-    nik: "",
-    alias: "",
-    telp: "",
-    email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    mother_name: "",
-    npwp: "",
-    bpjsk: "",
-    bpjstk: "",
-    rek_bukopin: "",
-    rek_other: "",
-  });
+  const [fileList, setFileList] = useState([]);
+  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
+  const [uploadedIDCardPicture, setUploadedIDCardPicture] = useState(null);
+
+  // 2. USE EFFECT
+  // 2.1. Display id card filename when available in draft
+  useEffect(() => {
+    if (dataEmployee?.id_card_photo?.link) {
+      const currentFileName = dataEmployee?.id_card_photo?.link?.split("/")[2];
+      setFileList([{ name: currentFileName }]);
+    }
+  }, []);
 
   // 3. HANDLER
+  // 3.1. Handle input change and auto save in "Tambah Karyawan"
   const onChangeInput = (e) => {
-    setDataProfile({
-      ...dataProfile,
+    setDataEmployee({
+      ...dataEmployee,
       [e.target.name]: e.target.value,
     });
+
+    // use for auto save in
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        [e.target.name]: e.target.value,
+      });
+    }
   };
+
+  const onChangeSelect = (value, attributeName) => {
+    setDataEmployee({
+      ...dataEmployee,
+      [attributeName]: value,
+    });
+
+    // use for auto save in
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        [attributeName]: value,
+      });
+    }
+  };
+
+  // 3.2. Handle upload file
+  const beforeUploadIDCardPicture = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
+
+    if (!allowedFileTypes.includes(uploadedFile.type)) {
+      notification.error({
+        message: "File harus berupa gambar",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setDataEmployee((prev) => ({
+      ...prev,
+      id_card_photo: uploadedFile,
+    }));
+
+    // use for auto save in "Tambah Karyawan"
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        id_card_photo: uploadedFile,
+      });
+    }
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadPictureLoading(file.status === "uploading");
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setDataEmployee((prev) => ({
+      ...prev,
+      id_card_photo: null,
+    }));
+
+    // use for auto save in "Tambah Karyawan"
+    if (debouncedApiCall) {
+      debouncedApiCall({
+        ...dataEmployee,
+        id_card_photo: null,
+      });
+    }
+  }, []);
 
   return (
     <Form
@@ -77,34 +147,17 @@ const EmployeeProfileForm = () => {
       form={instanceForm}
       className="grid grid-cols-2 gap-x-8"
     >
-      <Form.Item
-        label="ID Card"
-        name={"id_card"}
-        className="relative col-span-2 w-full"
-      >
+      <Form.Item label="ID Card" className="relative col-span-2 w-full">
         <em className="text-mono50 mr-10">Unggah File JPEG (Maksimal 5 MB)</em>
         <Upload
           accept=".png, .jpg, .jpeg"
           listType="picture"
           maxCount={1}
-          beforeUpload={(file) => {
-            const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-            const isReachedMaxFileSize =
-              checkMaxFileSizeFilter(file) === Upload.LIST_IGNORE;
-            const isImage =
-              file.type === `image/png` ||
-              file.type === `image/jpg` ||
-              file.type === `image/jpeg`;
-            if (!isImage) {
-              notification.error({
-                message: "File harus berupa gambar",
-              });
-            }
-            const allowedUpload = !isReachedMaxFileSize && isImage;
-            return allowedUpload || Upload.LIST_IGNORE;
-          }}
-          // disabled={true}
-          // onChange={}
+          beforeUpload={beforeUploadIDCardPicture}
+          onChange={onUploadChange}
+          onRemove={onUploadRemove}
+          disabled={uploadPictureLoading}
+          fileList={fileList}
         >
           <Button
             className="btn-sm btn text-white font-semibold px-6 border
@@ -130,7 +183,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.name}
+            value={dataEmployee.name}
             name={"name"}
             onChange={onChangeInput}
             placeholder="Masukkan nama"
@@ -145,15 +198,19 @@ const EmployeeProfileForm = () => {
             required: true,
             message: "NIP karyawan wajib diisi",
           },
+          {
+            pattern: /[0-9]+/,
+            message: "NIP hanya boleh diisi dengan angka",
+          },
         ]}
         className="col-span-2"
       >
         <div>
           <Input
-            value={dataProfile.nip}
+            value={dataEmployee.nip}
             name={"nip"}
             onChange={onChangeInput}
-            placeholder="Masukkan nama"
+            placeholder="Masukkan NIP"
           />
         </div>
       </Form.Item>
@@ -165,11 +222,15 @@ const EmployeeProfileForm = () => {
             required: true,
             message: "NIK karyawan wajib diisi",
           },
+          {
+            pattern: /[0-9]+/,
+            message: "NIK hanya boleh diisi dengan angka",
+          },
         ]}
       >
         <div>
           <Input
-            value={dataProfile.nik}
+            value={dataEmployee.nik}
             name={"nik"}
             onChange={onChangeInput}
             placeholder="Masukkan NIK"
@@ -188,7 +249,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.alias}
+            value={dataEmployee.alias}
             name={"alias"}
             onChange={onChangeInput}
             placeholder="Masukkan alias"
@@ -197,7 +258,7 @@ const EmployeeProfileForm = () => {
       </Form.Item>
       <Form.Item
         label="Email Kantor"
-        name={"office_email"}
+        name={"email_office"}
         rules={[
           {
             required: true,
@@ -212,8 +273,8 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.email_office}
-            name={"office_email"}
+            value={dataEmployee.email_office}
+            name={"email_office"}
             onChange={onChangeInput}
             placeholder="Masukkan email kantor"
           />
@@ -221,7 +282,7 @@ const EmployeeProfileForm = () => {
       </Form.Item>
       <Form.Item
         label="Email Pribadi"
-        name={"personal_email"}
+        name={"email_personal"}
         rules={[
           {
             required: true,
@@ -236,18 +297,18 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.email_personal}
-            name={"personal_email"}
+            value={dataEmployee.email_personal}
+            name={"email_personal"}
             onChange={onChangeInput}
             placeholder="Masukkan email pribadi"
           />
         </div>
       </Form.Item>
-      <Form.Item label="Domisili" name={"domisili"}>
+      <Form.Item label="Domisili" name={"domicile"}>
         <div>
           <Input
-            value={dataProfile.domicile}
-            name={"domisili"}
+            value={dataEmployee.domicile}
+            name={"domicile"}
             onChange={onChangeInput}
             placeholder="Masukkan domisili"
           />
@@ -255,18 +316,22 @@ const EmployeeProfileForm = () => {
       </Form.Item>
       <Form.Item
         label="Nomor Telepon"
-        name={"phone"}
+        name={"phone_number"}
         rules={[
           {
             required: true,
             message: "Nomor telepon wajib diisi",
           },
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor HP hanya boleh diisi dengan angka",
+          },
         ]}
       >
         <div>
           <Input
-            value={dataProfile.telp}
-            name={"phone"}
+            value={dataEmployee.phone_number}
+            name={"phone_number"}
             onChange={onChangeInput}
             placeholder="Masukkan nomor telepon"
           />
@@ -284,7 +349,7 @@ const EmployeeProfileForm = () => {
       >
         <div>
           <Input
-            value={dataProfile.birth_place}
+            value={dataEmployee.birth_place}
             name={"birth_place"}
             onChange={onChangeInput}
             placeholder="Masukkan tempat lahir"
@@ -301,21 +366,31 @@ const EmployeeProfileForm = () => {
           },
         ]}
       >
-        <DatePicker
-          name="birth_date"
-          placeholder="Pilih tanggal lahir"
-          className="w-full"
-          value={[
-            dataProfile.birth_date ? moment(dataProfile.birth_date) : null,
-          ]}
-          onChange={(value, datestring) => {
-            let selectedDate = datestring[0];
-            setDataProfile((prev) => ({
-              ...prev,
-              birth_date: selectedDate,
-            }));
-          }}
-        />
+        <>
+          <DatePicker
+            name="birth_date"
+            placeholder="Pilih tanggal lahir"
+            className="w-full"
+            value={
+              moment(dataEmployee.birth_date).isValid()
+                ? moment(dataEmployee.birth_date)
+                : null
+            }
+            onChange={(value, datestring) => {
+              setDataEmployee((prev) => ({
+                ...prev,
+                birth_date: datestring,
+              }));
+
+              if (debouncedApiCall) {
+                debouncedApiCall({
+                  ...dataEmployee,
+                  birth_date: datestring,
+                });
+              }
+            }}
+          />
+        </>
       </Form.Item>
 
       <Form.Item
@@ -328,130 +403,190 @@ const EmployeeProfileForm = () => {
           },
         ]}
       >
-        <Select
-          value={dataProfile.gender}
-          onChange={(value) => {
-            setDataProfile({
-              ...dataProfile,
-              gender: value,
-            });
-          }}
-          placeholder="Pilih jenis kelamin"
-        >
-          {["Laki-laki", "Perempuan"].map((option, idx) => (
-            <Select.Option key={idx} value={option}>
-              {option}
-            </Select.Option>
-          ))}
-        </Select>
+        <>
+          <Select
+            value={dataEmployee.gender}
+            onChange={(value) => onChangeSelect(value, "gender")}
+            placeholder="Pilih jenis kelamin"
+            options={[
+              {
+                value: "Laki-laki",
+              },
+              {
+                value: "Perempuan",
+              },
+            ]}
+          />
+        </>
       </Form.Item>
       <Form.Item label="Golongan Darah" name={"blood_type"}>
-        <Select
-          value={dataProfile.blood_type}
-          onChange={(value) => {
-            setDataProfile({
-              ...dataProfile,
-              blood_type: value,
-            });
-          }}
-          placeholder="Pilih jenis kelamin"
-        >
-          {["A", "B", "AB", "O"].map((option, idx) => (
-            <Select.Option key={idx} value={option}>
-              {option}
-            </Select.Option>
-          ))}
-        </Select>
+        <>
+          <Select
+            value={dataEmployee.blood_type}
+            onChange={(value) => onChangeSelect(value, "blood_type")}
+            placeholder="Pilih jenis kelamin"
+            options={[
+              {
+                value: "A",
+              },
+              {
+                value: "B",
+              },
+              {
+                value: "AB",
+              },
+              {
+                value: "O",
+              },
+            ]}
+          />
+        </>
       </Form.Item>
       <Form.Item label="Status Kawin" name={"marital_status"}>
-        <Select
-          value={dataProfile.marital_status}
-          onChange={(value) => {
-            setDataProfile({
-              ...dataProfile,
-              marital_status: value,
-            });
-          }}
-          placeholder="Pilih status kawin"
-        >
-          {["Belum kawin", "Kawin", "Cerai hidup", "Cerai mati"].map(
-            (option, idx) => (
-              <Select.Option key={idx} value={option}>
-                {option}
-              </Select.Option>
-            )
-          )}
-        </Select>
+        <>
+          <Select
+            value={dataEmployee.marital_status}
+            onChange={(value) => onChangeSelect(value, "marital_status")}
+            placeholder="Pilih status kawin"
+            options={[
+              {
+                value: 0,
+                label: "Belum kawin",
+              },
+              {
+                value: 1,
+                label: "Kawin",
+              },
+              {
+                value: 2,
+                label: "Cerai hidup",
+              },
+              {
+                value: 3,
+                label: "Cerai mati",
+              },
+            ]}
+          />
+        </>
       </Form.Item>
-      <Form.Item label="Jumlah Anak" name={"child_total"}>
+      <Form.Item label="Jumlah Anak" name={"number_of_children"}>
         <div>
-          <Input
-            value={dataProfile.child_total}
-            name={"child_total"}
-            onChange={onChangeInput}
+          <InputNumber
+            min={0}
+            value={dataEmployee.number_of_children}
+            name={"number_of_children"}
+            onChange={(value) => onChangeSelect(value, "number_of_children")}
             placeholder="Masukkan jumlah anak"
+            className="w-full"
           />
         </div>
       </Form.Item>
       <Form.Item
         label="Nama Ibu Kandung"
-        name={"mother_name"}
+        name={"bio_mother_name"}
         className="col-span-2"
       >
         <div>
           <Input
-            value={dataProfile.mother_name}
-            name={"mother_name"}
+            value={dataEmployee.bio_mother_name}
+            name={"bio_mother_name"}
             placeholder="Masukkan nama ibu kandung"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor NPWP" name={"npwp"} className="col-span-2">
+      <Form.Item
+        label="Nomor NPWP"
+        name={"npwp"}
+        className="col-span-2"
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor NPWP hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.npwp}
+            value={dataEmployee.npwp}
             name={"npwp"}
             placeholder="Masukkan nomor NPWP"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor BPJS Kesehatan" name={"bpjsk"}>
+      <Form.Item
+        label="Nomor BPJS Kesehatan"
+        name={"bpjs_kesehatan"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor BPJS Kesehatan hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.bpjsk}
-            name={"bpjsk"}
+            value={dataEmployee.bpjs_kesehatan}
+            name={"bpjs_kesehatan"}
             placeholder="Masukkan nomor BPJS Kesehatan"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor BPJS Ketenagakerjaan" name={"bpjstk"}>
+      <Form.Item
+        label="Nomor BPJS Ketenagakerjaan"
+        name={"bpjs_ketenagakerjaan"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message:
+              "Nomor BPJS Ketenagakerjaan hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.bpjstk}
-            name={"bpjstk"}
+            value={dataEmployee.bpjs_ketenagakerjaan}
+            name={"bpjs_ketenagakerjaan"}
             placeholder="Masukkan nomor BPJS Ketenagakerjaan"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor Rekening Bank KB Bukopin" name={"rek_bukopin"}>
+      <Form.Item
+        label="Nomor Rekening Bank KB Bukopin"
+        name={"acc_number_bukopin"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor rekening hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.rek_bukopin}
-            name={"rek_bukopin"}
+            value={dataEmployee.acc_number_bukopin}
+            name={"acc_number_bukopin"}
             placeholder="Masukkan nomor rekening Bank KB Bukopin"
             onChange={onChangeInput}
           />
         </div>
       </Form.Item>
-      <Form.Item label="Nomor Rekening Bank Lainnya" name={"rek_other"}>
+      <Form.Item
+        label="Nomor Rekening Bank Lainnya"
+        name={"acc_number_another"}
+        rules={[
+          {
+            pattern: /[0-9]+/,
+            message: "Nomor rekening hanya boleh diisi dengan angka",
+          },
+        ]}
+      >
         <div className="flex flex-row space-x-3">
           <Input
-            value={dataProfile.rek_other}
-            name={"rek_other"}
+            value={dataEmployee.acc_number_another}
+            name={"acc_number_another"}
             placeholder="Masukkan nomor rekening bank lainnya"
             onChange={onChangeInput}
           />

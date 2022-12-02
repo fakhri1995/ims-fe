@@ -2234,6 +2234,54 @@ const CircleCheckIconSvg = ({ size, color }) => {
   return <Icon component={circleCheckIconSvg}></Icon>;
 };
 
+const LogoutIconSvg = ({ size, color }) => {
+  const logoutIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-logout"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M14 8v-2a2 2 0 0 0 -2 -2h-7a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h7a2 2 0 0 0 2 -2v-2" />
+      <path d="M7 12h14l-3 -3m0 6l3 -3" />
+    </svg>
+  );
+  return <Icon component={logoutIconSvg}></Icon>;
+};
+
+const ClipboardListIconSvg = ({ size, color }) => {
+  const clipboardListIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-clipboard-list"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="2" />
+      <line x1="9" y1="12" x2="9.01" y2="12" />
+      <line x1="13" y1="12" x2="15" y2="12" />
+      <line x1="9" y1="16" x2="9.01" y2="16" />
+      <line x1="13" y1="16" x2="15" y2="16" />
+    </svg>
+  );
+  return <Icon component={clipboardListIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -2326,4 +2374,6 @@ export {
   RightIconSvg,
   LeftIconSvg,
   CircleCheckIconSvg,
+  LogoutIconSvg,
+  ClipboardListIconSvg,
 };
