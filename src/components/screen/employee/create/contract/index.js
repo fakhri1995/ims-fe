@@ -386,7 +386,7 @@ const EmployeeContractForm = ({
             placeholder="Pilih posisi"
           >
             <>
-              {dataPositionList.map((option) => (
+              {dataPositionList?.map((option) => (
                 <Select.Option key={option.id} value={option.id}>
                   {option.name}
                 </Select.Option>
@@ -412,7 +412,7 @@ const EmployeeContractForm = ({
             placeholder="Pilih status kontrak"
           >
             <>
-              {dataRoleTypeList.map((option) => (
+              {dataRoleTypeList?.map((option) => (
                 <Select.Option key={option.id} value={option.id}>
                   {option.name}
                 </Select.Option>
@@ -536,7 +536,7 @@ const EmployeeContractForm = ({
             onChange={(value) => onChangeSelect(value, "placement")}
             placeholder="Pilih penempatan"
           >
-            {dataCompanyList.map((option) => (
+            {dataCompanyList?.map((option) => (
               <Select.Option key={option.id} value={option.name}>
                 {option.name}
               </Select.Option>
