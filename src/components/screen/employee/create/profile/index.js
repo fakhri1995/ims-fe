@@ -52,7 +52,7 @@ const EmployeeProfileForm = ({
       const currentFileName = dataEmployee?.id_card_photo?.link?.split("/")[2];
       setFileList([{ name: currentFileName }]);
     }
-  }, [dataEmployee]);
+  }, []);
 
   // 3. HANDLER
   // 3.1. Handle input change and auto save in "Tambah Karyawan"
@@ -120,7 +120,6 @@ const EmployeeProfileForm = ({
 
   const onUploadChange = useCallback(({ file }) => {
     setUploadPictureLoading(file.status === "uploading");
-    console.log(file);
     if (file.status !== "removed") {
       setFileList([file]);
     }
