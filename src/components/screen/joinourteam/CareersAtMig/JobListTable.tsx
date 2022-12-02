@@ -116,7 +116,7 @@ export const JobListTable: FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-y-8">
+    <div className="grid grid-cols-1 gap-y-8 px-[112px]">
       <p
         dangerouslySetInnerHTML={{
           __html: searchMessage,

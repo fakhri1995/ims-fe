@@ -16,20 +16,19 @@ function AboutUs({}) {
       </Head>
       <section
         className={
-          "section2people px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 py-8 md:py-10 text-center justify-center "
+          "section2people pt-8 md:pt-[16] pb-5 md:pb-[40px] px-4 md:px-[112px] text-center"
         }
       >
-        <div className={"pb-8"}>
+        <div className={""}>
           <p
             className={
-              "text-xl md:text-3xl gilroy-semibold font-semibold text-blackmig"
+              "text-xl md:text-[32px] gilroy-semibold font-semibold text-blackmig"
             }
           >
             Operate your business, more efficient and more agile
           </p>
-        </div>
-        <div className={"pb-2"}>
-          <p className={"text-base text-black w-full gilroy-regular"}>
+
+          <p className={"text-base text-blackmig gilroy-regular mt-4"}>
             Mitramas Infosys global is supporting you staff augmentation &
             delivering software and hardware managed services. We have served
             multiple industries, bringing the best solutions to financial
@@ -37,85 +36,80 @@ function AboutUs({}) {
           </p>
         </div>
       </section>
-      <section
-        className={
-          "block bg-transp60 pt-4 md:flex px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
-        }
-      >
-        <div className={"flex-col w-full py-1 md:py-1 pr-0 md:pr-10 m-auto"}>
-          <p
-            className={
-              "gilroy-semibold font-semibold text-left pb-0 md:pb-8 text-xl md:text-2xl"
-            }
-          >
-            Who we are
-          </p>
-          {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
+      <section className={"block bg-transp60 py-2 md:py-6 px-4 md:px-[112px]"}>
+        <p
+          className={
+            "gilroy-semibold font-semibold text-left pb-0 text-xl md:text-2xl"
+          }
+        >
+          Who we are
+        </p>
+        {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
-          <p className={"pb-8 gilroy-regular text-base"}>
-            Founded in 2003, Mitramas Infosys Global (MIG) directly partner with
-            global providers and collaborate with local IT talents to offer you
-            a seamless technology experience. Experienced across archipelago for
-            more than decade we have a plethora of experience in the business.
-            With integrity as our core principle, we collaborate with our
-            clients to increase their efficiency and reach long-term business
-            goals.
-          </p>
+        <p className={"mt-4 gilroy-regular text-base"}>
+          Founded in 2003, Mitramas Infosys Global (MIG) directly partner with
+          global providers and collaborate with local IT talents to offer you a
+          seamless technology experience. Experienced across archipelago for
+          more than decade we have a plethora of experience in the business.
+          With integrity as our core principle, we collaborate with our clients
+          to increase their efficiency and reach long-term business goals.
+        </p>
 
-          <p className={"pb-8 text-base gilroy-regular"}>
-            <Link href="joinourteam">
-              <em className={"cursor-pointer text-primarygreen underline"}>
-                Careers
-              </em>
-            </Link>{" "}
-            at MIG offer meaningful work to be better together
-          </p>
-        </div>
+        <p className={"mt-4 text-base gilroy-regular"}>
+          <Link href="joinourteam">
+            <em className={"cursor-pointer text-primarygreen underline"}>
+              Careers
+            </em>
+          </Link>{" "}
+          at MIG offer meaningful work to be better together
+        </p>
       </section>
-      <section
-        className={"py-8 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"}
-      >
-        <div className={"pb-4"}>
-          <p className={"text-xl md:text-2xl font-semibold text-blackmig"}>
-            Support your business efficiently
-          </p>
-        </div>
+      <section className={"pt-6 md:pt-[40px] pb-4 md:pb-8 px-4 md:px-[112px]"}>
+        <p className={"text-xl md:text-2xl font-semibold text-blackmig"}>
+          Support your business efficiently
+        </p>
         <div>
-          <p className={"text-base w-full gilroy-regular"}>
+          <p className={"text-base mt-4 gilroy-regular"}>
             One stop seamless technology solution to help you achieve business
             goals and optimize your cost{" "}
           </p>
         </div>
-        <div className={"grid md:flex my-4 justify-center md:justify-between"}>
+        <div className={"flex md:flex-row mt-4"}>
           <div
             className={
-              "flex-col flex bg-white mr-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg"
+              "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] mr-5 border-dividermig rounded-lg hover:shadow-lg"
             }
           >
-            <div className={"min-h-full relative pb-4"} style={{}}>
+            <div>
               <img
-                style={{ height: "40px", width: "auto" }}
                 src="/image/navbar/hardware.svg"
-              ></img>
+                className={"w-[32px] h-[32px]"}
+              />
               <p
                 className={
-                  "text-left py-3 font-semibold text-blackmig text-base"
+                  "text-left mt-[11px] font-semibold text-blackmig text-base"
                 }
               >
                 Hardware
               </p>
-              <p className={"gilroy-regular text-base"}>
+              <p className={"gilroy-regular text-base mt-2"}>
                 Optimize your cost by leasing and maintenances variety of
                 electronic equipments
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/hardware" }}>
-                  <a className={"font-semibold text-base text-primarygreen"}>
-                    Get yours&nbsp;{" "}
-                    <ArrowRightOutlined
-                      className={"relative"}
-                      style={{ top: "-2.5px" }}
+                  <a
+                    className={
+                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
+                    }
+                  >
+                    <p className={"font-semibold text-base text-primarygreen"}>
+                      Get yours
+                    </p>
+                    <img
+                      src="/image/landingpage/arrow_right_alt.png"
+                      className={"w-5 h-5"}
                     />
                   </a>
                 </Link>
@@ -124,32 +118,38 @@ function AboutUs({}) {
           </div>
           <div
             className={
-              "flex-col bg-white my-5 md:my-0 mx-0 md:mx-5 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg"
+              "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] mr-5 border-dividermig rounded-lg hover:shadow-lg"
             }
           >
-            <div className={"min-h-full relative pb-4"} style={{}}>
+            <div>
               <img
-                style={{ height: "40px", width: "auto", position: "relative" }}
                 src="/image/navbar/software.svg"
-              ></img>
+                className={"w-[32px] h-[32px]"}
+              />
               <p
                 className={
-                  "text-left py-3 font-semibold text-blackmig text-base"
+                  "text-left mt-[11px] font-semibold text-blackmig text-base"
                 }
               >
                 Software
               </p>
-              <p className={"gilroy-regular text-base"}>
+              <p className={"gilroy-regular text-base mt-2"}>
                 We support your companies to simplify and automate the process
                 through digitalization
               </p>
               <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/software" }}>
-                  <a className={"font-semibold text-base text-primarygreen"}>
-                    Build now&nbsp;{" "}
-                    <ArrowRightOutlined
-                      className={"relative"}
-                      style={{ top: "-2.5px" }}
+                <Link href={{ pathname: "/hardware" }}>
+                  <a
+                    className={
+                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
+                    }
+                  >
+                    <p className={"font-semibold text-base text-primarygreen"}>
+                      Build now
+                    </p>
+                    <img
+                      src="/image/landingpage/arrow_right_alt.png"
+                      className={"w-5 h-5"}
                     />
                   </a>
                 </Link>
@@ -158,31 +158,37 @@ function AboutUs({}) {
           </div>
           <div
             className={
-              "flex-col bg-white mdl-0 p-4 w-full border-2 border-black-300 rounded-lg hover:shadow-lg"
+              "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] border-dividermig rounded-lg hover:shadow-lg"
             }
           >
-            <div className={"min-h-full relative pb-4"} style={{}}>
+            <div>
               <img
-                style={{ height: "40px", width: "auto", position: "relative" }}
                 src="/image/navbar/talents.svg"
-              ></img>
+                className={"w-[32px] h-[32px]"}
+              />
               <p
                 className={
-                  "text-left py-3 font-semibold text-blackmig text-base"
+                  "text-left mt-[11px] font-semibold text-blackmig text-base"
                 }
               >
                 Talents
               </p>
-              <p className={"gilroy-regular text-base"}>
+              <p className={"gilroy-regular text-base mt-2"}>
                 We help you reduce complexity in talent sourcing and management
               </p>
               <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/talents" }}>
-                  <a className={"font-semibold text-base text-primarygreen"}>
-                    Setup your team&nbsp;{" "}
-                    <ArrowRightOutlined
-                      className={"relative"}
-                      style={{ top: "-2.5px" }}
+                <Link href={{ pathname: "/hardware" }}>
+                  <a
+                    className={
+                      "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
+                    }
+                  >
+                    <p className={"font-semibold text-base text-primarygreen"}>
+                      Set up your team
+                    </p>
+                    <img
+                      src="/image/landingpage/arrow_right_alt.png"
+                      className={"w-5 h-5"}
                     />
                   </a>
                 </Link>
@@ -193,7 +199,7 @@ function AboutUs({}) {
       </section>
 
       <section
-        className={"px-4 sm:px-10 md:px-10 pt-4 md:pb-[130px] bg-transp60"}
+        className={"px-4 md:px-[112px] pt-4 md:pt-8 md:pb-[130px] bg-transp60"}
       >
         <div>
           <p className={"font-semibold text-xl text-blackmig md:text-2xl pb-2"}>
@@ -202,8 +208,11 @@ function AboutUs({}) {
           <p className={"font-semibold pb-2 text-xl text-blackmig"}>
             Headquarter
           </p>
-          <p className={"text-base font-semibold text-darkgrey"}>
-            Location: Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
+          <p className={"text-base text-darkgrey"}>
+            <span className="font-semibold">Location: </span>
+            <span className={"text-blackmig gilroy-regular"}>
+              Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
+            </span>
           </p>
 
           <div className={"flex flex-row mt-3"}>
@@ -229,146 +238,158 @@ function AboutUs({}) {
             Coverages
           </p>
           <div
-            className={"bg-white p-4"}
-            style={{ boxShadow: "0 10px 20px rgb(0 0 0 / 20%)" }}
+            className={"bg-white p-6"}
+            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
           >
-            <ul className={"coverage-list"}>
-              <li>
-                <p href="">Banda Aceh</p>
-              </li>
-              <li>
-                <p href="">Medan</p>
-              </li>
-              <li>
-                <p href="">Padang</p>
-              </li>
-              <li>
-                <p href="">Jambi</p>
-              </li>
-              <li>
-                <p href="">Pekanbaru</p>
-              </li>
-              <li>
-                <p href="">Batam</p>
-              </li>
-              <li>
-                <p href="">Tanjung pinang</p>
-              </li>
-              <li>
-                <p href="">Jakarta</p>
-              </li>
-              <li>
-                <p href="">Bekasi</p>
-              </li>
-              <li>
-                <p href="">Depok</p>
-              </li>
-              <li>
-                <p href="">Karawang</p>
-              </li>
-              <li>
-                <p href="">Cilegon</p>
-              </li>
-              <li>
-                <p href="">Sukabumi</p>
-              </li>
-              <li>
-                <p href="">Bandar lampung</p>
-              </li>
-              <li>
-                <p href="">Palembang</p>
-              </li>
-              <li>
-                <p href="">Bandung</p>
-              </li>
-              <li>
-                <p href="">Tasikmalaya</p>
-              </li>
-              <li>
-                <p href="">Cirebon</p>
-              </li>
-              <li>
-                <p href="">Semarang</p>
-              </li>
-              <li>
-                <p href="">Purwokerto</p>
-              </li>
-              <li>
-                <p href="">Tegal</p>
-              </li>
-              <li>
-                <p href="">Yogyakarta</p>
-              </li>
-              <li>
-                <p href="">Magelang</p>
-              </li>
-              <li>
-                <p href="">Solo</p>
-              </li>
-              <li>
-                <p href="">Surabaya</p>
-              </li>
-              <li>
-                <p href="">Madiun</p>
-              </li>
-              <li>
-                <p href="">Sidoarjo</p>
-              </li>
-              <li>
-                <p href="">Malang</p>
-              </li>
-              <li>
-                <p href="">Kediri</p>
-              </li>
-              <li>
-                <p href="">Bogor</p>
-              </li>
-              <li>
-                <p href="">Probolingo</p>
-              </li>
-              <li>
-                <p href="">Banyuwangi</p>
-              </li>
-              <li>
-                <p href="">Jember</p>
-              </li>
-              <li>
-                <p href="">Bali</p>
-              </li>
-              <li>
-                <p href="">Mataram</p>
-              </li>
-              <li>
-                <p href="">Kupang</p>
-              </li>
-              <li>
-                <p href="">Samarinda</p>
-              </li>
-              <li>
-                <p href="">Banjarmasin</p>
-              </li>
-              <li>
-                <p href="">Pontianak</p>
-              </li>
-              <li>
-                <p href="">Balikpapan</p>
-              </li>
-              <li>
-                <p href="">Makasar</p>
-              </li>
-              <li>
-                <p href="">Sorong</p>
-              </li>
-              <li>
-                <p href="">Palu</p>
-              </li>
-              <li>
-                <p href="">Manado</p>
-              </li>
-              <li>
-                <p href="">Pare-pare</p>
-              </li>
-            </ul>
+            <div className={"flex flex-row justify-between"}>
+              <div>
+                <ul>
+                  <li>
+                    <p href="">Banda Aceh</p>
+                  </li>
+                  <li>
+                    <p href="">Medan</p>
+                  </li>
+                  <li>
+                    <p href="">Padang</p>
+                  </li>
+                  <li>
+                    <p href="">Jambi</p>
+                  </li>
+                  <li>
+                    <p href="">Pekanbaru</p>
+                  </li>
+                  <li>
+                    <p href="">Batam</p>
+                  </li>
+                  <li>
+                    <p href="">Tanjung pinang</p>
+                  </li>
+                  <li>
+                    <p href="">Jakarta</p>
+                  </li>
+                  <li>
+                    <p href="">Bekasi</p>
+                  </li>
+                  <li>
+                    <p href="">Depok</p>
+                  </li>
+                  <li>
+                    <p href="">Karawang</p>
+                  </li>
+                  <li>
+                    <p href="">Cilegon</p>
+                  </li>
+                  <li>
+                    <p href="">Sukabumi</p>
+                  </li>
+                  <li>
+                    <p href="">Bandar lampung</p>
+                  </li>
+                  <li>
+                    <p href="">Palembang</p>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <ul>
+                  <li>
+                    <p href="">Bandung</p>
+                  </li>
+                  <li>
+                    <p href="">Tasikmalaya</p>
+                  </li>
+                  <li>
+                    <p href="">Cirebon</p>
+                  </li>
+                  <li>
+                    <p href="">Semarang</p>
+                  </li>
+                  <li>
+                    <p href="">Purwokerto</p>
+                  </li>
+                  <li>
+                    <p href="">Tegal</p>
+                  </li>
+                  <li>
+                    <p href="">Yogyakarta</p>
+                  </li>
+                  <li>
+                    <p href="">Magelang</p>
+                  </li>
+                  <li>
+                    <p href="">Solo</p>
+                  </li>
+                  <li>
+                    <p href="">Surabaya</p>
+                  </li>
+                  <li>
+                    <p href="">Madiun</p>
+                  </li>
+                  <li>
+                    <p href="">Sidoarjo</p>
+                  </li>
+                  <li>
+                    <p href="">Malang</p>
+                  </li>
+                  <li>
+                    <p href="">Kediri</p>
+                  </li>
+                  <li>
+                    <p href="">Bogor</p>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <ul>
+                  <li>
+                    <p href="">Probolingo</p>
+                  </li>
+                  <li>
+                    <p href="">Banyuwangi</p>
+                  </li>
+                  <li>
+                    <p href="">Jember</p>
+                  </li>
+                  <li>
+                    <p href="">Bali</p>
+                  </li>
+                  <li>
+                    <p href="">Mataram</p>
+                  </li>
+                  <li>
+                    <p href="">Kupang</p>
+                  </li>
+                  <li>
+                    <p href="">Samarinda</p>
+                  </li>
+                  <li>
+                    <p href="">Banjarmasin</p>
+                  </li>
+                  <li>
+                    <p href="">Pontianak</p>
+                  </li>
+                  <li>
+                    <p href="">Balikpapan</p>
+                  </li>
+                  <li>
+                    <p href="">Makasar</p>
+                  </li>
+                  <li>
+                    <p href="">Sorong</p>
+                  </li>
+                  <li>
+                    <p href="">Palu</p>
+                  </li>
+                  <li>
+                    <p href="">Manado</p>
+                  </li>
+                  <li>
+                    <p href="">Pare-pare</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>

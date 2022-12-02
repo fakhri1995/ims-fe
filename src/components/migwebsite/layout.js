@@ -551,7 +551,7 @@ function layout({ children }) {
                     />
                     <a
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
+                        "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -567,7 +567,7 @@ function layout({ children }) {
                     />
                     <a
                       className={
-                        "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
+                        "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
                       href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
                       target="_blank"
@@ -671,7 +671,7 @@ function layout({ children }) {
                         />
                         <p
                           className={
-                            "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
+                            "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                           }
                         >
                           Instagram
@@ -686,7 +686,7 @@ function layout({ children }) {
                         />
                         <p
                           className={
-                            "gilroy-regular cursor-pointer menu-underlined py-1 hover:text-green-500"
+                            "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                           }
                         >
                           LinkedIn

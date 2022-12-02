@@ -13,7 +13,10 @@ ul {
   list-style-type: disc;
   margin-left: 24px;
 }
-
+@font-face {
+  font-family: "Gilroy-semibold";
+  src: url("../../../public/fonts/GIlroy-semibold.ttf");
+}
 ol {
   list-style-type: decimal;
   margin-left: 20px;
@@ -357,6 +360,14 @@ ol {
   border-color: #b8b8b8;
   outline: 0;
 }
+.ant-input-affix-wrapper {
+  border-color: #b8b8b8;
+  outline: 0;
+}
+.ant-input .ant-input lg {
+  border-color: #b8b8b8;
+  outline: 0;
+}
 .ant-input:focus {
   border-color: #b8b8b8;
   outline: 0;
@@ -374,4 +385,16 @@ ol {
 }
 .slick-dots li button:before {
   color: #d9d9d9 !important;
+}
+
+.ant-upload.ant-upload-drag {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: #e5e7e6;
+  border: 1px dashed #0059a0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.3s;
 }
