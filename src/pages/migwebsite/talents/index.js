@@ -45,8 +45,13 @@ function Talents({}) {
     phone_number: null,
     interested_in: "talents",
     message: null,
-    level_employee: null,
-    many_talent: null,
+    // level_employee: null,
+    // many_talent: null,
+    // maximum_budget:null,
+    // details:null,
+    // urgently:null,
+    // time_used:null,
+    // open_remote:null,
   });
   const [modalTalents, setModalTalents] = useState(false);
   const [modalTalentsData, setModalTalentsData] = useState(false);
@@ -90,6 +95,15 @@ function Talents({}) {
   const captchaRef = useRef(null);
   const [product, setProduct] = useState(null);
   const [productSelected, setProductSelected] = useState([]);
+  const [levelEmployee, setLevelEmployee] = useState(null);
+  const [manyTalent, setManyTalent] = useState(null);
+  const [urgently, setUrgently] = useState(null);
+  const [timeUsed, setTimeUsed] = useState(null);
+  const [openRemote, setOpenRemote] = useState(null);
+  const [maxBudget, setMaxBudget] = useState(null);
+  const [details, setDetails] = useState(null);
+  const [dataTalents, setDataTalents] = useState([]);
+  const [statusEdit, setStatusEdit] = useState(false);
   const dataMeetingTime = [
     {
       id: 1,
@@ -144,6 +158,11 @@ function Talents({}) {
       label_meeting: "17.30 WIB - 18.00 WIB",
     },
   ];
+
+  const handleEdit = () => {
+    console.log("edit");
+    setProductSelected(["Oke", "Jos"]);
+  };
   const onChangeValuePurpose = (e) => {
     console.log("radio checked", e.target.value);
     setValuePurpose(e.target.value);
@@ -152,8 +171,8 @@ function Talents({}) {
     console.log("radio checked", e.target.value);
     setValueKindProject(e.target.value);
   };
-  const handleForm = () => {
-    setFormActive("first");
+  const handleForm = (value) => {
+    setFormActive(value);
   };
   const showModal = () => {
     setModalTalents(true);
@@ -244,11 +263,43 @@ function Talents({}) {
     form.setFieldValue(form, "product", "");
   };
 
+  const deleteProduct = (index) => {
+    let arr_product = productSelected;
+    arr_product.splice(index, 1);
+    setProductSelected([...arr_product]);
+  };
+
+  const handleSuggestionSkill = (skill) => {
+    console.log("handle suggestion skill ", skill);
+    let arr_product = productSelected;
+    arr_product.push(skill);
+    setProductSelected([...arr_product]);
+    // form.setFieldValue(form, "product", "");
+  };
+
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() != "") {
       console.log("tidak kosong");
       setShowThankForm(true);
     }
+  };
+
+  const handleAddAnotherProduct = () => {
+    let array_talents = dataTalents;
+    array_talents.push({
+      kindOfTalent: kindOfTalent,
+      product: productSelected,
+      levelEmployee: levelEmployee,
+      manyTalent: manyTalent,
+      urgently: urgently,
+      timeUsed: timeUsed,
+      openRemote: openRemote,
+      maxBudget: maxBudget,
+      details: details,
+    });
+    console.log("array talents ", array_talents);
+    setDataTalents([...array_talents]);
+    form.resetFields(["formtalentdetail"]);
   };
 
   const handleKindOfTalent = (value) => {
@@ -577,7 +628,7 @@ function Talents({}) {
                   <div className={"mt-9 flex flex-row justify-between"}>
                     <button
                       className={"bg-white py-2 px-4"}
-                      onClick={handleForm}
+                      onClick={() => handleForm("first")}
                     >
                       <p className={"text-base text-primarygreen"}>Back</p>
                     </button>
@@ -605,10 +656,10 @@ function Talents({}) {
                   What kind of talent are you looking for?
                 </p>
                 <Form
-                  id="formcontact"
+                  id="formtalentdetail"
                   hidden={!feedback}
                   layout={"vertical"}
-                  onFinish={handleSubmitThird}
+                  // onFinish={handleSubmitThird}
                   form={form}
                 >
                   {/* choose product */}
@@ -907,17 +958,20 @@ function Talents({}) {
                     </Form.Item>
                   </div>
                   {productSelected.length > 0 && (
-                    <div className={"flex flex-row mt-3"}>
+                    <div className={"flex flex-wrap"}>
                       {productSelected.map((data, index) => (
                         <div
                           className={
-                            "bg-transp45 rounded-[20px] py-1 pl-2 pr-1.5 flex flex-row mr-3"
+                            "bg-transp45 rounded-[20px]  mt-3 py-1 pl-2 pr-1.5 flex flex-row mr-3"
                           }
                         >
                           <p className={"text-sm text-blackmig gilroy-regular"}>
                             {data}
                           </p>
-                          <button className={"bg-transparent ml-2"}>
+                          <button
+                            className={"bg-transparent ml-2"}
+                            onClick={() => deleteProduct(index)}
+                          >
                             <img
                               className={"w-5 h-5"}
                               src="/image/hardware/cancel.png"
@@ -946,19 +1000,20 @@ function Talents({}) {
                   {skillSuggestion.length > 0 && (
                     <div className={"flex flex-row mt-3"}>
                       {skillSuggestion.map((data, index) => (
-                        <div
+                        <button
+                          onClick={() => handleSuggestionSkill(data)}
                           className={
-                            " border border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                            " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
                           }
                         >
                           <p className={"text-sm text-darkgrey gilroy-regular"}>
                             {data}
                           </p>
-                        </div>
+                        </button>
                       ))}
                     </div>
                   )}
-                  {console.log("skill suggestion ", skillSuggestion)}
+                  {console.log("formactive ", formActive)}
 
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
@@ -972,10 +1027,7 @@ function Talents({}) {
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="need_product"
                         onChange={(value) => {
-                          setDataPeople({
-                            ...dataPeople,
-                            level_employee: value,
-                          });
+                          setLevelEmployee(value);
                         }}
                         allowClear
                       >
@@ -991,9 +1043,9 @@ function Talents({}) {
 
                       className={"gilroy-medium text-xl"}
                       label={
-                        <p>
+                        <p className={"text-blackmig"}>
                           How many talent in{" "}
-                          <span className={"font-gilroysemibold"}>
+                          <span className={"font-gilroysemibold font-semibold"}>
                             {kindOfTalent}
                           </span>{" "}
                           you want to hire??
@@ -1001,7 +1053,7 @@ function Talents({}) {
                       }
                       rules={[{ required: true }]}
                     >
-                      <Input
+                      <InputNumber
                         // value={product}
                         style={{
                           border: "1px solid #B8B8B8",
@@ -1010,10 +1062,7 @@ function Talents({}) {
                         }}
                         name={"Many Talent"}
                         onChange={(e) => {
-                          setDataPeople({
-                            ...dataPeople,
-                            many_talent: value,
-                          });
+                          setManyTalent(e);
                         }}
                         // onPressEnter={handleInputProduct}
                         placeholder="How many?"
@@ -1027,16 +1076,79 @@ function Talents({}) {
                       2. Additional Information
                     </p>
                   </div>
+                  <div className={"mt-8 w-1/2"}>
+                    <Form.Item
+                      name="Urgently Need Talent"
+                      className={"gilroy-medium text-xl"}
+                      label="How soon do you need the talent?"
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{ border: "1px solid #B8B8B8" }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="Urgently Need Talent"
+                        onChange={(value) => {
+                          setUrgently(value);
+                        }}
+                        allowClear
+                        placeholder={"When will you start using the product?"}
+                      >
+                        <Option value="1 week">1 week</Option>
+                        <Option value="1 month">1 month</Option>
+                        <Option value="6 month">6 month</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8 w-1/2"}>
+                    <Form.Item
+                      name="Time used"
+                      className={"gilroy-medium text-xl"}
+                      label="How long do you need the the talent?"
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{ border: "1px solid #B8B8B8" }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="Time used"
+                        onChange={(value) => {
+                          setTimeUsed(value);
+                        }}
+                        allowClear
+                        placeholder={"How long will the product used?"}
+                      >
+                        <Option value="1 month">1 month</Option>
+                        <Option value="3 month">3 month</Option>
+                        <Option value="6 month">6 month</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8 w-1/2"}>
+                    <Form.Item
+                      name="Open Remote Talent"
+                      className={"gilroy-medium text-xl"}
+                      label="Are you open in hiring our remote talent? (work from home)"
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{ border: "1px solid #B8B8B8" }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="Open Remote Talent"
+                        onChange={(value) => {
+                          setOpenRemote([...value]);
+                        }}
+                        allowClear
+                        placeholder={"Choose decision"}
+                      >
+                        <Option value="yes">Yes</Option>
+                        <Option value="no">No</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
                   <div className={"mt-8"}>
                     <Form.Item
                       label={
                         <p className={"text-sm"}>
-                          {" "}
-                          How many product in{" "}
-                          <span className={"font-gilroysemibold text-blackmig"}>
-                            Workstation{" "}
-                          </span>
-                          you need?
+                          What is your maximum budget for your new hire?
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1050,49 +1162,26 @@ function Talents({}) {
                           height: "37px",
                           width: "170px",
                         }}
-                      />
-                      {/* </Form.Item> */}
-                      <span className="ant-form-text" style={{ marginLeft: 8 }}>
-                        pieces
-                      </span>
-                    </Form.Item>
-                    <Form.Item
-                      label={
-                        <p className={"text-sm"}>
-                          What is your maximum budget for your new product?
-                        </p>
-                      }
-                      rules={[{ required: true }]}
-                    >
-                      {/* <Form.Item name="input-number" noStyle> */}
-                      <InputNumber
-                        min={1}
-                        max={10}
-                        style={{
-                          border: "1px solid #B8B8B8",
-                          height: "37px",
-                          width: "170px",
+                        onChange={(e) => {
+                          setMaxBudget(e);
                         }}
                       />
                       {/* </Form.Item> */}
                       <span className="ant-form-text" style={{ marginLeft: 8 }}>
-                        / piece / month
+                        / talent / month
                       </span>
                     </Form.Item>
                     <Form.Item
-                      name={"Company Name"}
+                      name={"Details"}
                       className={"gilroy-medium text-xl"}
                       label="Details (Optional)"
                       // rules={[{ required: true }]}
                     >
                       <TextArea
                         style={{ border: "1px solid #B8B8B8" }}
-                        name={"Company Name"}
+                        name={"Details"}
                         onChange={(e) => {
-                          setDataHardware({
-                            ...dataHardware,
-                            company_name: e.target.value,
-                          });
+                          setDetails(e);
                         }}
                         rows={4}
                         placeholder="Tell us more about your talent details"
@@ -1103,11 +1192,12 @@ function Talents({}) {
                   <div className={"mt-9 flex flex-row justify-between"}>
                     <button
                       className={"bg-white py-2 px-4"}
-                      onClick={handleForm}
+                      onClick={() => handleForm("second")}
                     >
                       <p className={"text-base text-primarygreen"}>Back</p>
                     </button>
                     <button
+                      onClick={handleAddAnotherProduct}
                       className={
                         "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
@@ -1128,6 +1218,7 @@ function Talents({}) {
               </div>
             ) : (
               <div className="w-[52%]">
+                {console.log("form active ", formActive)}
                 <p className={"text-2xl text-blackmig font-semibold"}>
                   Choose Meeting Date
                 </p>
@@ -1246,7 +1337,10 @@ function Talents({}) {
                   />
                 </div>
                 <div className={"mt-9 flex flex-row justify-between"}>
-                  <button className={"bg-white py-2 px-4"} onClick={handleForm}>
+                  <button
+                    className={"bg-white py-2 px-4"}
+                    onClick={() => handleForm("third")}
+                  >
                     <p className={"text-base text-primarygreen"}>Back</p>
                   </button>
                   <button
@@ -1266,26 +1360,103 @@ function Talents({}) {
                 </div>
               </div>
             )}
-            <div
-              className={
-                formActive == "first" ? "w-[46%] self-center" : "w-[46%] ml-5"
-              }
-            >
-              <img
-                className={"w-full h-auto"}
-                src="/image/landingpage/Talents-2.png"
-              />
-            </div>
+            {formActive == "third" ? (
+              <div>
+                {dataTalents.length > 0 && (
+                  <div
+                    className={"w-[400px] py-4 pl-4 pr-[17px] ml-5 "}
+                    style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
+                  >
+                    <p className={"Gilroy-Bold text-primarygreen text-base"}>
+                      Talent Request Summary
+                    </p>
+                    <div className={"mt-3 border border-dividermig"} />
+                    {dataTalents.map((data) => (
+                      <button
+                        className={
+                          "bg-transparent mt-4  text-left hover:bg-greenTrans5 w-full"
+                        }
+                        onClick={handleEdit}
+                      >
+                        <p
+                          className={
+                            "text-blackmig font-gilroysemibold text-sm "
+                          }
+                        >
+                          {data.kindOfTalent}
+                        </p>
+                        <p className={"text-blackmig gilroy-regular text-sm"}>
+                          {data.levelEmployee +
+                            " - level, " +
+                            data.manyTalent +
+                            " talent, " +
+                            data.urgently +
+                            ", " +
+                            data.timeUsed +
+                            " duration"}
+                        </p>
+                        <div className={"flex"}>
+                          <p
+                            className={
+                              "text-blackmig text-xs font-gilroysemibold"
+                            }
+                          >
+                            Roles/skills:
+                          </p>
+                        </div>
+                      </button>
+                    ))}
+                    <button
+                      className={
+                        "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p
+                          className={"text-white text-base font-gilroysemibold"}
+                        >
+                          Submit Request
+                        </p>
+                        <div
+                          className={
+                            "w-[22px] h-[22px] bg-white rounded-[100px] items-center self-center"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-primarygreen text-base font-semibold"
+                            }
+                          >
+                            1
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div
+                className={
+                  formActive == "first" ? "w-[46%] self-center" : "w-[46%] ml-5"
+                }
+              >
+                <img
+                  className={"w-full h-auto"}
+                  src="/image/landingpage/Talents-2.png"
+                />
+              </div>
+            )}
           </section>
         </div>
       ) : (
         <div>
           <section
             className={
-              "section2talents py-4 md:py-12 px-4 md:px-[112px] mt:4 md:mt-12"
+              "section2talents py-4 md:py-12 px-4 mx-auto mt:4 md:mt-12"
             }
           >
-            <div className={"hidden md:flex justify-between container"}>
+            <div className={"hidden md:flex justify-between container mx-auto"}>
               <div className={"flex-col w-2/5"}>
                 <p className={"text-3xl pb-4 gilroy-bold"}>
                   Enabling you to assemble the best team

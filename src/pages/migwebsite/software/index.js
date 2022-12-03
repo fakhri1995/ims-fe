@@ -772,10 +772,8 @@ function Software({}) {
         </div>
       ) : (
         <div className={"noform"}>
-          <section
-            className={"section2software py-4 md:py-16 px-4 md:px-[113.5px]"}
-          >
-            <div className={"hidden md:flex container mt-16"}>
+          <section className={"section2software py-4 md:py-16 px-4 md:mx-auto"}>
+            <div className={"hidden md:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <p className={"text-[32px] gilroy-bold"}>
                   Simplify and automate the process through digitalization
