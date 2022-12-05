@@ -465,6 +465,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const todayDate = moment();
   const countWorkDaysLeft = (datestring) => {
     let lastdayDate = moment(datestring);
+    if (!datestring || !lastdayDate.isValid()) {
+      return "-";
+    }
     return lastdayDate.diff(todayDate, "days") + 1;
   };
 
@@ -525,8 +528,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Sisa Hari Kerja",
       dataIndex: "days_left",
       render: (text, record, index) => {
-        let workDaysLeft =
-          countWorkDaysLeft(record.contracts[0]?.contract_end_at) || "-";
+        let workDaysLeft = countWorkDaysLeft(
+          record.contracts[0]?.contract_end_at
+        );
         return {
           children: (
             <>
@@ -733,7 +737,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 value={selectedPlacement === 0 ? null : selectedPlacement}
                 allowClear
                 name={`role`}
-                disabled={!isAllowedToGetRoleList}
+                disabled={!isAllowedToGetCompanyList}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
