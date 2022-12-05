@@ -110,7 +110,7 @@ function LandingPage({}) {
       {/* <section className={'container mx-auto'}> */}
       <section
         className={
-          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:px-[114px]"
+          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] items-center"
         }
       >
         {/* Browser View */}
