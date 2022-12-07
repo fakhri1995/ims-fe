@@ -1,5 +1,13 @@
 import { UpOutlined } from "@ant-design/icons";
-import { Collapse, Input, Select, Table, Tabs, notification } from "antd";
+import {
+  Collapse,
+  Input,
+  Select,
+  Table,
+  Tabs,
+  Tooltip,
+  notification,
+} from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -21,6 +29,7 @@ import ButtonSys from "../../../../../components/button";
 import DrawerCore from "../../../../../components/drawer/drawerCore";
 import DrawerPayslipDetail from "../../../../../components/drawer/employees/drawerPayslipDetail";
 import {
+  AlertIconSvg,
   CirclePlusIconSvg,
   DownloadIconSvg,
   EditIconSvg,
@@ -366,6 +375,28 @@ const EmployeePayslipDetailIndex = ({
       title: "Periode",
       dataIndex: "period",
       // TODO: sort by month
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="flex flex-row space-x-2 items-center">
+              {/* <p>{record.period}</p> */}
+              <p>Oktober 2022</p>
+              {record.is_main_salary_changed && (
+                <Tooltip
+                  placement="top"
+                  title="Gaji pokok diubah"
+                  color="#E6E6E6"
+                  overlayInnerStyle={{ color: "#4D4D4D" }}
+                >
+                  <span>
+                    <AlertIconSvg color={"#DDB44A"} size={16} />
+                  </span>
+                </Tooltip>
+              )}
+            </div>
+          ),
+        };
+      },
       sorter: isAllowedToGetPayslips
         ? (a, b) => a.period?.toLowerCase() > b.period?.toLowerCase()
         : false,
@@ -508,14 +539,14 @@ const EmployeePayslipDetailIndex = ({
 
           {/* Right column */}
           <div className="flex flex-col w-4/5 gap-5">
-            {/* Employee Status */}
+            {/* Payslip Status */}
             <div
               className="shadow-lg rounded-md bg-white px-6 py-3 flex flex-row 
 							justify-between items-center"
             >
               <div className="flex flex-col space-y-2">
                 <p className="mig-caption--medium text-mono80">
-                  Status Karyawan
+                  Status Slip Gaji (Oktober 2022)
                 </p>
                 {dataEmployee?.contracts[0]?.is_employee_active ? (
                   <div className="flex flex-row space-x-2 items-center">
@@ -532,7 +563,7 @@ const EmployeePayslipDetailIndex = ({
               <ButtonSys
                 type={!isAllowedToAddPayslip ? "primary" : "default"}
                 // onClick={() => rt.push(`${employeeId}/addPayslip?id=${payslipId}`)}
-                // onClick={() => rt.push(`${employeeId}/addPayslip?id=1`)}
+                onClick={() => rt.push(`${employeeId}/addPayslip?id=1`)}
                 disabled={!isAllowedToAddPayslip}
               >
                 <FilePlusIconSvg color={"#35763B"} size={16} />

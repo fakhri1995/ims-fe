@@ -80,7 +80,7 @@ const EmployeeContractDetail = ({
 
   // 2. USE EFFECT
   useEffect(() => {
-    handleGetEmployeeContract(dataEmployee.contracts[0]?.id);
+    handleGetEmployeeContract(dataEmployee?.contracts[0]?.id);
   }, [isAllowedToGetEmployeeContract]);
 
   // 3. EVENT HANDLER
