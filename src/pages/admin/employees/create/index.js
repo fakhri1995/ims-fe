@@ -2,7 +2,7 @@ import { Tabs, notification } from "antd";
 import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useState } from "react";
 import { useCallback } from "react";
 
@@ -98,6 +98,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [loadingEmployee, setLoadingEmployee] = useState(false);
 
   const [currentTab, setCurrentTab] = useState("1");
+  const prevTab = useRef();
   const [dataEmployee, setDataEmployee] = useState({
     id: null,
     id_card_photo: null,
@@ -148,6 +149,13 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [inventoryList, setInventoryList] = useState([]);
 
   // 2. USE EFFECT
+  useEffect(() => {
+    prevTab.current = currentTab;
+  }, [currentTab]);
+
+  // console.log(prevTab)
+  // console.log(currentTab)
+
   // 2.1. Get Employee Data
   useEffect(() => {
     if (!isAllowedToGetEmployee) {
@@ -191,9 +199,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployee, refresh]);
 
-  // 3. HANDLER
-
-  // Debounce function for auto save draft
+  // 2.2. Debounce function for auto save draft
   const debouncedSaveProfile = useCallback(
     debounce((data) => {
       handleSaveProfile(0, data);
@@ -213,6 +219,16 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     []
   );
 
+  // 2.3. Cleanup debounce function
+  useEffect(() => {
+    return () => {
+      debouncedSaveProfile.cancel();
+      debouncedSaveContract.cancel();
+      debouncedSaveInventory.cancel();
+    };
+  }, []);
+
+  // 3. HANDLER
   const handleAddEmployeeContract = () => {
     const payload = {
       employee_id: employeeId,
@@ -223,169 +239,189 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    if (employeeId) {
-      setLoadingAdd(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeContract`, {
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeContract`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (!response2.success) {
+          notification.error({
+            message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan kontrak karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingAdd(false));
+  };
+
+  // Save profile as draft or posted
+  const handleSaveProfile = (isPosted, employeeProfileData) => {
+    if (!isAllowedToUpdateEmployee) {
+      permissionWarningNotification("Menyimpan", "Draft Karyawan");
+      return;
+    }
+
+    if (employeeProfileData) {
+      const payloadFormData = objectToFormData({
+        ...employeeProfileData,
+        is_posted: isPosted,
+      });
+
+      setLoadingUpdate(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployee`, {
         method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: payloadFormData,
       })
         .then((response) => response.json())
         .then((response2) => {
           setRefresh((prev) => prev + 1);
-          if (!response2.success) {
+          if (response2.success) {
+            notification.success({
+              message: `Draft karyawan berhasil disimpan.`,
+              duration: 3,
+            });
+            if (isPosted === 1) {
+              setTimeout(() => {
+                setDataEmployee({});
+                rt.push(`/admin/employees`);
+              }, 500);
+            }
+          } else {
             notification.error({
-              message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
+              message: `Gagal menyimpan draft karyawan. ${response2.message}`,
               duration: 3,
             });
           }
         })
         .catch((err) => {
           notification.error({
-            message: `Gagal menambahkan kontrak karyawan. ${err.response}`,
+            message: `Gagal menyimpan draft karyawan. ${err.response}`,
             duration: 3,
           });
         })
-        .finally(() => setLoadingAdd(false));
-    }
-  };
-
-  // Save profile as draft or posted
-  const handleSaveProfile = (isPosted, employeeProfileData) => {
-    const payloadFormData = objectToFormData({
-      ...employeeProfileData,
-      is_posted: isPosted,
-    });
-
-    if (!isAllowedToUpdateEmployee) {
-      permissionWarningNotification("Menyimpan", "Draft Karyawan");
-      return;
-    }
-    setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployee`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-      body: payloadFormData,
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        if (response2.success) {
-          notification.success({
-            message: `Draft karyawan berhasil disimpan.`,
-            duration: 3,
-          });
-          if (isPosted === 1) {
-            setTimeout(() => {
-              setDataEmployee({});
-              rt.push(`/admin/employees`);
-            }, 500);
-          }
-        } else {
-          notification.error({
-            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menyimpan draft karyawan. ${err.response}`,
-          duration: 3,
+        .finally(() => {
+          setLoadingUpdate(false);
         });
-      })
-      .finally(() => {
-        setLoadingUpdate(false);
-      });
+    }
   };
 
   // Save contract
   const handleSaveContract = (contractData) => {
-    const payloadFormData = objectToFormData(contractData);
-
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
       return;
     }
-    setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-      body: payloadFormData,
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        if (response2.success) {
-          notification.success({
-            message: `Draft karyawan berhasil disimpan.`,
-            duration: 3,
-          });
-        } else {
+
+    if (contractData) {
+      const payloadFormData = objectToFormData(contractData);
+
+      setLoadingUpdate(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+        body: payloadFormData,
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          setRefresh((prev) => prev + 1);
+          if (response2.success) {
+            notification.success({
+              message: `Draft karyawan berhasil disimpan.`,
+              duration: 3,
+            });
+          } else {
+            notification.error({
+              message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+            message: `Gagal menyimpan draft karyawan. ${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menyimpan draft karyawan. ${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingUpdate(false);
         });
-      })
-      .finally(() => {
-        setLoadingUpdate(false);
-      });
+    }
   };
 
   // Save inventory
   const handleSaveInventory = (inventoryData) => {
-    const payloadFormData = objectToFormData(inventoryData);
-
     if (!isAllowedToUpdateEmployeeInventory) {
       permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
       return;
     }
-    setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-      body: payloadFormData,
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        if (response2.success) {
-          notification.success({
-            message: `Draft karyawan berhasil disimpan.`,
-            duration: 3,
-          });
-        } else {
+
+    if (inventoryData) {
+      const payloadFormData = objectToFormData(inventoryData);
+
+      setLoadingUpdate(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
+        method: "POST",
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+        body: payloadFormData,
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          setRefresh((prev) => prev + 1);
+          if (response2.success) {
+            notification.success({
+              message: `Draft karyawan berhasil disimpan.`,
+              duration: 3,
+            });
+          } else {
+            notification.error({
+              message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+            message: `Gagal menyimpan draft karyawan. ${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menyimpan draft karyawan. ${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingUpdate(false);
         });
-      })
-      .finally(() => {
-        setLoadingUpdate(false);
-      });
+    }
+  };
+
+  const handleAutoSaveOnTabChange = () => {
+    if (prevTab.current == "1") {
+      debouncedSaveProfile.cancel();
+      handleSaveProfile(0, dataEmployee);
+    } else if (prevTab.current == "2") {
+      debouncedSaveContract.cancel();
+      handleSaveContract(dataContract);
+    } else {
+      debouncedSaveInventory.cancel();
+      handleSaveInventory(inventoryList[0]);
+    }
   };
 
   return (
@@ -420,6 +456,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => {
                   let numTab = Number(currentTab);
                   currentTab <= 3 && setCurrentTab(String(numTab - 1));
+                  handleAutoSaveOnTabChange();
                 }}
               >
                 <LeftIconSvg size={18} color={`#35763B`} />
@@ -443,11 +480,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 type={"primary"}
                 className="flex flex-row"
                 onClick={() => {
+                  debouncedSaveInventory.cancel();
                   handleSaveProfile(1, dataEmployee);
                   dataEmployee.contracts.length !== 0 &&
                     handleSaveContract(dataContract);
                   dataEmployee.inventories.length !== 0 &&
-                    handleSaveInventory(inventoryList);
+                    handleSaveInventory(inventoryList[0]);
                 }}
               >
                 <CheckIconSvg size={18} color={`white`} />
@@ -460,6 +498,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => {
                   let numTab = Number(currentTab);
                   currentTab < 3 && setCurrentTab(String(numTab + 1));
+                  handleAutoSaveOnTabChange();
                 }}
                 disabled={loadingUpdate}
               >
@@ -477,6 +516,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           onTabClick={(key) => setCurrentTab(key)}
           onChange={(key) => {
             // add employee contract if it has no contract yet
+            handleAutoSaveOnTabChange();
             key == "2" &&
               dataEmployee.contracts?.length === 0 &&
               handleAddEmployeeContract();

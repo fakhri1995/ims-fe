@@ -40,7 +40,7 @@ import {
   SIDEBAR_DASHBOARD,
   SIDEBAR_EMPLOYEE,
   SIDEBAR_EMPLOYEE_LIST,
-  SIDEBAR_EMPLOYEE_SALARY,
+  SIDEBAR_EMPLOYEE_PAYSLIP,
   SIDEBAR_FEATURE,
   SIDEBAR_FEATURE_MODULE,
   SIDEBAR_FEATURE_ROLE,
@@ -260,9 +260,9 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/admin/employees">Daftar Karyawan</Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_EMPLOYEE_SALARY) && (
+          {hasPermission(SIDEBAR_EMPLOYEE_PAYSLIP) && (
             <Menu.Item key="employee-salary">
-              <Link href="/admin/employees/salary">Slip Gaji</Link>
+              <Link href="/admin/employees/payslip">Slip Gaji</Link>
             </Menu.Item>
           )}
         </SubMenu>

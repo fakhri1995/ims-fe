@@ -187,6 +187,7 @@ const EmployeeContractDetail = ({
         )}
         accordion={true}
         onChange={(contractId) => handleGetEmployeeContract(contractId)}
+        className={"bg-transparent"}
       >
         {dataEmployee?.contracts?.map((contract, idx) => (
           <Collapse.Panel

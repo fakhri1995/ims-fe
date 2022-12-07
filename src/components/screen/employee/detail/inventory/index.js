@@ -184,6 +184,7 @@ const EmployeeInventoryDetail = ({
           )}
           accordion={true}
           onChange={(inventoryId) => handleGetEmployeeInventory(inventoryId)}
+          className={"bg-transparent"}
         >
           {dataEmployee?.inventories?.map((inventory, idx) => (
             <Collapse.Panel
