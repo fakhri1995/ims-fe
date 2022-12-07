@@ -22,6 +22,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Slider from "react-slick";
 
 import Layout from "../../../components/migwebsite/layout.js";
+import ThankForm from "../../../components/migwebsite/thank-form.js";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
@@ -104,6 +105,10 @@ function Talents({}) {
   const [details, setDetails] = useState(null);
   const [dataTalents, setDataTalents] = useState([]);
   const [statusEdit, setStatusEdit] = useState(false);
+  const [indexEdit, setIndexEdit] = useState(null);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [modalSubmit, setModalSubmit] = useState(false);
+  const [deleteTalentValue, setDeleteTalentValue] = useState(null);
   const dataMeetingTime = [
     {
       id: 1,
@@ -159,9 +164,28 @@ function Talents({}) {
     },
   ];
 
-  const handleEdit = () => {
-    console.log("edit");
-    setProductSelected(["Oke", "Jos"]);
+  const handleEdit = (index) => {
+    console.log("handle edit ", index);
+    setStatusEdit(true);
+    setIndexEdit(index);
+    setProductSelected(dataTalents[index].product);
+    setKindOfTalent(dataTalents[index].kindOfTalent);
+    setManyTalent(dataTalents[index].manyTalent);
+    setUrgently(dataTalents[index].urgently);
+    setOpenRemote(dataTalents[index].openRemote);
+    handleSetForm(index);
+  };
+
+  const handleSetForm = (index) => {
+    console.log("data talents ", dataTalents[index]);
+    form.setFieldsValue({ urgently_need: dataTalents[index].urgently });
+    form.setFieldsValue({ level_employee: dataTalents[index].levelEmployee });
+    form.setFieldsValue({ time_used: dataTalents[index].timeUsed });
+    // form.setFieldsValue({product: dataHardwareSummary[index].product });
+    form.setFieldsValue({ max_budget: dataTalents[index].maxBudget });
+    form.setFieldsValue({ many_talent: dataTalents[index].manyTalent });
+    form.setFieldsValue({ Details: dataTalents[index].details });
+    form.setFieldsValue({ open_remote: dataTalents[index].openRemote });
   };
   const onChangeValuePurpose = (e) => {
     console.log("radio checked", e.target.value);
@@ -180,6 +204,9 @@ function Talents({}) {
 
   const handleCancel = () => {
     setModalTalents(false);
+  };
+  const handleCancelDelete = () => {
+    setModalDelete(false);
   };
   const showModalData = () => {
     setModalTalentsData(true);
@@ -260,7 +287,8 @@ function Talents({}) {
     arr_product.push(product);
     setProductSelected(arr_product);
     console.log("selected ", formActive);
-    form.setFieldValue(form, "product", "");
+    setProduct(null);
+    form.setFieldsValue({ product: null });
   };
 
   const deleteProduct = (index) => {
@@ -280,26 +308,86 @@ function Talents({}) {
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() != "") {
       console.log("tidak kosong");
+      notification.success({
+        message: "Submit Form Solution Talents Success!",
+        duration: 3,
+      });
       setShowThankForm(true);
     }
   };
 
   const handleAddAnotherProduct = () => {
-    let array_talents = dataTalents;
-    array_talents.push({
-      kindOfTalent: kindOfTalent,
-      product: productSelected,
-      levelEmployee: levelEmployee,
-      manyTalent: manyTalent,
-      urgently: urgently,
-      timeUsed: timeUsed,
-      openRemote: openRemote,
-      maxBudget: maxBudget,
-      details: details,
-    });
-    console.log("array talents ", array_talents);
-    setDataTalents([...array_talents]);
-    form.resetFields(["formtalentdetail"]);
+    console.log("edit status ", statusEdit);
+    console.log("edit status manyTalent", manyTalent);
+
+    if (statusEdit == true) {
+      let array_talents = [];
+      for (let i = 0; i < dataTalents.length; i++) {
+        if (i == indexEdit) {
+          array_talents.push({
+            kindOfTalent: kindOfTalent,
+            product: productSelected,
+            levelEmployee: levelEmployee,
+            manyTalent: manyTalent,
+            urgently: urgently,
+            timeUsed: timeUsed,
+            openRemote: openRemote,
+            maxBudget: maxBudget,
+            details: details,
+          });
+        } else {
+          array_talents.push({
+            kindOfTalent: dataTalents[i].kindOfTalent,
+            product: dataTalents[i].productSelected,
+            levelEmployee: dataTalents[i].levelEmployee,
+            manyTalent: dataTalents[i].manyTalent,
+            urgently: dataTalents[i].urgently,
+            timeUsed: dataTalents[i].timeUsed,
+            openRemote: dataTalents[i].openRemote,
+            maxBudget: dataTalents[i].maxBudget,
+            details: dataTalents[i].details,
+          });
+        }
+      }
+      setDataTalents([...array_talents]);
+      notification.success({
+        message: "Edit Talent success!",
+        duration: 3,
+      });
+    } else {
+      let array_talents = dataTalents;
+      array_talents.push({
+        kindOfTalent: kindOfTalent,
+        product: productSelected,
+        levelEmployee: levelEmployee,
+        manyTalent: manyTalent,
+        urgently: urgently,
+        timeUsed: timeUsed,
+        openRemote: openRemote,
+        maxBudget: maxBudget,
+        details: details,
+      });
+
+      setDataTalents([...array_talents]);
+      notification.success({
+        message: "Add Talent success!",
+        duration: 3,
+      });
+    }
+    console.log("array talents ", openRemote);
+    clearForm();
+  };
+
+  const clearForm = () => {
+    setKindOfTalent(null);
+    setSkillSuggestion([]);
+    form.resetFields(["level_employee"]);
+    form.resetFields(["many_talent"]);
+    form.resetFields(["time_used"]);
+    form.resetFields(["open_remote"]);
+    form.resetFields(["urgently_need"]);
+    form.resetFields(["max_budget"]);
+    form.resetFields(["Details"]);
   };
 
   const handleKindOfTalent = (value) => {
@@ -323,6 +411,38 @@ function Talents({}) {
     }
     console.log("array ", arr);
     setSkillSuggestion(arr);
+  };
+
+  const handleDeleteTalents = (value, index) => {
+    console.log("index ke ", index);
+    setIndexEdit(index);
+    setDeleteTalentValue(value);
+    setModalDelete(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    let array_talents = dataTalents;
+    array_talents.slice(indexEdit, 1);
+    if (dataTalents.length == 1) {
+      setDataTalents([]);
+      setModalDelete(false);
+    } else {
+      setDataTalents([...array_talents]);
+    }
+
+    console.log("handle delete confirm ", array_talents);
+  };
+
+  const handleSubmitTalents = () => {
+    setModalSubmit(true);
+  };
+
+  const handleSubmitConfirm = () => {
+    setFormActive("four");
+    setModalSubmit(false);
+  };
+  const handleCancelSubmit = () => {
+    setModalSubmit(false);
   };
   const NextArrow = (props) => {
     const { className, style, onClick } = props;
@@ -419,7 +539,7 @@ function Talents({}) {
           </div>
         </section>
       )}
-      {showForm ? (
+      {showForm && showThankForm == false ? (
         <div>
           <section
             className={
@@ -649,6 +769,133 @@ function Talents({}) {
               </div>
             ) : formActive == "third" ? (
               <div className="w-[52%]">
+                <Modal
+                  open={modalDelete}
+                  onCancel={handleCancelDelete}
+                  width={392}
+                  closeIcon={
+                    <img
+                      className={"w-[24px] mt-8 h-[24px]"}
+                      src="/image/people/close.png"
+                    />
+                  }
+                  footer={null}
+                >
+                  <div className={"text-center mx-auto"}>
+                    <div className={"mt-9 grid justify-items-center"}>
+                      <img
+                        src="image/icon-warning.png"
+                        className={"w-[72px] h-[72px]"}
+                      />
+                    </div>
+                    <div className={"mt-8"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-blackmig text-[32px]"
+                        }
+                      >
+                        Delete
+                      </p>
+                      <p
+                        className={
+                          "mt-4 text-base text-blackmig gilroy-regular"
+                        }
+                      >
+                        Are you sure you want to remove talent{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {deleteTalentValue}
+                        </span>{" "}
+                        ?
+                      </p>
+                    </div>
+                    <button
+                      className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
+                      onClick={handleDeleteConfirm}
+                    >
+                      <p className={"text-base text-white font-gilroysemibold"}>
+                        Yes, delete talent request
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "mt-4 py-2 bg-white border border-primarygreen rounded px-[129px]"
+                      }
+                      onClick={handleCancelDelete}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        Cancel
+                      </p>
+                    </button>
+                  </div>
+                </Modal>
+                <Modal
+                  open={modalSubmit}
+                  onCancel={handleCancelSubmit}
+                  width={392}
+                  closeIcon={
+                    <img
+                      className={"w-[24px] mt-8 h-[24px]"}
+                      src="/image/people/close.png"
+                    />
+                  }
+                  footer={null}
+                >
+                  <div className={"text-center mx-auto"}>
+                    <div className={"mt-9 grid justify-items-center"}>
+                      <img
+                        src="image/icon-warning.png"
+                        className={"w-[72px] h-[72px]"}
+                      />
+                    </div>
+                    <div className={"mt-8"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-blackmig text-[32px]"
+                        }
+                      >
+                        Submit Request
+                      </p>
+                      <div className={"mt-2 border border-dividermig px-8"} />
+                      <p
+                        className={
+                          "mt-4 text-base text-blackmig gilroy-regular"
+                        }
+                      >
+                        Are you sure you want to submit your request with only{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {dataTalents.length}
+                        </span>{" "}
+                        talent ?
+                      </p>
+                    </div>
+                    <button
+                      className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
+                      onClick={handleSubmitConfirm}
+                    >
+                      <p className={"text-base text-white font-gilroysemibold"}>
+                        Yes, continue with {dataTalents.length} talent
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "mt-4 py-2 bg-white border border-primarygreen rounded px-[27.5px]"
+                      }
+                      onClick={handleCancelSubmit}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        No, I want to complete my request{" "}
+                      </p>
+                    </button>
+                  </div>
+                </Modal>
                 <p className={"text-2xl text-blackmig font-semibold"}>
                   Talent Information
                 </p>
@@ -1017,7 +1264,7 @@ function Talents({}) {
 
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
-                      name="Level Employee"
+                      name="level_employee"
                       className={"gilroy-medium text-xl"}
                       label="What level of employee you would like to see in your new hire?"
                       rules={[{ required: true }]}
@@ -1025,7 +1272,7 @@ function Talents({}) {
                       <Select
                         style={{ border: "1px solid #B8B8B8" }}
                         // dropdownStyle={{ backgroundColor: "green" }}
-                        name="need_product"
+                        name="level_employee"
                         onChange={(value) => {
                           setLevelEmployee(value);
                         }}
@@ -1040,7 +1287,7 @@ function Talents({}) {
                   <div className={"mt-8"}>
                     <Form.Item
                       // name={"product"}
-
+                      name={"many_talent"}
                       className={"gilroy-medium text-xl"}
                       label={
                         <p className={"text-blackmig"}>
@@ -1054,13 +1301,13 @@ function Talents({}) {
                       rules={[{ required: true }]}
                     >
                       <InputNumber
-                        // value={product}
+                        // value={manyTalent}
                         style={{
                           border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
                         }}
-                        name={"Many Talent"}
+                        name={"many_talent"}
                         onChange={(e) => {
                           setManyTalent(e);
                         }}
@@ -1078,7 +1325,7 @@ function Talents({}) {
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
-                      name="Urgently Need Talent"
+                      name="urgently_need"
                       className={"gilroy-medium text-xl"}
                       label="How soon do you need the talent?"
                       rules={[{ required: true }]}
@@ -1086,22 +1333,26 @@ function Talents({}) {
                       <Select
                         style={{ border: "1px solid #B8B8B8" }}
                         // dropdownStyle={{ backgroundColor: "green" }}
-                        name="Urgently Need Talent"
+                        name="urgently_need"
                         onChange={(value) => {
                           setUrgently(value);
                         }}
                         allowClear
                         placeholder={"When will you start using the product?"}
                       >
-                        <Option value="1 week">1 week</Option>
-                        <Option value="1 month">1 month</Option>
-                        <Option value="6 month">6 month</Option>
+                        <Option value="Within this week">
+                          Within this week
+                        </Option>
+                        <Option value="Within this month">
+                          Within this month
+                        </Option>
+                        <Option value="Next Month">Next Month</Option>
                       </Select>
                     </Form.Item>
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
-                      name="Time used"
+                      name="time_used"
                       className={"gilroy-medium text-xl"}
                       label="How long do you need the the talent?"
                       rules={[{ required: true }]}
@@ -1109,22 +1360,23 @@ function Talents({}) {
                       <Select
                         style={{ border: "1px solid #B8B8B8" }}
                         // dropdownStyle={{ backgroundColor: "green" }}
-                        name="Time used"
+                        name="time_used"
                         onChange={(value) => {
                           setTimeUsed(value);
                         }}
                         allowClear
                         placeholder={"How long will the product used?"}
                       >
-                        <Option value="1 month">1 month</Option>
-                        <Option value="3 month">3 month</Option>
-                        <Option value="6 month">6 month</Option>
+                        <Option value="6">{"< 6 Month Duration"}</Option>
+                        <Option value="6 - 12">
+                          {"6 - 12 Month Duration"}
+                        </Option>
                       </Select>
                     </Form.Item>
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
-                      name="Open Remote Talent"
+                      name="open_remote"
                       className={"gilroy-medium text-xl"}
                       label="Are you open in hiring our remote talent? (work from home)"
                       rules={[{ required: true }]}
@@ -1132,44 +1384,48 @@ function Talents({}) {
                       <Select
                         style={{ border: "1px solid #B8B8B8" }}
                         // dropdownStyle={{ backgroundColor: "green" }}
-                        name="Open Remote Talent"
+                        name="open_remote"
                         onChange={(value) => {
-                          setOpenRemote([...value]);
+                          setOpenRemote(value);
                         }}
                         allowClear
                         placeholder={"Choose decision"}
                       >
-                        <Option value="yes">Yes</Option>
-                        <Option value="no">No</Option>
+                        <Option value="Yes">Yes</Option>
+                        <Option value="No">No</Option>
                       </Select>
                     </Form.Item>
                   </div>
                   <div className={"mt-8"}>
                     <Form.Item
+                      // name={"product"}
+                      name={"max_budget"}
+                      className={"gilroy-medium text-xl"}
                       label={
-                        <p className={"text-sm"}>
+                        <p className={"text-blackmig"}>
                           What is your maximum budget for your new hire?
                         </p>
                       }
                       rules={[{ required: true }]}
                     >
-                      {/* <Form.Item name="input-number" noStyle> */}
                       <InputNumber
-                        min={1}
-                        max={10}
+                        // value={manyTalent}
                         style={{
                           border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
                         }}
+                        name={"max_budget"}
+                        formatter={(value) =>
+                          `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => value.replace(/\Rp\s?|(,*)/g, "")}
                         onChange={(e) => {
                           setMaxBudget(e);
                         }}
+                        // onPressEnter={handleInputProduct}
+                        placeholder="How many?"
                       />
-                      {/* </Form.Item> */}
-                      <span className="ant-form-text" style={{ marginLeft: 8 }}>
-                        / talent / month
-                      </span>
                     </Form.Item>
                     <Form.Item
                       name={"Details"}
@@ -1180,8 +1436,8 @@ function Talents({}) {
                       <TextArea
                         style={{ border: "1px solid #B8B8B8" }}
                         name={"Details"}
-                        onChange={(e) => {
-                          setDetails(e);
+                        onChange={(value) => {
+                          setDetails(value.target.value);
                         }}
                         rows={4}
                         placeholder="Tell us more about your talent details"
@@ -1210,7 +1466,7 @@ function Talents({}) {
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
-                        src="/image/landingpage/arrow_forward_ios2.png"
+                        src="/image/plus.png"
                       />
                     </button>
                   </div>
@@ -1371,42 +1627,79 @@ function Talents({}) {
                       Talent Request Summary
                     </p>
                     <div className={"mt-3 border border-dividermig"} />
-                    {dataTalents.map((data) => (
-                      <button
-                        className={
-                          "bg-transparent mt-4  text-left hover:bg-greenTrans5 w-full"
-                        }
-                        onClick={handleEdit}
-                      >
-                        <p
-                          className={
-                            "text-blackmig font-gilroysemibold text-sm "
-                          }
-                        >
-                          {data.kindOfTalent}
-                        </p>
-                        <p className={"text-blackmig gilroy-regular text-sm"}>
-                          {data.levelEmployee +
-                            " - level, " +
-                            data.manyTalent +
-                            " talent, " +
-                            data.urgently +
-                            ", " +
-                            data.timeUsed +
-                            " duration"}
-                        </p>
-                        <div className={"flex"}>
-                          <p
-                            className={
-                              "text-blackmig text-xs font-gilroysemibold"
-                            }
+                    {dataTalents.map((data, index) => (
+                      <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                        <div className={"flex flex-row"}>
+                          <button
+                            className={"bg-transparent text-left"}
+                            onClick={() => handleEdit(index)}
                           >
-                            Roles/skills:
-                          </p>
+                            <div className={"w-[90%]"}>
+                              <p
+                                className={
+                                  "text-blackmig font-gilroysemibold text-sm "
+                                }
+                              >
+                                {data.kindOfTalent}
+                              </p>
+                              <p
+                                className={
+                                  "text-blackmig gilroy-regular text-sm"
+                                }
+                              >
+                                {data.levelEmployee +
+                                  " - level, " +
+                                  data.manyTalent +
+                                  " talent, " +
+                                  data.urgently +
+                                  ", " +
+                                  data.timeUsed +
+                                  " duration"}
+                              </p>
+                              <div className={"flex"}>
+                                <p
+                                  className={
+                                    "text-blackmig text-xs font-gilroysemibold"
+                                  }
+                                >
+                                  Roles/skills:
+                                </p>
+                                <div className="flex flex-row ml-2">
+                                  {data.product.map(
+                                    (data_product, index_product) => (
+                                      <p className={"text-xs text-blackmig"}>
+                                        {data_product}{" "}
+                                        {index_product ==
+                                        data.product.length - 1
+                                          ? " "
+                                          : ", "}
+                                      </p>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                          <div
+                            className={"w-[10%] flex justify-end self-center"}
+                          >
+                            <button
+                              className={"bg-transparent"}
+                              onClick={() =>
+                                handleDeleteTalents(data.kindOfTalent, index)
+                              }
+                            >
+                              <img
+                                src="image/trash.png"
+                                className={"w-6 h-6"}
+                              />
+                            </button>
+                          </div>
                         </div>
-                      </button>
+                      </div>
                     ))}
                     <button
+                      onClick={handleSubmitTalents}
                       className={
                         "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
                       }
@@ -1427,7 +1720,7 @@ function Talents({}) {
                               "text-primarygreen text-base font-semibold"
                             }
                           >
-                            1
+                            {dataTalents.length}
                           </p>
                         </div>
                       </div>
@@ -1448,6 +1741,10 @@ function Talents({}) {
               </div>
             )}
           </section>
+        </div>
+      ) : showForm && showThankForm == true ? (
+        <div className="grid justify-items-center">
+          <ThankForm type_form={"Talents"} />
         </div>
       ) : (
         <div>
@@ -2566,6 +2863,8 @@ function Talents({}) {
               </div>
             </div>
           </Modal>
+          {/* modal delete */}
+
           {/*section why you should */}
           <section
             className={

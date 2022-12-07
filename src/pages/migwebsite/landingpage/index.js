@@ -110,11 +110,11 @@ function LandingPage({}) {
       {/* <section className={'container mx-auto'}> */}
       <section
         className={
-          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] items-center"
+          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:mx-auto md:relative"
         }
       >
         {/* Browser View */}
-        <div className={"hidden md:flex mx-auto"}>
+        <div className={"hidden md:flex container mx-auto relative"}>
           <div className={"flex-col w-2/5"}>
             <p
               className={

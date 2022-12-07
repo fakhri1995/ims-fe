@@ -333,6 +333,16 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/admin/messages">Message</Link>
             </Menu.Item>
           )}
+          {hasPermission(SIDEBAR_CMS_MESSAGE) && (
+            <Menu.Item key="93">
+              <Link href="/admin/form-solution">Form Solution</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_CMS_MESSAGE) && (
+            <Menu.Item key="94">
+              <Link href="/admin/blog">Blog</Link>
+            </Menu.Item>
+          )}
         </SubMenu>
       )}
 

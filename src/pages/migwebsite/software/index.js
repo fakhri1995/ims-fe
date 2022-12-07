@@ -228,6 +228,10 @@ function Software({}) {
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() != "") {
       console.log("tidak kosong");
+      notification.success({
+        message: "Submit Form Solution Software Success!",
+        duration: 3,
+      });
       setShowThankForm(true);
     }
   };
