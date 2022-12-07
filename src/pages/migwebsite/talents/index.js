@@ -1589,7 +1589,8 @@ function Talents({}) {
                 <div className={"mt-4"}>
                   <ReCAPTCHA
                     ref={captchaRef}
-                    sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
+                    // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
+                    sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
                 </div>
                 <div className={"mt-9 flex flex-row justify-between"}>
