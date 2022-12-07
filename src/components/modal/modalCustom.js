@@ -1,6 +1,7 @@
 import { Checkbox, Form, Input, Modal, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 
+import { createKeyPressHandler } from "../../lib/helper";
 import ButtonSys from "../button";
 import {
   AlertIconSvg,
@@ -870,19 +871,59 @@ const ModalUbah = ({
 };
 
 const ModalAddSalaryVar = ({
+  isManageVar,
   visible,
   onvisible,
   onOk,
   loading,
   disabled,
-  setInputVar,
-  isInputVar,
+  // setInputVar,
+  // isInputVar,
 }) => {
+  const [isInputReceiveVar, setInputReceiveVar] = useState(false);
+  const [isInputReductionVar, setInputReductionVar] = useState(false);
+  const receiveVarList = [
+    {
+      label: "Gaji Pokok",
+      value: "Gaji Pokok",
+    },
+    {
+      label: "Tunjangan Uang Makan",
+      value: "Tunjangan Uang Makan",
+    },
+    {
+      label: "Tunjangan Transport",
+      value: "Tunjangan Transport",
+    },
+  ];
+  const reductionVarList = [
+    {
+      label: "PPh 21",
+      value: "PPh 21",
+    },
+    {
+      label: "BPJS KS",
+      value: "BPJS KS",
+    },
+    {
+      label: "BPJS TK-JHT",
+      value: "BPJS TK-JHT",
+    },
+  ];
+
+  const onAddVariable = (e) => {
+    console.log(e);
+  };
+  const { onKeyPressHandler } = createKeyPressHandler(onAddVariable, "Enter");
   return (
     <Modal
       title={
         <div className="flex flex-row justify-between items-center">
-          <p>Tambah Variabel Gaji</p>
+          {isManageVar ? (
+            <p>Kelola Variabel Gaji</p>
+          ) : (
+            <p>Tambah Variabel Gaji</p>
+          )}
           <CircleCheckIconSvg size={32} color={"#35763B"} />
         </div>
       }
@@ -902,21 +943,61 @@ const ModalAddSalaryVar = ({
       }
       loading={loading}
     >
-      <div className="flex flex-row space-x-8">
-        <div className="w-full space-y-2">
-          <h5 className="mig-heading--5">PENERIMAAN</h5>
-          {/* TODO: Loop variabel */}
-          <Checkbox
-            className="ml-1"
-            // onChange={}
-          >
-            Gaji Pokok
-          </Checkbox>
-          {isInputVar ? (
-            <div className="flex flex-row items-center space-x-1">
+      <div className="grid grid-cols-2 gap-x-8">
+        {isManageVar && (
+          <p className="col-span-2 mb-5">
+            Pilih variabel gaji yang ingin ditampilkan atau tambah variabel
+            baru.
+          </p>
+        )}
+        <div className="">
+          <h5 className="mig-heading--5 mb-2">PENERIMAAN</h5>
+          <Checkbox.Group
+            options={receiveVarList}
+            defaultValue={["Gaji Pokok"]}
+            className="space-y-2 mb-2"
+          />
+          {isInputReceiveVar ? (
+            <div className="flex flex-row items-center -ml-1 space-x-2">
               <button
                 onClick={() => {
-                  setInputVar(false);
+                  setInputReceiveVar(false);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <SquarePlusIconSvg color={"#35763B"} size={24} />
+              </button>
+
+              <Input
+                size="small"
+                placeholder="Masukkan variabel"
+                autoFocus
+                onKeyPress={onKeyPressHandler}
+              />
+            </div>
+          ) : (
+            <button
+              className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
+              onClick={() => setInputReceiveVar(true)}
+            >
+              <SquarePlusIconSvg color={"#35763B"} size={24} />
+              <p className="text-primary100 ">Tambah</p>
+            </button>
+          )}
+        </div>
+
+        <div className="">
+          <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
+          <Checkbox.Group
+            options={reductionVarList}
+            defaultValue={["PPh 21"]}
+            className="space-y-2 mb-2 flex flex-col"
+          />
+          {isInputReductionVar ? (
+            <div className="flex flex-row items-center -ml-1 space-x-2">
+              <button
+                onClick={() => {
+                  setInputReductionVar(false);
                 }}
                 className="bg-transparent hover:opacity-75"
               >
@@ -931,21 +1012,13 @@ const ModalAddSalaryVar = ({
             </div>
           ) : (
             <button
-              className="flex flex-row items-center bg-transparent hover:opacity-75"
-              onClick={() => setInputVar(true)}
+              className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
+              onClick={() => setInputReductionVar(true)}
             >
               <SquarePlusIconSvg color={"#35763B"} size={24} />
-              <p className="text-primary100 ml-1">Tambah</p>
+              <p className="text-primary100 ">Tambah</p>
             </button>
           )}
-        </div>
-        <div className="w-full space-y-2">
-          <h5 className="mig-heading--5">PENGURANGAN</h5>
-          <Checkbox
-          // onChange={}
-          >
-            PPh 21
-          </Checkbox>
         </div>
       </div>
     </Modal>

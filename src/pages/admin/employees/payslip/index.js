@@ -29,6 +29,7 @@ import {
   EMPLOYEES_PAYSLIPS_POST,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_GET,
+  EMPLOYEE_PAYSLIP_VARIABLE_ADD,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -48,6 +49,7 @@ import { DownloadIconSvg, SettingsIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import {
+  ModalAddSalaryVar,
   ModalHapus2,
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
@@ -179,6 +181,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.4. Delete payslip
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+
+  // 2.5. Add salary variable
+  const [modalSalaryVar, setModalSalaryVar] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
+  const [isInputVar, setInputVar] = useState(false);
 
   // 3. UseEffect
   // 3.1. Get Payslips
@@ -402,7 +409,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.placement || "-"}</>,
+          children: <>{record?.contract?.placement || "-"}</>,
         };
       },
     },
@@ -411,7 +418,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.role_id || "-"}</>,
+          children: <>{record?.contract?.role_id || "-"}</>,
         };
       },
     },
@@ -601,7 +608,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div className="flex flex-col md:flex-row items-center space-x-6">
               <ButtonSys
                 type={"default"}
-                // onClick={}
+                onClick={() => setModalSalaryVar(true)}
                 // disabled
               >
                 <div className="flex space-x-2 items-center">
@@ -754,6 +761,18 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           />
         </div>
       </div>
+      {/* Modal Add Salary Variable */}
+      {/* TODO: change hasPermission */}
+      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_VARIABLE_ADD}>
+        <ModalAddSalaryVar
+          isManageVar={true}
+          visible={modalSalaryVar}
+          onvisible={setModalSalaryVar}
+          loading={loadingSave}
+          // onOk={}
+          // disabled
+        />
+      </AccessControl>
       <AccessControl hasPermission={EMPLOYEES_PAYSLIPS_POST}>
         <ModalUbah
           title={"Konfirmasi Penerbitan Draft Slip Gaji"}
