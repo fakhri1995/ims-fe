@@ -81,7 +81,6 @@ const EmployeeDetailIndex = ({
   const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
   const [dataEmployee, setDataEmployee] = useState({
-    // id_photo: "",
     id: 0,
     name: "",
     nip: "",
@@ -106,6 +105,7 @@ const EmployeeDetailIndex = ({
     is_posted: 0,
     contracts: [],
     inventories: [],
+    id_card_photo: {},
   });
 
   const [refresh, setRefresh] = useState(-1);

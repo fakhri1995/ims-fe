@@ -36,7 +36,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
   return (
     <div className="flex flex-col shadow-md rounded-md bg-white p-5 ">
       <div className="flex items-center justify-between mb-4">
-        <H1>{title}</H1>
+        <h4 className="mig-heading--4">{title}</h4>
       </div>
       <div className=" w-full flex justify-center">
         <Doughnut
@@ -83,7 +83,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
                   }`,
                 }}
               ></div>
-              <Text>{doc[objName]}</Text>
+              <Text>{doc[objName] || "-"}</Text>
             </div>
             <div className="flex">
               <H2>{doc[value]}</H2>

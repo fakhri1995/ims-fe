@@ -93,45 +93,6 @@ const InventoryForm = ({
     }
   }, [inventoryList]);
 
-  // 2.1 Get employee devices
-  // useEffect(() => {
-  //   if (!isAllowedToGetEmployeeInventoryDevices) {
-  //     permissionWarningNotification("Mendapatkan", "Daftar Piranti Karyawan");
-  //     setpraloading(false);
-  //     return;
-  //   }
-  //   if (inventoryId) {
-  //     setpraloading(true);
-  //     fetch(
-  //       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeDevices?employee_inventory_id=${inventoryId}`,
-  //       {
-  //         method: `GET`,
-  //         headers: {
-  //           Authorization: JSON.parse(initProps),
-  //         },
-  //       }
-  //     )
-  //       .then((response) => response.json())
-  //       .then((response2) => {
-  //         if (response2.success) {
-  //           setDeviceList([...deviceList, response2.data]);
-  //         } else {
-  //           notification.error({
-  //             message: `${response2.message}`,
-  //             duration: 3,
-  //           });
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         notification.error({
-  //           message: `${err.response}`,
-  //           duration: 3,
-  //         });
-  //       })
-  //       .finally(() => setpraloading(false))
-  //   }
-  // }, [isAllowedToGetEmployeeInventoryDevices, inventoryId, refresh]);
-
   // 3. HANDLER
   const onChangeInput = (e) => {
     let data = [...inventoryList];
@@ -155,21 +116,6 @@ const InventoryForm = ({
   };
 
   const handleAddNewDevice = () => {
-    // let newDataDevice = {
-    //   id: null,
-    //   employee_inventory_id: null,
-    //   id_number: "",
-    //   device_name: "",
-    //   device_type: "",
-    //   serial_number: "",
-    // };
-
-    // let newDeviceList = [...deviceList, newDataDevice];
-    // setDeviceList(newDeviceList);
-
-    // let dataInventories = [...inventoryList];
-    // dataInventories[idx].devices = newDeviceList;
-    // setInventoryList(dataInventories);
     const payload = {
       employee_inventory_id: inventoryId,
     };
@@ -179,35 +125,33 @@ const InventoryForm = ({
       return;
     }
 
-    if (inventoryId) {
-      setLoadingAdd(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeDevice`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setRefresh((prev) => prev + 1);
-          } else {
-            notification.error({
-              message: `Gagal menambahkan piranti karyawan. ${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeDevice`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+        } else {
           notification.error({
-            message: `Gagal menambahkan piranti karyawan. ${err.response}`,
+            message: `Gagal menambahkan piranti karyawan. ${response2.message}`,
             duration: 3,
           });
-        })
-        .finally(() => setLoadingAdd(false));
-    }
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan piranti karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingAdd(false));
   };
 
   const handleDeleteDevice = () => {
@@ -323,7 +267,6 @@ const InventoryForm = ({
       ]);
     }
 
-    console.log(debouncedApiCall);
     // use for auto save
     if (debouncedApiCall) {
       debouncedApiCall(data[idx]);
