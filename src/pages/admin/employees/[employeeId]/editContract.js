@@ -44,7 +44,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { id: contractId, employeeId } = rt.query;
+  const { id: contractId, employeeId, prevpath } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -110,6 +110,9 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response2) => {
           if (response2.success) {
             setDataContract(response2.data);
+            if (prevpath === "inactivate") {
+              setDataContract({ ...response2.data, is_employee_active: 0 });
+            }
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -151,12 +154,19 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
-          rt.push(`/admin/employees/${employeeId}`);
+          rt.push(`/admin/employees/${employeeId}?tab=2`);
           setTimeout(() => {
-            notification.success({
-              message: `Kontrak karyawan berhasil diubah.`,
-              duration: 3,
-            });
+            if (prevpath === "inactivate") {
+              notification.success({
+                message: `Status karyawan berhasil dinonaktifkan.`,
+                duration: 3,
+              });
+            } else {
+              notification.success({
+                message: `Kontrak karyawan berhasil diubah.`,
+                duration: 3,
+              });
+            }
           }, 500);
         } else {
           notification.error({
@@ -215,6 +225,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           initProps={initProps}
           dataContract={dataContract}
           setDataContract={setDataContract}
+          prevpath={prevpath}
         />
       </div>
     </LayoutDashboard>

@@ -68,6 +68,8 @@ const EmployeeDetailIndex = ({
 
   //INIT
   const rt = useRouter();
+  const { tab: tabId } = rt.query;
+
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
 
@@ -79,7 +81,7 @@ const EmployeeDetailIndex = ({
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("1");
+  const [currentTab, setCurrentTab] = useState(tabId || "1");
   const [dataEmployee, setDataEmployee] = useState({
     id: 0,
     name: "",
@@ -252,52 +254,6 @@ const EmployeeDetailIndex = ({
     }
   };
 
-  const handleDeleteEmployee = () => {
-    if (!isAllowedToDeleteEmployee) {
-      permissionWarningNotification("Menonaktifkan", "Karyawan");
-      return;
-    }
-    setLoadingDelete(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployee?id=${Number(
-        employeeId
-      )}`,
-      {
-        method: "DELETE",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          notification.success({
-            message: res2.message,
-            duration: 3,
-          });
-          setModalDelete(false);
-          rt.push("/admin/employees");
-        } else {
-          notification.error({
-            message: `Gagal menonaktifkan karyawan. ${res2.response}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menghapus kandidat. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingDelete(false);
-        setModalDelete(false);
-      });
-  };
-
   // Tab Button
   const tabButton = () => {
     let renderedButton = <></>;
@@ -388,7 +344,7 @@ const EmployeeDetailIndex = ({
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
-                {dataEmployee?.contracts[0]?.is_employee_active ? (
+                {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-primary100"></div>
                     <h4 className="mig-heading--4">Aktif</h4>
@@ -400,15 +356,19 @@ const EmployeeDetailIndex = ({
                   </div>
                 )}
               </div>
-              <ButtonSys
-                type={!isAllowedToDeleteEmployee ? "primary" : "default"}
-                color={"danger"}
-                onClick={() => setModalDelete(true)}
-                disabled={!isAllowedToDeleteEmployee}
-              >
-                <TrashIconSvg color={"#BF4A40"} size={16} />
-                <p className="ml-2">Nonaktifkan Karyawan</p>
-              </ButtonSys>
+              {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
+                <ButtonSys
+                  type={!isAllowedToDeleteEmployee ? "primary" : "default"}
+                  color={"danger"}
+                  onClick={() => setModalDelete(true)}
+                  disabled={!isAllowedToDeleteEmployee}
+                >
+                  <TrashIconSvg color={"#BF4A40"} size={16} />
+                  <p className="ml-2">Nonaktifkan Karyawan</p>
+                </ButtonSys>
+              ) : (
+                <></>
+              )}
             </div>
 
             {/* Profile summary */}
@@ -455,7 +415,11 @@ const EmployeeDetailIndex = ({
             tabBarGutter={60}
             className="px-1"
             activeKey={currentTab}
-            onTabClick={(key) => setCurrentTab(key)}
+            // onTabClick={(key) => setCurrentTab(key)}
+            onTabClick={(key) => {
+              setCurrentTab(key);
+              rt.push(`${employeeId}?tab=${key}`, undefined, { shallow: true });
+            }}
             tabBarExtraContent={tabButton()}
           >
             <Tabs.TabPane tab="Detail Profil" key="1">
@@ -493,7 +457,11 @@ const EmployeeDetailIndex = ({
           title={`Peringatan`}
           visible={modalDelete}
           onvisible={setModalDelete}
-          onOk={handleDeleteEmployee}
+          onOk={() =>
+            rt.push(
+              `${employeeId}/editContract?id=${dataEmployee?.contracts[0]?.id}&prevpath=inactivate`
+            )
+          }
           onCancel={() => {
             setModalDelete(false);
           }}

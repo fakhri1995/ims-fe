@@ -47,6 +47,7 @@ const EmployeeContractForm = ({
   dataContract,
   setDataContract,
   debouncedApiCall,
+  prevpath,
 }) => {
   /**
    * Dependencies
@@ -566,7 +567,18 @@ const EmployeeContractForm = ({
           />
         </div>
       </Form.Item>
-      <Form.Item label="Tanggal Resign" name={"resign_at"}>
+      <Form.Item
+        label="Tanggal Resign"
+        name={"resign_at"}
+        rules={
+          prevpath === "inactivate" && [
+            {
+              required: true,
+              message: "Akhir kontrak wajib diisi",
+            },
+          ]
+        }
+      >
         <>
           <DatePicker
             name="resign_at"

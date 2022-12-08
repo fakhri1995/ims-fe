@@ -12,6 +12,7 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  EMPLOYEE_CONTRACTS_GET,
   EMPLOYEE_CONTRACT_DELETE,
   EMPLOYEE_CONTRACT_GET,
   EMPLOYEE_CONTRACT_UPDATE,
@@ -44,6 +45,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   }
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
+  const isAllowedToGetEmployeeContracts = hasPermission(EMPLOYEE_CONTRACTS_GET);
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
   );
@@ -98,6 +100,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 1.2 Update
   const [modalUpdate, setModalUpdate] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [prevContractName, setPrevContractName] = useState("");
 
   // 1.3. Delete
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -142,6 +145,49 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployeeContract, contractId, refresh]);
 
+  // 2.1 Get employee contracts
+  useEffect(() => {
+    if (!isAllowedToGetEmployeeContracts) {
+      permissionWarningNotification("Mendapatkan", "Daftar Kontrak Karyawan");
+      setpraloading(false);
+      return;
+    }
+    if (contractId) {
+      setpraloading(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContracts?employee_id=${employeeId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            let contractList = response2.data;
+            let previousContractName =
+              contractList[contractList.length - 2]?.contract_name;
+            console.log(previousContractName);
+            setPrevContractName(previousContractName);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setpraloading(false));
+    }
+  }, [isAllowedToGetEmployeeContracts, employeeId, refresh]);
+
   // 3. Event
   // Save Employee Contract
   const handleSaveContract = () => {
@@ -167,7 +213,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             message: `Kontrak karyawan berhasil ditambahkan.`,
             duration: 3,
           });
-          rt.push(`/admin/employees/${employeeId}`);
+          rt.push(`/admin/employees/${employeeId}?tab=2`);
         } else {
           notification.error({
             message: `Gagal menyimpan kontrak karyawan. ${response2.message}`,
@@ -186,7 +232,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   };
 
-  // Delete Employee Contract
+  // Delete Employee Contract when click "Batalkan"
   const handleDeleteContract = () => {
     if (!isAllowedToDeleteEmployeeContract) {
       permissionWarningNotification("Menghapus", "Kontrak");
@@ -297,8 +343,9 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
         >
           <div className="space-y-4">
             <p className="">
-              Dengan menambahkan kontrak ini, status kontrak Anda dengan nama
-              <strong>{dataContract?.current_contract}</strong> akan menjadi{" "}
+              Dengan menambahkan kontrak ini, status kontrak Anda dengan
+              nama&nbsp;
+              <strong>{prevContractName || "-"} </strong> akan menjadi{" "}
               <strong>Tidak Aktif</strong>.
             </p>
             <p>
