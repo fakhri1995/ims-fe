@@ -20,6 +20,9 @@ import "react-calendar/dist/Calendar.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import Slider from "react-slick";
 
+import { getBase64 } from "lib/helper";
+import { objectToFormData } from "lib/helper";
+
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
 import "slick-carousel/slick/slick-theme.css";
@@ -70,17 +73,18 @@ function Software({}) {
       setShowform(true);
     }
   };
+
   const [dataSoftware, setDataSoftware] = useState({
     company_name: null,
     company_email: null,
-    name: null,
+    contact_name: null,
     phone_number: null,
-    interested_in: "software",
+    kind_form: "software",
     budget_from: null,
     budget_to: null,
-    message: null,
-    kind_of_project: null,
-    type_of_project: null,
+    kind_project: null,
+    type_project: null,
+    attachment: null,
   });
   const [email, setEmail] = useState(null);
   const [showForm, setShowform] = useState(false);
@@ -151,7 +155,7 @@ function Software({}) {
     // setValuePurpose(e.target.value);
     setDataSoftware({
       ...dataSoftware,
-      type_of_project: e.target.value,
+      type_project: e.target.value,
     });
   };
 
@@ -225,14 +229,65 @@ function Software({}) {
     arrows: false,
   };
 
+  const onChangeFile = async (info) => {
+    if (info.file.status === "uploading") {
+      // setLoadingupload(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+      console.log("info file ", info);
+      setDataSoftware({
+        ...dataSoftware,
+        attachment: blobFile,
+      });
+    }
+  };
+
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() != "") {
-      console.log("tidak kosong");
-      notification.success({
-        message: "Submit Form Solution Software Success!",
-        duration: 3,
-      });
-      setShowThankForm(true);
+      let dataSoftwarePost = {
+        company_name: dataSoftware.company_name,
+        contact_name: dataSoftware.contact_name,
+        company_email: dataSoftware.company_email,
+        phone_number: dataSoftware.phone_number,
+        kind_project: dataSoftware.kind_project,
+        type_project: dataSoftware.type_project,
+        budget_from: dataSoftware.budget_from,
+        budget_to: dataSoftware.budget_to,
+        kind_form: "software",
+        meeting_schedule:
+          moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
+        attachment: dataSoftware.attachment,
+      };
+      let formData = objectToFormData(dataSoftwarePost);
+      console.log("data meeting schedule ", dataSoftwarePost.meeting_schedule);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolution`, {
+        method: "POST",
+        headers: {
+          // "Content-Type": "multipart/form-data",
+          Accept: "*/*",
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            form.resetFields();
+            setFeedback(false);
+            notification.success({
+              message: "Submit Form Solution Software Success!",
+              duration: 3,
+            });
+            setShowThankForm(true);
+          } else if (!res2.success) {
+            notification["error"]({
+              message: res2.message.errorInfo.status_detail,
+              duration: 5,
+            });
+          }
+        });
     }
   };
 
@@ -363,7 +418,7 @@ function Software({}) {
                           onChange={(e) => {
                             setDataSoftware({
                               ...dataSoftware,
-                              name: e.target.value,
+                              contact_name: e.target.value,
                             });
                           }}
                           placeholder="Enter your name here"
@@ -466,7 +521,7 @@ function Software({}) {
                       onChange={(e) => {
                         setDataSoftware({
                           ...dataSoftware,
-                          kind_of_project: e.target.value,
+                          kind_project: e.target.value,
                         });
                       }}
                       placeholder="Tell us about your project"
@@ -482,7 +537,7 @@ function Software({}) {
                     >
                       <Radio.Group
                         onChange={onChangeValuePurpose}
-                        value={dataSoftware.kind_of_project}
+                        value={dataSoftware.type_project}
                         buttonStyle={"solid"}
                       >
                         <Space direction="vertical">
@@ -579,7 +634,10 @@ function Software({}) {
                       >
                         <Upload.Dragger
                           name="files"
-                          action="/upload.do"
+                          maxCount={1}
+                          onChange={onChangeFile}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          // action="/upload.do"
                           style={{ width: "298px", height: "180px" }}
                         >
                           <p className="ant-upload-drag-icon">
