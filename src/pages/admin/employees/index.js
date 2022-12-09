@@ -478,7 +478,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         if (response2.success) {
           setTimeout(() => {
             setLoadingAdd(false);
-            rt.push(`/admin/employees/create?id=${response2.data?.id}`);
+            rt.push(
+              `/admin/employees/create?id=${response2.data?.id}&prevpath=add`
+            );
           }, 500);
         } else {
           notification.error({
@@ -590,16 +592,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   };
 
-  // Count "Sisa Hari Kerja" in table
-  // const todayDate = moment();
-  // const countWorkDaysLeft = (datestring) => {
-  //   let lastdayDate = moment(datestring);
-  //   if (!datestring || !lastdayDate.isValid()) {
-  //     return "-";
-  //   }
-  //   return lastdayDate.diff(todayDate, "days") + 1;
-  // };
-
   // "Daftar Karyawan" Table's columns
   const columnEmployee = [
     {
@@ -660,12 +652,16 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.contract?.contract_end_countdown <= 30 ? (
-                <p className="text-warning">
-                  {record.contract?.contract_end_countdown} hari
-                </p>
+              {moment(record?.contract?.contract_end_at).isValid() ? (
+                record.contract?.contract_end_countdown <= 30 ? (
+                  <p className="text-warning">
+                    {record.contract?.contract_end_countdown} hari
+                  </p>
+                ) : (
+                  <p>{record.contract?.contract_end_countdown} hari</p>
+                )
               ) : (
-                <p>{record.contract?.contract_end_countdown} hari</p>
+                <p>- hari</p>
               )}
             </>
           ),
@@ -829,7 +825,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     hover:border-primary75 focus:bg-primary100 focus:border-primary100"
                 icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                 onClick={onAddEmployeeButtonClicked}
-                // disabled
+                disabled={!isAllowedToAddEmployee}
               >
                 Tambah Karyawan
               </Button>

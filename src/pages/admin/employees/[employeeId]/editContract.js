@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { Form, notification } from "antd";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
@@ -54,7 +54,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   pathTitleArr.splice(1, 3);
   pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Kontrak");
 
-  const { query } = useRouter();
+  // const [instanceForm] = Form.useForm();
 
   // 1. STATE
   // 1.1. display
@@ -212,6 +212,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"primary"}
               onClick={handleSaveContract}
+              // onClick={instanceForm.submit}
               disabled={!isAllowedToUpdateEmployeeContract}
             >
               <div className="flex flex-row space-x-2">
@@ -226,6 +227,8 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           dataContract={dataContract}
           setDataContract={setDataContract}
           prevpath={prevpath}
+          // handleSaveContract={handleSaveContract}
+          // instanceForm={instanceForm}
         />
       </div>
     </LayoutDashboard>
