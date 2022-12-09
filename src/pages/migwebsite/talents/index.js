@@ -21,6 +21,8 @@ import "react-calendar/dist/Calendar.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import Slider from "react-slick";
 
+import { objectToFormData } from "lib/helper";
+
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
 import "slick-carousel/slick/slick-theme.css";
@@ -307,12 +309,43 @@ function Talents({}) {
 
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() != "") {
-      console.log("tidak kosong");
-      notification.success({
-        message: "Submit Form Solution Talents Success!",
-        duration: 3,
-      });
-      setShowThankForm(true);
+      let dataTalentPost = {
+        company_name: dataPeople.company_name,
+        contact_name: dataPeople.name,
+        company_email: dataPeople.company_email,
+        phone_number: dataPeople.phone_number,
+        many_people: valuePurpose,
+        kind_form: "talent",
+        meeting_schedule:
+          moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
+        talent_list: dataTalents,
+      };
+      // let formData = objectToFormData(dataTalentPost);
+      console.log("talent post ", dataTalentPost);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionTalent`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataTalentPost),
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            form.resetFields();
+            setFeedback(false);
+            notification.success({
+              message: "Submit Form Solution Talent Success!",
+              duration: 3,
+            });
+            setShowThankForm(true);
+          } else if (!res2.success) {
+            notification["error"]({
+              message: res2.message.errorInfo.status_detail,
+              duration: 5,
+            });
+          }
+        });
     }
   };
 

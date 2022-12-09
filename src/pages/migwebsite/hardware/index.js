@@ -26,6 +26,9 @@ import "react-calendar/dist/Calendar.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import Slider from "react-slick";
 
+import { objectToFormData } from "lib/helper";
+import { getBase64 } from "lib/helper";
+
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
 import "slick-carousel/slick/slick-theme.css";
@@ -92,6 +95,7 @@ function Hardware({}) {
   const [timeUsed, setTimeUsed] = useState(null);
   const [maxBudget, setMaxBudget] = useState(null);
   const [details, setDetails] = useState(null);
+  const [attachment, setAttachment] = useState(null);
   const [indexEdit, setIndexEdit] = useState(null);
   const [modalDelete, setModalDelete] = useState(false);
   const [modalSubmit, setModalSubmit] = useState(false);
@@ -149,6 +153,7 @@ function Hardware({}) {
   const [productSelected, setProductSelected] = useState([]);
   const [statusEdit, setStatusEdit] = useState(false);
   const [showThankForm, setShowThankForm] = useState(false);
+
   const captchaRef = useRef(null);
   const dataMeetingTime = [
     {
@@ -211,13 +216,91 @@ function Hardware({}) {
     setProductSelected([...arr_product]);
   };
   const submitFormSoftware = () => {
-    if (captchaRef.current.getValue() != "") {
-      console.log("tidak kosong");
-      notification.success({
-        message: "Submit Form Solution hardware Success!",
-        duration: 3,
-      });
-      setShowThankForm(true);
+    if (captchaRef.current.getValue() == "") {
+      let dataSoftwarePost = {
+        company_name: dataHardware.company_name,
+        contact_name: dataHardware.name,
+        company_email: dataHardware.company_email,
+        phone_number: dataHardware.phone_number,
+        purpose: valuePurpose,
+        kind_form: "hardware",
+        meeting_schedule:
+          moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
+        hardware_list: dataHardwareSummary,
+      };
+      console.log("data hardware summary ", dataHardwareSummary);
+      // let dataHardwarePost = objectToFormData(dataSoftwarePost);
+      let dataHardwarePost = new FormData();
+      // dataHardwarePost.append('company_name',dataHardware.company_name)
+      // dataHardwarePost.append('contact_name',dataHardware.name)
+      // dataHardwarePost.append('company_email',dataHardware.company_email)
+      // dataHardwarePost.append('phone_number',dataHardware.phone_number)
+      // dataHardwarePost.append('purpose',valuePurpose)
+      // dataHardwarePost.append('kind_form','hardware')
+      // dataHardwarePost.append('meeting_schedule',moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime)
+      // dataHardwarePost.append('hardware_list',dataHardwareSummary)
+      for (var i = 0; i < dataHardwareSummary.length; i++) {
+        dataHardwarePost.append("hardware_list[]", dataHardwareSummary[i]);
+      }
+      for (let i = 0; i < dataHardwareSummary.length; i++) {
+        dataHardwarePost.append(
+          `hardware_list[${i}].kind_of_product`,
+          dataHardwareSummary[i].kindOfHardware
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].product`,
+          dataHardwareSummary[i].product
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].manyTalent`,
+          dataHardwareSummary[i].manyTalent
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].urgently`,
+          dataHardwareSummary[i].urgently
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].timeUsed`,
+          dataHardwareSummary[i].timeUsed
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].maxBudget`,
+          dataHardwareSummary[i].maxBudget
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].details`,
+          dataHardwareSummary[i].details
+        );
+        dataHardwarePost.append(
+          `hardware_list[${i}].attachment`,
+          dataHardwareSummary[i].attachment
+        );
+      }
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionHardware`, {
+        method: "POST",
+        headers: {
+          // "Content-Type": "multipart/form-data",
+          Accept: "*/*",
+        },
+        body: dataHardwarePost,
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            form.resetFields();
+            setFeedback(false);
+            notification.success({
+              message: "Submit Form Solution Hardware Success!",
+              duration: 3,
+            });
+            setShowThankForm(true);
+          } else if (!res2.success) {
+            notification["error"]({
+              message: res2.message.errorInfo.status_detail,
+              duration: 5,
+            });
+          }
+        });
     }
   };
   const onPanelChange = (value) => {
@@ -280,6 +363,7 @@ function Hardware({}) {
             timeUsed: timeUsed,
             maxBudget: maxBudget,
             details: details,
+            attachment: attachment,
           });
         } else {
           array_hardwares.push({
@@ -290,6 +374,7 @@ function Hardware({}) {
             timeUsed: dataHardware[i].timeUsed,
             maxBudget: dataHardware[i].maxBudget,
             details: dataHardware[i].details,
+            attachment: dataHardware[i].attachment,
           });
         }
       }
@@ -309,6 +394,7 @@ function Hardware({}) {
         timeUsed: timeUsed,
         maxBudget: maxBudget,
         details: details,
+        attachment: attachment,
       });
       setDataHardwareSummary([...array_hardwares]);
       notification.success({
@@ -439,7 +525,7 @@ function Hardware({}) {
   };
 
   const handleLetsTalk = () => {
-    if (email == null) {
+    if (dataHardware.company_email == null) {
     } else {
       setShowform(true);
     }
@@ -469,6 +555,20 @@ function Hardware({}) {
     setProductSelected(arr_product);
     form.resetFields([product]);
   };
+
+  const onChangeFile = async (info) => {
+    if (info.file.status === "uploading") {
+      // setLoadingupload(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+      console.log("info file ", info);
+      setAttachment(blobFile);
+    }
+  };
+
   useEffect(() => {}, []);
   return (
     <Layout>
@@ -568,6 +668,7 @@ function Hardware({}) {
                       </Form.Item>
                       <Form.Item
                         name={"Email"}
+                        initialValue={dataHardware.company_email}
                         className={"gilroy-medium text-xl"}
                         label="Email"
                         rules={[{ required: true, type: "email" }]}
@@ -1344,7 +1445,9 @@ function Hardware({}) {
                       >
                         <Upload.Dragger
                           name="files"
-                          action="/upload.do"
+                          maxCount={1}
+                          onChange={onChangeFile}
+                          accept=".pdf,.jpg,.jpeg,.png"
                           style={{ width: "298px", height: "180px" }}
                         >
                           <p className="ant-upload-drag-icon">
@@ -1664,7 +1767,10 @@ function Hardware({}) {
                       name={"email"}
                       className={"w-[253px] h-[40px]"}
                       onChange={(e) => {
-                        setEmail(e.target.value);
+                        setDataHardware({
+                          ...dataHardware,
+                          company_email: e.target.value,
+                        });
                       }}
                       placeholder="Enter your email here."
                     />
