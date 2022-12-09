@@ -85,7 +85,7 @@ const EmployeeInventoryDetail = ({
   });
   // 2. USE EFFECT
   useEffect(() => {
-    handleGetEmployeeInventory(dataEmployee.inventories[0]?.id);
+    handleGetEmployeeInventory(dataEmployee?.inventories[0]?.id);
   }, [isAllowedToGetEmployeeInventory]);
 
   // 3. EVENT HANDLER

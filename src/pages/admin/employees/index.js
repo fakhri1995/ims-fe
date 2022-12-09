@@ -27,6 +27,9 @@ import {
   EMPLOYEE_ADD,
   EMPLOYEE_DELETE,
   EMPLOYEE_GET,
+  EMPLOYEE_PLACEMENTS_COUNT_GET,
+  EMPLOYEE_ROLES_COUNT_GET,
+  EMPLOYEE_STATUSES_COUNT_GET,
   EMPLOYEE_UPDATE,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
@@ -88,6 +91,11 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoleTypeList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
+  const isAllowedToGetPlacementCount = hasPermission(
+    EMPLOYEE_PLACEMENTS_COUNT_GET
+  );
+  const isAllowedToGetRoleCount = hasPermission(EMPLOYEE_ROLES_COUNT_GET);
+  const isAllowedToGetStatusCount = hasPermission(EMPLOYEE_STATUSES_COUNT_GET);
   // 1. Init
   const rt = useRouter();
   // Breadcrumb url
@@ -101,17 +109,8 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2. Use state
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
-  const [topCompanyCount, setTopCompanyCount] = useState([
-    {
-      name: "Bank Bukopin",
-      employee_count: 5,
-    },
-    {
-      name: "Mitramas",
-      employee_count: 10,
-    },
-  ]);
-  const [topPositionCount, setTopPositionCount] = useState([]);
+  const [placementCount, setPlacementCount] = useState([]);
+  const [roleCount, setRoleCount] = useState([]);
   const [statusCount, setStatusCount] = useState([]);
 
   // 2.2. Table Employee List
@@ -181,7 +180,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employe_active=${isEmployeeActive}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employee_active=${isEmployeeActive}`,
       {
         method: `GET`,
         headers: {
@@ -326,6 +325,136 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRoleTypeList]);
 
+  // 3.5. Get Employee Placement Count
+  useEffect(() => {
+    if (!isAllowedToGetPlacementCount) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Statistik Employee Placement"
+      );
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePlacementsCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setPlacementCount(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingChart(false);
+      });
+  }, [isAllowedToGetPlacementCount]);
+
+  // 3.6. Get Employee Role Count
+  useEffect(() => {
+    if (!isAllowedToGetRoleCount) {
+      permissionWarningNotification("Mendapatkan", "Statistik Employee Role");
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeRolesCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          let roleCountRes = res2.data;
+          let mappedRoleCount = roleCountRes.map((data) => {
+            return {
+              role_count: data.role_count,
+              role_name: data.role?.name,
+            };
+          });
+          setRoleCount(mappedRoleCount);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingChart(false);
+      });
+  }, [isAllowedToGetRoleCount]);
+
+  // 3.7. Get Employee Status Count
+  useEffect(() => {
+    if (!isAllowedToGetStatusCount) {
+      permissionWarningNotification("Mendapatkan", "Statistik Employee Status");
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeStatusesCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          let statusCountRes = res2.data;
+          let mappedStatusCount = statusCountRes.map((data) => {
+            return {
+              status_count: data.status_count,
+              is_employee_active: Number(data.is_employee_active)
+                ? "Aktif"
+                : "Tidak Aktif",
+            };
+          });
+          setStatusCount(mappedStatusCount);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingChart(false);
+      });
+  }, [isAllowedToGetStatusCount]);
+
   // 4. Event
   const onAddEmployeeButtonClicked = useCallback(() => {
     handleAddEmployee();
@@ -416,7 +545,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterEmployees = () => {
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedContractStatusId}&is_employe_active=${isEmployeeActive}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&contract_status_ids=${selectedContractStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
       {
         method: `GET`,
         headers: {
@@ -462,14 +591,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // Count "Sisa Hari Kerja" in table
-  const todayDate = moment();
-  const countWorkDaysLeft = (datestring) => {
-    let lastdayDate = moment(datestring);
-    if (!datestring || !lastdayDate.isValid()) {
-      return "-";
-    }
-    return lastdayDate.diff(todayDate, "days") + 1;
-  };
+  // const todayDate = moment();
+  // const countWorkDaysLeft = (datestring) => {
+  //   let lastdayDate = moment(datestring);
+  //   if (!datestring || !lastdayDate.isValid()) {
+  //     return "-";
+  //   }
+  //   return lastdayDate.diff(todayDate, "days") + 1;
+  // };
 
   // "Daftar Karyawan" Table's columns
   const columnEmployee = [
@@ -498,7 +627,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.placement || "-"}</>,
+          children: <>{record.contract?.placement || "-"}</>,
         };
       },
     },
@@ -507,7 +636,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "contract_status",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.contract_status_id || "-"}</>,
+          children: <>{record.contract?.contract_status?.name || "-"}</>,
         };
       },
     },
@@ -516,7 +645,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record.contracts[0]?.role_id || "-"}</>,
+          children: <>{record.contract?.role?.name || "-"}</>,
         };
       },
     },
@@ -528,23 +657,24 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Sisa Hari Kerja",
       dataIndex: "days_left",
       render: (text, record, index) => {
-        let workDaysLeft = countWorkDaysLeft(
-          record.contracts[0]?.contract_end_at
-        );
         return {
           children: (
             <>
-              {workDaysLeft <= 30 ? (
-                <p className="text-warning">{workDaysLeft} hari</p>
+              {record.contract?.contract_end_countdown <= 30 ? (
+                <p className="text-warning">
+                  {record.contract?.contract_end_countdown} hari
+                </p>
               ) : (
-                <p>{workDaysLeft} hari</p>
+                <p>{record.contract?.contract_end_countdown} hari</p>
               )}
             </>
           ),
         };
       },
       sorter: isAllowedToGetEmployees
-        ? (a, b) => a.days_left > b.days_left
+        ? (a, b) =>
+            a.contract?.contract_end_countdown >
+            b.contract?.contract_end_countdown
         : false,
     },
     {
@@ -562,7 +692,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(
-                        `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
+                        `/admin/employees/${record.id}/editContract?id=${record?.contract?.id}`
                       );
                     }}
                   >
@@ -645,9 +775,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               ) : (
                 <ChartDoughnut
                   title={"Penempatan Karyawan"}
-                  dataChart={topCompanyCount}
-                  objName={"name"}
-                  value={"employee_count"}
+                  dataChart={placementCount}
+                  objName={"placement"}
+                  value={"placement_count"}
                 />
               )}
               {/* CHART POSISI */}
@@ -656,9 +786,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               ) : (
                 <ChartDoughnut
                   title={"Posisi"}
-                  dataChart={topCompanyCount}
-                  objName={"name"}
-                  value={"employee_count"}
+                  dataChart={roleCount}
+                  objName={`role_name`}
+                  value={"role_count"}
                 />
               )}
               {/* CHART STATUS KARYAWAN */}
@@ -667,9 +797,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               ) : (
                 <ChartDoughnut
                   title={"Status Karyawan"}
-                  dataChart={topCompanyCount}
-                  objName={"name"}
-                  value={"employee_count"}
+                  dataChart={statusCount}
+                  objName={"is_employee_active"}
+                  value={"status_count"}
                 />
               )}
             </div>
@@ -748,7 +878,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 {/* <Select.Option value={0}>Semua Role</Select.Option> */}
                 {dataCompanyList.map((company) => (
-                  <Select.Option key={company.id} value={company.id}>
+                  <Select.Option key={company.id} value={company.name}>
                     {company.name}
                   </Select.Option>
                 ))}

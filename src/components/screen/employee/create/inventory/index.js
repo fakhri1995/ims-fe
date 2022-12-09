@@ -38,15 +38,10 @@ const EmployeeInventoryForm = ({
     return null;
   }
 
-  // TODO: change constant
-  const isAllowedToGetPICList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetEmployeeInventories = hasPermission(
     EMPLOYEE_INVENTORIES_GET
   );
   const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
-
-  const rt = useRouter();
-  const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
   const [isOwn, setIsOwn] = useState(false);
@@ -54,49 +49,10 @@ const EmployeeInventoryForm = ({
 
   const [loadingInventories, setLoadingInventories] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
-  const [loadingPICList, setLoadingPICList] = useState(false);
 
-  const [dataPICList, setDataPICList] = useState([]);
   const [refresh, setRefresh] = useState(-1);
 
   // 2. USE EFFECT
-  // 2.1. Get PIC List
-  useEffect(() => {
-    if (!isAllowedToGetPICList) {
-      permissionWarningNotification("Mendapatkan", "Daftar Penanggung Jawab");
-      setLoadingPICList(false);
-      return;
-    }
-
-    setLoadingPICList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataPICList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingPICList(false);
-      });
-  }, [isAllowedToGetPICList]);
-
   // 2.1. Get Employee Inventories Data
   useEffect(() => {
     if (!isAllowedToGetEmployeeInventories) {
@@ -156,23 +112,6 @@ const EmployeeInventoryForm = ({
 
   // 3. HANDLER
   const handleAddNewInventory = () => {
-    // let newDataInventory = {
-    //   id: null,
-    //   employee_id: null,
-    //   id_number: null,
-    //   device_name: "",
-    //   referance_invertory: "",
-    //   device_type: "",
-    //   serial_number: "",
-    //   delivery_date: "",
-    //   return_date: "",
-    //   pic_delivery: "",
-    //   pic_return: "",
-    //   delivery_file: "",
-    //   return_file: "",
-    //   device_list: [],
-    // };
-    // setInventoryList([...inventoryList, newDataInventory]);
     const payload = {
       employee_id: employeeId,
     };
@@ -182,35 +121,33 @@ const EmployeeInventoryForm = ({
       return;
     }
 
-    if (employeeId) {
-      setLoadingAdd(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeInventory`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setRefresh((prev) => prev + 1);
-          } else {
-            notification.error({
-              message: `Gagal menambahkan inventaris karyawan. ${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeInventory`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+        } else {
           notification.error({
-            message: `Gagal menambahkan inventaris karyawan. ${err.response}`,
+            message: `Gagal menambahkan inventaris karyawan. ${response2.message}`,
             duration: 3,
           });
-        })
-        .finally(() => setLoadingAdd(false));
-    }
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan inventaris karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingAdd(false));
   };
 
   const handleRemoveInventory = (idx) => {
@@ -242,7 +179,6 @@ const EmployeeInventoryForm = ({
               initProps={initProps}
               inventoryList={inventoryList}
               setInventoryList={setInventoryList}
-              dataPICList={dataPICList}
               // inventoryId={inventoryId}
               inventoryId={inventory.id}
               debouncedApiCall={debouncedApiCall}

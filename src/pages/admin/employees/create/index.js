@@ -153,9 +153,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     prevTab.current = currentTab;
   }, [currentTab]);
 
-  // console.log(prevTab)
-  // console.log(currentTab)
-
   // 2.1. Get Employee Data
   useEffect(() => {
     if (!isAllowedToGetEmployee) {
@@ -373,42 +370,75 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    if (inventoryData) {
-      const payloadFormData = objectToFormData(inventoryData);
+    if (!inventoryData) {
+      notification.error({
+        message: `Gagal menyimpan data inventaris`,
+        duration: 3,
+      });
+    }
 
-      setLoadingUpdate(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
-        method: "POST",
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-        body: payloadFormData,
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          setRefresh((prev) => prev + 1);
-          if (response2.success) {
-            notification.success({
-              message: `Draft karyawan berhasil disimpan.`,
-              duration: 3,
-            });
-          } else {
-            notification.error({
-              message: `Gagal menyimpan draft karyawan. ${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `Gagal menyimpan draft karyawan. ${err.response}`,
+    // Setup form data to be sent in API
+    let payloadFormData;
+    if (dataInventory[0]?.devices) {
+      // Mapping devices list of objects to required format in API updateEmployeeInventory form-data
+      let devicesObjectList = inventoryData?.devices?.map((device, idx) => {
+        let obj = {};
+        obj[`device[${idx}][id]`] = device.id;
+        obj[`device[${idx}][employee_inventory_id]`] =
+          device.employee_inventory_id;
+        obj[`device[${idx}][id_number]`] = device.id_number;
+        obj[`device[${idx}][device_name]`] = device.device_name;
+        obj[`device[${idx}][device_type]`] = device.device_type;
+        obj[`device[${idx}][serial_number]`] = device.serial_number;
+        return obj;
+      });
+
+      let allDevicesObject = {};
+      for (let deviceObject of devicesObjectList) {
+        Object.assign(allDevicesObject, deviceObject);
+      }
+
+      let inventoryDataWithDevice = { ...inventoryData, ...allDevicesObject };
+
+      // convert object to form data
+      payloadFormData = objectToFormData(inventoryDataWithDevice);
+    } else {
+      payloadFormData = objectToFormData(inventoryData);
+    }
+
+    // Fetch API
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeInventory`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+      body: payloadFormData,
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Draft karyawan berhasil disimpan.`,
             duration: 3,
           });
-        })
-        .finally(() => {
-          setLoadingUpdate(false);
+        } else {
+          notification.error({
+            message: `Gagal menyimpan draft karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menyimpan draft karyawan. ${err.response}`,
+          duration: 3,
         });
-    }
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
   };
 
   const handleAutoSaveOnTabChange = () => {

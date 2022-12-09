@@ -2101,7 +2101,7 @@ const TableCustomEmployeeList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedContractStatusId}&is_employe_active=${isEmployeeActive}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&contract_status_ids=${selectedContractStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2128,7 +2128,7 @@ const TableCustomEmployeeList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployees?role_id=${selectedRoleId}&contract_status_id=${selectedContractStatusId}&placement=${selectedPlacement}&is_employe_active=${isEmployeeActive}&sort_by=${
+              }/getEmployees?role_ids=${selectedRoleId}&contract_status_ids=${selectedContractStatusId}&placements=${selectedPlacement}&is_employee_active=${isEmployeeActive}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -2160,7 +2160,7 @@ const TableCustomEmployeeList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?role_id=${selectedRoleId}&contract_status_id=${selectedContractStatusId}&placement=${selectedPlacement}&is_employe_active=${isEmployeeActive}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?role_ids=${selectedRoleId}&contract_status_ids=${selectedContractStatusId}&placements=${selectedPlacement}&is_employee_active=${isEmployeeActive}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
@@ -2233,7 +2233,7 @@ const TableCustomPayslipList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&payslip_status_id=${selectedContractStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2260,7 +2260,7 @@ const TableCustomPayslipList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployees?role_id=${selectedRoleId}&payslip_status_id=${selectedPayslipStatusId}&placement=${selectedPlacement}&sort_by=${
+              }/getEmployees?role_ids=${selectedRoleId}&payslip_status_ids=${selectedPayslipStatusId}&placements=${selectedPlacement}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -2292,7 +2292,7 @@ const TableCustomPayslipList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?role_id=${selectedRoleId}&payslip_status_id=${selectedPayslipStatusId}&placement=${selectedPlacement}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?role_ids=${selectedRoleId}&payslip_status_ids=${selectedPayslipStatusId}&placements=${selectedPlacement}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
@@ -2363,7 +2363,7 @@ const TableCustomPayslipEmployeeList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_id=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2390,7 +2390,7 @@ const TableCustomPayslipEmployeeList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployees?payslip_status_id=${selectedPayslipStatusId}&sort_by=${
+              }/getEmployees?payslip_status_ids=${selectedPayslipStatusId}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -2422,7 +2422,7 @@ const TableCustomPayslipEmployeeList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?payslip_status_id=${selectedPayslipStatusId}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?payslip_status_ids=${selectedPayslipStatusId}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {

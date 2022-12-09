@@ -12,9 +12,12 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RECRUITMENT_DELETE, RECRUITMENT_GET } from "lib/features";
+import { EMPLOYEE_GET } from "lib/features";
 
-import { permissionWarningNotification } from "../..//lib/helper";
+import {
+  generateStaticAssetUrl,
+  permissionWarningNotification,
+} from "../..//lib/helper";
 import ButtonSys from "../../components/button";
 import { DownloadIconSvg, OneUserIconSvg } from "../../components/icon";
 import LayoutDashboard2 from "../../components/layout-dashboard2";
@@ -40,8 +43,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
     return null;
   }
 
-  const isAllowedToGetEmployee = hasPermission(RECRUITMENT_GET);
-  const isAllowedToDownloadEmployeePayslip = hasPermission(RECRUITMENT_DELETE);
+  const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
 
   //INIT
   const rt = useRouter();
@@ -54,7 +56,33 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
   const [currentTab, setCurrentTab] = useState("1");
-  const [dataEmployee, setDataEmployee] = useState({});
+  const [dataEmployee, setDataEmployee] = useState({
+    id: 0,
+    name: "",
+    nip: "",
+    nik: "",
+    alias: "",
+    phone_number: "",
+    email_office: "",
+    email_personal: "",
+    domicile: "",
+    birth_place: "",
+    birth_date: "",
+    gender: "",
+    blood_type: "",
+    marital_status: "",
+    child_total: "",
+    bio_mother_name: "",
+    npwp: "",
+    bpjs_kesehatan: "",
+    bpjs_ketenagakerjaan: "",
+    acc_number_bukopin: "",
+    acc_number_another: "",
+    is_posted: 0,
+    contracts: [],
+    inventories: [],
+    id_card_photo: {},
+  });
 
   const [resumeId, setResumeId] = useState(0);
 
@@ -74,38 +102,35 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       return;
     }
 
-    if (employeeId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitment?id=${employeeId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataEmployee(response2.data);
-            setResumeId(response2.data.resume?.id);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-          setpraloading(false);
-        })
-        .catch((err) => {
+    setpraloading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setDataEmployee(response2.data);
+        } else {
           notification.error({
-            message: `${err.response}`,
+            message: `${response2.message}`,
             duration: 3,
           });
-          setpraloading(false);
+        }
+        setpraloading(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
         });
-    }
+        setpraloading(false);
+      });
   }, [isAllowedToGetEmployee, employeeId, refresh]);
 
   // 3. Event
@@ -120,14 +145,24 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       <div>
         <div className="flex flex-row gap-5 w-full">
           {/* Left Column - ID Card Photo */}
-          <div
-            className="w-1/4 bg-white rounded-md shadow-lg flex flex-col items-center 
-            justify-center space-y-2 p-4"
-          >
-            <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
-            <h4 className="mig-heading--4 text-center">[Nama Karyawan]</h4>
-            {/* <img /> */}
-          </div>
+          {dataEmployee.id_card_photo ? (
+            <img
+              src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
+              alt={dataEmployee.id_card_photo?.description}
+              className="w-1/5 bg-cover object-cover rounded-md shadow-lg"
+            />
+          ) : (
+            <div
+              className="w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
+                justify-center space-y-2 p-4"
+            >
+              <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
+              <h4 className="mig-heading--4 text-center">
+                {dataEmployee?.name}
+              </h4>
+            </div>
+          )}
+
           {/* Right column */}
           <div className="flex flex-col w-3/4 gap-5">
             {/* Employee Status */}
@@ -139,17 +174,22 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
-                <div className="flex flex-row space-x-2 items-center">
-                  <div className="rounded-full w-4 h-4 bg-primary100"></div>
-                  <h4 className="mig-heading--4">Aktif</h4>
-                </div>
+                {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
+                  <div className="flex flex-row space-x-2 items-center">
+                    <div className="rounded-full w-4 h-4 bg-primary100"></div>
+                    <h4 className="mig-heading--4">Aktif</h4>
+                  </div>
+                ) : (
+                  <div className="flex flex-row space-x-2 items-center">
+                    <div className="rounded-full w-4 h-4 bg-warning"></div>
+                    <h4 className="mig-heading--4">Tidak Aktif</h4>
+                  </div>
+                )}
               </div>
               <ButtonSys
-                type={
-                  !isAllowedToDownloadEmployeePayslip ? "primary" : "default"
-                }
+                type={!isAllowedToGetEmployee ? "primary" : "default"}
                 onClick={() => setModalDownload(true)}
-                disabled={!isAllowedToDownloadEmployeePayslip}
+                disabled={!isAllowedToGetEmployee}
               >
                 <DownloadIconSvg color={"#35763B"} size={16} />
                 <p className="ml-2">Unduh Slip Gaji</p>
@@ -162,31 +202,31 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p>[Nama karyawan]</p>
+                  <p>{dataEmployee?.name}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">NIP</p>
-                  <p>[nip]</p>
+                  <p>{dataEmployee?.nip}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>[posisi]</p>
+                  <p>{dataEmployee?.role_name}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
-                  <p>Tetap</p>
+                  <p>{dataEmployee?.contracts[0]?.contract_status_name}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">E-mail</p>
-                  <p>emailkaryawan@mitrasolusi.group</p>
+                  <p>{dataEmployee?.email_office}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Telepon
                   </p>
-                  <p>0812345678</p>
+                  <p>{dataEmployee?.phone_number}</p>
                 </div>
               </div>
             </div>
@@ -236,13 +276,13 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
       {/* Modal Download Payslip */}
       {/* TODO: change access control */}
-      <AccessControl hasPermission={RECRUITMENT_DELETE}>
+      <AccessControl hasPermission={EMPLOYEE_GET}>
         <ModalDownloadPayslip
           visible={modalDownload}
           onvisible={setModalDownload}
           // onOk
           loading={loadingDownload}
-          disabled={!isAllowedToDownloadEmployeePayslip}
+          disabled={!isAllowedToGetEmployee}
           downloadPass={downloadPass}
           setDownloadPass={setDownloadPass}
           instanceForm={instanceForm}
@@ -254,6 +294,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 };
 
 export async function getServerSideProps({ req, res, params }) {
+  // TODO: adjust employeeId
   //   const employeeId = params.employeeId;
   const employeeId = 1;
   var initProps = {};
