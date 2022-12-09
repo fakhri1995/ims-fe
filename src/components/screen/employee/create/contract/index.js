@@ -19,6 +19,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useCallback } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -48,6 +49,8 @@ const EmployeeContractForm = ({
   setDataContract,
   debouncedApiCall,
   prevpath,
+  // instanceForm,
+  // handleSaveContract,
 }) => {
   /**
    * Dependencies
@@ -90,7 +93,13 @@ const EmployeeContractForm = ({
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState(null);
 
+  const [formattedNominal, setFormattedNominal] = useState(0);
+
   // 2. USE EFFECT
+  // useEffect(() => {
+  //   setFormattedNominal(dataContract?.benefit?.main_salary);
+  // }, [])
+
   // 2.1. Get Position List
   useEffect(() => {
     if (!isAllowedToGetRoleList) {
@@ -312,6 +321,7 @@ const EmployeeContractForm = ({
       layout="vertical"
       form={instanceForm}
       className="grid grid-cols-2 gap-x-8"
+      // onFinish={handleSaveContract}
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item
@@ -558,6 +568,7 @@ const EmployeeContractForm = ({
       <Form.Item label="Cuti Tahunan" name={"annual_leave"}>
         <div>
           <InputNumber
+            type={"number"}
             min={0}
             value={dataContract?.annual_leave}
             name={"annual_leave"}
@@ -610,16 +621,24 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              value={dataContract?.benefit?.main_salary}
-              name={"main_salary"}
-              onChange={(e) => {
+            <CurrencyFormat
+              customInput={Input}
+              placeholder="Masukkan gaji pokok"
+              value={formattedNominal}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"Rp"}
+              suffix={",00"}
+              onValueChange={(values) => {
+                const { formattedValue, value } = values;
+                // formattedValue = $2,223
+                // value ie, 2223
+                setFormattedNominal(formattedValue);
                 setDataContract((prev) => ({
                   ...prev,
-                  benefit: { ...prev.benefit, main_salary: e.target.value },
+                  benefit: { ...prev.benefit, main_salary: value },
                 }));
               }}
-              placeholder="Masukkan gaji pokok"
             />
           </div>
         </Form.Item>
@@ -628,12 +647,12 @@ const EmployeeContractForm = ({
             <Input
               value={dataContract?.benefit?.meal_allowance}
               name={"meal_allowance"}
-              onChange={(e) => {
-                setDataContract((prev) => ({
-                  ...prev,
-                  benefit: { ...prev.benefit, meal_allowance: e.target.value },
-                }));
-              }}
+              // onChange={(e) => {
+              //   setDataContract((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, meal_allowance: e.target.value },
+              //   }));
+              // }}
               placeholder="Masukkan tunjangan uang makan"
             />
           </div>
@@ -647,12 +666,12 @@ const EmployeeContractForm = ({
             <Input
               value={dataContract?.benefit?.income_tax}
               name={"income_tax"}
-              onChange={(e) => {
-                setDataContract((prev) => ({
-                  ...prev,
-                  benefit: { ...prev.benefit, income_tax: e.target.value },
-                }));
-              }}
+              // onChange={(e) => {
+              //   setDataContract((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, income_tax: e.target.value },
+              //   }));
+              // }}
               placeholder="Masukkan pajak penghasilan"
             />
           </div>
