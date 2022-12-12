@@ -39,6 +39,7 @@ import ButtonSys from "../../../../button";
 import {
   CircleCheckIconSvg,
   SquarePlusIconSvg,
+  TrashIconSvg,
   UploadIconSvg,
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
@@ -642,8 +643,9 @@ const EmployeeContractForm = ({
             />
           </div>
         </Form.Item>
+        {/* TODO: Loop additional benefit */}
         <Form.Item label="Tunjangan Uang Makan" name={"meal_allowance"}>
-          <div>
+          <div className="flex flex-row items-center space-x-2">
             <Input
               value={dataContract?.benefit?.meal_allowance}
               name={"meal_allowance"}
@@ -654,6 +656,11 @@ const EmployeeContractForm = ({
               //   }));
               // }}
               placeholder="Masukkan tunjangan uang makan"
+              className="flex flex-row items-center space-x-2"
+            />
+            <Button
+              icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
+              className="border-0"
             />
           </div>
         </Form.Item>
@@ -661,10 +668,139 @@ const EmployeeContractForm = ({
 
       <div className="flex flex-col space-y-3">
         <p className="mig-heading--5">BENEFIT PENGURANGAN</p>
-        <Form.Item label="PPh 21" name={"income_tax"}>
+        <Form.Item
+          label="BPJS KS (5% Perusahaan)"
+          name={"bpjs_ks"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS KS wajib diisi",
+            },
+          ]}
+        >
           <div>
             <Input
-              value={dataContract?.benefit?.income_tax}
+              // value={dataContract.benefit?.bpjs_ks}
+              name={"bpjs_ks"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_ks: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JHT (5,7% Perusahaan)"
+          name={"bpjs_tk_jht"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JHT wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jht}
+              name={"bpjs_tk_jht"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jht: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JKK (0,24% Perusahaan)"
+          name={"bpjs_tk_jkk"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JKK wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jkk}
+              name={"bpjs_tk_jkk"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jkk: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JKM (0,3% Perusahaan)"
+          name={"bpjs_tk_jkm"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JKM wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jkm}
+              name={"bpjs_tk_jkm"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jkm: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JP (3% Perusahaan)"
+          name={"bpjs_tk_jp"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JP wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jp}
+              name={"bpjs_tk_jp"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jp: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="PPh 21"
+          name={"income_tax"}
+          rules={[
+            {
+              required: true,
+              message: "PPh 21 wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataContract?.benefit?.income_tax}
               name={"income_tax"}
               // onChange={(e) => {
               //   setDataContract((prev) => ({
