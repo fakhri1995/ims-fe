@@ -79,7 +79,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [dataContract, setDataContract] = useState({
     id: null,
     employee_id: null,
-    is_employee_active: 0,
+    is_employee_active: 1,
     contract_name: "",
     contract_file: null,
     contract_status_id: null,

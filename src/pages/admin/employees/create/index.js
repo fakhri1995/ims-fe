@@ -1,4 +1,5 @@
-import { Tabs, notification } from "antd";
+import { Spin, Tabs, notification } from "antd";
+import { size } from "lodash";
 import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -81,7 +82,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // INIT
   const rt = useRouter();
-  const employeeId = rt?.query?.id;
+  const { id: employeeId, prevpath } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
@@ -96,6 +97,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
+  const [showSuccessIcon, setShowSuccessIcon] = useState(false);
 
   const [currentTab, setCurrentTab] = useState("1");
   const prevTab = useRef();
@@ -176,7 +178,14 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((res2) => {
           if (res2.success) {
             setDataEmployee(res2.data);
-            setDataContract(res2.data?.contracts[0]);
+            if (prevpath === "add") {
+              setDataContract({
+                ...res2.data?.contracts[0],
+                is_employee_active: 1,
+              });
+            } else {
+              setDataContract(res2.data?.contracts[0]);
+            }
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -200,19 +209,19 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const debouncedSaveProfile = useCallback(
     debounce((data) => {
       handleSaveProfile(0, data);
-    }, 10000),
+    }, 5000),
     []
   );
   const debouncedSaveContract = useCallback(
     debounce((data) => {
       handleSaveContract(data);
-    }, 10000),
+    }, 5000),
     []
   );
   const debouncedSaveInventory = useCallback(
     debounce((data) => {
       handleSaveInventory(data);
-    }, 10000),
+    }, 5000),
     []
   );
 
@@ -289,10 +298,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response2) => {
           setRefresh((prev) => prev + 1);
           if (response2.success) {
-            notification.success({
-              message: `Draft karyawan berhasil disimpan.`,
-              duration: 3,
-            });
+            // notification.success({
+            //   message: `Draft karyawan berhasil disimpan.`,
+            //   duration: 3,
+            // });
+            setShowSuccessIcon(true);
+            setTimeout(() => setShowSuccessIcon(false), 1000);
             if (isPosted === 1) {
               setTimeout(() => {
                 setDataEmployee({});
@@ -340,10 +351,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response2) => {
           setRefresh((prev) => prev + 1);
           if (response2.success) {
-            notification.success({
-              message: `Draft karyawan berhasil disimpan.`,
-              duration: 3,
-            });
+            // notification.success({
+            //   message: `Draft karyawan berhasil disimpan.`,
+            //   duration: 3,
+            // });
+            setShowSuccessIcon(true);
+            setTimeout(() => setShowSuccessIcon(false), 1000);
           } else {
             notification.error({
               message: `Gagal menyimpan draft karyawan. ${response2.message}`,
@@ -371,15 +384,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
 
     if (!inventoryData) {
-      notification.error({
-        message: `Gagal menyimpan data inventaris`,
-        duration: 3,
-      });
+      return;
     }
 
     // Setup form data to be sent in API
     let payloadFormData;
-    if (dataInventory[0]?.devices) {
+    if (inventoryData?.devices) {
       // Mapping devices list of objects to required format in API updateEmployeeInventory form-data
       let devicesObjectList = inventoryData?.devices?.map((device, idx) => {
         let obj = {};
@@ -419,10 +429,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((response2) => {
         setRefresh((prev) => prev + 1);
         if (response2.success) {
-          notification.success({
-            message: `Draft karyawan berhasil disimpan.`,
-            duration: 3,
-          });
+          // notification.success({
+          //   message: `Draft karyawan berhasil disimpan.`,
+          //   duration: 3,
+          // });
+          setShowSuccessIcon(true);
+          setTimeout(() => setShowSuccessIcon(false), 1000);
         } else {
           notification.error({
             message: `Gagal menyimpan draft karyawan. ${response2.message}`,
@@ -466,7 +478,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       <div className=" shadow-lg rounded-md bg-white py-7 px-4">
         <div className="flex flex-row items-center justify-between mb-4 px-1">
           <h3 className="mig-heading--3">Tambah Karyawan</h3>
-          <div className="flex flex-row space-x-6">
+          <div className="flex flex-row space-x-6 items-center">
+            <Spin spinning={loadingUpdate} />
+            {showSuccessIcon && <CheckIconSvg color={"#35763B"} size={32} />}
             {currentTab == "1" ? (
               <ButtonSys
                 type={"default"}

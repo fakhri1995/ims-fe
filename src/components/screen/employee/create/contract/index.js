@@ -19,6 +19,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useCallback } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -38,6 +39,7 @@ import ButtonSys from "../../../../button";
 import {
   CircleCheckIconSvg,
   SquarePlusIconSvg,
+  TrashIconSvg,
   UploadIconSvg,
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
@@ -48,6 +50,8 @@ const EmployeeContractForm = ({
   setDataContract,
   debouncedApiCall,
   prevpath,
+  // instanceForm,
+  // handleSaveContract,
 }) => {
   /**
    * Dependencies
@@ -90,7 +94,13 @@ const EmployeeContractForm = ({
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
   const [uploadedDocument, setUploadedDocument] = useState(null);
 
+  const [formattedNominal, setFormattedNominal] = useState(0);
+
   // 2. USE EFFECT
+  // useEffect(() => {
+  //   setFormattedNominal(dataContract?.benefit?.main_salary);
+  // }, [])
+
   // 2.1. Get Position List
   useEffect(() => {
     if (!isAllowedToGetRoleList) {
@@ -312,6 +322,7 @@ const EmployeeContractForm = ({
       layout="vertical"
       form={instanceForm}
       className="grid grid-cols-2 gap-x-8"
+      // onFinish={handleSaveContract}
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item
@@ -558,6 +569,7 @@ const EmployeeContractForm = ({
       <Form.Item label="Cuti Tahunan" name={"annual_leave"}>
         <div>
           <InputNumber
+            type={"number"}
             min={0}
             value={dataContract?.annual_leave}
             name={"annual_leave"}
@@ -610,31 +622,45 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              value={dataContract?.benefit?.main_salary}
-              name={"main_salary"}
-              onChange={(e) => {
+            <CurrencyFormat
+              customInput={Input}
+              placeholder="Masukkan gaji pokok"
+              value={formattedNominal}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"Rp"}
+              suffix={",00"}
+              onValueChange={(values) => {
+                const { formattedValue, value } = values;
+                // formattedValue = $2,223
+                // value ie, 2223
+                setFormattedNominal(formattedValue);
                 setDataContract((prev) => ({
                   ...prev,
-                  benefit: { ...prev.benefit, main_salary: e.target.value },
+                  benefit: { ...prev.benefit, main_salary: value },
                 }));
               }}
-              placeholder="Masukkan gaji pokok"
             />
           </div>
         </Form.Item>
+        {/* TODO: Loop additional benefit */}
         <Form.Item label="Tunjangan Uang Makan" name={"meal_allowance"}>
-          <div>
+          <div className="flex flex-row items-center space-x-2">
             <Input
               value={dataContract?.benefit?.meal_allowance}
               name={"meal_allowance"}
-              onChange={(e) => {
-                setDataContract((prev) => ({
-                  ...prev,
-                  benefit: { ...prev.benefit, meal_allowance: e.target.value },
-                }));
-              }}
+              // onChange={(e) => {
+              //   setDataContract((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, meal_allowance: e.target.value },
+              //   }));
+              // }}
               placeholder="Masukkan tunjangan uang makan"
+              className="flex flex-row items-center space-x-2"
+            />
+            <Button
+              icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
+              className="border-0"
             />
           </div>
         </Form.Item>
@@ -642,17 +668,146 @@ const EmployeeContractForm = ({
 
       <div className="flex flex-col space-y-3">
         <p className="mig-heading--5">BENEFIT PENGURANGAN</p>
-        <Form.Item label="PPh 21" name={"income_tax"}>
+        <Form.Item
+          label="BPJS KS (5% Perusahaan)"
+          name={"bpjs_ks"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS KS wajib diisi",
+            },
+          ]}
+        >
           <div>
             <Input
-              value={dataContract?.benefit?.income_tax}
+              // value={dataContract.benefit?.bpjs_ks}
+              name={"bpjs_ks"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_ks: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JHT (5,7% Perusahaan)"
+          name={"bpjs_tk_jht"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JHT wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jht}
+              name={"bpjs_tk_jht"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jht: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JKK (0,24% Perusahaan)"
+          name={"bpjs_tk_jkk"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JKK wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jkk}
+              name={"bpjs_tk_jkk"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jkk: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JKM (0,3% Perusahaan)"
+          name={"bpjs_tk_jkm"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JKM wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jkm}
+              name={"bpjs_tk_jkm"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jkm: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="BPJS TK-JP (3% Perusahaan)"
+          name={"bpjs_tk_jp"}
+          rules={[
+            {
+              required: true,
+              message: "BPJS TK-JP wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataPayslip?.benefit?.bpjs_tk_jp}
+              name={"bpjs_tk_jp"}
+              // onChange={(e) => {
+              //   setDataPayslip((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, bpjs_tk_jp: e.target.value },
+              //   }));
+              // }}
+              disabled
+            />
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="PPh 21"
+          name={"income_tax"}
+          rules={[
+            {
+              required: true,
+              message: "PPh 21 wajib diisi",
+            },
+          ]}
+        >
+          <div>
+            <Input
+              // value={dataContract?.benefit?.income_tax}
               name={"income_tax"}
-              onChange={(e) => {
-                setDataContract((prev) => ({
-                  ...prev,
-                  benefit: { ...prev.benefit, income_tax: e.target.value },
-                }));
-              }}
+              // onChange={(e) => {
+              //   setDataContract((prev) => ({
+              //     ...prev,
+              //     benefit: { ...prev.benefit, income_tax: e.target.value },
+              //   }));
+              // }}
               placeholder="Masukkan pajak penghasilan"
             />
           </div>

@@ -1038,7 +1038,12 @@ const ModalDownloadPayslip = ({
 }) => {
   return (
     <Modal
-      title={"Konfirmasi"}
+      title={
+        <div className="flex flex-row items-center justify-between">
+          <p>Konfirmasi</p>
+          <CircleCheckIconSvg color={"#35763B"} size={24} />
+        </div>
+      }
       visible={visible}
       closable={false}
       footer={
