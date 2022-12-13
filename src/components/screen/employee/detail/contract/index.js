@@ -16,6 +16,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -313,7 +314,18 @@ const EmployeeContractDetail = ({
                 <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
                 <div className="space-y-1 col-span-2">
                   <p className="mig-caption--medium text-mono80">Gaji Pokok</p>
-                  <p>{benefitObject?.main_salary || "-"}</p>
+                  {benefitObject?.main_salary ? (
+                    <CurrencyFormat
+                      displayType="text"
+                      value={benefitObject?.main_salary}
+                      thousandSeparator={"."}
+                      decimalSeparator={","}
+                      prefix={"Rp"}
+                      suffix={",00"}
+                    />
+                  ) : (
+                    "-"
+                  )}
                 </div>
                 <div className="space-y-1 col-span-2">
                   <p className="mig-caption--medium text-mono80">
