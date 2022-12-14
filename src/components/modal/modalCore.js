@@ -12,6 +12,7 @@ const ModalCore = ({
   width,
   closeIcon,
   maskClosable,
+  closable,
 }) => {
   return (
     <Modal
@@ -24,6 +25,7 @@ const ModalCore = ({
       width={width}
       closeIcon={closeIcon}
       maskClosable={maskClosable}
+      closable={closable}
     >
       {children}
     </Modal>

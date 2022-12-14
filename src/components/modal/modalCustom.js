@@ -833,12 +833,14 @@ const ModalUbah = ({
   disabled,
   children,
   okButtonText,
+  closable,
 }) => {
   return (
     <ModalCore
       title={title}
       visible={visible}
       onCancel={onCancel}
+      closable={closable}
       footer={
         <Spin spinning={loading}>
           <div className="flex justify-between items-center">

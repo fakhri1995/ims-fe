@@ -436,13 +436,19 @@ const EmployeePayslipDetailIndex = ({
           children: (
             <>
               {record.status == "draft" ? (
-                <div className="bg-state2 bg-opacity-10 text-state2 py-1 px-7 rounded-md">
+                <p
+                  className="bg-state2 bg-opacity-10 text-state2 
+                  py-1 px-7 rounded-md text-center"
+                >
                   Draft
-                </div>
+                </p>
               ) : (
-                <div className="bg-primary100 bg-opacity-10 text-primary100 py-1 px-4 rounded-md">
+                <p
+                  className="bg-primary100 bg-opacity-10 text-primary100 
+                  py-1 px-4 rounded-md text-center"
+                >
                   Diterbitkan
-                </div>
+                </p>
               )}
             </>
           ),
@@ -744,7 +750,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "employee-list",
+      sidemenu: "employee-salary",
       employeeId,
     },
   };
