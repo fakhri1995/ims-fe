@@ -16,6 +16,7 @@ const DrawerCore = ({
   buttonCancelText,
   onButtonCancelClicked,
   buttonUpdateText,
+  buttonSpace,
 }) => {
   return (
     <Drawer
@@ -27,7 +28,11 @@ const DrawerCore = ({
       width={420}
       drawerStyle={drawerStyle}
       footer={
-        <div className="flex items-center justify-end space-x-6">
+        <div
+          className={`flex items-center justify-end ${
+            buttonSpace ? buttonSpace : `space-x-6`
+          }`}
+        >
           {/* Additional button on the LHS for Cancelling the action, etc. */}
           {buttonCancelText && onButtonCancelClicked && (
             <ButtonSys

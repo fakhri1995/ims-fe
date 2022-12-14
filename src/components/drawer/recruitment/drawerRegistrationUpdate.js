@@ -151,8 +151,9 @@ const DrawerRegistrationUpdate = ({
       buttonOkText={"Simpan Jalur Daftar"}
       onClick={handleUpdateRegistration}
       disabled={disabledUpdate}
+      buttonSpace="space-x-2"
       buttonCancelText={
-        <div className="flex flex-row space-x-2 items-center">
+        <div className="flex flex-row space-x-1 items-center">
           <TrashIconSvg size={16} color={"#BF4A40"} />
           <p>Hapus Jalur Daftar</p>
         </div>
