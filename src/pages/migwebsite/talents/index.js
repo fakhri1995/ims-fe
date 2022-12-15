@@ -454,12 +454,13 @@ function Talents({}) {
   };
 
   const handleDeleteConfirm = () => {
-    let array_talents = dataTalents;
-    array_talents.slice(indexEdit, 1);
     if (dataTalents.length == 1) {
       setDataTalents([]);
       setModalDelete(false);
     } else {
+      let array_talents = dataTalents;
+      array_talents.splice(indexEdit, 1);
+      setModalDelete(false);
       setDataTalents([...array_talents]);
     }
 

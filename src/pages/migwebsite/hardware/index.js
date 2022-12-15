@@ -37,6 +37,7 @@ import "slick-carousel/slick/slick.css";
 function Hardware({}) {
   const { Panel } = Collapse;
   const [form] = Form.useForm();
+  const inputRef = useRef(null);
   const { Option } = Select;
   const { TextArea } = Input;
   const handleSubmit = () => {
@@ -153,7 +154,7 @@ function Hardware({}) {
   const [productSelected, setProductSelected] = useState([]);
   const [statusEdit, setStatusEdit] = useState(false);
   const [showThankForm, setShowThankForm] = useState(false);
-
+  const [showUploadFile, setShowUploadFile] = useState(true);
   const captchaRef = useRef(null);
   const dataMeetingTime = [
     {
@@ -217,6 +218,25 @@ function Hardware({}) {
   };
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() == "") {
+      let devicesObjectList = dataHardwareSummary.map((device, idx) => {
+        let obj = {};
+        console.log("device.details ", device.details);
+        obj[`hardware_list[${idx}][kind_of_product]`] = device.kindOfHardware;
+        obj[`hardware_list[${idx}][product]`] = device.product;
+        obj[`hardware_list[${idx}][manyTalent]`] = device.manyTalent;
+        obj[`hardware_list[${idx}][urgently]`] = device.urgently;
+        obj[`hardware_list[${idx}][timeUsed]`] = device.timeUsed;
+        obj[`hardware_list[${idx}][maxBudget]`] = device.maxBudget;
+        obj[`hardware_list[${idx}][details]`] = device.details;
+        obj[`hardware_list[${idx}][attachment]`] = device.attachment;
+        return obj;
+      });
+
+      let allDevicesObject = {};
+      for (let deviceObject of devicesObjectList) {
+        Object.assign(allDevicesObject, deviceObject);
+      }
+
       let dataSoftwarePost = {
         company_name: dataHardware.company_name,
         contact_name: dataHardware.name,
@@ -226,11 +246,15 @@ function Hardware({}) {
         kind_form: "hardware",
         meeting_schedule:
           moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
-        hardware_list: dataHardwareSummary,
       };
-      console.log("data hardware summary ", dataHardwareSummary);
-      // let dataHardwarePost = objectToFormData(dataSoftwarePost);
-      let dataHardwarePost = new FormData();
+      let inventoryDataWithDevice = {
+        ...dataSoftwarePost,
+        ...allDevicesObject,
+      };
+      console.log("data hardware summary ", inventoryDataWithDevice);
+      let dataHardwarePost = objectToFormData(inventoryDataWithDevice);
+      console.log("data hardware summary 2", dataHardwarePost);
+      // let dataHardwarePost = new FormData();
       // dataHardwarePost.append('company_name',dataHardware.company_name)
       // dataHardwarePost.append('contact_name',dataHardware.name)
       // dataHardwarePost.append('company_email',dataHardware.company_email)
@@ -238,44 +262,47 @@ function Hardware({}) {
       // dataHardwarePost.append('purpose',valuePurpose)
       // dataHardwarePost.append('kind_form','hardware')
       // dataHardwarePost.append('meeting_schedule',moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime)
-      // dataHardwarePost.append('hardware_list',dataHardwareSummary)
-      for (var i = 0; i < dataHardwareSummary.length; i++) {
-        dataHardwarePost.append("hardware_list[]", dataHardwareSummary[i]);
-      }
-      for (let i = 0; i < dataHardwareSummary.length; i++) {
-        dataHardwarePost.append(
-          `hardware_list[${i}].kind_of_product`,
-          dataHardwareSummary[i].kindOfHardware
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].product`,
-          dataHardwareSummary[i].product
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].manyTalent`,
-          dataHardwareSummary[i].manyTalent
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].urgently`,
-          dataHardwareSummary[i].urgently
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].timeUsed`,
-          dataHardwareSummary[i].timeUsed
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].maxBudget`,
-          dataHardwareSummary[i].maxBudget
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].details`,
-          dataHardwareSummary[i].details
-        );
-        dataHardwarePost.append(
-          `hardware_list[${i}].attachment`,
-          dataHardwareSummary[i].attachment
-        );
-      }
+      // // dataHardwarePost.append('hardware_list',dataHardwareSummary)
+      // // for (var i = 0; i < dataHardwareSummary.length; i++) {
+      // //   console.log("hardware summary ",dataHardwareSummary[i])
+      // //   dataHardwarePost.append("hardware_list[]", dataHardwareSummary[i]);
+      // // }
+      // // console.log("data hardware ",dataHardwarePost)
+      // for (let i = 0; i < dataHardwareSummary.length; i++) {
+      //   console.log("data hardware ",dataHardwareSummary[i].kindOfHardware)
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].kind_of_product`,
+      //     dataHardwareSummary[i].kindOfHardware
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].product`,
+      //     dataHardwareSummary[i].product
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].manyTalent`,
+      //     dataHardwareSummary[i].manyTalent
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].urgently`,
+      //     dataHardwareSummary[i].urgently
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].timeUsed`,
+      //     dataHardwareSummary[i].timeUsed
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].maxBudget`,
+      //     dataHardwareSummary[i].maxBudget
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].details`,
+      //     dataHardwareSummary[i].details
+      //   );
+      //   dataHardwarePost.append(
+      //     `hardware_list[${i}].attachment`,
+      //     dataHardwareSummary[i].attachment
+      //   );
+      // }
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionHardware`, {
         method: "POST",
         headers: {
@@ -431,9 +458,17 @@ function Hardware({}) {
     form.setFieldsValue({ max_budget: null });
     form.setFieldsValue({ manyproduct: null });
     form.setFieldsValue({ Details: null });
+    form.setFieldsValue({ attachment: null });
     setHardwareSuggestion([]);
     setProductSelected([]);
     setKindOfHardware(null);
+    setManyTalent(null);
+    setUrgently(null);
+    setTimeUsed(null);
+    setMaxBudget(null);
+    setDetails(null);
+    setAttachment(null);
+    setShowUploadFile(false);
   };
   const handleSubmitConfirm = () => {
     setFormActive("four");
@@ -470,16 +505,16 @@ function Hardware({}) {
   };
 
   const handleDeleteConfirm = () => {
-    let array_talents = dataHardwareSummary;
-    array_talents.slice(indexEdit, 1);
     if (dataHardwareSummary.length == 1) {
+      console.log("if length ", dataHardwareSummary.length);
       setDataHardwareSummary([]);
       setModalDelete(false);
     } else {
-      setDataHardwareSummary([...array_talents]);
+      let array_talents = dataHardwareSummary;
+      array_talents.splice(indexEdit, 1);
+      setModalDelete(false);
+      setDataHardwareSummary(array_talents);
     }
-
-    console.log("handle delete confirm ", array_talents);
   };
 
   const PrevArrow = (props) => {
@@ -566,6 +601,7 @@ function Hardware({}) {
       const base64Data = await getBase64(blobFile);
       console.log("info file ", info);
       setAttachment(blobFile);
+      setShowUploadFile(true);
     }
   };
 
@@ -674,6 +710,7 @@ function Hardware({}) {
                         rules={[{ required: true, type: "email" }]}
                       >
                         <Input
+                          // disabled={true}
                           style={{ border: "1px solid #B8B8B8" }}
                           name={"Email"}
                           onChange={(e) => {
@@ -775,14 +812,27 @@ function Hardware({}) {
                     buttonStyle={"solid"}
                   >
                     <Space direction="vertical">
-                      <Radio className="text-blackmig text-sm" value={1}>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={"I want to buy the product"}
+                      >
                         I want to buy the product
                       </Radio>
-                      <Radio className="text-blackmig text-sm" value={2}>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={
+                          "I want to lease the product and having hardware managed"
+                        }
+                      >
                         I want to lease the product and having hardware managed
                         services
                       </Radio>
-                      <Radio className="text-blackmig text-sm" value={3}>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={
+                          "None of the above, I just want to know about the service"
+                        }
+                      >
                         None of the above, I just want to know about the service
                       </Radio>
                     </Space>
@@ -1375,6 +1425,7 @@ function Hardware({}) {
                     >
                       {/* <Form.Item name="input-number" noStyle> */}
                       <InputNumber
+                        value={manyTalent}
                         min={1}
                         name={"manyproduct"}
                         // max={10}
@@ -1403,7 +1454,12 @@ function Hardware({}) {
                     >
                       {/* <Form.Item name="input-number" noStyle> */}
                       <InputNumber
+                        value={maxBudget}
                         name="max_budget"
+                        formatter={(value) =>
+                          `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => value.replace(/\Rp\s?|(,*)/g, "")}
                         min={1}
                         // max={10}
                         style={{
@@ -1430,7 +1486,7 @@ function Hardware({}) {
                         style={{ border: "1px solid #B8B8B8" }}
                         name={"Details"}
                         onChange={(value) => {
-                          setDetails(value);
+                          setDetails(value.target.value);
                         }}
                         rows={4}
                         placeholder="Tell us more about your talent details"
@@ -1444,6 +1500,7 @@ function Hardware({}) {
                         noStyle
                       >
                         <Upload.Dragger
+                          showUploadList={showUploadFile}
                           name="files"
                           maxCount={1}
                           onChange={onChangeFile}
@@ -3678,7 +3735,7 @@ function Hardware({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
+              <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
                 <p className={"text-2xl font-semibold text-black"}>
                   Fulfill your IT needs easily!
                 </p>
@@ -3724,7 +3781,7 @@ function Hardware({}) {
             }
           >
             <div className={"container mx-auto"}>
-              <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+              <div className="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
                 <p className={"text-xl font-semibold"}>
                   Fulfill your IT needs easily!
                 </p>

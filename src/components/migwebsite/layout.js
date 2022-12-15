@@ -6,14 +6,21 @@ import {
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Button, Dropdown, Layout, Menu, Space } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
 import Bounce from "react-reveal/Bounce";
 
+import en from "../../locales/en";
+import id from "../../locales/id";
 import Head from "./head";
 import Styles from "./styles";
 
 function layout({ children }) {
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   const { Header, Content, Footer } = Layout;
   const menu = (
     <div
@@ -110,6 +117,39 @@ function layout({ children }) {
       </Link>
     </div>
   );
+  const menuLanguanges = (
+    <div
+      className={
+        "bg-white w-auto h-auto px-2 py-4 top-6 relative flex flex-col"
+      }
+      // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
+    >
+      <Button
+        className={"bg-transparent border-0 border-white hover:bg-primarygreen"}
+        onClick={() => changeLanguage("en")}
+      >
+        <div className={"flex flex-row"}>
+          <img className={"relative"} width={37} src={"/image/english.png"} />
+          <div className={"ml-4"}>
+            <p className={"text-lg gilroy-medium "}>English</p>
+          </div>
+        </div>
+      </Button>
+      <Button
+        className={
+          "bg-transparent border-0 border-white hover:bg-primarygreen my-4"
+        }
+        onClick={() => changeLanguage("id")}
+      >
+        <div className={"flex flex-row"}>
+          <img className={"relative"} width={37} src={"/image/indonesia.png"} />
+          <div className={"ml-4"}>
+            <p className={"text-lg gilroy-medium"}>Indonesia</p>
+          </div>
+        </div>
+      </Button>
+    </div>
+  );
   const [kelas, setKelas] = useState("notShadow");
   const handleScroll = () => {
     setKelas("notShadow");
@@ -136,6 +176,10 @@ function layout({ children }) {
     } else {
       setNavbarBottom(!navbarBottom);
     }
+  };
+  const changeLanguage = (e) => {
+    const locale = e;
+    router.push(router.pathname, router.asPath, { locale });
   };
   const { SubMenu } = Menu;
 
@@ -209,6 +253,32 @@ function layout({ children }) {
             style={{ lineHeight: "3.9rem" }}
             className={"hidden md:block float-right menu pt-2"}
           >
+            <Dropdown overlay={menuLanguanges} placement="bottomCenter">
+              <Button
+                type={"text"}
+                style={{ background: "white" }}
+                className={
+                  "ant-dropdown-link text-lg text-black hover:text-black"
+                }
+                onClick={(e) => e.preventDefault()}
+              >
+                {locale == "en" ? (
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={37}
+                    src={"/image/english.png"}
+                  />
+                ) : (
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={37}
+                    src={"/image/indonesia.png"}
+                  />
+                )}
+              </Button>
+            </Dropdown>
             <Dropdown overlay={menu} placement="bottomCenter">
               <Button
                 type={"text"}
@@ -223,7 +293,7 @@ function layout({ children }) {
                     "text-base gilroy-regular text-blackmig  menu-underlined hover:text-green-500"
                   }
                 >
-                  Solutions{" "}
+                  {t.solutions}{" "}
                   <CaretDownOutlined
                     style={{ display: "inline-block", verticalAlign: "middle" }}
                   />
@@ -232,12 +302,12 @@ function layout({ children }) {
             </Dropdown>
             <Link href="/aboutus">
               <a className="text-base gilroy-regular text-blackmig menu-underlined mx-4 hover:text-green-500">
-                About Us
+                {t.aboutus}
               </a>
             </Link>
             <Link href="/joinourteam">
               <a className="text-base gilroy-regular text-blackmig  menu-underlined mx-4 hover:text-green-500">
-                Career in MIG
+                {t.career}
               </a>
             </Link>
             <Link href="/blog">
@@ -247,7 +317,7 @@ function layout({ children }) {
             </Link>
             <Link href="/contactus">
               <a className="text-base gilroy-regular text-blackmig  menu-underlined mx-4 hover:text-green-500">
-                Contact Us
+                {t.contactus}
               </a>
             </Link>
           </div>
@@ -738,5 +808,4 @@ function layout({ children }) {
     </>
   );
 }
-
 export default layout;
