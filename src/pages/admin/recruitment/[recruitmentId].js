@@ -1007,8 +1007,14 @@ const RecruitmentDetailIndex = ({
                   </PDFDownloadLink>
                 )}
                 <ButtonSys
-                  type={!isAllowedToUpdateResume ? "primary" : "default"}
-                  disabled={!isAllowedToUpdateResume}
+                  type={
+                    !isAllowedToUpdateResume || !dataRecruitment?.resume
+                      ? "primary"
+                      : "default"
+                  }
+                  disabled={
+                    !isAllowedToUpdateResume || !dataRecruitment?.resume
+                  }
                   onClick={() => rt.push(`${recruitmentId}/${resumeId}`)}
                 >
                   <div className="flex flex-row space-x-3 items-center">
@@ -1019,14 +1025,14 @@ const RecruitmentDetailIndex = ({
                 <ButtonSys
                   type={
                     !isAllowedToUpdateCandidateAccess ||
-                    dataRecruitment.user?.is_enabled === 0
+                    !dataRecruitment?.user?.is_enabled
                       ? "primary"
                       : "default"
                   }
                   color={"danger"}
                   disabled={
                     !isAllowedToUpdateCandidateAccess ||
-                    dataRecruitment.user?.is_enabled === 0
+                    !dataRecruitment?.user?.is_enabled
                   }
                   onClick={() => setOpenAccessModal(true)}
                 >
