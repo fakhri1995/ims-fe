@@ -81,11 +81,11 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
-
   // use when this page comes from Recruitment Detail
   // url path: `/admin/recruitment/:recruitmentId/:resumeId` (config in next.config.js)
   if (pathTitleArr.length === 4) {
-    pathTitleArr[pathTitleArr.length - 2] = "Detail Kandidat";
+    pathTitleArr.splice(1, 1);
+    pathTitleArr.splice(1, 1, "Rekrutmen", "Detail Kandidat");
   }
 
   pathTitleArr[pathTitleArr.length - 1] = "Resume Kandidat";
