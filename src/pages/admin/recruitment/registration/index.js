@@ -58,25 +58,25 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetResgistrationsList = hasPermission(
+  const isAllowedToGetRegistrationsList = hasPermission(
     RECRUITMENT_JALUR_DAFTARS_LIST_GET
   );
-  const isAllowedToGetResgistrations = hasPermission(
+  const isAllowedToGetRegistrations = hasPermission(
     RECRUITMENT_JALUR_DAFTARS_GET
   );
-  const isAllowedToGetResgistration = hasPermission(
+  const isAllowedToGetRegistration = hasPermission(
     RECRUITMENT_JALUR_DAFTAR_GET
   );
-  const isAllowedToAddResgistration = hasPermission(
+  const isAllowedToAddRegistration = hasPermission(
     RECRUITMENT_JALUR_DAFTAR_ADD
   );
-  const isAllowedToUpdateResgistration = hasPermission(
+  const isAllowedToUpdateRegistration = hasPermission(
     RECRUITMENT_JALUR_DAFTAR_UPDATE
   );
-  const isAllowedToDeleteSResgistration = hasPermission(
+  const isAllowedToDeleteRegistration = hasPermission(
     RECRUITMENT_JALUR_DAFTAR_DELETE
   );
-  const canUpdateResgistration = hasPermission([
+  const canUpdateRegistration = hasPermission([
     RECRUITMENT_JALUR_DAFTAR_UPDATE,
     RECRUITMENT_JALUR_DAFTAR_GET,
   ]);
@@ -151,7 +151,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect
   // 3.1. Get Registrations List
   useEffect(() => {
-    if (!isAllowedToGetResgistrationsList) {
+    if (!isAllowedToGetRegistrationsList) {
       permissionWarningNotification(
         "Mendapatkan",
         "Data Recruitment Registration List"
@@ -190,12 +190,15 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingRegistrationList(false);
       });
-  }, [isAllowedToGetResgistrationsList, refresh]);
+  }, [isAllowedToGetRegistrationsList, refresh]);
 
   // 3.2. Get Registrations
   useEffect(() => {
-    if (!isAllowedToGetResgistrations) {
-      permissionWarningNotification("Mendapatkan", "Dafta");
+    if (!isAllowedToGetRegistrations) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Recruitment Jalur Daftar"
+      );
       setLoadingRegistrations(false);
       return;
     }
@@ -230,7 +233,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingRegistrations(false);
       });
-  }, [isAllowedToGetResgistrations, refresh]);
+  }, [isAllowedToGetRegistrations, refresh]);
 
   // 4. Event
   const onFilterRegistration = () => {
@@ -291,7 +294,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   const handleDelete = () => {
-    if (!isAllowedToDeleteSResgistration) {
+    if (!isAllowedToDeleteRegistration) {
       permissionWarningNotification("Menghapus", "Registration Rekrutmen");
       return;
     }
@@ -363,7 +366,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: isAllowedToGetResgistrations
+      sorter: isAllowedToGetRegistrations
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
@@ -375,7 +378,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.recruitments_count}</>,
         };
       },
-      sorter: isAllowedToGetResgistrations
+      sorter: isAllowedToGetRegistrations
         ? (a, b) => a.recruitments_count > b.recruitments_count
         : false,
     },
@@ -387,8 +390,8 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <div className="flex items-center space-x-2">
               <ButtonSys
-                type={canUpdateResgistration ? "default" : "primary"}
-                disabled={!canUpdateResgistration}
+                type={canUpdateRegistration ? "default" : "primary"}
+                disabled={!canUpdateRegistration}
                 onClick={(event) => {
                   event.stopPropagation();
                   tempIdUpdate.current = record.id;
@@ -399,9 +402,9 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <EditIconSvg size={15} color={`#35763B`} />
               </ButtonSys>
               <ButtonSys
-                type={isAllowedToDeleteSResgistration ? "default" : "primary"}
+                type={isAllowedToDeleteRegistration ? "default" : "primary"}
                 color="danger"
-                disabled={!isAllowedToDeleteSResgistration}
+                disabled={!isAllowedToDeleteRegistration}
                 onClick={(event) => {
                   event.stopPropagation();
                   onOpenDeleteModal(record);
@@ -437,9 +440,9 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
               </h4>
 
               <ButtonSys
-                type={isAllowedToAddResgistration ? "default" : "primary"}
+                type={isAllowedToAddRegistration ? "default" : "primary"}
                 onClick={() => setCreateDrawerShown(true)}
-                disabled={!isAllowedToAddResgistration}
+                disabled={!isAllowedToAddRegistration}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
                   <LayoutGridAddSvg size={16} color="#35763B" />
@@ -469,14 +472,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetResgistrations}
+                  disabled={!isAllowedToGetRegistrations}
                 />
               </div>
 
               <ButtonSys
                 type={`primary`}
                 onClick={onFilterRegistration}
-                disabled={!isAllowedToGetResgistrations}
+                disabled={!isAllowedToGetRegistrations}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -512,13 +515,18 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           initProps={initProps}
           onvisible={setCreateDrawerShown}
           setRefresh={setRefresh}
-          isAllowedToAdd={isAllowedToAddResgistration}
+          isAllowedToAdd={isAllowedToAddRegistration}
           setLoadingCreate={setLoadingCreate}
           loadingCreate={loadingCreate}
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_JALUR_DAFTAR_UPDATE}>
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_JALUR_DAFTAR_UPDATE,
+          RECRUITMENT_JALUR_DAFTAR_GET,
+        ]}
+      >
         <DrawerRegistrationUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
@@ -526,8 +534,8 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setUpdateDrawerShown}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetRegistration={true}
-          isAllowedToUpdateRegistration={true}
+          isAllowedToGetRegistration={isAllowedToGetRegistration}
+          isAllowedToUpdateRegistration={isAllowedToUpdateRegistration}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
           onClickDelete={onOpenDeleteModal}
@@ -590,12 +598,12 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"Registration"}
+          itemName={"jalur daftar"}
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
           Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada Registration
+          berada pada jalur daftar
           {"\n"}
           <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
           melanjutkan penghapusan?

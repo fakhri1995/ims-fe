@@ -14,6 +14,7 @@ const DrawerRoleUpdate = ({
   setRefresh,
   isAllowedToGetRole,
   isAllowedToUpdateRole,
+  isAllowedToDeleteRole,
   dataRoleTypes,
   setLoadingUpdate,
   loadingUpdate,
@@ -152,10 +153,12 @@ const DrawerRoleUpdate = ({
       onClick={handleUpdateRole}
       disabled={disabledUpdate}
       buttonCancelText={
-        <div className="flex flex-row space-x-2 items-center">
-          <TrashIconSvg size={16} color={"#BF4A40"} />
-          <p>Hapus Role</p>
-        </div>
+        isAllowedToDeleteRole && (
+          <div className="flex flex-row space-x-2 items-center">
+            <TrashIconSvg size={16} color={"#BF4A40"} />
+            <p>Hapus Role</p>
+          </div>
+        )
       }
       onButtonCancelClicked={() => {
         onClickDelete(dataRole);

@@ -8,6 +8,7 @@ import {
   Popover,
   Select,
   Spin,
+  Switch,
   Tag,
   Timeline,
   notification,
@@ -46,6 +47,8 @@ import ButtonSys from "../../../components/button";
 import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import DrawerCandidateUpdate from "../../../components/drawer/recruitment/drawerCandidateUpdate";
 import {
+  AlertIconSvg,
+  AlerttriangleIconSvg,
   DotsIconSvg,
   DownloadIconSvg,
   EditIconSvg,
@@ -105,9 +108,13 @@ const RecruitmentDetailIndex = ({
 
   //INIT
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
-  // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Detail Kandidat";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 2);
+  pathTitleArr.splice(1, 2, "Rekrutmen", "Detail Kandidat");
 
   // 1. STATE
   // 1.1. display
@@ -146,6 +153,7 @@ const RecruitmentDetailIndex = ({
   const [moreMode, setMoreMode] = useState("");
 
   // 1.5. Update Stage & Status
+  const [isAddNote, setIsAddNote] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modeUpdate, setModeUpdate] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -165,7 +173,7 @@ const RecruitmentDetailIndex = ({
   const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
 
   // 1.7. Download Profile/Resume
-  const [openDownloadModal, setOpenDownloadModal] = useState(false);
+  const [openAccessModal, setOpenAccessModal] = useState(false);
 
   // 2. USE EFFECT
   // 2.1 Get recruitment candidate detail
@@ -367,10 +375,10 @@ const RecruitmentDetailIndex = ({
 
   // 2.7. Disable update stage and status
   useEffect(() => {
-    let allFilled = Object.values(dataUpdateStage).every(
-      (value) => value !== "" && value !== null
-    );
-    // console.log(allFilled)
+    let allFilled =
+      dataUpdateStage.id !== null &&
+      dataUpdateStage.recruitment_stage_id !== null;
+
     if (allFilled) {
       setDisableUpdate(false);
     } else {
@@ -379,10 +387,10 @@ const RecruitmentDetailIndex = ({
   }, [dataUpdateStage]);
 
   useEffect(() => {
-    let allFilled = Object.values(dataUpdateStatus).every(
-      (value) => value !== "" && value !== null
-    );
-    // console.log(allFilled)
+    let allFilled =
+      dataUpdateStatus.id !== null &&
+      dataUpdateStatus.recruitment_status_id !== null;
+
     if (allFilled) {
       setDisableUpdate(false);
     } else {
@@ -615,16 +623,16 @@ const RecruitmentDetailIndex = ({
   };
 
   const handleUpdateCandidateAccess = () => {
-    const payload = {
-      user_id: dataRecruitment.owner_id,
-      is_enabled: false,
-    };
-
     if (!isAllowedToUpdateCandidateAccess) {
       permissionWarningNotification("Mengubah", "Status Akses Kandidat");
       setLoadingUpdate(false);
       return;
     }
+
+    const payload = {
+      user_id: dataRecruitment.owner_id,
+      is_enabled: false,
+    };
 
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/guestActivation`, {
@@ -643,7 +651,7 @@ const RecruitmentDetailIndex = ({
             message: res2.message,
             duration: 3,
           });
-          setOpenDownloadModal(false);
+          setOpenAccessModal(false);
         } else {
           notification["error"]({
             message: `Gagal mengubah status akses kandidat ${res2.message}`,
@@ -669,6 +677,7 @@ const RecruitmentDetailIndex = ({
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-row gap-4 w-full">
         {/* Left Column */}
@@ -974,45 +983,62 @@ const RecruitmentDetailIndex = ({
             <div className="flex flex-row justify-between items-center mb-4">
               <h4 className="mig-heading--4">Profil Kandidat</h4>
               <div
-                className="space-x-2 flex lg:flex-row md:flex-col 
-                md:space-y-2 lg:space-y-0"
+                className="space-x-0 xl:space-x-2 flex flex-col xl:flex-row  
+                space-y-2 xl:space-y-0"
               >
+                {isOnClient && (
+                  <PDFDownloadLink
+                    document={<ResumePDFTemplate dataResume={dataResume} />}
+                    fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+                  >
+                    <ButtonSys
+                      type={
+                        !resumeId || !isAllowedToGetResume
+                          ? "primary"
+                          : "default"
+                      }
+                      disabled={!resumeId || !isAllowedToGetResume}
+                    >
+                      <div className="flex flex-row space-x-2 items-center">
+                        <DownloadIconSvg size={16} color={"#35763B"} />
+                        <p>Unduh Resume</p>
+                      </div>
+                    </ButtonSys>
+                  </PDFDownloadLink>
+                )}
                 <ButtonSys
                   type={
-                    !resumeId ||
-                    !isAllowedToGetResume ||
-                    dataRecruitment.user?.is_enabled === 0
+                    !isAllowedToUpdateResume || !dataRecruitment?.resume
                       ? "primary"
                       : "default"
                   }
-                  onClick={() => setOpenDownloadModal(true)}
                   disabled={
-                    !resumeId ||
-                    !isAllowedToGetResume ||
-                    dataRecruitment.user?.is_enabled === 0
-                  }
-                >
-                  <div className="flex flex-row space-x-2">
-                    <DownloadIconSvg size={16} color={"#35763B"} />
-                    <p>Unduh Resume</p>
-                  </div>
-                </ButtonSys>
-                <ButtonSys
-                  type={
-                    !isAllowedToUpdateResume ||
-                    dataRecruitment.user?.is_enabled === 0
-                      ? "primary"
-                      : "default"
-                  }
-                  disabled={
-                    !isAllowedToUpdateResume ||
-                    dataRecruitment.user?.is_enabled === 0
+                    !isAllowedToUpdateResume || !dataRecruitment?.resume
                   }
                   onClick={() => rt.push(`${recruitmentId}/${resumeId}`)}
                 >
                   <div className="flex flex-row space-x-3 items-center">
                     <EditIconSvg size={16} color="#35763B" />
                     <p>Ubah Resume</p>
+                  </div>
+                </ButtonSys>
+                <ButtonSys
+                  type={
+                    !isAllowedToUpdateCandidateAccess ||
+                    !dataRecruitment?.user?.is_enabled
+                      ? "primary"
+                      : "default"
+                  }
+                  color={"danger"}
+                  disabled={
+                    !isAllowedToUpdateCandidateAccess ||
+                    !dataRecruitment?.user?.is_enabled
+                  }
+                  onClick={() => setOpenAccessModal(true)}
+                >
+                  <div className="flex flex-row space-x-3 items-center">
+                    <AlertIconSvg size={20} color="#BF4A40" />
+                    <p>Hentikan Akses</p>
                   </div>
                 </ButtonSys>
               </div>
@@ -1278,19 +1304,31 @@ const RecruitmentDetailIndex = ({
                   ))}
                 </Select>
               </div>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStage.notes ? dataUpdateStage.notes : null}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStage.notes ? dataUpdateStage.notes : null}
+                  onChange={(event) => {
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           ) : (
@@ -1324,19 +1362,30 @@ const RecruitmentDetailIndex = ({
                   ))}
                 </Select>
               </div>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStatus.notes ? dataUpdateStatus.notes : null}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStatus.notes ? dataUpdateStatus.notes : null}
+                  onChange={(event) => {
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           )}
@@ -1440,48 +1489,38 @@ const RecruitmentDetailIndex = ({
         </ModalCore>
       </AccessControl>
 
-      {/* Modal Unduh Profil */}
-      <AccessControl hasPermission={RESUME_GET}>
+      {/* Modal Hentikan Akses */}
+      <AccessControl hasPermission={GUEST_STATUS}>
         <ModalCore
-          title={"Apakah Anda yakin ingin mengunduh profil?"}
-          visible={openDownloadModal}
-          onCancel={() => setOpenDownloadModal(false)}
+          title={"Apakah Anda yakin ingin menghentikan akses?"}
+          visible={openAccessModal}
+          onCancel={() => setOpenAccessModal(false)}
           footer={
-            <PDFDownloadLink
-              document={<ResumePDFTemplate dataResume={dataResume} />}
-              fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+            <ButtonSys
+              onClick={handleUpdateCandidateAccess}
+              type={
+                !resumeId ||
+                !isAllowedToGetResume ||
+                dataRecruitment.user?.is_enabled === 0
+                  ? "primary"
+                  : "default"
+              }
               disabled={
                 !resumeId ||
                 !isAllowedToGetResume ||
                 dataRecruitment.user?.is_enabled === 0
               }
             >
-              <ButtonSys
-                onClick={handleUpdateCandidateAccess}
-                type={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                    ? "primary"
-                    : "default"
-                }
-                disabled={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                }
-              >
-                Ya, Saya Yakin
-              </ButtonSys>
-            </PDFDownloadLink>
+              Ya, Saya Yakin
+            </ButtonSys>
           }
         >
           <Spin spinning={loadingDataResume}>
             {isOnClient && (
               <div className="flex flex-col space-y-5">
                 <p className="text-center">
-                  Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, profil
-                  akan terunduh dan akses kandidat dengan nama&nbsp;
+                  Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, akses
+                  kandidat dengan nama&nbsp;
                   <strong>{dataResume.name}</strong> ke resume builder akan
                   terhapus.
                 </p>

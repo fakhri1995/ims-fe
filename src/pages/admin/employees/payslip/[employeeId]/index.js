@@ -548,7 +548,7 @@ const EmployeePayslipDetailIndex = ({
                 <p className="mig-caption--medium text-mono80">
                   Status Slip Gaji (Oktober 2022)
                 </p>
-                {dataEmployee?.contracts[0]?.is_employee_active ? (
+                {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-primary100"></div>
                     <h4 className="mig-heading--4">Aktif</h4>
@@ -607,7 +607,6 @@ const EmployeePayslipDetailIndex = ({
             </div>
           </div>
         </div>
-
         {/* Table Daftar Slip Gaji */}
         <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6 mt-8">
           <h4 className="mig-heading--4 mb-6">Daftar Slip Gaji</h4>
