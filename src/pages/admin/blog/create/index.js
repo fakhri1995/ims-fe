@@ -26,6 +26,7 @@ import { RequesterService } from "apis/user";
 
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
+import { objectToFormData } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 // function modifData(dataa) {
@@ -51,6 +52,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
 
   const axiosClient = useAxiosClient();
   const rt = useRouter();
+  const { id: articleId, prevpath } = rt.query;
   const tok = initProps;
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr[pathArr.length - 1] = "Create";
@@ -59,59 +61,115 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
 
   //useState
   const [artikelBlog, setArtikelBlog] = useState({
+    id: null,
     judul: "",
     isi: "",
     slug: "",
     artikel_image: "",
     artikel_image_file: null,
   });
+
+  const [artikelEdit, setArtikelEdit] = useState(null);
   const [loadingupload, setLoadingupload] = useState(false);
   const [loadingcreate, setLoadingcreate] = useState(false);
   const [datacompanylist, setdatacompanylist] = useState([]);
   const [dataraw1, setdataraw1] = useState([]);
   const [praloading, setpraloading] = useState(true);
+  const [loadingEmployee, setLoadingEmployee] = useState(false);
+  const [refresh, setRefresh] = useState(-1);
 
   //handleCreateButton
-  const handleCreateAgents = () => {
-    setLoadingcreate(true);
 
-    const createPayload = {
-      ...newuserrequesters,
-      profile_image: newuserrequesters.profile_image_file,
-    };
-    if ("profile_image_file" in createPayload) {
-      delete createPayload["profile_image_file"];
-    }
-
-    RequesterService.create(axiosClient, createPayload)
-      .then((response) => {
-        const res2 = response.data;
-
-        if (res2.success) {
-          notification["success"]({
-            message: res2.message,
+  useEffect(() => {
+    if (articleId) {
+      setLoadingEmployee(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticleDetail?id=${articleId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            console.log("edit data ", res2);
+            if (prevpath === "add") {
+            } else {
+              instanceForm.setFieldsValue({
+                judul: res2.data.title,
+                isi: res2.data.description,
+              });
+              setArtikelBlog({
+                judul: res2.data.title,
+                isi: res2.data.description,
+              });
+            }
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
             duration: 3,
           });
-          setTimeout(() => {
-            rt.push(`/admin/requesters/detail/${res2.id}`);
-          }, 1000);
+        })
+        .finally(() => {
+          setLoadingEmployee(false);
+        });
+    }
+  }, [refresh]);
+
+  const handleCreateArticle = () => {
+    let title_lowercase = artikelBlog.judul.toLowerCase();
+    let dataArticle = {
+      id: articleId ? articleId : null,
+      title: artikelBlog.judul,
+      description: artikelBlog.isi,
+      slug: title_lowercase.replace(/ /g, "-"),
+      attachment: artikelBlog.artikel_image_file,
+    };
+
+    console.log("data articel ", dataArticle);
+    let formData = objectToFormData(dataArticle);
+    let url = "";
+    if (articleId) {
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateArticle`;
+    } else {
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addArticle`;
+    }
+    fetch(url, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        Accept: "*/*",
+      },
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          instanceForm.resetFields();
+          notification.success({
+            message: articleId
+              ? "Update Article Success!"
+              : "Add Article Success!",
+            duration: 3,
+          });
         } else if (!res2.success) {
           notification["error"]({
-            message: res2.message,
-            duration: 3,
+            message: articleId
+              ? "Update Article Failed!"
+              : "Add Article Failed!",
+            duration: 5,
           });
         }
-      })
-      .catch((error) => {
-        const errorMessage = error?.response?.data?.message;
-
-        notification["error"]({
-          message: errorMessage || "Terjadi kesalahan saat memperbarui profil",
-          duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingcreate(false);
       });
   };
 
@@ -161,41 +219,6 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   );
 
   //useEffect
-  useEffect(() => {
-    if (!isAllowedToGetClientCompanyList) {
-      setpraloading(false);
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getClientCompanyList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatacompanylist(res2.data.children);
-        setpraloading(false);
-      });
-  }, [isAllowedToGetClientCompanyList]);
-
-  useEffect(() => {
-    if (isAllowedToGetRolesList) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setdataraw1(res2.data);
-        });
-      return;
-    }
-  }, [isAllowedToGetRolesList]);
 
   return (
     <Layout
@@ -216,7 +239,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
               <div className="flex space-x-2">
                 {/* <Link href="/admin/requesters"> */}
                 <Button
-                  disabled={praloading}
+                  // disabled={praloading}
                   onClick={() => {
                     rt.push(`/admin/requesters`);
                   }}
@@ -227,16 +250,16 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 {/* <button className=" bg-white border hover:bg-gray-200 border-gray-300 text-black py-1 px-3 rounded-md">Cancel</button> */}
                 {/* </Link> */}
                 <Button
-                  disabled={
-                    praloading ||
-                    !isAllowedToAddRequester ||
-                    !isAllowedToGetClientCompanyList
-                  }
+                  // disabled={
+                  //   praloading ||
+                  //   !isAllowedToAddRequester ||
+                  //   !isAllowedToGetClientCompanyList
+                  // }
                   loading={loadingcreate}
                   onClick={instanceForm.submit}
                   type="primary"
                 >
-                  Simpan
+                  {articleId ? "Update" : "Simpan"}
                 </Button>
                 {/* <button className=" bg-gray-700 hover:bg-gray-800 border text-white py-1 px-3 rounded-md" onClick={handleCreateAgents}>Save</button> */}
               </div>
@@ -273,12 +296,13 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 <Form
                   layout="vertical"
                   className="createAgentsForm"
-                  onFinish={handleCreateAgents}
+                  onFinish={handleCreateArticle}
                   form={instanceForm}
                 >
                   <Form.Item
                     label="Judul Artikel"
                     required
+                    initialValue={artikelBlog.judul}
                     name="judul"
                     rules={[
                       {
@@ -308,23 +332,6 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       rows={5}
                       value={artikelBlog.isi}
                       name={`isi`}
-                      onChange={onChangeCreateArtikel}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Slug"
-                    required
-                    name="alug"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Slug wajib diisi",
-                      },
-                    ]}
-                  >
-                    <Input
-                      value={artikelBlog.slug}
-                      name={`slug`}
                       onChange={onChangeCreateArtikel}
                     />
                   </Form.Item>

@@ -812,14 +812,27 @@ function Hardware({}) {
                     buttonStyle={"solid"}
                   >
                     <Space direction="vertical">
-                      <Radio className="text-blackmig text-sm" value={1}>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={"I want to buy the product"}
+                      >
                         I want to buy the product
                       </Radio>
-                      <Radio className="text-blackmig text-sm" value={2}>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={
+                          "I want to lease the product and having hardware managed"
+                        }
+                      >
                         I want to lease the product and having hardware managed
                         services
                       </Radio>
-                      <Radio className="text-blackmig text-sm" value={3}>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={
+                          "None of the above, I just want to know about the service"
+                        }
+                      >
                         None of the above, I just want to know about the service
                       </Radio>
                     </Space>

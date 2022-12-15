@@ -1,3 +1,4 @@
+
 const withBundleAnalyzer = require("@next/bundle-analyzer")({
   enabled: process.env.ANALYZE === "true",
 });
@@ -6,6 +7,10 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
+  i18n: {
+    locales: ['en', 'id'],
+    defaultLocale: 'en',
+  },
   rewrites: async () => [
     { source: "/advantages", destination: "/migwebsite/advantages" },
     { source: "/hardware", destination: "/migwebsite/hardware" },
@@ -38,6 +43,7 @@ const nextConfig = {
     },
   ],
   webpack: (config) => {
+    
     config.module.rules.push({
       test: /\.svg$/,
       use: ["@svgr/webpack"],

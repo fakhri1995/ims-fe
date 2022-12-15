@@ -1,6 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Modal, Table } from "antd";
-import { useRouter } from "next/router";
+import moment from "moment";
+import { Router, useRouter } from "next/router";
 import { useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -36,9 +37,9 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
       },
     },
     {
-      title: "Nama Pengirim",
-      dataIndex: "name",
-      key: "name",
+      title: "Contact Name",
+      dataIndex: "contact_name",
+      key: "contact_name",
       render: (text, record, index) => {
         return {
           props: {
@@ -46,7 +47,7 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
           },
           children: (
             <>
-              <p className=" text-base">{record.name}</p>
+              <p className=" text-base">{record.contact_name}</p>
             </>
           ),
         };
@@ -54,8 +55,8 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
     },
     {
       title: "Company Email",
-      dataIndex: "company_email",
-      key: "company_email",
+      dataIndex: "email",
+      key: "email",
       render: (text, record, index) => {
         return {
           props: {
@@ -63,7 +64,7 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
           },
           children: (
             <>
-              <p className="text-xs">{record.company_email}</p>
+              <p className="text-xs">{record.email}</p>
             </>
           ),
         };
@@ -87,9 +88,9 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
       },
     },
     {
-      title: "Interested In",
-      dataIndex: "interested_in",
-      key: "interested_in",
+      title: "Kind Form",
+      dataIndex: "kind_form",
+      key: "kind_form",
       render: (text, record, index) => {
         return {
           props: {
@@ -97,7 +98,26 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
           },
           children: (
             <>
-              <h1 className="text-xs">{record.interested_in}</h1>
+              <h1 className="text-xs">{record.kind_form}</h1>
+            </>
+          ),
+        };
+      },
+    },
+    {
+      title: "Meeting Schedule",
+      dataIndex: "meeting_schedule",
+      key: "meeting_schedule",
+      render: (text, record, index) => {
+        return {
+          props: {
+            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
+          },
+          children: (
+            <>
+              <h1 className="text-xs">
+                {moment(record.meeting_schedule).format("DD MMMM YYYY, h:mm a")}
+              </h1>
             </>
           ),
         };
@@ -120,18 +140,10 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
                   marginRight: `1rem`,
                 }}
                 onClick={() => {
-                  setdatadetail({
-                    id: record.id,
-                    name: record.name,
-                    company_email: record.company_email,
-                    company_name: record.company_name,
-                    interseted_in: record.interested_in,
-                    message: record.message,
-                  });
-                  setmodaldetail(true);
+                  rt.push(`/admin/form-solution/${record.id}`);
                 }}
               >
-                <SearchOutlined />
+                <p>Details</p>
               </Button>
             </div>
           ),
@@ -184,7 +196,7 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
         </div>
       </div>
       <Modal
-        title={`Message Detail`}
+        title={`Form Solution Detail`}
         visible={modaldetail}
         okButtonProps={{ disabled: loadingdetail }}
         onCancel={() => {
@@ -202,10 +214,10 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
           <p className="text-sm mb-5">{datadetail.company_name}</p>
           <h1 className="text-sm font-semibold mb-2">Company Email:</h1>
           <p className="text-sm mb-5">{datadetail.company_email}</p>
-          <h1 className="text-sm font-semibold mb-2">Interested In:</h1>
+          <h1 className="text-sm font-semibold mb-2">Kind of Form:</h1>
           <p className="text-sm mb-5">{datadetail.interseted_in}</p>
-          <h1 className="text-sm font-semibold mb-2">Message:</h1>
-          <p className="text-sm mb-5">{datadetail.message}</p>
+          <h1 className="text-sm font-semibold mb-2">Meeting Schedule:</h1>
+          <p className="text-sm mb-5">{datadetail.meeting_schedule}</p>
         </div>
       </Modal>
     </Layout>
@@ -238,7 +250,7 @@ export async function getServerSideProps({ req, res }) {
   const dataProfile = resjsonGP;
 
   const resourcesGM = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getMessages`,
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFormSolution`,
     {
       method: `GET`,
       headers: {
@@ -248,7 +260,7 @@ export async function getServerSideProps({ req, res }) {
   );
   const resjsonGM = await resourcesGM.json();
   const dataMessages = resjsonGM;
-
+  console.log("datanya ", dataMessages);
   return {
     props: {
       initProps,
