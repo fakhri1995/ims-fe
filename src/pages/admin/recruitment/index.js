@@ -8,6 +8,7 @@ import {
   Menu,
   Select,
   Spin,
+  Switch,
   Table,
   notification,
 } from "antd";
@@ -158,7 +159,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 1. Init
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 1, "Rekrutmen");
 
   const [instanceForm] = Form.useForm();
   // 2. Use state
@@ -245,6 +252,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [verificationLink, setVerificationLink] = useState("");
 
   // 2.4 Update Stage & Status
+  const [isAddNote, setIsAddNote] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
 
@@ -545,13 +553,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [isAllowedToGetRecruitmentVerification, modalSendAccess, refresh]);
 
   // 3.6. Disable update stage or status if notes empty
-  useEffect(() => {
-    dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
-  }, [dataUpdateStage]);
+  // useEffect(() => {
+  //   dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
+  // }, [dataUpdateStage]);
 
-  useEffect(() => {
-    dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
-  }, [dataUpdateStatus]);
+  // useEffect(() => {
+  //   dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
+  // }, [dataUpdateStatus]);
 
   // 3.7. Set options in import excel
   useEffect(() => {
@@ -1381,6 +1389,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       sidemenu={sidemenu}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
         <div className="grid grid-cols-2 lg:grid-cols-3 md:px-5 gap-6">
@@ -1907,19 +1916,31 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }`}
                 </p>
               ))}
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStage.notes}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStage.notes}
+                  onChange={(event) => {
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <p>
                 Apakah Anda yakin ingin mengubah stage menjadi{" "}
                 <strong>{dataUpdateStage.recruitment_stage_name}</strong>?
@@ -1935,19 +1956,30 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <p className="font-bold">
                 {`Stage ${dataUpdateStage.prev_recruitment_stage_name} → ${dataUpdateStage.recruitment_stage_name}`}
               </p>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStage.notes}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStage.notes}
+                  onChange={(event) => {
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           )}
@@ -1982,19 +2014,31 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }`}
                 </p>
               ))}
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStatus.notes}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStatus.notes}
+                  onChange={(event) => {
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <div className="flex flex-wrap space-x-1">
                 <p>Apakah Anda yakin ingin mengubah status menjadi</p>
                 <strong>{dataUpdateStatus.recruitment_status_name}</strong>?
@@ -2010,19 +2054,30 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <p className="font-bold">
                 {`Status ${dataUpdateStatus.prev_recruitment_status_name} → ${dataUpdateStatus.recruitment_status_name}`}
               </p>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStatus.notes}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStatus.notes}
+                  onChange={(event) => {
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           )}
@@ -2090,6 +2145,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
                 dataSource={selectedRecruitments}
+                pagination={false}
+                scroll={{
+                  y: 150,
+                }}
               ></Table>
             </div>
 
