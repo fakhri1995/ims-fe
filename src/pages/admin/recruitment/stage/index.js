@@ -557,7 +557,9 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_STAGE_UPDATE}>
+      <AccessControl
+        hasPermission={[RECRUITMENT_STAGE_UPDATE, RECRUITMENT_STAGE_GET]}
+      >
         <DrawerStageUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}

@@ -37,9 +37,9 @@ const nextConfig = {
     { source: "/contactus", destination: "/migwebsite/contactus" },
     { source: "/dashboard/clients", destination: "/company/clients" },
 
-    { 
-      source: "/admin/recruitment/:recruitment_id/:resume_id", 
-      destination: "/admin/candidates/:resume_id" 
+    {
+      source: "/admin/recruitment/:recruitment_id/:resume_id",
+      destination: "/admin/candidates/:resume_id",
     },
   ],
   webpack: (config) => {

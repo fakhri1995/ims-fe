@@ -479,8 +479,18 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         <div className="flex flex-row items-center justify-between mb-4 px-1">
           <h3 className="mig-heading--3">Tambah Karyawan</h3>
           <div className="flex flex-row space-x-6 items-center">
-            <Spin spinning={loadingUpdate} />
-            {showSuccessIcon && <CheckIconSvg color={"#35763B"} size={32} />}
+            {loadingUpdate ? (
+              <Spin spinning={loadingUpdate} />
+            ) : (
+              <div
+                className={`transition duration-700 ease-in-out ${
+                  showSuccessIcon ? "opacity-1" : "opacity-0"
+                }`}
+              >
+                <CheckIconSvg color={"#35763B"} size={32} />
+              </div>
+            )}
+
             {currentTab == "1" ? (
               <ButtonSys
                 type={"default"}
