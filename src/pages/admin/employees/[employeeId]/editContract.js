@@ -25,7 +25,13 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeeContractEditIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  employeeId,
+  employeeName,
+}) => {
   /**
    * Dependencies
    */
@@ -44,7 +50,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { id: contractId, employeeId, prevpath } = rt.query;
+  const { id: contractId, prevpath } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -52,7 +58,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Kontrak");
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", employeeName, "Edit Kontrak");
 
   // const [instanceForm] = Form.useForm();
 
@@ -86,6 +92,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 1.3. Delete
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
 
   // 2. USE EFFECT
   // 2.1 Get employee contract detail
@@ -129,6 +136,32 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
         .finally(() => setpraloading(false));
     }
   }, [isAllowedToGetEmployeeContract, contractId, refresh]);
+
+  // 2.2. Disable "Simpan" button if any required field is empty
+  useEffect(() => {
+    // resign date field is required if page comes from "Nonaktifkan Karyawan" button
+    let isNotResign = true;
+    if (prevpath === "inactivate") {
+      isNotResign = moment(dataContract?.resign_at).isValid();
+    }
+
+    let requiredContractField = Boolean(
+      dataContract.contract_name &&
+        dataContract.role_id &&
+        dataContract.contract_status_id &&
+        dataContract.contract_file &&
+        dataContract.pkwt_reference &&
+        dataContract.contract_start_at &&
+        dataContract.contract_end_at &&
+        isNotResign
+    );
+
+    if (!requiredContractField) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataContract, prevpath]);
 
   // 3. Event
   // 3.1. Save Employee Contract
@@ -212,8 +245,7 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"primary"}
               onClick={handleSaveContract}
-              // onClick={instanceForm.submit}
-              disabled={!isAllowedToUpdateEmployeeContract}
+              disabled={!isAllowedToUpdateEmployeeContract || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -235,7 +267,8 @@ const EmployeeContractEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -267,11 +300,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-list",
+      employeeId,
+      employeeName,
     },
   };
 }
