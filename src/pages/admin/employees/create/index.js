@@ -155,56 +155,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     prevTab.current = currentTab;
   }, [currentTab]);
 
-  // Disable "Simpan Karyawan" button if any required field is empty
-  useEffect(() => {
-    let requiredProfileField = Boolean(
-      dataEmployee.name &&
-        dataEmployee.nip &&
-        dataEmployee.nik &&
-        dataEmployee.alias &&
-        dataEmployee.email_office &&
-        dataEmployee.email_personal &&
-        dataEmployee.phone_number &&
-        dataEmployee.birth_place &&
-        dataEmployee.birth_date &&
-        dataEmployee.gender
-    );
-
-    let requiredContractField = Boolean(
-      dataContract.contract_name &&
-        dataContract.role_id &&
-        dataContract.contract_status_id &&
-        dataContract.contract_file &&
-        dataContract.pkwt_reference &&
-        dataContract.contract_start_at &&
-        dataContract.contract_end_at
-    );
-
-    let requiredInventoryField = inventoryList.every((inventory) => {
-      let isDevicesFilled = inventory.devices?.every((device) =>
-        Boolean(device.id_number && device.device_name)
-      );
-      return Boolean(
-        inventory.id_number &&
-          inventory.device_name &&
-          inventory.referance_invertory &&
-          inventory.delivery_date &&
-          inventory.pic_delivery &&
-          isDevicesFilled
-      );
-    });
-
-    if (
-      !requiredProfileField ||
-      !requiredContractField ||
-      !requiredInventoryField
-    ) {
-      setDisablePublish(true);
-    } else {
-      setDisablePublish(false);
-    }
-  }, [dataEmployee, dataContract, inventoryList]);
-
   // 2.1. Get Employee Data
   useEffect(() => {
     if (!isAllowedToGetEmployee) {
@@ -255,7 +205,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployee, refresh]);
 
-  // 2.1. Get Employee Contract
+  // 2.2. Get Employee Contract
   useEffect(() => {
     if (!isAllowedToGetEmployeeContract) {
       permissionWarningNotification("Mendapatkan", "Data Employee Contract");
@@ -263,7 +213,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    if (employeeId) {
+    if (dataEmployee?.contracts[0]?.id) {
       setLoadingEmployee(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${dataEmployee?.contracts[0]?.id}`,
@@ -304,7 +254,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployeeContract, refresh]);
 
-  // 2.2. Debounce function for auto save draft
+  // 2.3. Debounce function for auto save draft
   const debouncedSaveProfile = useCallback(
     debounce((data) => {
       handleSaveProfile(0, data);
@@ -324,7 +274,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     []
   );
 
-  // 2.3. Cleanup debounce function
+  // 2.4. Cleanup debounce function
   useEffect(() => {
     return () => {
       debouncedSaveProfile.cancel();
@@ -332,6 +282,56 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       debouncedSaveInventory.cancel();
     };
   }, []);
+
+  // 2.5. Disable "Simpan Karyawan" button if any required field is empty
+  useEffect(() => {
+    let requiredProfileField = Boolean(
+      dataEmployee.name &&
+        dataEmployee.nip &&
+        dataEmployee.nik &&
+        dataEmployee.alias &&
+        dataEmployee.email_office &&
+        dataEmployee.email_personal &&
+        dataEmployee.phone_number &&
+        dataEmployee.birth_place &&
+        dataEmployee.birth_date &&
+        dataEmployee.gender
+    );
+
+    let requiredContractField = Boolean(
+      dataContract.contract_name &&
+        dataContract.role_id &&
+        dataContract.contract_status_id &&
+        dataContract.contract_file &&
+        dataContract.pkwt_reference &&
+        dataContract.contract_start_at &&
+        dataContract.contract_end_at
+    );
+
+    let requiredInventoryField = inventoryList.every((inventory) => {
+      let isDevicesFilled = inventory.devices?.every((device) =>
+        Boolean(device.id_number && device.device_name)
+      );
+      return Boolean(
+        inventory.id_number &&
+          inventory.device_name &&
+          inventory.referance_invertory &&
+          inventory.delivery_date &&
+          inventory.pic_delivery &&
+          isDevicesFilled
+      );
+    });
+
+    if (
+      !requiredProfileField ||
+      !requiredContractField ||
+      !requiredInventoryField
+    ) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataEmployee, dataContract, inventoryList]);
 
   // 3. HANDLER
   const handleAddEmployeeContract = () => {
