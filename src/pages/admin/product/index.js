@@ -24,7 +24,7 @@ import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import httpcookie from "cookie";
 
-const Blog = ({ initProps, dataProfile, sidemenu }) => {
+const Product = ({ initProps, dataProfile, sidemenu }) => {
   const rt = useRouter();
 
   const pathArr = rt.pathname.split("/").slice(1);
@@ -32,6 +32,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [refresh, setRefresh] = useState(-1);
+  const [dataProductAll, setDataProductAll] = useState(null);
   //Definisi table
   const columnsFeature = [
     {
@@ -52,9 +53,9 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
       },
     },
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
+      title: "Name Product",
+      dataIndex: "name_product",
+      key: "name_product",
       render: (text, record, index) => {
         return {
           props: {
@@ -62,16 +63,16 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
           },
           children: (
             <>
-              <p className=" text-base">{record.title}</p>
+              <p className=" text-base">{record.name_product}</p>
             </>
           ),
         };
       },
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
       render: (text, record, index) => {
         return {
           props: {
@@ -79,24 +80,15 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
           },
           children: (
             <>
-              <p className="text-xs">{record.description}</p>
-            </>
-          ),
-        };
-      },
-    },
-    {
-      title: "Slug",
-      dataIndex: "slug",
-      key: "slug",
-      render: (text, record, index) => {
-        return {
-          props: {
-            style: { backgroundColor: index % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: (
-            <>
-              <p className="text-xs">{record.slug}</p>
+              <p className="text-xs">
+                {record.category_product_id == 1
+                  ? "Banking Machinery"
+                  : record.category_product_id == 2
+                  ? "Workstation"
+                  : record.category_product_id == 3
+                  ? "Server & Hosting"
+                  : "UPS"}
+              </p>
             </>
           ),
         };
@@ -114,7 +106,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
           children: (
             <>
               <img
-                src={generateStaticAssetUrl(record.attachment_article?.link)}
+                src={generateStaticAssetUrl(record.attachment_product?.link)}
                 className="w-1/5 bg-cover object-cover rounded-md shadow-lg"
               />
             </>
@@ -138,13 +130,13 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
                 // disabled={!isAllowedToEditDraft}
                 onClick={(event) => {
                   event.stopPropagation();
-                  rt.push(`/admin/blog/create?id=${record.id}`);
+                  rt.push(`/admin/product/create?id=${record.id}`);
                 }}
                 color={"border-notice text-notice bg-notice bg-opacity-10"}
               >
                 <div className="flex flex-row space-x-2 items-center">
                   <EditIconSvg size={16} color={`#DDB44A`} />
-                  <p className="whitespace-nowrap">Edit Article</p>
+                  <p className="whitespace-nowrap">Edit Product</p>
                 </div>
               </ButtonSysColor>
               <ButtonSysColor
@@ -159,7 +151,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
               >
                 <div className="flex flex-row space-x-2 items-center">
                   <TrashIconSvg size={16} color={`#BF4A40`} />
-                  <p className="whitespace-nowrap">Hapus Article</p>
+                  <p className="whitespace-nowrap">Hapus Product</p>
                 </div>
               </ButtonSysColor>
             </div>
@@ -170,8 +162,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
   ];
 
   //useState
-  const [dataArticleAll, setDataArticleAll] = useState(null);
-  const datatemp = dataArticleAll ?? [];
+  const datatemp = dataProductAll ? dataProductAll : [];
   const dataMessagesMap = datatemp.map((doc, idx) => {
     return {
       ...doc,
@@ -191,7 +182,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticle`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProduct`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -200,7 +191,7 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataArticleAll(res2.data);
+          setDataProductAll(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
@@ -218,10 +209,11 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
         // setLoadingEmployees(false);
       });
   }, [refresh]);
+
   const handleDeleteArticle = (articleId) => {
     setLoadingDelete(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteArticle?id=${articleId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProduct?id=${articleId}`,
       {
         method: "DELETE",
         headers: {
@@ -269,11 +261,11 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
         <div className=" col-span-1 md:col-span-4">
           <Sticky containerSelectorFocus="#formAgentsWrapper">
             <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-              <h1 className="font-semibold text-base w-auto pt-2">Blog</h1>
+              <h1 className="font-semibold text-base w-auto pt-2">Product</h1>
               {
                 // [176].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                 <div className="flex space-x-2">
-                  <Link href="/admin/blog/create">
+                  <Link href="/admin/product/create">
                     <Button
                       type="primary"
                       size="large"
@@ -306,12 +298,12 @@ const Blog = ({ initProps, dataProfile, sidemenu }) => {
         onCancel={() => {
           setModalDelete(false);
         }}
-        itemName={"article"}
+        itemName={"product"}
         loading={loadingDelete}
       >
         <p>
-          Apakah Anda yakin ingin melanjutkan penghapusan artikel dengan judul{" "}
-          <strong>{dataRowClicked.title}?</strong>
+          Apakah Anda yakin ingin melanjutkan penghapusan produk dengan nama{" "}
+          <strong>{dataRowClicked.name_product}?</strong>
         </p>
       </ModalHapus2>
     </Layout>
@@ -343,13 +335,24 @@ export async function getServerSideProps({ req, res }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGM = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProduct`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGM = await resourcesGM.json();
+  const dataMessages = resjsonGM;
   return {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "4",
+      sidemenu: "96",
     },
   };
 }
 
-export default Blog;
+export default Product;
