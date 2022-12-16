@@ -41,7 +41,7 @@ import httpcookie from "cookie";
 //   return dataa;
 // }
 
-function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
+function ProductCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   /**
    * Dependencies
    */
@@ -58,15 +58,15 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   pathArr[pathArr.length - 1] = "Create";
   // dataCompanyList = dataCompanyList.data.members.filter(data => data.company_id !== 66)
   const [instanceForm] = Form.useForm();
+  const { Option } = Select;
 
   //useState
-  const [artikelBlog, setArtikelBlog] = useState({
+  const [dataProduct, setDataProduct] = useState({
     id: null,
-    judul: "",
-    isi: "",
-    slug: "",
-    artikel_image: "",
-    artikel_image_file: null,
+    name_product: "",
+    category_product_id: "",
+    product_image: "",
+    product_image_file: null,
   });
 
   const [artikelEdit, setArtikelEdit] = useState(null);
@@ -84,7 +84,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     if (articleId) {
       setLoadingEmployee(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticleDetail?id=${articleId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductDetail?id=${articleId}`,
         {
           method: `GET`,
           headers: {
@@ -98,12 +98,12 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
             if (prevpath === "add") {
             } else {
               instanceForm.setFieldsValue({
-                judul: res2.data.title,
-                isi: res2.data.description,
+                name_product: res2.data.name_product,
+                category_product_id: res2.data.category_product_id,
               });
-              setArtikelBlog({
-                judul: res2.data.title,
-                isi: res2.data.description,
+              setDataProduct({
+                name_product: res2.data.name_product,
+                category_product_id: res2.data.category_product_id,
               });
             }
           } else {
@@ -125,22 +125,20 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     }
   }, [refresh]);
 
-  const handleCreateArticle = () => {
-    let title_lowercase = artikelBlog.judul.toLowerCase();
-    let dataArticle = {
+  const handleCreateProduct = () => {
+    let dataProducts = {
       id: articleId ? articleId : null,
-      title: artikelBlog.judul,
-      description: artikelBlog.isi,
-      slug: title_lowercase.replace(/ /g, "-"),
-      attachment: artikelBlog.artikel_image_file,
+      name_product: dataProduct.name_product,
+      category_product_id: dataProduct.category_product_id,
+      attachment_product: dataProduct.product_image_file,
     };
 
-    let formData = objectToFormData(dataArticle);
+    let formData = objectToFormData(dataProducts);
     let url = "";
     if (articleId) {
-      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateArticle`;
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProduct`;
     } else {
-      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addArticle`;
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProduct`;
     }
     fetch(url, {
       method: "POST",
@@ -154,26 +152,36 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
       .then((res2) => {
         if (res2.success) {
           instanceForm.resetFields();
+          instanceForm.setFieldsValue({
+            name_product: "",
+            category_product_id: "",
+          });
+          setDataProduct({
+            name_product: "",
+            category_product_id: "",
+            product_image: "",
+            product_image_file: null,
+          });
           notification.success({
             message: articleId
-              ? "Update Article Success!"
-              : "Add Article Success!",
+              ? "Update Product Success!"
+              : "Add Product Success!",
             duration: 3,
           });
         } else if (!res2.success) {
           notification["error"]({
             message: articleId
-              ? "Update Article Failed!"
-              : "Add Article Failed!",
+              ? "Update Product Failed!"
+              : "Add Product Failed!",
             duration: 5,
           });
         }
       });
   };
 
-  const onChangeCreateArtikel = (e) => {
-    setArtikelBlog({
-      ...artikelBlog,
+  const onChangeCreateProduct = (e) => {
+    setDataProduct({
+      ...dataProduct,
       [e.target.name]: e.target.value,
     });
   };
@@ -202,10 +210,10 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
 
-      setArtikelBlog({
-        ...artikelBlog,
-        artikel_image: base64Data,
-        artikel_image_file: blobFile,
+      setDataProduct({
+        ...dataProduct,
+        product_image: base64Data,
+        product_image_file: blobFile,
       });
     }
   };
@@ -233,7 +241,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         <div className="col-span-1 md:col-span-4">
           <Sticky containerSelectorFocus="#createAgentsWrapper">
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
-              <h1 className="font-semibold py-2">Buat Artikel</h1>
+              <h1 className="font-semibold py-2">Tambah Produk</h1>
               <div className="flex space-x-2">
                 {/* <Link href="/admin/requesters"> */}
                 <Button
@@ -267,7 +275,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         <div className="col-span-1 md:col-span-3 flex flex-col">
           <div className="shadow-lg flex flex-col rounded-md w-full h-auto p-4 mb-14">
             <div className="border-b border-black p-4 font-semibold mb-5">
-              Artikel
+              Produk
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4">
               {/* <div className="p-3 col-span-1 md:col-span-1">
@@ -294,44 +302,55 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 <Form
                   layout="vertical"
                   className="createAgentsForm"
-                  onFinish={handleCreateArticle}
+                  onFinish={handleCreateProduct}
                   form={instanceForm}
                 >
                   <Form.Item
-                    label="Judul Artikel"
+                    label="Nama Produk"
                     required
-                    initialValue={artikelBlog.judul}
-                    name="judul"
+                    initialValue={dataProduct.name_product}
+                    name="name_product"
                     rules={[
                       {
                         required: true,
-                        message: "Judul Artikel wajib diisi",
+                        message: "Nama Produk wajib diisi",
                       },
                     ]}
                   >
                     <Input
-                      value={artikelBlog.judul}
-                      name={`judul`}
-                      onChange={onChangeCreateArtikel}
+                      value={dataProduct.name_product}
+                      name={`name_product`}
+                      onChange={onChangeCreateProduct}
                     />
                   </Form.Item>
                   <Form.Item
-                    label="Isi Artikel"
-                    required
-                    name="isi"
+                    name="category_product_id"
+                    className={"gilroy-medium text-xl"}
+                    label="Category"
                     rules={[
                       {
                         required: true,
-                        message: "Isi artikel wajib diisi",
+                        message: "Category wajib diisi",
                       },
                     ]}
                   >
-                    <TextArea
-                      rows={5}
-                      value={artikelBlog.isi}
-                      name={`isi`}
-                      onChange={onChangeCreateArtikel}
-                    />
+                    <Select
+                      style={{ border: "1px solid #B8B8B8" }}
+                      // dropdownStyle={{ backgroundColor: "green" }}
+                      name="category_product_id"
+                      onChange={(value) => {
+                        setDataProduct({
+                          ...dataProduct,
+                          category_product_id: value,
+                        });
+                      }}
+                      allowClear
+                    >
+                      <Option value={1}>Banking Machinery</Option>
+                      <Option value={2}>Workstation</Option>
+                      <Option value={3}>Server & Hosting</Option>
+                      <Option value={4}>UPS</Option>
+                    </Select>
                   </Form.Item>
                   <Upload
                     name="artikel_image"
@@ -341,9 +360,9 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     beforeUpload={beforeUploadProfileImage}
                     onChange={onChangeProfileImage}
                   >
-                    {artikelBlog.artikel_image ? (
+                    {dataProduct.product_image ? (
                       <img
-                        src={artikelBlog.artikel_image}
+                        src={dataProduct.product_image}
                         alt="avatar"
                         style={{ width: "100%" }}
                       />
@@ -425,4 +444,4 @@ export async function getServerSideProps({ req, res }) {
   };
 }
 
-export default BlogCreate;
+export default ProductCreate;
