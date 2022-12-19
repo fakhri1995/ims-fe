@@ -30,11 +30,16 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeeInventoryEditIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  dataEmployee,
+  employeeId,
+}) => {
   /**
    * Dependencies
    */
-
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -46,13 +51,10 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToUpdateEmployeeInventory = hasPermission(
     EMPLOYEE_INVENTORY_UPDATE
   );
-  const isAllowedToDeleteEmployeeInventory = hasPermission(
-    EMPLOYEE_INVENTORY_DELETE
-  );
 
   //INIT
   const rt = useRouter();
-  const { id: inventoryId, employeeId } = rt.query;
+  const { id: inventoryId } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -60,7 +62,13 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Inventaris");
+  pathTitleArr.splice(
+    1,
+    3,
+    "Daftar Karyawan",
+    dataEmployee?.name,
+    "Edit Inventaris"
+  );
 
   // 1. STATE
   // 1.1. display
@@ -87,10 +95,7 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
-
-  // 1.3. Delete
-  const [modalDelete, setModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
 
   // 2. USE EFFECT
   // 2.1 Get employee inventory detail
@@ -135,6 +140,29 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
         .finally(() => setpraloading(false));
     }
   }, [isAllowedToGetEmployeeInventory, inventoryId, refresh]);
+
+  // 2.2 Disable "Simpan" button if any required field is empty
+  useEffect(() => {
+    let requiredInventoryField = dataInventory.every((inventory) => {
+      let isDevicesFilled = inventory.devices?.every((device) =>
+        Boolean(device.id_number && device.device_name)
+      );
+      return Boolean(
+        inventory.id_number &&
+          inventory.device_name &&
+          inventory.referance_invertory &&
+          inventory.delivery_date &&
+          inventory.pic_delivery &&
+          isDevicesFilled
+      );
+    });
+
+    if (!requiredInventoryField) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataInventory]);
 
   // 3. Event
   // Save Employee Inventory
@@ -246,7 +274,7 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"primary"}
               onClick={handleSaveInventory}
-              disabled={!isAllowedToUpdateEmployeeInventory}
+              disabled={!isAllowedToUpdateEmployeeInventory || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -268,8 +296,8 @@ const EmployeeInventoryEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
-  const employeeId = params.employeeId;
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -301,12 +329,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const dataEmployee = resjsonGE?.data;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-list",
       employeeId,
+      dataEmployee,
     },
   };
 }

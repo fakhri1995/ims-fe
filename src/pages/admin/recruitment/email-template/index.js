@@ -30,10 +30,7 @@ import {
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import {
-  ModalHapus2,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
+import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import SetupMenu from "../../../../components/setupMenu";
 import { TableCustomRecruitmentTemplateEmail } from "../../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../../lib/helper";

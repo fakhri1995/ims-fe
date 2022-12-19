@@ -38,8 +38,10 @@ import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../../components/button";
 import ButtonSysColor from "../../../../components/buttonColor";
+import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
   CheckIconSvg,
+  CircleCheckIconSvg,
   EditIconSvg,
   SearchIconSvg,
   TrashIconSvg,
@@ -50,7 +52,6 @@ import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import {
   ModalAddSalaryVar,
-  ModalHapus2,
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import {
@@ -418,7 +419,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record?.contract?.role_id || "-"}</>,
+          children: <>{record?.contract?.role?.name || "-"}</>,
         };
       },
     },
@@ -434,13 +435,19 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.status == "draft" ? (
-                <div className="bg-state2 bg-opacity-10 text-state2 py-1 px-7 rounded-md">
+                <p
+                  className="bg-state2 bg-opacity-10 text-state2 
+                  py-1 px-7 rounded-md text-center"
+                >
                   Draft
-                </div>
+                </p>
               ) : (
-                <div className="bg-primary100 bg-opacity-10 text-primary100 py-1 px-4 rounded-md">
+                <p
+                  className="bg-primary100 bg-opacity-10 text-primary100 
+                  py-1 px-4 rounded-md text-center"
+                >
                   Diterbitkan
-                </div>
+                </p>
               )}
             </>
           ),
@@ -519,85 +526,12 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Spin />
             </>
           ) : (
-            <div className="flex flex-row justify-between items-center">
-              <div className="w-2/3 h-24">
-                <Bar
-                  data={{
-                    labels: payslipStatusCount.map((doc) =>
-                      doc.name.split(" ")
-                    ),
-                    datasets: [
-                      {
-                        data: payslipStatusCount.map((doc) => doc.status_count),
-                        backgroundColor: payslipStatusCount.map(
-                          (doc, idx) =>
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                        ),
-                        borderColor: payslipStatusCount.map(
-                          (doc, idx) =>
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                        ),
-                        barPercentage: 1.0,
-                        barThickness: 24,
-                        maxBarThickness: 34,
-                        minBarLength: 2,
-                        borderRadius: 5,
-                      },
-                    ],
-                  }}
-                  options={{
-                    title: {
-                      display: false,
-                    },
-                    legend: {
-                      display: false,
-                    },
-                    maintainAspectRatio: false,
-                    indexAxis: "y",
-                    scales: {
-                      x: {
-                        grid: {
-                          display: false,
-                          drawBorder: false,
-                        },
-                        ticks: {
-                          display: false,
-                        },
-                      },
-                      y: {
-                        grid: {
-                          display: false,
-                        },
-                        // ticks: {
-                        //   font: {
-                        //     family: "Inter, sans-serif",
-                        //     size: 10,
-                        //   },
-                        // },
-                      },
-                    },
-                    plugins: {
-                      tooltip: {
-                        callbacks: {
-                          title: (context) => {
-                            return context[0].label.replaceAll(",", " ");
-                          },
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-
-              <div className="flex flex-col">
-                {payslipStatusCount.map((doc, idx) => (
-                  <div key={idx} className="flex items-center space-x-32">
-                    <p className="w-3/4">{doc.name}</p>
-                    <p className="mig-heading--4 ">{doc.status_count}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ChartHorizontalBar
+              dataChart={payslipStatusCount}
+              objName="name"
+              value="status_count"
+              colorBarList={dataColorBar}
+            />
           )}
         </div>
 
@@ -775,13 +709,18 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
       <AccessControl hasPermission={EMPLOYEES_PAYSLIPS_POST}>
         <ModalUbah
-          title={"Konfirmasi Penerbitan Draft Slip Gaji"}
+          title={
+            <div className="flex flex-row items-center justify-between">
+              <p>Konfirmasi Penerbitan Draft Slip Gaji</p>
+              <CircleCheckIconSvg color={"#35763B"} size={28} />
+            </div>
+          }
           visible={modalPost}
           onvisible={setModalPost}
           onOk={handlePostPayslips}
-          onCancel={() => setModalPost(false)}
           loading={loadingPost}
           disabled={!isAllowedToPostEmployeesPayslips}
+          closable={false}
           okButtonText="Ya, saya yakin"
         >
           Apakah Anda yakin inign menerbitkan draft slip gaji untuk semua

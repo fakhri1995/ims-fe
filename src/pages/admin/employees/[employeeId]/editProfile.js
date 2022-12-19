@@ -27,7 +27,13 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeeProfileEditIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  employeeId,
+  employeeName,
+}) => {
   /**
    * Dependencies
    */
@@ -44,7 +50,6 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { employeeId } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -52,7 +57,7 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Edit Profil");
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", employeeName, "Edit Profil");
 
   // 1. STATE
   // 1.1. display
@@ -89,10 +94,7 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
-
-  // 1.3. Delete
-  const [modalDelete, setModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
@@ -133,6 +135,28 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
         .finally(() => setpraloading(false));
     }
   }, [isAllowedToGetEmployee, employeeId, refresh]);
+
+  // 2.2. Disable "Simpan" button if any required field is empty
+  useEffect(() => {
+    let requiredProfileField = Boolean(
+      dataEmployee.name &&
+        dataEmployee.nip &&
+        dataEmployee.nik &&
+        dataEmployee.alias &&
+        dataEmployee.email_office &&
+        dataEmployee.email_personal &&
+        dataEmployee.phone_number &&
+        dataEmployee.birth_place &&
+        dataEmployee.birth_date &&
+        dataEmployee.gender
+    );
+
+    if (!requiredProfileField) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataEmployee]);
 
   // 3. Event
   // 3.1. Save employee profile
@@ -206,7 +230,7 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"primary"}
               onClick={handleSaveEmployee}
-              disabled={!isAllowedToUpdateEmployee}
+              disabled={!isAllowedToUpdateEmployee || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -220,27 +244,12 @@ const EmployeeProfileEditIndex = ({ initProps, dataProfile, sidemenu }) => {
           setDataEmployee={setDataEmployee}
         />
       </div>
-
-      {/* Drawer Update Recruitment Candidate */}
-      {/* <AccessControl hasPermission={RECRUITMENT_UPDATE}>
-        <DrawerCandidateUpdate
-          dataEmployee={dataEmployee}
-          visible={drawerUpdate}
-          initProps={initProps}
-          onvisible={setDrawerUpdate}
-          setRefresh={setRefresh}
-          trigger={triggerUpdate}
-          isAllowedToGetEmployee={isAllowedToGetEmployee}
-          isAllowedToUpdateEmployee={isAllowedToUpdateEmployee}
-          isAllowedToDeleteEmployee={isAllowedToDeleteEmployee}
-          setModalDelete={setModalDelete}
-        />
-      </AccessControl> */}
     </LayoutDashboard>
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -272,11 +281,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-list",
+      employeeId,
+      employeeName,
     },
   };
 }

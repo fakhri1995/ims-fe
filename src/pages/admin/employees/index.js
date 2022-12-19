@@ -180,7 +180,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employee_active=${isEmployeeActive}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employee_active=${isEmployeeActive}&page=${pageEmployees}`,
       {
         method: `GET`,
         headers: {
@@ -687,9 +687,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToGetEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
-                      rt.push(
-                        `/admin/employees/${record.id}/editContract?id=${record?.contract?.id}`
-                      );
+                      rt.push(`/admin/employees/${record.id}?tab=2`);
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
