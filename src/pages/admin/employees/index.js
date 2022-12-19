@@ -59,13 +59,11 @@ import {
   LineElement,
   LinearScale,
   PointElement,
-  Tooltip,
 } from "chart.js";
 import httpcookie from "cookie";
 
 Chart.register(
   ArcElement,
-  Tooltip,
   CategoryScale,
   LinearScale,
   LineElement,
@@ -108,6 +106,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. Use state
   // 2.1. Charts
+  const cursorTooltipRef = useRef(null);
   const [loadingChart, setLoadingChart] = useState(false);
   const [placementCount, setPlacementCount] = useState([]);
   const [roleCount, setRoleCount] = useState([]);
@@ -750,55 +749,94 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <Collapse
-          className="col-span-3 mb-5 shadow-md rounded-md bg-white"
-          bordered={false}
-          ghost={true}
-          expandIconPosition={"right"}
-          expandIcon={({ isActive }) => (
-            <UpOutlined rotate={isActive ? 180 : 0} />
-          )}
+        <div
+          className="relative mb-5"
+          onMouseMove={(e) => {
+            let x = e.clientX;
+            let y = e.clientY;
+
+            cursorTooltipRef.current.style.left = x - 250 + "px";
+            cursorTooltipRef.current.style.top = y - 70 + "px";
+          }}
+          onMouseEnter={() => {
+            cursorTooltipRef.current.style.opacity = 0.85;
+          }}
+          onMouseLeave={() => {
+            cursorTooltipRef.current.style.opacity = 0;
+          }}
         >
-          <Collapse.Panel
-            header={<h4 className="mig-heading--4">Statistik</h4>}
+          {/* Custom tooltip */}
+          <div
+            ref={cursorTooltipRef}
+            className="bg-zinc-900 text-white rounded-sm p-2 z-50"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              opacity: 0,
+            }}
           >
-            <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* CHART PENEMPATAN KARYAWAN */}
-              {loadingChart ? (
-                <Spin />
-              ) : (
-                <ChartDoughnut
-                  title={"Penempatan Karyawan"}
-                  dataChart={placementCount}
-                  objName={"placement"}
-                  value={"placement_count"}
-                />
-              )}
-              {/* CHART POSISI */}
-              {loadingChart ? (
-                <Spin />
-              ) : (
-                <ChartDoughnut
-                  title={"Posisi"}
-                  dataChart={roleCount}
-                  objName={`role_name`}
-                  value={"role_count"}
-                />
-              )}
-              {/* CHART STATUS KARYAWAN */}
-              {loadingChart ? (
-                <Spin />
-              ) : (
-                <ChartDoughnut
-                  title={"Status Karyawan"}
-                  dataChart={statusCount}
-                  objName={"is_employee_active"}
-                  value={"status_count"}
-                />
-              )}
-            </div>
-          </Collapse.Panel>
-        </Collapse>
+            Klik untuk melihat statistik
+          </div>
+
+          {/* Collapsible Panel */}
+          <Collapse
+            className="col-span-3 shadow-md rounded-md bg-white"
+            bordered={false}
+            ghost={true}
+            expandIconPosition="left"
+            expandIcon={({ isActive }) => (
+              <UpOutlined rotate={isActive ? 180 : 0} />
+            )}
+            onChange={(openedPanels) => {
+              if (openedPanels) {
+                cursorTooltipRef.current.style.opacity = 0;
+              } else {
+                cursorTooltipRef.current.style.opacity = 1;
+              }
+            }}
+          >
+            <Collapse.Panel
+              header={<div className="mig-heading--4">Statistik</div>}
+            >
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+                {/* CHART PENEMPATAN KARYAWAN */}
+                {loadingChart ? (
+                  <Spin />
+                ) : (
+                  <ChartDoughnut
+                    title={"Penempatan Karyawan"}
+                    dataChart={placementCount}
+                    objName={"placement"}
+                    value={"placement_count"}
+                  />
+                )}
+                {/* CHART POSISI */}
+                {loadingChart ? (
+                  <Spin />
+                ) : (
+                  <ChartDoughnut
+                    title={"Posisi"}
+                    dataChart={roleCount}
+                    objName={`role_name`}
+                    value={"role_count"}
+                  />
+                )}
+                {/* CHART STATUS KARYAWAN */}
+                {loadingChart ? (
+                  <Spin />
+                ) : (
+                  <ChartDoughnut
+                    title={"Status Karyawan"}
+                    dataChart={statusCount}
+                    objName={"is_employee_active"}
+                    value={"status_count"}
+                  />
+                )}
+              </div>
+            </Collapse.Panel>
+          </Collapse>
+        </div>
 
         {/* Table Karyawan */}
         <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
