@@ -196,7 +196,8 @@ const EmployeeContractAddIndex = ({
         dataContract.contract_file &&
         dataContract.pkwt_reference &&
         dataContract.contract_start_at &&
-        dataContract.contract_end_at
+        dataContract.contract_end_at &&
+        dataContract.placement
     );
 
     if (!requiredContractField) {

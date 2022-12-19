@@ -153,6 +153,7 @@ const EmployeeContractEditIndex = ({
         dataContract.pkwt_reference &&
         dataContract.contract_start_at &&
         dataContract.contract_end_at &&
+        dataContract.placement &&
         isNotResign
     );
 
