@@ -32,7 +32,13 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeeContractAddIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  employeeId,
+  employeeName,
+}) => {
   /**
    * Dependencies
    */
@@ -56,7 +62,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { id: contractId, employeeId } = rt.query;
+  const { id: contractId } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -64,14 +70,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(
-    1,
-    3,
-    "Daftar Karyawan",
-    "Karyawan",
-    // dataContract?.employee?.name,
-    "Tambah Kontrak"
-  );
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", employeeName, "Tambah Kontrak");
 
   // 1. STATE
   // 1.1. display
@@ -101,6 +100,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [modalUpdate, setModalUpdate] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [prevContractName, setPrevContractName] = useState("");
+  const [disablePublish, setDisablePublish] = useState(true);
 
   // 1.3. Delete
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -127,7 +127,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setDataContract(response2.data);
+            setDataContract({ ...response2.data, is_employee_active: 1 });
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -145,7 +145,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployeeContract, contractId, refresh]);
 
-  // 2.1 Get employee contracts
+  // 2.2. Get employee contracts (use for getting previous active contract name)
   useEffect(() => {
     if (!isAllowedToGetEmployeeContracts) {
       permissionWarningNotification("Mendapatkan", "Daftar Kontrak Karyawan");
@@ -169,7 +169,6 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             let contractList = response2.data;
             let previousContractName =
               contractList[contractList.length - 2]?.contract_name;
-            console.log(previousContractName);
             setPrevContractName(previousContractName);
           } else {
             notification.error({
@@ -187,6 +186,26 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
         .finally(() => setpraloading(false));
     }
   }, [isAllowedToGetEmployeeContracts, employeeId, refresh]);
+
+  // 2.3. Disable "Simpan" button if any required field is empty
+  useEffect(() => {
+    let requiredContractField = Boolean(
+      dataContract.contract_name &&
+        dataContract.role_id &&
+        dataContract.contract_status_id &&
+        dataContract.contract_file &&
+        dataContract.pkwt_reference &&
+        dataContract.contract_start_at &&
+        dataContract.contract_end_at &&
+        dataContract.placement
+    );
+
+    if (!requiredContractField) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataContract]);
 
   // 3. Event
   // Save Employee Contract
@@ -307,11 +326,7 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"primary"}
               onClick={() => setModalUpdate(true)}
-              disabled={
-                !isAllowedToUpdateEmployeeContract ||
-                !dataContract?.contract_name ||
-                Number(dataContract?.is_employee_active) === 0
-              }
+              disabled={!isAllowedToUpdateEmployeeContract || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -361,7 +376,8 @@ const EmployeeContractAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -393,11 +409,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-list",
+      employeeId,
+      employeeName,
     },
   };
 }

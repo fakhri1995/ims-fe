@@ -32,11 +32,17 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeeInventoryAddIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  employeeId,
+  dataEmployee,
+}) => {
   /**
    * Dependencies
    */
-
+  console.log(dataEmployee);
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -54,7 +60,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { id: inventoryId, employeeId } = rt.query;
+  const { id: inventoryId } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -62,7 +68,13 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Karyawan", "Tambah Inventaris");
+  pathTitleArr.splice(
+    1,
+    3,
+    "Daftar Karyawan",
+    dataEmployee?.name,
+    "Tambah Inventaris"
+  );
 
   // 1. STATE
   // 1.1. display
@@ -90,9 +102,9 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [modalSave, setModalSave] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
 
   // 1.3. Delete
-  const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // 2. USE EFFECT
@@ -137,6 +149,29 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
         .finally(() => setpraloading(false));
     }
   }, [isAllowedToGetEmployeeInventory, inventoryId, refresh]);
+
+  // 2.2 Disable "Simpan" button if any required field is empty
+  useEffect(() => {
+    let requiredInventoryField = dataInventory.every((inventory) => {
+      let isDevicesFilled = inventory.devices?.every((device) =>
+        Boolean(device.id_number && device.device_name)
+      );
+      return Boolean(
+        inventory.id_number &&
+          inventory.device_name &&
+          inventory.referance_invertory &&
+          inventory.delivery_date &&
+          inventory.pic_delivery &&
+          isDevicesFilled
+      );
+    });
+
+    if (!requiredInventoryField) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataInventory]);
 
   // 3. Event
   // Save Employee Inventory
@@ -290,7 +325,7 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
             <ButtonSys
               type={"primary"}
               onClick={() => setModalSave(true)}
-              disabled={!isAllowedToUpdateEmployeeInventory}
+              disabled={!isAllowedToUpdateEmployeeInventory || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -343,7 +378,8 @@ const EmployeeInventoryAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -375,11 +411,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const dataEmployee = resjsonGE?.data;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-list",
+      employeeId,
+      dataEmployee,
     },
   };
 }

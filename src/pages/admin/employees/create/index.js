@@ -98,6 +98,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [showSuccessIcon, setShowSuccessIcon] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(true);
 
   const [currentTab, setCurrentTab] = useState("1");
   const prevTab = useRef();
@@ -137,7 +138,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     contract_file: null,
     contract_status_id: null,
     role_id: null,
-    employee_status: false,
     pkwt_reference: "",
     annual_leave: 0,
     contract_start_at: "",
@@ -178,14 +178,14 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((res2) => {
           if (res2.success) {
             setDataEmployee(res2.data);
-            if (prevpath === "add") {
-              setDataContract({
-                ...res2.data?.contracts[0],
-                is_employee_active: 1,
-              });
-            } else {
-              setDataContract(res2.data?.contracts[0]);
-            }
+            // if (prevpath === "add") {
+            //   setDataContract({
+            //     ...res2.data?.contracts[0],
+            //     is_employee_active: 1,
+            //   });
+            // } else {
+            //   setDataContract(res2.data?.contracts[0]);
+            // }
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -205,7 +205,56 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   }, [isAllowedToGetEmployee, refresh]);
 
-  // 2.2. Debounce function for auto save draft
+  // 2.2. Get Employee Contract
+  useEffect(() => {
+    if (!isAllowedToGetEmployeeContract) {
+      permissionWarningNotification("Mendapatkan", "Data Employee Contract");
+      setLoadingEmployee(false);
+      return;
+    }
+
+    if (dataEmployee?.contracts[0]?.id) {
+      setLoadingEmployee(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${dataEmployee?.contracts[0]?.id}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            if (prevpath === "add") {
+              setDataContract({
+                ...res2.data,
+                is_employee_active: 1,
+              });
+            } else {
+              setDataContract(res2.data);
+            }
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingEmployee(false);
+        });
+    }
+  }, [isAllowedToGetEmployeeContract, refresh]);
+
+  // 2.3. Debounce function for auto save draft
   const debouncedSaveProfile = useCallback(
     debounce((data) => {
       handleSaveProfile(0, data);
@@ -225,7 +274,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     []
   );
 
-  // 2.3. Cleanup debounce function
+  // 2.4. Cleanup debounce function
   useEffect(() => {
     return () => {
       debouncedSaveProfile.cancel();
@@ -233,6 +282,57 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       debouncedSaveInventory.cancel();
     };
   }, []);
+
+  // 2.5. Disable "Simpan Karyawan" button if any required field is empty
+  useEffect(() => {
+    let requiredProfileField = Boolean(
+      dataEmployee.name &&
+        dataEmployee.nip &&
+        dataEmployee.nik &&
+        dataEmployee.alias &&
+        dataEmployee.email_office &&
+        dataEmployee.email_personal &&
+        dataEmployee.phone_number &&
+        dataEmployee.birth_place &&
+        dataEmployee.birth_date &&
+        dataEmployee.gender
+    );
+
+    let requiredContractField = Boolean(
+      dataContract.contract_name &&
+        dataContract.role_id &&
+        dataContract.contract_status_id &&
+        dataContract.contract_file &&
+        dataContract.pkwt_reference &&
+        dataContract.contract_start_at &&
+        dataContract.contract_end_at &&
+        dataContract.placement
+    );
+
+    let requiredInventoryField = inventoryList.every((inventory) => {
+      let isDevicesFilled = inventory.devices?.every((device) =>
+        Boolean(device.id_number && device.device_name)
+      );
+      return Boolean(
+        inventory.id_number &&
+          inventory.device_name &&
+          inventory.referance_invertory &&
+          inventory.delivery_date &&
+          inventory.pic_delivery &&
+          isDevicesFilled
+      );
+    });
+
+    if (
+      !requiredProfileField ||
+      !requiredContractField ||
+      !requiredInventoryField
+    ) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataEmployee, dataContract, inventoryList]);
 
   // 3. HANDLER
   const handleAddEmployeeContract = () => {
@@ -541,6 +641,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   dataEmployee.inventories.length !== 0 &&
                     handleSaveInventory(inventoryList[0]);
                 }}
+                disabled={disablePublish}
               >
                 <CheckIconSvg size={18} color={`white`} />
                 <p className="ml-2">Simpan Karyawan</p>

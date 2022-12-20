@@ -58,7 +58,7 @@ const DrawerPayslipDetail = ({
         </div>
         <hr className="col-span-2" />
         <Collapse
-          className="col-span-2 bg-transparent"
+          className="col-span-2 bg-transparent "
           bordered={false}
           expandIconPosition="right"
           expandIcon={({ isActive }) => (
@@ -103,12 +103,22 @@ const DrawerPayslipDetail = ({
                   description: "Tunjangan Uang Makan",
                   receive: "550,000",
                 },
-                {
-                  key: "3",
-                  description: "Total Penerimaan",
-                  receive: "5,997,600",
-                },
               ]}
+              summary={() => (
+                <Table.Summary fixed>
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell index={0} className="font-bold">
+                      Total Penerimaan
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell
+                      index={1}
+                      className="font-bold text-right"
+                    >
+                      5,997,600
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )}
             />
           </Collapse.Panel>
           <Collapse.Panel
@@ -148,12 +158,22 @@ const DrawerPayslipDetail = ({
                   description: "Tunjangan Uang Makan",
                   receive: "550,000",
                 },
-                {
-                  key: "3",
-                  description: "Total Pengurangan",
-                  receive: "5,997,600",
-                },
               ]}
+              summary={() => (
+                <Table.Summary fixed>
+                  <Table.Summary.Row>
+                    <Table.Summary.Cell index={0} className="font-bold">
+                      Total Pengurangan
+                    </Table.Summary.Cell>
+                    <Table.Summary.Cell
+                      index={1}
+                      className="font-bold text-right"
+                    >
+                      5,997,600
+                    </Table.Summary.Cell>
+                  </Table.Summary.Row>
+                </Table.Summary>
+              )}
             />
           </Collapse.Panel>
         </Collapse>

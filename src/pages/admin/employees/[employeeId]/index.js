@@ -43,6 +43,7 @@ const EmployeeDetailIndex = ({
   dataProfile,
   sidemenu,
   employeeId,
+  employeeName,
 }) => {
   /**
    * Dependencies
@@ -76,7 +77,7 @@ const EmployeeDetailIndex = ({
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 2);
-  pathTitleArr.splice(1, 2, "Daftar Karyawan", "Karyawan");
+  pathTitleArr.splice(1, 2, "Daftar Karyawan", employeeName);
 
   // 1. STATE
   // 1.1. display
@@ -509,12 +510,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-list",
       employeeId,
+      employeeName,
     },
   };
 }

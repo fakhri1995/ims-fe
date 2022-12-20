@@ -95,4 +95,87 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
   );
 };
 
-export { ChartDoughnut };
+const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
+  return (
+    <div className="flex flex-row justify-between items-center">
+      <div className="w-2/3 h-24">
+        <Bar
+          data={{
+            labels: dataChart.map((doc) => doc[objName].split(" ")),
+            datasets: [
+              {
+                data: dataChart.map((doc) => doc[value]),
+                backgroundColor: dataChart.map(
+                  (doc, idx) =>
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                ),
+                borderColor: dataChart.map(
+                  (doc, idx) =>
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                ),
+                barPercentage: 1.0,
+                barThickness: 24,
+                maxBarThickness: 34,
+                minBarLength: 2,
+                borderRadius: 5,
+              },
+            ],
+          }}
+          options={{
+            title: {
+              display: false,
+            },
+            legend: {
+              display: false,
+            },
+            maintainAspectRatio: false,
+            indexAxis: "y",
+            scales: {
+              x: {
+                grid: {
+                  display: false,
+                  drawBorder: false,
+                },
+                ticks: {
+                  display: false,
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  font: {
+                    family: "Inter, sans-serif",
+                    size: 10,
+                  },
+                  color: "#808080",
+                },
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: (context) => {
+                    return context[0].label.replaceAll(",", " ");
+                  },
+                },
+              },
+            },
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col">
+        {dataChart.map((doc, idx) => (
+          <div key={idx} className="flex items-center space-x-32">
+            <p className="w-3/4 font-medium">{doc[objName]}</p>
+            <p className="mig-heading--4 ">{doc[value]}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export { ChartDoughnut, ChartHorizontalBar };
