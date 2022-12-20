@@ -22,13 +22,13 @@ function AboutUs({}) {
         <div className={""}>
           <p
             className={
-              "text-xl md:text-[32px] gilroy-semibold font-semibold text-blackmig"
+              "text-xl md:text-[32px] gilroy-semibold font-gilroysemibold text-blackmig"
             }
           >
             Operate your business, more efficient and more agile
           </p>
 
-          <p className={"text-base text-blackmig gilroy-regular mt-4"}>
+          <p className={"text-base text-blackmig font-gilroyregular mt-4"}>
             Mitramas Infosys global is supporting you staff augmentation &
             delivering software and hardware managed services. We have served
             multiple industries, bringing the best solutions to financial
@@ -39,7 +39,7 @@ function AboutUs({}) {
       <section className={"block bg-transp60 py-2 md:py-6 px-4 md:px-[112px]"}>
         <p
           className={
-            "gilroy-semibold font-semibold text-left pb-0 text-xl md:text-2xl"
+            "gilroy-semibold font-gilroysemibold text-left pb-0 text-xl md:text-2xl"
           }
         >
           Who we are
@@ -47,7 +47,7 @@ function AboutUs({}) {
         {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
-        <p className={"mt-4 gilroy-regular text-base"}>
+        <p className={"mt-4 font-gilroyregular text-base"}>
           Founded in 2003, Mitramas Infosys Global (MIG) directly partner with
           global providers and collaborate with local IT talents to offer you a
           seamless technology experience. Experienced across archipelago for
@@ -56,7 +56,7 @@ function AboutUs({}) {
           to increase their efficiency and reach long-term business goals.
         </p>
 
-        <p className={"mt-4 text-base gilroy-regular"}>
+        <p className={"mt-4 text-base font-gilroyregular"}>
           <Link href="joinourteam">
             <em className={"cursor-pointer text-primarygreen underline"}>
               Careers
@@ -66,11 +66,11 @@ function AboutUs({}) {
         </p>
       </section>
       <section className={"pt-6 md:pt-[40px] pb-4 md:pb-8 px-4 md:px-[112px]"}>
-        <p className={"text-xl md:text-2xl font-semibold text-blackmig"}>
+        <p className={"text-xl md:text-2xl font-gilroysemibold text-blackmig"}>
           Support your business efficiently
         </p>
         <div>
-          <p className={"text-base mt-4 gilroy-regular"}>
+          <p className={"text-base mt-4 font-gilroyregular"}>
             One stop seamless technology solution to help you achieve business
             goals and optimize your cost{" "}
           </p>
@@ -88,12 +88,12 @@ function AboutUs({}) {
               />
               <p
                 className={
-                  "text-left mt-[11px] font-semibold text-blackmig text-base"
+                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
                 }
               >
                 Hardware
               </p>
-              <p className={"gilroy-regular text-base mt-2"}>
+              <p className={"font-gilroyregular text-base mt-2"}>
                 Optimize your cost by leasing and maintenances variety of
                 electronic equipments
               </p>
@@ -104,7 +104,11 @@ function AboutUs({}) {
                       "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
                     }
                   >
-                    <p className={"font-semibold text-base text-primarygreen"}>
+                    <p
+                      className={
+                        "font-gilroysemibold text-base text-primarygreen"
+                      }
+                    >
                       Get yours
                     </p>
                     <img
@@ -128,12 +132,12 @@ function AboutUs({}) {
               />
               <p
                 className={
-                  "text-left mt-[11px] font-semibold text-blackmig text-base"
+                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
                 }
               >
                 Software
               </p>
-              <p className={"gilroy-regular text-base mt-2"}>
+              <p className={"font-gilroyregular text-base mt-2"}>
                 We support your companies to simplify and automate the process
                 through digitalization
               </p>
@@ -144,7 +148,11 @@ function AboutUs({}) {
                       "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
                     }
                   >
-                    <p className={"font-semibold text-base text-primarygreen"}>
+                    <p
+                      className={
+                        "font-gilroysemibold text-base text-primarygreen"
+                      }
+                    >
                       Build now
                     </p>
                     <img
@@ -168,12 +176,12 @@ function AboutUs({}) {
               />
               <p
                 className={
-                  "text-left mt-[11px] font-semibold text-blackmig text-base"
+                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
                 }
               >
                 Talents
               </p>
-              <p className={"gilroy-regular text-base mt-2"}>
+              <p className={"font-gilroyregular text-base mt-2"}>
                 We help you reduce complexity in talent sourcing and management
               </p>
               <div className={"flex justify-end mt-4"}>
@@ -183,7 +191,11 @@ function AboutUs({}) {
                       "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
                     }
                   >
-                    <p className={"font-semibold text-base text-primarygreen"}>
+                    <p
+                      className={
+                        "font-gilroysemibold text-base text-primarygreen"
+                      }
+                    >
                       Set up your team
                     </p>
                     <img
@@ -202,21 +214,25 @@ function AboutUs({}) {
         className={"px-4 md:px-[112px] pt-4 md:pt-8 md:pb-[130px] bg-transp60"}
       >
         <div>
-          <p className={"font-semibold text-xl text-blackmig md:text-2xl pb-2"}>
+          <p
+            className={
+              "font-gilroysemibold text-xl text-blackmig md:text-2xl pb-2"
+            }
+          >
             MIG Location
           </p>
-          <p className={"font-semibold pb-2 text-xl text-blackmig"}>
+          <p className={"font-gilroysemibold pb-2 text-xl text-blackmig"}>
             Headquarter
           </p>
           <p className={"text-base text-darkgrey"}>
-            <span className="font-semibold">Location: </span>
-            <span className={"text-blackmig gilroy-regular"}>
+            <span className="font-gilroysemibold">Location: </span>
+            <span className={"text-blackmig font-gilroyregular"}>
               Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
             </span>
           </p>
 
           <div className={"flex flex-row mt-3"}>
-            <p className={"font-semibold text-base text-darkgrey"}>
+            <p className={"font-gilroysemibold text-base text-darkgrey"}>
               Phone:&nbsp;
             </p>
             <p className={"text-accentblue text-base underline"}>
@@ -224,7 +240,7 @@ function AboutUs({}) {
             </p>
           </div>
           <div className={"flex flex-row mt-3"}>
-            <p className={"font-semibold text-base text-darkgrey"}>
+            <p className={"font-gilroysemibold text-base text-darkgrey"}>
               Email:&nbsp;
             </p>
             <a
@@ -234,7 +250,7 @@ function AboutUs({}) {
               help@mitrasolusi.group
             </a>
           </div>
-          <p className={"py-4 text-blackmig font-semibold text-xl"}>
+          <p className={"py-4 text-blackmig font-gilroysemibold text-xl"}>
             Coverages
           </p>
           <div
@@ -406,12 +422,12 @@ function AboutUs({}) {
         </div>
         <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
-            <p className={"text-2xl font-semibold text-black"}>
+            <p className={"text-2xl font-gilroysemibold text-black"}>
               Fulfill your IT needs easily!
             </p>
             <div
               className={
-                "mt-3.5 text-base gilroy-regular text-center text-black"
+                "mt-3.5 text-base font-gilroyregular text-center text-black"
               }
             >
               <p>
@@ -431,7 +447,9 @@ function AboutUs({}) {
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"text-base gilroy-semibold font-semibold"}>
+                  <p
+                    className={"text-base gilroy-semibold font-gilroysemibold"}
+                  >
                     Contact Us
                   </p>
                   <img
@@ -458,10 +476,10 @@ function AboutUs({}) {
       >
         <div className={"container mx-auto"}>
           <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-            <p className={"text-xl font-semibold"}>
+            <p className={"text-xl font-gilroysemibold"}>
               Fulfill your IT needs easily!
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
+            <p className={"py-5 text-sm font-gilroyregular"}>
               Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!

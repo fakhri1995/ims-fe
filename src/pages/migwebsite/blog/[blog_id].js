@@ -64,7 +64,11 @@ function BlogDetail({}) {
         }
       >
         <div className={"w-5/6"}>
-          <p className={"text-2xl md:text-[32px] text-blackmig font-semibold"}>
+          <p
+            className={
+              "text-2xl md:text-[32px] text-blackmig font-gilroysemibold"
+            }
+          >
             This is a Title This is a Title This is a Title
           </p>
           <div className={"flex flex-row justify-between my-[17px]"}>
@@ -72,7 +76,7 @@ function BlogDetail({}) {
               by <span className={"font-bold"}>Mayfa Shadrina </span>
               on <span className={"font-bold"}>August 8th, 2022</span>
             </p>
-            <p className={"text-sm text-darkgrey gilroy-regular"}>
+            <p className={"text-sm text-darkgrey font-gilroyregular"}>
               9 MINUTE READ
             </p>
           </div>
@@ -86,7 +90,11 @@ function BlogDetail({}) {
               "w-1/6 items-center grid justify-items-center self-center"
             }
           >
-            <p className={"text-sm text-darkgrey md:text-base font-semibold"}>
+            <p
+              className={
+                "text-sm text-darkgrey md:text-base font-gilroysemibold"
+              }
+            >
               Share
             </p>
             <img
@@ -122,23 +130,27 @@ function BlogDetail({}) {
               className={"bg-white p-4 rounded"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
-              <p className={"text-blackmig text-base font-semibold"}>
+              <p className={"text-blackmig text-base font-gilroysemibold"}>
                 TABLE OF CONTENT
               </p>
               <div className={"border border-dividermig mt-2"}></div>
               <div className={"mt-1"}>
                 <ul class="">
-                  <li class={"text-primarygreen text-sm font-semibold"}>
+                  <li class={"text-primarygreen text-sm font-gilroysemibold"}>
                     Lorem ipsum dolor sit amet, consectetur adipiscing eli.
                   </li>
                   <li
-                    class={"text-blackmig text-sm font-regular gilroy-regular"}
+                    class={
+                      "text-blackmig text-sm font-regular font-gilroyregular"
+                    }
                   >
                     Sed do eiusmod tempor incididunt ut labore et dolore magna
                     aliqua
                   </li>
                   <li
-                    class={"text-blackmig text-sm font-regular gilroy-regular"}
+                    class={
+                      "text-blackmig text-sm font-regular font-gilroyregular"
+                    }
                   >
                     Ut enim ad minim veniam, quis nostrud exercitation.
                   </li>
@@ -147,7 +159,7 @@ function BlogDetail({}) {
             </div>
           </div>
           <div className={"w-3/5 ml-12"}>
-            <p className={"indent-5 text-base gilroy-regular"}>
+            <p className={"indent-5 text-base font-gilroyregular"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -156,7 +168,7 @@ function BlogDetail({}) {
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
-            <p className={"indent-5 text-base gilroy-regular"}>
+            <p className={"indent-5 text-base font-gilroyregular"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -165,7 +177,7 @@ function BlogDetail({}) {
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
-            <p className={"indent-5 text-base gilroy-regular"}>
+            <p className={"indent-5 text-base font-gilroyregular"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -182,13 +194,13 @@ function BlogDetail({}) {
               />
               <p
                 className={
-                  "text-xs text-darkgrey gilroy-regular font-regular pt-2 mb-4"
+                  "text-xs text-darkgrey font-gilroyregular font-regular pt-2 mb-4"
                 }
               >
                 This is a caption for the image above
               </p>
             </div>
-            <p className={"indent-5 text-base gilroy-regular"}>
+            <p className={"indent-5 text-base font-gilroyregular"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -197,7 +209,7 @@ function BlogDetail({}) {
               nulla pariatur. Excepteur sint occaecat cupidatat non proident,
               sunt in culpa qui officia deserunt mollit anim id est laborum.
             </p>
-            <p className={"indent-5 text-base gilroy-regular"}>
+            <p className={"indent-5 text-base font-gilroyregular"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -215,7 +227,9 @@ function BlogDetail({}) {
         }
       >
         <div className={"px-2 py-2"}>
-          <p className={"text-2xl md:text-3xl text-blackmig font-semibold"}>
+          <p
+            className={"text-2xl md:text-3xl text-blackmig font-gilroysemibold"}
+          >
             This is a Title This is a Title This is a Title
           </p>
           <p className={"text-xs text-darkgrey mb-4"}>
@@ -226,7 +240,11 @@ function BlogDetail({}) {
         </div>
         <div className={"py-4 flex flex-row justify-between px-2"}>
           <div className={"flex flex-row justify-around"}>
-            <p className={"text-sm text-darkgrey md:text-base font-semibold"}>
+            <p
+              className={
+                "text-sm text-darkgrey md:text-base font-gilroysemibold"
+              }
+            >
               Share
             </p>
             <img
@@ -255,7 +273,7 @@ function BlogDetail({}) {
             />
           </div>
           <div className={"items-end"}></div>
-          <p className={"text-sm text-darkgrey gilroy-regular"}>
+          <p className={"text-sm text-darkgrey font-gilroyregular"}>
             9 MINUTE READ
           </p>
         </div>
@@ -267,19 +285,27 @@ function BlogDetail({}) {
       >
         <div className={"px-2 py-2 pr-8"}>
           <div className={"bg-white p-2 shadow-lg"}>
-            <p className={"text-blackmig text-base font-semibold mt-2"}>
+            <p className={"text-blackmig text-base font-gilroysemibold mt-2"}>
               TABLE OF CONTENT
             </p>
             <div className={"p-2 mt-4"}>
               <ul class="list-disc">
-                <li class={"text-primarygreen text-sm font-semibold"}>
+                <li class={"text-primarygreen text-sm font-gilroysemibold"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing eli.
                 </li>
-                <li class={"text-blackmig text-sm font-regular gilroy-regular"}>
+                <li
+                  class={
+                    "text-blackmig text-sm font-regular font-gilroyregular"
+                  }
+                >
                   Sed do eiusmod tempor incididunt ut labore et dolore magna
                   aliqua
                 </li>
-                <li class={"text-blackmig text-sm font-regular gilroy-regular"}>
+                <li
+                  class={
+                    "text-blackmig text-sm font-regular font-gilroyregular"
+                  }
+                >
                   Ut enim ad minim veniam, quis nostrud exercitation.
                 </li>
               </ul>
@@ -287,7 +313,7 @@ function BlogDetail({}) {
           </div>
         </div>
         <div className={"px-2 py-2"}>
-          <p className={"indent-5 text-sm gilroy-regular"}>
+          <p className={"indent-5 text-sm font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -296,7 +322,7 @@ function BlogDetail({}) {
             pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
             culpa qui officia deserunt mollit anim id est laborum.
           </p>
-          <p className={"indent-5 text-sm gilroy-regular"}>
+          <p className={"indent-5 text-sm font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -305,7 +331,7 @@ function BlogDetail({}) {
             pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
             culpa qui officia deserunt mollit anim id est laborum.
           </p>
-          <p className={"indent-5 text-sm gilroy-regular"}>
+          <p className={"indent-5 text-sm font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -322,13 +348,13 @@ function BlogDetail({}) {
             />
             <p
               className={
-                "text-xs text-darkgrey gilroy-regular font-regular pt-2 mb-4"
+                "text-xs text-darkgrey font-gilroyregular font-regular pt-2 mb-4"
               }
             >
               This is a caption for the image above
             </p>
           </div>
-          <p className={"indent-5 text-sm gilroy-regular"}>
+          <p className={"indent-5 text-sm font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -337,7 +363,7 @@ function BlogDetail({}) {
             pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
             culpa qui officia deserunt mollit anim id est laborum.
           </p>
-          <p className={"indent-5 text-sm gilroy-regular"}>
+          <p className={"indent-5 text-sm font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -354,7 +380,7 @@ function BlogDetail({}) {
         }
       >
         <div className={"bg-white p-2 text-center shadow-lg"}>
-          <p className={"text-primarygreen text-xs font-semibold my-4"}>
+          <p className={"text-primarygreen text-xs font-gilroysemibold my-4"}>
             Our Client
           </p>
           <div className={"grid justify-items-center"}>
@@ -369,7 +395,7 @@ function BlogDetail({}) {
           </p>
           <div className={"px-2 flex flex-row justify-between"}>
             <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
-              <p className="text-sm text-primarygreen font-semibold ">
+              <p className="text-sm text-primarygreen font-gilroysemibold ">
                 Industry :
                 <span
                   style={{
@@ -382,7 +408,7 @@ function BlogDetail({}) {
               </p>
             </div>
             <div className="bg-lightblue px-4 rounded-[20px] mt-2">
-              <p className="text-sm text-primarygreen font-semibold ">
+              <p className="text-sm text-primarygreen font-gilroysemibold ">
                 Service:
                 <span
                   style={{
@@ -414,7 +440,7 @@ function BlogDetail({}) {
             </Linkk>
           </div>
           <Linkk href="/contactus">
-            <p className={"text-blackmig text-sm gilroy-regular my-4"}>
+            <p className={"text-blackmig text-sm font-gilroyregular my-4"}>
               or{" "}
               <span className={"text-primarygreen"}>
                 contact our sales team
@@ -454,11 +480,11 @@ function BlogDetail({}) {
               <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
@@ -476,11 +502,11 @@ function BlogDetail({}) {
               <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
@@ -498,11 +524,11 @@ function BlogDetail({}) {
               <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
@@ -520,11 +546,11 @@ function BlogDetail({}) {
               <p className={"font-bold text-blackmig text-base mt-3"}>
                 This is a Title This is a Title This is a Title This is a Title
               </p>
-              <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
                 eiusmod tempor incididunt ut labore et dolore magna aliqua.
               </p>
-              <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                 Hardware
               </span>
             </div>
@@ -560,11 +586,11 @@ function BlogDetail({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs"}>
+                <p className={" text-blackmig font-gilroyregular text-xs"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
-                <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
                   Hardware
                 </span>
               </div>
@@ -586,11 +612,11 @@ function BlogDetail({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs"}>
+                <p className={" text-blackmig font-gilroyregular text-xs"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
-                <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
                   Hardware
                 </span>
               </div>
@@ -612,11 +638,11 @@ function BlogDetail({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs"}>
+                <p className={" text-blackmig font-gilroyregular text-xs"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
-                <span class="text-xs mt-4 gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
                   Hardware
                 </span>
               </div>
@@ -627,12 +653,12 @@ function BlogDetail({}) {
       <section className={"sectioncomments md:relative p-2 md:p-20"}>
         <p
           className={
-            "text-blackmig text-lg md:text-xl gilroy-semibold font-semibold"
+            "text-blackmig text-lg md:text-xl gilroy-semibold font-gilroysemibold"
           }
         >
           Comments (6)
         </p>
-        <p className={"text-redmig text-sm gilroy-regular mt-4"}>
+        <p className={"text-redmig text-sm font-gilroyregular mt-4"}>
           * <span className={"text-blackmig"}>Comment</span>
         </p>
         <div className={"py-2"}>
@@ -715,13 +741,13 @@ function BlogDetail({}) {
         </div>
         <div className={"mt-8 border border-dividermig"}></div>
         <div className="mt-8 p-4 md:px-4 md:pt-4 md:pb-[19px] border-2 border-bordermig rounded-lg">
-          <p className={"text-sm text-blackmig font-semibold"}>
+          <p className={"text-sm text-blackmig font-gilroysemibold"}>
             Mayfa Shadrina
           </p>
-          <p className={"text-xs text-darkgrey pt-1 gilroy-regular"}>
+          <p className={"text-xs text-darkgrey pt-1 font-gilroyregular"}>
             Feb 21, 2022 on 13:59 WIB
           </p>
-          <p className={"text-sm text-blackmig pt-4 gilroy-regular"}>
+          <p className={"text-sm text-blackmig pt-4 font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
             ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
@@ -732,7 +758,9 @@ function BlogDetail({}) {
           </p>
           <div className={"w-32 flex flex-row justify-between mt-2"}>
             <a href="#">
-              <p className={"text-primarygreen text-xs font-semibold"}>Reply</p>
+              <p className={"text-primarygreen text-xs font-gilroysemibold"}>
+                Reply
+              </p>
             </a>
             <div className="flex flex-row justify-around items-center">
               <img
@@ -740,7 +768,7 @@ function BlogDetail({}) {
                 style={{ width: "16px", height: "13px" }}
                 alt=""
               />
-              <p className="text-xs text-lightgrey font-semibold ml-2">
+              <p className="text-xs text-lightgrey font-gilroysemibold ml-2">
                 3 Likes
               </p>
             </div>
@@ -753,13 +781,13 @@ function BlogDetail({}) {
             />
           </div>
           <div className={"ml-10 -mt-2"}>
-            <p className={"text-sm text-blackmig font-semibold"}>
+            <p className={"text-sm text-blackmig font-gilroysemibold"}>
               Mayfa Shadrina
             </p>
-            <p className={"text-xs text-darkgrey pt-1 gilroy-regular"}>
+            <p className={"text-xs text-darkgrey pt-1 font-gilroyregular"}>
               Feb 21, 2022 on 13:59 WIB
             </p>
-            <p className={"text-sm text-blackmig pt-4 gilroy-regular"}>
+            <p className={"text-sm text-blackmig pt-4 font-gilroyregular"}>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
               eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
               enim ad minim veniam, quis nostrud exercitation ullamco laboris
@@ -770,7 +798,7 @@ function BlogDetail({}) {
             </p>
             <div className={"w-32 flex flex-row justify-between mt-2"}>
               <a href="#">
-                <p className={"text-primarygreen text-xs font-semibold"}>
+                <p className={"text-primarygreen text-xs font-gilroysemibold"}>
                   Reply
                 </p>
               </a>
@@ -780,7 +808,7 @@ function BlogDetail({}) {
                   style={{ width: "16px", height: "13px" }}
                   alt=""
                 />
-                <p className="text-xs text-lightgrey font-semibold ml-2">
+                <p className="text-xs text-lightgrey font-gilroysemibold ml-2">
                   3 Likes
                 </p>
               </div>
@@ -797,7 +825,7 @@ function BlogDetail({}) {
                 alt=""
               />
               <div className={"ml-4"}>
-                <p className={"text-xs font-semibold text-primarygreen"}>
+                <p className={"text-xs font-gilroysemibold text-primarygreen"}>
                   See other 4 replies
                 </p>
               </div>
@@ -813,7 +841,7 @@ function BlogDetail({}) {
                 alt=""
               />
               <div className={"ml-4"}>
-                <p className={"text-xs font-semibold text-primarygreen"}>
+                <p className={"text-xs font-gilroysemibold text-primarygreen"}>
                   Hide other 4 replies
                 </p>
               </div>
@@ -822,13 +850,13 @@ function BlogDetail({}) {
           {hideReply == false && (
             <div>
               <div className={"ml-10 mt-4"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Mayfa Shadrina
                 </p>
-                <p className={"text-xs text-darkgrey pt-1 gilroy-regular"}>
+                <p className={"text-xs text-darkgrey pt-1 font-gilroyregular"}>
                   Feb 21, 2022 on 13:59 WIB
                 </p>
-                <p className={"text-sm text-blackmig pt-4 gilroy-regular"}>
+                <p className={"text-sm text-blackmig pt-4 font-gilroyregular"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco
@@ -840,7 +868,11 @@ function BlogDetail({}) {
                 </p>
                 <div className={"w-32 flex flex-row justify-between mt-2"}>
                   <a href="#">
-                    <p className={"text-primarygreen text-xs font-semibold"}>
+                    <p
+                      className={
+                        "text-primarygreen text-xs font-gilroysemibold"
+                      }
+                    >
                       Reply
                     </p>
                   </a>
@@ -850,20 +882,20 @@ function BlogDetail({}) {
                       style={{ width: "16px", height: "13px" }}
                       alt=""
                     />
-                    <p className="text-xs text-lightgrey font-semibold ml-2">
+                    <p className="text-xs text-lightgrey font-gilroysemibold ml-2">
                       3 Likes
                     </p>
                   </div>
                 </div>
               </div>
               <div className={"ml-10 mt-4"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Mayfa Shadrina
                 </p>
-                <p className={"text-xs text-darkgrey pt-1 gilroy-regular"}>
+                <p className={"text-xs text-darkgrey pt-1 font-gilroyregular"}>
                   Feb 21, 2022 on 13:59 WIB
                 </p>
-                <p className={"text-sm text-blackmig pt-4 gilroy-regular"}>
+                <p className={"text-sm text-blackmig pt-4 font-gilroyregular"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco
@@ -875,7 +907,11 @@ function BlogDetail({}) {
                 </p>
                 <div className={"w-32 flex flex-row justify-between mt-2"}>
                   <a href="#">
-                    <p className={"text-primarygreen text-xs font-semibold"}>
+                    <p
+                      className={
+                        "text-primarygreen text-xs font-gilroysemibold"
+                      }
+                    >
                       Reply
                     </p>
                   </a>
@@ -885,20 +921,20 @@ function BlogDetail({}) {
                       style={{ width: "16px", height: "13px" }}
                       alt=""
                     />
-                    <p className="text-xs text-lightgrey font-semibold ml-2">
+                    <p className="text-xs text-lightgrey font-gilroysemibold ml-2">
                       3 Likes
                     </p>
                   </div>
                 </div>
               </div>
               <div className={"ml-10 mt-4"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Mayfa Shadrina
                 </p>
-                <p className={"text-xs text-darkgrey pt-1 gilroy-regular"}>
+                <p className={"text-xs text-darkgrey pt-1 font-gilroyregular"}>
                   Feb 21, 2022 on 13:59 WIB
                 </p>
-                <p className={"text-sm text-blackmig pt-4 gilroy-regular"}>
+                <p className={"text-sm text-blackmig pt-4 font-gilroyregular"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco
@@ -910,7 +946,11 @@ function BlogDetail({}) {
                 </p>
                 <div className={"w-32 flex flex-row justify-between mt-2"}>
                   <a href="#">
-                    <p className={"text-primarygreen text-xs font-semibold"}>
+                    <p
+                      className={
+                        "text-primarygreen text-xs font-gilroysemibold"
+                      }
+                    >
                       Reply
                     </p>
                   </a>
@@ -920,20 +960,20 @@ function BlogDetail({}) {
                       style={{ width: "16px", height: "13px" }}
                       alt=""
                     />
-                    <p className="text-xs text-lightgrey font-semibold ml-2">
+                    <p className="text-xs text-lightgrey font-gilroysemibold ml-2">
                       3 Likes
                     </p>
                   </div>
                 </div>
               </div>
               <div className={"ml-10 mt-4"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Mayfa Shadrina
                 </p>
-                <p className={"text-xs text-darkgrey pt-1 gilroy-regular"}>
+                <p className={"text-xs text-darkgrey pt-1 font-gilroyregular"}>
                   Feb 21, 2022 on 13:59 WIB
                 </p>
-                <p className={"text-sm text-blackmig pt-4 gilroy-regular"}>
+                <p className={"text-sm text-blackmig pt-4 font-gilroyregular"}>
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                   Ut enim ad minim veniam, quis nostrud exercitation ullamco
@@ -945,7 +985,11 @@ function BlogDetail({}) {
                 </p>
                 <div className={"w-32 flex flex-row justify-between mt-2"}>
                   <a href="#">
-                    <p className={"text-primarygreen text-xs font-semibold"}>
+                    <p
+                      className={
+                        "text-primarygreen text-xs font-gilroysemibold"
+                      }
+                    >
                       Reply
                     </p>
                   </a>
@@ -955,7 +999,7 @@ function BlogDetail({}) {
                       style={{ width: "16px", height: "13px" }}
                       alt=""
                     />
-                    <p className="text-xs text-lightgrey font-semibold ml-2">
+                    <p className="text-xs text-lightgrey font-gilroysemibold ml-2">
                       3 Likes
                     </p>
                   </div>

@@ -50,7 +50,7 @@ function Advantages({}) {
             <Link href={{ pathname: "/advantages" }}>
               <p
                 className={
-                  "cursor-pointer flex-col text-base font-semibold pr-4"
+                  "cursor-pointer flex-col text-base font-gilroysemibold pr-4"
                 }
                 style={{}}
               >
@@ -60,7 +60,7 @@ function Advantages({}) {
             <Link href={{ pathname: "/hardware" }}>
               <p
                 className={
-                  "cursor-pointer flex-col text-base font-semibold px-4"
+                  "cursor-pointer flex-col text-base font-gilroysemibold px-4"
                 }
               >
                 Hardware
@@ -69,7 +69,7 @@ function Advantages({}) {
             <Link href={{ pathname: "/software" }}>
               <p
                 className={
-                  "cursor-pointer flex-col text-base font-semibold px-4"
+                  "cursor-pointer flex-col text-base font-gilroysemibold px-4"
                 }
               >
                 Software
@@ -78,7 +78,7 @@ function Advantages({}) {
             <Link href={{ pathname: "/people" }}>
               <p
                 className={
-                  "cursor-pointer flex-col text-base font-semibold px-4"
+                  "cursor-pointer flex-col text-base font-gilroysemibold px-4"
                 }
               >
                 People
@@ -600,7 +600,7 @@ function Advantages({}) {
         >
           <div
             className={
-              "flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative gilroy-bold"
+              "flex-col text-2xl md:text-4xl text-black -top-4 md:top-0 relative font-gilroybold"
             }
             style={{}}
           >

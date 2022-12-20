@@ -17,6 +17,14 @@ ul {
   font-family: "Gilroy-semibold";
   src: url("../../../public/fonts/GIlroy-semibold.ttf");
 }
+@font-face {
+  font-family: "Gilroy-bold";
+  src: url("../../../public/fonts/Gilroy-Bold.ttf");
+}
+@font-face {
+  font-family: "Gilroy-regular";
+  src: url("../../../public/fonts/Gilroy-Regular.ttf");
+}
 ol {
   list-style-type: decimal;
   margin-left: 20px;

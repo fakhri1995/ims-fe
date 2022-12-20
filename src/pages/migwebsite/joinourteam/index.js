@@ -47,7 +47,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             >
               <button
                 className={
-                  "gilroy-regular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                  "font-gilroyregular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
                 }
                 style={{}}
               >
@@ -65,7 +65,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             >
               <button
                 className={
-                  "gilroy-regular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                  "font-gilroyregular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
                 }
                 style={{}}
               >
@@ -83,7 +83,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             >
               <button
                 className={
-                  "gilroy-regular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                  "font-gilroyregular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
                 }
                 style={{}}
               >
@@ -103,14 +103,14 @@ function JoinOurTeam({ dataCareers, empData }) {
             <div className={""}>
               <p
                 className={
-                  "text-2xl md:text-[32px] text-center md:text-left font-semibold text-blackmig"
+                  "text-2xl md:text-[32px] text-center md:text-left font-gilroysemibold text-blackmig"
                 }
               >
                 Careers at MIG
               </p>
               <p
                 className={
-                  "text-base gilroy-regular text-blackmig my-4 md:my-8"
+                  "text-base font-gilroyregular text-blackmig my-4 md:my-8"
                 }
               >
                 We are currently looking to expand our team! Our team comprises
@@ -120,7 +120,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <Link href="/section7careers">
                   <button
                     className={
-                      "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-semibold"
+                      "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-gilroysemibold"
                     }
                   >
                     <p className={"self-center"}>Explore Open Positions</p>
@@ -144,7 +144,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
       {/* section career1 mobile */}
       <section className={"section1careers md:hidden py-12 px-4"}>
-        <p className={"text-2xl text-center font-semibold text-blackmig"}>
+        <p className={"text-2xl text-center font-gilroysemibold text-blackmig"}>
           Careers at MIG
         </p>
         <div className={"mt-12"}>
@@ -154,7 +154,9 @@ function JoinOurTeam({ dataCareers, empData }) {
           />
         </div>
         <div className={"py-12"}>
-          <p className={"text-base text-center gilroy-regular text-blackmig"}>
+          <p
+            className={"text-base text-center font-gilroyregular text-blackmig"}
+          >
             We are currently looking to expand our team! Our team comprises of
             highly motivated, positive and hardworking individuals.
           </p>
@@ -163,7 +165,7 @@ function JoinOurTeam({ dataCareers, empData }) {
           <Link href="/section7careers">
             <button
               className={
-                "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-semibold"
+                "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-gilroysemibold"
               }
             >
               <p className={"self-center"}>Explore Open Positions</p>
@@ -182,7 +184,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         <div className={"py-4 md:py-6 px-4 md:px-[112px]"}>
           <p
             className={
-              "text-xl md:text-[32px] gilroy-semibold font-semibold text-blackmig text-center "
+              "text-xl md:text-[32px] gilroy-semibold font-gilroysemibold text-blackmig text-center "
             }
           >
             Our Values
@@ -203,7 +205,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </div>
                 <p
                   className={
-                    "text-lg md:text-xl mt-2 font-semibold text-blackmig"
+                    "text-lg md:text-xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Agility
@@ -228,7 +230,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </div>
                 <p
                   className={
-                    "text-lg md:text-xl mt-2 font-semibold text-blackmig"
+                    "text-lg md:text-xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Perseverance
@@ -252,7 +254,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 </div>
                 <p
                   className={
-                    "text-lg md:text-xl mt-2 font-semibold text-blackmig"
+                    "text-lg md:text-xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Integrity
@@ -278,7 +280,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                 />
               </div>
               <div className={" w-4/5 ml-4"}>
-                <p className={"text-sm font-semibold text-blackmig"}>Agility</p>
+                <p className={"text-sm font-gilroysemibold text-blackmig"}>
+                  Agility
+                </p>
                 <p className={"text-blackmig text-sm mt-1"}>
                   We are adapting to fast-changing environments.
                 </p>
@@ -296,7 +300,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 />
               </div>
               <div className={" w-4/5 ml-4"}>
-                <p className={"text-sm font-semibold text-blackmig"}>
+                <p className={"text-sm font-gilroysemibold text-blackmig"}>
                   Perseverance
                 </p>
                 <p className={"text-blackmig text-sm mt-1"}>
@@ -316,7 +320,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 />
               </div>
               <div className={" w-4/5 ml-4"}>
-                <p className={"text-sm font-semibold text-blackmig"}>
+                <p className={"text-sm font-gilroysemibold text-blackmig"}>
                   Integrity
                 </p>
                 <p className={"text-blackmig text-sm mt-1"}>
@@ -331,13 +335,13 @@ function JoinOurTeam({ dataCareers, empData }) {
       <section className={"section6careers hidden md:block py-8 md:py-16"}>
         <p
           className={
-            "text-center text-blackmig font-semibold text-2xl md:text-[32px]"
+            "text-center text-blackmig font-gilroysemibold text-2xl md:text-[32px]"
           }
         >
           Benefits
         </p>
         <div className={"px-4 md:px-[112px] mt-4"}>
-          <p className={"text-base gilroy-regular text-blackmig"}>
+          <p className={"text-base font-gilroyregular text-blackmig"}>
             Mitramas is a people-centric business with a foundation to gives
             working opportunities for motivated individuals at all levels. Our
             long-term sustainable business which has been running for +15 years
@@ -356,7 +360,7 @@ function JoinOurTeam({ dataCareers, empData }) {
 
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-base text-black gilroy-regular"
+                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
                   We love to empower our team members to solve problems that
@@ -370,7 +374,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-base text-black gilroy-regular"
+                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
                   We offer diverse industry exposures and hands-on experience
@@ -383,7 +387,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-base text-black gilroy-regular"
+                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
                   We support personal growth through constant experiment and
@@ -401,7 +405,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-base text-black gilroy-regular"
+                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
                   We provide unique and competitive packages to launch your
@@ -415,7 +419,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-base text-black gilroy-regular"
+                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
                   We value informal social bonding to offer a enjoyable working
@@ -429,7 +433,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-base text-black gilroy-regular"
+                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
                   We create engaging environment and believe everyone has a
@@ -442,11 +446,13 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
       {/*section 6 careers mobile view */}
       <section className={"section6careers md:hidden pt-12 pb-[150px] px-4"}>
-        <p className={"text-center text-blackmig font-semibold text-xl"}>
+        <p className={"text-center text-blackmig font-gilroysemibold text-xl"}>
           Benefits
         </p>
         <div className={"mt-2"}>
-          <p className={"text-base gilroy-regular text-center text-blackmig"}>
+          <p
+            className={"text-base font-gilroyregular text-center text-blackmig"}
+          >
             Mitramas is a people-centric business with a foundation to gives
             working opportunities for motivated individuals at all levels. Our
             long-term sustainable business which has been running for +15 years
@@ -465,7 +471,7 @@ function JoinOurTeam({ dataCareers, empData }) {
 
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                    "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
                   We love to empower our team members to solve problems that
@@ -479,7 +485,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                    "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
                   We offer diverse industry exposures and hands-on experience
@@ -492,7 +498,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                    "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
                   We support personal growth through constant experiment and
@@ -510,7 +516,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                    "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
                   We provide unique and competitive packages to launch your
@@ -524,7 +530,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                    "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
                   We value informal social bonding to offer a enjoyable working
@@ -538,7 +544,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
                 <p
                   className={
-                    "flex-row my-auto pl-4 text-xs text-blackmig gilroy-regular"
+                    "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
                   We create engaging environment and believe everyone has a
