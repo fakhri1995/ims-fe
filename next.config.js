@@ -18,6 +18,7 @@ const nextConfig = {
       source: "/hardware/:hardware_id",
       destination: "/migwebsite/hardware/[hardware_id]",
     },
+    { source: "/freeconsultation", destination: "/migwebsite/freeconsultation" },
     { source: "/software", destination: "/migwebsite/software" },
     { source: "/talents", destination: "/migwebsite/talents" },
     { source: "/aboutus", destination: "/migwebsite/aboutus" },

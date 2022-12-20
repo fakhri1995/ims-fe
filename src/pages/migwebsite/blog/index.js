@@ -42,10 +42,12 @@ function Blog({}) {
           <div className={"flex w-1/2 md:ml-[50px] xl:ml-[60px]"}>
             <div className={"w-3/4 flex flex-col justify-between"}>
               <div>
-                <p className={"text-[32px] font-semibold text-blackmig"}>
+                <p className={"text-[32px] font-gilroysemibold text-blackmig"}>
                   Welcome to MIG Blog!
                 </p>
-                <p className={" text-base text-blackmig gilroy-regular mt-1"}>
+                <p
+                  className={" text-base text-blackmig font-gilroyregular mt-1"}
+                >
                   MIG catalyzes your core business with{" "}
                   <span style={{ fontWeight: "bold" }}>
                     IT hardware solutions
@@ -86,7 +88,11 @@ function Blog({}) {
               </div>
             </div>
             <div className={"w-1/4 grid justify-end self-center "}>
-              <p className={"text-sm text-darkgrey md:text-base font-semibold"}>
+              <p
+                className={
+                  "text-sm text-darkgrey md:text-base font-gilroysemibold"
+                }
+              >
                 Share
               </p>
               <div className={"mt-[22px]"}>
@@ -128,7 +134,7 @@ function Blog({}) {
               src="/image/landingpage/image-section1.png"
             />
           </div>
-          <p className={" text-base text-center text-black gilroy-regular"}>
+          <p className={" text-base text-center text-black font-gilroyregular"}>
             MIG catalyzes your core business with{" "}
             <span style={{ fontWeight: "bold" }}>IT hardware solutions</span>,
             <span style={{ fontWeight: "bold" }}>software development</span>,
@@ -164,7 +170,9 @@ function Blog({}) {
             </div>
             <div className={"text-center my-4"}>
               <p
-                className={"text-base text-darkgrey md:text-base font-semibold"}
+                className={
+                  "text-base text-darkgrey md:text-base font-gilroysemibold"
+                }
               >
                 Share
               </p>
@@ -221,8 +229,12 @@ function Blog({}) {
               />
               <div className={"pl-4"}>
                 <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p
                   className={
@@ -232,12 +244,14 @@ function Blog({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -259,8 +273,12 @@ function Blog({}) {
               />
               <div className={"pl-4"}>
                 <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p
                   className={
@@ -270,12 +288,14 @@ function Blog({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -297,8 +317,12 @@ function Blog({}) {
               />
               <div className={"pl-4"}>
                 <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p
                   className={
@@ -308,12 +332,14 @@ function Blog({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -335,8 +361,12 @@ function Blog({}) {
               />
               <div className={"pl-4"}>
                 <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p
                   className={
@@ -346,12 +376,14 @@ function Blog({}) {
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -368,7 +400,7 @@ function Blog({}) {
           <div className={"flex flex-row pr-4"}>
             <p
               className={
-                "text-xs md:text-sm gilroy-regular text-blackmig mr-4 self-center"
+                "text-xs md:text-sm font-gilroyregular text-blackmig mr-4 self-center"
               }
             >
               Sort by
@@ -408,19 +440,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -435,19 +473,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -462,19 +506,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -489,19 +539,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -516,19 +572,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -543,19 +605,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -570,19 +638,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -597,19 +671,25 @@ function Blog({}) {
               />
               <div className={"mt-3"}>
                 <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-semibold"}>Mayfa Shadrina </span>
-                  on <span className={"font-semibold"}>August 8th, 2022</span>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
                 </p>
                 <p className={"font-bold text-blackmig text-base mt-3"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig gilroy-regular text-xs mt-1.5"}>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
                 <div className={"mt-1.5"}>
-                  <span class="text-xs gilroy-regular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                     Hardware
                   </span>
                 </div>
@@ -637,7 +717,7 @@ function Blog({}) {
             </div>
             <div className={"w-3/5 justify-self-start"}>
               <div className="flex flex-col items-start px-10">
-                <h4 className="mb-2 text-2xl font-semibold text-blackmig">
+                <h4 className="mb-2 text-2xl font-gilroysemibold text-blackmig">
                   Hear what our customers said about us!
                 </h4>
                 <div className="flex flex-row items-center mt-5">
@@ -648,7 +728,7 @@ function Blog({}) {
                     />
                   </div>
                   <div>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
                       We love to empower our team members to solve problems that
                       matter
                     </p>
@@ -662,7 +742,7 @@ function Blog({}) {
                     />
                   </div>
                   <div>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
                       We offer diverse industry exposures and hands-on
                       experience
                     </p>
@@ -676,7 +756,7 @@ function Blog({}) {
                     />
                   </div>
                   <div>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
                       We support personal growth through constant experiment and
                       learning
                     </p>
@@ -685,7 +765,7 @@ function Blog({}) {
                 <div className="mt-3">
                   <a href="/contactus">
                     <div className="flex border-2 border-primarygreen w-[264px] rounded px-4 py-2 justify-between">
-                      <p className="text-base mr-2 text-primarygreen font-semibold gilroy-semibold">
+                      <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
                         Read Our Customer Stories
                       </p>
                       <img
@@ -758,7 +838,7 @@ function Blog({}) {
         <div className="self-end mt-5">
           <a href="#">
             <div className="flex mt-5 justify-end mr-5">
-              <p className="text-base mr-2 text-primarygreen font-semibold gilroy-semibold">
+              <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
                 Apply for jobs
               </p>
               <img
@@ -783,10 +863,10 @@ function Blog({}) {
         </div>
         <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[144px] py-4 px-8">
-            <p className={"text-2xl font-semibold text-blackmig"}>
+            <p className={"text-2xl font-gilroysemibold text-blackmig"}>
               Want help on providing your IT needs?
             </p>
-            <p className={"py-5 text-base gilroy-regular text-blackmig"}>
+            <p className={"py-5 text-base font-gilroyregular text-blackmig"}>
               Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!
@@ -798,7 +878,11 @@ function Blog({}) {
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"text-base gilroy-semibold font-semibold mr-2"}>
+                  <p
+                    className={
+                      "text-base font-gilroysemibold font-gilroysemibold mr-2"
+                    }
+                  >
                     Learn more
                   </p>
                   <img
@@ -825,10 +909,10 @@ function Blog({}) {
       >
         <div className={"container mx-auto"}>
           <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-30 py-4 px-8">
-            <p className={"text-xl font-semibold"}>
+            <p className={"text-xl font-gilroysemibold"}>
               Want help on providing your IT needs?
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
+            <p className={"py-5 text-sm font-gilroyregular"}>
               Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!

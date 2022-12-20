@@ -150,6 +150,23 @@ function Software({}) {
       label_meeting: "17.30 WIB - 18.00 WIB",
     },
   ];
+
+  useEffect(() => {
+    if (localStorage.getItem("dataForm")) {
+      let dataForm = JSON.parse(localStorage.getItem("dataForm"));
+      console.log("dataform ", dataForm);
+      setDataSoftware({
+        ...dataSoftware,
+        company_email: dataForm.company_email,
+        company_name: dataForm.company_name,
+        contact_name: dataForm.name,
+        phone_number: dataForm.phone_number,
+      });
+      setShowform(true);
+      setFormActive("second");
+      localStorage.removeItem("dataForm");
+    }
+  }, []);
   const onChangeValuePurpose = (e) => {
     console.log("radio checked", e.target.value);
     // setValuePurpose(e.target.value);
@@ -331,7 +348,9 @@ function Software({}) {
               </Link>
               <Link href={{ pathname: "/software" }}>
                 <p
-                  className={"cursor-pointer flex-col text-lg gilroy-bold mx-4"}
+                  className={
+                    "cursor-pointer flex-col text-lg font-gilroybold mx-4"
+                  }
                   style={{
                     borderBottom: "solid 2px #10B981",
                     paddingBottom: "2.5px",
@@ -364,7 +383,7 @@ function Software({}) {
           >
             {formActive == "first" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-primarygreen font-semibold"}>
+                <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
                   Thank you for your interest in providing your IT needs through
                   Mitramas Infosys Global
                 </p>
@@ -482,7 +501,7 @@ function Software({}) {
                           }
                         >
                           <div className={"flex flex-row justify-between"}>
-                            <p className={"text-base font-semibold"}>
+                            <p className={"text-base font-gilroysemibold"}>
                               Get Started
                             </p>
                             <img
@@ -505,12 +524,12 @@ function Software({}) {
                   onFinish={() => handleSubmit("third")}
                   form={form}
                 >
-                  <p className={"text-2xl text-blackmig font-semibold"}>
+                  <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                     Project Information
                   </p>
                   <Form.Item
                     name={"Kind of Project"}
-                    className={"gilroy-medium text-xl"}
+                    className={"text-blackmig text-xl"}
                     label="What kind of project do you want to build?"
                     rules={[{ required: true }]}
                   >
@@ -531,7 +550,7 @@ function Software({}) {
                   <div className={"mt-9"}>
                     <Form.Item
                       name={"Type of Project"}
-                      className={"gilroy-medium text-xl"}
+                      className={"text-blackmig text-xl"}
                       label="What type of project are you hiring us for?"
                       rules={[{ required: true }]}
                     >
@@ -558,7 +577,7 @@ function Software({}) {
                     <div className={"mt-1 flex flex-row"}>
                       <Form.Item
                         name={"Budget Minimal"}
-                        className={"gilroy-medium text-xl"}
+                        className={"text-blackmig text-xl"}
                         label="From"
                         rules={[
                           {
@@ -594,7 +613,7 @@ function Software({}) {
                       </div>
                       <Form.Item
                         name={"Budget Maximal"}
-                        className={"gilroy-medium text-xl"}
+                        className={"text-blackmig text-xl"}
                         label="To"
                         rules={[
                           {
@@ -678,7 +697,7 @@ function Software({}) {
               </div>
             ) : (
               <div className="w-[52%]">
-                <p className={"text-2xl text-blackmig font-semibold"}>
+                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   Choose Meeting Date
                 </p>
                 <div
@@ -702,7 +721,11 @@ function Software({}) {
                     <p className={"text-xs text-blackmig font-gilroysemibold"}>
                       Choose Time
                     </p>
-                    <p className={"font-xs text-blackmig gilroy-regular mt-1"}>
+                    <p
+                      className={
+                        "font-xs text-blackmig font-gilroyregular mt-1"
+                      }
+                    >
                       Meeting duration: 30 minutes
                     </p>
                     <div className={"mt-4 flex flex-row"}>
@@ -770,7 +793,7 @@ function Software({}) {
                   </div>
                 </div>
                 <div className={"mt-[35px]"}>
-                  <p className={"text-sm text-blackmig gilroy-regular"}>
+                  <p className={"text-sm text-blackmig font-gilroyregular"}>
                     *Meeting Time
                   </p>
 
@@ -838,16 +861,18 @@ function Software({}) {
           <section className={"section2software py-4 md:py-16 px-4 md:mx-auto"}>
             <div className={"hidden md:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
-                <p className={"text-[32px] gilroy-bold"}>
+                <p className={"text-[32px] font-gilroyboldold"}>
                   Simplify and automate the process through digitalization
                 </p>
-                <p className={"mt-8 gilroy-regular text-base"}>
+                <p className={"mt-8 font-gilroyregular text-base"}>
                   High competition, need transformation, and slow operations
                   force you to be more effective and efficient in order to grow
                   rapidly.
                 </p>
                 <div className={"mt-[40px]"}>
-                  <p className={"gilroy-bold text-primarygreen text-base"}>
+                  <p
+                    className={"font-gilroyboldold text-primarygreen text-base"}
+                  >
                     Reach us to get more information
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
@@ -869,7 +894,7 @@ function Software({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between gap-2"}>
-                        <p className={"font-semibold"}>Let's talk!</p>
+                        <p className={"font-gilroysemibold"}>Let's talk!</p>
                         <img
                           className={"w-[20px] h-[20px] self-center"}
                           src="/image/landingpage/arrow-circle-right.png"
@@ -888,18 +913,22 @@ function Software({}) {
                         src="/image/landingpage/info.png"
                       />
                       <div>
-                        <p className={"text-base text-blackmig gilroy-regular"}>
+                        <p
+                          className={
+                            "text-base text-blackmig font-gilroyregular"
+                          }
+                        >
                           Let us help you to achieve business goals with :
                         </p>
                         <ul>
                           <li>
                             <p
                               className={
-                                "text-base text-blackmig gilroy-regular"
+                                "text-base text-blackmig font-gilroyregular"
                               }
                             >
                               {""}
-                              <span className={"font-semibold"}>
+                              <span className={"font-gilroysemibold"}>
                                 {" "}
                                 Customized
                               </span>{" "}
@@ -909,11 +938,11 @@ function Software({}) {
                           <li>
                             <p
                               className={
-                                "text-base text-blackmig gilroy-regular"
+                                "text-base text-blackmig font-gilroyregular"
                               }
                             >
                               {""}
-                              <span className={"font-semibold"}>
+                              <span className={"font-gilroysemibold"}>
                                 Automated
                               </span>{" "}
                               business operations
@@ -932,7 +961,9 @@ function Software({}) {
             <div className={"block md:hidden py-9 px-4"}>
               <div className={"px-3"}>
                 <p
-                  className={"text-blackmig text-xl text-center font-semibold"}
+                  className={
+                    "text-blackmig text-xl text-center font-gilroysemibold"
+                  }
                 >
                   Simplify and automate the process through digitalization
                 </p>
@@ -942,7 +973,7 @@ function Software({}) {
                 ></img>
                 <p
                   className={
-                    "py-6 text-center text-base gilroy-regular text-blackmig"
+                    "py-6 text-center text-base font-gilroyregular text-blackmig"
                   }
                 >
                   High competition, need transformation, and slow operations
@@ -951,7 +982,7 @@ function Software({}) {
                 </p>
               </div>
               <div>
-                <p className={"font-semibold text-primarygreen text-sm"}>
+                <p className={"font-gilroysemibold text-primarygreen text-sm"}>
                   Reach us to get more information
                 </p>
                 <div className={"flex flex-row items-center mt-1"}>
@@ -986,19 +1017,23 @@ function Software({}) {
                     src="/image/landingpage/info.png"
                   />
                   <div>
-                    <p className={"text-sm text-blackmig gilroy-regular"}>
+                    <p className={"text-sm text-blackmig font-gilroyregular"}>
                       Let us help you to achieve business goals with :
                     </p>
                     <ul className={""}>
                       <li className={"mt-1"}>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           {""}
                           <span className={"font-bold"}>Customized</span>{" "}
                           software solutions
                         </p>
                       </li>
                       <li className={"mt-1"}>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           {""}
                           <span className={"font-bold"}>Automated</span>{" "}
                           business operations
@@ -1018,7 +1053,7 @@ function Software({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-semibold py-8 md:py-0 mb-10"
+                "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
               Let’s see some of{" "}
@@ -1056,21 +1091,21 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -1090,11 +1125,17 @@ function Software({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -1108,21 +1149,25 @@ function Software({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -1139,21 +1184,21 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -1173,11 +1218,17 @@ function Software({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -1191,21 +1242,25 @@ function Software({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -1222,21 +1277,21 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -1256,11 +1311,17 @@ function Software({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -1274,21 +1335,25 @@ function Software({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -1323,7 +1388,11 @@ function Software({}) {
               "section3software block md:hidden bg-bgjoinmig px-6 pt-9 pb-[72px]"
             }
           >
-            <p className={"text-xl text-center gilroy-semibold font-semibold"}>
+            <p
+              className={
+                "text-xl text-center gilroy-semibold font-gilroysemibold"
+              }
+            >
               Let’s see what{" "}
               <span
                 style={{
@@ -1346,21 +1415,25 @@ function Software({}) {
                     src="/image/software/migsys.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
-                    <p className={"gilroy-bold text-blackmig text-sm"}>
+                    <p className={"font-gilroyboldold text-blackmig text-sm"}>
                       MIGSys
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
-                      <p className={"text-primarygreen gilroy-regular text-xs"}>
+                      <p
+                        className={
+                          "text-primarygreen font-gilroyregular text-xs"
+                        }
+                      >
                         Website Development
                       </p>
                     </div>
                   </div>
                   <div className={"mt-1"}>
-                    <p className={"gilroy-regular text-blackmig text-sm"}>
+                    <p className={"font-gilroyregular text-blackmig text-sm"}>
                       An enterprise resource planning that built to enhance
                       employee’s performance and productivity:{" "}
                     </p>
-                    <ul className={"gilroy-regular text-blackmig text-sm"}>
+                    <ul className={"font-gilroyregular text-blackmig text-sm"}>
                       <li>Task & Recruitment Process</li>
                       <li>Warehouse Managed Service</li>
                       <li>Contract, Order, and Service for Assets</li>
@@ -1378,17 +1451,21 @@ function Software({}) {
                     src="/image/software/lms.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
-                    <p className={"gilroy-bold text-blackmig text-sm"}>
+                    <p className={"font-gilroyboldold text-blackmig text-sm"}>
                       MIGSys
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
-                      <p className={"text-primarygreen gilroy-regular text-xs"}>
+                      <p
+                        className={
+                          "text-primarygreen font-gilroyregular text-xs"
+                        }
+                      >
                         Website Development
                       </p>
                     </div>
                   </div>
                   <div className={"mt-1"}>
-                    <p className={"gilroy-regular text-blackmig text-sm"}>
+                    <p className={"font-gilroyregular text-blackmig text-sm"}>
                       A web-based educational platform (learning management
                       system) that built to digitalize learning programs; plan,
                       implement and assess learning programs at AQL Islamic
@@ -1405,17 +1482,21 @@ function Software({}) {
                     src="/image/software/warung-lebaran.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
-                    <p className={"gilroy-bold text-blackmig text-sm"}>
+                    <p className={"font-gilroyboldold text-blackmig text-sm"}>
                       MIGSys
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
-                      <p className={"text-primarygreen gilroy-regular text-xs"}>
+                      <p
+                        className={
+                          "text-primarygreen font-gilroyregular text-xs"
+                        }
+                      >
                         Website Development
                       </p>
                     </div>
                   </div>
                   <div className={"mt-1"}>
-                    <p className={"gilroy-regular text-blackmig text-sm"}>
+                    <p className={"font-gilroyregular text-blackmig text-sm"}>
                       A web-based hardware managed service to enhance the
                       efficiency of distributions between seller and consumer.
                     </p>
@@ -1429,7 +1510,7 @@ function Software({}) {
               <div className={"pb-12"}>
                 <p
                   className={
-                    "text-base text-blackmig gilroy-regular text-center w-[646px] mx-auto px-2"
+                    "text-base text-blackmig font-gilroyregular text-center w-[646px] mx-auto px-2"
                   }
                 >
                   We support your companies to simplify and automate the process
@@ -1445,7 +1526,9 @@ function Software({}) {
                     }
                   >
                     <p
-                      className={"text-base gilroy-semibold font-semibold mr-2"}
+                      className={
+                        "text-base gilroy-semibold font-gilroysemibold mr-2"
+                      }
                     >
                       Contact our sales team
                     </p>
@@ -1469,7 +1552,7 @@ function Software({}) {
                 />
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
-                <h4 className="mb-2 text-2xl text-center font-semibold text-blackmig">
+                <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
                   Why you should{" "}
                   <span
                     style={{
@@ -1494,10 +1577,10 @@ function Software({}) {
                     className="w-[42px] h-[42px] self-center"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Build Software Based on Your Needs
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                       Giving you customization software to simplify and automate
                       your business.
                     </p>
@@ -1509,10 +1592,10 @@ function Software({}) {
                     className="w-[42px] h-[42px] self-center"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Excellent Talent Support
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                       We develops software to help you achieve business process
                       automation with our IT talent pool
                     </p>
@@ -1524,10 +1607,10 @@ function Software({}) {
                     className="w-[42px] h-[42px] self-center"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Enhance Productivity & Efficiency
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                       We can discuss about project also provide the best cost
                       with a mutual agreement based on time, and complexity
                     </p>
@@ -1543,7 +1626,11 @@ function Software({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <p className={"text-xl md:text-2xl gilroy-bold py-8 md:py-0"}>
+              <p
+                className={
+                  "text-xl md:text-2xl font-gilroyboldold py-8 md:py-0"
+                }
+              >
                 How it{" "}
                 <span
                   style={{
@@ -1566,14 +1653,14 @@ function Software({}) {
                   />
                   <p
                     className={
-                      "text-blackmig text-sm md:text-base Gilroy-semibold font-semibold mt-4 text-center"
+                      "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                     }
                   >
                     Custom project-based collaboration
                   </p>
                   <p
                     className={
-                      "text-base text-blackmig gilroy-regular text-center"
+                      "text-base text-blackmig font-gilroyregular text-center"
                     }
                   >
                     One-stop service to develop tailored products
@@ -1594,14 +1681,14 @@ function Software({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-semibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
                   Providing all the resources you’ll need
                 </p>
                 <p
                   className={
-                    "text-base text-blackmig gilroy-regular text-center"
+                    "text-base text-blackmig font-gilroyregular text-center"
                   }
                 >
                   We have extensive talents and technologies tobuild the best
@@ -1622,14 +1709,14 @@ function Software({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-semibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
                   Clear and detailed project development
                 </p>
                 <p
                   className={
-                    "text-base text-blackmig gilroy-regular text-center"
+                    "text-base text-blackmig font-gilroyregular text-center"
                   }
                 >
                   We do multiple iterations and input before you’re receiving
@@ -1642,7 +1729,7 @@ function Software({}) {
           <section
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
-            <p className="mb-2 text-2xl text-center font-semibold text-blackmig">
+            <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
               How{" "}
               <span
                 style={{
@@ -1660,10 +1747,10 @@ function Software({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Custom project-based collaboration
                 </p>
-                <p className={"text-sm text-blackmig gilroy-regular"}>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
                   One-stop service to develop tailored products
                 </p>
               </div>
@@ -1674,10 +1761,10 @@ function Software({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Providing all the resources you’ll need
                 </p>
-                <p className={"text-sm text-blackmig gilroy-regular"}>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We have extensive talents and technologies tobuild the best
                   project for you and your companies
                 </p>
@@ -1689,10 +1776,10 @@ function Software({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Clear and detailed project development
                 </p>
-                <p className={"text-sm text-blackmig gilroy-regular"}>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We do multiple iterations and input before you’re receiving
                   the end-product
                 </p>
@@ -1707,7 +1794,7 @@ function Software({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-semibold mb-[42px]"
+                "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold mb-[42px]"
               }
             >
               What they say{" "}
@@ -1745,21 +1832,21 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -1779,11 +1866,17 @@ function Software({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -1797,21 +1890,25 @@ function Software({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -1828,21 +1925,21 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -1862,11 +1959,17 @@ function Software({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -1880,21 +1983,25 @@ function Software({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -1911,21 +2018,21 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -1945,11 +2052,17 @@ function Software({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -1963,21 +2076,25 @@ function Software({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -2014,7 +2131,7 @@ function Software({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-semibold md:py-0 mb-7 md:mb-10"
+                "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold md:py-0 mb-7 md:mb-10"
               }
             >
               What they say{" "}
@@ -2035,25 +2152,25 @@ function Software({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -2065,10 +2182,10 @@ function Software({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -2081,25 +2198,25 @@ function Software({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -2111,10 +2228,10 @@ function Software({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -2127,25 +2244,25 @@ function Software({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -2157,10 +2274,10 @@ function Software({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -2175,7 +2292,7 @@ function Software({}) {
                 <div className={"flex flex-row justify-around"}>
                   <p
                     className={
-                      "text-base text-primarygreen gilroy-semibold font-semibold"
+                      "text-base text-primarygreen gilroy-semibold font-gilroysemibold"
                     }
                   >
                     Read More
@@ -2202,10 +2319,10 @@ function Software({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
-                <p className={"text-2xl font-semibold text-black"}>
+                <p className={"text-2xl font-gilroysemibold text-black"}>
                   Fulfill your IT needs easily!
                 </p>
-                <p className={"py-5 text-base gilroy-regular text-black"}>
+                <p className={"py-5 text-base font-gilroyregular text-black"}>
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!
@@ -2219,7 +2336,7 @@ function Software({}) {
                     <div className={"flex flex-row justify-between"}>
                       <p
                         className={
-                          "text-base gilroy-semibold font-semibold mr-2"
+                          "text-base gilroy-semibold font-gilroysemibold mr-2"
                         }
                       >
                         Contact Us
@@ -2248,10 +2365,10 @@ function Software({}) {
           >
             <div className={"container mx-auto"}>
               <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-[102px] py-4 px-8">
-                <p className={"text-xl font-semibold"}>
+                <p className={"text-xl font-gilroysemibold"}>
                   Fulfill your IT needs easily!
                 </p>
-                <p className={"py-5 text-sm Gilroy-regular"}>
+                <p className={"py-5 text-sm font-gilroyregular"}>
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!

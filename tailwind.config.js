@@ -11,6 +11,8 @@ module.exports = {
       fontFamily: {
         mont: ["Montserrat"],
         gilroysemibold:["Gilroy-semibold"],
+        gilroybold:["Gilroy-bold"],
+        gilroyregular:["Gilroy-regular"],
       },
       boxShadow: {
         migcard: "0 0 20px rgba(0, 0, 0, 0.15)",

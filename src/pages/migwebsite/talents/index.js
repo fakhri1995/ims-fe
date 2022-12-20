@@ -166,6 +166,23 @@ function Talents({}) {
     },
   ];
 
+  useEffect(() => {
+    if (localStorage.getItem("dataForm")) {
+      let dataForm = JSON.parse(localStorage.getItem("dataForm"));
+      console.log("dataform ", dataForm);
+      setDataTalents({
+        ...dataTalents,
+        company_email: dataForm.company_email,
+        company_name: dataForm.company_name,
+        contact_name: dataForm.name,
+        phone_number: dataForm.phone_number,
+      });
+      setShowform(true);
+      setFormActive("second");
+      localStorage.removeItem("dataForm");
+    }
+  }, []);
+
   const handleEdit = (index) => {
     console.log("handle edit ", index);
     setStatusEdit(true);
@@ -543,7 +560,7 @@ function Talents({}) {
               <Link href={{ pathname: "/hardware" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg gilroy-medium mr-4"
+                    "cursor-pointer flex-col text-lg font-gilroyregular mr-4"
                   }
                 >
                   Hardware
@@ -552,7 +569,7 @@ function Talents({}) {
               <Link href={{ pathname: "/software" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg gilroy-medium mx-4"
+                    "cursor-pointer flex-col text-lg font-gilroyregular mx-4"
                   }
                 >
                   Software
@@ -560,7 +577,9 @@ function Talents({}) {
               </Link>
               <Link href={{ pathname: "/talents" }}>
                 <p
-                  className={"cursor-pointer flex-col text-lg gilroy-bold mx-4"}
+                  className={
+                    "cursor-pointer flex-col text-lg font-gilroybold mx-4"
+                  }
                   style={{
                     borderBottom: "solid 2px #10B981",
                     paddingBottom: "2.5px",
@@ -584,7 +603,7 @@ function Talents({}) {
           >
             {formActive == "first" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-primarygreen font-semibold"}>
+                <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
                   Thank you for your interest in providing your IT needs through
                   Mitramas Infosys Global
                 </p>
@@ -603,7 +622,7 @@ function Talents({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Company Name"}
-                        className={"gilroy-medium text-xl"}
+                        className={"font-gilroyregular text-xl"}
                         label="Company Name"
                         rules={[{ required: true }]}
                       >
@@ -625,7 +644,7 @@ function Talents({}) {
                       <Form.Item
                         initialValue={dataPeople.company_email}
                         name={"Email"}
-                        className={"gilroy-medium text-xl"}
+                        className={"font-gilroyregular text-xl"}
                         label="Email"
                         rules={[{ required: true, type: "email" }]}
                       >
@@ -646,7 +665,7 @@ function Talents({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Contact Name"}
-                        className={"gilroy-medium text-xl"}
+                        className={"font-gilroyregular text-xl"}
                         label="Contact Name"
                         rules={[{ required: true }]}
                       >
@@ -667,7 +686,7 @@ function Talents({}) {
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
-                        className={"gilroy-medium text-xl"}
+                        className={"font-gilroyregular text-xl"}
                         label="Phone Number"
                         rules={[
                           {
@@ -701,7 +720,7 @@ function Talents({}) {
                           }
                         >
                           <div className={"flex flex-row justify-between"}>
-                            <p className={"text-base font-semibold"}>
+                            <p className={"text-base font-gilroysemibold"}>
                               Get Started
                             </p>
                             <img
@@ -724,14 +743,14 @@ function Talents({}) {
                   onFinish={() => handleSubmit("third")}
                   form={form}
                 >
-                  <p className={"text-2xl text-blackmig font-semibold"}>
+                  <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                     General Information
                   </p>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
                   <div className={"mt-9"}>
                     <Form.Item
                       name={"type project"}
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="How many people are employed at your company?"
                       rules={[{ required: true }]}
                     >
@@ -756,7 +775,7 @@ function Talents({}) {
                   <div className={"mt-9"}>
                     <Form.Item
                       name={"kind project"}
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="What kind of project are you hiring for?"
                       rules={[{ required: true }]}
                     >
@@ -832,7 +851,7 @@ function Talents({}) {
                       </p>
                       <p
                         className={
-                          "mt-4 text-base text-blackmig gilroy-regular"
+                          "mt-4 text-base text-blackmig font-gilroyregular"
                         }
                       >
                         Are you sure you want to remove talent{" "}
@@ -896,7 +915,7 @@ function Talents({}) {
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
                         className={
-                          "mt-4 text-base text-blackmig gilroy-regular"
+                          "mt-4 text-base text-blackmig font-gilroyregular"
                         }
                       >
                         Are you sure you want to submit your request with only{" "}
@@ -930,7 +949,7 @@ function Talents({}) {
                     </button>
                   </div>
                 </Modal>
-                <p className={"text-2xl text-blackmig font-semibold"}>
+                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   Talent Information
                 </p>
                 <p className={"mt-9"}>
@@ -989,7 +1008,7 @@ function Talents({}) {
                             className={
                               kindOfTalent == "Engineering"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Engineering
@@ -1041,7 +1060,7 @@ function Talents({}) {
                             className={
                               kindOfTalent == "Data"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Data
@@ -1093,7 +1112,7 @@ function Talents({}) {
                             className={
                               kindOfTalent == "Product"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Product
@@ -1145,7 +1164,7 @@ function Talents({}) {
                             className={
                               kindOfTalent == "Design"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Design
@@ -1197,7 +1216,7 @@ function Talents({}) {
                             className={
                               kindOfTalent == "Others"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Others
@@ -1209,7 +1228,7 @@ function Talents({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-semibold"}>
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
                       1. Job Specification
                     </p>
                   </div>
@@ -1217,7 +1236,7 @@ function Talents({}) {
                     <Form.Item
                       // name={"product"}
 
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label={
                         <p>
                           What roles/skills would you like to see in your new
@@ -1246,7 +1265,11 @@ function Talents({}) {
                             "bg-transp45 rounded-[20px]  mt-3 py-1 pl-2 pr-1.5 flex flex-row mr-3"
                           }
                         >
-                          <p className={"text-sm text-blackmig gilroy-regular"}>
+                          <p
+                            className={
+                              "text-sm text-blackmig font-gilroyregular"
+                            }
+                          >
                             {data}
                           </p>
                           <button
@@ -1287,7 +1310,11 @@ function Talents({}) {
                             " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
                           }
                         >
-                          <p className={"text-sm text-darkgrey gilroy-regular"}>
+                          <p
+                            className={
+                              "text-sm text-darkgrey font-gilroyregular"
+                            }
+                          >
                             {data}
                           </p>
                         </button>
@@ -1299,7 +1326,7 @@ function Talents({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="level_employee"
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="What level of employee you would like to see in your new hire?"
                       rules={[{ required: true }]}
                     >
@@ -1322,11 +1349,15 @@ function Talents({}) {
                     <Form.Item
                       // name={"product"}
                       name={"many_talent"}
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label={
                         <p className={"text-blackmig"}>
                           How many talent in{" "}
-                          <span className={"font-gilroysemibold font-semibold"}>
+                          <span
+                            className={
+                              "font-gilroysemibold font-gilroysemibold"
+                            }
+                          >
                             {kindOfTalent}
                           </span>{" "}
                           you want to hire??
@@ -1353,14 +1384,14 @@ function Talents({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-semibold"}>
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
                       2. Additional Information
                     </p>
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="urgently_need"
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="How soon do you need the talent?"
                       rules={[{ required: true }]}
                     >
@@ -1387,7 +1418,7 @@ function Talents({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_used"
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="How long do you need the the talent?"
                       rules={[{ required: true }]}
                     >
@@ -1411,7 +1442,7 @@ function Talents({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="open_remote"
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="Are you open in hiring our remote talent? (work from home)"
                       rules={[{ required: true }]}
                     >
@@ -1434,7 +1465,7 @@ function Talents({}) {
                     <Form.Item
                       // name={"product"}
                       name={"max_budget"}
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label={
                         <p className={"text-blackmig"}>
                           What is your maximum budget for your new hire?
@@ -1463,7 +1494,7 @@ function Talents({}) {
                     </Form.Item>
                     <Form.Item
                       name={"Details"}
-                      className={"gilroy-medium text-xl"}
+                      className={"font-gilroyregular text-xl"}
                       label="Details (Optional)"
                       // rules={[{ required: true }]}
                     >
@@ -1493,7 +1524,9 @@ function Talents({}) {
                       }
                     >
                       <p
-                        className={"text-base text-primarygreen font-semibold"}
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
                       >
                         I want to add another product
                       </p>
@@ -1509,7 +1542,7 @@ function Talents({}) {
             ) : (
               <div className="w-[52%]">
                 {console.log("form active ", formActive)}
-                <p className={"text-2xl text-blackmig font-semibold"}>
+                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   Choose Meeting Date
                 </p>
                 <div
@@ -1533,7 +1566,11 @@ function Talents({}) {
                     <p className={"text-xs text-blackmig font-gilroysemibold"}>
                       Choose Time
                     </p>
-                    <p className={"font-xs text-blackmig gilroy-regular mt-1"}>
+                    <p
+                      className={
+                        "font-xs text-blackmig font-gilroyregular mt-1"
+                      }
+                    >
                       Meeting duration: 30 minutes
                     </p>
                     <div className={"mt-4 flex flex-row"}>
@@ -1601,7 +1638,7 @@ function Talents({}) {
                   </div>
                 </div>
                 <div className={"mt-[35px]"}>
-                  <p className={"text-sm text-blackmig gilroy-regular"}>
+                  <p className={"text-sm text-blackmig font-gilroyregular"}>
                     *Meeting Time
                   </p>
 
@@ -1658,7 +1695,9 @@ function Talents({}) {
                     className={"w-[400px] py-4 pl-4 pr-[17px] ml-5 "}
                     style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                   >
-                    <p className={"Gilroy-Bold text-primarygreen text-base"}>
+                    <p
+                      className={"font-gilroybold text-primarygreen text-base"}
+                    >
                       Talent Request Summary
                     </p>
                     <div className={"mt-3 border border-dividermig"} />
@@ -1679,7 +1718,7 @@ function Talents({}) {
                               </p>
                               <p
                                 className={
-                                  "text-blackmig gilroy-regular text-sm"
+                                  "text-blackmig font-gilroyregular text-sm"
                                 }
                               >
                                 {data.levelEmployee +
@@ -1752,7 +1791,7 @@ function Talents({}) {
                         >
                           <p
                             className={
-                              "text-primarygreen text-base font-semibold"
+                              "text-primarygreen text-base font-gilroysemibold"
                             }
                           >
                             {dataTalents.length}
@@ -1790,16 +1829,16 @@ function Talents({}) {
           >
             <div className={"hidden md:flex justify-between container mx-auto"}>
               <div className={"flex-col w-2/5"}>
-                <p className={"text-3xl pb-4 gilroy-bold"}>
+                <p className={"text-3xl pb-4 font-gilroybold"}>
                   Enabling you to assemble the best team
                 </p>
-                <p className={"mt-8 gilroy-regular text-base"}>
+                <p className={"mt-8 font-gilroyregular text-base"}>
                   Large quantity of profiles coming in with widely different
                   qualities. Your turnover rate is high and you have to do it
                   all over again.
                 </p>
                 <div className={"mt-[40px]"}>
-                  <p className={"gilroy-bold text-primarygreen text-base"}>
+                  <p className={"font-gilroybold text-primarygreen text-base"}>
                     Reach us to get more information
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
@@ -1821,7 +1860,7 @@ function Talents({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"font-semibold"}>Hire now!</p>
+                        <p className={"font-gilroysemibold"}>Hire now!</p>
                         <img
                           className={"w-[20px] h-[20px] self-center ml-2.5"}
                           src="/image/landingpage/arrow-circle-right.png"
@@ -1840,7 +1879,11 @@ function Talents({}) {
                         src="/image/landingpage/info.png"
                       />
                       <div className={"ml-2"}>
-                        <p className={"text-base text-blackmig gilroy-regular"}>
+                        <p
+                          className={
+                            "text-base text-blackmig font-gilroyregular"
+                          }
+                        >
                           Let us help you to scale and manage your IT
                           infrastructure with :
                         </p>
@@ -1848,11 +1891,11 @@ function Talents({}) {
                           <li>
                             <p
                               className={
-                                "text-base text-blackmig gilroy-regular"
+                                "text-base text-blackmig font-gilroyregular"
                               }
                             >
                               {""}
-                              <span className={"font-semibold"}>
+                              <span className={"font-gilroysemibold"}>
                                 {" "}
                                 predictable
                               </span>{" "}
@@ -1862,11 +1905,11 @@ function Talents({}) {
                           <li>
                             <p
                               className={
-                                "text-base text-blackmig gilroy-regular"
+                                "text-base text-blackmig font-gilroyregular"
                               }
                             >
                               {""}
-                              <span className={"font-semibold"}>
+                              <span className={"font-gilroysemibold"}>
                                 guaranteed
                               </span>{" "}
                               service level
@@ -1889,7 +1932,9 @@ function Talents({}) {
             <div className={"block md:hidden py-9 px-4"}>
               <div className={"px-3"}>
                 <p
-                  className={"text-blackmig text-xl text-center font-semibold"}
+                  className={
+                    "text-blackmig text-xl text-center font-gilroysemibold"
+                  }
                 >
                   Enabling you to assemble the best team
                 </p>
@@ -1899,7 +1944,7 @@ function Talents({}) {
                 ></img>
                 <p
                   className={
-                    "py-6 text-center text-base gilroy-regular text-blackmig"
+                    "py-6 text-center text-base font-gilroyregular text-blackmig"
                   }
                 >
                   Rapid pace of change, uncertainty on scalability, and heavy
@@ -1908,7 +1953,7 @@ function Talents({}) {
                 </p>
               </div>
               <div>
-                <p className={"font-semibold text-primarygreen text-sm"}>
+                <p className={"font-gilroysemibold text-primarygreen text-sm"}>
                   Reach us to get more information
                 </p>
                 <div className={"flex flex-row items-center mt-1"}>
@@ -1943,19 +1988,23 @@ function Talents({}) {
                     src="/image/landingpage/info.png"
                   />
                   <div>
-                    <p className={"text-sm text-blackmig gilroy-regular"}>
+                    <p className={"text-sm text-blackmig font-gilroyregular"}>
                       Let us streamline your process with :
                     </p>
                     <ul className={""}>
                       <li className={"mt-1"}>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           {""}
                           <span className={"font-bold"}>On-demand</span>{" "}
                           expertise
                         </p>
                       </li>
                       <li className={"mt-1"}>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           {""}
                           <span className={"font-bold"}>Flexibility</span> in
                           talent head counts and working period
@@ -1974,9 +2023,7 @@ function Talents({}) {
             }
           >
             <p
-              className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-semibold"
-              }
+              className={"text-xl md:text-3xl text-center font-gilroysemibold"}
             >
               Let’s see what{" "}
               <span
@@ -2012,19 +2059,19 @@ function Talents({}) {
                     <div>
                       <p
                         className={
-                          "text-accentblue gilroy-bold text-base md:text-xl"
+                          "text-accentblue font-gilroybold text-base md:text-xl"
                         }
                       >
                         Engineering
                       </p>
                     </div>
                     <div className={"mt-2 md:mt-0"}>
-                      <p className={"text-xs gilroy-regular text-darkgrey"}>
+                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
                         Typical Roles
                       </p>
                       <p
                         className={
-                          "text-blackmig text-xs md:text-sm font-semibold"
+                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
                         }
                       >
                         Website Developer, Android/IOS Developer, and more
@@ -2041,7 +2088,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-primarygreen text-base gilroy-semibold font-semibold"
+                        "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
                       See more
@@ -2074,19 +2121,19 @@ function Talents({}) {
                     <div>
                       <p
                         className={
-                          "text-accentpink gilroy-bold text-base md:text-xl"
+                          "text-accentpink font-gilroybold text-base md:text-xl"
                         }
                       >
                         Data
                       </p>
                     </div>
                     <div className={"mt-2 md:mt-0"}>
-                      <p className={"text-xs gilroy-regular text-darkgrey"}>
+                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
                         Typical Roles
                       </p>
                       <p
                         className={
-                          "text-blackmig text-xs md:text-sm font-semibold"
+                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
                         }
                       >
                         Data Scientist, Data/Business Intelligence Analyst, and
@@ -2104,7 +2151,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-primarygreen text-base gilroy-semibold font-semibold"
+                        "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
                       See more
@@ -2143,19 +2190,19 @@ function Talents({}) {
                     <div>
                       <p
                         className={
-                          "text-accentpurple gilroy-bold text-base md:text-xl"
+                          "text-accentpurple font-gilroybold text-base md:text-xl"
                         }
                       >
                         Design
                       </p>
                     </div>
                     <div className={""}>
-                      <p className={"text-xs gilroy-regular text-darkgrey"}>
+                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
                         Typical Roles
                       </p>
                       <p
                         className={
-                          "text-blackmig text-xs md:text-sm font-semibold"
+                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
                         }
                       >
                         Product Designer, Web Designer, Graphic Designer, and
@@ -2173,7 +2220,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-primarygreen text-base gilroy-semibold font-semibold"
+                        "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
                       See more
@@ -2206,19 +2253,19 @@ function Talents({}) {
                     <div>
                       <p
                         className={
-                          "text-primarygreen gilroy-bold text-lg md:text-xl"
+                          "text-primarygreen font-gilroybold text-lg md:text-xl"
                         }
                       >
                         Product
                       </p>
                     </div>
                     <div className={"mt-2 md:mt-0"}>
-                      <p className={"text-xs gilroy-regular text-darkgrey"}>
+                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
                         Typical Roles
                       </p>
                       <p
                         className={
-                          "text-blackmig text-xs md:text-sm font-semibold"
+                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
                         }
                       >
                         Product Manager, Product Analyst, Project Manager, and
@@ -2236,7 +2283,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-primarygreen text-base gilroy-semibold font-semibold"
+                        "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
                       See more
@@ -2257,10 +2304,10 @@ function Talents({}) {
             >
               <p
                 className={
-                  "font-regular gilroy-regular text-sm px-2 md:px-0  md:text-base"
+                  "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-base"
                 }
               >
-                <span className={"font-semibold"}>
+                <span className={"font-gilroysemibold"}>
                   Didn’t find what you were looking for?
                 </span>{" "}
                 Reach us to get your orders customized based on your IT talent
@@ -2274,7 +2321,7 @@ function Talents({}) {
                     "text-sm md:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-bgjoinmig border-primarygreen px-4 py-2 md:px-2 mt-4"
                   }
                 >
-                  <p className={"text-base gilroy-semibold font-semibold mr-2"}>
+                  <p className={"text-base  font-gilroysemibold mr-2"}>
                     Contact our team
                   </p>
                 </button>
@@ -2301,22 +2348,24 @@ function Talents({}) {
               />
               <div className={"ml-12  flex flex-col justify-between"}>
                 <div>
-                  <p className={"text-2xl gilroy-bold text-blackmig"}>
+                  <p className={"text-2xl font-gilroybold text-blackmig"}>
                     Engineering
                   </p>
                 </div>
                 <div className={"mt-3"}>
-                  <p className={"text-sm text-darkgrey font-semibold"}>
+                  <p className={"text-sm text-darkgrey font-gilroysemibold"}>
                     Pilihan Masa Kontrak
                   </p>
-                  <p className={"text-base gilroy-regular text-blackmig"}>
+                  <p className={"text-base font-gilroyregular text-blackmig"}>
                     1 minggu - 5 tahun
                   </p>
                 </div>
               </div>
             </div>
             <div className={"md:hidden mx-auto"}>
-              <p className={"text-center text-xl gilroy-bold"}>Engineering</p>
+              <p className={"text-center text-xl font-gilroybold"}>
+                Engineering
+              </p>
               <div className={"flex justify-center mt-4"}>
                 <img
                   className={"w-[93px] h-[93px]"}
@@ -2326,24 +2375,24 @@ function Talents({}) {
             </div>
             <div className={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
-                <p className={"text-xs text-darkgrey font-semibold"}>
+                <p className={"text-xs text-darkgrey font-gilroysemibold"}>
                   Pilihan Masa Kontrak
                 </p>
-                <p className={"text-sm gilroy-regular text-blackmig"}>
+                <p className={"text-sm font-gilroyregular text-blackmig"}>
                   1 minggu - 5 tahun
                 </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"text-sm font-semibold"}>Typical Roles</p>
-                <ul className={"text-base text-blackmig gilroy-regular"}>
+                <p className={"text-sm font-gilroysemibold"}>Typical Roles</p>
+                <ul className={"text-base text-blackmig font-gilroyregular"}>
                   <li>Web Developer</li>
                   <li>Mobile App Developer</li>
                   <li>Quality Assurance Engineer, etc.</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Bachelor's degree in Computer Science, </li>
                   <li>
                     Knowledge of primary coding languages including C++, HTML5,
@@ -2358,8 +2407,10 @@ function Talents({}) {
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Deliverables</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  Typical Deliverables
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>
                     Integration of user-facing elements developed by front-end
                     developers,
@@ -2383,7 +2434,7 @@ function Talents({}) {
                 <div className={"flex flex-row justify-end mr-4"}>
                   <p
                     className={
-                      "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-mig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
                     Interested with our talents?
@@ -2395,7 +2446,9 @@ function Talents({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-semibold"}>Hire now</p>
+                      <p className={"text-base font-gilroysemibold"}>
+                        Hire now
+                      </p>
                       <img
                         className={"self-center"}
                         style={{ height: "15px", width: "8px" }}
@@ -2413,7 +2466,7 @@ function Talents({}) {
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-mig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-mig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
                     Interested with our talents?
@@ -2425,7 +2478,9 @@ function Talents({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-semibold self-center"}>
+                      <p
+                        className={"text-base font-gilroysemibold self-center"}
+                      >
                         Contact our sales team
                       </p>
                       <img
@@ -2459,20 +2514,22 @@ function Talents({}) {
               />
               <div className={"ml-12 flex flex-col justify-between"}>
                 <div>
-                  <p className={" text-2xl gilroy-bold text-blackmig"}>Data</p>
+                  <p className={" text-2xl font-gilroybold text-blackmig"}>
+                    Data
+                  </p>
                 </div>
                 <div className={"mt-3"}>
-                  <p className={"text-xs text-darkgrey font-semibold"}>
+                  <p className={"text-xs text-darkgrey font-gilroysemibold"}>
                     Pilihan Masa Kontrak
                   </p>
-                  <p className={"text-sm gilroy-regular text-blackmig"}>
+                  <p className={"text-sm font-gilroyregular text-blackmig"}>
                     1 minggu - 5 tahun
                   </p>
                 </div>
               </div>
             </div>
             <div className={"md:hidden mx-auto"}>
-              <p className={"text-center text-xl gilroy-bold"}>Data</p>
+              <p className={"text-center text-xl font-gilroybold"}>Data</p>
               <div className={"flex justify-center mt-4"}>
                 <img
                   className={"w-[93px] h-[93px]"}
@@ -2482,20 +2539,24 @@ function Talents({}) {
             </div>
             <div classname={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
-                <p className={"text-xs font-semibold"}>Pilihan Masa Kontrak</p>
-                <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
+                <p className={"text-xs font-gilroysemibold"}>
+                  Pilihan Masa Kontrak
+                </p>
+                <p className={"text-sm font-gilroyregular"}>
+                  1 minggu - 5 tahun
+                </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Roles</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Roles</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Data Analyst</li>
                   <li> Data Scientist</li>
                   <li>Business Intelligence Analyst, etc.</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>A high level of mathematical ability,</li>
                   <li>
                     Programming languages, such as SQL, Oracle and Python,{" "}
@@ -2507,8 +2568,10 @@ function Talents({}) {
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Deliverables</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  Typical Deliverables
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Examines information using data analysis tools.</li>
                   <li>
                     Generate meaningful results that pulled from the raw data
@@ -2532,7 +2595,7 @@ function Talents({}) {
               <div className={"flex flex-row justify-end mr-4"}>
                 <p
                   className={
-                    "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                    "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                   }
                 >
                   Interested with our talents?
@@ -2544,7 +2607,7 @@ function Talents({}) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base font-semibold"}>Hire now</p>
+                    <p className={"text-base font-gilroysemibold"}>Hire now</p>
                     <img
                       className={"self-center"}
                       style={{ height: "15px", width: "8px" }}
@@ -2561,7 +2624,7 @@ function Talents({}) {
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
                     Interested with our talents?
@@ -2573,7 +2636,9 @@ function Talents({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-semibold self-center"}>
+                      <p
+                        className={"text-base font-gilroysemibold self-center"}
+                      >
                         Contact our sales team
                       </p>
                       <img
@@ -2608,16 +2673,16 @@ function Talents({}) {
               />
               <div className={"ml-12  flex flex-col justify-between"}>
                 <div>
-                  <p className={"text-2xl gilroy-bold text-blackmig"}>
+                  <p className={"text-2xl font-gilroybold text-blackmig"}>
                     Product
                   </p>
                 </div>
                 <div>
                   <div className={"mt-3"}>
-                    <p className={"text-xs text-darkgrey font-semibold"}>
+                    <p className={"text-xs text-darkgrey font-gilroysemibold"}>
                       Pilihan Masa Kontrak
                     </p>
-                    <p className={"text-sm gilroy-regular text-blackmig"}>
+                    <p className={"text-sm font-gilroyregular text-blackmig"}>
                       1 minggu - 5 tahun
                     </p>
                   </div>
@@ -2625,7 +2690,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"md:hidden mx-auto"}>
-              <p className={"text-center text-xl gilroy-bold"}>Product</p>
+              <p className={"text-center text-xl font-gilroybold"}>Product</p>
               <div className={"flex justify-center mt-4"}>
                 <img
                   className={"w-[93px] h-[93px]"}
@@ -2635,19 +2700,23 @@ function Talents({}) {
             </div>
             <div className={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
-                <p className={"text-xs font-semibold"}>Pilihan Masa Kontrak</p>
-                <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
+                <p className={"text-xs font-gilroysemibold"}>
+                  Pilihan Masa Kontrak
+                </p>
+                <p className={"text-sm font-gilroyregular"}>
+                  1 minggu - 5 tahun
+                </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Roles</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Roles</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Product Manager</li>
                   <li>Product Analyst, etc.</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>
                     Proven experience with rapid prototyping tools and
                     techniques, such as story mapping, design sprints, and
@@ -2662,8 +2731,10 @@ function Talents({}) {
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Deliverables</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  Typical Deliverables
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>
                     Doing the research and analysis of the competitive
                     landscape, product metrics, and latest internet trends to
@@ -2689,7 +2760,7 @@ function Talents({}) {
               <div className={"flex flex-row justify-end mr-4"}>
                 <p
                   className={
-                    "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                    "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                   }
                 >
                   Interested with our talents?
@@ -2701,7 +2772,7 @@ function Talents({}) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base font-semibold"}>Hire now</p>
+                    <p className={"text-base font-gilroysemibold"}>Hire now</p>
                     <img
                       className={"self-center"}
                       style={{ height: "15px", width: "8px" }}
@@ -2718,7 +2789,7 @@ function Talents({}) {
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
                     Interested with our talents?
@@ -2730,7 +2801,9 @@ function Talents({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-semibold self-center"}>
+                      <p
+                        className={"text-base font-gilroysemibold self-center"}
+                      >
                         Contact our sales team
                       </p>
                       <img
@@ -2764,20 +2837,22 @@ function Talents({}) {
               />
               <div className={"ml-12  flex flex-col justify-between"}>
                 <div>
-                  <p className={"text-2xl gilroy-bold text-blackmig"}>Design</p>
+                  <p className={"text-2xl font-gilroybold text-blackmig"}>
+                    Design
+                  </p>
                 </div>
                 <div className={"mt-3"}>
-                  <p className={"text-xs text-darkgrey font-semibold"}>
+                  <p className={"text-xs text-darkgrey font-gilroysemibold"}>
                     Pilihan Masa Kontrak
                   </p>
-                  <p className={"text-sm gilroy-regular text-blackmig"}>
+                  <p className={"text-sm font-gilroyregular text-blackmig"}>
                     1 minggu - 5 tahun
                   </p>
                 </div>
               </div>
             </div>
             <div className={"md:hidden mx-auto"}>
-              <p className={"text-center text-xl gilroy-bold"}>Design</p>
+              <p className={"text-center text-xl font-gilroybold"}>Design</p>
               <div className={"flex justify-center mt-4"}>
                 <img
                   className={"w-[93px] h-[93px]"}
@@ -2787,20 +2862,24 @@ function Talents({}) {
             </div>
             <div className={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
-                <p className={"text-xs font-semibold"}>Pilihan Masa Kontrak</p>
-                <p className={"text-sm gilroy-regular"}>1 minggu - 5 tahun</p>
+                <p className={"text-xs font-gilroysemibold"}>
+                  Pilihan Masa Kontrak
+                </p>
+                <p className={"text-sm font-gilroyregular"}>
+                  1 minggu - 5 tahun
+                </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Roles</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Roles</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Graphic Designer,</li>
                   <li>Product Designer,</li>
                   <li>UI/UX Designer, etc.</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>
                     Proven experience with rapid prototyping tools and
                     techniques, such as story mapping, design sprints, and
@@ -2815,8 +2894,10 @@ function Talents({}) {
                 </ul>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-semibold text-sm"}>Typical Deliverables</p>
-                <ul className={"text-base gilroy-regular text-blackmig"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  Typical Deliverables
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>
                     Conceptualizing visuals based on client’s requirements
                   </li>
@@ -2843,7 +2924,7 @@ function Talents({}) {
               <div className={"flex flex-row justify-end mr-4"}>
                 <p
                   className={
-                    "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                    "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                   }
                 >
                   Interested with our talents?
@@ -2855,7 +2936,7 @@ function Talents({}) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base font-semibold"}>Hire now</p>
+                    <p className={"text-base font-gilroysemibold"}>Hire now</p>
                     <img
                       className={"self-center"}
                       style={{ height: "15px", width: "8px" }}
@@ -2872,7 +2953,7 @@ function Talents({}) {
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-blackmig font-semibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
                     Interested with our talents?
@@ -2884,7 +2965,9 @@ function Talents({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-semibold self-center"}>
+                      <p
+                        className={"text-base font-gilroysemibold self-center"}
+                      >
                         Contact our sales team
                       </p>
                       <img
@@ -2908,7 +2991,7 @@ function Talents({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-semibold py-8 md:py-0"
+                "text-xl md:text-3xl text-center  font-gilroysemibold py-8 md:py-0"
               }
             >
               Why you should{" "}
@@ -2924,7 +3007,7 @@ function Talents({}) {
             </p>
             <p
               className={
-                "text-center text-sm  md:text-base text-black gilroy-regular pt-6"
+                "text-center text-sm  md:text-base text-black font-gilroyregular pt-6"
               }
             >
               With on-demand expertise and flexibility in talent head counts and
@@ -2948,10 +3031,10 @@ function Talents({}) {
                     />
                   </div>
                   <div>
-                    <h5 className="px-5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="px-5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Customization Based on Your Needs
                     </h5>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
                       Numbers of talent and their working period can be tailored
                       as per required by project.
                     </p>
@@ -2965,10 +3048,10 @@ function Talents({}) {
                     />
                   </div>
                   <div>
-                    <h5 className="px-5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="px-5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Full Flexibility
                     </h5>
-                    <p className="text-left px-5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
                       You have full flexibility to rotate and rematch to make
                       your quality criteria fullfiled.
                     </p>
@@ -2986,8 +3069,10 @@ function Talents({}) {
                     src="/image/people/icon-talents1.png"
                   />
                   <div className={"ml-[14px] text-blackmig text-base"}>
-                    <p className={"font-semibold"}>Tight Candidate Selection</p>
-                    <p className={"gilroy-regular"}>
+                    <p className={"font-gilroysemibold"}>
+                      Tight Candidate Selection
+                    </p>
+                    <p className={"font-gilroyregular"}>
                       Only less than 10% of all candidates from various industry
                       backgrounds and top tier universities are selected as our
                       top talent.
@@ -3000,8 +3085,10 @@ function Talents({}) {
                     src="/image/people/icon-talents2.png"
                   />
                   <div className={"ml-[14px] text-blackmig text-base"}>
-                    <p className={"font-semibold"}>Excellent Capability</p>
-                    <p className={"gilroy-regular"}>
+                    <p className={"font-gilroysemibold"}>
+                      Excellent Capability
+                    </p>
+                    <p className={"font-gilroyregular"}>
                       Extensive test and interview process covering tech stacks,
                       coding algorithm, systems design, and soft skills are
                       given to ensure you having qualified talents.
@@ -3026,7 +3113,7 @@ function Talents({}) {
             >
               <div className={"md:ml-10 md:py-[53px]"}>
                 <div className="flex flex-col md:w-[662px]">
-                  <h4 className="mb-2 text-xl text-center font-semibold text-blackmig">
+                  <h4 className="mb-2 text-xl text-center font-gilroysemibold text-blackmig">
                     Why you should{" "}
                     <span
                       style={{
@@ -3051,10 +3138,10 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                         Customization Based on Your Needs
                       </h5>
-                      <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                      <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                         Numbers of talent and their working period can be
                         tailored as per required by project.
                       </p>
@@ -3066,10 +3153,10 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                         Full Flexibility
                       </h5>
-                      <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                      <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                         You have full flexibility to rotate and rematch to make
                         your quality criteria fullfiled.
                       </p>
@@ -3081,10 +3168,10 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                         Tight Candidate Selection
                       </h5>
-                      <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                      <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                         Only less than 10% of all candidates applying to MIG are
                         selected as our top talent.
                       </p>
@@ -3096,10 +3183,10 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                         Excellent Capability
                       </h5>
-                      <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                      <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                         Extensive test and interview process covering tech
                         stacks, coding algorithm, systems design, and soft
                         skills are given to ensure you having qualified talents.
@@ -3123,7 +3210,7 @@ function Talents({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-semibold py-8 md:py-0"
+                "text-xl md:text-[32px] text-center  font-gilroysemibold py-8 md:py-0"
               }
             >
               Which{" "}
@@ -3153,10 +3240,14 @@ function Talents({}) {
                     src="/image/people/head-hunt.png"
                   />
                   <div className={"ml-6 "}>
-                    <p className={"text-primarygreen text-xl gilroy-bold"}>
+                    <p className={"text-primarygreen text-xl font-gilroybold"}>
                       Head-Hunt
                     </p>
-                    <ul className={"text-blackmig text-sm gilroy-regular mt-2"}>
+                    <ul
+                      className={
+                        "text-blackmig text-sm font-gilroyregular mt-2"
+                      }
+                    >
                       <li>
                         Conduct end-to-end hiring process to provide dedicated
                         talents for your business
@@ -3182,10 +3273,14 @@ function Talents({}) {
                     src="/image/people/it-staff.png"
                   />
                   <div className={"ml-6 "}>
-                    <p className={"text-primarygreen text-xl gilroy-bold"}>
+                    <p className={"text-primarygreen text-xl font-gilroybold"}>
                       IT Staff Augmentation
                     </p>
-                    <ul className={"text-blackmig text-sm gilroy-regular mt-2"}>
+                    <ul
+                      className={
+                        "text-blackmig text-sm font-gilroyregular mt-2"
+                      }
+                    >
                       <li>
                         All-in service, where we provide talents, including
                         their compensation & benefit, device, and tax
@@ -3201,7 +3296,7 @@ function Talents({}) {
             </div>
             {/*recruitmen provided mobileview */}
             <div
-              className={"md:hidden mt-4 bg-white px-4 py-3"}
+              className={"md:hidden mt-4 bg-white px-4 py-3 rounded-lg"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
               <div className={"flex flex-row"}>
@@ -3210,10 +3305,12 @@ function Talents({}) {
                   src="/image/people/head-hunt.png"
                 />
                 <div className={"ml-4"}>
-                  <p className={"text-primarygreen text-sm font-semibold"}>
+                  <p
+                    className={"text-primarygreen text-sm font-gilroysemibold"}
+                  >
                     Head Hunt
                   </p>
-                  <ul className={"text-blackmig text-xs gilroy-regular"}>
+                  <ul className={"text-blackmig text-xs font-gilroyregular"}>
                     <li>
                       Conduct end-to-end hiring process to provide dedicated
                       talents for your business
@@ -3230,7 +3327,7 @@ function Talents({}) {
               </div>
             </div>
             <div
-              className={"md:hidden mt-4 bg-white px-4 py-3 mb-8"}
+              className={"md:hidden mt-4 bg-white px-4 py-3 mb-8 rounded-lg"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
               <div className={"flex flex-row"}>
@@ -3239,10 +3336,12 @@ function Talents({}) {
                   src="/image/people/it-staff.png"
                 />
                 <div className={"ml-4"}>
-                  <p className={"text-primarygreen text-sm font-semibold"}>
+                  <p
+                    className={"text-primarygreen text-sm font-gilroysemibold"}
+                  >
                     IT Staff Augmentation
                   </p>
-                  <ul className={"text-blackmig text-xs gilroy-regular"}>
+                  <ul className={"text-blackmig text-xs font-gilroyregular"}>
                     <li>
                       All-in service, where we provide talents, including their
                       compensation & benefit, device, and tax
@@ -3262,7 +3361,7 @@ function Talents({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-semibold mb-[42px]"
+                "text-xl md:text-[32px] text-center  font-gilroysemibold mb-[42px]"
               }
             >
               What they say{" "}
@@ -3300,21 +3399,21 @@ function Talents({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -3334,11 +3433,17 @@ function Talents({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3352,21 +3457,25 @@ function Talents({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -3383,21 +3492,21 @@ function Talents({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -3417,11 +3526,17 @@ function Talents({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3435,21 +3550,25 @@ function Talents({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -3466,21 +3585,21 @@ function Talents({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -3500,11 +3619,17 @@ function Talents({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3518,21 +3643,25 @@ function Talents({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -3569,7 +3698,7 @@ function Talents({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-semibold md:py-0 mb-7 md:mb-10"
+                "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
               }
             >
               What they say{" "}
@@ -3586,29 +3715,29 @@ function Talents({}) {
             <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
               <Slider {...sliderSettingsPhone}>
                 <div
-                  className="py-4 px-8 bg-white rounded-lg"
+                  className="py-4 px-8 bg-white rounded-lg w-[300px]"
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
 
-                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                    <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3616,14 +3745,14 @@ function Talents({}) {
                         <img
                           className="rounded-full"
                           src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "40px", width: "60px" }}
+                          style={{ height: "40px", width: "40px" }}
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold  text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold  text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3632,29 +3761,29 @@ function Talents({}) {
                   </div>
                 </div>
                 <div
-                  className="py-4 px-8 bg-white rounded-lg"
+                  className="py-4 px-8 bg-white rounded-lg w-[300px]"
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
 
-                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                    <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3662,14 +3791,14 @@ function Talents({}) {
                         <img
                           className="rounded-full"
                           src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "40px", width: "60px" }}
+                          style={{ height: "40px", width: "40px" }}
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold  text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold  text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3678,44 +3807,42 @@ function Talents({}) {
                   </div>
                 </div>
                 <div
-                  className="py-4 px-8 bg-white rounded-lg"
+                  className="py-4 px-8 bg-white rounded-lg w-[300px]"
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
 
-                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                    <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
                     <div className="flex flex-col">
                       <div className="flex flex-row mt-2">
                         <img
                           className="rounded-full"
                           src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "40px", width: "60px" }}
+                          style={{ height: "40px", width: "40px" }}
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold  text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3730,7 +3857,7 @@ function Talents({}) {
                 <div className={"flex flex-row justify-around"}>
                   <p
                     className={
-                      "text-base text-primarygreen gilroy-semibold font-semibold"
+                      "text-base text-primarygreen  font-gilroysemibold"
                     }
                   >
                     Read More
@@ -3757,12 +3884,12 @@ function Talents({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
-                <p className={"text-2xl font-semibold text-black"}>
+                <p className={"text-2xl font-gilroysemibold text-black"}>
                   Fulfill your IT needs easily!
                 </p>
                 <div
                   className={
-                    "mt-3.5 text-base gilroy-regular text-center text-black"
+                    "mt-3.5 text-base font-gilroyregular text-center text-black"
                   }
                 >
                   <p>
@@ -3782,7 +3909,7 @@ function Talents({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base gilroy-semibold font-semibold"}>
+                      <p className={"text-base font-gilroysemibold"}>
                         Contact Us
                       </p>
                       <img
@@ -3809,10 +3936,10 @@ function Talents({}) {
           >
             <div className={"container mx-auto"}>
               <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-                <p className={"text-xl font-semibold"}>
+                <p className={"text-xl font-gilroysemibold"}>
                   Fulfill your IT needs easily!
                 </p>
-                <p className={"py-5 text-sm Gilroy-regular"}>
+                <p className={"py-5 text-sm font-gilroyregular"}>
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!
@@ -3820,7 +3947,7 @@ function Talents({}) {
                 <Link href="/hardware">
                   <button
                     className={
-                      "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                      "text-base text-center -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4 rounded"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>

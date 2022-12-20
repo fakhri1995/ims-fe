@@ -124,7 +124,7 @@ function LandingPage({}) {
               Solve your business technology challenges with our IT expertise
               today
             </p>
-            <p className={" text-base gilroy-regular text-blackmig pb-6"}>
+            <p className={" text-base font-gilroyregular text-blackmig pb-6"}>
               MIG catalyzes your core business with{" "}
               <span style={{ fontWeight: "bold" }}>IT hardware solutions</span>,
               <span style={{ fontWeight: "bold" }}> software development</span>,
@@ -155,7 +155,7 @@ function LandingPage({}) {
                     />
                   </button>
                 </Link>
-                <Linkk href="/hardware">
+                <Linkk href="/freeconsultation">
                   <button
                     className={
                       "text-xl text-center w-[256px] h-[54px] text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 gilroy-medium bg-white"
@@ -175,7 +175,7 @@ function LandingPage({}) {
                       src="/image/landingpage/info.png"
                       style={{ width: "20px", height: "20px" }}
                     />
-                    <p className={"text-base gilroy-regular ml-2"}>
+                    <p className={"text-base font-gilroyregular ml-2"}>
                       <span className={"font-gilroysemibold"}>Trusted </span>
                       in more than
                       <span className={"font-gilroysemibold"}>
@@ -344,7 +344,7 @@ function LandingPage({}) {
                 >
                   Lighten up your heavy capital in IT infrastructure
                 </p>
-                <p className={"text-center text-sm gilroy-regular mt-5"}>
+                <p className={"text-center text-sm font-gilroyregular mt-5"}>
                   Transform yours into managed service model, guaranteeing you
                   with predictable monthly cost and excelent service level.
                 </p>
@@ -400,7 +400,11 @@ function LandingPage({}) {
                 >
                   Delivering custom-made software
                 </p>
-                <p className={"text-center text-sm gilroy-regular pb-[42.5px]"}>
+                <p
+                  className={
+                    "text-center text-sm font-gilroyregular pb-[42.5px]"
+                  }
+                >
                   Simplify and digitalize your business process. Customize your
                   system with us.
                 </p>
@@ -456,7 +460,7 @@ function LandingPage({}) {
                 >
                   Our people, your growth
                 </p>
-                <p className={"text-center text-sm gilroy-regular pb-8"}>
+                <p className={"text-center text-sm font-gilroyregular pb-8"}>
                   Let us streamline your hiring process with on-demand
                   expertise, giving you flexible headcounts and talents working
                   period.
@@ -527,7 +531,7 @@ function LandingPage({}) {
                 <p className="text-sm text-black text-left mt-1 gilroy-semibold font-gilroysemibold">
                   Lighten up your heavy capital in IT infrastructure
                 </p>
-                <p className="text-sm text-black text-left mt-1 gilroy-regular font-regular">
+                <p className="text-sm text-black text-left mt-1 font-gilroyregular font-regular">
                   Transform yours into managed service model, guaranteeing you
                   with predictable monthly cost and excelent service level.
                 </p>
@@ -573,7 +577,7 @@ function LandingPage({}) {
                 <p className="text-sm text-black text-left mt-1 gilroy-semibold font-gilroysemibold">
                   Automate your business
                 </p>
-                <p className="text-sm text-black text-left mt-1 gilroy-regular font-regular">
+                <p className="text-sm text-black text-left mt-1 font-gilroyregular font-regular">
                   Simplify and digitalize your business process. Customize your
                   system with us.
                 </p>
@@ -619,7 +623,7 @@ function LandingPage({}) {
                 <p className="text-sm text-black text-left mt-1 gilroy-semibold font-gilroysemibold">
                   Our people, your growth
                 </p>
-                <p className="text-sm text-black text-left mt-1 gilroy-regular font-regular">
+                <p className="text-sm text-black text-left mt-1 font-gilroyregular font-regular">
                   Let us streamline your hiring process with on-demand
                   expertise, giving you flexible headcounts and talents working
                   period.
@@ -664,7 +668,7 @@ function LandingPage({}) {
             <div className={"flex-col text-black md:w-40 mr-8 md:mr-16"}>
               <p
                 className={
-                  "text-2xl text-primarygreen md:text-[32px] text-center gilroy-regular font-semibold "
+                  "text-2xl text-primarygreen md:text-[32px] text-center font-gilroyregular font-semibold "
                 }
               >
                 <CountUp end={45} />+
@@ -687,7 +691,7 @@ function LandingPage({}) {
             <div className={"flex-col text-black md:w-[227px] mr-16"}>
               <p
                 className={
-                  "text-2xl text-primarygreen md:text-[32px] text-center gilroy-regular font-semibold"
+                  "text-2xl text-primarygreen md:text-[32px] text-center font-gilroyregular font-semibold"
                 }
               >
                 <CountUp end={9000} />+
@@ -710,7 +714,7 @@ function LandingPage({}) {
             <div className={"flex-col text-black"}>
               <p
                 className={
-                  "text-2xl text-primarygreen md:text-[32px] text-center gilroy-regular font-semibold"
+                  "text-2xl text-primarygreen md:text-[32px] text-center font-gilroyregular font-semibold"
                 }
               >
                 <CountUp end={100} />+
@@ -873,7 +877,7 @@ function LandingPage({}) {
               <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
                 On Demand Services
               </h5>
-              <p className="text-left text-sm md:text-base text-blackmig gilroy-regular">
+              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
                 Transform your business with our custom solutions to optimize
                 your cost and productivity
               </p>
@@ -882,7 +886,7 @@ function LandingPage({}) {
               <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
                 On Demand Services
               </h5>
-              <p className="text-left text-sm md:text-base text-blackmig gilroy-regular">
+              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
                 Transform your business with our custom solutions to optimize
                 your cost and productivity
               </p>
@@ -898,7 +902,7 @@ function LandingPage({}) {
               <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
                 Reliable Partner
               </h5>
-              <p className="text-left text-sm md:text-base text-blackmig gilroy-regular">
+              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
                 A partner you can trust, with more than 15 years of
                 experiences-we’re here for the long run
               </p>
@@ -920,7 +924,7 @@ function LandingPage({}) {
               <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
                 Competitive Rate
               </h5>
-              <p className="text-left text-sm md:text-base text-blackmig gilroy-regular">
+              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
                 We offer the best services with the best price tailored to your
                 needs
               </p>
@@ -936,7 +940,7 @@ function LandingPage({}) {
               <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
                 Cost Efficient
               </h5>
-              <p className="text-left text-sm md:text-base text-blackmig gilroy-regular">
+              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
                 We help you grow and offer solutions to help optimized your
                 bussiness
               </p>
@@ -1148,7 +1152,7 @@ function LandingPage({}) {
                     "
                   </p>
                 </div>
-                <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                   I had a{" "}
                   <span className={"text-primarygreen font-gilroysemibold"}>
                     wonderful experience
@@ -1197,7 +1201,7 @@ function LandingPage({}) {
                   </div>
                   <div className="flex flex-row justify-center mx-2 mt-6">
                     <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                      <p className="text-sm text-primarygreen gilroy-regular">
+                      <p className="text-sm text-primarygreen font-gilroyregular">
                         <span className={"font-gilroysemibold"}>
                           Industry :{" "}
                         </span>
@@ -1205,7 +1209,7 @@ function LandingPage({}) {
                       </p>
                     </div>
                     <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                      <p className="text-sm text-primarygreen gilroy-regular">
+                      <p className="text-sm text-primarygreen font-gilroyregular">
                         <span className={"font-gilroysemibold"}>
                           Service :{" "}
                         </span>
@@ -1239,7 +1243,7 @@ function LandingPage({}) {
                     "
                   </p>
                 </div>
-                <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                   I had a{" "}
                   <span className={"text-primarygreen font-gilroysemibold"}>
                     wonderful experience
@@ -1288,7 +1292,7 @@ function LandingPage({}) {
                   </div>
                   <div className="flex flex-row justify-center mx-2 mt-6">
                     <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                      <p className="text-sm text-primarygreen gilroy-regular">
+                      <p className="text-sm text-primarygreen font-gilroyregular">
                         <span className={"font-gilroysemibold"}>
                           Industry :{" "}
                         </span>
@@ -1296,7 +1300,7 @@ function LandingPage({}) {
                       </p>
                     </div>
                     <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                      <p className="text-sm text-primarygreen gilroy-regular">
+                      <p className="text-sm text-primarygreen font-gilroyregular">
                         <span className={"font-gilroysemibold"}>
                           Service :{" "}
                         </span>
@@ -1330,7 +1334,7 @@ function LandingPage({}) {
                     "
                   </p>
                 </div>
-                <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                   I had a{" "}
                   <span className={"text-primarygreen font-gilroysemibold"}>
                     wonderful experience
@@ -1379,7 +1383,7 @@ function LandingPage({}) {
                   </div>
                   <div className="flex flex-row justify-center mx-2 mt-6">
                     <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                      <p className="text-sm text-primarygreen gilroy-regular">
+                      <p className="text-sm text-primarygreen font-gilroyregular">
                         <span className={"font-gilroysemibold"}>
                           Industry :{" "}
                         </span>
@@ -1387,7 +1391,7 @@ function LandingPage({}) {
                       </p>
                     </div>
                     <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                      <p className="text-sm text-primarygreen gilroy-regular">
+                      <p className="text-sm text-primarygreen font-gilroyregular">
                         <span className={"font-gilroysemibold"}>
                           Service :{" "}
                         </span>
@@ -1681,7 +1685,7 @@ function LandingPage({}) {
           </div>
           <div className={"w-[589px] justify-self-start"}>
             <div className="flex flex-col items-start">
-              <h4 className="mb-2 text-2xl gilroy-regular font-gilroysemibold text-blackmig">
+              <h4 className="mb-2 text-2xl font-gilroyregular font-gilroysemibold text-blackmig">
                 Interested in joining MIG?
               </h4>
               <div className="flex flex-row items-center mt-5">
@@ -1692,7 +1696,7 @@ function LandingPage({}) {
                   />
                 </div>
                 <div>
-                  <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                  <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                     We love to empower our team members to solve problems that
                     matter
                   </p>
@@ -1706,7 +1710,7 @@ function LandingPage({}) {
                   />
                 </div>
                 <div>
-                  <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                  <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                     We offer diverse industry exposures and hands-on experience
                   </p>
                 </div>
@@ -1719,7 +1723,7 @@ function LandingPage({}) {
                   />
                 </div>
                 <div>
-                  <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                  <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                     We support personal growth through constant experiment and
                     learning
                   </p>
@@ -1837,7 +1841,7 @@ function LandingPage({}) {
             </p>
             <div
               className={
-                "mt-3.5 text-base gilroy-regular text-center text-black"
+                "mt-3.5 text-base font-gilroyregular text-center text-black"
               }
             >
               <p>
@@ -1895,7 +1899,7 @@ function LandingPage({}) {
             <p className={"text-xl font-gilroysemibold"}>
               Fulfill your IT needs easily!
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
+            <p className={"py-5 text-sm font-gilroyregular"}>
               Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!

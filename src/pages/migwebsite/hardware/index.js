@@ -67,7 +67,18 @@ function Hardware({}) {
   };
 
   const handleForm = (value) => {
-    setFormActive(value);
+    if (value == "third") {
+      if (valuePurpose == null) {
+        notification["error"]({
+          message: "You must filled your purpose",
+          duration: 5,
+        });
+      } else {
+        setFormActive(value);
+      }
+    } else {
+      setFormActive(value);
+    }
   };
   const [dataHardware, setDataHardware] = useState({
     company_name: null,
@@ -92,9 +103,14 @@ function Hardware({}) {
   const [feedback, setFeedback] = useState(true);
   const [valuePurpose, setValuePurpose] = useState(null);
   const [manyTalent, setManyTalent] = useState(null);
+  const [manyTalentErrorStatus, setManyTalentErrorStatus] = useState(false);
   const [urgently, setUrgently] = useState(null);
+  const [urgentlyErrorStatus, setUrgentlyErrorStatus] = useState(false);
   const [timeUsed, setTimeUsed] = useState(null);
+  const [timeUsedErrorStatus, setTimeUsedErrorStatus] = useState(false);
   const [maxBudget, setMaxBudget] = useState(null);
+  const [maxBudgetErrorStatus, setMaxBudgetErrorStatus] = useState(false);
+  const [productErrorStatus, setProductErrorStatus] = useState(false);
   const [details, setDetails] = useState(null);
   const [attachment, setAttachment] = useState(null);
   const [indexEdit, setIndexEdit] = useState(null);
@@ -146,9 +162,28 @@ function Hardware({}) {
   const [dataProduct, setDataProduct] = useState(dataGetProduct);
   const [kindOfHardware, setKindOfHardware] = useState(null);
   const [hardwareSuggestion, setHardwareSuggestion] = useState([]);
+  useEffect(() => {
+    if (localStorage.getItem("dataForm")) {
+      let dataForm = JSON.parse(localStorage.getItem("dataForm"));
+      console.log("dataform ", dataForm);
+      setDataHardware({
+        ...dataHardware,
+        company_email: dataForm.company_email,
+        company_name: dataForm.company_name,
+        contact_name: dataForm.name,
+        phone_number: dataForm.phone_number,
+      });
+      setShowform(true);
+      setFormActive("second");
+      localStorage.removeItem("dataForm");
+    }
+  }, []);
   const onChangeValuePurpose = (e) => {
     console.log("radio checked", e.target.value);
     setValuePurpose(e.target.value);
+  };
+  const onChangeManyProduct = (value) => {
+    if (Number(value)) setManyTalent(value);
   };
   const [product, setProduct] = useState(null);
   const [productSelected, setProductSelected] = useState([]);
@@ -217,7 +252,7 @@ function Hardware({}) {
     setProductSelected([...arr_product]);
   };
   const submitFormSoftware = () => {
-    if (captchaRef.current.getValue() == "") {
+    if (captchaRef.current.getValue() != "") {
       let devicesObjectList = dataHardwareSummary.map((device, idx) => {
         let obj = {};
         console.log("device.details ", device.details);
@@ -355,7 +390,7 @@ function Hardware({}) {
       arr.push("Money Counter");
     } else if (value == "Workstation") {
       arr.push("Laptop");
-      arr.push("PC ? Dekstop");
+      arr.push("PC / Dekstop");
     } else if (value == "Server") {
       arr.push("Server Ultraboost");
       arr.push("Server Boost");
@@ -378,58 +413,87 @@ function Hardware({}) {
   };
 
   const handleAddAnotherProduct = () => {
-    if (statusEdit == true) {
-      let array_hardwares = [];
-      for (let i = 0; i < dataHardwareSummary.length; i++) {
-        if (i == indexEdit) {
-          array_hardwares.push({
-            kindOfHardware: kindOfHardware,
-            product: productSelected,
-            manyTalent: manyTalent,
-            urgently: urgently,
-            timeUsed: timeUsed,
-            maxBudget: maxBudget,
-            details: details,
-            attachment: attachment,
-          });
-        } else {
-          array_hardwares.push({
-            kindOfHardware: dataHardware[i].kindOfHardware,
-            product: dataHardware[i].product,
-            manyTalent: dataHardware[i].manyTalent,
-            urgently: dataHardware[i].urgently,
-            timeUsed: dataHardware[i].timeUsed,
-            maxBudget: dataHardware[i].maxBudget,
-            details: dataHardware[i].details,
-            attachment: dataHardware[i].attachment,
-          });
-        }
+    console.log("urgently ", urgently);
+    if (
+      productSelected.length == 0 ||
+      urgently == null ||
+      urgently == "" ||
+      manyTalent == null ||
+      manyTalent == 0 ||
+      timeUsed == null ||
+      timeUsed == "" ||
+      maxBudget == null ||
+      maxBudget == 0
+    ) {
+      if (productSelected.length == 0) {
+        setProductErrorStatus(true);
       }
-      setDataHardwareSummary([...array_hardwares]);
-      setStatusEdit(false);
-      notification.success({
-        message: "Edit Hardware Product success!",
-        duration: 3,
-      });
+      if (urgently == null || urgently == "") {
+        setUrgentlyErrorStatus(true);
+      }
+      if (manyTalent == null || manyTalent == 0) {
+        setManyTalentErrorStatus(true);
+      }
+      if (timeUsed == null || timeUsed == "") {
+        setTimeUsedErrorStatus(true);
+      }
+      if (maxBudget == null || maxBudget == 0) {
+        setMaxBudgetErrorStatus(true);
+      }
     } else {
-      let array_hardwares = dataHardwareSummary;
-      array_hardwares.push({
-        kindOfHardware: kindOfHardware,
-        product: productSelected,
-        manyTalent: manyTalent,
-        urgently: urgently,
-        timeUsed: timeUsed,
-        maxBudget: maxBudget,
-        details: details,
-        attachment: attachment,
-      });
-      setDataHardwareSummary([...array_hardwares]);
-      notification.success({
-        message: "Add Hardware Product success!",
-        duration: 3,
-      });
+      if (statusEdit == true) {
+        let array_hardwares = [];
+        for (let i = 0; i < dataHardwareSummary.length; i++) {
+          if (i == indexEdit) {
+            array_hardwares.push({
+              kindOfHardware: kindOfHardware,
+              product: productSelected,
+              manyTalent: manyTalent,
+              urgently: urgently,
+              timeUsed: timeUsed,
+              maxBudget: maxBudget,
+              details: details,
+              attachment: attachment,
+            });
+          } else {
+            array_hardwares.push({
+              kindOfHardware: dataHardware[i].kindOfHardware,
+              product: dataHardware[i].product,
+              manyTalent: dataHardware[i].manyTalent,
+              urgently: dataHardware[i].urgently,
+              timeUsed: dataHardware[i].timeUsed,
+              maxBudget: dataHardware[i].maxBudget,
+              details: dataHardware[i].details,
+              attachment: dataHardware[i].attachment,
+            });
+          }
+        }
+        setDataHardwareSummary([...array_hardwares]);
+        setStatusEdit(false);
+        notification.success({
+          message: "Edit Hardware Product success!",
+          duration: 3,
+        });
+      } else {
+        let array_hardwares = dataHardwareSummary;
+        array_hardwares.push({
+          kindOfHardware: kindOfHardware,
+          product: productSelected,
+          manyTalent: manyTalent,
+          urgently: urgently,
+          timeUsed: timeUsed,
+          maxBudget: maxBudget,
+          details: details,
+          attachment: attachment,
+        });
+        setDataHardwareSummary([...array_hardwares]);
+        notification.success({
+          message: "Add Hardware Product success!",
+          duration: 3,
+        });
+      }
+      handleClearForm();
     }
-    handleClearForm();
   };
 
   const handleEdit = (index) => {
@@ -605,6 +669,12 @@ function Hardware({}) {
     }
   };
 
+  const tileDisabled = ({ activeStartDate, date, view }) => {
+    let $today = new Date();
+    let disabledate = moment($today).subtract(1, "day");
+    return date < disabledate;
+  };
+
   useEffect(() => {}, []);
   return (
     <Layout>
@@ -622,7 +692,9 @@ function Hardware({}) {
             <div className={"flex py-4"}>
               <Link href={{ pathname: "/hardware" }}>
                 <p
-                  className={"cursor-pointer flex-col gilroy-bold text-lg mr-4"}
+                  className={
+                    "cursor-pointer flex-col font-gilroybold text-lg mr-4"
+                  }
                   style={{
                     borderBottom: "solid 2px #10B981",
                     paddingBottom: "2.5px",
@@ -664,7 +736,7 @@ function Hardware({}) {
           >
             {formActive == "first" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-primarygreen font-semibold"}>
+                <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
                   Thank you for your interest in providing your IT needs through
                   Mitramas Infosys Global
                 </p>
@@ -705,7 +777,7 @@ function Hardware({}) {
                       <Form.Item
                         name={"Email"}
                         initialValue={dataHardware.company_email}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-xl -mt-2"}
                         label="Email"
                         rules={[{ required: true, type: "email" }]}
                       >
@@ -726,7 +798,7 @@ function Hardware({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Contact Name"}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-xl -mt-2"}
                         label="Contact Name"
                         rules={[{ required: true }]}
                       >
@@ -747,7 +819,7 @@ function Hardware({}) {
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-xl -mt-2"}
                         label="Phone Number"
                         rules={[
                           {
@@ -771,7 +843,7 @@ function Hardware({}) {
                         />
                       </Form.Item>
                     </div>
-                    <div className={"border border-dividermig w-full"}></div>
+                    <div className={"border border-dividermig w-[90%]"}></div>
                     <Form.Item>
                       <div className={"w-full flex justify-start mt-2"}>
                         <button
@@ -781,7 +853,7 @@ function Hardware({}) {
                           }
                         >
                           <div className={"flex flex-row justify-between"}>
-                            <p className={"text-base font-semibold"}>
+                            <p className={"text-base font-gilroysemibold"}>
                               Get Started
                             </p>
                             <img
@@ -798,7 +870,7 @@ function Hardware({}) {
               </div>
             ) : formActive == "second" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-blackmig font-semibold"}>
+                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   General Information
                 </p>
                 <p className={"pt-9"}>
@@ -894,7 +966,7 @@ function Hardware({}) {
                       </p>
                       <p
                         className={
-                          "mt-4 text-base text-blackmig gilroy-regular"
+                          "mt-4 text-base text-blackmig font-gilroyregular"
                         }
                       >
                         Are you sure you want to remove{" "}
@@ -960,7 +1032,7 @@ function Hardware({}) {
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
                         className={
-                          "mt-4 text-base text-blackmig gilroy-regular"
+                          "mt-4 text-base text-blackmig font-gilroyregular"
                         }
                       >
                         Are you sure you want to submit your request with only{" "}
@@ -994,7 +1066,7 @@ function Hardware({}) {
                     </button>
                   </div>
                 </Modal>
-                <p className={"text-2xl text-blackmig font-semibold"}>
+                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   Hardware Information
                 </p>
                 <p className={"mt-9"}>
@@ -1002,9 +1074,9 @@ function Hardware({}) {
                 </p>
                 <Form
                   id="formhardware"
-                  hidden={!feedback}
+                  // hidden={!feedback}
                   layout={"vertical"}
-                  // onFinish={handleSubmit}
+                  onFinish={() => handleAddAnotherProduct()}
                   form={form}
                 >
                   <p className={"text-primarygreen text-sm"}>
@@ -1056,7 +1128,7 @@ function Hardware({}) {
                             className={
                               kindOfHardware == "Bank Machinery"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Bank Machinery
@@ -1108,7 +1180,7 @@ function Hardware({}) {
                             className={
                               kindOfHardware == "Workstation"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Workstation
@@ -1160,7 +1232,7 @@ function Hardware({}) {
                             className={
                               kindOfHardware == "Server"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Server & Hosting
@@ -1212,7 +1284,7 @@ function Hardware({}) {
                             className={
                               kindOfHardware == "UPS"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             UPS
@@ -1264,7 +1336,7 @@ function Hardware({}) {
                             className={
                               kindOfHardware == "Others"
                                 ? "font-gilroysemibold"
-                                : "gilroy-regular"
+                                : "font-gilroyregular"
                             }
                           >
                             Others
@@ -1276,16 +1348,21 @@ function Hardware({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-semibold"}>
-                      1. Job Specification
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
+                      1. Hardware Specification
                     </p>
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_need_product"
                       className={"gilroy-medium text-xl"}
-                      label="How soon do you need the product?"
-                      rules={[{ required: true }]}
+                      label="*How soon do you need the product?"
+                      rules={[
+                        {
+                          required: true,
+                          message: "This input is must be filled",
+                        },
+                      ]}
                     >
                       <Select
                         style={{ border: "1px solid #B8B8B8" }}
@@ -1311,7 +1388,12 @@ function Hardware({}) {
                       name="time_used"
                       className={"gilroy-medium text-xl"}
                       label="How long do you need the product?"
-                      rules={[{ required: true }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: "This input is must be filled",
+                        },
+                      ]}
                     >
                       <Select
                         style={{ border: "1px solid #B8B8B8" }}
@@ -1335,12 +1417,14 @@ function Hardware({}) {
                       className={"gilroy-medium text-xl"}
                       label={
                         <p>
-                          What product in{" "}
-                          <span className={"font-semibold"}>Workstation</span>{" "}
+                          *What product in{" "}
+                          <span className={"font-gilroysemibold"}>
+                            Workstation
+                          </span>{" "}
                           do you need?
                         </p>
                       }
-                      rules={[{ required: true }]}
+                      // rules={[{ required: true }]}
                     >
                       <Input
                         value={product}
@@ -1362,7 +1446,11 @@ function Hardware({}) {
                             "bg-transp45 rounded-[20px] py-1 pl-2 pr-1.5 flex flex-row mr-3"
                           }
                         >
-                          <p className={"text-sm text-blackmig gilroy-regular"}>
+                          <p
+                            className={
+                              "text-sm text-blackmig font-gilroyregular"
+                            }
+                          >
                             {data}
                           </p>
                           <button
@@ -1392,7 +1480,9 @@ function Hardware({}) {
                             }
                           >
                             <p
-                              className={"text-sm text-darkgrey gilroy-regular"}
+                              className={
+                                "text-sm text-darkgrey font-gilroyregular"
+                              }
                             >
                               {data}
                             </p>
@@ -1404,7 +1494,7 @@ function Hardware({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-semibold"}>
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
                       2. Additional Information
                     </p>
                   </div>
@@ -1417,15 +1507,18 @@ function Hardware({}) {
                           <span className={"font-gilroysemibold text-blackmig"}>
                             Workstation{" "}
                           </span>
-                          you need?
+                          you need? (pieces)
                         </p>
                       }
                       name={"manyproduct"}
-                      rules={[{ required: true }]}
+                      rules={[
+                        { message: "You must fill this field", required: true },
+                      ]}
                     >
                       {/* <Form.Item name="input-number" noStyle> */}
+
                       <InputNumber
-                        value={manyTalent}
+                        // value={manyTalent}
                         min={1}
                         name={"manyproduct"}
                         // max={10}
@@ -1434,14 +1527,13 @@ function Hardware({}) {
                           height: "37px",
                           width: "170px",
                         }}
-                        onChange={(value) => {
-                          setManyTalent(value);
-                        }}
+                        onChange={onChangeManyProduct}
                       />
+
                       {/* </Form.Item> */}
-                      <span className="ant-form-text" style={{ marginLeft: 8 }}>
+                      {/* <span className="ant-form-text" style={{ marginLeft: 8 }}>
                         pieces
-                      </span>
+                      </span> */}
                     </Form.Item>
                     <Form.Item
                       name={"max_budget"}
@@ -1472,9 +1564,9 @@ function Hardware({}) {
                         }}
                       />
                       {/* </Form.Item> */}
-                      <span className="ant-form-text" style={{ marginLeft: 8 }}>
+                      {/* <span className="ant-form-text" style={{ marginLeft: 8 }}>
                         / piece / month
-                      </span>
+                      </span> */}
                     </Form.Item>
                     <Form.Item
                       name={"Details"}
@@ -1529,13 +1621,17 @@ function Hardware({}) {
                       <p className={"text-base text-primarygreen"}>Back</p>
                     </button>
                     <button
-                      onClick={handleAddAnotherProduct}
+                      onClick={form.submit}
+                      // type="submit"
+                      // onClick={handleAddAnotherProduct}
                       className={
                         "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
                       <p
-                        className={"text-base text-primarygreen font-semibold"}
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
                       >
                         I want to add another product
                       </p>
@@ -1551,7 +1647,7 @@ function Hardware({}) {
             ) : (
               <div className="w-[52%]">
                 {console.log("form active ", formActive)}
-                <p className={"text-2xl text-blackmig font-semibold"}>
+                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   Choose Meeting Date
                 </p>
                 <div
@@ -1568,14 +1664,22 @@ function Hardware({}) {
                 <div className={"flex flex-row mt-4"}>
                   <div className={"w-[392px]"}>
                     <div className="site-calendar-demo-card">
-                      <Calendar onChange={onPanelChange} value={valueDate} />
+                      <Calendar
+                        onChange={onPanelChange}
+                        value={valueDate}
+                        tileDisabled={tileDisabled}
+                      />
                     </div>
                   </div>
                   <div className={"ml-8"}>
                     <p className={"text-xs text-blackmig font-gilroysemibold"}>
                       Choose Time
                     </p>
-                    <p className={"font-xs text-blackmig gilroy-regular mt-1"}>
+                    <p
+                      className={
+                        "font-xs text-blackmig font-gilroyregular mt-1"
+                      }
+                    >
                       Meeting duration: 30 minutes
                     </p>
                     <div className={"mt-4 flex flex-row"}>
@@ -1643,7 +1747,7 @@ function Hardware({}) {
                   </div>
                 </div>
                 <div className={"mt-[35px]"}>
-                  <p className={"text-sm text-blackmig gilroy-regular"}>
+                  <p className={"text-sm text-blackmig font-gilroyregular"}>
                     *Meeting Time
                   </p>
 
@@ -1696,10 +1800,12 @@ function Hardware({}) {
             {formActive == "third" ? (
               dataHardwareSummary.length > 0 && (
                 <div
-                  className={"w-[400px] h-[100%] py-4 pl-4 pr-[17px] ml-5 "}
+                  className={
+                    "w-[400px] h-[100%] py-4 pl-4 pr-[17px] ml-5 top-20 sticky "
+                  }
                   style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                 >
-                  <p className={"Gilroy-Bold text-primarygreen text-base"}>
+                  <p className={"font-gilroybold text-primarygreen text-base"}>
                     Hardware Request Summary
                   </p>
                   <div className={"mt-3 border border-dividermig"} />
@@ -1719,7 +1825,9 @@ function Hardware({}) {
                               {data.kindOfHardware}
                             </p>
                             <p
-                              className={"text-blackmig gilroy-regular text-sm"}
+                              className={
+                                "text-blackmig font-gilroyregular text-sm"
+                              }
                             >
                               {data.timeUsed +
                                 " month duration, " +
@@ -1774,7 +1882,7 @@ function Hardware({}) {
                       >
                         <p
                           className={
-                            "text-primarygreen text-base font-semibold"
+                            "text-primarygreen text-base font-gilroysemibold"
                           }
                         >
                           {dataHardwareSummary.length}
@@ -1785,9 +1893,9 @@ function Hardware({}) {
                 </div>
               )
             ) : (
-              <div className={"w-[46%] self-center"}>
+              <div className={"w-[50%] flex justify-end"}>
                 <img
-                  className={"w-full h-auto"}
+                  className={"w-[607px] h-[354px]"}
                   src="/image/landingpage/Talents-2.png"
                 />
               </div>
@@ -1807,16 +1915,16 @@ function Hardware({}) {
               }
             >
               <div className={"flex-col w-[495px]"}>
-                <p className={"text-3xl pb-4 gilroy-bold"}>
+                <p className={"text-3xl pb-4 font-gilroybold"}>
                   Nation-wide managed service model for your IT hardwares
                 </p>
-                <p className={"mt:4 md:mt-8 gilroy-regular text-base"}>
+                <p className={"mt:4 md:mt-8 font-gilroyregular text-base"}>
                   Rapid pace of change, uncertainty on scalability, and heavy
                   capital requirements might break your focus from executing
                   your core business.
                 </p>
                 <div className={"mt-10"}>
-                  <p className={"gilroy-bold text-primarygreen text-base"}>
+                  <p className={"font-gilroybold text-primarygreen text-base"}>
                     Reach us to get more information
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
@@ -1838,7 +1946,7 @@ function Hardware({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"gilroy-semibold font-semibold"}>
+                        <p className={"gilroy-semibold font-gilroysemibold"}>
                           Let's talk!
                         </p>
                         <img
@@ -1859,14 +1967,18 @@ function Hardware({}) {
                         src="/image/landingpage/info.png"
                       />
                       <div>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           Let us help you to scale and manage your IT
                           infrastructure with :
                         </p>
                         <ul className={""}>
                           <li className={"mt-1"}>
                             <p
-                              className={"text-sm text-blackmig gilroy-regular"}
+                              className={
+                                "text-sm text-blackmig font-gilroyregular"
+                              }
                             >
                               {""}
                               <span className={"font-bold"}>
@@ -1877,7 +1989,9 @@ function Hardware({}) {
                           </li>
                           <li className={"mt-1"}>
                             <p
-                              className={"text-sm text-blackmig gilroy-regular"}
+                              className={
+                                "text-sm text-blackmig font-gilroyregular"
+                              }
                             >
                               {""}
                               <span className={"font-bold"}>
@@ -1902,7 +2016,9 @@ function Hardware({}) {
             <div className={"block md:hidden py-9 px-4"}>
               <div className={"px-3"}>
                 <p
-                  className={"text-blackmig text-xl text-center font-semibold"}
+                  className={
+                    "text-blackmig text-xl text-center font-gilroysemibold"
+                  }
                 >
                   Nation-wide managed service model for your IT hardwares
                 </p>
@@ -1912,7 +2028,7 @@ function Hardware({}) {
                 ></img>
                 <p
                   className={
-                    "py-6 text-center text-base gilroy-regular text-blackmig"
+                    "py-6 text-center text-base font-gilroyregular text-blackmig"
                   }
                 >
                   Rapid pace of change, uncertainty on scalability, and heavy
@@ -1921,7 +2037,7 @@ function Hardware({}) {
                 </p>
               </div>
               <div>
-                <p className={"font-semibold text-primarygreen text-sm"}>
+                <p className={"font-gilroysemibold text-primarygreen text-sm"}>
                   Reach us to get more information
                 </p>
                 <div className={"flex flex-row items-center mt-1"}>
@@ -1956,20 +2072,24 @@ function Hardware({}) {
                     src="/image/landingpage/info.png"
                   />
                   <div>
-                    <p className={"text-sm text-blackmig gilroy-regular"}>
+                    <p className={"text-sm text-blackmig font-gilroyregular"}>
                       Let us help you to scale and manage your IT infrastructure
                       with :
                     </p>
                     <ul className={""}>
                       <li className={"mt-1"}>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           {""}
                           <span className={"font-bold"}>predictable</span>{" "}
                           monthly cost
                         </p>
                       </li>
                       <li className={"mt-1"}>
-                        <p className={"text-sm text-blackmig gilroy-regular"}>
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
                           {""}
                           <span className={"font-bold"}>guaranteed</span>{" "}
                           service level
@@ -1990,7 +2110,7 @@ function Hardware({}) {
             <div className={"container text-center mx-auto"}>
               <p
                 className={
-                  "text-xl md:text-[32px] px-8 md:px-0 gilroy-semibold font-semibold"
+                  "text-xl md:text-[32px] px-8 md:px-0 gilroy-semibold font-gilroysemibold"
                 }
               >
                 Let’s see what{" "}
@@ -2011,10 +2131,14 @@ function Hardware({}) {
                       "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightblue rounded-lg p-3"
                     }
                   >
-                    <p className={"text-xl gilroy-bold text-accentblue"}>
+                    <p className={"text-xl font-gilroybold text-accentblue"}>
                       Banking Machinery
                     </p>
-                    <p className={"text-xs font-semibold italic text-blackmig"}>
+                    <p
+                      className={
+                        "text-xs font-gilroysemibold italic text-blackmig"
+                      }
+                    >
                       Help you to grow your financial business domestically
                     </p>
                     <div className={"self-center"}>
@@ -2024,7 +2148,7 @@ function Hardware({}) {
                         >
                           <p
                             className={
-                              "text-base text-accentblue font-semibold"
+                              "text-base text-accentblue font-gilroysemibold"
                             }
                           >
                             Get yours
@@ -2045,7 +2169,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2053,7 +2177,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2061,7 +2185,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2069,7 +2193,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2077,7 +2201,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2085,7 +2209,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                   </div>
                 </div>
@@ -2095,10 +2219,14 @@ function Hardware({}) {
                       "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgreen rounded-lg p-3"
                     }
                   >
-                    <p className={"text-xl gilroy-bold text-primarygreen"}>
+                    <p className={"text-xl font-gilroybold text-primarygreen"}>
                       Workstation
                     </p>
-                    <p className={"text-xs font-semibold italic text-blackmig"}>
+                    <p
+                      className={
+                        "text-xs font-gilroysemibold italic text-blackmig"
+                      }
+                    >
                       Enhance the productivity of your people
                     </p>
                     <div className={"self-center"}>
@@ -2108,7 +2236,7 @@ function Hardware({}) {
                         >
                           <p
                             className={
-                              "text-base text-primarygreen font-semibold"
+                              "text-base text-primarygreen font-gilroysemibold"
                             }
                           >
                             Get yours
@@ -2129,7 +2257,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2137,7 +2265,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2145,7 +2273,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2153,7 +2281,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2161,7 +2289,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2169,7 +2297,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                   </div>
                 </div>
@@ -2179,10 +2307,14 @@ function Hardware({}) {
                       "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgrey rounded-lg p-3"
                     }
                   >
-                    <p className={"text-xl gilroy-bold text-accentpurple"}>
+                    <p className={"text-xl font-gilroybold text-accentpurple"}>
                       Server & Hosting
                     </p>
-                    <p className={"text-xs font-semibold italic text-blackmig"}>
+                    <p
+                      className={
+                        "text-xs font-gilroysemibold italic text-blackmig"
+                      }
+                    >
                       Enhance the productivity of your people
                     </p>
                     <div className={"self-center"}>
@@ -2192,7 +2324,7 @@ function Hardware({}) {
                         >
                           <p
                             className={
-                              "text-base text-accentpurple font-semibold"
+                              "text-base text-accentpurple font-gilroysemibold"
                             }
                           >
                             Get yours
@@ -2213,7 +2345,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2221,7 +2353,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2229,7 +2361,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2237,7 +2369,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2245,7 +2377,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2253,7 +2385,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                   </div>
                 </div>
@@ -2263,8 +2395,14 @@ function Hardware({}) {
                       "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightpink rounded-lg p-3"
                     }
                   >
-                    <p className={"text-xl gilroy-bold text-accentblue"}>UPS</p>
-                    <p className={"text-xs font-semibold italic text-blackmig"}>
+                    <p className={"text-xl font-gilroybold text-accentblue"}>
+                      UPS
+                    </p>
+                    <p
+                      className={
+                        "text-xs font-gilroysemibold italic text-blackmig"
+                      }
+                    >
                       Prevent any damage of your devices from power loss
                     </p>
                     <div className={"self-center"}>
@@ -2274,7 +2412,7 @@ function Hardware({}) {
                         >
                           <p
                             className={
-                              "text-base text-accentpink font-semibold"
+                              "text-base text-accentpink font-gilroysemibold"
                             }
                           >
                             Get yours
@@ -2295,7 +2433,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2303,7 +2441,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2311,7 +2449,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2319,7 +2457,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2327,7 +2465,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                     <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
                       <img
@@ -2335,7 +2473,7 @@ function Hardware({}) {
                         className={"w-[128px] h-[90px] self-center"}
                         alt=""
                       />
-                      <p className={"mt-3 gilroy-bold text-base"}>ATM</p>
+                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
                     </div>
                   </div>
                 </div>
@@ -2344,7 +2482,7 @@ function Hardware({}) {
                 <div className={"mt-7 px-2"}>
                   <p
                     className={
-                      "text-base text-left gilroy-semibold text-blackmig font-semibold"
+                      "text-base text-left gilroy-semibold text-blackmig font-gilroysemibold"
                     }
                   >
                     Banking Machinery
@@ -2359,7 +2497,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2372,7 +2510,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2385,7 +2523,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2394,7 +2532,7 @@ function Hardware({}) {
                 <div className={"mt-7 px-2"}>
                   <p
                     className={
-                      "text-base text-left gilroy-semibold text-blackmig font-semibold"
+                      "text-base text-left gilroy-semibold text-blackmig font-gilroysemibold"
                     }
                   >
                     Workstation
@@ -2409,7 +2547,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2422,7 +2560,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2435,7 +2573,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2444,7 +2582,7 @@ function Hardware({}) {
                 <div className={"mt-7 px-2"}>
                   <p
                     className={
-                      "text-base text-left gilroy-semibold text-blackmig font-semibold"
+                      "text-base text-left gilroy-semibold text-blackmig font-gilroysemibold"
                     }
                   >
                     Server & Hosting
@@ -2459,7 +2597,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2472,7 +2610,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2485,7 +2623,7 @@ function Hardware({}) {
                         className={"w-[110px] h-[77.79px]"}
                         src="/image/hardware/laptop.png"
                       />
-                      <p className={"text-blackmig gilroy-bold text-xs"}>
+                      <p className={"text-blackmig font-gilroybold text-xs"}>
                         Laptop
                       </p>
                     </div>
@@ -2499,10 +2637,10 @@ function Hardware({}) {
               >
                 <p
                   className={
-                    "font-regular gilroy-regular text-sm px-2 md:px-0  md:text-base"
+                    "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-base"
                   }
                 >
-                  <span className={"font-semibold"}>
+                  <span className={"font-gilroysemibold"}>
                     Didn’t find what you were looking for?
                   </span>{" "}
                   Reach us to get your orders customized based on your IT needs
@@ -2516,7 +2654,9 @@ function Hardware({}) {
                     }
                   >
                     <p
-                      className={"text-base gilroy-semibold font-semibold mr-2"}
+                      className={
+                        "text-base gilroy-semibold font-gilroysemibold mr-2"
+                      }
                     >
                       Contact our sales team
                     </p>
@@ -2539,7 +2679,7 @@ function Hardware({}) {
                 />
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
-                <h4 className="mb-2 text-2xl text-center font-semibold text-blackmig">
+                <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
                   Why you should{" "}
                   <span
                     style={{
@@ -2564,10 +2704,10 @@ function Hardware({}) {
                     className="w-[42px] h-[42px]"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Reliable Partner
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                       We provide guaranteed level of IT operation services to
                       support your business
                     </p>
@@ -2579,10 +2719,10 @@ function Hardware({}) {
                     className="w-[42px] h-[42px]"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Increase Efficiency
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                       We transform a heavy capital IT hardware infrastructure,
                       that requires large upfront investment into managed
                       services model
@@ -2595,10 +2735,10 @@ function Hardware({}) {
                     className="w-[42px] h-[42px]"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-semibold text-blackmig">
+                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
                       Nationwide Performance
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig gilroy-regular">
+                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
                       We provide strong local knowledge and network to help your
                       business strive across Indonesia
                     </p>
@@ -2614,7 +2754,7 @@ function Hardware({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <p className={"text-xl md:text-2xl gilroy-bold py-8 md:py-0"}>
+              <p className={"text-xl md:text-2xl font-gilroybold py-8 md:py-0"}>
                 How it{" "}
                 <span
                   style={{
@@ -2637,14 +2777,14 @@ function Hardware({}) {
                   />
                   <p
                     className={
-                      "text-blackmig text-sm md:text-base Gilroy-semibold font-semibold mt-4 text-center"
+                      "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                     }
                   >
                     We find high quality hardware products
                   </p>
                   <p
                     className={
-                      "text-base text-blackmig gilroy-regular text-center"
+                      "text-base text-blackmig font-gilroyregular text-center"
                     }
                   >
                     We have extensive network and partnerships with hardware
@@ -2666,14 +2806,14 @@ function Hardware({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-semibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
                   Custom match with your needs
                 </p>
                 <p
                   className={
-                    "text-base text-blackmig gilroy-regular text-center"
+                    "text-base text-blackmig font-gilroyregular text-center"
                   }
                 >
                   We customize our procurement with your specification needs
@@ -2693,14 +2833,14 @@ function Hardware({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-semibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
                   We conduct full operation and maintenance for your hardware
                 </p>
                 <p
                   className={
-                    "text-base text-blackmig gilroy-regular text-center"
+                    "text-base text-blackmig font-gilroyregular text-center"
                   }
                 >
                   We ensure guaranteed level of hardware performance throughout
@@ -2712,7 +2852,7 @@ function Hardware({}) {
           <section
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
-            <p className="mb-2 text-2xl text-center font-semibold text-blackmig">
+            <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
               How{" "}
               <span
                 style={{
@@ -2730,10 +2870,10 @@ function Hardware({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   We find high quality hardware products
                 </p>
-                <p className={"text-sm text-blackmig gilroy-regular"}>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We have extensive network and partnerships with hardware
                   principles ready to be leveraged for your advantage
                 </p>
@@ -2745,10 +2885,10 @@ function Hardware({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   Custom match with your needs
                 </p>
-                <p className={"text-sm text-blackmig gilroy-regular"}>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We customize our procurement with your specification needs
                 </p>
               </div>
@@ -2759,10 +2899,10 @@ function Hardware({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-semibold"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
                   We conduct full operation and maintenance for your hardware
                 </p>
-                <p className={"text-sm text-blackmig gilroy-regular"}>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We ensure guaranteed level of hardware performance throughout
                 </p>
               </div>
@@ -2776,7 +2916,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-semibold mb-[42px]"
+                "text-xl md:text-3xl text-center gilroy-semibold font-gilroysemibold mb-[42px]"
               }
             >
               What they say{" "}
@@ -2803,7 +2943,7 @@ function Hardware({}) {
                     }}
                   >
                     <div className="">
-                      <p className="text-sm text italic gilroy-semibold font-semibold">
+                      <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
 
@@ -2815,7 +2955,7 @@ function Hardware({}) {
                         <br className="hidden xl:block"></br> optimize your cost
                         and productivity
                       </p>
-                      <p className="text-sm text italic gilroy-semibold font-semibold">
+                      <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                       <div className="flex flex-col items-center">
@@ -2827,17 +2967,17 @@ function Hardware({}) {
                             alt=""
                           />
                           <div className="self-center">
-                            <p className="text-sm font-semibold Gilroy-semibold text-black">
+                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
                               Fachri Fauzan
                             </p>
-                            <p className="text-sm font-semibold Gilroy-semibold text-darkgrey">
+                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
                               Talent Acquisition at Bukopin
                             </p>
                           </div>
                         </div>
                         <div className="self-start">
                           <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
-                            <p className="text-sm text-primarygreen font-semibold ">
+                            <p className="text-sm text-primarygreen font-gilroysemibold ">
                               Industry :
                               <span
                                 style={{
@@ -2850,7 +2990,7 @@ function Hardware({}) {
                             </p>
                           </div>
                           <div className="bg-lightblue px-4 rounded-[20px] mt-2">
-                            <p className="text-sm text-primarygreen font-semibold ">
+                            <p className="text-sm text-primarygreen font-gilroysemibold ">
                               Service:
                               <span
                                 style={{
@@ -2875,7 +3015,7 @@ function Hardware({}) {
                     }}
                   >
                     <div className="">
-                      <p className="text-3xl text italic gilroy-semibold font-semibold">
+                      <p className="text-3xl text italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
 
@@ -2887,7 +3027,7 @@ function Hardware({}) {
                         <br className="hidden xl:block"></br> optimize your cost
                         and productivity
                       </p>
-                      <p className="text-sm text italic gilroy-semibold font-semibold">
+                      <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                       <div className="flex flex-col items-center">
@@ -2899,17 +3039,17 @@ function Hardware({}) {
                             alt=""
                           />
                           <div className="self-center">
-                            <p className="text-sm font-semibold Gilroy-semibold text-black">
+                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
                               Fachri Fauzan
                             </p>
-                            <p className="text-sm font-semibold Gilroy-semibold text-darkgrey">
+                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
                               Talent Acquisition at Bukopin
                             </p>
                           </div>
                         </div>
                         <div className="self-start">
                           <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
-                            <p className="text-sm text-primarygreen font-semibold ">
+                            <p className="text-sm text-primarygreen font-gilroysemibold ">
                               Industry :
                               <span
                                 style={{
@@ -2922,7 +3062,7 @@ function Hardware({}) {
                             </p>
                           </div>
                           <div className="bg-lightblue px-4 rounded-[20px] mt-2">
-                            <p className="text-sm text-primarygreen font-semibold ">
+                            <p className="text-sm text-primarygreen font-gilroysemibold ">
                               Service:
                               <span
                                 style={{
@@ -2965,21 +3105,21 @@ function Hardware({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -2999,11 +3139,17 @@ function Hardware({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3017,21 +3163,25 @@ function Hardware({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -3048,21 +3198,21 @@ function Hardware({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -3082,11 +3232,17 @@ function Hardware({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3100,21 +3256,25 @@ function Hardware({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -3131,21 +3291,21 @@ function Hardware({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-semibold">
+                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
                         "
                       </p>
                     </div>
-                    <p className="pb-4 gilroy-regular text-xl text-blackmig mx-auto text-center">
+                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience
                       </span>{" "}
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt
                       </span>{" "}
                       ut labore et dolore magna aliqua.
@@ -3165,11 +3325,17 @@ function Hardware({}) {
                         />
                         <div className="self-center">
                           <p
-                            className={"text-blackmig font-semibold text-base"}
+                            className={
+                              "text-blackmig font-gilroysemibold text-base"
+                            }
                           >
                             Fachri Fauzan
                           </p>
-                          <p className={"text-darkgrey font-semibold text-sm"}>
+                          <p
+                            className={
+                              "text-darkgrey font-gilroysemibold text-sm"
+                            }
+                          >
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3183,21 +3349,25 @@ function Hardware({}) {
                       </div>
                       <div className="flex flex-row justify-center mx-2 mt-6">
                         <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Industry : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Industry :{" "}
+                            </span>
                             Banking
                           </p>
                         </div>
                         <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen gilroy-regular">
-                            <span className={"font-semibold"}>Service : </span>
+                          <p className="text-sm text-primarygreen font-gilroyregular">
+                            <span className={"font-gilroysemibold"}>
+                              Service :{" "}
+                            </span>
                             Hardware, Talents
                           </p>
                         </div>
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-semibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
                             Read more
                           </p>
                           <img
@@ -3234,7 +3404,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-semibold md:py-0 mb-7 md:mb-10"
+                "text-xl md:text-3xl text-center gilroy-semibold font-gilroysemibold md:py-0 mb-7 md:mb-10"
               }
             >
               What they say{" "}
@@ -3255,25 +3425,25 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3285,10 +3455,10 @@ function Hardware({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3301,25 +3471,25 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3331,10 +3501,10 @@ function Hardware({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3347,25 +3517,25 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
                       </span>
                       working with Mitramas Infosys Global. Lorem ipsum dolor
                       sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-semibold"}>
+                      <span className={"text-primarygreen font-gilroysemibold"}>
                         tempor incididunt{" "}
                       </span>
                       ut labore et dolore magna aliqua.
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-semibold">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3377,10 +3547,10 @@ function Hardware({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-semibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-semibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3395,7 +3565,7 @@ function Hardware({}) {
                 <div className={"flex flex-row justify-around"}>
                   <p
                     className={
-                      "text-base text-primarygreen gilroy-semibold font-semibold"
+                      "text-base text-primarygreen gilroy-semibold font-gilroysemibold"
                     }
                   >
                     Read More
@@ -3417,7 +3587,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-blackmig text-center gilroy-semibold font-semibold py-8 md:py-0 mb-10"
+                "text-xl md:text-3xl text-blackmig text-center gilroy-semibold font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
               Coverages
@@ -3575,7 +3745,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl text-blackmig text-center gilroy-semibold font-semibold"
+                "text-xl text-blackmig text-center gilroy-semibold font-gilroysemibold"
               }
             >
               Coverages
@@ -3736,10 +3906,10 @@ function Hardware({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
-                <p className={"text-2xl font-semibold text-black"}>
+                <p className={"text-2xl font-gilroysemibold text-black"}>
                   Fulfill your IT needs easily!
                 </p>
-                <p className={"py-5 text-base gilroy-regular text-black"}>
+                <p className={"py-5 text-base font-gilroyregular text-black"}>
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!
@@ -3753,7 +3923,7 @@ function Hardware({}) {
                     <div className={"flex flex-row justify-between"}>
                       <p
                         className={
-                          "text-base gilroy-semibold font-semibold mr-2"
+                          "text-base gilroy-semibold font-gilroysemibold mr-2"
                         }
                       >
                         Contact Us
@@ -3782,10 +3952,10 @@ function Hardware({}) {
           >
             <div className={"container mx-auto"}>
               <div className="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-                <p className={"text-xl font-semibold"}>
+                <p className={"text-xl font-gilroysemibold"}>
                   Fulfill your IT needs easily!
                 </p>
-                <p className={"py-5 text-sm Gilroy-regular"}>
+                <p className={"py-5 text-sm font-gilroyregular"}>
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!
