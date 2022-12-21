@@ -260,8 +260,6 @@ const EmployeeContractEditIndex = ({
           dataContract={dataContract}
           setDataContract={setDataContract}
           prevpath={prevpath}
-          // handleSaveContract={handleSaveContract}
-          // instanceForm={instanceForm}
         />
       </div>
     </LayoutDashboard>

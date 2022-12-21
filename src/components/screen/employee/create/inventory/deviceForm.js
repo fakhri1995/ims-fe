@@ -1,37 +1,15 @@
-import {
-  Button,
-  Checkbox,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Switch,
-  Tabs,
-  Upload,
-  notification,
-} from "antd";
-import moment from "moment";
+import { Button, Form, Input } from "antd";
 import React from "react";
-import { useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { EMPLOYEE_DEVICE_DELETE } from "lib/features";
-
-import {
-  beforeUploadFileMaxSize,
-  permissionWarningNotification,
-} from "../../../../../lib/helper";
-import ButtonSys from "../../../../button";
-import { TrashIconSvg, UploadIconSvg } from "../../../../icon";
+import { TrashIconSvg } from "../../../../icon";
 
 const DeviceForm = ({
   idxInv,
   idxDev,
   inventoryList,
   setInventoryList,
-  deviceList,
-  setDeviceList,
   setDataModalDelete,
   setModalDelete,
   debouncedApiCall,
@@ -51,13 +29,11 @@ const DeviceForm = ({
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [loadingCreate, setLoadingCreate] = useState(false);
 
-  // 3. HANDLER
+  // 2. HANDLER
   const onChangeDeviceInput = (e) => {
-    let dataDevices = [...deviceList];
+    let dataDevices = inventoryList[idxInv]?.devices;
     dataDevices[idxDev][e.target.name] = e.target.value;
-    setDeviceList(dataDevices);
 
     let dataInventories = [...inventoryList];
     dataInventories[idxInv].devices = dataDevices;

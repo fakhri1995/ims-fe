@@ -30,7 +30,6 @@ const EmployeeInventoryForm = ({
   /**
    * Dependencies
    */
-
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -179,7 +178,6 @@ const EmployeeInventoryForm = ({
               initProps={initProps}
               inventoryList={inventoryList}
               setInventoryList={setInventoryList}
-              // inventoryId={inventoryId}
               inventoryId={inventory.id}
               debouncedApiCall={debouncedApiCall}
               setRefresh={setRefresh}
