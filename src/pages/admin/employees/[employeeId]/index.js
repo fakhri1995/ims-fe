@@ -329,7 +329,7 @@ const EmployeeDetailIndex = ({
             >
               <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
               <h4 className="mig-heading--4 text-center">
-                {dataEmployee?.name}
+                {dataEmployee?.name || "-"}
               </h4>
             </div>
           )}
@@ -378,31 +378,33 @@ const EmployeeDetailIndex = ({
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p>{dataEmployee?.name}</p>
+                  <p>{dataEmployee?.name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">NIP</p>
-                  <p>{dataEmployee?.nip}</p>
+                  <p>{dataEmployee?.nip || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.role_name}</p>
+                  <p>{dataEmployee?.role_name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
-                  <p>{dataEmployee?.contracts[0]?.contract_status_name}</p>
+                  <p>
+                    {dataEmployee?.contracts[0]?.contract_status_name || "-"}
+                  </p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">E-mail</p>
-                  <p>{dataEmployee?.email_office}</p>
+                  <p>{dataEmployee?.email_office || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Telepon
                   </p>
-                  <p>{dataEmployee?.phone_number}</p>
+                  <p>{dataEmployee?.phone_number || "-"}</p>
                 </div>
               </div>
             </div>
@@ -416,7 +418,6 @@ const EmployeeDetailIndex = ({
             tabBarGutter={60}
             className="px-1"
             activeKey={currentTab}
-            // onTabClick={(key) => setCurrentTab(key)}
             onTabClick={(key) => {
               setCurrentTab(key);
               rt.push(`${employeeId}?tab=${key}`, undefined, { shallow: true });
