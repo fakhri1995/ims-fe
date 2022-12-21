@@ -42,7 +42,13 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeePayslipAddIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  employeeId,
+  employeeName,
+}) => {
   /**
    * Dependencies
    */
@@ -58,7 +64,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { id: payslipId, employeeId } = rt.query;
+  const { id: payslipId } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -71,8 +77,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
     4,
     "Daftar Karyawan",
     "Slip Gaji",
-    "Karyawan",
-    // dataPayslip?.employee?.name,
+    employeeName,
     "Buat Slip Gaji"
   );
 
@@ -642,7 +647,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
           title={`Konfirmasi Penerbitan Slip Gaji`}
           visible={modalUpdate}
           onvisible={setModalUpdate}
-          onOk={handleSavePayslip}
+          // onOk={handleSavePayslip}
           onCancel={() => {
             setModalUpdate(false);
           }}
@@ -667,7 +672,8 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -699,11 +705,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-payslip",
+      employeeId,
+      employeeName,
     },
   };
 }

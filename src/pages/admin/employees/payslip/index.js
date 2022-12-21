@@ -34,10 +34,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import SettingsIcon from "assets/vectors/icon-settings.svg";
-
 import ButtonSys from "../../../../components/button";
-import ButtonSysColor from "../../../../components/buttonColor";
 import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
   CheckIconSvg,
@@ -54,10 +51,7 @@ import {
   ModalAddSalaryVar,
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
-import {
-  TableCustomEmployeeList,
-  TableCustomPayslipList,
-} from "../../../../components/table/tableCustom";
+import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
 import { H2 } from "../../../../components/typography";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import {
@@ -108,8 +102,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Slip Gaji");
+  pathTitleArr.splice(1, 2);
+  pathTitleArr.splice(1, 2, "Daftar Karyawan", "Slip Gaji");
 
   // 2. Use state
   // 2.1. Charts
@@ -469,7 +463,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onClick={(event) => {
                       event.stopPropagation();
                       // rt.push(
-                      //   `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
+                      //   `/admin/employees/payslip/${record.id}/addPayslip?id=${record?.payslips[0].id}`
                       // );
                     }}
                   >
@@ -487,9 +481,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(
-                      //   `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
-                      // );
+                      //download pdf
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
