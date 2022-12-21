@@ -148,6 +148,7 @@ module.exports = {
         lightgrey: "#B8B8B8",
         redmig2: "#D66B42",
         accentpink:"#BE658A",
+        bluemig:"#304FFE"
       },
       gradientColorStops: {
         state1: `#799F0C`,

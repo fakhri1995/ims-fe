@@ -12,7 +12,7 @@ function AboutUs({}) {
   return (
     <Layout>
       <Head>
-        <title>About Us</title>
+        <title>About Us | Mitramas Infosys Global - MIG</title>
       </Head>
       <section
         className={

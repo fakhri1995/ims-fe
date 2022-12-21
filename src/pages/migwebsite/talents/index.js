@@ -546,7 +546,13 @@ function Talents({}) {
   return (
     <Layout>
       <Head>
-        <title>Talents</title>
+        <title>
+          Top Tech Talent, IT Outsourcing & Recruitment Solution - MIG
+        </title>
+        <meta
+          name="description"
+          content="Simplify the process of finding and managing talent with our Headhunt and IT Staff Augmentation service. Address your need & speak with our team now!"
+        />
       </Head>
       {showForm == false && (
         <section
@@ -1939,8 +1945,8 @@ function Talents({}) {
                   Enabling you to assemble the best team
                 </p>
                 <img
-                  src="/image/hardware/Hardware-Solution.png"
-                  className={"w-[304px] h-[174px]"}
+                  src="/image/landingpage/Talents-2.png"
+                  className={"w-[292px] h-[174px] mt-6"}
                 ></img>
                 <p
                   className={
@@ -2043,6 +2049,7 @@ function Talents({}) {
                 className={
                   "md:w-[600px] h-[151px] md:h-[176px] bg-white md:mr-[19px] rounded-lg p-4 pb-6"
                 }
+                style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
@@ -2083,7 +2090,7 @@ function Talents({}) {
                   <button
                     onClick={showModal}
                     className={
-                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[40px]"
+                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[37px]"
                     }
                   >
                     <p
@@ -2105,6 +2112,7 @@ function Talents({}) {
                 className={
                   "mt-7 md:mt-0 md:w-[600px] h-[151px] md:h-[176px] bg-white rounded-lg p-4 pb-6"
                 }
+                style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
@@ -2146,7 +2154,7 @@ function Talents({}) {
                   <button
                     onClick={showModalData}
                     className={
-                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[40px]"
+                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[37px]"
                     }
                   >
                     <p
@@ -2174,6 +2182,7 @@ function Talents({}) {
                 className={
                   "md:w-[600px] h-[151px] md:h-[176px] bg-white md:mr-[19px] rounded-lg p-4 pb-6"
                 }
+                style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
@@ -2215,7 +2224,7 @@ function Talents({}) {
                   <button
                     onClick={showModalDesign}
                     className={
-                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[40px]"
+                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[37px]"
                     }
                   >
                     <p
@@ -2237,6 +2246,7 @@ function Talents({}) {
                 className={
                   "mt-7 md:mt-0 md:w-[600px] h-[151px]  md:h-[176px] bg-white rounded-lg p-4 pb-6"
                 }
+                style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
@@ -2278,7 +2288,7 @@ function Talents({}) {
                   <button
                     onClick={showModalProduct}
                     className={
-                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[40px]"
+                      "flex flex-row justify-between pb-6 bg-white items-center px-4 w-[131px] h-[37px]"
                     }
                   >
                     <p

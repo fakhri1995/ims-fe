@@ -326,7 +326,11 @@ function Software({}) {
   return (
     <Layout>
       <Head>
-        <title>Software</title>
+        <title>Develop Custom Software to Digitalize your Business - MIG</title>
+        <meta
+          name="description"
+          content="Improve efficiency by implementing digital technologies in your business. Build custom software with our outstanding tech team. Book a call today!"
+        />
       </Head>
       {showForm == false && (
         <section
@@ -652,6 +656,7 @@ function Software({}) {
                         noStyle
                       >
                         <Upload.Dragger
+                          className={"border-1 border-dashed border-accentblue"}
                           name="files"
                           maxCount={1}
                           onChange={onChangeFile}
@@ -659,18 +664,26 @@ function Software({}) {
                           // action="/upload.do"
                           style={{ width: "298px", height: "180px" }}
                         >
-                          <p className="ant-upload-drag-icon">
-                            <CloudUploadOutlined />
-                          </p>
-                          <p className="ant-upload-text">
+                          <img
+                            className="anticon anticon-inbox mt-3"
+                            style={{ width: "48px", height: "32px" }}
+                            src="/image/landingpage/upload.png"
+                          />
+                          <p className="text-xs font-gilroyregular px-9 mt-9">
                             Drag and drop your sourcing documents here
                           </p>
-                          <p className="ant-upload-hint">
-                            Support for a single or bulk upload.
+                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular text-bluemig mt-2">
+                            browse
                           </p>
                         </Upload.Dragger>
                       </Form.Item>
                     </Form.Item>
+                  </div>
+                  <div className={"mt-1"}>
+                    <p className={"text-darkgrey text-xs font-gilroyregular"}>
+                      Product images or files lead to more accurate quotes.
+                    </p>
                   </div>
                   <div className={"border border-dividermig w-full mt-9"} />
                   <div className={"mt-9 flex flex-row justify-between"}>

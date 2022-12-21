@@ -26,7 +26,7 @@ import "react-calendar/dist/Calendar.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import Slider from "react-slick";
 
-import { objectToFormData } from "lib/helper";
+import { generateStaticAssetUrl, objectToFormData } from "lib/helper";
 import { getBase64 } from "lib/helper";
 
 import Layout from "../../../components/migwebsite/layout.js";
@@ -40,6 +40,50 @@ function Hardware({}) {
   const inputRef = useRef(null);
   const { Option } = Select;
   const { TextArea } = Input;
+  const [dataBanking, setDataBanking] = useState(null);
+  const [dataWorkstation, setDataWorkStation] = useState(null);
+  const [dataServer, setDataServer] = useState(null);
+  const [dataUps, setDataUps] = useState(null);
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProduct`, {
+      method: `GET`,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          var dataBank = res2.data.filter(function (el) {
+            return el.category_product_id == 1;
+          });
+          var dataStation = res2.data.filter(function (el) {
+            return el.category_product_id == 2;
+          });
+          var dataServers = res2.data.filter(function (el) {
+            return el.category_product_id == 3;
+          });
+          var dataUp = res2.data.filter(function (el) {
+            return el.category_product_id == 4;
+          });
+          if (dataBank.length != 0) {
+            setDataBanking(dataBank);
+          }
+          if (dataStation.length != 0) {
+            setDataWorkStation(dataStation);
+          }
+          if (dataServers.length != 0) {
+            setDataServer(dataServers);
+          }
+          if (dataUp.length != 0) {
+            setDataUps(dataUp);
+          }
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
+  }, []);
   const handleSubmit = () => {
     // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addMessage`, {
     //   method: "POST",
@@ -165,7 +209,6 @@ function Hardware({}) {
   useEffect(() => {
     if (localStorage.getItem("dataForm")) {
       let dataForm = JSON.parse(localStorage.getItem("dataForm"));
-      console.log("dataform ", dataForm);
       setDataHardware({
         ...dataHardware,
         company_email: dataForm.company_email,
@@ -179,7 +222,6 @@ function Hardware({}) {
     }
   }, []);
   const onChangeValuePurpose = (e) => {
-    console.log("radio checked", e.target.value);
     setValuePurpose(e.target.value);
   };
   const onChangeManyProduct = (value) => {
@@ -255,7 +297,6 @@ function Hardware({}) {
     if (captchaRef.current.getValue() != "") {
       let devicesObjectList = dataHardwareSummary.map((device, idx) => {
         let obj = {};
-        console.log("device.details ", device.details);
         obj[`hardware_list[${idx}][kind_of_product]`] = device.kindOfHardware;
         obj[`hardware_list[${idx}][product]`] = device.product;
         obj[`hardware_list[${idx}][manyTalent]`] = device.manyTalent;
@@ -286,58 +327,6 @@ function Hardware({}) {
         ...dataSoftwarePost,
         ...allDevicesObject,
       };
-      console.log("data hardware summary ", inventoryDataWithDevice);
-      let dataHardwarePost = objectToFormData(inventoryDataWithDevice);
-      console.log("data hardware summary 2", dataHardwarePost);
-      // let dataHardwarePost = new FormData();
-      // dataHardwarePost.append('company_name',dataHardware.company_name)
-      // dataHardwarePost.append('contact_name',dataHardware.name)
-      // dataHardwarePost.append('company_email',dataHardware.company_email)
-      // dataHardwarePost.append('phone_number',dataHardware.phone_number)
-      // dataHardwarePost.append('purpose',valuePurpose)
-      // dataHardwarePost.append('kind_form','hardware')
-      // dataHardwarePost.append('meeting_schedule',moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime)
-      // // dataHardwarePost.append('hardware_list',dataHardwareSummary)
-      // // for (var i = 0; i < dataHardwareSummary.length; i++) {
-      // //   console.log("hardware summary ",dataHardwareSummary[i])
-      // //   dataHardwarePost.append("hardware_list[]", dataHardwareSummary[i]);
-      // // }
-      // // console.log("data hardware ",dataHardwarePost)
-      // for (let i = 0; i < dataHardwareSummary.length; i++) {
-      //   console.log("data hardware ",dataHardwareSummary[i].kindOfHardware)
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].kind_of_product`,
-      //     dataHardwareSummary[i].kindOfHardware
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].product`,
-      //     dataHardwareSummary[i].product
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].manyTalent`,
-      //     dataHardwareSummary[i].manyTalent
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].urgently`,
-      //     dataHardwareSummary[i].urgently
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].timeUsed`,
-      //     dataHardwareSummary[i].timeUsed
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].maxBudget`,
-      //     dataHardwareSummary[i].maxBudget
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].details`,
-      //     dataHardwareSummary[i].details
-      //   );
-      //   dataHardwarePost.append(
-      //     `hardware_list[${i}].attachment`,
-      //     dataHardwareSummary[i].attachment
-      //   );
-      // }
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionHardware`, {
         method: "POST",
         headers: {
@@ -366,7 +355,6 @@ function Hardware({}) {
     }
   };
   const onPanelChange = (value) => {
-    console.log("helo calendar ", value);
     onChangeDateTemp(value);
     onChangeDate(value);
   };
@@ -401,7 +389,6 @@ function Hardware({}) {
       arr.push("Smartphone");
       arr.push("Tablet");
     }
-    console.log("array ", arr);
     setHardwareSuggestion(arr);
   };
 
@@ -413,7 +400,6 @@ function Hardware({}) {
   };
 
   const handleAddAnotherProduct = () => {
-    console.log("urgently ", urgently);
     if (
       productSelected.length == 0 ||
       urgently == null ||
@@ -562,7 +548,6 @@ function Hardware({}) {
   };
 
   const handleDeleteHardware = (value, index) => {
-    console.log("index ke ", index);
     setIndexEdit(index);
     setDeleteHardwareValue(value);
     setModalDelete(true);
@@ -570,7 +555,6 @@ function Hardware({}) {
 
   const handleDeleteConfirm = () => {
     if (dataHardwareSummary.length == 1) {
-      console.log("if length ", dataHardwareSummary.length);
       setDataHardwareSummary([]);
       setModalDelete(false);
     } else {
@@ -631,7 +615,6 @@ function Hardware({}) {
   };
 
   const normFile = (e) => {
-    console.log("Upload event:", e);
     if (Array.isArray(e)) {
       return e;
     }
@@ -663,7 +646,6 @@ function Hardware({}) {
     if (info.file.status === "done") {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
-      console.log("info file ", info);
       setAttachment(blobFile);
       setShowUploadFile(true);
     }
@@ -679,7 +661,11 @@ function Hardware({}) {
   return (
     <Layout>
       <Head>
-        <title>Hardware</title>
+        <title>Cost-Effective Hardware Managed Service Model - MIG</title>
+        <meta
+          name="description"
+          content="Maximize cost-effectiveness with our leased and well-maintained electronic equipment. Get personalized hardware that meets your needs. Contact us."
+        />
       </Head>
       {showForm == false && (
         <section
@@ -1584,7 +1570,7 @@ function Hardware({}) {
                         placeholder="Tell us more about your talent details"
                       />
                     </Form.Item>
-                    <Form.Item label="Dragger">
+                    <Form.Item label="Attachment">
                       <Form.Item
                         name="dragger"
                         valuePropName="fileList"
@@ -1592,21 +1578,25 @@ function Hardware({}) {
                         noStyle
                       >
                         <Upload.Dragger
-                          showUploadList={showUploadFile}
+                          className={"border-1 border-dashed border-accentblue"}
                           name="files"
                           maxCount={1}
                           onChange={onChangeFile}
                           accept=".pdf,.jpg,.jpeg,.png"
+                          // action="/upload.do"
                           style={{ width: "298px", height: "180px" }}
                         >
-                          <p className="ant-upload-drag-icon">
-                            <CloudUploadOutlined />
-                          </p>
-                          <p className="ant-upload-text">
+                          <img
+                            className="anticon anticon-inbox mt-3"
+                            style={{ width: "48px", height: "32px" }}
+                            src="/image/landingpage/upload.png"
+                          />
+                          <p className="text-xs font-gilroyregular px-9 mt-9">
                             Drag and drop your sourcing documents here
                           </p>
-                          <p className="ant-upload-hint">
-                            Support for a single or bulk upload.
+                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular text-bluemig mt-2">
+                            browse
                           </p>
                         </Upload.Dragger>
                       </Form.Item>
@@ -1646,7 +1636,6 @@ function Hardware({}) {
               </div>
             ) : (
               <div className="w-[52%]">
-                {console.log("form active ", formActive)}
                 <p className={"text-2xl text-blackmig font-gilroysemibold"}>
                   Choose Meeting Date
                 </p>
@@ -2162,56 +2151,75 @@ function Hardware({}) {
                       </button>
                     </div>
                   </div>
-                  <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  {dataBanking ? (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      {dataBanking.map((data, index) => (
+                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p className={"mt-3 font-gilroybold text-base"}>
+                            {data.name_product}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  ) : (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
                 <div className={"flex flex-row mt-8 justify-center"}>
                   <div
@@ -2250,56 +2258,75 @@ function Hardware({}) {
                       </button>
                     </div>
                   </div>
-                  <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  {dataWorkstation ? (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      {dataWorkstation.map((data, index) => (
+                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p className={"mt-3 font-gilroybold text-base"}>
+                            {data.name_product}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  ) : (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
                 <div className={"flex flex-row mt-8 justify-center"}>
                   <div
@@ -2338,56 +2365,75 @@ function Hardware({}) {
                       </button>
                     </div>
                   </div>
-                  <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  {dataServer ? (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      {dataServer.map((data, index) => (
+                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p className={"mt-3 font-gilroybold text-base"}>
+                            {data.name_product}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  ) : (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
                 <div className={"flex flex-row mt-8 justify-center"}>
                   <div
@@ -2426,56 +2472,75 @@ function Hardware({}) {
                       </button>
                     </div>
                   </div>
-                  <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  {dataUps ? (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      {dataUps.map((data, index) => (
+                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p className={"mt-3 font-gilroybold text-base"}>
+                            {data.name_product}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                  ) : (
+                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
+                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
+                        <img
+                          src="/image/hardware/laptop.png"
+                          className={"w-[128px] h-[90px] self-center"}
+                          alt=""
+                        />
+                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
+                      </div>
                     </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                    <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                      <img
-                        src="/image/hardware/laptop.png"
-                        className={"w-[128px] h-[90px] self-center"}
-                        alt=""
-                      />
-                      <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
               <div className={"block md:hidden"}>

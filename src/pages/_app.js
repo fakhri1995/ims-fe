@@ -3,6 +3,7 @@ import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
+import ReactGA from "react-ga";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 
@@ -13,7 +14,7 @@ import "../styles/globals.scss";
 Router.events.on("routeChangeStart", () => NProgress.start());
 Router.events.on("routeChangeComplete", () => NProgress.done());
 Router.events.on("routeChangeError", () => NProgress.done());
-
+ReactGA.initialize(`${process.env.NEXT_PUBLIC_ANALYTICS}`);
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
