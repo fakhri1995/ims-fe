@@ -8,8 +8,10 @@ import LayoutFormContactUs from "../../../components/migwebsite/layout-form-cont
 import Layout from "../../../components/migwebsite/layout.js";
 import LeftContactUs from "../../../components/migwebsite/left-contact-us.js";
 import RightContactUs from "../../../components/migwebsite/right-contact-us.js";
+import useAnalyticsEventTracker from "../../../components/migwebsite/useAnalyticsEventTracker.js";
 
 function ContactUs({}) {
+  const gaEventTracker = useAnalyticsEventTracker("Contact us");
   const [form] = Form.useForm();
   const { Option } = Select;
   const handleSubmit = () => {
@@ -99,10 +101,10 @@ function ContactUs({}) {
       >
         <div className={"container mx-auto"}>
           <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-            <p className={"text-xl font-semibold"}>
+            <p className={"text-xl font-gilroysemibold"}>
               Fulfill your IT needs easily!
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
+            <p className={"py-5 text-sm font-gilroyregularegular"}>
               Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!

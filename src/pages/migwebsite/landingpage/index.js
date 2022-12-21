@@ -1,7 +1,9 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Card, Col, Row, Space } from "antd";
+import Head from "next/head";
 import Linkk from "next/link";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import Flickity from "react-flickity-component";
@@ -9,10 +11,13 @@ import { Link, animateScroll as scroll } from "react-scroll";
 import Slider from "react-slick";
 
 import Layout from "../../../components/migwebsite/layout";
+import useAnalyticsEventTracker from "../../../components/migwebsite/useAnalyticsEventTracker";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function LandingPage({}) {
+  const gaEventTracker = useAnalyticsEventTracker("Landing Page");
+  const rt = useRouter();
   const flickityOptions = {
     initialIndex: 0,
     // wrapAround: 'true',
@@ -105,9 +110,28 @@ function LandingPage({}) {
     swipeToSlide: true,
     arrows: false,
   };
+
+  const getFreeConsultation = () => {
+    gaEventTracker("get free consultation");
+    rt.push("/freeconsultation");
+  };
+
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
+      <Head>
+        <title>
+          Mitramas Infosys Global: Hardware, Software, IT Outsourcing.
+        </title>
+        <meta
+          name="description"
+          content="We offer cost-effective technology solutions, including hardware managed service, software development, and sourcing of top IT talent. Contact us!"
+        />
+        <meta
+          name="keywords"
+          content="managed service, software development, it oursourcing"
+        />
+      </Head>
       <section
         className={
           "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:mx-auto md:relative"
@@ -155,15 +179,14 @@ function LandingPage({}) {
                     />
                   </button>
                 </Link>
-                <Linkk href="/freeconsultation">
-                  <button
-                    className={
-                      "text-xl text-center w-[256px] h-[54px] text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 gilroy-medium bg-white"
-                    }
-                  >
-                    <p className={""}>Get Free Consultation</p>
-                  </button>
-                </Linkk>
+                <button
+                  onClick={getFreeConsultation}
+                  className={
+                    "text-xl text-center w-[256px] h-[54px] text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 gilroy-medium bg-white"
+                  }
+                >
+                  <p className={""}>Get Free Consultation</p>
+                </button>
               </div>
               <div className={"container py-5 pr-20 mt-[34px]"}>
                 <div
@@ -224,7 +247,7 @@ function LandingPage({}) {
           </div>
           <div className={"flex-col center"}>
             <div className={"grid justify-items-center text-center"}>
-              <Linkk href="/hardware">
+              <Linkk href="/freeconsultation">
                 <button
                   className={
                     "flex text-xl text-white border-2 bg-primarygreen rounded border-primarygreen px-3 py-2 md:px-4 md:py-3 mt-4"
