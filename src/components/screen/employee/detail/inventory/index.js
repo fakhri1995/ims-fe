@@ -86,10 +86,10 @@ const EmployeeInventoryDetail = ({
   // 2. USE EFFECT
   useEffect(() => {
     handleGetEmployeeInventory(dataEmployee?.inventories[0]?.id);
-  }, [isAllowedToGetEmployeeInventory]);
+  }, [isAllowedToGetEmployeeInventory, dataEmployee]);
 
   // 3. EVENT HANDLER
-  // 3.1. Get Employee Contract Data
+  // 3.1. Get Employee Inventory Data
   const handleGetEmployeeInventory = (inventoryId) => {
     if (!isAllowedToGetEmployeeInventory) {
       permissionWarningNotification("Mendapatkan", "Data Inventaris Employee");
@@ -177,7 +177,7 @@ const EmployeeInventoryDetail = ({
       {dataEmployee?.inventories?.length > 0 ? (
         <Collapse
           bordered={false}
-          defaultActiveKey={dataEmployee?.inventories[0]?.id}
+          defaultActiveKey={0}
           expandIconPosition={"right"}
           expandIcon={({ isActive }) => (
             <UpOutlined rotate={isActive ? 180 : 0} />
@@ -188,7 +188,7 @@ const EmployeeInventoryDetail = ({
         >
           {dataEmployee?.inventories?.map((inventory, idx) => (
             <Collapse.Panel
-              key={inventory.id}
+              key={idx}
               header={
                 <div className="flex flex-row space-x-3 items-center">
                   <p className="text-md font-bold">

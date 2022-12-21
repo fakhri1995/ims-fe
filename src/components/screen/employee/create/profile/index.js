@@ -43,16 +43,15 @@ const EmployeeProfileForm = ({
   // 1. USE STATE
   const [fileList, setFileList] = useState([]);
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
-  const [uploadedIDCardPicture, setUploadedIDCardPicture] = useState(null);
 
   // 2. USE EFFECT
-  // 2.1. Display id card filename when available in draft
+  // 2.1. Display id card filename when available
   useEffect(() => {
     if (dataEmployee?.id_card_photo?.link) {
       const currentFileName = dataEmployee?.id_card_photo?.link?.split("/")[2];
       setFileList([{ name: currentFileName }]);
     }
-  }, []);
+  }, [dataEmployee?.id_card_photo]);
 
   // 3. HANDLER
   // 3.1. Handle input change and auto save in "Tambah Karyawan"

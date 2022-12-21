@@ -82,7 +82,7 @@ const EmployeeContractDetail = ({
   // 2. USE EFFECT
   useEffect(() => {
     handleGetEmployeeContract(dataEmployee?.contracts[0]?.id);
-  }, [isAllowedToGetEmployeeContract]);
+  }, [isAllowedToGetEmployeeContract, dataEmployee]);
 
   // 3. EVENT HANDLER
   // 3.1. Get Employee Contract Data
@@ -181,7 +181,7 @@ const EmployeeContractDetail = ({
     <section>
       <Collapse
         bordered={false}
-        defaultActiveKey={dataEmployee?.contracts[0]?.id}
+        defaultActiveKey={0}
         expandIconPosition={"right"}
         expandIcon={({ isActive }) => (
           <UpOutlined rotate={isActive ? 180 : 0} />
@@ -192,7 +192,7 @@ const EmployeeContractDetail = ({
       >
         {dataEmployee?.contracts?.map((contract, idx) => (
           <Collapse.Panel
-            key={contract.id}
+            key={idx}
             header={
               <div className="flex flex-row space-x-3 items-center">
                 <p className="text-sm font-bold">

@@ -74,7 +74,6 @@ const EmployeeContractForm = ({
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [isInputVar, setInputVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -92,15 +91,10 @@ const EmployeeContractForm = ({
 
   const [fileList, setFileList] = useState([]);
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
-  const [uploadedDocument, setUploadedDocument] = useState(null);
 
   const [formattedNominal, setFormattedNominal] = useState(0);
 
   // 2. USE EFFECT
-  // useEffect(() => {
-  //   setFormattedNominal(dataContract?.benefit?.main_salary);
-  // }, [])
-
   // 2.1. Get Position List
   useEffect(() => {
     if (!isAllowedToGetRoleList) {
@@ -214,6 +208,14 @@ const EmployeeContractForm = ({
         setLoadingRoleTypeList(false);
       });
   }, [isAllowedToGetRoleTypeList]);
+
+  // 2.4. Display contract file when available
+  useEffect(() => {
+    if (dataContract?.contract_file?.link) {
+      const currentFileName = dataContract?.contract_file?.link?.split("/")[2];
+      setFileList([{ name: currentFileName }]);
+    }
+  }, [dataContract?.contract_file]);
 
   // 3. HANDLER
   // 3.1. Handle input change and auto save in "Tambah Karyawan"
@@ -393,7 +395,7 @@ const EmployeeContractForm = ({
       >
         <>
           <Select
-            value={Number(dataContract?.role_id)}
+            value={dataContract?.role_id && Number(dataContract?.role_id)}
             onChange={(value) => onChangeSelect(value, "role_id")}
             placeholder="Pilih posisi"
           >
@@ -419,7 +421,10 @@ const EmployeeContractForm = ({
       >
         <>
           <Select
-            value={Number(dataContract?.contract_status_id)}
+            value={
+              dataContract?.contract_status_id &&
+              Number(dataContract?.contract_status_id)
+            }
             onChange={(value) => onChangeSelect(value, "contract_status_id")}
             placeholder="Pilih status kontrak"
           >
@@ -448,7 +453,7 @@ const EmployeeContractForm = ({
           <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
           <Upload
             accept=".pdf"
-            listType="picture"
+            listType="text"
             maxCount={1}
             beforeUpload={beforeUploadDocument}
             onChange={onUploadChange}
@@ -541,7 +546,16 @@ const EmployeeContractForm = ({
           />
         </>
       </Form.Item>
-      <Form.Item label="Penempatan" name={"placement"}>
+      <Form.Item
+        label="Penempatan"
+        name={"placement"}
+        rules={[
+          {
+            required: true,
+            message: "Penempatan wajib diisi",
+          },
+        ]}
+      >
         <>
           <Select
             value={dataContract?.placement}
