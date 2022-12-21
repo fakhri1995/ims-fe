@@ -65,9 +65,7 @@ const InventoryForm = ({
 
   // 1. USE STATE
   const [praloading, setpraloading] = useState(true);
-
   const [loadingAdd, setLoadingAdd] = useState(false);
-  const [deviceList, setDeviceList] = useState([]);
 
   // File upload
   const [assignFileList, setAssignFileList] = useState([]);
@@ -86,12 +84,24 @@ const InventoryForm = ({
   });
 
   // 2. USE EFFECT
-  // Fill devices
+  // 2.1. Display filename of Assign and Return document when available
   useEffect(() => {
-    if (inventoryList[0]?.devices) {
-      setDeviceList(inventoryList[0]?.devices);
+    if (inventoryList[idx]?.delivery_file?.link) {
+      const currentFileName = inventoryList[idx]?.delivery_file?.link
+        ?.toString()
+        .split("/")[2];
+      setAssignFileList([{ name: currentFileName }]);
     }
-  }, [inventoryList]);
+  }, [idx, inventoryList[idx]?.delivery_file]);
+
+  useEffect(() => {
+    if (inventoryList[idx]?.return_file?.link) {
+      const currentFileName = inventoryList[idx]?.return_file?.link
+        ?.toString()
+        .split("/")[2];
+      setReturnFileList([{ name: currentFileName }]);
+    }
+  }, [idx, inventoryList[idx]?.return_file]);
 
   // 3. HANDLER
   const onChangeInput = (e) => {
@@ -116,14 +126,14 @@ const InventoryForm = ({
   };
 
   const handleAddNewDevice = () => {
-    const payload = {
-      employee_inventory_id: inventoryId,
-    };
-
     if (!isAllowedToAddEmployeeInventoryDevice) {
       permissionWarningNotification("Menambah", "Piranti Karyawan");
       return;
     }
+
+    const payload = {
+      employee_inventory_id: inventoryId,
+    };
 
     setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeDevice`, {
@@ -493,7 +503,7 @@ const InventoryForm = ({
               </em>
               <Upload
                 accept=".pdf"
-                listType="picture"
+                listType="text"
                 maxCount={1}
                 beforeUpload={beforeUploadAssignDocument}
                 onChange={onUploadAssignChange}
@@ -524,7 +534,7 @@ const InventoryForm = ({
               </em>
               <Upload
                 accept=".pdf"
-                listType="picture"
+                listType="text"
                 maxCount={1}
                 beforeUpload={beforeUploadReturnDocument}
                 onChange={onUploadReturnChange}
@@ -554,8 +564,6 @@ const InventoryForm = ({
             idxDev={idxDev}
             inventoryList={inventoryList}
             setInventoryList={setInventoryList}
-            deviceList={deviceList}
-            setDeviceList={setDeviceList}
             setDataModalDelete={setDataModalDelete}
             setModalDelete={setModalDelete}
             debouncedApiCall={debouncedApiCall}
