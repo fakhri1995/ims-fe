@@ -313,19 +313,19 @@ const EmployeeDetailIndex = ({
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div>
-        <div className="flex flex-row gap-5 w-full">
+      <div className="grid grid-cols-1 ">
+        <div className="flex flex-col md:flex-row md:gap-5 w-full">
           {/* Left Column - ID Card Photo */}
           {dataEmployee.id_card_photo ? (
             <img
               src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
               alt={dataEmployee.id_card_photo?.description}
-              className="w-1/5 bg-cover object-cover rounded-md shadow-lg"
+              className="md:w-1/5 bg-cover object-cover rounded-md shadow-lg"
             />
           ) : (
             <div
-              className="w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
-                justify-center space-y-2 p-4"
+              className="md:w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
+              justify-center space-y-2 p-4"
             >
               <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
               <h4 className="mig-heading--4 text-center">
@@ -335,13 +335,13 @@ const EmployeeDetailIndex = ({
           )}
 
           {/* Right column */}
-          <div className="flex flex-col w-4/5 gap-5">
+          <div className="md:flex md:flex-col md:w-4/5 md:gap-5">
             {/* Employee Status */}
             <div
-              className="shadow-lg rounded-md bg-white px-6 py-3 flex flex-row 
-							justify-between items-center"
+              className="shadow-lg rounded-md bg-white md:px-6 py-3 
+              flex flex-row justify-between items-center"
             >
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col space-x-0 space-y-2 justify-between ">
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
@@ -364,8 +364,10 @@ const EmployeeDetailIndex = ({
                   onClick={() => setModalDelete(true)}
                   disabled={!isAllowedToDeleteEmployee}
                 >
-                  <TrashIconSvg color={"#BF4A40"} size={16} />
-                  <p className="ml-2">Nonaktifkan Karyawan</p>
+                  <div className="flex flex-row whitespace-nowrap">
+                    <TrashIconSvg color={"#BF4A40"} size={16} />
+                    <p className="ml-2">Nonaktifkan Karyawan</p>
+                  </div>
                 </ButtonSys>
               ) : (
                 <></>
@@ -373,7 +375,7 @@ const EmployeeDetailIndex = ({
             </div>
 
             {/* Profile summary */}
-            <div className="shadow-lg rounded-md bg-white py-4 px-6 divide-y-2 h-full">
+            <div className="shadow-lg rounded-md bg-white pb-4 md:py-4 md:px-6 divide-y-2 h-full">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
@@ -412,7 +414,7 @@ const EmployeeDetailIndex = ({
         </div>
 
         {/* Employee detail */}
-        <div className="shadow-lg rounded-md bg-white p-4 mt-8">
+        <div className="shadow-lg rounded-md bg-white md:p-4 mt-8">
           <Tabs
             defaultActiveKey="1"
             tabBarGutter={60}

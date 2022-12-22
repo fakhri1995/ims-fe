@@ -333,7 +333,7 @@ const InventoryForm = ({
         <Form
           layout="vertical"
           form={instanceForm}
-          className="grid md:grid-cols-2 gap-x-8 mt-6"
+          className="md:grid md:grid-cols-2 md:gap-x-8"
         >
           <h5 className="mig-heading--5 md:col-span-2 mb-3">
             INVENTARIS {idx + 1}/PIRANTI 1
