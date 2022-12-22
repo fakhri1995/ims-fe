@@ -1070,7 +1070,7 @@ function Hardware({}) {
                   </p>
                   {/* choose product */}
                   <div className={"flex flex-row mt-4"}>
-                    <button
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfHardware("Bank Machinery")}
                     >
@@ -1121,8 +1121,8 @@ function Hardware({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfHardware("Workstation")}
                     >
@@ -1173,8 +1173,8 @@ function Hardware({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfHardware("Server")}
                     >
@@ -1225,8 +1225,8 @@ function Hardware({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfHardware("UPS")}
                     >
@@ -1277,8 +1277,8 @@ function Hardware({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfHardware("Others")}
                     >
@@ -1329,7 +1329,7 @@ function Hardware({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </a>
                   </div>
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}

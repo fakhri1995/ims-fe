@@ -22,7 +22,7 @@ function AboutUs({}) {
         <div className={""}>
           <p
             className={
-              "text-xl md:text-[32px] gilroy-semibold font-gilroysemibold text-blackmig"
+              "text-xl md:text-[32px] font-gilroysemibold text-blackmig"
             }
           >
             Operate your business, more efficient and more agile
@@ -224,8 +224,10 @@ function AboutUs({}) {
           <p className={"font-gilroysemibold pb-2 text-xl text-blackmig"}>
             Headquarter
           </p>
-          <p className={"text-base text-darkgrey"}>
-            <span className="font-gilroysemibold">Location: </span>
+          <p className={"text-base "}>
+            <span className="font-gilroysemibold text-darkgrey">
+              Location:{" "}
+            </span>
             <span className={"text-blackmig font-gilroyregular"}>
               Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
             </span>

@@ -184,7 +184,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         <div className={"py-4 md:py-6 px-4 md:px-[112px]"}>
           <p
             className={
-              "text-xl md:text-[32px] gilroy-semibold font-gilroysemibold text-blackmig text-center "
+              "text-xl md:text-[32px] font-gilroysemibold text-blackmig text-center "
             }
           >
             Our Values

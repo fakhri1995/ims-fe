@@ -73,7 +73,7 @@ function FreeConsultation({}) {
               id="formcontact"
               hidden={!feedback}
               layout={"vertical"}
-              onFinish={submitFormConsultation}
+              onFinish={() => submitFormConsultation}
               form={form}
             >
               <div className={"w-[495px]"}>
@@ -124,7 +124,9 @@ function FreeConsultation({}) {
                   name={"Contact Name"}
                   className={"gilroy-medium text-xl -mt-2"}
                   label="Contact Name"
-                  rules={[{ required: true }]}
+                  rules={[
+                    { required: true, message: "Contact name is required" },
+                  ]}
                 >
                   <Input
                     style={{
@@ -168,7 +170,7 @@ function FreeConsultation({}) {
                 </Form.Item>
               </div>
               <div className={"flex flex-row mt-4"}>
-                <button
+                <a
                   className={"bg-white"}
                   onClick={() => handleKindOfHardware("Hardware")}
                 >
@@ -217,8 +219,8 @@ function FreeConsultation({}) {
                       </p>
                     </div>
                   </div>
-                </button>
-                <button
+                </a>
+                <a
                   className={"bg-white"}
                   onClick={() => handleKindOfHardware("Software")}
                 >
@@ -267,8 +269,8 @@ function FreeConsultation({}) {
                       </p>
                     </div>
                   </div>
-                </button>
-                <button
+                </a>
+                <a
                   className={"bg-white"}
                   onClick={() => handleKindOfHardware("Talents")}
                 >
@@ -317,13 +319,14 @@ function FreeConsultation({}) {
                       </p>
                     </div>
                   </div>
-                </button>
+                </a>
               </div>
               <div className={"border border-dividermig w-[90%] mt-4 "}></div>
               <Form.Item>
                 <div className={"w-full flex justify-start mt-2"}>
                   <button
-                    type={"submit"}
+                    type="primary"
+                    htmlType="submit"
                     className={
                       "rounded w-[190px] h-[54px] text-white border-2 bg-primarygreen border-primarygreen py-3 pl-6 pr-[19px] mt-9"
                     }
