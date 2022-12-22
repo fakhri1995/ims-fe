@@ -179,7 +179,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employee_active=${isEmployeeActive}&page=${pageEmployees}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsEmployees}&is_employee_active=${isEmployeeActive}&page=${pageEmployees}`,
       {
         method: `GET`,
         headers: {
@@ -583,12 +583,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const handleSwitchActiveEmployee = () => {
     if (isEmployeeActive === 1) {
-      // fetch all emmployees
+      // fetch all employees
       setIsEmployeeActive(0);
     } else {
       // fetch active employee only
       setIsEmployeeActive(1);
     }
+    setPageEmployees(1);
   };
 
   // "Daftar Karyawan" Table's columns
@@ -736,8 +737,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
   ];
-
-  // DEBUG
 
   return (
     <Layout
@@ -989,6 +988,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               loading={loadingEmployees}
               setpraloading={setLoadingEmployees}
               pageSize={rowsEmployees}
+              setPageSize={setRowsEmployees}
               total={dataRawEmployees?.total}
               initProps={initProps}
               setpage={setPageEmployees}

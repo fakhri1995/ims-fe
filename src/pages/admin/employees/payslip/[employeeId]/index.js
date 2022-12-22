@@ -202,7 +202,7 @@ const EmployeePayslipDetailIndex = ({
     if (employeeId) {
       setpraloading(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?id=${employeeId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=1&page=${pagePayslips}`,
         {
           method: `GET`,
           headers: {
@@ -729,6 +729,7 @@ const EmployeePayslipDetailIndex = ({
             loading={praloading}
             setpraloading={setpraloading}
             pageSize={rowsPayslips}
+            setPageSize={setRowsPayslips}
             total={dataRawPayslips?.total}
             initProps={initProps}
             setpage={setPagePayslips}

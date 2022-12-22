@@ -193,7 +193,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employe_active=${isEmployeeActive}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
       {
         method: `GET`,
         headers: {
@@ -342,7 +342,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedPayslipStatusId}&is_employe_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&payslip_status_id=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
         headers: {
@@ -673,6 +673,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             loading={loadingPayslips}
             setpraloading={setLoadingPayslips}
             pageSize={rowsPayslips}
+            setPageSize={setRowsPayslips}
             total={dataRawPayslips?.total}
             initProps={initProps}
             setpage={setPagePayslips}
