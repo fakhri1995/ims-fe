@@ -509,7 +509,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
+      <div className="grid grid-cols-1 md:px-5" id="mainWrapper">
         <div className="shadow-md rounded-md bg-white p-4 mb-6">
           <h4 className="mig-heading--4 ">Status Slip Gaji (Oktober 2022)</h4>
           {/* CHART STATUS SLIP GAJI */}
@@ -531,7 +531,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex items-center justify-between mb-6">
             <h4 className="mig-heading--4 ">Slip Gaji</h4>
-            <div className="flex flex-col md:flex-row items-center space-x-6">
+            <div
+              className="flex flex-col md:flex-row space-y-2 md:space-y-0 
+              md:space-x-6 items-end md:items-center"
+            >
               <ButtonSys
                 type={"default"}
                 onClick={() => setModalSalaryVar(true)}

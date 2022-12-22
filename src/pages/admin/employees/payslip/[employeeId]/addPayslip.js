@@ -251,10 +251,13 @@ const EmployeePayslipAddIndex = ({
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="shadow-lg rounded-md bg-white py-7 px-5">
+      <div className="shadow-lg rounded-md bg-white md:py-7 md:px-5">
         <div className="flex flex-row items-center justify-between mb-7">
           <h4 className="mig-heading--4">Buat Slip Gaji</h4>
-          <div className="space-x-6">
+          <div
+            className="space-y-2 md:space-y-0 md:space-x-6 flex flex-col 
+            md:flex-row items-end "
+          >
             <ButtonSys
               color={"danger"}
               type={"default"}
@@ -298,7 +301,7 @@ const EmployeePayslipAddIndex = ({
         <Form
           layout="vertical"
           form={instanceForm}
-          className="grid grid-cols-2 gap-x-8"
+          className="md:grid md:grid-cols-2 md:gap-x-8"
         >
           <Form.Item
             label="Total Hari Kerja"

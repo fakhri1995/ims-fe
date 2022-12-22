@@ -97,7 +97,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
 
 const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
   return (
-    <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-col md:flex-row md:justify-between md:items-center md:space-x-2">
       <div className="w-2/3 h-24">
         <Bar
           data={{
