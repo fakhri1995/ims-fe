@@ -19,6 +19,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
+import { ChartVerticalBar } from "../../../components/chart/chartCustom";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerAssessmentCreate from "../../../components/drawer/resume/drawerAssessmentCreate";
 import DrawerAssessmentUpdate from "../../../components/drawer/resume/drawerAssessmentUpdate";
@@ -188,12 +189,15 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
 
     setLoadingRoleAssessment(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?rows=10`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessments?page=${pageRoleAssessment}&rows=${rowsRoleAssessment}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         setDataRawRoleAssessment(res2.data);
@@ -408,176 +412,86 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
       st={st}
       pathArr={pathArr}
     >
-      <div className="flex flex-col lg:flex-row">
-        <div className="flex flex-col px-5 lg:w-1/3">
-          <AddNewFormButton
-            title="Tambah Form"
-            disabled={!isAllowedToAddRoleAssessment}
-            onButtonClicked={onAddNewFormButtonClicked}
-          />
-          {/* CHART PENGGUNAAN TERBANYAK */}
-          {loadingAssessmentsCountData ? (
-            <>
-              <Spin />
-            </>
-          ) : (
-            <div className="flex flex-col shadow-md rounded-md bg-white p-5 my-6">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Penggunaan Terbanyak</H1>
-              </div>
-              <div className=" w-full flex justify-center">
-                <Bar
-                  data={{
-                    labels: top4AssessmentsCount.map((doc) =>
-                      doc.name.split(" ")
-                    ),
-                    datasets: [
-                      {
-                        data: top4AssessmentsCount.map(
-                          (doc) => doc.resumes_count
-                        ),
-                        backgroundColor: top4AssessmentsCount.map(
-                          (doc, idx) =>
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                        ),
-                        borderColor: top4AssessmentsCount.map(
-                          (doc, idx) =>
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                        ),
-                        barPercentage: 1.0,
-                        barThickness: 32,
-                        maxBarThickness: 32,
-                        minBarLength: 2,
-                        borderRadius: 5,
-                      },
-                    ],
-                  }}
-                  options={{
-                    title: {
-                      display: false,
-                    },
-                    legend: {
-                      display: false,
-                    },
-                    maintainAspectRatio: false,
-                    scales: {
-                      x: {
-                        grid: {
-                          display: false,
-                          drawBorder: false,
-                        },
-                        ticks: {
-                          font: {
-                            family: "Montserrat, sans-serif",
-                            size: 10,
-                          },
-                        },
-                      },
-                      y: {
-                        grid: {
-                          display: false,
-                        },
-                        ticks: {
-                          display: false,
-                        },
-                        display: false,
-                      },
-                    },
-                    plugins: {
-                      tooltip: {
-                        callbacks: {
-                          title: (context) => {
-                            return context[0].label.replaceAll(",", " ");
-                          },
-                        },
-                      },
-                    },
-                  }}
-                />
-              </div>
-
-              <div className="flex flex-col w-full">
-                {top4AssessmentsCount.map((doc, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-between items-center mb-1"
-                  >
-                    <div className="flex">
-                      <div
-                        className=" w-1 mr-2"
-                        style={{
-                          backgroundColor: `${
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                          }`,
-                        }}
-                      ></div>
-                      <Text>{doc.name}</Text>
-                    </div>
-                    <div className="flex">
-                      <H2>{doc.resumes_count}</H2>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* CARD TOTAL FORM */}
-          <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
-            <H1>Total Form</H1>
-            <p className="font-semibold text-4xl">{dataCountAssessments}</p>
-          </div>
-        </div>
-
-        {/* TABEL SEMUA ROLE ASSESSMENT */}
-        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2 space-y-6">
-          <h4 className="mig-heading--4">Semua Role Assessment</h4>
-          <div className="flex flex-row w-full mb-5 space-x-4">
-            <Input
-              value={
-                searchingFilterRoleAssessment === ""
-                  ? null
-                  : searchingFilterRoleAssessment
-              }
-              style={{ width: `100%` }}
-              placeholder="Kata Kunci.."
-              allowClear
-              onChange={(e) => {
-                if (e.target.value === "") {
-                  setSearchingFilterRoleAssessment("");
-                } else {
-                  setSearchingFilterRoleAssessment(e.target.value);
-                }
-              }}
-              onKeyPress={onKeyPressHandler}
-              disabled={!isAllowedToGetRoleAssessmentList}
+      <div className="grid grid-cols-1">
+        <div className="flex flex-col lg:flex-row">
+          <div className="flex flex-col lg:px-5 lg:w-1/3">
+            <AddNewFormButton
+              title="Tambah Form"
+              disabled={!isAllowedToAddRoleAssessment}
+              onButtonClicked={onAddNewFormButtonClicked}
             />
+            {/* CHART PENGGUNAAN TERBANYAK */}
+            {loadingAssessmentsCountData ? (
+              <>
+                <Spin />
+              </>
+            ) : (
+              <ChartVerticalBar
+                dataChart={top4AssessmentsCount}
+                objName={"name"}
+                value={"resumes_count"}
+                colorBarList={dataColorBar}
+              />
+            )}
 
-            <ButtonSys
-              type={"primary"}
-              onClick={onFilterRoleAssessment}
-              disabled={!isAllowedToGetRoleAssessmentList}
-            >
-              Cari
-            </ButtonSys>
+            {/* CARD TOTAL FORM */}
+            <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
+              <H1>Total Form</H1>
+              <p className="font-semibold text-4xl">{dataCountAssessments}</p>
+            </div>
           </div>
-          <TableCustomRoleAssessment
-            dataSource={dataTable}
-            setDataSource={setDataTable}
-            columns={columnsRoleAssessment}
-            loading={loadingRoleAssesment}
-            setpraloading={setLoadingRoleAssessment}
-            pageSize={rowsRoleAssessment}
-            total={dataRawRoleAssessment?.total}
-            initProps={initProps}
-            setpage={setPageRoleAssessment}
-            pagefromsearch={pageRoleAssessment}
-            setdataraw={setDataRawRoleAssessment}
-            setsorting={setSortingRoleAssessment}
-            sorting={sortingRoleAssessment}
-            searching={searchingFilterRoleAssessment}
-            onOpenReadDrawer={onOpenReadDrawer}
-          />
+
+          {/* TABEL SEMUA ROLE ASSESSMENT */}
+          <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 lg:mx-2 space-y-6">
+            <h4 className="mig-heading--4">Semua Role Assessment</h4>
+            <div className="flex flex-row w-full mb-5 space-x-4">
+              <Input
+                value={
+                  searchingFilterRoleAssessment === ""
+                    ? null
+                    : searchingFilterRoleAssessment
+                }
+                style={{ width: `100%` }}
+                placeholder="Kata Kunci.."
+                allowClear
+                onChange={(e) => {
+                  if (e.target.value === "") {
+                    setSearchingFilterRoleAssessment("");
+                  } else {
+                    setSearchingFilterRoleAssessment(e.target.value);
+                  }
+                }}
+                onKeyPress={onKeyPressHandler}
+                disabled={!isAllowedToGetRoleAssessmentList}
+              />
+
+              <ButtonSys
+                type={"primary"}
+                onClick={onFilterRoleAssessment}
+                disabled={!isAllowedToGetRoleAssessmentList}
+              >
+                Cari
+              </ButtonSys>
+            </div>
+            <TableCustomRoleAssessment
+              dataSource={dataTable}
+              setDataSource={setDataTable}
+              columns={columnsRoleAssessment}
+              loading={loadingRoleAssesment}
+              setpraloading={setLoadingRoleAssessment}
+              pageSize={rowsRoleAssessment}
+              setPageSize={setRowsRoleAssessment}
+              total={dataRawRoleAssessment?.total}
+              initProps={initProps}
+              setpage={setPageRoleAssessment}
+              pagefromsearch={pageRoleAssessment}
+              setdataraw={setDataRawRoleAssessment}
+              setsorting={setSortingRoleAssessment}
+              sorting={sortingRoleAssessment}
+              searching={searchingFilterRoleAssessment}
+              onOpenReadDrawer={onOpenReadDrawer}
+            />
+          </div>
         </div>
       </div>
 

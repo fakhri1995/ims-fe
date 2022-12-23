@@ -1064,6 +1064,7 @@ const TableCustomRoleAssessment = ({
   columns,
   loading,
   pageSize,
+  setPageSize,
   total,
   setpraloading,
   initProps,
@@ -1087,6 +1088,10 @@ const TableCustomRoleAssessment = ({
         current: pagefromsearch,
         pageSize: pageSize,
         total: total,
+        showSizeChanger: true,
+        onShowSizeChange: (pagefromsearch, pageSize) => {
+          setPageSize(pageSize);
+        },
         onChange: (page, pageSize) => {
           setpraloading(true);
           setpage(page);
@@ -1181,6 +1186,7 @@ const TableCustomCandidate = ({
   columns,
   loading,
   pageSize,
+  setPageSize,
   total,
   setpraloading,
   initProps,
@@ -1205,6 +1211,10 @@ const TableCustomCandidate = ({
         current: pagefromsearch,
         pageSize: pageSize,
         total: total,
+        showSizeChanger: true,
+        onShowSizeChange: (pagefromsearch, pageSize) => {
+          setPageSize(pageSize);
+        },
         onChange: (page, pageSize) => {
           setpraloading(true);
           setpage(page);
