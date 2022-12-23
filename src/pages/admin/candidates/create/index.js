@@ -6,7 +6,11 @@ import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { RESUME_ADD, RESUME_ASSESSMENT_LIST } from "lib/features";
+import {
+  ASSESSMENT_GET,
+  RESUME_ADD,
+  RESUME_ASSESSMENT_LIST,
+} from "lib/features";
 
 import ButtonSys from "../../../../components/button";
 import BasicInfoCard from "../../../../components/cards/resume/BasicInfoCard";
@@ -30,6 +34,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
 
   const isAllowedToCreateCandidate = hasPermission(RESUME_ADD);
   const isAllowedToGetAssessmentList = hasPermission(RESUME_ASSESSMENT_LIST);
+  const isAllowedToGetAssessment = hasPermission(ASSESSMENT_GET);
 
   const rt = useRouter();
 
@@ -52,6 +57,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
   const [loadingRoleList, setLoadingRoleList] = useState(false);
   const [assessmentRoles, setAssessmentRoles] = useState([]);
   const [roleName, setRoleName] = useState("");
+  const [roleCriteria, setRoleCriteria] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. Get Role List
@@ -89,6 +95,46 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
         setLoadingRoleList(false);
       });
   }, [isAllowedToGetAssessmentList]);
+
+  // 2.2. Get Role Criteria
+  useEffect(() => {
+    if (!isAllowedToGetAssessmentList) {
+      permissionWarningNotification("Mendapatkan", "Detail Role Assessment");
+      setLoadingRoleList(false);
+      return;
+    }
+
+    if (dataAddCandidate?.assessment_id) {
+      setLoadingRoleList(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssessment?id=${dataAddCandidate?.assessment_id}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setRoleCriteria(res2?.data?.details || []);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingRoleList(false));
+    }
+  }, [isAllowedToGetAssessment, dataAddCandidate?.assessment_id]);
 
   // 2.2. Get Role Name For Section Technical Assessment Result
   useEffect(() => {
@@ -170,7 +216,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
       st={st}
       pathArr={pathArr}
     >
-      <div className="flex flex-col gap-6 ">
+      <div className="grid grid-cols-1">
         <BasicInfoCard
           dataUpdateBasic={dataAddCandidate}
           setDataUpdateBasic={setDataAddCandidate}
@@ -180,7 +226,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
           isCreateForm={true}
         />
 
-        <div className="flex flex-row gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
             <div className="shadow-lg rounded-md bg-white p-5">
@@ -274,13 +320,13 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
               <div>
                 <div className="flex flex-col space-y-2 mb-3">
                   <p className="text-xs text-gray-400">Assessment Role</p>
-                  <p>{roleName}</p>
+                  <p>{roleName || "-"}</p>
                 </div>
 
-                {/* <div>
+                <div className="flex flex-col space-y-2 mb-3">
                   <p className="text-xs text-gray-400 mb-2">Criteria</p>
                   <ul>
-                    {criterias.map((assessment) => (
+                    {roleCriteria.map((assessment) => (
                       <li key={assessment.id}>
                         <div className="flex flex-row justify-between items-center mb-1">
                           <p className="w-full mr-5">{assessment.criteria}</p>
@@ -288,7 +334,7 @@ const CandidateCreate = ({ initProps, dataProfile, sidemenu }) => {
                       </li>
                     ))}
                   </ul>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>
