@@ -34,36 +34,40 @@ const dataColorBar = [
 
 const ChartDoughnut = ({ title, dataChart, objName, value }) => {
   return (
-    <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5 ">
+    <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
       <h4 className="mig-heading--4 mb-4">{title}</h4>
-      <Doughnut
-        data={{
-          labels: dataChart.map((doc) => doc[objName]),
-          datasets: [
-            {
-              data: dataChart.map((doc) => doc[value]),
-              backgroundColor: dataChart.map(
-                (doc, idx) => dataColorBar[idx + (1 % dataColorBar.length) - 1]
-              ),
-              borderColor: dataChart.map(
-                (doc, idx) => dataColorBar[idx + (1 % dataColorBar.length) - 1]
-              ),
-              borderWidth: 1,
+      <div className="w-10/12 lg:w-11/12 xl:w-8/12 flex mx-auto">
+        <Doughnut
+          data={{
+            labels: dataChart.map((doc) => doc[objName]),
+            datasets: [
+              {
+                data: dataChart.map((doc) => doc[value]),
+                backgroundColor: dataChart.map(
+                  (doc, idx) =>
+                    dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                ),
+                borderColor: dataChart.map(
+                  (doc, idx) =>
+                    dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                ),
+                borderWidth: 1,
+              },
+            ],
+          }}
+          options={{
+            title: {
+              display: false,
             },
-          ],
-        }}
-        options={{
-          title: {
-            display: false,
-          },
-          legend: {
-            display: false,
-          },
-          maintainAspectRatio: true,
-          cutout: 60,
-          spacing: 10,
-        }}
-      />
+            legend: {
+              display: false,
+            },
+            maintainAspectRatio: true,
+            cutout: 60,
+            spacing: 10,
+          }}
+        />
+      </div>
 
       <div className="flex flex-col w-full mt-5">
         {dataChart.map((doc, idx) => (

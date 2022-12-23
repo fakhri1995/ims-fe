@@ -856,18 +856,16 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <p>Karyawan Tidak Aktif</p>
                 )}
               </div>
-              <Button
+              <ButtonSys
                 type={"primary"}
-                className="btn btn-sm text-white font-semibold px-6 border 
-                      bg-primary100 hover:bg-primary75 border-primary100 
-                      hover:border-primary75 focus:bg-primary100 focus:border-primary100
-                      "
-                icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                 onClick={onAddEmployeeButtonClicked}
                 disabled={!isAllowedToAddEmployee}
               >
-                Tambah Karyawan
-              </Button>
+                <div className="flex flex-row items-center space-x-2">
+                  <UserPlusIconSvg size={16} color="#FFFFFF" />
+                  <p className="whitespace-nowrap">Tambah Karyawan</p>
+                </div>
+              </ButtonSys>
             </div>
           </div>
 
