@@ -179,7 +179,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingEmployees(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employee_active=${isEmployeeActive}&page=${pageEmployees}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsEmployees}&is_employee_active=${isEmployeeActive}&page=${pageEmployees}`,
       {
         method: `GET`,
         headers: {
@@ -583,12 +583,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const handleSwitchActiveEmployee = () => {
     if (isEmployeeActive === 1) {
-      // fetch all emmployees
+      // fetch all employees
       setIsEmployeeActive(0);
     } else {
       // fetch active employee only
       setIsEmployeeActive(1);
     }
+    setPageEmployees(1);
   };
 
   // "Daftar Karyawan" Table's columns
@@ -737,8 +738,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  // DEBUG
-
   return (
     <Layout
       tok={initProps}
@@ -748,9 +747,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
+      <div className="grid grid-cols-1 md:grid-cols-3 md:px-5" id="mainWrapper">
         <div
-          className="relative mb-5"
+          className="relative mb-5 col-span-3"
           onMouseMove={(e) => {
             let x = e.clientX;
             let y = e.clientY;
@@ -781,7 +780,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Collapsible Panel */}
           <Collapse
-            className="col-span-3 shadow-md rounded-md bg-white"
+            className="shadow-md rounded-md bg-white"
             bordered={false}
             ghost={true}
             expandIconPosition="left"
@@ -799,7 +798,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <Collapse.Panel
               header={<div className="mig-heading--4">Statistik</div>}
             >
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {/* CHART PENEMPATAN KARYAWAN */}
                 {loadingChart ? (
                   <Spin />
@@ -839,10 +838,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
 
         {/* Table Karyawan */}
-        <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
+        <div className="md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex items-center justify-between mb-6">
             <h4 className="mig-heading--4 ">Daftar Karyawan</h4>
-            <div className="flex flex-row items-center space-x-6">
+            <div
+              className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 
+              items-end md:items-center"
+            >
               <div className="flex flex-row items-center space-x-2 text-primary100">
                 <Switch
                   checked={isEmployeeActive}
@@ -854,17 +856,16 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <p>Karyawan Tidak Aktif</p>
                 )}
               </div>
-              <Button
+              <ButtonSys
                 type={"primary"}
-                className="btn btn-sm text-white font-semibold px-6 border 
-                    bg-primary100 hover:bg-primary75 border-primary100 
-                    hover:border-primary75 focus:bg-primary100 focus:border-primary100"
-                icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                 onClick={onAddEmployeeButtonClicked}
                 disabled={!isAllowedToAddEmployee}
               >
-                Tambah Karyawan
-              </Button>
+                <div className="flex flex-row items-center space-x-2">
+                  <UserPlusIconSvg size={16} color="#FFFFFF" />
+                  <p className="whitespace-nowrap">Tambah Karyawan</p>
+                </div>
+              </ButtonSys>
             </div>
           </div>
 
@@ -989,6 +990,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               loading={loadingEmployees}
               setpraloading={setLoadingEmployees}
               pageSize={rowsEmployees}
+              setPageSize={setRowsEmployees}
               total={dataRawEmployees?.total}
               initProps={initProps}
               setpage={setPageEmployees}

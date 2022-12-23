@@ -49,7 +49,7 @@ const DeviceForm = ({
     <Form
       layout="vertical"
       form={instanceForm}
-      className="grid grid-cols-2 gap-x-8"
+      className="md:grid md:grid-cols-2 md:gap-x-8"
     >
       <div className="flex flex-row items-center space-x-1 col-span-2 mb-3">
         <h5 className="mig-heading--5 ">

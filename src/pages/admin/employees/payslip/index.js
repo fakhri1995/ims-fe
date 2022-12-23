@@ -34,10 +34,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import SettingsIcon from "assets/vectors/icon-settings.svg";
-
 import ButtonSys from "../../../../components/button";
-import ButtonSysColor from "../../../../components/buttonColor";
 import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
   CheckIconSvg,
@@ -54,10 +51,7 @@ import {
   ModalAddSalaryVar,
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
-import {
-  TableCustomEmployeeList,
-  TableCustomPayslipList,
-} from "../../../../components/table/tableCustom";
+import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
 import { H2 } from "../../../../components/typography";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import {
@@ -108,8 +102,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
-  pathTitleArr.splice(1, 1);
-  pathTitleArr.splice(1, 1, "Slip Gaji");
+  pathTitleArr.splice(1, 2);
+  pathTitleArr.splice(1, 2, "Daftar Karyawan", "Slip Gaji");
 
   // 2. Use state
   // 2.1. Charts
@@ -199,7 +193,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=10&is_employe_active=${isEmployeeActive}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
       {
         method: `GET`,
         headers: {
@@ -348,7 +342,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&contract_status_id=${selectedPayslipStatusId}&is_employe_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&payslip_status_id=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
         headers: {
@@ -469,7 +463,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onClick={(event) => {
                       event.stopPropagation();
                       // rt.push(
-                      //   `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
+                      //   `/admin/employees/payslip/${record.id}/addPayslip?id=${record?.payslips[0].id}`
                       // );
                     }}
                   >
@@ -487,9 +481,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(
-                      //   `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
-                      // );
+                      //download pdf
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -517,7 +509,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col" id="mainWrapper">
+      <div className="grid grid-cols-1 md:px-5" id="mainWrapper">
         <div className="shadow-md rounded-md bg-white p-4 mb-6">
           <h4 className="mig-heading--4 ">Status Slip Gaji (Oktober 2022)</h4>
           {/* CHART STATUS SLIP GAJI */}
@@ -539,7 +531,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6">
           <div className="flex items-center justify-between mb-6">
             <h4 className="mig-heading--4 ">Slip Gaji</h4>
-            <div className="flex flex-col md:flex-row items-center space-x-6">
+            <div
+              className="flex flex-col md:flex-row space-y-2 md:space-y-0 
+              md:space-x-6 items-end md:items-center"
+            >
               <ButtonSys
                 type={"default"}
                 onClick={() => setModalSalaryVar(true)}
@@ -681,6 +676,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             loading={loadingPayslips}
             setpraloading={setLoadingPayslips}
             pageSize={rowsPayslips}
+            setPageSize={setRowsPayslips}
             total={dataRawPayslips?.total}
             initProps={initProps}
             setpage={setPagePayslips}

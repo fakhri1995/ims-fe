@@ -323,8 +323,7 @@ const EmployeeContractForm = ({
     <Form
       layout="vertical"
       form={instanceForm}
-      className="grid grid-cols-2 gap-x-8"
-      // onFinish={handleSaveContract}
+      className="md:grid md:grid-cols-2 md:gap-x-8"
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
       <Form.Item
@@ -680,7 +679,7 @@ const EmployeeContractForm = ({
         </Form.Item>
       </div>
 
-      <div className="flex flex-col space-y-3">
+      <div className="flex flex-col space-y-3 mt-5 md:mt-0">
         <p className="mig-heading--5">BENEFIT PENGURANGAN</p>
         <Form.Item
           label="BPJS KS (5% Perusahaan)"

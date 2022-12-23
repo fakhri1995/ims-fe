@@ -2070,6 +2070,7 @@ const TableCustomEmployeeList = ({
   columns,
   loading,
   pageSize,
+  setPageSize,
   total,
   setpraloading,
   initProps,
@@ -2097,6 +2098,10 @@ const TableCustomEmployeeList = ({
         current: pagefromsearch,
         pageSize: pageSize,
         total: total,
+        showSizeChanger: true,
+        onShowSizeChange: (pagefromsearch, pageSize) => {
+          setPageSize(pageSize);
+        },
         onChange: (page, pageSize) => {
           setpraloading(true);
           setpage(page);
@@ -2203,6 +2208,7 @@ const TableCustomPayslipList = ({
   columns,
   loading,
   pageSize,
+  setPageSize,
   total,
   setpraloading,
   initProps,
@@ -2229,11 +2235,15 @@ const TableCustomPayslipList = ({
         current: pagefromsearch,
         pageSize: pageSize,
         total: total,
+        showSizeChanger: true,
+        onShowSizeChange: (pagefromsearch, pageSize) => {
+          setPageSize(pageSize);
+        },
         onChange: (page, pageSize) => {
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?is_employee_active=1&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2335,6 +2345,7 @@ const TableCustomPayslipEmployeeList = ({
   columns,
   loading,
   pageSize,
+  setPageSize,
   total,
   setpraloading,
   initProps,
@@ -2359,11 +2370,15 @@ const TableCustomPayslipEmployeeList = ({
         current: pagefromsearch,
         pageSize: pageSize,
         total: total,
+        showSizeChanger: true,
+        onShowSizeChange: (pagefromsearch, pageSize) => {
+          setPageSize(pageSize);
+        },
         onChange: (page, pageSize) => {
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?is_employee_active=1&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {

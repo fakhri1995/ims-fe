@@ -8,6 +8,8 @@ import {
   Tooltip,
   notification,
 } from "antd";
+import moment from "moment";
+import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -23,6 +25,7 @@ import {
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_GET,
+  EMPLOYEE_PAYSLIP_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../../../components/button";
@@ -37,6 +40,7 @@ import {
   OneUserIconSvg,
   SearchIconSvg,
   TrashIconSvg,
+  UploadIconSvg,
 } from "../../../../../components/icon";
 import { FilePlusIconSvg } from "../../../../../components/icon";
 import LayoutDashboard from "../../../../../components/layout-dashboard";
@@ -52,11 +56,14 @@ import {
 import { createKeyPressHandler } from "../../../../../lib/helper";
 import httpcookie from "cookie";
 
+moment.locale("id");
+
 const EmployeePayslipDetailIndex = ({
   initProps,
   dataProfile,
   sidemenu,
   employeeId,
+  employeeName,
 }) => {
   /**
    * Dependencies
@@ -70,6 +77,7 @@ const EmployeePayslipDetailIndex = ({
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
+  const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
 
@@ -81,7 +89,7 @@ const EmployeePayslipDetailIndex = ({
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Slip Gaji", "Karyawan");
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", "Slip Gaji", employeeName);
 
   // 1. STATE
   // 1.1. display
@@ -92,24 +100,8 @@ const EmployeePayslipDetailIndex = ({
     id: 0,
     name: "",
     nip: "",
-    nik: "",
-    alias: "",
     phone_number: "",
     email_office: "",
-    email_personal: "",
-    domicile: "",
-    birth_place: "",
-    birth_date: "",
-    gender: "",
-    blood_type: "",
-    marital_status: "",
-    child_total: "",
-    bio_mother_name: "",
-    npwp: "",
-    bpjs_kesehatan: "",
-    bpjs_ketenagakerjaan: "",
-    acc_number_bukopin: "",
-    acc_number_another: "",
     is_posted: 0,
     contracts: [],
     inventories: [],
@@ -158,7 +150,7 @@ const EmployeePayslipDetailIndex = ({
   // 1.4 View payslip detail
   const [drawerDetail, setDrawerDetail] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  const [dataPayslip, setDataPayslip] = useState(false);
+  const [dataPayslip, setDataPayslip] = useState({ status: "kosong" });
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
@@ -210,7 +202,7 @@ const EmployeePayslipDetailIndex = ({
     if (employeeId) {
       setpraloading(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?id=${employeeId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=1&page=${pagePayslips}`,
         {
           method: `GET`,
           headers: {
@@ -435,7 +427,14 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.status == "draft" ? (
+              {record.status === "kosong" ? (
+                <p
+                  className="bg-mono30 bg-opacity-10 text-mono30 
+                  py-1 px-7 rounded-md text-center"
+                >
+                  Kosong
+                </p>
+              ) : record.status === "draft" ? (
                 <p
                   className="bg-state2 bg-opacity-10 text-state2 
                   py-1 px-7 rounded-md text-center"
@@ -462,16 +461,30 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.status == "draft" ? (
+              {record.status == "kosong" ? (
                 <div className="flex flex-col space-y-2">
                   <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
+                    type={isAllowedToAddPayslip ? "default" : "primary"}
+                    disabled={!isAllowedToAddPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(
-                      //   `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
-                      // );
+                      // handleAddEmployeePayslip();
+                    }}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <FilePlusIconSvg size={16} color={`#35763B`} />
+                      <p className="whitespace-nowrap">Buat Slip Gaji</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              ) : record.status == "draft" ? (
+                <div className="flex flex-col space-y-2">
+                  <ButtonSys
+                    type={isAllowedToUpdatePayslip ? "default" : "primary"}
+                    disabled={!isAllowedToUpdatePayslip}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      // rt.push(`${employeeId}/addPayslip?id=${payslipId}`)
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -497,9 +510,7 @@ const EmployeePayslipDetailIndex = ({
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(
-                      //   `/admin/employees/${record.id}/editContract?id=${record?.contracts[0]?.id}`
-                      // );
+                      // download pdf payslip
                     }}
                   >
                     <DownloadIconSvg size={16} color={`#35763B`} />
@@ -522,99 +533,130 @@ const EmployeePayslipDetailIndex = ({
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div>
-        <div className="flex flex-row gap-5 w-full">
+      <div className="grid grid-cols-1" id="mainWrapper">
+        <div className="flex flex-col md:flex-row md:gap-5 w-full">
           {/* Left Column - ID Card Photo */}
           {dataEmployee.id_card_photo ? (
             <img
               src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
               alt={dataEmployee.id_card_photo?.description}
-              className="w-1/5 bg-cover object-cover rounded-md shadow-lg"
+              className="md:w-1/5 bg-cover object-cover rounded-md shadow-lg"
             />
           ) : (
             <div
-              className="w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
-                justify-center space-y-2 p-4"
+              className="md:w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
+                  justify-center space-y-2 p-4"
             >
               <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
               <h4 className="mig-heading--4 text-center">
-                {dataEmployee?.name}
+                {dataEmployee?.name || "-"}
               </h4>
             </div>
           )}
 
           {/* Right column */}
-          <div className="flex flex-col w-4/5 gap-5">
+          <div className="md:flex md:flex-col md:w-4/5 md:gap-5">
             {/* Payslip Status */}
             <div
-              className="shadow-lg rounded-md bg-white px-6 py-3 flex flex-row 
-							justify-between items-center"
+              className="shadow-lg rounded-md bg-white md:px-6 py-3 
+              flex flex-row justify-between items-center"
             >
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col space-y-2 justify-between">
                 <p className="mig-caption--medium text-mono80">
-                  Status Slip Gaji (Oktober 2022)
+                  Status Slip Gaji (
+                  {moment(dataPayslip.month).isValid()
+                    ? moment(dataPayslip.month).format("MMMM YYYY")
+                    : "-"}
+                  )
                 </p>
-                {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
+                {dataPayslip?.status === "kosong" ? (
                   <div className="flex flex-row space-x-2 items-center">
-                    <div className="rounded-full w-4 h-4 bg-primary100"></div>
-                    <h4 className="mig-heading--4">Aktif</h4>
+                    <div className="rounded-full w-4 h-4 bg-mono80"></div>
+                    <h4 className="mig-heading--4">Kosong</h4>
+                  </div>
+                ) : dataPayslip?.status === "draft" ? (
+                  <div className="flex flex-row space-x-2 items-center">
+                    <div className="rounded-full w-4 h-4 bg-notice"></div>
+                    <h4 className="mig-heading--4">Draft</h4>
                   </div>
                 ) : (
                   <div className="flex flex-row space-x-2 items-center">
-                    <div className="rounded-full w-4 h-4 bg-warning"></div>
-                    <h4 className="mig-heading--4">Tidak Aktif</h4>
+                    <div className="rounded-full w-4 h-4 bg-primary100"></div>
+                    <h4 className="mig-heading--4">Diterbitkan</h4>
                   </div>
                 )}
               </div>
-              <ButtonSys
-                type={!isAllowedToAddPayslip ? "primary" : "default"}
-                // onClick={() => rt.push(`${employeeId}/addPayslip?id=${payslipId}`)}
-                onClick={() => rt.push(`${employeeId}/addPayslip?id=1`)}
-                disabled={!isAllowedToAddPayslip}
-              >
-                <FilePlusIconSvg color={"#35763B"} size={16} />
-                <p className="ml-2">Buat Slip Gaji</p>
-              </ButtonSys>
+              {dataPayslip?.status === "kosong" ? (
+                <ButtonSys
+                  type={!isAllowedToAddPayslip ? "primary" : "default"}
+                  // onClick={handleAddEmployeePayslip}
+                  disabled={!isAllowedToAddPayslip}
+                >
+                  <FilePlusIconSvg color={"#35763B"} size={16} />
+                  <p className="ml-2">Buat Slip Gaji</p>
+                </ButtonSys>
+              ) : dataPayslip?.status === "draft" ? (
+                <ButtonSys
+                  type={!isAllowedToUpdatePayslip ? "primary" : "default"}
+                  // onClick={() => rt.push(`${employeeId}/addPayslip?id=${payslipId}`)}
+                  onClick={() => rt.push(`${employeeId}/addPayslip?id=1`)}
+                  disabled={!isAllowedToUpdatePayslip}
+                >
+                  <EditIconSvg color={"#35763B"} size={16} />
+                  <p className="ml-2">Edit Draft</p>
+                </ButtonSys>
+              ) : (
+                <ButtonSys
+                  type={!isAllowedToGetPayslip ? "primary" : "default"}
+                  // onClick={() => download pdf payslip}
+                  disabled={!isAllowedToGetPayslip}
+                >
+                  <DownloadIconSvg color={"#35763B"} size={16} />
+                  <p className="ml-2">Unduh Slip Gaji</p>
+                </ButtonSys>
+              )}
             </div>
 
             {/* Profile summary */}
-            <div className="shadow-lg rounded-md bg-white py-4 px-6 divide-y-2 h-full">
+            <div className="shadow-lg rounded-md bg-white pb-4 md:py-4 md:px-6 divide-y-2 h-full">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p>{dataEmployee?.name}</p>
+                  <p>{dataEmployee?.name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">NIP</p>
-                  <p>{dataEmployee?.nip}</p>
+                  <p>{dataEmployee?.nip || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.role_name}</p>
+                  <p>{dataEmployee?.role_name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
-                  <p>{dataEmployee?.contracts[0]?.contract_status_name}</p>
+                  <p>
+                    {dataEmployee?.contracts[0]?.contract_status_name || "-"}
+                  </p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">E-mail</p>
-                  <p>{dataEmployee?.email_office}</p>
+                  <p>{dataEmployee?.email_office || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Telepon
                   </p>
-                  <p>{dataEmployee?.phone_number}</p>
+                  <p>{dataEmployee?.phone_number || "-"}</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
         {/* Table Daftar Slip Gaji */}
-        <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-4 mb-6 mt-8">
+        <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white md:p-4 mb-6 mt-8">
           <h4 className="mig-heading--4 mb-6">Daftar Slip Gaji</h4>
 
           {/* Start: Search criteria */}
@@ -687,6 +729,7 @@ const EmployeePayslipDetailIndex = ({
             loading={praloading}
             setpraloading={setpraloading}
             pageSize={rowsPayslips}
+            setPageSize={setRowsPayslips}
             total={dataRawPayslips?.total}
             initProps={initProps}
             setpage={setPagePayslips}
@@ -746,12 +789,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-salary",
       employeeId,
+      employeeName,
     },
   };
 }

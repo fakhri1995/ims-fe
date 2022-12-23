@@ -34,11 +34,9 @@ const dataColorBar = [
 
 const ChartDoughnut = ({ title, dataChart, objName, value }) => {
   return (
-    <div className="flex flex-col shadow-md rounded-md bg-white p-5 ">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="mig-heading--4">{title}</h4>
-      </div>
-      <div className=" w-full flex justify-center">
+    <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
+      <h4 className="mig-heading--4 mb-4">{title}</h4>
+      <div className="w-10/12 lg:w-11/12 xl:w-8/12 flex mx-auto">
         <Doughnut
           data={{
             labels: dataChart.map((doc) => doc[objName]),
@@ -64,9 +62,9 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
             legend: {
               display: false,
             },
-            maintainAspectRatio: false,
-            cutout: 55,
-            spacing: 5,
+            maintainAspectRatio: true,
+            cutout: 60,
+            spacing: 10,
           }}
         />
       </div>
@@ -97,7 +95,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
 
 const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
   return (
-    <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-col md:flex-row md:justify-between md:items-center md:space-x-2">
       <div className="w-2/3 h-24">
         <Bar
           data={{

@@ -47,6 +47,8 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
   //INIT
   const rt = useRouter();
+  const { tab: tabId } = rt.query;
+
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr[pathArr.length - 1] = "Karyawan";
 
@@ -55,7 +57,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("1");
+  const [currentTab, setCurrentTab] = useState(tabId || "2");
   const [dataEmployee, setDataEmployee] = useState({
     id: 0,
     name: "",
@@ -202,31 +204,33 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p>{dataEmployee?.name}</p>
+                  <p>{dataEmployee?.name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">NIP</p>
-                  <p>{dataEmployee?.nip}</p>
+                  <p>{dataEmployee?.nip || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.role_name}</p>
+                  <p>{dataEmployee?.role_name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
-                  <p>{dataEmployee?.contracts[0]?.contract_status_name}</p>
+                  <p>
+                    {dataEmployee?.contracts[0]?.contract_status_name || "-"}
+                  </p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">E-mail</p>
-                  <p>{dataEmployee?.email_office}</p>
+                  <p>{dataEmployee?.email_office || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Nomor Telepon
                   </p>
-                  <p>{dataEmployee?.phone_number}</p>
+                  <p>{dataEmployee?.phone_number || "-"}</p>
                 </div>
               </div>
             </div>
@@ -240,7 +244,12 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             tabBarGutter={60}
             className="px-1"
             activeKey={currentTab}
-            onTabClick={(key) => setCurrentTab(key)}
+            onTabClick={(key) => {
+              setCurrentTab(key);
+              rt.push(`employeeProfile?tab=${key}`, undefined, {
+                shallow: true,
+              });
+            }}
           >
             <Tabs.TabPane tab="Detail Profil" key="1">
               <EmployeeProfileDetail />
