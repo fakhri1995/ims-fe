@@ -1307,6 +1307,7 @@ const TableCustomRecruitmentCandidate = ({
   columns,
   loading,
   pageSize,
+  setPageSize,
   total,
   setpraloading,
   initProps,
@@ -1351,6 +1352,10 @@ const TableCustomRecruitmentCandidate = ({
         current: pagefromsearch,
         pageSize: pageSize,
         total: total,
+        showSizeChanger: true,
+        onShowSizeChange: (pagefromsearch, pageSize) => {
+          setPageSize(pageSize);
+        },
         onChange: (page, pageSize) => {
           setpraloading(true);
           setpage(page);
