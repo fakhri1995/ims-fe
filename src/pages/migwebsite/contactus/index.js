@@ -64,7 +64,7 @@ function ContactUs({}) {
         }
       >
         <div className={"container md:flex "}>
-          <LeftContactUs />
+          <LeftContactUs analytics={gaEventTracker} />
           <RightContactUs
             feedback={feedback}
             heightt={heightt}

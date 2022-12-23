@@ -6,10 +6,10 @@ import React from "react";
 function LeftContactUs({ children }) {
   return (
     <div className={"w-full md:w-2/5"}>
-      <p className={"text-2xl font-semibold text-blackmig gilroy-semibold"}>
+      <p className={"text-2xl font-gilroysemibold text-blackmig"}>
         We’d love to hear from you
       </p>
-      <p className={"text-sm gilroy-regular mt-3 w-[400px]"}>
+      <p className={"text-sm font-gilroyregular mt-3 w-[400px]"}>
         Have questions about our products, features, or company? Our teams will
         help you.
       </p>
@@ -26,21 +26,23 @@ function LeftContactUs({ children }) {
         ></iframe>
       </div>
       <div className={"flex flex-row mt-6"}>
-        <p className={"font-semibold text-base text-blackmig"}>
+        <p className={"font-gilroysemibold text-base text-blackmig"}>
           Location:&nbsp;
         </p>
-        <p classNamme={"text-base text-blackmig gilroy-regular"}>
+        <p classNamme={"text-base text-blackmig font-gilroyregular"}>
           Tebet raya no. 72 South Jakarta, DKI Jakarta,12820
         </p>
       </div>
       <div className={"flex flex-row mt-3"}>
-        <p className={"font-semibold text-base text-blackmig"}>
+        <p className={"font-gilroysemibold text-base text-blackmig"}>
           Contact:&nbsp;
         </p>
         <p className={"text-accentblue text-base underline"}>+62-21-831-4522</p>
       </div>
       <div className={"flex flex-row mt-3"}>
-        <p className={"font-semibold text-base text-blackmig"}>Email:&nbsp;</p>
+        <p className={"font-gilroysemibold text-base text-blackmig"}>
+          Email:&nbsp;
+        </p>
         <a
           href="mailto:help@mitrasolusi.group"
           className={"text-accentblue text-base underline"}
@@ -50,7 +52,7 @@ function LeftContactUs({ children }) {
       </div>
 
       <div className={"mt-[54px]"}>
-        <p className={"text-sm text-blackmig font-semibold gilroy-semibold"}>
+        <p className={"text-sm text-blackmig font-gilroysemibold"}>
           Or reach us through:
         </p>
         <div className={"flex flex-row mt-2"}>

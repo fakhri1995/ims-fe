@@ -32,6 +32,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     const handleRouteChange = (url) => {
+      console.log("url ", url);
       gtag.pageview(url);
     };
     rt.events.on("routeChangeComplete", handleRouteChange);
@@ -46,7 +47,6 @@ function MyApp({ Component, pageProps }) {
         strategy="afterInteractive"
         src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXX"
       />
-          
       <Script
         id="google-analytics"
         strategy="afterInteractive"
