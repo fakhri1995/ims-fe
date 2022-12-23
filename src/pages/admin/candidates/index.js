@@ -20,6 +20,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
+import { ChartDoughnut } from "../../../components/chart/chartCustom";
 import {
   ClipboardIconSvg,
   DownloadIconSvg,
@@ -83,13 +84,6 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [loadingResumeCountData, setLoadingResumeCountData] = useState(true);
   const [dataCountResumes, setDataCountResumes] = useState(0);
   const [topCandidateCount, setTopCandidateCount] = useState([]);
-  const [dataColorBar, setDataColorBar] = useState([
-    "#2F80ED",
-    "#E5C471",
-    "#BF4A40",
-    "#6AAA70",
-    "#808080",
-  ]);
 
   // 2.2. Table Semua Kandidat
   const [dataTable, setDataTable] = useState([]);
@@ -211,12 +205,15 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
 
     setLoadingResumeList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?rows=10`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -424,154 +421,102 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
       st={st}
       pathArr={pathArr}
     >
-      <div className="flex flex-col lg:flex-row">
-        <div className="flex flex-col lg:px-5 lg:w-1/3">
-          <AddNewFormButton
-            title="Tambah Kandidat"
-            disabled={!isAllowedToAddResume}
-            onButtonClicked={onAddNewCandidateButtonClicked}
-          />
-          {/* CHART ROLE KANDIDAT */}
-          {loadingResumeCountData ? (
-            <>
-              <Spin />
-            </>
-          ) : (
-            <div className="flex flex-col shadow-md rounded-md bg-white p-5 my-6">
-              <div className="flex items-center justify-between mb-4">
-                <H1>Role Kandidat</H1>
-              </div>
-              <div className=" w-full flex justify-center">
-                <Doughnut
-                  data={{
-                    labels: topCandidateCount.map((doc) => doc.name),
-                    datasets: [
-                      {
-                        data: topCandidateCount.map((doc) => doc.resumes_count),
-                        backgroundColor: topCandidateCount.map(
-                          (doc, idx) =>
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                        ),
-                        borderColor: topCandidateCount.map(
-                          (doc, idx) =>
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                        ),
-                        borderWidth: 1,
-                      },
-                    ],
-                  }}
-                  options={{
-                    title: {
-                      display: false,
-                    },
-                    legend: {
-                      display: false,
-                    },
-                    maintainAspectRatio: false,
-                    cutout: 55,
-                    spacing: 5,
-                  }}
-                />
-              </div>
-
-              <div className="flex flex-col w-full mt-5">
-                {topCandidateCount.map((doc, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-between items-center mb-1"
-                  >
-                    <div className="flex">
-                      <div
-                        className=" w-1 mr-2"
-                        style={{
-                          backgroundColor: `${
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                          }`,
-                        }}
-                      ></div>
-                      <Text>{doc.name}</Text>
-                    </div>
-                    <div className="flex">
-                      <H2>{doc.resumes_count}</H2>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* CARD TOTAL KANDIDAT */}
-          <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 mb-6">
-            <H1>Total Kandidat</H1>
-            <p className="font-semibold text-4xl">{dataCountResumes}</p>
-          </div>
-        </div>
-
-        {/* TABEL SEMUA KANDIDAT */}
-        <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 ">
-          <h4 className="mig-heading--4">Semua Kandidat</h4>
-          <div className="mt-5 flex flex-col">
-            <div className="flex flex-row w-full mb-5 space-x-4">
-              <Input
-                value={
-                  searchingFilterResume === "" ? null : searchingFilterResume
-                }
-                style={{ width: `100%` }}
-                placeholder="Kata Kunci.."
-                allowClear
-                onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterResume("");
-                  } else {
-                    setSearchingFilterResume(e.target.value);
-                  }
-                }}
-                onKeyPress={onKeyPressHandler}
-                disabled={!isAllowedToGetResumeList}
-              />
-
-              <Select
-                disabled={!isAllowedToGetAssessmentList}
-                placeholder="Semua Role"
-                defaultValue={0}
-                style={{ width: `50%` }}
-                onChange={(value) => {
-                  setAssessmentIds(value);
-                }}
-              >
-                <Select.Option value={0}>Semua Role</Select.Option>
-                {roleFilterResume.map((doc) => (
-                  <Select.Option key={doc.id} value={doc.id}>
-                    {doc.name}
-                  </Select.Option>
-                ))}
-              </Select>
-
-              <ButtonSys
-                type={"primary"}
-                onClick={onFilterResume}
-                disabled={!isAllowedToGetResumeList}
-              >
-                Cari
-              </ButtonSys>
-            </div>
-            <TableCustomCandidate
-              dataSource={dataTable}
-              setDataSource={setDataTable}
-              columns={columnsResume}
-              loading={loadingResumeList}
-              setpraloading={setLoadingResumeList}
-              pageSize={rowsResume}
-              total={dataRawResume?.total}
-              initProps={initProps}
-              setpage={setPageResume}
-              pagefromsearch={pageResume}
-              setdataraw={setDataRawResume}
-              setsorting={setSortingResume}
-              sorting={sortingResume}
-              searching={searchingFilterResume}
-              assessmentIds={assessmentIds}
+      <div className="grid grid-cols-1">
+        <div className="flex flex-col lg:flex-row">
+          <div className="flex flex-col space-y-6 lg:px-5 lg:w-1/3">
+            <AddNewFormButton
+              title="Tambah Kandidat"
+              disabled={!isAllowedToAddResume}
+              onButtonClicked={onAddNewCandidateButtonClicked}
             />
+            {/* CHART ROLE KANDIDAT */}
+            {loadingResumeCountData ? (
+              <>
+                <Spin />
+              </>
+            ) : (
+              <ChartDoughnut
+                title={"Role Kandidat"}
+                dataChart={topCandidateCount}
+                objName="name"
+                value={"resumes_count"}
+              />
+            )}
+
+            {/* CARD TOTAL KANDIDAT */}
+            <div className="flex flex-row justify-between items-center shadow-md rounded-md bg-white p-5 ">
+              <H1>Total Kandidat</H1>
+              <p className="font-semibold text-4xl">{dataCountResumes}</p>
+            </div>
+          </div>
+
+          {/* TABEL SEMUA KANDIDAT */}
+          <div className="lg:w-2/3 flex flex-col shadow-md rounded-md bg-white p-5 mt-6 md:mt-0">
+            <h4 className="mig-heading--4">Semua Kandidat</h4>
+            <div className="mt-5 flex flex-col">
+              <div className="flex flex-row w-full mb-5 space-x-4">
+                <Input
+                  value={
+                    searchingFilterResume === "" ? null : searchingFilterResume
+                  }
+                  style={{ width: `100%` }}
+                  placeholder="Kata Kunci.."
+                  allowClear
+                  onChange={(e) => {
+                    if (e.target.value === "") {
+                      setSearchingFilterResume("");
+                    } else {
+                      setSearchingFilterResume(e.target.value);
+                    }
+                  }}
+                  onKeyPress={onKeyPressHandler}
+                  disabled={!isAllowedToGetResumeList}
+                />
+
+                <Select
+                  disabled={!isAllowedToGetAssessmentList}
+                  placeholder="Semua Role"
+                  defaultValue={0}
+                  style={{ width: `50%` }}
+                  onChange={(value) => {
+                    setAssessmentIds(value);
+                  }}
+                >
+                  <Select.Option value={0}>Semua Role</Select.Option>
+                  {roleFilterResume.map((doc) => (
+                    <Select.Option key={doc.id} value={doc.id}>
+                      {doc.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+
+                <ButtonSys
+                  type={"primary"}
+                  onClick={onFilterResume}
+                  disabled={!isAllowedToGetResumeList}
+                >
+                  Cari
+                </ButtonSys>
+              </div>
+              <TableCustomCandidate
+                dataSource={dataTable}
+                setDataSource={setDataTable}
+                columns={columnsResume}
+                loading={loadingResumeList}
+                setpraloading={setLoadingResumeList}
+                pageSize={rowsResume}
+                setPageSize={setRowsResume}
+                total={dataRawResume?.total}
+                initProps={initProps}
+                setpage={setPageResume}
+                pagefromsearch={pageResume}
+                setdataraw={setDataRawResume}
+                setsorting={setSortingResume}
+                sorting={sortingResume}
+                searching={searchingFilterResume}
+                assessmentIds={assessmentIds}
+              />
+            </div>
           </div>
         </div>
       </div>
