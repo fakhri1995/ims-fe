@@ -164,6 +164,7 @@ const EmployeeInventoryForm = ({
             setIsOwn(e.target.checked);
             isOwn ? setInventoryList([]) : handleAddNewInventory();
           }}
+          className="mb-6"
         >
           Memiliki inventaris & piranti
         </Checkbox>

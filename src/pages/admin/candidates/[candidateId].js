@@ -485,7 +485,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1">
         {/* SECTION BASIC INFO */}
         <BasicInfoCard
           dataDisplay={dataDisplay}
@@ -502,7 +502,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           loadingUpdate={loadingUpdate}
         />
 
-        <div className="flex flex-row gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
             <AcademicCard

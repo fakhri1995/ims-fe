@@ -79,7 +79,10 @@ const BasicInfoCard = ({
     <div className=" shadow-lg rounded-md bg-white p-5">
       <div className="flex flex-row items-center justify-between mb-4 ">
         <h3 className="mig-heading--3">Basic Information</h3>
-        <div className="flex flex-row space-x-6">
+        <div
+          className="flex flex-col md:flex-row space-y-2 md:space-y-0 
+          md:space-x-6 items-end md:items-center"
+        >
           <ButtonSys
             type={"default"}
             color={"danger"}
@@ -112,8 +115,14 @@ const BasicInfoCard = ({
             }}
             disabled={loadingUpdate}
           >
-            <CheckIconSvg size={16} color={`white`} />
-            {isCreateForm ? <p>Tambah Kandidat</p> : <p>Simpan Kandidat</p>}
+            <div className="flex flex-row space-x-2 items-center">
+              <CheckIconSvg size={16} color={`white`} />
+              {isCreateForm ? (
+                <p className="whitespace-nowrap">Tambah Kandidat</p>
+              ) : (
+                <p className="whitespace-nowrap">Simpan Kandidat</p>
+              )}
+            </div>
           </ButtonSys>
         </div>
       </div>
@@ -130,7 +139,7 @@ const BasicInfoCard = ({
       <Form
         layout="vertical"
         form={instanceForm}
-        className="grid grid-cols-2 gap-x-6 pt-5"
+        className="md:grid md:grid-cols-2 gap-x-6 md:pt-5"
       >
         <Form.Item
           label="Name"
@@ -279,7 +288,10 @@ const BasicInfoCard = ({
           )}
         </div>
 
-        <div className="flex flex-row space-x-6">
+        <div
+          className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 
+          items-end md:items-center"
+        >
           {!isGuest && (
             <ButtonSys
               type={isAllowedToDeleteCandidate ? "default" : "primary"}
@@ -287,9 +299,9 @@ const BasicInfoCard = ({
               disabled={!isAllowedToDeleteCandidate}
               onClick={() => setModalDelete(true)}
             >
-              <div className="flex flex-row space-x-2">
+              <div className="flex flex-row space-x-2 items-center">
                 <TrashIconSvg size={16} color={`#BF4A40`} />
-                <p>Remove Candidate</p>
+                <p className="whitespace-nowrap">Remove Candidate</p>
               </div>
             </ButtonSys>
           )}
@@ -299,9 +311,9 @@ const BasicInfoCard = ({
               fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
             >
               <ButtonSys type={"default"}>
-                <div className="flex flex-row space-x-2">
+                <div className="flex flex-row space-x-2 items-center">
                   <DownloadIconSvg size={16} color={"#35763B"} />
-                  <p>Download Resume</p>
+                  <p className="whitespace-nowrap">Download Resume</p>
                 </div>
               </ButtonSys>
             </PDFDownloadLink>

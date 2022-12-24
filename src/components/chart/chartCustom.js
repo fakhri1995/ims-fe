@@ -34,11 +34,9 @@ const dataColorBar = [
 
 const ChartDoughnut = ({ title, dataChart, objName, value }) => {
   return (
-    <div className="flex flex-col shadow-md rounded-md bg-white p-5 ">
-      <div className="flex items-center justify-between mb-4">
-        <h4 className="mig-heading--4">{title}</h4>
-      </div>
-      <div className=" w-full flex justify-center">
+    <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
+      <h4 className="mig-heading--4 mb-4">{title}</h4>
+      <div className="w-10/12 lg:w-11/12 xl:w-8/12 flex mx-auto">
         <Doughnut
           data={{
             labels: dataChart.map((doc) => doc[objName]),
@@ -64,9 +62,9 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
             legend: {
               display: false,
             },
-            maintainAspectRatio: false,
-            cutout: 55,
-            spacing: 5,
+            maintainAspectRatio: true,
+            cutout: 60,
+            spacing: 10,
           }}
         />
       </div>
@@ -97,7 +95,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
 
 const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
   return (
-    <div className="flex flex-row justify-between items-center">
+    <div className="flex flex-col md:flex-row md:justify-between md:items-center md:space-x-2">
       <div className="w-2/3 h-24">
         <Bar
           data={{
@@ -178,4 +176,101 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
   );
 };
 
-export { ChartDoughnut, ChartHorizontalBar };
+const ChartVerticalBar = ({ dataChart, objName, value, colorBarList }) => {
+  return (
+    <div className="flex flex-col shadow-md rounded-md bg-white p-5 my-6">
+      <div className="flex items-center justify-between mb-4">
+        <H1>Penggunaan Terbanyak</H1>
+      </div>
+      <div className=" w-full flex justify-center">
+        <Bar
+          data={{
+            labels: dataChart.map((doc) => doc[objName].split(" ")),
+            datasets: [
+              {
+                data: dataChart.map((doc) => doc[value]),
+                backgroundColor: dataChart.map(
+                  (doc, idx) =>
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                ),
+                borderColor: dataChart.map(
+                  (doc, idx) =>
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                ),
+                barPercentage: 1.0,
+                barThickness: 32,
+                maxBarThickness: 32,
+                minBarLength: 2,
+                borderRadius: 5,
+              },
+            ],
+          }}
+          options={{
+            title: {
+              display: false,
+            },
+            legend: {
+              display: false,
+            },
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                grid: {
+                  display: false,
+                  drawBorder: false,
+                },
+                ticks: {
+                  font: {
+                    family: "Montserrat, sans-serif",
+                    size: 10,
+                  },
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  display: false,
+                },
+                display: false,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: (context) => {
+                    return context[0].label.replaceAll(",", " ");
+                  },
+                },
+              },
+            },
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col w-full">
+        {dataChart.map((doc, idx) => (
+          <div key={idx} className="flex justify-between items-center mb-1">
+            <div className="flex">
+              <div
+                className="w-1 mr-2"
+                style={{
+                  backgroundColor: `${
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                  }`,
+                }}
+              ></div>
+              <Text>{doc[objName]}</Text>
+            </div>
+            <div className="flex">
+              <H2>{doc[value]}</H2>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export { ChartDoughnut, ChartHorizontalBar, ChartVerticalBar };

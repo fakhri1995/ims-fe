@@ -575,49 +575,50 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className=" shadow-lg rounded-md bg-white py-7 px-4">
-        <div className="flex flex-row items-center justify-between mb-4 px-1">
-          <h3 className="mig-heading--3">Tambah Karyawan</h3>
-          <div className="flex flex-row space-x-6 items-center">
-            {loadingUpdate ? (
-              <Spin spinning={loadingUpdate} />
-            ) : (
-              <div
-                className={`transition duration-700 ease-in-out ${
-                  showSuccessIcon ? "opacity-1" : "opacity-0"
-                }`}
-              >
-                <CheckIconSvg color={"#35763B"} size={32} />
-              </div>
-            )}
+      <div className="shadow-lg rounded-md bg-white md:py-7 md:px-4">
+        <div className="grid grid-cols-1">
+          <div className="flex flex-row items-center justify-between mb-4">
+            <h3 className="mig-heading--3">Tambah Karyawan</h3>
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
+              {loadingUpdate ? (
+                <Spin spinning={loadingUpdate} />
+              ) : (
+                <div
+                  className={`transition duration-700 ease-in-out ${
+                    showSuccessIcon ? "opacity-1" : "opacity-0"
+                  }`}
+                >
+                  <CheckIconSvg color={"#35763B"} size={32} />
+                </div>
+              )}
 
-            {currentTab == "1" ? (
-              <ButtonSys
-                type={"default"}
-                color={"danger"}
-                className="flex flex-row"
-                onClick={() => {
-                  rt.push("/admin/employees");
-                }}
-              >
-                <XIconSvg size={18} color={`#BF4A40`} />
-                <p className="ml-2">Batalkan</p>
-              </ButtonSys>
-            ) : (
-              <ButtonSys
-                type={"default"}
-                className="flex flex-row"
-                onClick={() => {
-                  let numTab = Number(currentTab);
-                  currentTab <= 3 && setCurrentTab(String(numTab - 1));
-                  handleAutoSaveOnTabChange();
-                }}
-              >
-                <LeftIconSvg size={18} color={`#35763B`} />
-                <p className="ml-2">Kembali</p>
-              </ButtonSys>
-            )}
-            {/* <ButtonSys
+              {currentTab == "1" ? (
+                <ButtonSys
+                  type={"default"}
+                  color={"danger"}
+                  className="flex flex-row"
+                  onClick={() => {
+                    rt.push("/admin/employees");
+                  }}
+                >
+                  <XIconSvg size={18} color={`#BF4A40`} />
+                  <p className="ml-2">Batalkan</p>
+                </ButtonSys>
+              ) : (
+                <ButtonSys
+                  type={"default"}
+                  className="flex flex-row"
+                  onClick={() => {
+                    let numTab = Number(currentTab);
+                    currentTab <= 3 && setCurrentTab(String(numTab - 1));
+                    handleAutoSaveOnTabChange();
+                  }}
+                >
+                  <LeftIconSvg size={18} color={`#35763B`} />
+                  <p className="ml-2">Kembali</p>
+                </ButtonSys>
+              )}
+              {/* <ButtonSys
               type={"default"}
               className="flex flex-row"
               onClick={() => {
@@ -629,79 +630,82 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               <ClipboardListIconSvg size={18} color={`#35763B`} />
               <p className="ml-2">Simpan Draft</p>
             </ButtonSys> */}
-            {currentTab == "3" ? (
-              <ButtonSys
-                type={"primary"}
-                className="flex flex-row"
-                onClick={() => {
-                  debouncedSaveInventory.cancel();
-                  handleSaveProfile(1, dataEmployee);
-                  dataEmployee.contracts.length !== 0 &&
-                    handleSaveContract(dataContract);
-                  dataEmployee.inventories.length !== 0 &&
-                    handleSaveInventory(inventoryList[0]);
-                }}
-                disabled={disablePublish}
-              >
-                <CheckIconSvg size={18} color={`white`} />
-                <p className="ml-2">Simpan Karyawan</p>
-              </ButtonSys>
-            ) : (
-              <ButtonSys
-                type={"primary"}
-                className="flex flex-row"
-                onClick={() => {
-                  let numTab = Number(currentTab);
-                  currentTab < 3 && setCurrentTab(String(numTab + 1));
-                  handleAutoSaveOnTabChange();
-                }}
-                disabled={loadingUpdate}
-              >
-                <p className="mr-2">Selanjutnya</p>
-                <RightIconSvg size={18} color={`white`} />
-              </ButtonSys>
-            )}
+              {currentTab == "3" ? (
+                <ButtonSys
+                  type={"primary"}
+                  onClick={() => {
+                    debouncedSaveInventory.cancel();
+                    handleSaveProfile(1, dataEmployee);
+                    dataEmployee.contracts.length !== 0 &&
+                      handleSaveContract(dataContract);
+                    dataEmployee.inventories.length !== 0 &&
+                      handleSaveInventory(inventoryList[0]);
+                  }}
+                  disabled={disablePublish}
+                >
+                  <div className="flex flex-row flex-nowrap items-center">
+                    <CheckIconSvg size={18} color={`white`} />
+                    <p className="ml-2">Simpan Karyawan</p>
+                  </div>
+                </ButtonSys>
+              ) : (
+                <ButtonSys
+                  type={"primary"}
+                  onClick={() => {
+                    let numTab = Number(currentTab);
+                    currentTab < 3 && setCurrentTab(String(numTab + 1));
+                    handleAutoSaveOnTabChange();
+                  }}
+                  disabled={loadingUpdate}
+                >
+                  <div className="flex flex-row flex-nowrap items-center">
+                    <p className="mr-2">Selanjutnya</p>
+                    <RightIconSvg size={18} color={`white`} />
+                  </div>
+                </ButtonSys>
+              )}
+            </div>
           </div>
+          <Tabs
+            defaultActiveKey="1"
+            tabBarGutter={60}
+            className="px-1"
+            activeKey={currentTab}
+            onTabClick={(key) => setCurrentTab(key)}
+            onChange={(key) => {
+              // add employee contract if it has no contract yet
+              handleAutoSaveOnTabChange();
+              key == "2" &&
+                dataEmployee.contracts?.length === 0 &&
+                handleAddEmployeeContract();
+            }}
+          >
+            <Tabs.TabPane tab="Profil Karyawan" key="1">
+              <EmployeeProfileForm
+                dataEmployee={dataEmployee}
+                setDataEmployee={setDataEmployee}
+                debouncedApiCall={debouncedSaveProfile}
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Kontrak Karyawan" key="2">
+              <EmployeeContractForm
+                initProps={initProps}
+                dataContract={dataContract}
+                setDataContract={setDataContract}
+                debouncedApiCall={debouncedSaveContract}
+              />
+            </Tabs.TabPane>
+            <Tabs.TabPane tab="Inventaris & Piranti" key="3">
+              <EmployeeInventoryForm
+                initProps={initProps}
+                inventoryList={inventoryList}
+                setInventoryList={setInventoryList}
+                employeeId={employeeId}
+                debouncedApiCall={debouncedSaveInventory}
+              />
+            </Tabs.TabPane>
+          </Tabs>
         </div>
-        <Tabs
-          defaultActiveKey="1"
-          tabBarGutter={60}
-          className="px-1"
-          activeKey={currentTab}
-          onTabClick={(key) => setCurrentTab(key)}
-          onChange={(key) => {
-            // add employee contract if it has no contract yet
-            handleAutoSaveOnTabChange();
-            key == "2" &&
-              dataEmployee.contracts?.length === 0 &&
-              handleAddEmployeeContract();
-          }}
-        >
-          <Tabs.TabPane tab="Profil Karyawan" key="1">
-            <EmployeeProfileForm
-              dataEmployee={dataEmployee}
-              setDataEmployee={setDataEmployee}
-              debouncedApiCall={debouncedSaveProfile}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Kontrak Karyawan" key="2">
-            <EmployeeContractForm
-              initProps={initProps}
-              dataContract={dataContract}
-              setDataContract={setDataContract}
-              debouncedApiCall={debouncedSaveContract}
-            />
-          </Tabs.TabPane>
-          <Tabs.TabPane tab="Inventaris & Piranti" key="3">
-            <EmployeeInventoryForm
-              initProps={initProps}
-              inventoryList={inventoryList}
-              setInventoryList={setInventoryList}
-              employeeId={employeeId}
-              debouncedApiCall={debouncedSaveInventory}
-            />
-          </Tabs.TabPane>
-        </Tabs>
       </div>
     </LayoutDashboard>
   );

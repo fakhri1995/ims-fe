@@ -42,7 +42,13 @@ import httpcookie from "cookie";
 
 moment.locale("id");
 
-const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
+const EmployeePayslipAddIndex = ({
+  initProps,
+  dataProfile,
+  sidemenu,
+  employeeId,
+  employeeName,
+}) => {
   /**
    * Dependencies
    */
@@ -58,7 +64,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //INIT
   const rt = useRouter();
-  const { id: payslipId, employeeId } = rt.query;
+  const { id: payslipId } = rt.query;
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -71,8 +77,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
     4,
     "Daftar Karyawan",
     "Slip Gaji",
-    "Karyawan",
-    // dataPayslip?.employee?.name,
+    employeeName,
     "Buat Slip Gaji"
   );
 
@@ -246,10 +251,13 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="shadow-lg rounded-md bg-white py-7 px-5">
+      <div className="shadow-lg rounded-md bg-white md:py-7 md:px-5">
         <div className="flex flex-row items-center justify-between mb-7">
           <h4 className="mig-heading--4">Buat Slip Gaji</h4>
-          <div className="space-x-6">
+          <div
+            className="space-y-2 md:space-y-0 md:space-x-6 flex flex-col 
+            md:flex-row items-end "
+          >
             <ButtonSys
               color={"danger"}
               type={"default"}
@@ -293,7 +301,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
         <Form
           layout="vertical"
           form={instanceForm}
-          className="grid grid-cols-2 gap-x-8"
+          className="md:grid md:grid-cols-2 md:gap-x-8"
         >
           <Form.Item
             label="Total Hari Kerja"
@@ -642,7 +650,7 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
           title={`Konfirmasi Penerbitan Slip Gaji`}
           visible={modalUpdate}
           onvisible={setModalUpdate}
-          onOk={handleSavePayslip}
+          // onOk={handleSavePayslip}
           onCancel={() => {
             setModalUpdate(false);
           }}
@@ -667,7 +675,8 @@ const EmployeePayslipAddIndex = ({ initProps, dataProfile, sidemenu }) => {
   );
 };
 
-export async function getServerSideProps({ req, res, params }) {
+export async function getServerSideProps({ req, res, query }) {
+  const employeeId = query.employeeId;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -699,11 +708,25 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
+  const resourcesGE = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployee?id=${employeeId}`,
+    {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    }
+  );
+  const resjsonGE = await resourcesGE.json();
+  const employeeName = resjsonGE?.data?.name;
+
   return {
     props: {
       initProps,
       dataProfile,
       sidemenu: "employee-payslip",
+      employeeId,
+      employeeName,
     },
   };
 }

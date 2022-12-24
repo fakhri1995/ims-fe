@@ -38,9 +38,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
         </div>
         <div className="space-y-2">
           <button
-            // target="_blank"
-            // rel="noopener noreferrer"
-            onClick={() => rt.push("/employeeProfile")}
+            onClick={() => rt.push("/employeeProfile?tab=2")}
             className="flex flex-row items-center space-x-2 bg-transparent hover:opacity-70"
           >
             <UsercircleIconSvg size={20} color={"black"} />

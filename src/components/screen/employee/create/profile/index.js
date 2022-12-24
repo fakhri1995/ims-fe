@@ -144,7 +144,7 @@ const EmployeeProfileForm = ({
     <Form
       layout="vertical"
       form={instanceForm}
-      className="grid grid-cols-2 gap-x-8"
+      className="md:grid md:grid-cols-2 md:gap-x-8"
     >
       <Form.Item label="ID Card" className="relative col-span-2 w-full">
         <em className="text-mono50 mr-10">Unggah File JPEG (Maksimal 5 MB)</em>

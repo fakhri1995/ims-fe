@@ -382,7 +382,7 @@ const DrawerAssessmentUpdate = ({
             }}
           >
             <p className="text-primary100 hover:text-primary75">
-              + Tambah Pekerjaan Baru
+              + Tambah Kriteria
             </p>
           </ButtonSys>
         </div>
