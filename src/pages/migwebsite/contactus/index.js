@@ -104,7 +104,7 @@ function ContactUs({}) {
             <p className={"text-xl font-gilroysemibold"}>
               Fulfill your IT needs easily!
             </p>
-            <p className={"py-5 text-sm font-gilroyregularegular"}>
+            <p className={"py-5 text-sm font-gilroyregular"}>
               Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
               what service can we offer to you and your company!
@@ -112,7 +112,7 @@ function ContactUs({}) {
             <Link href="/hardware">
               <button
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-base text-center text-white border-2 bg-primarygreen rounded border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>

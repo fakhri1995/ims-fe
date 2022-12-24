@@ -154,10 +154,16 @@ function LandingPage({}) {
               }
             >
               MIG catalyzes your core business with{" "}
-              <span style={{ fontWeight: "bold" }}>IT hardware solutions</span>,
-              <span style={{ fontWeight: "bold" }}> software development</span>,
-              and <span style={{ fontWeight: "bold" }}>tech talents</span>. We
-              serve you the best resource with efficient cost, but high
+              <span className={"font-gilroysemibold"}>
+                IT hardware solutions
+              </span>
+              ,
+              <span className={"font-gilroysemibold"}>
+                {" "}
+                software development
+              </span>
+              , and <span className={"font-gilroysemibold"}>tech talents</span>.
+              We serve you the best resource with efficient cost, but high
               maintenance.
             </p>
             <div className={"mt-[34px]"}>
@@ -1614,12 +1620,12 @@ function LandingPage({}) {
       {/* testimonial mobile */}
       <section
         className={
-          "sectiontestimonialmobile block md:hidden bg-bgjoinmig pt-8 pb-[178px] px-[30px] md:px-10"
+          "sectiontestimonialmobile block md:hidden bg-transp60 pt-8 pb-14 px-[30px] md:px-10"
         }
       >
         <p
           className={
-            "text-xl md:text-3xl text-center gilroy-semibold font-gilroysemibold md:py-0 mb-7 md:mb-10"
+            "text-xl  text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
           }
         >
           What they say{" "}
@@ -1640,11 +1646,9 @@ function LandingPage({}) {
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
               <div className="">
-                <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                  "
-                </p>
+                <p className="text-sm text italic font-gilroysemibold">"</p>
 
-                <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
                   I had a{" "}
                   <span className={"text-primarygreen font-gilroysemibold"}>
                     wonderful experience{" "}
@@ -1658,26 +1662,44 @@ function LandingPage({}) {
                   <br className="hidden xl:block"></br> optimize your cost and
                   productivity
                 </p>
-                <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                  "
-                </p>
+                <p className="text-sm text italic font-gilroysemibold">"</p>
                 <div className="flex flex-col">
                   <div className="flex flex-row mt-2">
                     <img
                       className="rounded-full"
                       src="/image/landingpage/testimonial-user.png"
-                      style={{ height: "40px", width: "60px" }}
+                      style={{ height: "40px", width: "40px" }}
                       alt=""
                     />
-                    <div className="self-center ml-[6.8px]">
-                      <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                    <div className="self-center ml-[17px]">
+                      <p className="text-xs font-gilroysemibold  text-black">
                         Fachri Fauzan
                       </p>
-                      <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                      <p className="text-xs font-gilroysemibold text-darkgrey">
                         Talent Acquisition at Bukopin
                       </p>
                     </div>
                   </div>
+                </div>
+                <div
+                  className={
+                    "mt-2 px-2 py-1 bg-greenTrans20 rounded-[20px] w-[113px]"
+                  }
+                >
+                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
+                    <span className="font-gilroysemibold">Industry: </span>{" "}
+                    Banking
+                  </p>
+                </div>
+                <div
+                  className={
+                    "mt-2 px-2 py-1 bg-lightblue rounded-[20px] w-[163px]"
+                  }
+                >
+                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
+                    <span className="font-gilroysemibold">Service: </span>{" "}
+                    Hardware, Talents
+                  </p>
                 </div>
               </div>
             </div>
@@ -1690,7 +1712,7 @@ function LandingPage({}) {
                   "
                 </p>
 
-                <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
                   I had a{" "}
                   <span className={"text-primarygreen font-gilroysemibold"}>
                     wonderful experience{" "}
@@ -1704,26 +1726,44 @@ function LandingPage({}) {
                   <br className="hidden xl:block"></br> optimize your cost and
                   productivity
                 </p>
-                <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                  "
-                </p>
+                <p className="text-sm text italic font-gilroysemibold">"</p>
                 <div className="flex flex-col">
                   <div className="flex flex-row mt-2">
                     <img
                       className="rounded-full"
                       src="/image/landingpage/testimonial-user.png"
-                      style={{ height: "40px", width: "60px" }}
+                      style={{ height: "40px", width: "40px" }}
                       alt=""
                     />
-                    <div className="self-center ml-[6.8px]">
-                      <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                    <div className="self-center ml-[17px]">
+                      <p className="text-xs font-gilroysemibold  text-black">
                         Fachri Fauzan
                       </p>
-                      <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                      <p className="text-xs font-gilroysemibold text-darkgrey">
                         Talent Acquisition at Bukopin
                       </p>
                     </div>
                   </div>
+                </div>
+                <div
+                  className={
+                    "mt-2 px-2 py-1 bg-greenTrans20 rounded-[20px] w-[113px]"
+                  }
+                >
+                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
+                    <span className="font-gilroysemibold">Industry: </span>{" "}
+                    Banking
+                  </p>
+                </div>
+                <div
+                  className={
+                    "mt-2 px-2 py-1 bg-lightblue rounded-[20px] w-[163px]"
+                  }
+                >
+                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
+                    <span className="font-gilroysemibold">Service: </span>{" "}
+                    Hardware, Talents
+                  </p>
                 </div>
               </div>
             </div>
@@ -1736,7 +1776,7 @@ function LandingPage({}) {
                   "
                 </p>
 
-                <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
                   I had a{" "}
                   <span className={"text-primarygreen font-gilroysemibold"}>
                     wonderful experience{" "}
@@ -1758,22 +1798,71 @@ function LandingPage({}) {
                     <img
                       className="rounded-full"
                       src="/image/landingpage/testimonial-user.png"
-                      style={{ height: "40px", width: "60px" }}
+                      style={{ height: "40px", width: "40px" }}
                       alt=""
                     />
-                    <div className="self-center ml-[6.8px]">
-                      <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                    <div className="self-center ml-[17px]">
+                      <p className="text-xs font-gilroysemibold  text-black">
                         Fachri Fauzan
                       </p>
-                      <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                      <p className="text-xs font-gilroysemibold text-darkgrey">
                         Talent Acquisition at Bukopin
                       </p>
                     </div>
                   </div>
+                </div>
+                <div
+                  className={
+                    "mt-2 px-2 py-1 bg-greenTrans20 rounded-[20px] w-[113px]"
+                  }
+                >
+                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
+                    <span className="font-gilroysemibold">Industry: </span>{" "}
+                    Banking
+                  </p>
+                </div>
+                <div
+                  className={
+                    "mt-2 px-2 py-1 bg-lightblue rounded-[20px] w-[163px]"
+                  }
+                >
+                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
+                    <span className="font-gilroysemibold">Service: </span>{" "}
+                    Hardware, Talents
+                  </p>
                 </div>
               </div>
             </div>
           </Slider>
+        </div>
+        <p
+          className={
+            "text-xs text-darkgrey font-gilroysemibold text-center mt-[48px] px-[29px]"
+          }
+        >
+          Join hundreds of our clients and partners in fulfilling your needs
+        </p>
+        <div className={"flex flex-row justify-center mt-6"}>
+          <img
+            className={"mr-[38px]"}
+            style={{ width: "59.38px", height: "50px" }}
+            src="/image/landingpage/client3.png"
+          />
+          <img
+            className={"mr-[38px]"}
+            style={{ width: "34.43px", height: "40px" }}
+            src="/image/landingpage/client4.png"
+          />
+          <img
+            className={"mr-[38px]"}
+            style={{ width: "59px", height: "50px" }}
+            src="/image/landingpage/client1.png"
+          />
+          <img
+            className={""}
+            style={{ width: "44px", height: "50px" }}
+            src="/image/landingpage/client2.png"
+          />
         </div>
         <div className={"block md:hidden mt-16 flex justify-center"}>
           <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
@@ -1878,13 +1967,20 @@ function LandingPage({}) {
         </div>
       </section>
 
-      <section className={"section2landingpagephone block md:hidden px-4"}>
-        <p
-          className={
-            "text-xl md:text-2xl text-center gilroy-semibold py-8 md:py-0"
-          }
-        >
-          Interested in joining MIG?
+      <section
+        className={"section2landingpagephone block md:hidden px-4 bg-bgjoinmig"}
+      >
+        <p className={"text-xl text-center font-gilroysemibold py-8 md:py-0"}>
+          Interested in{" "}
+          <span
+            style={{
+              borderBottom: "solid 3px #188E4D",
+              paddingBottom: "2.5px",
+            }}
+          >
+            joining{" "}
+          </span>{" "}
+          MIG?
         </p>
         <div className={"grid justify-items-center text-center"}>
           <img
@@ -1936,7 +2032,7 @@ function LandingPage({}) {
         <div className="self-end mt-5">
           <a href="#">
             <div className="flex mt-5 justify-end mr-5">
-              <p className="text-base mr-2 text-primarygreen font-gilroysemibold gilroy-semibold">
+              <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
                 Apply for jobs
               </p>
               <img
@@ -2037,7 +2133,7 @@ function LandingPage({}) {
             <Linkk href="/contactus">
               <button
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-base text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
@@ -2052,7 +2148,7 @@ function LandingPage({}) {
             </Linkk>
           </div>
         </div>
-        <div className={"flex justify-between self-end"}>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
           <img
             style={{ width: "160px", height: "69px" }}
             src="/image/landingpage/footer-left.png"

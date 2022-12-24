@@ -22,13 +22,17 @@ function AboutUs({}) {
         <div className={""}>
           <p
             className={
-              "text-xl md:text-[32px] font-gilroysemibold text-blackmig"
+              "text-2xl md:text-[32px] font-gilroysemibold text-blackmig"
             }
           >
             Operate your business, more efficient and more agile
           </p>
 
-          <p className={"text-base text-blackmig font-gilroyregular mt-4"}>
+          <p
+            className={
+              "text-sm md:text-base text-blackmig font-gilroyregular mt-12 md:mt-4 px-4 md:px-0"
+            }
+          >
             Mitramas Infosys global is supporting you staff augmentation &
             delivering software and hardware managed services. We have served
             multiple industries, bringing the best solutions to financial
@@ -36,18 +40,16 @@ function AboutUs({}) {
           </p>
         </div>
       </section>
-      <section className={"block bg-transp60 py-2 md:py-6 px-4 md:px-[112px]"}>
+      <section className={"block bg-transp60 py-4 md:py-6 px-4 md:px-[112px]"}>
         <p
-          className={
-            "gilroy-semibold font-gilroysemibold text-left pb-0 text-xl md:text-2xl"
-          }
+          className={"font-gilroysemibold text-left pb-0 text-base md:text-2xl"}
         >
           Who we are
         </p>
         {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
-        <p className={"mt-4 font-gilroyregular text-base"}>
+        <p className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-base"}>
           Founded in 2003, Mitramas Infosys Global (MIG) directly partner with
           global providers and collaborate with local IT talents to offer you a
           seamless technology experience. Experienced across archipelago for
@@ -56,7 +58,7 @@ function AboutUs({}) {
           to increase their efficiency and reach long-term business goals.
         </p>
 
-        <p className={"mt-4 text-base font-gilroyregular"}>
+        <p className={"mt-4 text-sm md:text-base font-gilroyregular"}>
           <Link href="joinourteam">
             <em className={"cursor-pointer text-primarygreen underline"}>
               Careers
@@ -65,17 +67,21 @@ function AboutUs({}) {
           at MIG offer meaningful work to be better together
         </p>
       </section>
-      <section className={"pt-6 md:pt-[40px] pb-4 md:pb-8 px-4 md:px-[112px]"}>
-        <p className={"text-xl md:text-2xl font-gilroysemibold text-blackmig"}>
+      <section
+        className={"pt-12 md:pt-[40px] pb-12 md:pb-8 px-4 md:px-[112px]"}
+      >
+        <p
+          className={"text-base md:text-2xl font-gilroysemibold text-blackmig"}
+        >
           Support your business efficiently
         </p>
         <div>
-          <p className={"text-base mt-4 font-gilroyregular"}>
+          <p className={"text-sm md:text-base mt-3 md:mt-4 font-gilroyregular"}>
             One stop seamless technology solution to help you achieve business
             goals and optimize your cost{" "}
           </p>
         </div>
-        <div className={"flex md:flex-row mt-4"}>
+        <div className={"hidden md:flex md:flex-row mt-4"}>
           <div
             className={
               "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] mr-5 border-dividermig rounded-lg hover:shadow-lg"
@@ -208,6 +214,142 @@ function AboutUs({}) {
             </div>
           </div>
         </div>
+        <div className={"block md:hidden mt-3"}>
+          <div
+            className={
+              "flex-col flex bg-white mr-0 p-3 border-2 w-[100%] border-dividermig rounded-lg"
+            }
+            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+          >
+            <div>
+              <img
+                src="/image/navbar/hardware.svg"
+                className={"w-[32px] h-[32px]"}
+              />
+              <p
+                className={
+                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
+                }
+              >
+                Hardware
+              </p>
+              <p className={"font-gilroyregular text-sm text-blackmig mt-2"}>
+                Optimize your cost by leasing and maintenances variety of
+                electronic equipments
+              </p>
+              <div className={"flex justify-end mt-4"}>
+                <Link href={{ pathname: "/hardware" }}>
+                  <a
+                    className={
+                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
+                    }
+                  >
+                    <p
+                      className={
+                        "font-gilroysemibold text-base text-primarygreen"
+                      }
+                    >
+                      Get yours
+                    </p>
+                    <img
+                      src="/image/landingpage/arrow_right_alt.png"
+                      className={"w-5 h-5"}
+                    />
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+          <div
+            className={
+              "flex-col flex bg-white mr-0 p-3 mt-3 border-2 w-[100%] border-dividermig rounded-lg"
+            }
+            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+          >
+            <div>
+              <img
+                src="/image/navbar/software.svg"
+                className={"w-[32px] h-[32px]"}
+              />
+              <p
+                className={
+                  "text-left mt-[13px] font-gilroysemibold text-blackmig text-base"
+                }
+              >
+                Software
+              </p>
+              <p className={"font-gilroyregular text-sm text-blackmig mt-2"}>
+                We support your companies to simplify and automate the process
+                through digitalization
+              </p>
+              <div className={"flex justify-end mt-4"}>
+                <Link href={{ pathname: "/hardware" }}>
+                  <a
+                    className={
+                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
+                    }
+                  >
+                    <p
+                      className={
+                        "font-gilroysemibold text-base text-primarygreen"
+                      }
+                    >
+                      Build now
+                    </p>
+                    <img
+                      src="/image/landingpage/arrow_right_alt.png"
+                      className={"w-5 h-5"}
+                    />
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+          <div
+            className={
+              "flex-col flex bg-white mr-0 p-3 mt-3 border-2 w-[100%] border-dividermig rounded-lg"
+            }
+            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+          >
+            <div>
+              <img
+                src="/image/navbar/talents.svg"
+                className={"w-[32px] h-[32px]"}
+              />
+              <p
+                className={
+                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
+                }
+              >
+                Talents
+              </p>
+              <p className={"font-gilroyregular text-blackmig text-sm mt-2"}>
+                We help you reduce complexity in talent sourcing and management
+              </p>
+              <div className={"flex justify-end mt-4"}>
+                <Link href={{ pathname: "/hardware" }}>
+                  <a
+                    className={
+                      "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
+                    }
+                  >
+                    <p
+                      className={
+                        "font-gilroysemibold text-base text-primarygreen"
+                      }
+                    >
+                      Set up your team
+                    </p>
+                    <img
+                      src="/image/landingpage/arrow_right_alt.png"
+                      className={"w-5 h-5"}
+                    />
+                  </a>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section
@@ -216,7 +358,7 @@ function AboutUs({}) {
         <div>
           <p
             className={
-              "font-gilroysemibold text-xl text-blackmig md:text-2xl pb-2"
+              "font-gilroysemibold text-2xl text-blackmig md:text-2xl pb-2"
             }
           >
             MIG Location
@@ -256,7 +398,7 @@ function AboutUs({}) {
             Coverages
           </p>
           <div
-            className={"bg-white p-6"}
+            className={"bg-white p-6 rounded-lg"}
             style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
           >
             <div className={"flex flex-row justify-between"}>
@@ -477,7 +619,7 @@ function AboutUs({}) {
         }
       >
         <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-20 py-4 px-8">
             <p className={"text-xl font-gilroysemibold"}>
               Fulfill your IT needs easily!
             </p>
@@ -489,7 +631,7 @@ function AboutUs({}) {
             <Link href="/hardware">
               <button
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-base text-center rounded-lg text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
@@ -504,7 +646,7 @@ function AboutUs({}) {
             </Link>
           </div>
         </div>
-        <div className={"flex justify-between self-end"}>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
           <img
             style={{ width: "160px", height: "69px" }}
             src="/image/landingpage/footer-left.png"

@@ -24,10 +24,10 @@ export const CareersAtMig: FC = () => {
       <JobListTable />
 
       {/* Notes */}
-      <div className="flex flex-col justify-center items-center space-y-8">
-        <span className="h-[3px] bg-primarygreen w-60 block" />
+      <div className="flex flex-col justify-center items-center">
+        <span className="h-[2px] bg-primarygreen w-[200px] md:w-60 block" />
 
-        <p className="pb-8 text-base text-black text-center">
+        <p className="pb-12 md:pb-8 text-base text-black text-center mt-4">
           Didn't find the role that best describes your skills ? Send your CV to{" "}
           <a
             href="mailto:recruitment@mitrasolusi.group"

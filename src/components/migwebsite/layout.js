@@ -51,7 +51,11 @@ function layout({ children }) {
             <p className={"text-lg gilroy-medium group-hover:text-green-500"}>
               Hardware
             </p>
-            <p className={"text-sm gilroy-regular group-hover:text-green-500"}>
+            <p
+              className={
+                "text-sm font-gilroyregular group-hover:text-green-500"
+              }
+            >
               Optimize your cost by leasing and maintenances IT hardwares
             </p>
           </div>
@@ -80,7 +84,11 @@ function layout({ children }) {
             <p className={"text-lg gilroy-medium group-hover:text-green-500"}>
               Software
             </p>
-            <p className={"text-sm gilroy-regular group-hover:text-green-500"}>
+            <p
+              className={
+                "text-sm font-gilroyregular group-hover:text-green-500"
+              }
+            >
               Simplify and automate the process through digitalization
             </p>
           </div>
@@ -109,7 +117,11 @@ function layout({ children }) {
             <p className={"text-lg gilroy-medium group-hover:text-green-500"}>
               Talents
             </p>
-            <p className={"text-sm gilroy-regular group-hover:text-green-500"}>
+            <p
+              className={
+                "text-sm font-gilroyregular group-hover:text-green-500"
+              }
+            >
               Reduce complexity in talent sourcing and management
             </p>
           </div>
@@ -290,7 +302,7 @@ function layout({ children }) {
               >
                 <p
                   className={
-                    "text-base gilroy-regular text-blackmig  menu-underlined hover:text-green-500"
+                    "text-base font-gilroyregular text-blackmig  menu-underlined hover:text-green-500"
                   }
                 >
                   {t.solutions}{" "}
@@ -301,22 +313,22 @@ function layout({ children }) {
               </Button>
             </Dropdown>
             <Link href="/aboutus">
-              <a className="text-base gilroy-regular text-blackmig menu-underlined mx-4 hover:text-green-500">
+              <a className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500">
                 {t.aboutus}
               </a>
             </Link>
             <Link href="/joinourteam">
-              <a className="text-base gilroy-regular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+              <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
                 {t.career}
               </a>
             </Link>
             <Link href="/blog">
-              <a className="text-base gilroy-regular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+              <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
                 Blog
               </a>
             </Link>
             <Link href="/contactus">
-              <a className="text-base gilroy-regular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+              <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
                 {t.contactus}
               </a>
             </Link>
@@ -339,7 +351,7 @@ function layout({ children }) {
               <SubMenu
                 key="sub 1"
                 title="Solutions"
-                className="text-base gilroy-regular text-blackmig "
+                className="text-base font-gilroyregular text-blackmig "
               >
                 <Menu.Item key="1">
                   <img
@@ -349,7 +361,7 @@ function layout({ children }) {
                     src={"/image/navbar/hardware_black.png"}
                   ></img>
                   <Link href="/hardware">
-                    <a className="text-base gilroy-regular text-blackmig  pl-3">
+                    <a className="text-base font-gilroyregular text-blackmig  pl-3">
                       Hardware
                     </a>
                   </Link>
@@ -362,7 +374,7 @@ function layout({ children }) {
                     src={"/image/navbar/software_black.png"}
                   ></img>
                   <Link href="/software">
-                    <a className="text-base gilroy-regular text-blackmig  pl-3">
+                    <a className="text-base font-gilroyregular text-blackmig  pl-3">
                       Software
                     </a>
                   </Link>
@@ -375,7 +387,7 @@ function layout({ children }) {
                     src={"/image/navbar/talents_black.png"}
                   ></img>
                   <Link href="/talents">
-                    <a className="text-base gilroy-regular text-blackmig  pl-3">
+                    <a className="text-base font-gilroyregular text-blackmig  pl-3">
                       Talents
                     </a>
                   </Link>
@@ -510,8 +522,8 @@ function layout({ children }) {
             >
               <Link href="/">
                 <div
-                  className={"pb-4 cursor-pointer"}
-                  style={{ minWidth: "150px", width: "150px" }}
+                  className={"pb-4 cursor-pointer w-[132px] md:w-[150px]"}
+                  // style={{ minWidth: "132px", width: "150px" }}
                 >
                   <img src="/mig.png" />
                 </div>
@@ -519,14 +531,16 @@ function layout({ children }) {
               <div className={"hidden md:flex flex-row px-0 justify-between"}>
                 <div className={"flex-col pr-2 my-2 lg:my-0 lg:px-16"}>
                   <p
-                    className={"py-1 font-semibold py-1 text-xs text-blackmig "}
+                    className={
+                      "py-1 font-gilroysemibold py-1 text-base text-blackmig "
+                    }
                   >
                     Solutions
                   </p>
                   <Link href={{ pathname: "/hardware" }}>
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Hardware
@@ -535,7 +549,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/software" }}>
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Software
@@ -544,7 +558,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/talents" }}>
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Talents
@@ -552,13 +566,17 @@ function layout({ children }) {
                   </Link>
                 </div>
                 <div className={"flex-col pr-2 my-2 lg:my-0 lg:px-16"}>
-                  <p className={"font-semibold py-1 text-xs text-blackmig"}>
+                  <p
+                    className={
+                      "font-gilroysemibold py-1 text-base text-blackmig"
+                    }
+                  >
                     Company
                   </p>
                   <Link href={{ pathname: "/aboutus" }}>
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       About&nbsp;Us
@@ -567,7 +585,7 @@ function layout({ children }) {
                   <Link href={{ pathname: "/joinourteam" }}>
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Career&nbsp;in&nbsp;MIG
@@ -576,7 +594,7 @@ function layout({ children }) {
                   <Link href="/blog">
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Blog
@@ -585,7 +603,7 @@ function layout({ children }) {
                   <Link href="/contactus">
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Customer Stories
@@ -593,13 +611,17 @@ function layout({ children }) {
                   </Link>
                 </div>
                 <div className={"flex-col pr-2 my-2 lg:my-0 lg:px-16"}>
-                  <p className={"font-semibold py-1 text-xs text-blackmig"}>
+                  <p
+                    className={
+                      "font-gilroysemibold py-1 text-base text-blackmig"
+                    }
+                  >
                     Get in touch
                   </p>
                   <Link href="/contactus">
                     <p
                       className={
-                        "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                       }
                     >
                       Contact&nbsp;Us
@@ -608,9 +630,7 @@ function layout({ children }) {
                 </div>
                 <div className={"flex-col my-2 lg:my-0 lg:px-16"}>
                   <p
-                    className={
-                      "gilroy-semibold font-semibold py-1 text-xs text-blackmig"
-                    }
+                    className={"font-gilroysemibold py-1 text-sm text-blackmig"}
                   >
                     Follow
                   </p>
@@ -621,7 +641,7 @@ function layout({ children }) {
                     />
                     <a
                       className={
-                        "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
+                        "font-gilroyregular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -637,7 +657,7 @@ function layout({ children }) {
                     />
                     <a
                       className={
-                        "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
+                        "font-gilroyregular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
                       href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
                       target="_blank"
@@ -653,7 +673,7 @@ function layout({ children }) {
                   <div className={"w-1/2 pr-2 my-2 lg:my-0 lg:px-16"}>
                     <p
                       className={
-                        "font-semibold py-1 text-xs text-blackmig  py-1"
+                        "font-gilroysemibold py-1 text-xs text-blackmig  py-1"
                       }
                     >
                       Solutions
@@ -661,7 +681,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/hardware" }}>
                       <p
                         className={
-                          "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Hardware
@@ -670,7 +690,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/software" }}>
                       <p
                         className={
-                          "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Software
@@ -679,7 +699,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/talents" }}>
                       <p
                         className={
-                          "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Talents
@@ -695,7 +715,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/aboutus" }}>
                       <p
                         className={
-                          "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         About&nbsp;Us
@@ -704,7 +724,7 @@ function layout({ children }) {
                     <Link href={{ pathname: "/joinourteam" }}>
                       <p
                         className={
-                          "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Career&nbsp;in&nbsp;Mig
@@ -716,7 +736,7 @@ function layout({ children }) {
                   <div className={"w-1/2 pr-2 my-2 lg:my-0 lg:px-16"}>
                     <p
                       className={
-                        "font-semibold py-1 text-xs text-blackmig py-1"
+                        "font-gilroysemibold py-1 text-xs text-blackmig py-1"
                       }
                     >
                       Get in touch
@@ -724,7 +744,7 @@ function layout({ children }) {
                     <Link href="/contactus">
                       <p
                         className={
-                          "gilroy-regular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
                         Contact&nbsp;Us
@@ -741,7 +761,7 @@ function layout({ children }) {
                         />
                         <p
                           className={
-                            "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
+                            "font-gilroyregular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                           }
                         >
                           Instagram
@@ -756,7 +776,7 @@ function layout({ children }) {
                         />
                         <p
                           className={
-                            "gilroy-regular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
+                            "font-gilroyregular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
                           }
                         >
                           LinkedIn

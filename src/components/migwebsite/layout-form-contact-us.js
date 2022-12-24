@@ -19,10 +19,10 @@ function LayoutFormContactUs({ title, description, button_title }) {
         </div>
         <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
-            <p className={"text-2xl font-semibold text-black"}>
+            <p className={"text-2xl font-gilroysemibold text-black"}>
               {title ? title : "Fulfill your IT needs easily!"}
             </p>
-            <p className={"py-5 text-base gilroy-regular text-black"}>
+            <p className={"py-5 text-base font-gilroyregular text-black"}>
               {description
                 ? description
                 : `Need help in providing your needs? Whether they related to
@@ -36,7 +36,11 @@ function LayoutFormContactUs({ title, description, button_title }) {
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"text-base gilroy-semibold font-semibold mr-2"}>
+                  <p
+                    className={
+                      "text-base gilroy-semibold font-gilroysemibold mr-2"
+                    }
+                  >
                     {button_title ? button_title : `Contact Us`}
                   </p>
                   <img
@@ -63,10 +67,10 @@ function LayoutFormContactUs({ title, description, button_title }) {
       >
         <div className={"container mx-auto"}>
           <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-            <p className={"text-xl font-semibold"}>
+            <p className={"text-xl font-gilroysemibold"}>
               {title ? title : "Fulfill your IT needs easily!"}
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
+            <p className={"py-5 text-sm font-gilroyregular"}>
               {description
                 ? description
                 : `Need help in providing your needs? Whether they related to
@@ -76,7 +80,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
             <Linkk href="/contactus">
               <button
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                  "text-base text-center rounded  text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
@@ -93,7 +97,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
             </Linkk>
           </div>
         </div>
-        <div className={"flex justify-between self-end"}>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
           <img
             style={{ width: "160px", height: "69px" }}
             src="/image/landingpage/footer-left.png"
