@@ -100,7 +100,15 @@ export const SearchAndFilter: FC = () => {
       {/* Button search */}
       <Button
         className={
-          "bg-primarygreen rounded text-white text-base w-[85px] h-[40px]"
+          "bg-primarygreen hidden md:block rounded text-white text-base w-[85px] h-[40px]"
+        }
+        onClick={onSearchButtonClicked}
+      >
+        Search
+      </Button>
+      <Button
+        className={
+          "bg-primarygreen md:hidden rounded text-white text-base w-full h-[40px]"
         }
         onClick={onSearchButtonClicked}
       >

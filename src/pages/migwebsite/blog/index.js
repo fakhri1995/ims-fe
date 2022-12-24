@@ -125,21 +125,32 @@ function Blog({}) {
         <div className={"block md:hidden py-8"}>
           <div className={"flex-col center"}>
             <div className={"text-center"}>
-              <p className={"text-4xl gilroy-bold"}>Welcome to MIG Blog!</p>
+              <p className={"text-2xl font-gilroysemibold"}>
+                Welcome to MIG Blog!
+              </p>
             </div>
           </div>
-          <div className={"flex-col"}>
+          <div className={"flex-col mt-16"}>
             <img
-              style={{ width: "1500px", height: "auto" }}
+              style={{
+                width: "328px",
+                height: "172px",
+                marginRight: "auto",
+                marginLeft: "auto",
+              }}
               src="/image/landingpage/image-section1.png"
             />
           </div>
-          <p className={" text-base text-center text-black font-gilroyregular"}>
+          <p
+            className={
+              " text-base text-center text-blackmig font-gilroyregular mt-16"
+            }
+          >
             MIG catalyzes your core business with{" "}
-            <span style={{ fontWeight: "bold" }}>IT hardware solutions</span>,
-            <span style={{ fontWeight: "bold" }}>software development</span>,
-            and <span style={{ fontWeight: "bold" }}>tech talents</span>. We
-            serve you the best resource with efficient cost, but high
+            <span className={"font-gilroysemibold"}>IT hardware solutions</span>
+            ,<span className={"font-gilroysemibold"}>software development</span>
+            , and <span className={"font-gilroysemibold"}>tech talents</span>.
+            We serve you the best resource with efficient cost, but high
             maintenance.
           </p>
           <div className={"flex-col center"}>
@@ -154,21 +165,23 @@ function Blog({}) {
               >
                 <button
                   className={
-                    "text-sm text-center w-[223px] text-white border-2 bg-primarygreen border-primarygreen px-6 py-2 md:px-4 mt-4 focus:outline-none"
+                    "text-sm text-center w-[223px] mt-7 text-white border-2 bg-primarygreen border-primarygreen py-3 pl-6 pr-[19px] rounded"
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"px-1 text-base"}>Explore Articles</p>
+                    <p className={"text-xl font-gilroysemibold"}>
+                      Explore Articles
+                    </p>
                     <img
-                      className={"ml-2"}
-                      style={{ width: "20px" }}
+                      className={"self-center"}
+                      style={{ width: "20px", height: "20px" }}
                       src="/image/landingpage/arrow-circle-down.png"
                     />
                   </div>
                 </button>
               </Link>
             </div>
-            <div className={"text-center my-4"}>
+            <div className={"text-center mt-7"}>
               <p
                 className={
                   "text-base text-darkgrey md:text-base font-gilroysemibold"
@@ -177,28 +190,27 @@ function Blog({}) {
                 Share
               </p>
             </div>
-            <div className={"flex flex-row justify-around"}>
+            <div className={"flex flex-row justify-between mt-4 mx-auto"}>
               <img
                 src="/image/message-circle.png"
-                className={"ml-4"}
-                style={{ width: "36px", height: "36px" }}
+                style={{ width: "42px", height: "42px" }}
                 alt=""
               />
               <img
                 src="/image/facebook-circle.png"
-                className={"ml-4"}
-                style={{ width: "36px", height: "36px" }}
+                className={""}
+                style={{ width: "42px", height: "42px" }}
                 alt=""
               />
               <img
                 src="/image/twitter-circle.png"
-                className={"ml-4"}
-                style={{ width: "36px", height: "36px" }}
+                className={""}
+                style={{ width: "42px", height: "42px" }}
                 alt=""
               />
               <img
                 src="/image/share-link.png"
-                className={"ml-4"}
+                className={""}
                 style={{ width: "42px", height: "42px" }}
                 alt=""
               />
@@ -210,10 +222,14 @@ function Blog({}) {
       <section
         className={"section2blog py-6 md:py-12 px-4 md:px-[112px] bg-bgjoinmig"}
       >
-        <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
+        <p
+          className={
+            "text-base md:text-xl font-gilroybold md:font-gilroysemibold text-primarygreen"
+          }
+        >
           Most Popular
         </p>
-        <div className={"grid md:grid-cols-2 gap-4 mt-4"}>
+        <div className={"hidden md:block grid md:grid-cols-2 gap-4 mt-4"}>
           <Linkk href="/blog/1">
             <div
               className={
@@ -381,6 +397,156 @@ function Blog({}) {
                 >
                   Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
                   do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+        </div>
+        <div className={"md:hidden "}>
+          <Linkk href="/blog/1">
+            <div
+              className={"flex w-full rounded-lg flex-row bg-white  p-4 mt-3"}
+            >
+              <img
+                className={"rounded-lg w-[103px] h-[131px]"}
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-gilroybold text-blackmig bold text-sm md:text-base mt-1"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+          <Linkk href="/blog/1">
+            <div
+              className={"flex w-full rounded-lg flex-row bg-white  p-4 mt-3"}
+            >
+              <img
+                className={"rounded-lg w-[103px] h-[131px]"}
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-gilroybold text-blackmig bold text-sm md:text-base mt-1"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+          <Linkk href="/blog/1">
+            <div
+              className={"flex w-full rounded-lg flex-row bg-white  p-4 mt-3"}
+            >
+              <img
+                className={"rounded-lg w-[103px] h-[131px]"}
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-gilroybold text-blackmig bold text-sm md:text-base mt-1"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+          <Linkk href="/blog/1">
+            <div
+              className={"flex w-full rounded-lg flex-row bg-white  p-4 mt-3"}
+            >
+              <img
+                className={"rounded-lg w-[103px] h-[131px]"}
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-gilroybold text-blackmig bold text-sm md:text-base mt-1"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
                 </p>
                 <div className={"mt-1.5"}>
                   <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
@@ -394,7 +560,11 @@ function Blog({}) {
       </section>
       <section className={"allarticles py-4 md:py-[69px] px-2 md:px-[112px]"}>
         <div className={"flex flex-row justify-between mb-[5px]"}>
-          <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
+          <p
+            className={
+              "text-base md:text-xl font-gilroysemibold text-primarygreen"
+            }
+          >
             All Articles
           </p>
           <div className={"flex flex-row pr-4"}>
@@ -784,7 +954,9 @@ function Blog({}) {
 
       <section className={"section2landingpagephone block md:hidden px-4"}>
         <p
-          className={"text-xl md:text-2xl text-center gilroy-bold py-8 md:py-0"}
+          className={
+            "text-xl md:text-2xl text-center font-gilroysemibold py-8 md:py-0"
+          }
         >
           Interested in joining MIG?
         </p>
