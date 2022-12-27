@@ -15,9 +15,6 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
-import { useCallback } from "react";
-import { useRef } from "react";
-import { Bar } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -25,11 +22,14 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_LISTS_GET,
-  EMPLOYEES_PAYSLIPS_GET,
   EMPLOYEES_PAYSLIPS_POST,
+  EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_GET,
-  EMPLOYEE_PAYSLIP_VARIABLE_ADD,
+  EMPLOYEE_SALARY_COLUMNS_GET,
+  EMPLOYEE_SALARY_COLUMN_ADD,
+  EMPLOYEE_SALARY_COLUMN_DELETE,
+  EMPLOYEE_SALARY_COLUMN_UPDATE,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -48,7 +48,7 @@ import { DownloadIconSvg, SettingsIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import {
-  ModalAddSalaryVar,
+  ModalManageSalaryVar,
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
@@ -85,7 +85,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetEmployeesPayslips = hasPermission(EMPLOYEES_PAYSLIPS_GET);
+  const isAllowedToGetEmployeesPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToPostEmployeesPayslips = hasPermission(
@@ -94,6 +94,17 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+
+  const isAllowedToGetSalaryColumns = hasPermission(
+    EMPLOYEE_SALARY_COLUMNS_GET
+  );
+  const isAllowedToAddSalaryColumn = hasPermission(EMPLOYEE_SALARY_COLUMN_ADD);
+  const isAllowedToDeleteSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_DELETE
+  );
+  const isAllowedToUpdateSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_UPDATE
+  );
 
   // 1. Init
   const rt = useRouter();
@@ -193,7 +204,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
       {
         method: `GET`,
         headers: {
@@ -428,7 +439,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.status == "draft" ? (
+              {record.is_posted == 0 ? (
                 <p
                   className="bg-state2 bg-opacity-10 text-state2 
                   py-1 px-7 rounded-md text-center"
@@ -455,7 +466,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.status == "draft" ? (
+              {record.is_posted == 0 ? (
                 <div className="flex flex-col space-y-2">
                   <ButtonSys
                     type={isAllowedToGetPayslip ? "default" : "primary"}
@@ -693,13 +704,17 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
       {/* Modal Add Salary Variable */}
       {/* TODO: change hasPermission */}
-      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_VARIABLE_ADD}>
-        <ModalAddSalaryVar
-          isManageVar={true}
+      <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
+        <ModalManageSalaryVar
+          initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
           loading={loadingSave}
-          // onOk={}
+          isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
+          isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
+          isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
+          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
+          onOk={() => setModalSalaryVar(false)}
           // disabled
         />
       </AccessControl>
