@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -21,7 +22,10 @@ import { useAccessControl } from "contexts/access-control";
 import {
   EMPLOYEE_PAYSLIP_GET,
   EMPLOYEE_PAYSLIP_UPDATE,
-  EMPLOYEE_PAYSLIP_VARIABLE_ADD,
+  EMPLOYEE_SALARY_COLUMNS_GET,
+  EMPLOYEE_SALARY_COLUMN_ADD,
+  EMPLOYEE_SALARY_COLUMN_DELETE,
+  EMPLOYEE_SALARY_COLUMN_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../../../components/button";
@@ -34,6 +38,7 @@ import {
   ModalUbah,
 } from "../../../../../components/modal/modalCustom";
 import EmployeeContractForm from "../../../../../components/screen/employee/create/contract";
+import CustomCurrencyInput from "../../../../../components/screen/employee/customCurrencyInput";
 import {
   objectToFormData,
   permissionWarningNotification,
@@ -61,6 +66,16 @@ const EmployeePayslipAddIndex = ({
   }
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
+  const isAllowedToGetSalaryColumns = hasPermission(
+    EMPLOYEE_SALARY_COLUMNS_GET
+  );
+  const isAllowedToAddSalaryColumn = hasPermission(EMPLOYEE_SALARY_COLUMN_ADD);
+  const isAllowedToDeleteSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_DELETE
+  );
+  const isAllowedToUpdateSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_UPDATE
+  );
 
   //INIT
   const rt = useRouter();
@@ -89,14 +104,19 @@ const EmployeePayslipAddIndex = ({
   const [dataPayslip, setDataPayslip] = useState({
     id: null,
     employee_id: null,
-    total_workdays: 0,
-    date_paid: "",
-    benefit_receive: {},
-    benefit_reduce: {},
-    total_gross_receive: "",
-    total_gross_reduce: "",
+    total_hari_kerja: 0,
+    tanggal_dibayarkan: "",
+    // benefit_receive: {},
+    // benefit_reduce: {},
+    total_gross_penerimaan: "",
+    total_gross_pengurangan: "",
     take_home_pay: "",
+    benefit: {},
   });
+
+  // Use for selected variable list to show as fields in form
+  const [receiveVarFields, setReceiveVarFields] = useState([]);
+  const [reductionVarFields, setReductionVarFields] = useState([]);
 
   const [refresh, setRefresh] = useState(-1);
   const [isDraft, setIsDraft] = useState(false);
@@ -105,6 +125,7 @@ const EmployeePayslipAddIndex = ({
   const [canUpdateMainSalary, setCanUpdateMainSalary] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(false);
 
   // 1.3. Delete
   const [loadingDelete, setLoadingDelete] = useState(false);
@@ -112,6 +133,11 @@ const EmployeePayslipAddIndex = ({
   // 1.4. Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+
+  // 1.5. Formatted currency field
+  const [formattedGrossPenerimaan, setFormattedGrossPenerimaan] = useState(0);
+  const [formattedGrossPengurangan, setFormattedGrossPengurangan] = useState(0);
+  const [formattedTakeHomePay, setFormattedTakeHomePay] = useState(0);
 
   // 2. USE EFFECT
   // 2.1 Get employee payslip detail
@@ -124,7 +150,7 @@ const EmployeePayslipAddIndex = ({
     if (payslipId) {
       setpraloading(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${payslipId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslip?id=${payslipId}`,
         {
           method: `GET`,
           headers: {
@@ -152,6 +178,74 @@ const EmployeePayslipAddIndex = ({
         .finally(() => setpraloading(false));
     }
   }, [isAllowedToGetPayslip, payslipId, refresh]);
+
+  // 2.2. Disable "Terbitkan" button if any required field is empty
+  useEffect(() => {
+    let requiredPayslipField = Boolean(
+      dataPayslip.total_hari_kerja &&
+        dataPayslip.tanggal_dibayarkan &&
+        dataPayslip.total_gross_penerimaan &&
+        dataPayslip.total_gross_pengurangan &&
+        dataPayslip.take_home_pay
+    );
+
+    if (!requiredPayslipField) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataPayslip]);
+
+  // 2.3 Get salary variable list
+  useEffect(() => {
+    if (!isAllowedToGetSalaryColumns) {
+      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+      setpraloading(false);
+      return;
+    }
+
+    setpraloading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          let dataVar = response2.data;
+          const receiveVariables = dataVar.filter(
+            (variable) => variable.type === 1
+          );
+          const reductionVariables = dataVar.filter(
+            (variable) => variable.type === 2
+          );
+
+          // Set checked variables to show as fields in form
+          const requiredReceiveVariables = receiveVariables.filter(
+            (variable) => variable.required === 1
+          );
+          const requiredReductionVariables = reductionVariables.filter(
+            (variable) => variable.required === 1
+          );
+          setReceiveVarFields(requiredReceiveVariables);
+          setReductionVarFields(requiredReductionVariables);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setpraloading(false));
+  }, [isAllowedToGetSalaryColumns, refresh]);
 
   // 3. Handler
   // 3.1. Handle input change
@@ -200,15 +294,18 @@ const EmployeePayslipAddIndex = ({
   };
 
   // 3.2. Handle Save Payslip Draft/Posted
-  const handleSavePayslip = () => {
+  const handleSavePayslip = (isPosted) => {
     if (!isAllowedToUpdatePayslip) {
       permissionWarningNotification("Menyimpan", "Slip Gaji Karyawan");
       return;
     }
 
-    const payloadFormData = objectToFormData(dataPayslip);
+    const payloadFormData = objectToFormData({
+      ...dataPayslip,
+      is_posted: isPosted,
+    });
     setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeePayslip`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
@@ -219,10 +316,18 @@ const EmployeePayslipAddIndex = ({
       .then((response2) => {
         if (response2.success) {
           setModalUpdate(false);
-          notification.success({
-            message: `Slip gaji berhasil ditambahkan.`,
-            duration: 3,
-          });
+          if (isDraft) {
+            notification.success({
+              message: `Draft slip gaji berhasil dibuat.`,
+              duration: 3,
+            });
+          } else {
+            notification.success({
+              message: `Slip gaji berhasil ditambahkan.`,
+              duration: 3,
+            });
+          }
+
           rt.push(`/admin/employees/${employeeId}`);
         } else {
           notification.error({
@@ -287,7 +392,7 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(false);
                 setModalUpdate(true);
               }}
-              disabled={!isAllowedToUpdatePayslip}
+              disabled={!isAllowedToUpdatePayslip || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -305,7 +410,7 @@ const EmployeePayslipAddIndex = ({
         >
           <Form.Item
             label="Total Hari Kerja"
-            name={"total_workdays"}
+            name={"total_hari_kerja"}
             rules={[
               {
                 required: true,
@@ -315,9 +420,9 @@ const EmployeePayslipAddIndex = ({
           >
             <div>
               <InputNumber
-                value={dataPayslip?.total_workdays}
-                name={"total_workdays"}
-                onChange={(value) => onChangeSelect(value, "total_workdays")}
+                value={dataPayslip?.total_hari_kerja}
+                name={"total_hari_kerja"}
+                onChange={(value) => onChangeSelect(value, "total_hari_kerja")}
                 placeholder="Masukkan total hari kerja"
                 className="w-full"
               />
@@ -325,7 +430,7 @@ const EmployeePayslipAddIndex = ({
           </Form.Item>
           <Form.Item
             label="Tanggal Dibayarkan"
-            name={"date_paid"}
+            name={"tanggal_dibayarkan"}
             rules={[
               {
                 required: true,
@@ -335,17 +440,17 @@ const EmployeePayslipAddIndex = ({
           >
             <>
               <DatePicker
-                name="date_paid"
+                name="tanggal_dibayarkan"
                 placeholder="Pilih tanggal dibayarkan"
                 className="w-full"
                 value={
-                  moment(dataPayslip?.date_paid).isValid()
-                    ? moment(dataPayslip?.date_paid)
+                  moment(dataPayslip?.tanggal_dibayarkan).isValid()
+                    ? moment(dataPayslip?.tanggal_dibayarkan)
                     : null
                 }
                 format={"YYYY-MM-DD"}
                 onChange={(value, datestring) => {
-                  onChangeDatePicker(datestring, "date_paid");
+                  onChangeDatePicker(datestring, "tanggal_dibayarkan");
                 }}
               />
             </>
@@ -364,16 +469,10 @@ const EmployeePayslipAddIndex = ({
               ]}
             >
               <div>
-                <Input
-                  value={dataPayslip?.benefit?.main_salary}
-                  name={"main_salary"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, main_salary: e.target.value },
-                    }));
-                  }}
-                  placeholder="Masukkan gaji pokok"
+                <CustomCurrencyInput
+                  fieldLabel={"gaji pokok"}
+                  fieldName={"gaji_pokok"}
+                  setDataForm={setDataPayslip}
                   disabled={canUpdateMainSalary ? false : true}
                 />
               </div>
@@ -385,29 +484,76 @@ const EmployeePayslipAddIndex = ({
             >
               Ubah gaji pokok
             </Checkbox>
-            <Form.Item label="Tunjangan Uang Makan" name={"meal_allowance"}>
-              <div>
-                <Input
-                  value={dataPayslip?.benefit?.meal_allowance}
-                  name={"meal_allowance"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: {
-                        ...prev.benefit,
-                        meal_allowance: e.target.value,
-                      },
-                    }));
-                  }}
-                  placeholder="Masukkan tunjangan uang makan"
-                />
-              </div>
-            </Form.Item>
+
+            {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
+            {receiveVarFields.map((variable) => (
+              <Form.Item
+                label={variable.name}
+                name={`${variable.name}`}
+                rules={[
+                  {
+                    required: variable.required,
+                    message: `${variable.name} wajib diisi`,
+                  },
+                ]}
+              >
+                <div>
+                  <CustomCurrencyInput
+                    fieldLabel={`${variable.name.toLowerCase()}`}
+                    fieldName={`${variable.name
+                      .toLowerCase()
+                      .split(" ")
+                      .join("_")}`}
+                    setDataForm={setDataPayslip}
+                  />
+                </div>
+              </Form.Item>
+            ))}
           </div>
 
           <div className="flex flex-col">
             <p className="mig-heading--5 mb-3">PENGURANGAN</p>
-            <Form.Item
+            {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
+            {reductionVarFields.map((variable) => (
+              <Form.Item
+                label={variable.name}
+                name={`${variable.name}`}
+                rules={[
+                  {
+                    required: variable.required,
+                    message: `${variable.name} wajib diisi`,
+                  },
+                ]}
+              >
+                <div>
+                  <CustomCurrencyInput
+                    fieldLabel={`${variable.name.toLowerCase()}`}
+                    fieldName={`${variable.name
+                      .toLowerCase()
+                      .split(" ")
+                      .join("_")}`}
+                    setDataForm={setDataPayslip}
+                    disabled={variable.required}
+                  />
+                  {/* <Input
+                    // value={dataPayslip?.benefit[`${variable.name}`]}
+                    name={`${variable.name}`}
+                    onChange={(e) => {
+                      setDataPayslip((prev) => ({
+                        ...prev,
+                        benefit: {
+                          ...prev.benefit,
+                          [variable.name]: e.target.value,
+                        },
+                      }));
+                    }}
+                    placeholder={`Masukkan ${variable.name}`}
+                    disabled={variable.required}
+                  /> */}
+                </div>
+              </Form.Item>
+            ))}
+            {/* <Form.Item
               label="BPJS KS (5% Perusahaan)"
               name={"bpjs_ks"}
               rules={[
@@ -415,8 +561,7 @@ const EmployeePayslipAddIndex = ({
                   required: true,
                   message: "BPJS KS wajib diisi",
                 },
-              ]}
-            >
+              ]}>
               <div>
                 <Input
                   value={dataPayslip?.benefit?.bpjs_ks}
@@ -439,8 +584,7 @@ const EmployeePayslipAddIndex = ({
                   required: true,
                   message: "BPJS TK-JHT wajib diisi",
                 },
-              ]}
-            >
+              ]}>
               <div>
                 <Input
                   value={dataPayslip?.benefit?.bpjs_tk_jht}
@@ -463,8 +607,7 @@ const EmployeePayslipAddIndex = ({
                   required: true,
                   message: "BPJS TK-JKK wajib diisi",
                 },
-              ]}
-            >
+              ]}>
               <div>
                 <Input
                   value={dataPayslip?.benefit?.bpjs_tk_jkk}
@@ -487,8 +630,7 @@ const EmployeePayslipAddIndex = ({
                   required: true,
                   message: "BPJS TK-JKM wajib diisi",
                 },
-              ]}
-            >
+              ]}>
               <div>
                 <Input
                   value={dataPayslip?.benefit?.bpjs_tk_jkm}
@@ -511,8 +653,7 @@ const EmployeePayslipAddIndex = ({
                   required: true,
                   message: "BPJS TK-JP wajib diisi",
                 },
-              ]}
-            >
+              ]}>
               <div>
                 <Input
                   value={dataPayslip?.benefit?.bpjs_tk_jp}
@@ -536,8 +677,7 @@ const EmployeePayslipAddIndex = ({
                   required: true,
                   message: "PPh 21 wajib diisi",
                 },
-              ]}
-            >
+              ]}>
               <>
                 <Input
                   value={dataPayslip?.benefit?.pph}
@@ -551,7 +691,7 @@ const EmployeePayslipAddIndex = ({
                   placeholder="Masukkan pajak penghasilan"
                 />
               </>
-            </Form.Item>
+            </Form.Item> */}
           </div>
           <div className="col-span-2 mb-6">
             <ButtonSys
@@ -570,7 +710,7 @@ const EmployeePayslipAddIndex = ({
           <p className="mig-heading--5 col-span-2 mb-3">TOTAL</p>
           <Form.Item
             label="Total Gross Penerimaan"
-            name={"total_gross_receive"}
+            name={"total_gross_penerimaan"}
             rules={[
               {
                 required: true,
@@ -579,18 +719,31 @@ const EmployeePayslipAddIndex = ({
             ]}
           >
             <>
-              <Input
-                value={dataPayslip?.total_gross_receive}
-                name={"total_gross_receive"}
-                onChange={onChangeInput}
-                placeholder="Masukkan total gross penerimaan"
+              <CurrencyFormat
+                customInput={Input}
+                placeholder={"Masukkan total gross penerimaan"}
+                value={formattedGrossPenerimaan}
+                thousandSeparator={"."}
+                decimalSeparator={","}
+                prefix={"Rp"}
+                suffix={",00"}
                 disabled
+                onValueChange={(values) => {
+                  const { formattedValue, value } = values;
+                  // formattedValue = $2,223
+                  // value ie, 2223
+                  setFormattedGrossPenerimaan(formattedValue);
+                  setDataPayslip((prev) => ({
+                    ...prev,
+                    total_gross_penerimaan: value,
+                  }));
+                }}
               />
             </>
           </Form.Item>
           <Form.Item
             label="Total Gross Pengurangan"
-            name={"total_gross_reduce"}
+            name={"total_gross_pengurangan"}
             rules={[
               {
                 required: true,
@@ -599,12 +752,23 @@ const EmployeePayslipAddIndex = ({
             ]}
           >
             <>
-              <Input
-                value={dataPayslip?.total_gross_reduce}
-                name={"total_gross_reduce"}
-                onChange={onChangeInput}
-                placeholder="Masukkan total gross pengurangan"
+              <CurrencyFormat
+                customInput={Input}
+                placeholder={"Masukkan total gross pengurangan"}
+                value={formattedGrossPengurangan}
+                thousandSeparator={"."}
+                decimalSeparator={","}
+                prefix={"Rp"}
+                suffix={",00"}
                 disabled
+                onValueChange={(values) => {
+                  const { formattedValue, value } = values;
+                  setFormattedGrossPengurangan(formattedValue);
+                  setDataPayslip((prev) => ({
+                    ...prev,
+                    total_gross_pengurangan: value,
+                  }));
+                }}
               />
             </>
           </Form.Item>
@@ -620,12 +784,22 @@ const EmployeePayslipAddIndex = ({
             className="col-span-2"
           >
             <>
-              <Input
-                value={dataPayslip?.take_home_pay}
-                name={"take_home_pay"}
-                onChange={onChangeInput}
-                placeholder="Masukkan take home pay"
+              <CurrencyFormat
+                customInput={Input}
+                value={formattedTakeHomePay}
+                thousandSeparator={"."}
+                decimalSeparator={","}
+                prefix={"Rp"}
+                suffix={",00"}
                 disabled
+                onValueChange={(values) => {
+                  const { formattedValue, value } = values;
+                  setFormattedTakeHomePay(formattedValue);
+                  setDataPayslip((prev) => ({
+                    ...prev,
+                    take_home_pay: value,
+                  }));
+                }}
               />
             </>
           </Form.Item>
@@ -633,13 +807,23 @@ const EmployeePayslipAddIndex = ({
       </div>
 
       {/* Modal Add Salary Variable */}
-      {/* TODO: change hasPermission */}
-      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_VARIABLE_ADD}>
+      <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
         <ModalAddSalaryVar
+          initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
           loading={loadingSave}
-          // onOk={}
+          isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
+          isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
+          isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
+          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
+          onOk={() => setModalSalaryVar(false)}
+          receiveVarFields={receiveVarFields}
+          reductionVarFields={reductionVarFields}
+          setReceiveVarFields={setReceiveVarFields}
+          setReductionVarFields={setReductionVarFields}
+          refresh={refresh}
+          setRefresh={setRefresh}
           // disabled
         />
       </AccessControl>
@@ -647,10 +831,16 @@ const EmployeePayslipAddIndex = ({
       {/* Modal save payslip */}
       <AccessControl hasPermission={EMPLOYEE_PAYSLIP_UPDATE}>
         <ModalUbah
-          title={`Konfirmasi Penerbitan Slip Gaji`}
+          title={
+            isDraft
+              ? "Konfirmasi Penyimpanan Draft Slip Gaji"
+              : "Konfirmasi Penerbitan Slip Gaji"
+          }
           visible={modalUpdate}
           onvisible={setModalUpdate}
-          // onOk={handleSavePayslip}
+          onOk={() => {
+            isDraft ? handleSavePayslip(0) : handleSavePayslip(1);
+          }}
           onCancel={() => {
             setModalUpdate(false);
           }}
@@ -718,7 +908,7 @@ export async function getServerSideProps({ req, res, query }) {
     }
   );
   const resjsonGE = await resourcesGE.json();
-  const employeeName = resjsonGE?.data?.name;
+  const employeeName = resjsonGE?.data?.name || "-";
 
   return {
     props: {

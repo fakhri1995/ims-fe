@@ -43,6 +43,7 @@ import {
   UploadIconSvg,
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
+import CustomCurrencyInput from "../../customCurrencyInput";
 
 const EmployeeContractForm = ({
   initProps,
@@ -635,24 +636,10 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <CurrencyFormat
-              customInput={Input}
-              placeholder="Masukkan gaji pokok"
-              value={formattedNominal}
-              thousandSeparator={"."}
-              decimalSeparator={","}
-              prefix={"Rp"}
-              suffix={",00"}
-              onValueChange={(values) => {
-                const { formattedValue, value } = values;
-                // formattedValue = $2,223
-                // value ie, 2223
-                setFormattedNominal(formattedValue);
-                setDataContract((prev) => ({
-                  ...prev,
-                  benefit: { ...prev.benefit, main_salary: value },
-                }));
-              }}
+            <CustomCurrencyInput
+              fieldLabel={"gaji pokok"}
+              fieldName={"main_salary"}
+              setDataForm={setDataContract}
             />
           </div>
         </Form.Item>
