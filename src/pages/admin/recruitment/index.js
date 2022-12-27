@@ -370,7 +370,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingRecruitments(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=10&page=${pageRecruitments}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=${rowsRecruitment}&page=${pageRecruitments}`,
       {
         method: `GET`,
         headers: {
@@ -1392,9 +1392,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 lg:grid-cols-3 md:px-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:px-5 gap-6">
           <div
-            className="col-span-2 flex flex-row items-center w-full 
+            className="lg:col-span-2 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
 						divide-x divide-gray-300"
           >
@@ -1450,7 +1450,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div> */}
 
           {/* Table Kandidat */}
-          <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+          <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">Semua Kandidat</h4>
               {isBulk === false ? (
@@ -1474,7 +1474,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                       type={"primary"}
                       className="btn btn-sm text-white font-semibold px-6 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
-                        hover:border-primary75 focus:bg-primary100 focus:border-primary100"
+                        hover:border-primary75 focus:bg-primary100 focus:border-primary100 
+                        flex-nowrap"
                       icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                     >
                       Tambah Kandidat
@@ -1669,9 +1670,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             />
 
             {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
+            <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
               {/* Search by keyword (kata kunci) */}
-              <div className="w-4/12">
+              <div className="w-full md:w-4/12">
                 <Input
                   value={
                     searchingFilterRecruitments === ""
@@ -1694,7 +1695,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by role (dropdown) */}
-              <div className="w-2/12">
+              <div className="w-full md:w-2/12">
                 <Select
                   value={selectedRoleId === 0 ? null : selectedRoleId}
                   allowClear
@@ -1718,7 +1719,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by stage */}
-              <div className="w-2/12">
+              <div className="w-full md:w-2/12">
                 <Select
                   value={selectedStage === 0 ? null : selectedStage}
                   allowClear
@@ -1743,7 +1744,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by status (dropdown) */}
-              <div className="w-2/12">
+              <div className="w-full md:w-2/12">
                 <Select
                   value={selectedStatus === 0 ? null : selectedStatus}
                   allowClear
@@ -1773,16 +1774,18 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </Select>
               </div>
 
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterRecruitments}
-                disabled={!isAllowedToGetRecruitments}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
-                </div>
-              </ButtonSys>
+              <div className="flex justify-end">
+                <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterRecruitments}
+                  disabled={!isAllowedToGetRecruitments}
+                >
+                  <div className="flex flex-row space-x-2.5 w-full items-center">
+                    <SearchIconSvg size={15} color={`#ffffff`} />
+                    <p>Cari</p>
+                  </div>
+                </ButtonSys>
+              </div>
             </div>
             {/* End: Search criteria */}
 
@@ -1794,6 +1797,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 loading={loadingRecruitments}
                 setpraloading={setLoadingRecruitments}
                 pageSize={rowsRecruitment}
+                setPageSize={setRowsRecruitments}
                 total={dataRawRecruitments?.total}
                 initProps={initProps}
                 setpage={setPageRecruitments}
