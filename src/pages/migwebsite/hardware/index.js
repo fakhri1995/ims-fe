@@ -1904,7 +1904,7 @@ function Hardware({}) {
               }
             >
               <div className={"flex-col w-[495px]"}>
-                <p className={"text-3xl pb-4 font-gilroybold"}>
+                <p className={"text-xl md:text-[32px] pb-4 font-gilroybold"}>
                   Nation-wide managed service model for your IT hardwares
                 </p>
                 <p className={"mt:4 md:mt-8 font-gilroyregular text-base"}>
@@ -2006,18 +2006,18 @@ function Hardware({}) {
               <div className={"px-3"}>
                 <p
                   className={
-                    "text-blackmig text-xl text-center font-gilroysemibold"
+                    "text-blackmig text-xl text-center font-gilroysemibold w-[328px]"
                   }
                 >
                   Nation-wide managed service model for your IT hardwares
                 </p>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
-                  className={"w-[304px] h-[174px]"}
+                  className={"w-[304px] h-[174px] mt-6 mx-auto"}
                 ></img>
                 <p
                   className={
-                    "py-6 text-center text-base font-gilroyregular text-blackmig"
+                    "py-6 text-center text-base font-gilroyregular text-blackmig w-[328px] mx-auto"
                   }
                 >
                   Rapid pace of change, uncertainty on scalability, and heavy
@@ -2025,11 +2025,11 @@ function Hardware({}) {
                   your core business.
                 </p>
               </div>
-              <div>
+              <div className={"w-[328px] mx-auto"}>
                 <p className={"font-gilroysemibold text-primarygreen text-sm"}>
                   Reach us to get more information
                 </p>
-                <div className={"flex flex-row items-center mt-1"}>
+                <div className={"flex flex-row items-center mt-1 mx-auto"}>
                   <Input
                     name={"email"}
                     className={"w-[241px] h-[37px]"}
@@ -2052,7 +2052,7 @@ function Hardware({}) {
               </div>
               <div
                 className={
-                  "mt-6 w-[328px] border rounded-lg p-2 bg-greentrans15"
+                  "mt-6 w-[328px] border rounded-lg p-2 bg-greentrans15 mx-auto"
                 }
               >
                 <div className={"flex flex-row"}>
@@ -2099,7 +2099,7 @@ function Hardware({}) {
             <div className={"container text-center mx-auto"}>
               <p
                 className={
-                  "text-xl md:text-[32px] px-8 md:px-0 gilroy-semibold font-gilroysemibold"
+                  "text-xl md:text-[32px] px-8 md:px-0 font-gilroysemibold"
                 }
               >
                 Let’s see what{" "}
@@ -2547,7 +2547,7 @@ function Hardware({}) {
                 <div className={"mt-7 px-2"}>
                   <p
                     className={
-                      "text-base text-left gilroy-semibold text-blackmig font-gilroysemibold"
+                      "text-base text-left text-blackmig font-gilroysemibold"
                     }
                   >
                     Banking Machinery

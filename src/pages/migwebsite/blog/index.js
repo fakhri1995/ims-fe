@@ -230,7 +230,7 @@ function Blog({}) {
         >
           Most Popular
         </p>
-        <div className={"hidden md:block grid md:grid-cols-2 gap-4 mt-4"}>
+        <div className={"hidden md:grid md:grid-cols-2 gap-4 mt-4"}>
           <Linkk href="/blog/1">
             <div
               className={
