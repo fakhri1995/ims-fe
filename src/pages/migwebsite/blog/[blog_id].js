@@ -223,7 +223,7 @@ function BlogDetail({}) {
       </section>
       <section
         className={
-          "section1articlepagephone block md:hidden md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section1articlepagephone block md:hidden pt-6 md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"px-2 py-2"}>
@@ -232,87 +232,86 @@ function BlogDetail({}) {
           >
             This is a Title This is a Title This is a Title
           </p>
-          <p className={"text-xs text-darkgrey mb-4"}>
-            by <span className={"font-bold"}>Mayfa Shadrina </span>
-            on <span className={"font-bold"}>August 8th, 2022</span>
+          <p className={"text-xs text-blackmig font-gilroyregular mt-3 mb-4"}>
+            by <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+            on <span className={"font-gilroysemibold"}>August 8th, 2022</span>
           </p>
-          <img src="/image/blog.png" className={"w-full h-full"} alt="" />
+          <img
+            src="/image/blog.png"
+            className={"w-full h-full rounded-lg"}
+            alt=""
+          />
         </div>
         <div className={"py-4 flex flex-row justify-between px-2"}>
           <div className={"flex flex-row justify-around"}>
             <p
               className={
-                "text-sm text-darkgrey md:text-base font-gilroysemibold"
+                "text-xs text-darkgrey md:text-base font-gilroysemibold self-center"
               }
             >
               Share
             </p>
             <img
               src="/image/message-circle.png"
-              className={"ml-4"}
+              className={"ml-2"}
               style={{ width: "36px", height: "36px" }}
               alt=""
             />
             <img
               src="/image/facebook-circle.png"
-              className={"ml-4"}
+              className={"ml-2"}
               style={{ width: "36px", height: "36px" }}
               alt=""
             />
             <img
               src="/image/twitter-circle.png"
-              className={"ml-4"}
+              className={"ml-2"}
               style={{ width: "36px", height: "36px" }}
               alt=""
             />
             <img
               src="/image/share-link.png"
-              className={"ml-4"}
+              className={"ml-2"}
               style={{ width: "42px", height: "42px" }}
               alt=""
             />
           </div>
-          <div className={"items-end"}></div>
-          <p className={"text-sm text-darkgrey font-gilroyregular"}>
-            9 MINUTE READ
-          </p>
-        </div>
-      </section>
-      <section
-        className={
-          "section2articlepage block md:hidden md:relative md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
-        }
-      >
-        <div className={"px-2 py-2 pr-8"}>
-          <div className={"bg-white p-2 shadow-lg"}>
-            <p className={"text-blackmig text-base font-gilroysemibold mt-2"}>
-              TABLE OF CONTENT
+          <div className={"self-center"}>
+            <p className={"text-xs text-darkgrey font-gilroyregular"}>
+              9 MINUTE READ
             </p>
-            <div className={"p-2 mt-4"}>
-              <ul class="list-disc">
-                <li class={"text-primarygreen text-sm font-gilroysemibold"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing eli.
-                </li>
-                <li
-                  class={
-                    "text-blackmig text-sm font-regular font-gilroyregular"
-                  }
-                >
-                  Sed do eiusmod tempor incididunt ut labore et dolore magna
-                  aliqua
-                </li>
-                <li
-                  class={
-                    "text-blackmig text-sm font-regular font-gilroyregular"
-                  }
-                >
-                  Ut enim ad minim veniam, quis nostrud exercitation.
-                </li>
-              </ul>
-            </div>
           </div>
         </div>
-        <div className={"px-2 py-2"}>
+      </section>
+      <section className={"section2articlepage block md:hidden px-5 py-6"}>
+        <div
+          className={"bg-table p-4 w-full rounded-lg"}
+          style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+        >
+          <p className={"text-blackmig text-base font-gilroysemibold"}>
+            TABLE OF CONTENT
+          </p>
+          <div className={"mt-2 border border-dividermig"}></div>
+          <div className={"mt-2"}>
+            <ul class="list-disc">
+              <li class={"text-blackmig text-sm font-gilroyregular"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing eli.
+              </li>
+              <li
+                class={"text-blackmig text-sm font-regular font-gilroyregular"}
+              >
+                Sed do eiusmod tempor incididunt ut labore et dolore magna
+                aliqua
+              </li>
+              <li
+                class={"text-blackmig text-sm font-regular font-gilroyregular"}
+              >
+                Ut enim ad minim veniam, quis nostrud exercitation.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className={"px-2 mt-6"}>
           <p className={"indent-5 text-sm font-gilroyregular"}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
@@ -343,6 +342,7 @@ function BlogDetail({}) {
           <div className={"grid justify-items-center pt-4"}>
             <img
               src="/image/blog.png"
+              className={"rounded-lg"}
               style={{ width: "244px", height: "124px" }}
               alt=""
             />
@@ -374,7 +374,7 @@ function BlogDetail({}) {
           </p>
         </div>
       </section>
-      <section
+      {/* <section
         className={
           "section3clientpagephone m-4 block md:hidden md:relative mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
@@ -448,7 +448,7 @@ function BlogDetail({}) {
             </p>
           </Linkk>
         </div>
-      </section>
+      </section> */}
       <section
         className={
           "section2blog hidden md:block md:pt-[25px] md:px-[112px] md:pb-6 bg-bgjoinmig "
@@ -557,92 +557,91 @@ function BlogDetail({}) {
           </div>
         </div>
       </section>
-      <section
-        className={
-          "section2blog block md:hidden mt-4 md:mt-8 pt-4 pb-8 bg-bgjoinmig "
-        }
-      >
+      <section className={"section2blog block md:hidden p-4 bg-bgjoinmig "}>
         <p
           className={
-            "text-base md:text-xl gilroy-bold text-primarygreen px-4 pt-4"
+            "text-base md:text-xl font-gilroybold text-primarygreen px-4"
           }
         >
           Read Other Articles
         </p>
         <Slider {...sliderSettingsPhone}>
           <Linkk href="/blog/1">
-            <div className={"flex mx-2 flex-row bg-white mt-2 shadow-lg p-4"}>
+            <div
+              className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
               <img
-                className={"m-1"}
-                style={{ width: "200px", height: "142px" }}
+                className={""}
+                style={{ width: "103px", height: "131px" }}
                 src="/image/blog.png"
               />
               <div className={"pl-4"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-bold"}>Mayfa Shadrina </span>
-                  on <span className={"font-bold"}>August 8th, 2022</span>
+                <p className={"text-[10px] text-darkgrey font-gilroysemibold"}>
+                  August 8th, 2022
                 </p>
-                <p className={"font-bold text-blackmig text-base"}>
+                <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig font-gilroyregular text-xs"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
                 </p>
-                <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
                   Hardware
                 </span>
               </div>
             </div>
           </Linkk>
           <Linkk href="/blog/1">
-            <div className={"flex mx-2 flex-row bg-white mt-2 shadow-lg p-4"}>
+            <div
+              className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
               <img
-                className={"m-1"}
-                style={{ width: "200px", height: "142px" }}
+                className={""}
+                style={{ width: "103px", height: "131px" }}
                 src="/image/blog.png"
               />
               <div className={"pl-4"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-bold"}>Mayfa Shadrina </span>
-                  on <span className={"font-bold"}>August 8th, 2022</span>
+                <p className={"text-[10px] text-darkgrey font-gilroysemibold"}>
+                  August 8th, 2022
                 </p>
-                <p className={"font-bold text-blackmig text-base"}>
+                <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig font-gilroyregular text-xs"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
                 </p>
-                <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
                   Hardware
                 </span>
               </div>
             </div>
           </Linkk>
           <Linkk href="/blog/1">
-            <div className={"flex mx-2 flex-row bg-white mt-2 shadow-lg p-4"}>
+            <div
+              className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
               <img
-                className={"m-1"}
-                style={{ width: "200px", height: "142px" }}
+                className={""}
+                style={{ width: "103px", height: "131px" }}
                 src="/image/blog.png"
               />
               <div className={"pl-4"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by <span className={"font-bold"}>Mayfa Shadrina </span>
-                  on <span className={"font-bold"}>August 8th, 2022</span>
+                <p className={"text-[10px] text-darkgrey font-gilroysemibold"}>
+                  August 8th, 2022
                 </p>
-                <p className={"font-bold text-blackmig text-base"}>
+                <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
                   This is a Title This is a Title This is a Title This is a
                   Title
                 </p>
-                <p className={" text-blackmig font-gilroyregular text-xs"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
                 </p>
-                <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2.5 py-0.5 rounded-[20px]">
+                <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
                   Hardware
                 </span>
               </div>
@@ -650,12 +649,8 @@ function BlogDetail({}) {
           </Linkk>
         </Slider>
       </section>
-      <section className={"sectioncomments md:relative p-2 md:p-20"}>
-        <p
-          className={
-            "text-blackmig text-lg md:text-xl gilroy-semibold font-gilroysemibold"
-          }
-        >
+      <section className={"sectioncomments md:relative py-4 px-6 md:p-20"}>
+        <p className={"text-blackmig text-base md:text-xl font-gilroysemibold"}>
           Comments (6)
         </p>
         <p className={"text-redmig text-sm font-gilroyregular mt-4"}>
@@ -726,20 +721,20 @@ function BlogDetail({}) {
               </Form.Item>
             </div>
             <Form.Item>
-              <div className={"w-full flex justify-start pb-8"}>
+              <div className={"w-full flex justify-start"}>
                 <button
                   type={"submit"}
                   className={
                     "text-sm text-center text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4 rounded bg-white"
                   }
                 >
-                  <p className={"px-1 text-base"}>Share</p>
+                  <p className={"px-1 text-base font-gilroysemibold"}>Share</p>
                 </button>
               </div>
             </Form.Item>
           </Form>
         </div>
-        <div className={"mt-8 border border-dividermig"}></div>
+        <div className={"mt-6 border border-dividermig"}></div>
         <div className="mt-8 p-4 md:px-4 md:pt-4 md:pb-[19px] border-2 border-bordermig rounded-lg">
           <p className={"text-sm text-blackmig font-gilroysemibold"}>
             Mayfa Shadrina

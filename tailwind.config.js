@@ -70,6 +70,7 @@ module.exports = {
         bgtalents:"#F8F8F8",
         redmig:"#FF3D3F",
         transp45:"rgba(24, 142, 77, 0.45)",
+        bgtable:"#F9F9F9"
       },
       borderColor: {
         primary: "#1890ff",

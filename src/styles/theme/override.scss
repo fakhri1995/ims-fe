@@ -406,3 +406,27 @@ ol {
   cursor: pointer;
   transition: border-color 0.3s;
 }
+
+.ant-checkbox .ant-checkbox-inner {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-color: "#262626";
+  border-radius: 4px;
+}
+
+.ant-checkbox-disabled .ant-checkbox-inner {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-color: "#262626";
+  border-radius: 4px;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-color: "#262626";
+  border-radius: 4px;
+}
