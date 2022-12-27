@@ -2227,7 +2227,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                           >
                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
                               <DeleteOutlined
-                                style={{ fontSize: `1.25rem` }}
+                                style={{
+                                  fontSize: `1.25rem`,
+                                }}
                               ></DeleteOutlined>
                             </div>
                           </Popconfirm>
@@ -2797,7 +2799,6 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                   onChange={(e) => {
                     setnewdata2({ ...newdata2, required_sn: e.target.checked });
                   }}
-                  checked={newdata2.required_sn}
                 />{" "}
                 Serial Number wajib ada
               </div>
@@ -4043,7 +4044,9 @@ const ModelsCreate = ({ sidemenu, dataProfile, initProps }) => {
                           >
                             <div className="flex items-center mr-4 hover:text-red-500 cursor-pointer">
                               <DeleteOutlined
-                                style={{ fontSize: `1.25rem` }}
+                                style={{
+                                  fontSize: `1.25rem`,
+                                }}
                               ></DeleteOutlined>
                             </div>
                           </Popconfirm>
