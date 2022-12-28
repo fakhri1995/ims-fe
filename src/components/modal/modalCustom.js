@@ -1,4 +1,15 @@
-import { Checkbox, Form, Input, Modal, Spin, notification } from "antd";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Popover,
+  Spin,
+  notification,
+} from "antd";
 import React, { useEffect, useState } from "react";
 
 import {
@@ -1166,12 +1177,21 @@ const ModalManageSalaryVar = ({
                 >
                   {option.name}
                 </Checkbox>
-                <button
-                  className="flex items-center bg-transparent hover:opacity-70"
-                  onClick={() => handleDeleteVariable(option.id)}
+                <Popconfirm
+                  title={
+                    <p className="w-40">
+                      Apakah Anda yakin ingin menghapus variabel{" "}
+                      <strong>{option.name}</strong>?
+                    </p>
+                  }
+                  okText={"Ya"}
+                  cancelText={"Tidak"}
+                  onConfirm={() => handleDeleteVariable(option.id)}
                 >
-                  <XIconSvg color={"#BF4A40"} size={16} />
-                </button>
+                  <button className="flex items-center bg-transparent hover:opacity-70">
+                    <XIconSvg color={"#BF4A40"} size={16} />
+                  </button>
+                </Popconfirm>
               </div>
             ))}
           </div>
@@ -1231,7 +1251,7 @@ const ModalManageSalaryVar = ({
         <div className="">
           <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
           <div className="flex flex-col space-y-2 space-x-0 mb-2">
-            {/* <Checkbox defaultChecked={true} disabled={true}>
+            <Checkbox defaultChecked={true} disabled={true}>
               BPJS KS (5% Perusahaan)
             </Checkbox>
             <Checkbox defaultChecked={true} disabled={true}>
@@ -1248,7 +1268,7 @@ const ModalManageSalaryVar = ({
             </Checkbox>
             <Checkbox defaultChecked={true} disabled={true}>
               PPh 21
-            </Checkbox> */}
+            </Checkbox>
 
             {reductionVarOptions?.map((option, idx) => (
               <div
@@ -1264,12 +1284,21 @@ const ModalManageSalaryVar = ({
                 >
                   {option.name}
                 </Checkbox>
-                <button
-                  className="flex items-center bg-transparent hover:opacity-70"
-                  onClick={() => handleDeleteVariable(option.id)}
+                <Popconfirm
+                  title={
+                    <p className="w-40">
+                      Apakah Anda yakin ingin menghapus variabel{" "}
+                      <strong>{option.name}</strong>?
+                    </p>
+                  }
+                  okText={"Ya"}
+                  cancelText={"Tidak"}
+                  onConfirm={() => handleDeleteVariable(option.id)}
                 >
-                  <XIconSvg color={"#BF4A40"} size={16} />
-                </button>
+                  <button className="flex items-center bg-transparent hover:opacity-70">
+                    <XIconSvg color={"#BF4A40"} size={16} />
+                  </button>
+                </Popconfirm>
               </div>
             ))}
           </div>
@@ -1342,6 +1371,7 @@ const ModalAddSalaryVar = ({
   setReceiveVarFields,
   setReductionVarFields,
 }) => {
+  // 1. Use State
   const [praLoading, setPraLoading] = useState(false);
 
   const [isInputReceiveVar, setInputReceiveVar] = useState(false);
@@ -1355,6 +1385,8 @@ const ModalAddSalaryVar = ({
   const [receiveVarOptions, setReceiveVarOptions] = useState([]);
   const [reductionVarOptions, setReductionVarOptions] = useState([]);
 
+  // 2. Use Effect
+  // 2.1. Get salary variable list
   useEffect(() => {
     if (!isAllowedToGetSalaryColumns) {
       permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
@@ -1400,6 +1432,11 @@ const ModalAddSalaryVar = ({
         .finally(() => setPraLoading(false));
     }
   }, [isAllowedToGetSalaryColumns, refresh, visible]);
+
+  // console.log(receiveVarOptions);
+
+  // 2.2. Update checked checkbox if any variable field is removed
+  // useEffect(() => {}, [receiveVarFields, reductionVarFields]);
 
   const handleAddVariable = () => {
     if (!isAllowedToAddSalaryColumn) {
@@ -1575,6 +1612,7 @@ const ModalAddSalaryVar = ({
                 ) : (
                   <div className="flex flex-row justify-between items-center">
                     <Checkbox
+                      // checked={receiveVarFields}
                       onChange={(e) => {
                         if (e.target.checked) {
                           setReceiveVarFields((prev) => [...prev, option]);
@@ -1587,12 +1625,21 @@ const ModalAddSalaryVar = ({
                     >
                       {option.name}
                     </Checkbox>
-                    <button
-                      className="flex items-center bg-transparent hover:opacity-70"
-                      onClick={() => handleDeleteVariable(option.id)}
+                    <Popconfirm
+                      title={
+                        <p className="w-40">
+                          Apakah Anda yakin ingin menghapus variabel{" "}
+                          <strong>{option.name}</strong>?
+                        </p>
+                      }
+                      okText={"Ya"}
+                      cancelText={"Tidak"}
+                      onConfirm={() => handleDeleteVariable(option.id)}
                     >
-                      <XIconSvg color={"#BF4A40"} size={16} />
-                    </button>
+                      <button className="flex items-center bg-transparent hover:opacity-70">
+                        <XIconSvg color={"#BF4A40"} size={16} />
+                      </button>
+                    </Popconfirm>
                   </div>
                 )}
               </div>
@@ -1646,6 +1693,24 @@ const ModalAddSalaryVar = ({
         <div className="">
           <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
           <div className="flex flex-col space-y-2 space-x-0 mb-2">
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS KS (5% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JHT (5,7% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JKK (0,24% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JKM (0,3% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JP (3% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              PPh 21
+            </Checkbox>
             {reductionVarOptions?.map((option, idx) => (
               <div key={idx}>
                 {option.required ? (
@@ -1671,12 +1736,21 @@ const ModalAddSalaryVar = ({
                       {option.name}
                     </Checkbox>
 
-                    <button
-                      className="flex items-center bg-transparent hover:opacity-70"
-                      onClick={() => handleDeleteVariable(option.id)}
+                    <Popconfirm
+                      title={
+                        <p className="w-40">
+                          Apakah Anda yakin ingin menghapus variabel{" "}
+                          <strong>{option.name}</strong>?
+                        </p>
+                      }
+                      okText={"Ya"}
+                      cancelText={"Tidak"}
+                      onConfirm={() => handleDeleteVariable(option.id)}
                     >
-                      <XIconSvg color={"#BF4A40"} size={16} />
-                    </button>
+                      <button className="flex items-center bg-transparent hover:opacity-70">
+                        <XIconSvg color={"#BF4A40"} size={16} />
+                      </button>
+                    </Popconfirm>
                   </div>
                 )}
               </div>
