@@ -77,6 +77,29 @@ ol {
   background-color: #35763b;
 }
 
+/* BUTTON */
+.ant-btn {
+  @apply rounded-md font-semibold;
+}
+
+/* primary */
+.ant-btn-primary:not(.ant-btn:disabled) {
+  background-color: #35763b;
+  border-color: #35763b;
+}
+.ant-btn-primary:hover {
+  opacity: 0.8;
+}
+
+/* default */
+.ant-btn-default:not(.ant-btn:disabled) {
+  color: #35763b;
+  border-color: #35763b;
+}
+.ant-btn-default:hover {
+  opacity: 0.8;
+}
+
 /* MENU */
 /* selected menu bg */
 .ant-menu-item-selected {
