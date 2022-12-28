@@ -69,7 +69,17 @@ function Software({}) {
   };
   const handleLetsTalk = () => {
     if (dataSoftware.company_email == null) {
+      setShowEmailError(true);
+      setEmailError("you must filled email first");
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\[A-Z]{2,4}$/i.test(
+        dataSoftware.company_email
+      )
+    ) {
+      setShowEmailError(true);
+      setEmailError("your email is invalid");
     } else {
+      setShowEmailError(false);
       setShowform(true);
     }
   };
@@ -96,6 +106,8 @@ function Software({}) {
   const [labelMeetingTime, setLabelMeetingTime] = useState(null);
   const [valueDate, onChangeDate] = useState(new Date());
   const [valueDateTemp, onChangeDateTemp] = useState(null);
+  const [showEmailError, setShowEmailError] = useState(false);
+  const [emailError, setEmailError] = useState(null);
   const dataMeetingTime = [
     {
       id: 1,
@@ -915,6 +927,15 @@ function Software({}) {
                       </div>
                     </button>
                   </div>
+                  {showEmailError && (
+                    <div className={"mt-2"}>
+                      <p
+                        className={"text-redmig font-gilroysemibold text-base"}
+                      >
+                        {emailError}
+                      </p>
+                    </div>
+                  )}
                   <div
                     className={
                       "my-4 w-3/4 border rounded-lg shadow-lg p-2 bg-green15"
