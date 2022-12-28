@@ -419,7 +419,7 @@ export async function getServerSideProps({ req, res, query }) {
     }
   );
   const resjsonGE = await resourcesGE.json();
-  const employeeName = resjsonGE?.data?.name;
+  const employeeName = resjsonGE?.data?.name || "-";
 
   return {
     props: {

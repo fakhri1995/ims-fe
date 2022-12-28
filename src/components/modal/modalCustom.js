@@ -1,7 +1,21 @@
-import { Checkbox, Form, Input, Modal, Spin } from "antd";
+import { ExclamationCircleFilled } from "@ant-design/icons";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Modal,
+  Popconfirm,
+  Popover,
+  Spin,
+  notification,
+} from "antd";
 import React, { useEffect, useState } from "react";
 
-import { createKeyPressHandler } from "../../lib/helper";
+import {
+  createKeyPressHandler,
+  permissionWarningNotification,
+} from "../../lib/helper";
 import ButtonSys from "../button";
 import {
   AlertIconSvg,
@@ -872,60 +886,253 @@ const ModalUbah = ({
   );
 };
 
-const ModalAddSalaryVar = ({
-  isManageVar,
+const ModalManageSalaryVar = ({
+  initProps,
   visible,
   onvisible,
   onOk,
   loading,
   disabled,
-  // setInputVar,
-  // isInputVar,
+  isAllowedToGetSalaryColumns,
+  isAllowedToAddSalaryColumn,
+  isAllowedToDeleteSalaryColumn,
+  isAllowedToUpdateSalaryColumn,
 }) => {
+  const [praLoading, setPraLoading] = useState(false);
+  const [refresh, setRefresh] = useState(-1);
+  const [dataVariables, setDataVariables] = useState([]);
+
   const [isInputReceiveVar, setInputReceiveVar] = useState(false);
   const [isInputReductionVar, setInputReductionVar] = useState(false);
-  const receiveVarList = [
-    {
-      label: "Gaji Pokok",
-      value: "Gaji Pokok",
-    },
-    {
-      label: "Tunjangan Uang Makan",
-      value: "Tunjangan Uang Makan",
-    },
-    {
-      label: "Tunjangan Transport",
-      value: "Tunjangan Transport",
-    },
-  ];
-  const reductionVarList = [
-    {
-      label: "PPh 21",
-      value: "PPh 21",
-    },
-    {
-      label: "BPJS KS",
-      value: "BPJS KS",
-    },
-    {
-      label: "BPJS TK-JHT",
-      value: "BPJS TK-JHT",
-    },
-  ];
+  const [dataVariable, setDataVariable] = useState({
+    name: "",
+    percent: 0,
+    type: 0,
+    required: false,
+  });
+  const [inputField, setInputField] = useState("");
+  const [varType, setVarType] = useState(0);
+  const [receiveVarOptions, setReceiveVarOptions] = useState([]);
+  const [reductionVarOptions, setReductionVarOptions] = useState([]);
 
-  const onAddVariable = (e) => {
-    console.log(e);
+  useEffect(() => {
+    if (!isAllowedToGetSalaryColumns) {
+      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    if (visible === true) {
+      setPraLoading(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            let dataVar = response2.data;
+            const receiveVariables = dataVar.filter(
+              (variable) => variable.type === 1
+            );
+
+            const reductionVariables = dataVar.filter(
+              (variable) => variable.type === 2
+            );
+
+            setReceiveVarOptions(receiveVariables);
+            setReductionVarOptions(reductionVariables);
+
+            // let newReceiveVarArr = receiveVariables.map((receiveVar) => {
+            //   return {
+            //     label: receiveVar.name,
+            //     value: receiveVar.id,
+            //     disabled: receiveVar.required,
+            //   };
+            // });
+
+            // setDataVariables(dataVar);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setPraLoading(false));
+    }
+  }, [isAllowedToGetSalaryColumns, refresh, visible]);
+
+  // const receiveVarList = [
+  //   {
+  //     label: "Gaji Pokok",
+  //     value: "Gaji Pokok",
+  //   },
+  //   {
+  //     label: "Tunjangan Uang Makan",
+  //     value: "Tunjangan Uang Makan",
+  //   },
+  //   {
+  //     label: "Tunjangan Transport",
+  //     value: "Tunjangan Transport",
+  //   },
+  // ];
+
+  const handleAddVariable = () => {
+    if (!isAllowedToAddSalaryColumn) {
+      permissionWarningNotification("Menambah", "Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    const payload = {
+      ...dataVariable,
+      required: 0,
+    };
+
+    setPraLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeSalaryColumn`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: `Variabel gaji berhasil ditambahkan`,
+            duration: 3,
+          });
+          setInputReceiveVar(false);
+        } else {
+          notification.error({
+            message: `Gagal menambah variabel gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambah variabel gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setPraLoading(false);
+        setDataVariable({ ...dataVariable, name: "" });
+      });
   };
-  const { onKeyPressHandler } = createKeyPressHandler(onAddVariable, "Enter");
+
+  const handleUpdateVariable = (variableData, isRequired) => {
+    if (!isAllowedToUpdateSalaryColumn) {
+      permissionWarningNotification("Mengubah", "Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    const payload = {
+      ...variableData,
+      required: isRequired,
+    };
+
+    setPraLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeSalaryColumn`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: `Variabel gaji berhasil diubah.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal mengubah variabel gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah variabel gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setPraLoading(false);
+      });
+  };
+
+  const handleDeleteVariable = (variableId) => {
+    if (!isAllowedToDeleteSalaryColumn) {
+      permissionWarningNotification("Menghapus", "Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+    setPraLoading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeeSalaryColumn?id=${variableId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus variabel gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setPraLoading(false));
+  };
+
+  // hapus semua variabel gaji
+  // useEffect(() => {
+  //   if (dataVariables.length > 1) {
+  //     for (let i = 1; i < dataVariables.length; i++) {
+  //       handleDeleteVariable(dataVariables[i].id);
+  //     }
+  //   }
+  // }, [dataVariables]);
+
   return (
     <Modal
       title={
         <div className="flex flex-row justify-between items-center">
-          {isManageVar ? (
-            <p>Kelola Variabel Gaji</p>
-          ) : (
-            <p>Tambah Variabel Gaji</p>
-          )}
+          <p>Kelola Variabel Gaji</p>
+
           <CircleCheckIconSvg size={32} color={"#35763B"} />
         </div>
       }
@@ -946,24 +1153,64 @@ const ModalAddSalaryVar = ({
       loading={loading}
     >
       <div className="grid grid-cols-2 gap-x-8">
-        {isManageVar && (
-          <p className="col-span-2 mb-5">
-            Pilih variabel gaji yang ingin ditampilkan atau tambah variabel
-            baru.
-          </p>
-        )}
+        <p className="col-span-2 mb-5">
+          Pilih variabel gaji yang ingin ditampilkan atau tambah variabel baru.
+        </p>
+
         <div className="">
           <h5 className="mig-heading--5 mb-2">PENERIMAAN</h5>
-          <Checkbox.Group
-            options={receiveVarList}
-            defaultValue={["Gaji Pokok"]}
-            className="space-y-2 mb-2"
-          />
+          <div className="flex flex-col space-y-2 space-x-0 mb-2">
+            <Checkbox checked={true} disabled={true}>
+              Gaji Pokok
+            </Checkbox>
+            {receiveVarOptions?.map((option, idx) => (
+              <div
+                key={idx}
+                className="flex flex-row justify-between items-center"
+              >
+                <Checkbox
+                  value={option.id}
+                  checked={option.required}
+                  onChange={(e) => {
+                    handleUpdateVariable(option, e.target.checked);
+                  }}
+                >
+                  {option.name}
+                </Checkbox>
+                <Popconfirm
+                  title={
+                    <p className="w-40">
+                      Apakah Anda yakin ingin menghapus variabel{" "}
+                      <strong>{option.name}</strong>?
+                    </p>
+                  }
+                  okText={"Ya"}
+                  cancelText={"Tidak"}
+                  onConfirm={() => handleDeleteVariable(option.id)}
+                >
+                  <button className="flex items-center bg-transparent hover:opacity-70">
+                    <XIconSvg color={"#BF4A40"} size={16} />
+                  </button>
+                </Popconfirm>
+              </div>
+            ))}
+          </div>
+
+          {/* {receiveVarOptions.length !== 0 && (
+            <Checkbox.Group
+              options={receiveVarOptions}
+              defaultValue={["Gaji Pokok"]}
+              className="space-y-2 mb-2"
+            />
+          )} */}
+
           {isInputReceiveVar ? (
             <div className="flex flex-row items-center -ml-1 space-x-2">
               <button
                 onClick={() => {
-                  setInputReceiveVar(false);
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReceiveVar(false);
                 }}
                 className="bg-transparent hover:opacity-75"
               >
@@ -974,13 +1221,26 @@ const ModalAddSalaryVar = ({
                 size="small"
                 placeholder="Masukkan variabel"
                 autoFocus
-                onKeyPress={onKeyPressHandler}
+                onPressEnter={() => {
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReceiveVar(false);
+                }}
+                value={dataVariable.name}
+                onChange={(e) =>
+                  setDataVariable({ ...dataVariable, name: e.target.value })
+                }
+                onFocus={() => setDataVariable({ ...dataVariable, type: 1 })}
               />
             </div>
           ) : (
             <button
               className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
-              onClick={() => setInputReceiveVar(true)}
+              onClick={() => {
+                setDataVariable({ ...dataVariable, name: "" });
+                setInputReceiveVar(true);
+                setInputReductionVar(false);
+              }}
             >
               <SquarePlusIconSvg color={"#35763B"} size={24} />
               <p className="text-primary100 ">Tambah</p>
@@ -990,16 +1250,66 @@ const ModalAddSalaryVar = ({
 
         <div className="">
           <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
-          <Checkbox.Group
-            options={reductionVarList}
-            defaultValue={["PPh 21"]}
-            className="space-y-2 mb-2 flex flex-col"
-          />
+          <div className="flex flex-col space-y-2 space-x-0 mb-2">
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS KS (5% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JHT (5,7% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JKK (0,24% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JKM (0,3% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JP (3% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              PPh 21
+            </Checkbox>
+
+            {reductionVarOptions?.map((option, idx) => (
+              <div
+                key={idx}
+                className="flex flex-row justify-between items-center"
+              >
+                <Checkbox
+                  value={option.id}
+                  checked={option.required}
+                  onChange={(e) => {
+                    handleUpdateVariable(option, e.target.checked);
+                  }}
+                >
+                  {option.name}
+                </Checkbox>
+                <Popconfirm
+                  title={
+                    <p className="w-40">
+                      Apakah Anda yakin ingin menghapus variabel{" "}
+                      <strong>{option.name}</strong>?
+                    </p>
+                  }
+                  okText={"Ya"}
+                  cancelText={"Tidak"}
+                  onConfirm={() => handleDeleteVariable(option.id)}
+                >
+                  <button className="flex items-center bg-transparent hover:opacity-70">
+                    <XIconSvg color={"#BF4A40"} size={16} />
+                  </button>
+                </Popconfirm>
+              </div>
+            ))}
+          </div>
+
           {isInputReductionVar ? (
             <div className="flex flex-row items-center -ml-1 space-x-2">
               <button
                 onClick={() => {
-                  setInputReductionVar(false);
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReductionVar(false);
                 }}
                 className="bg-transparent hover:opacity-75"
               >
@@ -1010,12 +1320,480 @@ const ModalAddSalaryVar = ({
                 size="small"
                 placeholder="Masukkan variabel"
                 autoFocus
-              ></Input>
+                onPressEnter={() => {
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReductionVar(false);
+                }}
+                value={dataVariable.name}
+                onChange={(e) =>
+                  setDataVariable({ ...dataVariable, name: e.target.value })
+                }
+                onFocus={() => setDataVariable({ ...dataVariable, type: 2 })}
+              />
             </div>
           ) : (
             <button
               className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
-              onClick={() => setInputReductionVar(true)}
+              onClick={() => {
+                setDataVariable({ ...dataVariable, name: "" });
+                setInputReductionVar(true);
+                setInputReceiveVar(false);
+              }}
+            >
+              <SquarePlusIconSvg color={"#35763B"} size={24} />
+              <p className="text-primary100 ">Tambah</p>
+            </button>
+          )}
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+const ModalAddSalaryVar = ({
+  initProps,
+  visible,
+  onvisible,
+  onOk,
+  loading,
+  disabled,
+  isAllowedToGetSalaryColumns,
+  isAllowedToAddSalaryColumn,
+  isAllowedToDeleteSalaryColumn,
+  isAllowedToUpdateSalaryColumn,
+  refresh,
+  setRefresh,
+  // receiveVarOptions,
+  // reductionVarOptions,
+  receiveVarFields,
+  reductionVarFields,
+  setReceiveVarFields,
+  setReductionVarFields,
+}) => {
+  // 1. Use State
+  const [praLoading, setPraLoading] = useState(false);
+
+  const [isInputReceiveVar, setInputReceiveVar] = useState(false);
+  const [isInputReductionVar, setInputReductionVar] = useState(false);
+  const [dataVariable, setDataVariable] = useState({
+    name: "",
+    percent: 0,
+    type: 0,
+    required: false,
+  });
+  const [receiveVarOptions, setReceiveVarOptions] = useState([]);
+  const [reductionVarOptions, setReductionVarOptions] = useState([]);
+
+  // 2. Use Effect
+  // 2.1. Get salary variable list
+  useEffect(() => {
+    if (!isAllowedToGetSalaryColumns) {
+      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    if (visible === true) {
+      setPraLoading(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            let dataVar = response2.data;
+
+            // Set checkbox list of variables
+            const receiveVariables = dataVar.filter(
+              (variable) => variable.type === 1
+            );
+            const reductionVariables = dataVar.filter(
+              (variable) => variable.type === 2
+            );
+            setReceiveVarOptions(receiveVariables);
+            setReductionVarOptions(reductionVariables);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setPraLoading(false));
+    }
+  }, [isAllowedToGetSalaryColumns, refresh, visible]);
+
+  // console.log(receiveVarOptions);
+
+  // 2.2. Update checked checkbox if any variable field is removed
+  // useEffect(() => {}, [receiveVarFields, reductionVarFields]);
+
+  const handleAddVariable = () => {
+    if (!isAllowedToAddSalaryColumn) {
+      permissionWarningNotification("Menambah", "Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    const payload = {
+      ...dataVariable,
+      required: 0,
+    };
+
+    setPraLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeSalaryColumn`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: `Variabel gaji berhasil ditambahkan`,
+            duration: 3,
+          });
+          setInputReceiveVar(false);
+        } else {
+          notification.error({
+            message: `Gagal menambah variabel gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambah variabel gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setPraLoading(false);
+        setDataVariable({ ...dataVariable, name: "" });
+      });
+  };
+
+  const handleUpdateVariable = (variableData, isRequired) => {
+    if (!isAllowedToUpdateSalaryColumn) {
+      permissionWarningNotification("Mengubah", "Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    const payload = {
+      ...variableData,
+      required: isRequired,
+    };
+
+    setPraLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeSalaryColumn`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: `Variabel gaji berhasil diubah.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal mengubah variabel gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah variabel gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setPraLoading(false);
+      });
+  };
+
+  const handleDeleteVariable = (variableId) => {
+    if (!isAllowedToDeleteSalaryColumn) {
+      permissionWarningNotification("Menghapus", "Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+    setPraLoading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeeSalaryColumn?id=${variableId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus variabel gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setPraLoading(false));
+  };
+  return (
+    <Modal
+      title={
+        <div className="flex flex-row justify-between items-center">
+          <p>Tambah Variabel Gaji</p>
+          <CircleCheckIconSvg size={32} color={"#35763B"} />
+        </div>
+      }
+      visible={visible}
+      closable={false}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex flex-row justify-between my-2">
+            <ButtonSys type={"default"} onClick={() => onvisible(false)}>
+              Batalkan
+            </ButtonSys>
+            <ButtonSys type={"primary"} onClick={onOk}>
+              Simpan
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      <div className="grid grid-cols-2 gap-x-8">
+        <div className="">
+          <h5 className="mig-heading--5 mb-2">PENERIMAAN</h5>
+          <div className="flex flex-col space-y-2 space-x-0 mb-2">
+            <Checkbox checked={true} disabled={true}>
+              Gaji Pokok
+            </Checkbox>
+            {receiveVarOptions?.map((option, idx) => (
+              <div key={idx}>
+                {option.required ? (
+                  <Checkbox
+                    checked={option.required}
+                    disabled={option.required}
+                  >
+                    {option.name}
+                  </Checkbox>
+                ) : (
+                  <div className="flex flex-row justify-between items-center">
+                    <Checkbox
+                      // checked={receiveVarFields}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setReceiveVarFields((prev) => [...prev, option]);
+                        } else {
+                          const temp = [...receiveVarFields];
+                          temp.splice(idx, 1);
+                          setReceiveVarFields(temp);
+                        }
+                      }}
+                    >
+                      {option.name}
+                    </Checkbox>
+                    <Popconfirm
+                      title={
+                        <p className="w-40">
+                          Apakah Anda yakin ingin menghapus variabel{" "}
+                          <strong>{option.name}</strong>?
+                        </p>
+                      }
+                      okText={"Ya"}
+                      cancelText={"Tidak"}
+                      onConfirm={() => handleDeleteVariable(option.id)}
+                    >
+                      <button className="flex items-center bg-transparent hover:opacity-70">
+                        <XIconSvg color={"#BF4A40"} size={16} />
+                      </button>
+                    </Popconfirm>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {isInputReceiveVar ? (
+            <div className="flex flex-row items-center -ml-1 space-x-2">
+              <button
+                onClick={() => {
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReceiveVar(false);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <SquarePlusIconSvg color={"#35763B"} size={24} />
+              </button>
+
+              <Input
+                size="small"
+                placeholder="Masukkan variabel"
+                autoFocus
+                onPressEnter={() => {
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReceiveVar(false);
+                }}
+                value={dataVariable.name}
+                onChange={(e) =>
+                  setDataVariable({ ...dataVariable, name: e.target.value })
+                }
+                onFocus={() => setDataVariable({ ...dataVariable, type: 1 })}
+              />
+            </div>
+          ) : (
+            <button
+              className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
+              onClick={() => {
+                setDataVariable({ ...dataVariable, name: "" });
+                setInputReceiveVar(true);
+                setInputReductionVar(false);
+              }}
+            >
+              <SquarePlusIconSvg color={"#35763B"} size={24} />
+              <p className="text-primary100 ">Tambah</p>
+            </button>
+          )}
+        </div>
+
+        <div className="">
+          <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
+          <div className="flex flex-col space-y-2 space-x-0 mb-2">
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS KS (5% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JHT (5,7% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JKK (0,24% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JKM (0,3% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              BPJS TK-JP (3% Perusahaan)
+            </Checkbox>
+            <Checkbox defaultChecked={true} disabled={true}>
+              PPh 21
+            </Checkbox>
+            {reductionVarOptions?.map((option, idx) => (
+              <div key={idx}>
+                {option.required ? (
+                  <Checkbox
+                    checked={option.required}
+                    disabled={option.required}
+                  >
+                    {option.name}
+                  </Checkbox>
+                ) : (
+                  <div className="flex flex-row justify-between items-center">
+                    <Checkbox
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setReductionVarFields((prev) => [...prev, option]);
+                        } else {
+                          const temp = [...reductionVarFields];
+                          temp.splice(idx, 1);
+                          setReductionVarFields(temp);
+                        }
+                      }}
+                    >
+                      {option.name}
+                    </Checkbox>
+
+                    <Popconfirm
+                      title={
+                        <p className="w-40">
+                          Apakah Anda yakin ingin menghapus variabel{" "}
+                          <strong>{option.name}</strong>?
+                        </p>
+                      }
+                      okText={"Ya"}
+                      cancelText={"Tidak"}
+                      onConfirm={() => handleDeleteVariable(option.id)}
+                    >
+                      <button className="flex items-center bg-transparent hover:opacity-70">
+                        <XIconSvg color={"#BF4A40"} size={16} />
+                      </button>
+                    </Popconfirm>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {isInputReductionVar ? (
+            <div className="flex flex-row items-center -ml-1 space-x-2">
+              <button
+                onClick={() => {
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReductionVar(false);
+                }}
+                className="bg-transparent hover:opacity-75"
+              >
+                <SquarePlusIconSvg color={"#35763B"} size={24} />
+              </button>
+
+              <Input
+                size="small"
+                placeholder="Masukkan variabel"
+                autoFocus
+                onPressEnter={() => {
+                  dataVariable.name?.length
+                    ? handleAddVariable()
+                    : setInputReductionVar(false);
+                }}
+                value={dataVariable.name}
+                onChange={(e) =>
+                  setDataVariable({ ...dataVariable, name: e.target.value })
+                }
+                onFocus={() => setDataVariable({ ...dataVariable, type: 2 })}
+              />
+            </div>
+          ) : (
+            <button
+              className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
+              onClick={() => {
+                setDataVariable({ ...dataVariable, name: "" });
+                setInputReductionVar(true);
+                setInputReceiveVar(false);
+              }}
             >
               <SquarePlusIconSvg color={"#35763B"} size={24} />
               <p className="text-primary100 ">Tambah</p>
@@ -1110,6 +1888,7 @@ export {
   ModalReleaseItemTiket,
   ModalHapus2,
   ModalUbah,
+  ModalManageSalaryVar,
   ModalAddSalaryVar,
   ModalDownloadPayslip,
 };
