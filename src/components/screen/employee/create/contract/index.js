@@ -27,6 +27,10 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_LISTS_GET,
+  EMPLOYEE_SALARY_COLUMNS_GET,
+  EMPLOYEE_SALARY_COLUMN_ADD,
+  EMPLOYEE_SALARY_COLUMN_DELETE,
+  EMPLOYEE_SALARY_COLUMN_UPDATE,
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
@@ -71,10 +75,25 @@ const EmployeeContractForm = ({
     RECRUITMENT_ROLE_TYPES_LIST_GET
   );
 
+  const isAllowedToGetSalaryColumns = hasPermission(
+    EMPLOYEE_SALARY_COLUMNS_GET
+  );
+  const isAllowedToAddSalaryColumn = hasPermission(EMPLOYEE_SALARY_COLUMN_ADD);
+  const isAllowedToDeleteSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_DELETE
+  );
+  const isAllowedToUpdateSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_UPDATE
+  );
+
+  // INIT
   const rt = useRouter();
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
+  const [praLoading, setPraLoading] = useState(false);
+  const [refresh, setRefresh] = useState(-1);
+
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [isInputVar, setInputVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -93,7 +112,9 @@ const EmployeeContractForm = ({
   const [fileList, setFileList] = useState([]);
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
 
-  const [formattedNominal, setFormattedNominal] = useState(0);
+  // Use for selected variable list to show as fields in form
+  const [receiveVarFields, setReceiveVarFields] = useState([]);
+  const [reductionVarFields, setReductionVarFields] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. Get Position List
@@ -210,7 +231,58 @@ const EmployeeContractForm = ({
       });
   }, [isAllowedToGetRoleTypeList]);
 
-  // 2.4. Display contract file when available
+  // 2.4 Get salary variable list
+  useEffect(() => {
+    if (!isAllowedToGetSalaryColumns) {
+      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+      setPraLoading(false);
+      return;
+    }
+
+    setPraLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          let dataVar = response2.data;
+          const receiveVariables = dataVar.filter(
+            (variable) => variable.type === 1
+          );
+          const reductionVariables = dataVar.filter(
+            (variable) => variable.type === 2
+          );
+
+          // Set checked variables to show as fields in form
+          const requiredReceiveVariables = receiveVariables.filter(
+            (variable) => variable.required === 1
+          );
+          const requiredReductionVariables = reductionVariables.filter(
+            (variable) => variable.required === 1
+          );
+          setReceiveVarFields(requiredReceiveVariables);
+          setReductionVarFields(requiredReductionVariables);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setPraLoading(false));
+  }, [isAllowedToGetSalaryColumns]);
+
+  // 2.5. Display contract file when available
   useEffect(() => {
     if (dataContract?.contract_file?.link) {
       const currentFileName = dataContract?.contract_file?.link?.split("/")[2];
@@ -622,7 +694,6 @@ const EmployeeContractForm = ({
         </>
       </Form.Item>
 
-      {/* TODO: ubah value input benefit */}
       <div className="flex flex-col space-y-3">
         <p className="mig-heading--5">BENEFIT PENERIMAAN</p>
         <Form.Item
@@ -638,32 +709,48 @@ const EmployeeContractForm = ({
           <div>
             <CustomCurrencyInput
               fieldLabel={"gaji pokok"}
-              fieldName={"main_salary"}
+              fieldName={"gaji_pokok"}
               setDataForm={setDataContract}
             />
           </div>
         </Form.Item>
         {/* TODO: Loop additional benefit */}
-        <Form.Item label="Tunjangan Uang Makan" name={"meal_allowance"}>
-          <div className="flex flex-row items-center space-x-2">
-            <Input
-              value={dataContract?.benefit?.meal_allowance}
-              name={"meal_allowance"}
-              // onChange={(e) => {
-              //   setDataContract((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, meal_allowance: e.target.value },
-              //   }));
-              // }}
-              placeholder="Masukkan tunjangan uang makan"
-              className="flex flex-row items-center space-x-2"
-            />
-            <Button
-              icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
-              className="border-0"
-            />
-          </div>
-        </Form.Item>
+        {receiveVarFields.map((variable, idx) => (
+          <Form.Item
+            key={idx}
+            label={variable.name}
+            name={`${variable.name}`}
+            rules={[
+              {
+                required: variable.required,
+                message: `${variable.name} wajib diisi`,
+              },
+            ]}
+          >
+            <div className="flex flex-row items-center space-x-2">
+              <CustomCurrencyInput
+                fieldLabel={`${variable.name.toLowerCase()}`}
+                fieldName={`${variable.name
+                  .toLowerCase()
+                  .split(" ")
+                  .join("_")}`}
+                setDataForm={setDataContract}
+                // value={dataContract?.benefit?.meal_allowance}
+              />
+              {/* {!variable.required && (
+                    <Button
+                      icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
+                      className="border-0 hover:opacity-60"
+                      onClick={() => {
+                        const temp = [...receiveVarFields];
+                        temp.splice(idx, 1);
+                        setReceiveVarFields(temp);
+                      }}
+                    />
+                  )} */}
+            </div>
+          </Form.Item>
+        ))}
       </div>
 
       <div className="flex flex-col space-y-3 mt-5 md:mt-0">
@@ -679,16 +766,12 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              // value={dataContract.benefit?.bpjs_ks}
-              name={"bpjs_ks"}
-              // onChange={(e) => {
-              //   setDataPayslip((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, bpjs_ks: e.target.value },
-              //   }));
-              // }}
+            <CustomCurrencyInput
+              fieldLabel={`bpjs ks`}
+              fieldName={"bpjs_ks"}
+              setDataForm={setDataContract}
               disabled
+              // value={dataContract?.benefit?.bpjs_ks}
             />
           </div>
         </Form.Item>
@@ -703,16 +786,12 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              // value={dataPayslip?.benefit?.bpjs_tk_jht}
-              name={"bpjs_tk_jht"}
-              // onChange={(e) => {
-              //   setDataPayslip((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, bpjs_tk_jht: e.target.value },
-              //   }));
-              // }}
+            <CustomCurrencyInput
+              fieldLabel={`bpjs tk jht`}
+              fieldName={"bpjs_tk_jht"}
+              setDataForm={setDataContract}
               disabled
+              // value={dataPayslip?.benefit?.bpjs_tk_jht}
             />
           </div>
         </Form.Item>
@@ -727,16 +806,12 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              // value={dataPayslip?.benefit?.bpjs_tk_jkk}
-              name={"bpjs_tk_jkk"}
-              // onChange={(e) => {
-              //   setDataPayslip((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, bpjs_tk_jkk: e.target.value },
-              //   }));
-              // }}
+            <CustomCurrencyInput
+              fieldLabel={`bpjs tk jkk`}
+              fieldName={"bpjs_tk_jkk"}
+              setDataForm={setDataContract}
               disabled
+              // value={dataPayslip?.benefit?.bpjs_tk_jkk}
             />
           </div>
         </Form.Item>
@@ -751,16 +826,12 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              // value={dataPayslip?.benefit?.bpjs_tk_jkm}
-              name={"bpjs_tk_jkm"}
-              // onChange={(e) => {
-              //   setDataPayslip((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, bpjs_tk_jkm: e.target.value },
-              //   }));
-              // }}
+            <CustomCurrencyInput
+              fieldLabel={`bpjs tk jkm`}
+              fieldName={"bpjs_tk_jkm"}
+              setDataForm={setDataContract}
               disabled
+              // value={dataPayslip?.benefit?.bpjs_tk_jkm}
             />
           </div>
         </Form.Item>
@@ -775,22 +846,19 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <Input
-              // value={dataPayslip?.benefit?.bpjs_tk_jp}
-              name={"bpjs_tk_jp"}
-              // onChange={(e) => {
-              //   setDataPayslip((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, bpjs_tk_jp: e.target.value },
-              //   }));
-              // }}
+            <CustomCurrencyInput
+              fieldLabel={`bpjs tk jp`}
+              fieldName={"bpjs_tk_jp"}
+              setDataForm={setDataContract}
               disabled
+              // value={dataPayslip?.benefit?.bpjs_tk_jp}
             />
           </div>
         </Form.Item>
+
         <Form.Item
           label="PPh 21"
-          name={"income_tax"}
+          name={"pph"}
           rules={[
             {
               required: true,
@@ -798,20 +866,42 @@ const EmployeeContractForm = ({
             },
           ]}
         >
-          <div>
-            <Input
-              // value={dataContract?.benefit?.income_tax}
-              name={"income_tax"}
-              // onChange={(e) => {
-              //   setDataContract((prev) => ({
-              //     ...prev,
-              //     benefit: { ...prev.benefit, income_tax: e.target.value },
-              //   }));
-              // }}
-              placeholder="Masukkan pajak penghasilan"
+          <>
+            <CustomCurrencyInput
+              fieldLabel={`PPh 21`}
+              fieldName={"pph"}
+              setDataForm={setDataContract}
+              disabled
+              // value={dataPayslip?.benefit?.pph}
             />
-          </div>
+          </>
         </Form.Item>
+        {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
+        {reductionVarFields.map((variable) => (
+          <Form.Item
+            label={variable.name}
+            name={`${variable.name}`}
+            rules={[
+              {
+                required: variable.required,
+                message: `${variable.name} wajib diisi`,
+              },
+            ]}
+          >
+            <div>
+              <CustomCurrencyInput
+                fieldLabel={`${variable.name.toLowerCase()}`}
+                fieldName={`${variable.name
+                  .toLowerCase()
+                  .split(" ")
+                  .join("_")}`}
+                setDataForm={setDataContract}
+                disabled={variable.required}
+                // value={dataContract?.benefit[`${variable.name}
+              />
+            </div>
+          </Form.Item>
+        ))}
       </div>
       <div className="col-span-2 mt-3">
         <ButtonSys
@@ -829,14 +919,23 @@ const EmployeeContractForm = ({
 
       {/* Modal Add Salary Variable */}
       {/* TODO: change hasPermission */}
-      <AccessControl hasPermission={RECRUITMENT_ROLES_LIST_GET}>
+      <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
         <ModalAddSalaryVar
+          initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
           loading={loadingSave}
-          setInputVar={setInputVar}
-          isInputVar={isInputVar}
-          // onOk={}
+          isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
+          isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
+          isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
+          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
+          onOk={() => setModalSalaryVar(false)}
+          receiveVarFields={receiveVarFields}
+          reductionVarFields={reductionVarFields}
+          setReceiveVarFields={setReceiveVarFields}
+          setReductionVarFields={setReductionVarFields}
+          refresh={refresh}
+          setRefresh={setRefresh}
           // disabled
         />
       </AccessControl>
