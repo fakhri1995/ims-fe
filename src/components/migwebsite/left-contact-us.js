@@ -54,9 +54,11 @@ function LeftContactUs({ children }) {
         <p className={"font-gilroysemibold text-sm md:text-base text-blackmig"}>
           Phone:&nbsp;
         </p>
-        <p className={"text-accentblue text-sm md:text-base underline"}>
-          +62-21-831-4522
-        </p>
+        <a href="tel:+62218314522">
+          <p className={"text-accentblue text-sm md:text-base underline"}>
+            +62-21-831-4522
+          </p>
+        </a>
       </div>
       <div className={"flex flex-row mt-3"}>
         <p className={"font-gilroysemibold text-sm md:text-base text-blackmig"}>
@@ -75,14 +77,14 @@ function LeftContactUs({ children }) {
           Or reach us through:
         </p>
         <div className={"flex flex-row mt-2"}>
-          <a>
+          <a href="https://instagram.com/mitramasglobal">
             <img
               className={"mr-6"}
               style={{ width: "32px", height: "32px" }}
               src="/image/instagram-trans.png"
             />
           </a>
-          <a>
+          <a href="https://www.linkedin.com/company/pt-mitramas-infosys-global">
             <img
               className={""}
               style={{ width: "32px", height: "32px" }}

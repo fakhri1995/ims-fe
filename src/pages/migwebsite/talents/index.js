@@ -111,6 +111,8 @@ function Talents({}) {
   const [modalDelete, setModalDelete] = useState(false);
   const [modalSubmit, setModalSubmit] = useState(false);
   const [deleteTalentValue, setDeleteTalentValue] = useState(null);
+  const [showEmailError, setShowEmailError] = useState(false);
+  const [emailError, setEmailError] = useState(null);
   const dataMeetingTime = [
     {
       id: 1,
@@ -223,6 +225,7 @@ function Talents({}) {
 
   const handleCancel = () => {
     setModalTalents(false);
+    setShowform(true);
   };
   const handleCancelDelete = () => {
     setModalDelete(false);
@@ -283,7 +286,15 @@ function Talents({}) {
 
   const handleHireNow = () => {
     if (dataPeople.company_email == null) {
+      setShowEmailError(true);
+      setEmailError("you must filled email first");
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\[A-Z]{2,4}$/i.test(dataPeople.company_email)
+    ) {
+      setShowEmailError(true);
+      setEmailError("your email is invalid");
     } else {
+      setShowEmailError(false);
       setShowform(true);
     }
   };
@@ -1874,6 +1885,15 @@ function Talents({}) {
                       </div>
                     </button>
                   </div>
+                  {showEmailError && (
+                    <div className={"mt-2"}>
+                      <p
+                        className={"text-redmig font-gilroysemibold text-base"}
+                      >
+                        {emailError}
+                      </p>
+                    </div>
+                  )}
                   <div
                     className={
                       "w-full border rounded-lg shadow-lg py-2 pr-2 pl-3 bg-green15 mt-[40px]"

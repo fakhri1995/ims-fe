@@ -148,7 +148,7 @@ function AboutUs({}) {
                 through digitalization
               </p>
               <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/software" }}>
                   <a
                     className={
                       "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
@@ -191,7 +191,7 @@ function AboutUs({}) {
                 We help you reduce complexity in talent sourcing and management
               </p>
               <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/talent" }}>
                   <a
                     className={
                       "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
@@ -283,7 +283,7 @@ function AboutUs({}) {
                 through digitalization
               </p>
               <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/software" }}>
                   <a
                     className={
                       "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
@@ -327,7 +327,7 @@ function AboutUs({}) {
                 We help you reduce complexity in talent sourcing and management
               </p>
               <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/hardware" }}>
+                <Link href={{ pathname: "/talent" }}>
                   <a
                     className={
                       "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
@@ -379,9 +379,11 @@ function AboutUs({}) {
             <p className={"font-gilroysemibold text-base text-darkgrey"}>
               Phone:&nbsp;
             </p>
-            <p className={"text-accentblue text-base underline"}>
-              +62-21-831-4522
-            </p>
+            <a href="tel:+62218314522">
+              <p className={"text-accentblue text-base underline"}>
+                +62-21-831-4522
+              </p>
+            </a>
           </div>
           <div className={"flex flex-row mt-3"}>
             <p className={"font-gilroysemibold text-base text-darkgrey"}>

@@ -165,6 +165,8 @@ function Hardware({}) {
   const [valueDateTemp, onChangeDateTemp] = useState(null);
   const [valueMeetingTime, setValueMeetingTime] = useState(null);
   const [labelMeetingTime, setLabelMeetingTime] = useState(null);
+  const [showEmailError, setShowEmailError] = useState(false);
+  const [emailError, setEmailError] = useState(null);
   const dataGetProduct = [
     {
       id: 1,
@@ -292,6 +294,9 @@ function Hardware({}) {
     let arr_product = productSelected;
     arr_product.splice(index, 1);
     setProductSelected([...arr_product]);
+  };
+  const handleShowForm = () => {
+    setShowform(true);
   };
   const submitFormSoftware = () => {
     if (captchaRef.current.getValue() != "") {
@@ -608,8 +613,24 @@ function Hardware({}) {
   };
 
   const handleLetsTalk = () => {
+    console.log(
+      "data email ",
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
+        dataHardware.company_email
+      )
+    );
     if (dataHardware.company_email == null) {
+      setShowEmailError(true);
+      setEmailError("you must filled email first");
+    } else if (
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\[A-Z]{2,4}$/i.test(
+        dataHardware.company_email
+      )
+    ) {
+      setShowEmailError(true);
+      setEmailError("your email is invalid");
     } else {
+      setShowEmailError(false);
       setShowform(true);
     }
   };
@@ -1945,6 +1966,15 @@ function Hardware({}) {
                       </div>
                     </button>
                   </div>
+                  {showEmailError && (
+                    <div className={"mt-2"}>
+                      <p
+                        className={"text-redmig font-gilroysemibold text-base"}
+                      >
+                        {emailError}
+                      </p>
+                    </div>
+                  )}
                   <div
                     className={
                       "mt-10 w-[495px] border rounded-lg p-2 bg-greentrans15"
@@ -2114,434 +2144,275 @@ function Hardware({}) {
                 we can offer
               </p>
               <div className={"hidden md:block"}>
-                <div className={"flex flex-row mt-[42px] justify-center"}>
-                  <div
-                    className={
-                      "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightblue rounded-lg p-3"
-                    }
-                  >
-                    <p className={"text-xl font-gilroybold text-accentblue"}>
-                      Banking Machinery
-                    </p>
-                    <p
+                {dataBanking && (
+                  <div className={"flex flex-row mt-[42px] justify-center"}>
+                    <div
                       className={
-                        "text-xs font-gilroysemibold italic text-blackmig"
+                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightblue rounded-lg p-3"
                       }
                     >
-                      Help you to grow your financial business domestically
-                    </p>
-                    <div className={"self-center"}>
-                      <button className={"bg-lightblue w-[133px]"}>
-                        <div
-                          className={"flex flex-row justify-between px-4 pb-3"}
+                      <p className={"text-xl font-gilroybold text-accentblue"}>
+                        Banking Machinery
+                      </p>
+                      <p
+                        className={
+                          "text-xs font-gilroysemibold italic text-blackmig"
+                        }
+                      >
+                        Help you to grow your financial business domestically
+                      </p>
+                      <div className={"self-center"}>
+                        <button
+                          className={"bg-lightblue w-[133px]"}
+                          onClick={handleShowForm}
                         >
-                          <p
+                          <div
                             className={
-                              "text-base text-accentblue font-gilroysemibold"
+                              "flex flex-row justify-between px-4 pb-3"
                             }
                           >
-                            Get yours
-                          </p>
-                          <img
-                            src="/image/hardware/arrow_forward_ios_blue.png"
-                            className={"w-[20px] h-[20px] self-center"}
-                            alt=""
-                          />
-                        </div>
-                      </button>
+                            <p
+                              className={
+                                "text-base text-accentblue font-gilroysemibold"
+                              }
+                            >
+                              Get yours
+                            </p>
+                            <img
+                              src="/image/hardware/arrow_forward_ios_blue.png"
+                              className={"w-[20px] h-[20px] self-center"}
+                              alt=""
+                            />
+                          </div>
+                        </button>
+                      </div>
                     </div>
+                    {dataBanking && (
+                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                        {dataBanking.map((data, index) => (
+                          <button
+                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            onClick={handleShowForm}
+                          >
+                            <img
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                              className={"w-[128px] h-[90px] self-center"}
+                              alt=""
+                            />
+                            <p className={"mt-3 font-gilroybold text-base"}>
+                              {data.name_product}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {dataBanking ? (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      {dataBanking.map((data, index) => (
-                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                          <img
-                            src={generateStaticAssetUrl(
-                              data.attachment_product.link
-                            )}
-                            className={"w-[128px] h-[90px] self-center"}
-                            alt=""
-                          />
-                          <p className={"mt-3 font-gilroybold text-base"}>
-                            {data.name_product}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className={"flex flex-row mt-8 justify-center"}>
-                  <div
-                    className={
-                      "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgreen rounded-lg p-3"
-                    }
-                  >
-                    <p className={"text-xl font-gilroybold text-primarygreen"}>
-                      Workstation
-                    </p>
-                    <p
+                )}
+                {dataWorkstation && (
+                  <div className={"flex flex-row mt-8 justify-center"}>
+                    <div
                       className={
-                        "text-xs font-gilroysemibold italic text-blackmig"
+                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgreen rounded-lg p-3"
                       }
                     >
-                      Enhance the productivity of your people
-                    </p>
-                    <div className={"self-center"}>
-                      <button className={"bg-lightgreen w-[133px]"}>
-                        <div
-                          className={"flex flex-row justify-between px-4 pb-3"}
+                      <p
+                        className={"text-xl font-gilroybold text-primarygreen"}
+                      >
+                        Workstation
+                      </p>
+                      <p
+                        className={
+                          "text-xs font-gilroysemibold italic text-blackmig"
+                        }
+                      >
+                        Enhance the productivity of your people
+                      </p>
+                      <div className={"self-center"}>
+                        <button
+                          className={"bg-lightgreen w-[133px]"}
+                          onClick={handleShowForm}
                         >
-                          <p
+                          <div
                             className={
-                              "text-base text-primarygreen font-gilroysemibold"
+                              "flex flex-row justify-between px-4 pb-3"
                             }
                           >
-                            Get yours
-                          </p>
-                          <img
-                            src="/image/hardware/arrow_forward_ios_green.png"
-                            className={"w-[20px] h-[20px] self-center"}
-                            alt=""
-                          />
-                        </div>
-                      </button>
+                            <p
+                              className={
+                                "text-base text-primarygreen font-gilroysemibold"
+                              }
+                            >
+                              Get yours
+                            </p>
+                            <img
+                              src="/image/hardware/arrow_forward_ios_green.png"
+                              className={"w-[20px] h-[20px] self-center"}
+                              alt=""
+                            />
+                          </div>
+                        </button>
+                      </div>
                     </div>
+                    {dataWorkstation && (
+                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                        {dataWorkstation.map((data, index) => (
+                          <button
+                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            onClick={handleShowForm}
+                          >
+                            <img
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                              className={"w-[128px] h-[90px] self-center"}
+                              alt=""
+                            />
+                            <p className={"mt-3 font-gilroybold text-base"}>
+                              {data.name_product}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {dataWorkstation ? (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      {dataWorkstation.map((data, index) => (
-                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                          <img
-                            src={generateStaticAssetUrl(
-                              data.attachment_product.link
-                            )}
-                            className={"w-[128px] h-[90px] self-center"}
-                            alt=""
-                          />
-                          <p className={"mt-3 font-gilroybold text-base"}>
-                            {data.name_product}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className={"flex flex-row mt-8 justify-center"}>
-                  <div
-                    className={
-                      "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgrey rounded-lg p-3"
-                    }
-                  >
-                    <p className={"text-xl font-gilroybold text-accentpurple"}>
-                      Server & Hosting
-                    </p>
-                    <p
+                )}
+                {dataServer && (
+                  <div className={"flex flex-row mt-8 justify-center"}>
+                    <div
                       className={
-                        "text-xs font-gilroysemibold italic text-blackmig"
+                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgrey rounded-lg p-3"
                       }
                     >
-                      Enhance the productivity of your people
-                    </p>
-                    <div className={"self-center"}>
-                      <button className={"bg-lightgrey w-[133px]"}>
-                        <div
-                          className={"flex flex-row justify-between px-4 pb-3"}
+                      <p
+                        className={"text-xl font-gilroybold text-accentpurple"}
+                      >
+                        Server & Hosting
+                      </p>
+                      <p
+                        className={
+                          "text-xs font-gilroysemibold italic text-blackmig"
+                        }
+                      >
+                        Enhance the productivity of your people
+                      </p>
+                      <div className={"self-center"}>
+                        <button
+                          className={"bg-lightgrey w-[133px]"}
+                          onClick={handleShowForm}
                         >
-                          <p
+                          <div
                             className={
-                              "text-base text-accentpurple font-gilroysemibold"
+                              "flex flex-row justify-between px-4 pb-3"
                             }
                           >
-                            Get yours
-                          </p>
-                          <img
-                            src="/image/hardware/arrow_forward_ios_purple.png"
-                            className={"w-[20px] h-[20px] self-center"}
-                            alt=""
-                          />
-                        </div>
-                      </button>
+                            <p
+                              className={
+                                "text-base text-accentpurple font-gilroysemibold"
+                              }
+                            >
+                              Get yours
+                            </p>
+                            <img
+                              src="/image/hardware/arrow_forward_ios_purple.png"
+                              className={"w-[20px] h-[20px] self-center"}
+                              alt=""
+                            />
+                          </div>
+                        </button>
+                      </div>
                     </div>
+                    {dataServer && (
+                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                        {dataServer.map((data, index) => (
+                          <button
+                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            onClick={handleShowForm}
+                          >
+                            <img
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                              className={"w-[128px] h-[90px] self-center"}
+                              alt=""
+                            />
+                            <p className={"mt-3 font-gilroybold text-base"}>
+                              {data.name_product}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {dataServer ? (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      {dataServer.map((data, index) => (
-                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                          <img
-                            src={generateStaticAssetUrl(
-                              data.attachment_product.link
-                            )}
-                            className={"w-[128px] h-[90px] self-center"}
-                            alt=""
-                          />
-                          <p className={"mt-3 font-gilroybold text-base"}>
-                            {data.name_product}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-                <div className={"flex flex-row mt-8 justify-center"}>
-                  <div
-                    className={
-                      "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightpink rounded-lg p-3"
-                    }
-                  >
-                    <p className={"text-xl font-gilroybold text-accentblue"}>
-                      UPS
-                    </p>
-                    <p
+                )}
+
+                {dataUps && (
+                  <div className={"flex flex-row mt-8 justify-center"}>
+                    <div
                       className={
-                        "text-xs font-gilroysemibold italic text-blackmig"
+                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightpink rounded-lg p-3"
                       }
                     >
-                      Prevent any damage of your devices from power loss
-                    </p>
-                    <div className={"self-center"}>
-                      <button className={"bg-lightpink w-[133px]"}>
-                        <div
-                          className={"flex flex-row justify-between px-4 pb-3"}
+                      <p className={"text-xl font-gilroybold text-accentblue"}>
+                        UPS
+                      </p>
+                      <p
+                        className={
+                          "text-xs font-gilroysemibold italic text-blackmig"
+                        }
+                      >
+                        Prevent any damage of your devices from power loss
+                      </p>
+                      <div className={"self-center"}>
+                        <button
+                          className={"bg-lightpink w-[133px]"}
+                          onClick={handleShowForm}
                         >
-                          <p
+                          <div
                             className={
-                              "text-base text-accentpink font-gilroysemibold"
+                              "flex flex-row justify-between px-4 pb-3"
                             }
                           >
-                            Get yours
-                          </p>
-                          <img
-                            src="/image/hardware/arrow_forward_ios_pink.png"
-                            className={"w-[20px] h-[20px] self-center"}
-                            alt=""
-                          />
-                        </div>
-                      </button>
+                            <p
+                              className={
+                                "text-base text-accentpink font-gilroysemibold"
+                              }
+                            >
+                              Get yours
+                            </p>
+                            <img
+                              src="/image/hardware/arrow_forward_ios_pink.png"
+                              className={"w-[20px] h-[20px] self-center"}
+                              alt=""
+                            />
+                          </div>
+                        </button>
+                      </div>
                     </div>
+                    {dataUps && (
+                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
+                        {dataUps.map((data, index) => (
+                          <button
+                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            onClick={handleShowForm}
+                          >
+                            <img
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                              className={"w-[128px] h-[90px] self-center"}
+                              alt=""
+                            />
+                            <p className={"mt-3 font-gilroybold text-base"}>
+                              {data.name_product}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  {dataUps ? (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      {dataUps.map((data, index) => (
-                        <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                          <img
-                            src={generateStaticAssetUrl(
-                              data.attachment_product.link
-                            )}
-                            className={"w-[128px] h-[90px] self-center"}
-                            alt=""
-                          />
-                          <p className={"mt-3 font-gilroybold text-base"}>
-                            {data.name_product}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                      <div className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center">
-                        <img
-                          src="/image/hardware/laptop.png"
-                          className={"w-[128px] h-[90px] self-center"}
-                          alt=""
-                        />
-                        <p className={"mt-3 font-gilroybold text-base"}>ATM</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                )}
               </div>
               <div className={"block md:hidden"}>
                 <div className={"mt-7 px-2"}>
