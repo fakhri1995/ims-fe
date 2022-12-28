@@ -1,4 +1,5 @@
 import {
+  Button,
   Checkbox,
   DatePicker,
   Form,
@@ -486,8 +487,9 @@ const EmployeePayslipAddIndex = ({
             </Checkbox>
 
             {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
-            {receiveVarFields.map((variable) => (
+            {receiveVarFields.map((variable, idx) => (
               <Form.Item
+                key={idx}
                 label={variable.name}
                 name={`${variable.name}`}
                 rules={[
@@ -497,7 +499,7 @@ const EmployeePayslipAddIndex = ({
                   },
                 ]}
               >
-                <div>
+                <div className="flex flex-row items-center space-x-2">
                   <CustomCurrencyInput
                     fieldLabel={`${variable.name.toLowerCase()}`}
                     fieldName={`${variable.name
@@ -506,6 +508,17 @@ const EmployeePayslipAddIndex = ({
                       .join("_")}`}
                     setDataForm={setDataPayslip}
                   />
+                  {/* {!variable.required && (
+                    <Button
+                      icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
+                      className="border-0 hover:opacity-60"
+                      onClick={() => {
+                        const temp = [...receiveVarFields];
+                        temp.splice(idx, 1);
+                        setReceiveVarFields(temp);
+                      }}
+                    />
+                  )} */}
                 </div>
               </Form.Item>
             ))}
@@ -513,6 +526,127 @@ const EmployeePayslipAddIndex = ({
 
           <div className="flex flex-col">
             <p className="mig-heading--5 mb-3">PENGURANGAN</p>
+            <Form.Item
+              label="BPJS KS (5% Perusahaan)"
+              name={"bpjs_ks"}
+              rules={[
+                {
+                  required: true,
+                  message: "BPJS KS wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={`bpjs ks`}
+                  fieldName={"bpjs_ks"}
+                  setDataForm={setDataPayslip}
+                  disabled
+                  // value={dataPayslip?.benefit?.bpjs_ks}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="BPJS TK-JHT (5,7% Perusahaan)"
+              name={"bpjs_tk_jht"}
+              rules={[
+                {
+                  required: true,
+                  message: "BPJS TK-JHT wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={`bpjs tk jht`}
+                  fieldName={"bpjs_tk_jht"}
+                  setDataForm={setDataPayslip}
+                  disabled
+                  // value={dataPayslip?.benefit?.bpjs_tk_jht}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="BPJS TK-JKK (0,24% Perusahaan)"
+              name={"bpjs_tk_jkk"}
+              rules={[
+                {
+                  required: true,
+                  message: "BPJS TK-JKK wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={`bpjs tk jkk`}
+                  fieldName={"bpjs_tk_jkk"}
+                  setDataForm={setDataPayslip}
+                  disabled
+                  // value={dataPayslip?.benefit?.bpjs_tk_jkk}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="BPJS TK-JKM (0,3% Perusahaan)"
+              name={"bpjs_tk_jkm"}
+              rules={[
+                {
+                  required: true,
+                  message: "BPJS TK-JKM wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={`bpjs tk jkm`}
+                  fieldName={"bpjs_tk_jkm"}
+                  setDataForm={setDataPayslip}
+                  disabled
+                  // value={dataPayslip?.benefit?.bpjs_tk_jkm}
+                />
+              </div>
+            </Form.Item>
+            <Form.Item
+              label="BPJS TK-JP (3% Perusahaan)"
+              name={"bpjs_tk_jp"}
+              rules={[
+                {
+                  required: true,
+                  message: "BPJS TK-JP wajib diisi",
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={`bpjs tk jp`}
+                  fieldName={"bpjs_tk_jp"}
+                  setDataForm={setDataPayslip}
+                  disabled
+                  // value={dataPayslip?.benefit?.bpjs_tk_jp}
+                />
+              </div>
+            </Form.Item>
+
+            <Form.Item
+              label="PPh 21"
+              name={"pph"}
+              rules={[
+                {
+                  required: true,
+                  message: "PPh 21 wajib diisi",
+                },
+              ]}
+            >
+              <>
+                <CustomCurrencyInput
+                  fieldLabel={`PPh 21`}
+                  fieldName={"pph"}
+                  setDataForm={setDataPayslip}
+                  disabled
+                  // value={dataPayslip?.benefit?.pph}
+                />
+              </>
+            </Form.Item>
             {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
             {reductionVarFields.map((variable) => (
               <Form.Item
@@ -534,164 +668,11 @@ const EmployeePayslipAddIndex = ({
                       .join("_")}`}
                     setDataForm={setDataPayslip}
                     disabled={variable.required}
+                    // value={dataPayslip?.benefit[`${variable.name}
                   />
-                  {/* <Input
-                    // value={dataPayslip?.benefit[`${variable.name}`]}
-                    name={`${variable.name}`}
-                    onChange={(e) => {
-                      setDataPayslip((prev) => ({
-                        ...prev,
-                        benefit: {
-                          ...prev.benefit,
-                          [variable.name]: e.target.value,
-                        },
-                      }));
-                    }}
-                    placeholder={`Masukkan ${variable.name}`}
-                    disabled={variable.required}
-                  /> */}
                 </div>
               </Form.Item>
             ))}
-            {/* <Form.Item
-              label="BPJS KS (5% Perusahaan)"
-              name={"bpjs_ks"}
-              rules={[
-                {
-                  required: true,
-                  message: "BPJS KS wajib diisi",
-                },
-              ]}>
-              <div>
-                <Input
-                  value={dataPayslip?.benefit?.bpjs_ks}
-                  name={"bpjs_ks"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, bpjs_ks: e.target.value },
-                    }));
-                  }}
-                  disabled
-                />
-              </div>
-            </Form.Item>
-            <Form.Item
-              label="BPJS TK-JHT (5,7% Perusahaan)"
-              name={"bpjs_tk_jht"}
-              rules={[
-                {
-                  required: true,
-                  message: "BPJS TK-JHT wajib diisi",
-                },
-              ]}>
-              <div>
-                <Input
-                  value={dataPayslip?.benefit?.bpjs_tk_jht}
-                  name={"bpjs_tk_jht"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, bpjs_tk_jht: e.target.value },
-                    }));
-                  }}
-                  disabled
-                />
-              </div>
-            </Form.Item>
-            <Form.Item
-              label="BPJS TK-JKK (0,24% Perusahaan)"
-              name={"bpjs_tk_jkk"}
-              rules={[
-                {
-                  required: true,
-                  message: "BPJS TK-JKK wajib diisi",
-                },
-              ]}>
-              <div>
-                <Input
-                  value={dataPayslip?.benefit?.bpjs_tk_jkk}
-                  name={"bpjs_tk_jkk"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, bpjs_tk_jkk: e.target.value },
-                    }));
-                  }}
-                  disabled
-                />
-              </div>
-            </Form.Item>
-            <Form.Item
-              label="BPJS TK-JKM (0,3% Perusahaan)"
-              name={"bpjs_tk_jkm"}
-              rules={[
-                {
-                  required: true,
-                  message: "BPJS TK-JKM wajib diisi",
-                },
-              ]}>
-              <div>
-                <Input
-                  value={dataPayslip?.benefit?.bpjs_tk_jkm}
-                  name={"bpjs_tk_jkm"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, bpjs_tk_jkm: e.target.value },
-                    }));
-                  }}
-                  disabled
-                />
-              </div>
-            </Form.Item>
-            <Form.Item
-              label="BPJS TK-JP (3% Perusahaan)"
-              name={"bpjs_tk_jp"}
-              rules={[
-                {
-                  required: true,
-                  message: "BPJS TK-JP wajib diisi",
-                },
-              ]}>
-              <div>
-                <Input
-                  value={dataPayslip?.benefit?.bpjs_tk_jp}
-                  name={"bpjs_tk_jp"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, bpjs_tk_jp: e.target.value },
-                    }));
-                  }}
-                  disabled
-                />
-              </div>
-            </Form.Item>
-
-            <Form.Item
-              label="PPh 21"
-              name={"pph"}
-              rules={[
-                {
-                  required: true,
-                  message: "PPh 21 wajib diisi",
-                },
-              ]}>
-              <>
-                <Input
-                  value={dataPayslip?.benefit?.pph}
-                  name={"pph"}
-                  onChange={(e) => {
-                    setDataPayslip((prev) => ({
-                      ...prev,
-                      benefit: { ...prev.benefit, pph: e.target.value },
-                    }));
-                  }}
-                  placeholder="Masukkan pajak penghasilan"
-                />
-              </>
-            </Form.Item> */}
           </div>
           <div className="col-span-2 mb-6">
             <ButtonSys

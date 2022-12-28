@@ -353,7 +353,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&payslip_status_id=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
         headers: {
@@ -473,9 +473,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(
-                      //   `/admin/employees/payslip/${record.id}/addPayslip?id=${record?.payslips[0].id}`
-                      // );
+                      rt.push(
+                        `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                      );
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -734,7 +734,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           closable={false}
           okButtonText="Ya, saya yakin"
         >
-          Apakah Anda yakin inign menerbitkan draft slip gaji untuk semua
+          Apakah Anda yakin ingin menerbitkan draft slip gaji untuk semua
           karyawan?
         </ModalUbah>
       </AccessControl>
