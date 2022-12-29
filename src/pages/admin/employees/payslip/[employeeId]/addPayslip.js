@@ -38,8 +38,8 @@ import {
   ModalAddSalaryVar,
   ModalUbah,
 } from "../../../../../components/modal/modalCustom";
+import CustomCurrencyInput from "../../../../../components/screen/employee/CustomCurrencyInput";
 import EmployeeContractForm from "../../../../../components/screen/employee/create/contract";
-import CustomCurrencyInput from "../../../../../components/screen/employee/customCurrencyInput";
 import {
   objectToFormData,
   permissionWarningNotification,

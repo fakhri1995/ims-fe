@@ -47,7 +47,7 @@ import {
   UploadIconSvg,
 } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
-import CustomCurrencyInput from "../../customCurrencyInput";
+import CustomCurrencyInput from "../../CustomCurrencyInput";
 
 const EmployeeContractForm = ({
   initProps,
