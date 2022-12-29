@@ -1,35 +1,47 @@
 import { Input } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import CurrencyFormat from "react-currency-format";
 
 const CustomCurrencyInput = ({
   fieldLabel,
   fieldName,
+  benefitType,
   setDataForm,
   disabled,
+  value,
 }) => {
-  const [formattedNominal, setFormattedNominal] = useState(0);
+  // Auto update benefit variable if value change automatically in a disabled field
+  useEffect(() => {
+    if (disabled) {
+      setDataForm((prev) => ({
+        ...prev,
+        [benefitType]: { ...prev[benefitType], [fieldName]: value },
+      }));
+    }
+  }, [value, disabled]);
+
   return (
     <CurrencyFormat
       customInput={Input}
       placeholder={`Masukkan ${fieldLabel}`}
-      value={formattedNominal}
+      value={value}
       thousandSeparator={"."}
       decimalSeparator={","}
       prefix={"Rp"}
       suffix={",00"}
+      allowNegative={false}
       disabled={disabled}
       onValueChange={(values) => {
-        const { formattedValue, value } = values;
+        const { formattedValue, value, floatValue } = values;
         // formattedValue = $2,223
         // value ie, 2223
-        setFormattedNominal(formattedValue);
         setDataForm((prev) => ({
           ...prev,
-          benefit: { ...prev.benefit, [fieldName]: value },
+          [benefitType]: { ...prev[benefitType], [fieldName]: floatValue },
         }));
       }}
+      renderText={(value) => <p>{value}</p>}
     />
   );
 };

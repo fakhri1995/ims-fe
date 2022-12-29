@@ -107,12 +107,12 @@ const EmployeePayslipAddIndex = ({
     employee_id: null,
     total_hari_kerja: 0,
     tanggal_dibayarkan: "",
-    // benefit_receive: {},
-    // benefit_reduce: {},
+    benefit_penerimaan: {},
+    benefit_pengurangan: {},
     total_gross_penerimaan: "",
     total_gross_pengurangan: "",
     take_home_pay: "",
-    benefit: {},
+    // benefit: {},
   });
 
   // Use for selected variable list to show as fields in form
@@ -248,6 +248,33 @@ const EmployeePayslipAddIndex = ({
       .finally(() => setpraloading(false));
   }, [isAllowedToGetSalaryColumns, refresh]);
 
+  // 2.4. Auto update total gross penerimaan, pengurangan, take home pay
+  useEffect(() => {
+    if (dataPayslip.benefit_penerimaan) {
+      let newTotalGrossPenerimaan = sumValues(dataPayslip?.benefit_penerimaan);
+
+      setDataPayslip((prev) => ({
+        ...prev,
+        total_gross_penerimaan: newTotalGrossPenerimaan,
+        take_home_pay: newTotalGrossPenerimaan - prev.total_gross_pengurangan,
+      }));
+    }
+  }, [dataPayslip.benefit_penerimaan]);
+
+  useEffect(() => {
+    if (dataPayslip.benefit_pengurangan) {
+      let newTotalGrossPengurangan = sumValues(
+        dataPayslip?.benefit_pengurangan
+      );
+
+      setDataPayslip((prev) => ({
+        ...prev,
+        total_gross_pengurangan: newTotalGrossPengurangan,
+        take_home_pay: prev.total_gross_penerimaan - newTotalGrossPengurangan,
+      }));
+    }
+  }, [dataPayslip.benefit_pengurangan]);
+
   // 3. Handler
   // 3.1. Handle input change
   const onChangeInput = (e) => {
@@ -348,6 +375,16 @@ const EmployeePayslipAddIndex = ({
       });
   };
 
+  const countBenefitValue = (multiplier) => {
+    let result =
+      Math.round(
+        dataPayslip?.benefit_penerimaan?.gaji_pokok * multiplier * 100
+      ) / 100;
+    return result || 0;
+  };
+
+  const sumValues = (obj) => Object.values(obj).reduce((a, b) => a + b, 0);
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -357,7 +394,7 @@ const EmployeePayslipAddIndex = ({
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="shadow-lg rounded-md bg-white md:py-7 md:px-5">
+      <div className="shadow-lg rounded-md bg-white py-7 px-5">
         <div className="flex flex-row items-center justify-between mb-7">
           <h4 className="mig-heading--4">Buat Slip Gaji</h4>
           <div
@@ -461,7 +498,7 @@ const EmployeePayslipAddIndex = ({
             <p className="mig-heading--5 mb-3">PENERIMAAN</p>
             <Form.Item
               label="Gaji Pokok"
-              name={"main_salary"}
+              name={"gaji_pokok"}
               rules={[
                 {
                   required: true,
@@ -473,8 +510,10 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={"gaji pokok"}
                   fieldName={"gaji_pokok"}
+                  benefitType={"benefit_penerimaan"}
                   setDataForm={setDataPayslip}
                   disabled={canUpdateMainSalary ? false : true}
+                  value={dataPayslip?.benefit_penerimaan?.gaji_pokok}
                 />
               </div>
             </Form.Item>
@@ -506,7 +545,13 @@ const EmployeePayslipAddIndex = ({
                       .toLowerCase()
                       .split(" ")
                       .join("_")}`}
+                    benefitType={"benefit_penerimaan"}
                     setDataForm={setDataPayslip}
+                    value={
+                      dataPayslip?.benefit?.[
+                        variable.name.toLowerCase().split(" ").join("_")
+                      ]
+                    }
                   />
                   {/* {!variable.required && (
                     <Button
@@ -540,9 +585,10 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs ks`}
                   fieldName={"bpjs_ks"}
+                  benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
+                  value={countBenefitValue(0.05)}
                   disabled
-                  // value={dataPayslip?.benefit?.bpjs_ks}
                 />
               </div>
             </Form.Item>
@@ -560,9 +606,10 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jht`}
                   fieldName={"bpjs_tk_jht"}
+                  benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  // value={dataPayslip?.benefit?.bpjs_tk_jht}
+                  value={countBenefitValue(0.057)}
                 />
               </div>
             </Form.Item>
@@ -580,9 +627,10 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jkk`}
                   fieldName={"bpjs_tk_jkk"}
+                  benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  // value={dataPayslip?.benefit?.bpjs_tk_jkk}
+                  value={countBenefitValue(0.0024)}
                 />
               </div>
             </Form.Item>
@@ -600,9 +648,10 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jkm`}
                   fieldName={"bpjs_tk_jkm"}
+                  benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  // value={dataPayslip?.benefit?.bpjs_tk_jkm}
+                  value={countBenefitValue(0.003)}
                 />
               </div>
             </Form.Item>
@@ -620,13 +669,14 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jp`}
                   fieldName={"bpjs_tk_jp"}
+                  benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  // value={dataPayslip?.benefit?.bpjs_tk_jp}
+                  value={countBenefitValue(0.03)}
                 />
               </div>
             </Form.Item>
-
+            {console.log(dataPayslip)}
             <Form.Item
               label="PPh 21"
               name={"pph"}
@@ -641,9 +691,9 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`PPh 21`}
                   fieldName={"pph"}
+                  benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
-                  disabled
-                  // value={dataPayslip?.benefit?.pph}
+                  value={dataPayslip?.benefit?.pph}
                 />
               </>
             </Form.Item>
@@ -666,9 +716,13 @@ const EmployeePayslipAddIndex = ({
                       .toLowerCase()
                       .split(" ")
                       .join("_")}`}
+                    benefitType={"benefit_pengurangan"}
                     setDataForm={setDataPayslip}
-                    disabled={variable.required}
-                    // value={dataPayslip?.benefit[`${variable.name}
+                    value={
+                      dataPayslip?.benefit?.[
+                        variable.name.toLowerCase().split(" ").join("_")
+                      ]
+                    }
                   />
                 </div>
               </Form.Item>
@@ -703,22 +757,14 @@ const EmployeePayslipAddIndex = ({
               <CurrencyFormat
                 customInput={Input}
                 placeholder={"Masukkan total gross penerimaan"}
-                value={formattedGrossPenerimaan}
+                value={dataPayslip?.total_gross_penerimaan}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
                 suffix={",00"}
-                disabled
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  // formattedValue = $2,223
-                  // value ie, 2223
-                  setFormattedGrossPenerimaan(formattedValue);
-                  setDataPayslip((prev) => ({
-                    ...prev,
-                    total_gross_penerimaan: value,
-                  }));
-                }}
+                allowNegative={false}
+                disabled={true}
+                renderText={(value) => <p>{value}</p>}
               />
             </>
           </Form.Item>
@@ -736,20 +782,14 @@ const EmployeePayslipAddIndex = ({
               <CurrencyFormat
                 customInput={Input}
                 placeholder={"Masukkan total gross pengurangan"}
-                value={formattedGrossPengurangan}
+                value={dataPayslip?.total_gross_pengurangan}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
                 suffix={",00"}
-                disabled
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  setFormattedGrossPengurangan(formattedValue);
-                  setDataPayslip((prev) => ({
-                    ...prev,
-                    total_gross_pengurangan: value,
-                  }));
-                }}
+                allowNegative={false}
+                disabled={true}
+                renderText={(value) => <p>{value}</p>}
               />
             </>
           </Form.Item>
@@ -767,20 +807,15 @@ const EmployeePayslipAddIndex = ({
             <>
               <CurrencyFormat
                 customInput={Input}
-                value={formattedTakeHomePay}
+                placeholder={"Masukkan take home pay"}
+                value={dataPayslip?.take_home_pay}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
                 suffix={",00"}
-                disabled
-                onValueChange={(values) => {
-                  const { formattedValue, value } = values;
-                  setFormattedTakeHomePay(formattedValue);
-                  setDataPayslip((prev) => ({
-                    ...prev,
-                    take_home_pay: value,
-                  }));
-                }}
+                allowNegative={false}
+                disabled={true}
+                renderText={(value) => <p>{value}</p>}
               />
             </>
           </Form.Item>
