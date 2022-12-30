@@ -21,6 +21,7 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_GET,
   EMPLOYEE_PAYSLIP_UPDATE,
   EMPLOYEE_SALARY_COLUMNS_GET,
@@ -66,6 +67,7 @@ const EmployeePayslipAddIndex = ({
     return null;
   }
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
+  const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
   const isAllowedToGetSalaryColumns = hasPermission(
     EMPLOYEE_SALARY_COLUMNS_GET
@@ -81,6 +83,8 @@ const EmployeePayslipAddIndex = ({
   //INIT
   const rt = useRouter();
   const { id: payslipId } = rt.query;
+
+  console.log(employeeId);
 
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
@@ -104,7 +108,7 @@ const EmployeePayslipAddIndex = ({
   const [praloading, setpraloading] = useState(true);
   const [dataPayslip, setDataPayslip] = useState({
     id: null,
-    employee_id: null,
+    employee_id: employeeId,
     total_hari_kerja: 0,
     tanggal_dibayarkan: "",
     benefit_penerimaan: {},
@@ -321,24 +325,26 @@ const EmployeePayslipAddIndex = ({
     // }
   };
 
-  // 3.2. Handle Save Payslip Draft/Posted
-  const handleSavePayslip = (isPosted) => {
-    if (!isAllowedToUpdatePayslip) {
-      permissionWarningNotification("Menyimpan", "Slip Gaji Karyawan");
+  // 3.2. Handle Add Payslip Draft/Posted
+  const handleAddPayslip = (isPosted) => {
+    if (!isAllowedToAddPayslip) {
+      permissionWarningNotification("Menambah", "Slip Gaji Karyawan");
       return;
     }
 
-    const payloadFormData = objectToFormData({
+    const payload = {
       ...dataPayslip,
       is_posted: isPosted,
-    });
-    setLoadingUpdate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeePayslip`, {
+    };
+
+    setLoadingSave(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeePayslip`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
       },
-      body: payloadFormData,
+      body: JSON.stringify(payload),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -356,7 +362,60 @@ const EmployeePayslipAddIndex = ({
             });
           }
 
-          rt.push(`/admin/employees/${employeeId}`);
+          rt.push(`/admin/employees/payslip/${employeeId}`);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan slip gaji karyawan. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan slip gaji karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
+  // 3.2. Handle Update Payslip Draft/Posted
+  const handleSavePayslip = (isPosted) => {
+    if (!isAllowedToUpdatePayslip) {
+      permissionWarningNotification("Menyimpan", "Slip Gaji Karyawan");
+      return;
+    }
+
+    const payload = {
+      ...dataPayslip,
+      is_posted: isPosted,
+    };
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeePayslip`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setModalUpdate(false);
+          if (isDraft) {
+            notification.success({
+              message: `Draft slip gaji berhasil dibuat.`,
+              duration: 3,
+            });
+          } else {
+            notification.success({
+              message: `Slip gaji berhasil ditambahkan.`,
+              duration: 3,
+            });
+          }
+
+          rt.push(`/admin/employees/payslip/${employeeId}`);
         } else {
           notification.error({
             message: `Gagal menyimpan slip gaji karyawan. ${response2.message}`,
@@ -417,7 +476,7 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(true);
                 setModalUpdate(true);
               }}
-              disabled={!isAllowedToUpdatePayslip}
+              disabled={!isAllowedToUpdatePayslip || !isAllowedToAddPayslip}
             >
               <div className="flex flex-row space-x-2">
                 <ClipboardListIconSvg color={"#35763B"} size={16} />
@@ -430,7 +489,11 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(false);
                 setModalUpdate(true);
               }}
-              disabled={!isAllowedToUpdatePayslip || disablePublish}
+              disabled={
+                !isAllowedToUpdatePayslip ||
+                !isAllowedToAddPayslip ||
+                disablePublish
+              }
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -676,7 +739,6 @@ const EmployeePayslipAddIndex = ({
                 />
               </div>
             </Form.Item>
-            {console.log(dataPayslip)}
             <Form.Item
               label="PPh 21"
               name={"pph"}
@@ -855,7 +917,13 @@ const EmployeePayslipAddIndex = ({
           visible={modalUpdate}
           onvisible={setModalUpdate}
           onOk={() => {
-            isDraft ? handleSavePayslip(0) : handleSavePayslip(1);
+            payslipId
+              ? isDraft
+                ? handleSavePayslip(0)
+                : handleSavePayslip(1)
+              : isDraft
+              ? handleAddPayslip(0)
+              : handleAddPayslip(1);
           }}
           onCancel={() => {
             setModalUpdate(false);
@@ -867,12 +935,24 @@ const EmployeePayslipAddIndex = ({
           {isDraft ? (
             <p className="">
               Apakah Anda yakin ingin menyimpan draft slip gaji untuk&nbsp;
-              <strong>John Doe</strong> periode <strong>Oktober 2022</strong>?
+              <strong>{dataPayslip?.employee?.name || "-"}</strong> periode{" "}
+              <strong>
+                {moment(dataPayslip?.tanggal_dibayarkan).isValid()
+                  ? moment(dataPayslip?.tanggal_dibayarkan).format("MMMM YYYY")
+                  : "-"}
+              </strong>
+              ?
             </p>
           ) : (
             <p className="">
               Apakah Anda yakin ingin menerbitkan slip gaji untuk&nbsp;
-              <strong>John Doe</strong> periode <strong>Oktober 2022</strong>?
+              <strong>{dataPayslip?.employee?.name || "-"}</strong> periode{" "}
+              <strong>
+                {moment(dataPayslip?.tanggal_dibayarkan).isValid()
+                  ? moment(dataPayslip?.tanggal_dibayarkan).format("MMMM YYYY")
+                  : "-"}
+              </strong>
+              ?
             </p>
           )}
         </ModalUbah>
