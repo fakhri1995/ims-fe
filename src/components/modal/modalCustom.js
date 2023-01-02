@@ -971,21 +971,6 @@ const ModalManageSalaryVar = ({
     }
   }, [isAllowedToGetSalaryColumns, refresh, visible]);
 
-  // const receiveVarList = [
-  //   {
-  //     label: "Gaji Pokok",
-  //     value: "Gaji Pokok",
-  //   },
-  //   {
-  //     label: "Tunjangan Uang Makan",
-  //     value: "Tunjangan Uang Makan",
-  //   },
-  //   {
-  //     label: "Tunjangan Transport",
-  //     value: "Tunjangan Transport",
-  //   },
-  // ];
-
   const handleAddVariable = () => {
     if (!isAllowedToAddSalaryColumn) {
       permissionWarningNotification("Menambah", "Variabel Gaji");

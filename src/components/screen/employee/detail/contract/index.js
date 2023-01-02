@@ -314,10 +314,10 @@ const EmployeeContractDetail = ({
                 <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
                 <div className="space-y-1 col-span-2">
                   <p className="mig-caption--medium text-mono80">Gaji Pokok</p>
-                  {benefitObject?.main_salary ? (
+                  {benefitObject?.gaji_pokok ? (
                     <CurrencyFormat
                       displayType="text"
-                      value={benefitObject?.main_salary}
+                      value={benefitObject?.gaji_pokok}
                       thousandSeparator={"."}
                       decimalSeparator={","}
                       prefix={"Rp"}

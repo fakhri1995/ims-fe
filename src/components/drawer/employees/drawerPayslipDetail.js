@@ -2,11 +2,13 @@ import { UpOutlined } from "@ant-design/icons";
 import { Collapse, Form, Input, Select, Spin, Table, notification } from "antd";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { EMPLOYEE_PAYSLIP_GET } from "lib/features";
 
+import { momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import { InputRequired } from "../../input";
@@ -14,11 +16,13 @@ import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 const DrawerPayslipDetail = ({
+  initProps,
   title,
   visible,
   onvisible,
   setRefresh,
   isAllowedToGetPayslip,
+  payslipId,
 }) => {
   /**
    * Dependencies
@@ -33,8 +37,58 @@ const DrawerPayslipDetail = ({
   const [instanceForm] = Form.useForm();
 
   // useState
+  const [detailPayslip, setDetailPayslip] = useState({
+    employee_id: -1,
+    id: -1,
+    is_posted: -1,
+    take_home_pay: 0,
+    tanggal_dibayarkan: "",
+    total_gross_penerimaan: 0,
+    total_gross_pengurangan: 0,
+    total_hari_kerja: 0,
+  });
+  const [loadingDetail, setLoadingDetail] = useState(false);
 
-  // useEffect
+  // 2. useEffect
+  // 2.1 Get employee payslip detail
+  useEffect(() => {
+    if (!isAllowedToGetPayslip) {
+      permissionWarningNotification("Mendapatkan", "Detail Slip Gaji Karyawan");
+      setLoadingDetail(false);
+      return;
+    }
+
+    if (visible) {
+      setLoadingDetail(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslip?id=${payslipId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDetailPayslip(response2.data);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingDetail(false));
+    }
+  }, [isAllowedToGetPayslip, payslipId, visible]);
 
   // console.log(dataCandidate);
   return (
@@ -46,15 +100,25 @@ const DrawerPayslipDetail = ({
       <div className="grid grid-cols-2 gap-x-8 gap-y-5">
         <div className="flex flex-col">
           <p className="mig-caption--medium text-mono80">Total Hari Kerja</p>
-          <p>25 hari</p>
+          <p>{detailPayslip?.total_hari_kerja}</p>
         </div>
         <div className="flex flex-col">
           <p className="mig-caption--medium text-mono80">Tanggal Dibayarkan</p>
-          <p>1 Oktober 2022</p>
+          <p>{momentFormatDate(detailPayslip?.tanggal_dibayarkan, "-")}</p>
         </div>
         <div className="flex flex-col col-span-2">
           <p className="mig-caption--medium text-mono80">Jumlah Diterima</p>
-          <p>Rp5,250,000 (Lima Juta Dua Ratus Lima Puluh Ribu Rupiah)</p>
+          <div className="flex flex-row">
+            <CurrencyFormat
+              displayType="text"
+              value={detailPayslip?.take_home_pay}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"Rp"}
+              suffix={",00"}
+            />
+            <p>&nbsp;(Lima Juta Dua Ratus Lima Puluh Ribu Rupiah)</p>
+          </div>
         </div>
         <hr className="col-span-2" />
         <Collapse
@@ -114,7 +178,12 @@ const DrawerPayslipDetail = ({
                       index={1}
                       className="font-bold text-right"
                     >
-                      5,997,600
+                      <CurrencyFormat
+                        displayType="text"
+                        value={detailPayslip?.total_gross_penerimaan}
+                        thousandSeparator={"."}
+                        decimalSeparator={","}
+                      />
                     </Table.Summary.Cell>
                   </Table.Summary.Row>
                 </Table.Summary>
@@ -169,7 +238,12 @@ const DrawerPayslipDetail = ({
                       index={1}
                       className="font-bold text-right"
                     >
-                      5,997,600
+                      <CurrencyFormat
+                        displayType="text"
+                        value={detailPayslip?.total_gross_pengurangan}
+                        thousandSeparator={"."}
+                        decimalSeparator={","}
+                      />
                     </Table.Summary.Cell>
                   </Table.Summary.Row>
                 </Table.Summary>
