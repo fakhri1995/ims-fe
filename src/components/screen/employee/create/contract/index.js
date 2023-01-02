@@ -95,10 +95,7 @@ const EmployeeContractForm = ({
   const [refresh, setRefresh] = useState(-1);
 
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
-  const [isInputVar, setInputVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
-
-  const [loadingCreate, setLoadingCreate] = useState(false);
 
   const [loadingPositonList, setLoadingPositionList] = useState(false);
   const [dataPositionList, setDataPositionList] = useState([]);
