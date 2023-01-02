@@ -402,20 +402,31 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "Nama",
       dataIndex: "name",
+      render: (text, record, index) => {
+        return {
+          children: <>{record?.employee?.name || "-"}</>,
+        };
+      },
       sorter: isAllowedToGetEmployeesPayslips
-        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        ? (a, b) =>
+            a.employee?.name?.toLowerCase() > b.employee?.name?.toLowerCase()
         : false,
     },
     {
       title: "NIP",
       dataIndex: "nip",
+      render: (text, record, index) => {
+        return {
+          children: <>{record?.employee?.nip || "-"}</>,
+        };
+      },
     },
     {
       title: "Penempatan",
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record?.contract?.placement || "-"}</>,
+          children: <>{record?.employee?.placement || "-"}</>,
         };
       },
     },
@@ -424,13 +435,18 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record?.contract?.role?.name || "-"}</>,
+          children: <>{record?.employee?.role?.name || "-"}</>,
         };
       },
     },
     {
       title: "No. Telepon",
       dataIndex: "phone_number",
+      render: (text, record, index) => {
+        return {
+          children: <>{record?.employee?.phone_number || "-"}</>,
+        };
+      },
     },
     {
       title: "Status Slip Gaji",
@@ -702,8 +718,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           />
         </div>
       </div>
-      {/* Modal Add Salary Variable */}
-      {/* TODO: change hasPermission */}
+      {/* Modal Kelola Variabel Gaji */}
       <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
         <ModalManageSalaryVar
           initProps={initProps}
