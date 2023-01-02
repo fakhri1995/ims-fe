@@ -14,10 +14,14 @@ const CustomCurrencyInput = ({
   // Auto update benefit variable if value change automatically in a disabled field
   useEffect(() => {
     if (disabled) {
-      setDataForm((prev) => ({
-        ...prev,
-        [benefitType]: { ...prev[benefitType], [fieldName]: value },
-      }));
+      const timer = setTimeout(() => {
+        setDataForm((prev) => ({
+          ...prev,
+          [benefitType]: { ...prev[benefitType], [fieldName]: value || 0 },
+        }));
+      }, 2000);
+
+      return () => clearTimeout(timer);
     }
   }, [value, disabled]);
 
@@ -25,11 +29,10 @@ const CustomCurrencyInput = ({
     <CurrencyFormat
       customInput={Input}
       placeholder={`Masukkan ${fieldLabel}`}
-      value={value}
+      value={value || 0}
       thousandSeparator={"."}
       decimalSeparator={","}
       prefix={"Rp"}
-      suffix={",00"}
       allowNegative={false}
       disabled={disabled}
       onValueChange={(values) => {
@@ -38,7 +41,7 @@ const CustomCurrencyInput = ({
         // value ie, 2223
         setDataForm((prev) => ({
           ...prev,
-          [benefitType]: { ...prev[benefitType], [fieldName]: floatValue },
+          [benefitType]: { ...prev[benefitType], [fieldName]: floatValue || 0 },
         }));
       }}
       renderText={(value) => <p>{value}</p>}

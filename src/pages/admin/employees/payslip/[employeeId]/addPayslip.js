@@ -84,8 +84,6 @@ const EmployeePayslipAddIndex = ({
   const rt = useRouter();
   const { id: payslipId } = rt.query;
 
-  console.log(employeeId);
-
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
 
@@ -111,8 +109,12 @@ const EmployeePayslipAddIndex = ({
     employee_id: employeeId,
     total_hari_kerja: 0,
     tanggal_dibayarkan: "",
-    benefit_penerimaan: {},
-    benefit_pengurangan: {},
+    benefit_penerimaan: {
+      gaji_pokok: 0,
+    },
+    benefit_pengurangan: {
+      pph: 0,
+    },
     total_gross_penerimaan: "",
     total_gross_pengurangan: "",
     take_home_pay: "",
@@ -139,13 +141,24 @@ const EmployeePayslipAddIndex = ({
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
 
-  // 1.5. Formatted currency field
-  const [formattedGrossPenerimaan, setFormattedGrossPenerimaan] = useState(0);
-  const [formattedGrossPengurangan, setFormattedGrossPengurangan] = useState(0);
-  const [formattedTakeHomePay, setFormattedTakeHomePay] = useState(0);
+  // 2. HELPER FUNCTION
+  // Format string variable name. e.g. "tunjangan_transport"
+  const formatVariableName = (name) => name.toLowerCase().split(" ").join("_");
 
-  // 2. USE EFFECT
-  // 2.1 Get employee payslip detail
+  // Count BPJS value
+  const countBenefitValue = (multiplier) => {
+    let result =
+      Math.round(
+        dataPayslip?.benefit_penerimaan?.gaji_pokok * multiplier * 100
+      ) / 100;
+    return result || 0;
+  };
+
+  // Count total gross penerimaan & pengurangan
+  const sumValues = (obj) => Object.values(obj).reduce((a, b) => a + b, 0);
+
+  // 3. USE EFFECT
+  // 3.1 Get employee payslip detail
   useEffect(() => {
     if (!isAllowedToGetPayslip) {
       permissionWarningNotification("Mendapatkan", "Detail Slip Gaji Karyawan");
@@ -184,24 +197,7 @@ const EmployeePayslipAddIndex = ({
     }
   }, [isAllowedToGetPayslip, payslipId, refresh]);
 
-  // 2.2. Disable "Terbitkan" button if any required field is empty
-  useEffect(() => {
-    let requiredPayslipField = Boolean(
-      dataPayslip.total_hari_kerja &&
-        dataPayslip.tanggal_dibayarkan &&
-        dataPayslip.total_gross_penerimaan &&
-        dataPayslip.total_gross_pengurangan &&
-        dataPayslip.take_home_pay
-    );
-
-    if (!requiredPayslipField) {
-      setDisablePublish(true);
-    } else {
-      setDisablePublish(false);
-    }
-  }, [dataPayslip]);
-
-  // 2.3 Get salary variable list
+  // 3.2 Get salary variable list
   useEffect(() => {
     if (!isAllowedToGetSalaryColumns) {
       permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
@@ -252,7 +248,44 @@ const EmployeePayslipAddIndex = ({
       .finally(() => setpraloading(false));
   }, [isAllowedToGetSalaryColumns, refresh]);
 
-  // 2.4. Auto update total gross penerimaan, pengurangan, take home pay
+  // 3.3. Disable "Terbitkan" button if any required field is empty
+  useEffect(() => {
+    const isAllRequiredPayslipFilled = Boolean(
+      dataPayslip.total_hari_kerja &&
+        dataPayslip.tanggal_dibayarkan &&
+        dataPayslip.total_gross_penerimaan &&
+        dataPayslip.total_gross_pengurangan &&
+        dataPayslip.take_home_pay &&
+        dataPayslip.benefit_penerimaan.gaji_pokok &&
+        dataPayslip.benefit_pengurangan.pph
+    );
+
+    const requiredBenefit = receiveVarFields
+      .concat(reductionVarFields)
+      .filter((field) => field.required === 1)
+      .map((field) => formatVariableName(field.name));
+
+    const isAllRequiredBenefitFilled = () => {
+      try {
+        const isFilled = requiredBenefit.every(
+          (benefitName) =>
+            dataPayslip?.benefit_penerimaan[benefitName] ||
+            dataPayslip?.benefit_pengurangan[benefitName]
+        );
+        return isFilled;
+      } catch (err) {
+        return false;
+      }
+    };
+
+    if (!(isAllRequiredPayslipFilled && isAllRequiredBenefitFilled())) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataPayslip]);
+
+  // 3.4. Auto update total gross penerimaan, pengurangan, take home pay
   useEffect(() => {
     if (dataPayslip.benefit_penerimaan) {
       let newTotalGrossPenerimaan = sumValues(dataPayslip?.benefit_penerimaan);
@@ -279,8 +312,8 @@ const EmployeePayslipAddIndex = ({
     }
   }, [dataPayslip.benefit_pengurangan]);
 
-  // 3. Handler
-  // 3.1. Handle input change
+  // 4. Handler
+  // 4.1. Handle input change
   const onChangeInput = (e) => {
     setDataPayslip({
       ...dataPayslip,
@@ -325,7 +358,7 @@ const EmployeePayslipAddIndex = ({
     // }
   };
 
-  // 3.2. Handle Add Payslip Draft/Posted
+  // 4.2. Handle Add Payslip Draft/Posted
   const handleAddPayslip = (isPosted) => {
     if (!isAllowedToAddPayslip) {
       permissionWarningNotification("Menambah", "Slip Gaji Karyawan");
@@ -379,7 +412,7 @@ const EmployeePayslipAddIndex = ({
       .finally(() => setLoadingSave(false));
   };
 
-  // 3.2. Handle Update Payslip Draft/Posted
+  // 4.3. Handle Update Payslip Draft/Posted
   const handleSavePayslip = (isPosted) => {
     if (!isAllowedToUpdatePayslip) {
       permissionWarningNotification("Menyimpan", "Slip Gaji Karyawan");
@@ -433,16 +466,6 @@ const EmployeePayslipAddIndex = ({
         setLoadingUpdate(false);
       });
   };
-
-  const countBenefitValue = (multiplier) => {
-    let result =
-      Math.round(
-        dataPayslip?.benefit_penerimaan?.gaji_pokok * multiplier * 100
-      ) / 100;
-    return result || 0;
-  };
-
-  const sumValues = (obj) => Object.values(obj).reduce((a, b) => a + b, 0);
 
   return (
     <LayoutDashboard
@@ -593,7 +616,7 @@ const EmployeePayslipAddIndex = ({
               <Form.Item
                 key={idx}
                 label={variable.name}
-                name={`${variable.name}`}
+                name={formatVariableName(variable.name)}
                 rules={[
                   {
                     required: variable.required,
@@ -604,15 +627,12 @@ const EmployeePayslipAddIndex = ({
                 <div className="flex flex-row items-center space-x-2">
                   <CustomCurrencyInput
                     fieldLabel={`${variable.name.toLowerCase()}`}
-                    fieldName={`${variable.name
-                      .toLowerCase()
-                      .split(" ")
-                      .join("_")}`}
+                    fieldName={formatVariableName(variable.name)}
                     benefitType={"benefit_penerimaan"}
                     setDataForm={setDataPayslip}
                     value={
-                      dataPayslip?.benefit?.[
-                        variable.name.toLowerCase().split(" ").join("_")
+                      dataPayslip?.benefit_penerimaan?.[
+                        formatVariableName(variable.name)
                       ]
                     }
                   />
@@ -755,7 +775,7 @@ const EmployeePayslipAddIndex = ({
                   fieldName={"pph"}
                   benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
-                  value={dataPayslip?.benefit?.pph}
+                  value={dataPayslip?.benefit_pengurangan?.pph}
                 />
               </>
             </Form.Item>
@@ -763,7 +783,7 @@ const EmployeePayslipAddIndex = ({
             {reductionVarFields.map((variable) => (
               <Form.Item
                 label={variable.name}
-                name={`${variable.name}`}
+                name={formatVariableName(variable.name)}
                 rules={[
                   {
                     required: variable.required,
@@ -774,15 +794,12 @@ const EmployeePayslipAddIndex = ({
                 <div>
                   <CustomCurrencyInput
                     fieldLabel={`${variable.name.toLowerCase()}`}
-                    fieldName={`${variable.name
-                      .toLowerCase()
-                      .split(" ")
-                      .join("_")}`}
+                    fieldName={formatVariableName(variable.name)}
                     benefitType={"benefit_pengurangan"}
                     setDataForm={setDataPayslip}
                     value={
-                      dataPayslip?.benefit?.[
-                        variable.name.toLowerCase().split(" ").join("_")
+                      dataPayslip?.benefit_pengurangan?.[
+                        formatVariableName(variable.name)
                       ]
                     }
                   />
@@ -819,11 +836,10 @@ const EmployeePayslipAddIndex = ({
               <CurrencyFormat
                 customInput={Input}
                 placeholder={"Masukkan total gross penerimaan"}
-                value={dataPayslip?.total_gross_penerimaan}
+                value={dataPayslip?.total_gross_penerimaan || 0}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
-                suffix={",00"}
                 allowNegative={false}
                 disabled={true}
                 renderText={(value) => <p>{value}</p>}
@@ -844,11 +860,10 @@ const EmployeePayslipAddIndex = ({
               <CurrencyFormat
                 customInput={Input}
                 placeholder={"Masukkan total gross pengurangan"}
-                value={dataPayslip?.total_gross_pengurangan}
+                value={dataPayslip?.total_gross_pengurangan || 0}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
-                suffix={",00"}
                 allowNegative={false}
                 disabled={true}
                 renderText={(value) => <p>{value}</p>}
@@ -870,12 +885,11 @@ const EmployeePayslipAddIndex = ({
               <CurrencyFormat
                 customInput={Input}
                 placeholder={"Masukkan take home pay"}
-                value={dataPayslip?.take_home_pay}
+                value={dataPayslip?.take_home_pay || 0}
                 thousandSeparator={"."}
                 decimalSeparator={","}
                 prefix={"Rp"}
-                suffix={",00"}
-                allowNegative={false}
+                allowNegative={true}
                 disabled={true}
                 renderText={(value) => <p>{value}</p>}
               />
