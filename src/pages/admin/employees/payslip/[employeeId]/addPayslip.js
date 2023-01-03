@@ -140,17 +140,18 @@ const EmployeePayslipAddIndex = ({
   // 1.4. Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+  const [selectedMultipliers, setSelectedMultipliers] = useState([]);
 
   // 2. HELPER FUNCTION
   // Format string variable name. e.g. "tunjangan_transport"
   const formatVariableName = (name) => name.toLowerCase().split(" ").join("_");
 
   // Count BPJS value
-  const countBenefitValue = (multiplier) => {
-    let result =
-      Math.round(
-        dataPayslip?.benefit_penerimaan?.gaji_pokok * multiplier * 100
-      ) / 100;
+  const countBenefitValue = (percent) => {
+    // TODO: add sum of selected multiplier
+    // selectedMultipliers.reduce((a, b) => a + b, 0)
+    const totalMultiplier = dataPayslip?.benefit_penerimaan?.gaji_pokok;
+    let result = Math.round(totalMultiplier * (percent / 100) * 100) / 100;
     return result || 0;
   };
 
@@ -670,7 +671,7 @@ const EmployeePayslipAddIndex = ({
                   fieldName={"bpjs_ks"}
                   benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
-                  value={countBenefitValue(0.05)}
+                  value={countBenefitValue(5)}
                   disabled
                 />
               </div>
@@ -692,7 +693,7 @@ const EmployeePayslipAddIndex = ({
                   benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(0.057)}
+                  value={countBenefitValue(5.7)}
                 />
               </div>
             </Form.Item>
@@ -713,7 +714,7 @@ const EmployeePayslipAddIndex = ({
                   benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(0.0024)}
+                  value={countBenefitValue(0.24)}
                 />
               </div>
             </Form.Item>
@@ -734,7 +735,7 @@ const EmployeePayslipAddIndex = ({
                   benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(0.003)}
+                  value={countBenefitValue(0.3)}
                 />
               </div>
             </Form.Item>
@@ -755,7 +756,7 @@ const EmployeePayslipAddIndex = ({
                   benefitType={"benefit_pengurangan"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(0.03)}
+                  value={countBenefitValue(3)}
                 />
               </div>
             </Form.Item>
@@ -908,7 +909,6 @@ const EmployeePayslipAddIndex = ({
           isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
           isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
-          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
           receiveVarFields={receiveVarFields}
           reductionVarFields={reductionVarFields}
@@ -916,6 +916,8 @@ const EmployeePayslipAddIndex = ({
           setReductionVarFields={setReductionVarFields}
           refresh={refresh}
           setRefresh={setRefresh}
+          selectedTags={selectedMultipliers}
+          setSelectedTags={setSelectedMultipliers}
           // disabled
         />
       </AccessControl>
