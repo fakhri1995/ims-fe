@@ -20,6 +20,7 @@ import {
 import moment from "moment";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { React, useEffect, useRef, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -31,10 +32,16 @@ import { getBase64 } from "lib/helper";
 
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function Hardware({}) {
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   const { Panel } = Collapse;
   const [form] = Form.useForm();
   const inputRef = useRef(null);
@@ -682,11 +689,8 @@ function Hardware({}) {
   return (
     <Layout>
       <Head>
-        <title>Cost-Effective Hardware Managed Service Model - MIG</title>
-        <meta
-          name="description"
-          content="Maximize cost-effectiveness with our leased and well-maintained electronic equipment. Get personalized hardware that meets your needs. Contact us."
-        />
+        <title>{t.softwaremetatitle}</title>
+        <meta name="description" content={t.softwaremetadescription} />
       </Head>
       {showForm == false && (
         <section
@@ -1926,16 +1930,14 @@ function Hardware({}) {
             >
               <div className={"flex-col w-[495px]"}>
                 <p className={"text-xl md:text-[32px] pb-4 font-gilroybold"}>
-                  Nation-wide managed service model for your IT hardwares
+                  {t.hardwareherosection}
                 </p>
                 <p className={"mt:4 md:mt-8 font-gilroyregular text-base"}>
-                  Rapid pace of change, uncertainty on scalability, and heavy
-                  capital requirements might break your focus from executing
-                  your core business.
+                  {t.hardwareherosectionsubtitle}
                 </p>
                 <div className={"mt-10"}>
                   <p className={"font-gilroybold text-primarygreen text-base"}>
-                    Reach us to get more information
+                    {t.hardwarereachus}
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
                     <Input
@@ -1947,7 +1949,7 @@ function Hardware({}) {
                           company_email: e.target.value,
                         });
                       }}
-                      placeholder="Enter your email here."
+                      placeholder={t.hardwareenteremail}
                     />
                     <button
                       onClick={handleLetsTalk}
@@ -2039,7 +2041,7 @@ function Hardware({}) {
                     "text-blackmig text-xl text-center font-gilroysemibold w-[328px]"
                   }
                 >
-                  Nation-wide managed service model for your IT hardwares
+                  {t.hardwareherosection}
                 </p>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
@@ -2050,14 +2052,12 @@ function Hardware({}) {
                     "py-6 text-center text-base font-gilroyregular text-blackmig w-[328px] mx-auto"
                   }
                 >
-                  Rapid pace of change, uncertainty on scalability, and heavy
-                  capital requirements might break your focus from executing
-                  your core business.
+                  {t.hardwareherosectionsubtitle}
                 </p>
               </div>
               <div className={"w-[328px] mx-auto"}>
                 <p className={"font-gilroysemibold text-primarygreen text-sm"}>
-                  Reach us to get more information
+                  {t.hardwarereachus}
                 </p>
                 <div className={"flex flex-row items-center mt-1 mx-auto"}>
                   <Input
@@ -2066,7 +2066,7 @@ function Hardware({}) {
                     onChange={(e) => {
                       setEmail(e.target.value);
                     }}
-                    placeholder="Enter your email here."
+                    placeholder={t.hardwareenteremail}
                   />
                   <button
                     className={
@@ -2159,7 +2159,7 @@ function Hardware({}) {
                           "text-xs font-gilroysemibold italic text-blackmig"
                         }
                       >
-                        Help you to grow your financial business domestically
+                        {t.hardwarebankingsubtitle}
                       </p>
                       <div className={"self-center"}>
                         <button
@@ -2227,7 +2227,7 @@ function Hardware({}) {
                           "text-xs font-gilroysemibold italic text-blackmig"
                         }
                       >
-                        Enhance the productivity of your people
+                        {t.hardwareworkstationsubtitle}
                       </p>
                       <div className={"self-center"}>
                         <button
@@ -2295,7 +2295,7 @@ function Hardware({}) {
                           "text-xs font-gilroysemibold italic text-blackmig"
                         }
                       >
-                        Enhance the productivity of your people
+                        {t.hardwareserversubtitle}
                       </p>
                       <div className={"self-center"}>
                         <button
@@ -2362,7 +2362,7 @@ function Hardware({}) {
                           "text-xs font-gilroysemibold italic text-blackmig"
                         }
                       >
-                        Prevent any damage of your devices from power loss
+                        {t.hardwareupssubtitle}
                       </p>
                       <div className={"self-center"}>
                         <button
@@ -2615,18 +2615,20 @@ function Hardware({}) {
                 />
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
-                <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-                  Why you should{" "}
-                  <span
-                    style={{
-                      borderBottom: "solid 3px #188E4D",
-                      paddingBottom: "2.5px",
-                    }}
-                  >
-                    trust us
-                  </span>{" "}
-                  in taking care of your IT hardwares?
-                </h4>
+                {
+                  <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
+                    Why you should{" "}
+                    <span
+                      style={{
+                        borderBottom: "solid 3px #188E4D",
+                        paddingBottom: "2.5px",
+                      }}
+                    >
+                      trust us
+                    </span>{" "}
+                    in taking care of your IT hardwares?
+                  </h4>
+                }
                 <div className={"block md:hidden mx-auto my-[17px]"}>
                   <img
                     src="/image/people/People-Solution.png"
@@ -2641,11 +2643,10 @@ function Hardware({}) {
                   />
                   <div>
                     <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                      Reliable Partner
+                      {t.hardwarewhyussection1}
                     </h5>
                     <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                      We provide guaranteed level of IT operation services to
-                      support your business
+                      {t.hardwarewhyussection1description}
                     </p>
                   </div>
                 </div>
@@ -2656,12 +2657,10 @@ function Hardware({}) {
                   />
                   <div>
                     <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                      Increase Efficiency
+                      {t.hardwarewhyussection2}
                     </h5>
                     <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                      We transform a heavy capital IT hardware infrastructure,
-                      that requires large upfront investment into managed
-                      services model
+                      {t.hardwarewhyussection2description}
                     </p>
                   </div>
                 </div>
@@ -2672,11 +2671,10 @@ function Hardware({}) {
                   />
                   <div>
                     <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                      Nationwide Performance
+                      {t.hardwarewhyussection3}
                     </h5>
                     <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                      We provide strong local knowledge and network to help your
-                      business strive across Indonesia
+                      {t.hardwarewhyussection3description}
                     </p>
                   </div>
                 </div>
@@ -2716,15 +2714,7 @@ function Hardware({}) {
                       "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                     }
                   >
-                    We find high quality hardware products
-                  </p>
-                  <p
-                    className={
-                      "text-base text-blackmig font-gilroyregular text-center"
-                    }
-                  >
-                    We have extensive network and partnerships with hardware
-                    principles ready to be leveraged for your advantage
+                    {t.hardwarehowitworksection1}
                   </p>
                 </div>
               </div>
@@ -2745,14 +2735,7 @@ function Hardware({}) {
                     "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
-                  Custom match with your needs
-                </p>
-                <p
-                  className={
-                    "text-base text-blackmig font-gilroyregular text-center"
-                  }
-                >
-                  We customize our procurement with your specification needs
+                  {t.hardwarehowitworksection2}
                 </p>
               </div>
               <div className={"self-center"}>
@@ -2772,14 +2755,7 @@ function Hardware({}) {
                     "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
-                  We conduct full operation and maintenance for your hardware
-                </p>
-                <p
-                  className={
-                    "text-base text-blackmig font-gilroyregular text-center"
-                  }
-                >
-                  We ensure guaranteed level of hardware performance throughout
+                  {t.hardwarehowitworksection3}
                 </p>
               </div>
             </div>

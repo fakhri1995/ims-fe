@@ -1,6 +1,7 @@
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Collapse } from "antd";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import React from "react";
 import { Link } from "react-scroll";
 import Slider from "react-slick";
@@ -9,10 +10,15 @@ import { CareersAtMig } from "components/screen/joinourteam";
 
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
 import Layout from "../../../components/migwebsite/layout.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function JoinOurTeam({ dataCareers, empData }) {
+  const router = useRouter();
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   const careers = dataCareers.data ?? [];
   const { Panel } = Collapse;
   const sliderSettings2 = {
@@ -106,15 +112,14 @@ function JoinOurTeam({ dataCareers, empData }) {
                   "text-2xl md:text-[32px] text-center md:text-left font-gilroysemibold text-blackmig"
                 }
               >
-                Careers at MIG
+                {t.careersatmig}
               </p>
               <p
                 className={
                   "text-base font-gilroyregular text-blackmig my-4 md:my-8"
                 }
               >
-                We are currently looking to expand our team! Our team comprises
-                of highly motivated, positive and hardworking individuals.
+                {t.careersatmigsubtitle}
               </p>
               <div className={"text-center md:text-left"}>
                 <Link href="/section7careers">
@@ -123,7 +128,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                       "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-gilroysemibold"
                     }
                   >
-                    <p className={"self-center"}>Explore Open Positions</p>
+                    <p className={"self-center"}>{t.careersatmigbuttontitle}</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -145,7 +150,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       {/* section career1 mobile */}
       <section className={"section1careers md:hidden py-12 px-4"}>
         <p className={"text-2xl text-center font-gilroysemibold text-blackmig"}>
-          Careers at MIG
+          {t.careersatmig}
         </p>
         <div className={"mt-12 flex justify-center"}>
           <img
@@ -157,8 +162,7 @@ function JoinOurTeam({ dataCareers, empData }) {
           <p
             className={"text-base text-center font-gilroyregular text-blackmig"}
           >
-            We are currently looking to expand our team! Our team comprises of
-            highly motivated, positive and hardworking individuals.
+            {t.careersatmigsubtitle}
           </p>
         </div>
         <div className={"flex justify-center"}>
@@ -168,7 +172,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-6 py-3 md:px-6 md:py-4 font-gilroysemibold"
               }
             >
-              <p className={"self-center"}>Explore Open Positions</p>
+              <p className={"self-center"}>{t.careersatmigbuttontitle}</p>
               <img
                 className={"self-center"}
                 style={{ width: "20px", height: "20px" }}
@@ -187,7 +191,7 @@ function JoinOurTeam({ dataCareers, empData }) {
               "text-xl md:text-[32px] font-gilroysemibold text-blackmig text-center "
             }
           >
-            Our Values
+            {t.careersatmigvaluesectiontitle}
           </p>
           {/*tampilan dekstpp */}
           <div className={"hidden md:flex md:flex-row md:justify-between mt-6"}>
@@ -280,10 +284,10 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
               <div className={" w-4/5 ml-4"}>
                 <p className={"text-sm font-gilroysemibold text-blackmig"}>
-                  Agility
+                  {t.careersatmigvaluesectiontitlebox1}
                 </p>
                 <p className={"text-blackmig text-sm mt-1"}>
-                  We are adapting to fast-changing environments.
+                  {t.careersatmigvaluesectionsubtitlebox1}
                 </p>
               </div>
             </div>
@@ -301,10 +305,10 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
               <div className={" w-4/5 ml-4"}>
                 <p className={"text-sm font-gilroysemibold text-blackmig"}>
-                  Perseverance
+                  {t.careersatmigvaluesectiontitlebox2}
                 </p>
                 <p className={"text-blackmig text-sm mt-1"}>
-                  We aim high and constantly strive for excellence.
+                  {t.careersatmigvaluesectionsubtitlebox2}
                 </p>
               </div>
             </div>
@@ -322,10 +326,10 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
               <div className={" w-4/5 ml-4"}>
                 <p className={"text-sm font-gilroysemibold text-blackmig"}>
-                  Integrity
+                  {t.careersatmigvaluesectiontitlebox3}
                 </p>
                 <p className={"text-blackmig text-sm mt-1"}>
-                  We are dedicated to adhering to positive ethical values.
+                  {t.careersatmigvaluesectionsubtitlebox3}
                 </p>
               </div>
             </div>
@@ -339,15 +343,11 @@ function JoinOurTeam({ dataCareers, empData }) {
             "text-center text-blackmig font-gilroysemibold text-2xl md:text-[32px]"
           }
         >
-          Benefits
+          {t.careersatmigbenefitsection}
         </p>
         <div className={"px-4 md:px-[112px] mt-4"}>
           <p className={"text-base font-gilroyregular text-blackmig"}>
-            Mitramas is a people-centric business with a foundation to gives
-            working opportunities for motivated individuals at all levels. Our
-            long-term sustainable business which has been running for +15 years
-            and operated across 45 cities have a strong commitment to offer
-            pleasant experience for our team, communities, and clients.
+            {t.careersatmigbenefitsectionsubtitle}
           </p>
           <div className={"block md:flex md:flex-row justify-center mt-4"}>
             <div
@@ -364,8 +364,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
-                  We love to empower our team members to solve problems that
-                  matter
+                  {t.careersatmigbenefitsectionpoint1}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -378,7 +377,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
-                  We offer diverse industry exposures and hands-on experience
+                  {t.careersatmigbenefitsectionpoint2}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -391,8 +390,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
                   }
                 >
-                  We support personal growth through constant experiment and
-                  learning
+                  {t.careersatmigbenefitsectionpoint3}
                 </p>
               </div>
             </div>
@@ -566,10 +564,8 @@ function JoinOurTeam({ dataCareers, empData }) {
         <CareersAtMig />
       </section>
       <LayoutFormContactUs
-        description={`Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!`}
-        button_title={"Contact Us"}
+        description={t.careersatmigcontactussectionsubtitle}
+        button_title={t.careersatmigcontactussectionbutton}
       />
     </Layout>
   );

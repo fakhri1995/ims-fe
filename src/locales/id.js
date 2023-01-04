@@ -4,6 +4,203 @@ export default {
   aboutus: "Tentang Kita",
   career: "Karir di MIG",
   contactus: "Kontak Kita",
+  landingpagemetatitle:
+    "Mitramas Infosys Global: Hardware, Software, IT Outsourcing.",
+  landingpagemetadescription:
+    "Temukan beragam solusi teknologi dengan biaya efektif: Layanan pengelolaan hardware, Jasa pembuatan software, dan IT Outsourcing terbaik. Hubungi kami.",
+  hardwaremetatitle:
+    "Hardware Managed Service Model dengan Biaya Efektif - MIG",
+  hardwaremetadescription:
+    "Maksimalkan efektivitas biaya dengan hardware yang kami sewakan dan rawat dengan baik. Dapatkan hardware yang sesuai dengan kebutuhan Anda. Kontak kami.",
+  talentmetatitle:
+    "Solusi Rekrutmen Tech Talent dan IT Outsourcing Terbaik - MIG ",
+  talentmetadescription:
+    "Mudahkan proses mencari dan mengelola talenta teknologi dengan layanan Headhunt dan IT Staff Augmentation kami. Diskusikan kebutuhan Anda sekarang!",
+  softwaremetatitle:
+    "Pengembangan Software untuk Digitalisasi Bisnis Anda - MIG",
+  softwaremetadescription:
+    "Tingkatkan efisiensi bisnis Anda dengan teknologi digital. Beritahu custom software impian Anda, wujudkan dengan tim teknologi terbaik kami sekarang!",
+  aboutusmetatitle: "Sekilas perjalanan Mitramas Infosys Global (MIG)",
+  aboutusmetadescription:
+    "Kami, Mitramas Infosys Global, perusahaan people-centric yang menawarkan pengalaman teknologi lancar melalui solusi hardware, software, dan IT outsourcing.",
+  landingpagesection1:
+    "Tingkatkan dan kembangkan bisnis Anda, taklukkan tantangan teknologi bersama.",
+  landingpagesection2: "MIG mendorong pertumbuhan bisnis Anda dengan ",
+  landingpagetitlelogo:
+    "Kami telah terbukti menjawab kebutuhan teknologi dan bisnis di berbagai industri.",
+  cities: "kota",
+  managed: "hardware yang dikelola & disewa",
+  techproject: "proyek teknologi telah selesai",
+  companies: "perusahaan",
+  landingpagesection3:
+    "Kami memberikan Anda sumber daya terbaik dengan biaya efisien, serta layanan yang terjamin.",
+  landingpageoursolution: "Pelajari solusi kami",
+  landingpagefreeconsultation: "Konsultasi gratis",
+  hardwaresolution: "solusi hardware",
+  hardwaredescription:
+    "Manfaatkan managed services kami: dapatkan mulai dari biaya bulanan yang terprediksi hingga layanan terbaik yang pernah Anda impikan.",
+  hardwarebuttontitle: "Cek opsi hardware",
+  softwaredescription:
+    "Digitalisasi proses bisnis Anda dan tingkatkan efisiensi. Tim kami dapat membantu menciptakan sistem khusus untuk Anda.",
+  softwarebuttontitle: "Mulai sekarang",
+  talentsubtitle: "Talenta kami, untuk pertumbuhan Anda",
+  talentdescription:
+    "Percepat proses rekrutmen Anda dengan layanan on-demand expertise kami. Headcounts dan periode kerja talenta dapat disesuaikan dengan kebutuhan. Kami akan menangani semuanya.",
+  talentbuttontitle: "Rekrut sekarang",
+  landingpagewhyus1: "Dapatkan seluruh manfaat di bawah ",
+  landingpagewhyus2: "satu atap.",
+  whyustitle1: "On-Demand Services:",
+  whyussubtitle1: "Solusi kami membantu bisnis lebih optimal dan berkembang.",
+  whyustitle2: "Partner Terpercaya",
+  whyussubtitle2: "Pengalaman sukses lebih dari 15 tahun di Indonesia.",
+  whyustitle3: "Harga Kompetitif",
+  whyussubtitle3:
+    "Layanan terbaik sesuai kebutuhan, semua dengan harga terbaik.",
+  whyustitle4: "Biaya Efisien",
+  whyussubtitle4:
+    "Tingkatkan bisnis secara maksimal, efisienkan biaya pengeluaran.",
+  aboutustitle: "Buat operasional bisnis Anda menjadi lebih efisien dan agile.",
+  aboutussubtitle: `Tim kami di Mitramas Infosys Global siap mendukung peningkatan dan pertumbuhan bisnis Anda dengan tech staff augmentation, pengembangan software, dan hardware managed services. 
+
+  Kami berpengalaman menyediakan berbagai solusi terbaik untuk beragam industri, mulai dari perusahaan penyedia jasa finansial, start up, hingga pemerintahan.
+  
+  Kami akan memberikan jawaban terbaik atas masalah teknologi mitra kami, tak terkecuali Anda.`,
+  findout: "Pelajari",
+  howourexpertise: "berbagai",
+  helpyou: "solusi kami",
+  softwaredevelopment: "pengembangan software",
+  and: "dan",
+  whoweare: "Perjalanan kami",
+  whowearedescription: `Mitramas Infosys Global (MIG) didirikan pada tahun 2003 dan bekerja sama langsung dengan provider berskala global, serta talenta teknologi lokal untuk memberikan pengalaman teknologi tanpa hambatan. 
+
+  Dengan pengalaman lebih dari satu dekade di seluruh nusantara, kami memiliki pemahaman yang mendalam mengenai penggunaan teknologi untuk mendorong pertumbuhan bisnis. 
+  
+  MIG memegang integritas sebagai prinsip utama dalam bekerja. Kami juga memiliki visi besar untuk meningkatkan efisiensi dan membantu mitra mencapai tujuan bisnis.
+  
+  Kami sangat menghargai kerja sama tim. Kami juga mampu menawarkan berbagai kesempatan kerja yang dapat membuat seluruh tim bertumbuh dan bergerak bersama ke arah yang lebih baik.
+  
+  Bergabunglah bersama segenap MIGhty team, lihat lowongan yang cocok untukmu di sini!`,
+  supportyourbusiness: "Solusi teknologi terlengkap di bawah satu atap.",
+  supportyourbusinessdetail:
+    "Optimalkan biaya dan capai tujuan bisnis lewat beragam solusi teknologi yang kami rancang.",
+  hardwaresubtitle:
+    "Maksimalkan efektivitas biaya dengan hardware yang kami sewakan dan rawat dengan sempurna.",
+  hardwarebuttontitleaboutus: "Cek pilihan",
+  techtalent: "supply talenta teknologi",
+  softwaresubtitle:
+    "Tingkatkan efisiensi bisnis dengan penggunaan teknologi digital terkini milik kami.",
+  talentsubtitleaboutus:
+    "Mudahkan proses mencari dan mengelola talenta teknologi terbaik bersama kami.",
+  talentbuttontitleaboutus: "Dirikan tim Anda",
+  careersatmig: "Bersama-sama, kita punya kekuatan untuk capai hal luar biasa.",
+  careersatmigsubtitle:
+    "Kami menghargai individu dengan motivasi tinggi dalam bekerja. Mari jadi anggota baru tim MIGhty kami!",
+  careersatmigbuttontitle: "Lihat Posisi Tersedia",
+  careersatmigvaluesectiontitle: "Tiga pilar yang mendefinisikan kami.",
+  careersatmigvaluesectiontitlebox1: "Agility",
+  careersatmigvaluesectionsubtitlebox1:
+    "Menyesuaikan diri di lingkungan kerja yang dinamis.",
+  careersatmigvaluesectiontitlebox2: "Perseverance",
+  careersatmigvaluesectionsubtitlebox2:
+    "Selalu mencari cara untuk mencapai tujuan, bahkan melampauinya.",
+  careersatmigvaluesectiontitlebox3: "Integrity",
+  careersatmigvaluesectionsubtitlebox3:
+    "Menghargai etika dan memegang integritas dalam bekerja.",
+  careersatmigbenefitsection: "Kerja di MIG untuk dapatkan ini!",
+  careersatmigbenefitsectionsubtitle:
+    "Kami di Mitramas menjunjung tinggi nilai people-centric. Kesejahteraan dan perkembangan tim kami merupakan prioritas. Kami berupaya memberikan kesempatan bagi individu yang memiliki potensi dan motivasi tinggi untuk terus tumbuh dan berkembang bersama! ",
+  careersatmigbenefitsectionpoint1:
+    "Mendukung Talenta MIGhty untuk terus menemukan solusi dan membuat berbagai perubahan.",
+  careersatmigbenefitsectionpoint2:
+    "Memberikan kesempatan bagi Talenta MIGhty untuk mendapatkan pengalaman dari berbagai industri.",
+  careersatmigbenefitsectionpoint3:
+    "Mendorong dan memfasilitasi pertumbuhan Talenta MIGhty secara berkelanjutan.",
+  careersatmigcareersection: "Yuk, gabung sebagai kekuatan baru MIGhty!",
+  careersatmigcareersectionsubtitle:
+    "Mulai kariermu bersama kami. Cek lowongan berikut untuk berbagai posisi. Siapkan dirimu untuk bergabung dalam berbagai proyek masa depan!",
+  careersatmigcontactussection:
+    "Nikmati berbagai solusi teknologi tanpa rasa sulit.",
+  careersatmigcontactussectionsubtitle:
+    "Sedang mencari solusi teknologi? Tim kami akan membantu menemukan jawaban tepat untuk memenuhi kebutuhan Anda.",
+  careersatmigcontactussectionbutton: "Hubungi kami",
+  hardwareherosection:
+    "Optimalkan pengelolaan hardware dengan layanan berskala nasional kami.",
+  hardwareherosectionsubtitle:
+    "Merasa kesulitan dalam mengelola hardware Anda? Perubahan yang sangat cepat, skalabilitas yang tidak menentu, serta biaya modal yang tinggi memang menyebabkan sakit kepala. Serahkan hal ini pada kami, kami akan membantu Anda untuk fokus pada bisnis Anda.",
+  hardwarereachus: "Hubungi kami untuk dapatkan detail informasi",
+  hardwareenteremail: "Cantumkan email Anda",
+  hardwarebankingsubtitle:
+    "Membantu mengembangkan bisnis keuangan Anda di pasar domestik.",
+  hardwareworkstationsubtitle: "Meningkatkan produktivitas tim Anda.",
+  hardwareserversubtitle: "Memenuhi kebutuhan database dan software Anda.",
+  hardwareupssubtitle:
+    "Melindungi perangkat Anda dari kerusakan akibat mati listrik.",
+  hardwarecontactourteam: "Kontak tim kami",
+  hardwarewhyussection: `<h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
+  Kami adalah{" "}
+  <span
+    style={{
+      borderBottom: "solid 3px #188E4D",
+      paddingBottom: "2.5px",
+    }}
+  >
+  pilihan terbaik
+  </span>{" "}
+  untuk mengelola hardware Anda.
+</h4>`,
+  hardwarewhyussection1: "Layanan terjamin",
+  hardwarewhyussection2: "Efisiensi maksimal",
+  hardwarewhyussection3: "Jangkauan skala nasional",
+  hardwarewhyussection1description:
+    "Jaminan dukungan teknologi untuk memastikan kelancaran bisnis Anda.",
+  hardwarewhyussection2description:
+    "Konversikan investasi awal untuk hardware, ubah menjadi managed services model dengan biaya efektif.",
+  hardwarewhyussection3description:
+    "Jaringan lokal yang kuat untuk membantu bisnis Anda bertumbuh.",
+  hardwarehowitworksection1:
+    "Kami menyesuaikan hardware yang paling sesuai dengan kebutuhan Anda.",
+  hardwarehowitworksection2: "Kami memilih produk hardware terbaik untuk Anda.",
+  hardwarehowitworksection3:
+    "Kami menjamin pengelolaan terbaik dan menyeluruh untuk hardware Anda.",
+  softwareherosection:
+    "Bawa bisnis ke era digital dengan solusi software kami.",
+  softwareheosectionsubtitle:
+    "Kebutuhan untuk meningkatkan daya saing di pasar semakin besar. Cara yang tepat untuk mempercepat pertumbuhan bisnis pun diperlukan. Kami menawarkan solusi digital untuk membantu mengatasi berbagai kendala, demi mencapai tujuan bisnis Anda!",
+  softwareherosectionboxtitle:
+    " Kami dapat membantu mencapai tujuan bisnis Anda dengan:",
+  softwareherosectionboxsubtitle1bold: "Solusi",
+  softwareherosectionboxsubtitle1: "perangkat lunak yang tepat.",
+  softwareherosectionboxsubtitle2bold: "Otomatisasi",
+  softwareherosectionboxsubtitle2: "operasional bisnis.",
+  softwarepastworksectiontitle1: "Solusi terdepan dan partner terbaik bagi",
+  softwarepastworksectiontitle2: "transfromasi digital ",
+  softwarepastworksectiontitle3: "Anda.",
+  migsysdescription:
+    "Sistem perencanaan sumber daya perusahaan untuk meningkatkan kinerja dan produktivitas tim.",
+  migsysdetail1: "Task & Recruitment Process",
+  migsysdetail2: "Warehouse Managed Service",
+  migsysdetail3: "Contract, Order, and Service for Assets",
+  migsysdetail4: "Attendance Tracking",
+  migsysdetail5: "Tickets, dan lainnya.",
+  softwarepastworksectionlast:
+    "Kami membantu digitalisasi dan otomatisasi, menggunakan framework yang paling sesuai untuk Anda.",
+  softwarewhyussectiontitle1: "Kami membantu mewujudkan ",
+  softwarewhyussectiontitle2: "proyek impian ",
+  softwarewhyussectiontitle3: "Anda.",
+  softwarehyyousectionlist1: "Solusi software yang sesuai",
+  softwarewhyyousectionsublist1: "Dapatkan software sesuai dengan kebutuhan.",
+  softwarehyyousectionlist2: "Pekerjaan terbaik dari tim terbaik",
+  softwarewhyyousectionsublist2:
+    "Tim teknologi kami memiliki keahlian untuk meningkatkan efisiensi bisnis.",
+  softwarehyyousectionlist3: "Cocok dengan budget",
+  softwarewhyyousectionsublist3:
+    "Diskusikan proyek, dapatkan biaya yang memuaskan berdasarkan kesepakatan bersama.",
+  softwarehowitwork1:
+    "Kami menyesuaikan proyek agar sesuai dengan kebutuhan Anda.",
+  softwarehowitwork2:
+    "Kami menggunakan sumber daya terbaik dalam membangun proyek berkualitas untuk Anda.",
+  softwarehowitwork3:
+    "Kami melakukan iterasi dan memastikan ketepatan sebelum menyampaikan hasilnya kepada Anda.",
   description: `The World Wide Web was invented by British scientist Tim Berners-Lee in 1989 while working at CERN`,
   cookies: `This website uses cookies to ensure you get the best experience on our website`,
   button: `Got it!`,

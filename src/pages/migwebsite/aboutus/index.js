@@ -3,17 +3,26 @@ import { Button, Card } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import Linkk from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
 import Layout from "../../../components/migwebsite/layout.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 
 function AboutUs({}) {
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   return (
     <Layout>
       <Head>
-        <title>About Us | Mitramas Infosys Global - MIG</title>
+        <title>{t.aboutusmetatitle}</title>
+        <meta name="description" content={t.aboutusmetadescription} />
       </Head>
+
       <section
         className={
           "section2people pt-8 md:pt-[16] pb-5 md:pb-[40px] px-4 md:px-[112px] text-center"
@@ -25,7 +34,7 @@ function AboutUs({}) {
               "text-2xl md:text-[32px] font-gilroysemibold text-blackmig"
             }
           >
-            Operate your business, more efficient and more agile
+            {t.aboutustitle}
           </p>
 
           <p
@@ -33,10 +42,7 @@ function AboutUs({}) {
               "text-sm md:text-base text-blackmig font-gilroyregular mt-12 md:mt-4 px-4 md:px-0"
             }
           >
-            Mitramas Infosys global is supporting you staff augmentation &
-            delivering software and hardware managed services. We have served
-            multiple industries, bringing the best solutions to financial
-            service companies, start ups, as well as government agencies.
+            {t.aboutussubtitle}
           </p>
         </div>
       </section>
@@ -44,18 +50,13 @@ function AboutUs({}) {
         <p
           className={"font-gilroysemibold text-left pb-0 text-base md:text-2xl"}
         >
-          Who we are
+          {t.whoweare}
         </p>
         {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
         <p className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-base"}>
-          Founded in 2003, Mitramas Infosys Global (MIG) directly partner with
-          global providers and collaborate with local IT talents to offer you a
-          seamless technology experience. Experienced across archipelago for
-          more than decade we have a plethora of experience in the business.
-          With integrity as our core principle, we collaborate with our clients
-          to increase their efficiency and reach long-term business goals.
+          {t.whowearedescription}
         </p>
 
         <p className={"mt-4 text-sm md:text-base font-gilroyregular"}>
@@ -73,12 +74,11 @@ function AboutUs({}) {
         <p
           className={"text-base md:text-2xl font-gilroysemibold text-blackmig"}
         >
-          Support your business efficiently
+          {t.supportyourbusiness}
         </p>
         <div>
           <p className={"text-sm md:text-base mt-3 md:mt-4 font-gilroyregular"}>
-            One stop seamless technology solution to help you achieve business
-            goals and optimize your cost{" "}
+            {t.supportyourbusinessdetail}{" "}
           </p>
         </div>
         <div className={"hidden md:flex md:flex-row mt-4"}>
@@ -100,8 +100,7 @@ function AboutUs({}) {
                 Hardware
               </p>
               <p className={"font-gilroyregular text-base mt-2"}>
-                Optimize your cost by leasing and maintenances variety of
-                electronic equipments
+                {t.hardwaresubtitle}
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/hardware" }}>
@@ -115,7 +114,7 @@ function AboutUs({}) {
                         "font-gilroysemibold text-base text-primarygreen"
                       }
                     >
-                      Get yours
+                      {t.hardwarebuttontitleaboutus}
                     </p>
                     <img
                       src="/image/landingpage/arrow_right_alt.png"
@@ -144,8 +143,7 @@ function AboutUs({}) {
                 Software
               </p>
               <p className={"font-gilroyregular text-base mt-2"}>
-                We support your companies to simplify and automate the process
-                through digitalization
+                {t.softwaresubtitle}
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/software" }}>
@@ -159,7 +157,7 @@ function AboutUs({}) {
                         "font-gilroysemibold text-base text-primarygreen"
                       }
                     >
-                      Build now
+                      {t.softwarebuttontitle}
                     </p>
                     <img
                       src="/image/landingpage/arrow_right_alt.png"
@@ -188,7 +186,7 @@ function AboutUs({}) {
                 Talents
               </p>
               <p className={"font-gilroyregular text-base mt-2"}>
-                We help you reduce complexity in talent sourcing and management
+                {t.talentsubtitleaboutus}
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/talent" }}>
@@ -202,7 +200,7 @@ function AboutUs({}) {
                         "font-gilroysemibold text-base text-primarygreen"
                       }
                     >
-                      Set up your team
+                      {t.talentbuttontitleaboutus}
                     </p>
                     <img
                       src="/image/landingpage/arrow_right_alt.png"
