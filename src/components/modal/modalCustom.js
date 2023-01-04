@@ -1420,11 +1420,7 @@ const ModalAddSalaryVar = ({
     }
   }, [isAllowedToGetSalaryColumns, refresh, visible]);
 
-  // console.log(receiveVarOptions);
-
-  // 2.2. Update checked checkbox if any variable field is removed
-  // useEffect(() => {}, [receiveVarFields, reductionVarFields]);
-
+  // 3. Event
   const handleAddVariable = () => {
     if (!isAllowedToAddSalaryColumn) {
       permissionWarningNotification("Menambah", "Variabel Gaji");
@@ -1555,9 +1551,6 @@ const ModalAddSalaryVar = ({
                 BPJS
               </Tag>
             </div>
-            {/* {console.log(receiveVarOptions)}
-            {console.log(selectedTags)} */}
-            {console.log(receiveVarFields)}
             {receiveVarOptions?.map((option, idx) => (
               <div key={idx}>
                 {option.required ? (
@@ -1711,9 +1704,11 @@ const ModalAddSalaryVar = ({
                         if (e.target.checked) {
                           setReductionVarFields((prev) => [...prev, option]);
                         } else {
-                          const temp = [...reductionVarFields];
-                          temp.splice(idx, 1);
-                          setReductionVarFields(temp);
+                          const newReductionVarFields =
+                            reductionVarFields.filter(
+                              (variable) => variable.id !== option.id
+                            );
+                          setReductionVarFields(newReductionVarFields);
                         }
                       }}
                     >

@@ -1,17 +1,20 @@
 import { Input } from "antd";
-import React, { useEffect } from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import CurrencyFormat from "react-currency-format";
 
 const CustomCurrencyInput = ({
+  idx,
   fieldLabel,
   fieldName,
   benefitType,
+  dataForm,
   setDataForm,
   disabled,
   value,
+  dataColumn,
+  payslipId,
 }) => {
-  // Auto update benefit variable if value change automatically in a disabled field
+  // Auto update benefit variable if value change automatically in a disabled field (use in BPJS field)
   useEffect(() => {
     if (disabled) {
       const timer = setTimeout(() => {
@@ -39,9 +42,25 @@ const CustomCurrencyInput = ({
         const { formattedValue, value, floatValue } = values;
         // formattedValue = $2,223
         // value ie, 2223
+        const field = {
+          id: idx,
+          employee_salary_column_id: dataColumn?.id,
+          employee_payslip_id: payslipId,
+          value: floatValue || 0,
+          column: {
+            id: dataColumn?.id,
+            name: dataColumn?.name,
+            type: dataColumn?.type,
+            required: dataColumn?.required,
+          },
+        };
+
+        let temp = [...dataForm?.salaries];
+        temp[idx] = field;
+
         setDataForm((prev) => ({
           ...prev,
-          [benefitType]: { ...prev[benefitType], [fieldName]: floatValue || 0 },
+          salaries: temp,
         }));
       }}
       renderText={(value) => <p>{value}</p>}
