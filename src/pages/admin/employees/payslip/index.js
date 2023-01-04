@@ -15,9 +15,6 @@ import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
-import { useCallback } from "react";
-import { useRef } from "react";
-import { Bar } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -25,11 +22,14 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_LISTS_GET,
-  EMPLOYEES_PAYSLIPS_GET,
   EMPLOYEES_PAYSLIPS_POST,
+  EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_GET,
-  EMPLOYEE_PAYSLIP_VARIABLE_ADD,
+  EMPLOYEE_SALARY_COLUMNS_GET,
+  EMPLOYEE_SALARY_COLUMN_ADD,
+  EMPLOYEE_SALARY_COLUMN_DELETE,
+  EMPLOYEE_SALARY_COLUMN_UPDATE,
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -48,7 +48,7 @@ import { DownloadIconSvg, SettingsIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import {
-  ModalAddSalaryVar,
+  ModalManageSalaryVar,
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
@@ -85,7 +85,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetEmployeesPayslips = hasPermission(EMPLOYEES_PAYSLIPS_GET);
+  const isAllowedToGetEmployeesPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToPostEmployeesPayslips = hasPermission(
@@ -94,6 +94,17 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+
+  const isAllowedToGetSalaryColumns = hasPermission(
+    EMPLOYEE_SALARY_COLUMNS_GET
+  );
+  const isAllowedToAddSalaryColumn = hasPermission(EMPLOYEE_SALARY_COLUMN_ADD);
+  const isAllowedToDeleteSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_DELETE
+  );
+  const isAllowedToUpdateSalaryColumn = hasPermission(
+    EMPLOYEE_SALARY_COLUMN_UPDATE
+  );
 
   // 1. Init
   const rt = useRouter();
@@ -193,7 +204,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
       {
         method: `GET`,
         headers: {
@@ -342,7 +353,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getPayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_id=${selectedRoleId}&placement=${selectedPlacement}&payslip_status_id=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
         headers: {
@@ -391,20 +402,31 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "Nama",
       dataIndex: "name",
+      render: (text, record, index) => {
+        return {
+          children: <>{record?.employee?.name || "-"}</>,
+        };
+      },
       sorter: isAllowedToGetEmployeesPayslips
-        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        ? (a, b) =>
+            a.employee?.name?.toLowerCase() > b.employee?.name?.toLowerCase()
         : false,
     },
     {
       title: "NIP",
       dataIndex: "nip",
+      render: (text, record, index) => {
+        return {
+          children: <>{record?.employee?.nip || "-"}</>,
+        };
+      },
     },
     {
       title: "Penempatan",
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record?.contract?.placement || "-"}</>,
+          children: <>{record?.employee?.placement || "-"}</>,
         };
       },
     },
@@ -413,13 +435,18 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record?.contract?.role?.name || "-"}</>,
+          children: <>{record?.employee?.role?.name || "-"}</>,
         };
       },
     },
     {
       title: "No. Telepon",
       dataIndex: "phone_number",
+      render: (text, record, index) => {
+        return {
+          children: <>{record?.employee?.phone_number || "-"}</>,
+        };
+      },
     },
     {
       title: "Status Slip Gaji",
@@ -428,7 +455,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.status == "draft" ? (
+              {record.is_posted == 0 ? (
                 <p
                   className="bg-state2 bg-opacity-10 text-state2 
                   py-1 px-7 rounded-md text-center"
@@ -455,16 +482,16 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.status == "draft" ? (
+              {record.is_posted == 0 ? (
                 <div className="flex flex-col space-y-2">
                   <ButtonSys
                     type={isAllowedToGetPayslip ? "default" : "primary"}
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(
-                      //   `/admin/employees/payslip/${record.id}/addPayslip?id=${record?.payslips[0].id}`
-                      // );
+                      rt.push(
+                        `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                      );
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -691,15 +718,18 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           />
         </div>
       </div>
-      {/* Modal Add Salary Variable */}
-      {/* TODO: change hasPermission */}
-      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_VARIABLE_ADD}>
-        <ModalAddSalaryVar
-          isManageVar={true}
+      {/* Modal Kelola Variabel Gaji */}
+      <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
+        <ModalManageSalaryVar
+          initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
           loading={loadingSave}
-          // onOk={}
+          isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
+          isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
+          isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
+          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
+          onOk={() => setModalSalaryVar(false)}
           // disabled
         />
       </AccessControl>
@@ -719,7 +749,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           closable={false}
           okButtonText="Ya, saya yakin"
         >
-          Apakah Anda yakin inign menerbitkan draft slip gaji untuk semua
+          Apakah Anda yakin ingin menerbitkan draft slip gaji untuk semua
           karyawan?
         </ModalUbah>
       </AccessControl>

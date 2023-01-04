@@ -34,7 +34,7 @@ const EmployeeInventoryEditIndex = ({
   initProps,
   dataProfile,
   sidemenu,
-  dataEmployee,
+  employeeName,
   employeeId,
 }) => {
   /**
@@ -62,13 +62,7 @@ const EmployeeInventoryEditIndex = ({
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(1, 3);
-  pathTitleArr.splice(
-    1,
-    3,
-    "Daftar Karyawan",
-    dataEmployee?.name,
-    "Edit Inventaris"
-  );
+  pathTitleArr.splice(1, 3, "Daftar Karyawan", employeeName, "Edit Inventaris");
 
   // 1. STATE
   // 1.1. display
@@ -339,7 +333,7 @@ export async function getServerSideProps({ req, res, query }) {
     }
   );
   const resjsonGE = await resourcesGE.json();
-  const dataEmployee = resjsonGE?.data;
+  const employeeName = resjsonGE?.data?.name || "-";
 
   return {
     props: {
@@ -347,7 +341,7 @@ export async function getServerSideProps({ req, res, query }) {
       dataProfile,
       sidemenu: "employee-list",
       employeeId,
-      dataEmployee,
+      employeeName,
     },
   };
 }

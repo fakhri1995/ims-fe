@@ -37,12 +37,11 @@ const EmployeeInventoryAddIndex = ({
   dataProfile,
   sidemenu,
   employeeId,
-  dataEmployee,
+  employeeName,
 }) => {
   /**
    * Dependencies
    */
-  console.log(dataEmployee);
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -72,7 +71,7 @@ const EmployeeInventoryAddIndex = ({
     1,
     3,
     "Daftar Karyawan",
-    dataEmployee?.name,
+    employeeName,
     "Tambah Inventaris"
   );
 
@@ -421,7 +420,7 @@ export async function getServerSideProps({ req, res, query }) {
     }
   );
   const resjsonGE = await resourcesGE.json();
-  const dataEmployee = resjsonGE?.data;
+  const employeeName = resjsonGE?.data?.name || "-";
 
   return {
     props: {
@@ -429,7 +428,7 @@ export async function getServerSideProps({ req, res, query }) {
       dataProfile,
       sidemenu: "employee-list",
       employeeId,
-      dataEmployee,
+      employeeName,
     },
   };
 }

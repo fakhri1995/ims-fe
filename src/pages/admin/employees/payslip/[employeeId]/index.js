@@ -151,6 +151,7 @@ const EmployeePayslipDetailIndex = ({
   const [drawerDetail, setDrawerDetail] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [dataPayslip, setDataPayslip] = useState({ status: "kosong" });
+  const [payslipId, setPayslipId] = useState(0);
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
@@ -199,50 +200,10 @@ const EmployeePayslipDetailIndex = ({
       setpraloading(false);
       return;
     }
-    if (employeeId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsPayslips}&is_employee_active=1&page=${pagePayslips}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataRawPayslips(response2.data);
-            setDataPayslips(response2.data.data);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetPayslips, employeeId, refresh]);
-
-  // 2.1 Get employee payslip detail
-  useEffect(() => {
-    if (!isAllowedToGetPayslip) {
-      permissionWarningNotification("Mendapatkan", "Detail Slip Gaji Karyawan");
-      setLoadingDetail(false);
-      return;
-    }
-
-    setLoadingDetail(true);
+    // if (employeeId) {
+    setpraloading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslip?id=${employeeId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?rows=${rowsPayslips}&is_employee_active=1&page=${pagePayslips}`,
       {
         method: `GET`,
         headers: {
@@ -253,7 +214,8 @@ const EmployeePayslipDetailIndex = ({
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
-          setDataPayslip(response2.data);
+          setDataRawPayslips(response2.data);
+          setDataPayslips(response2.data.data);
         } else {
           notification.error({
             message: `${response2.message}`,
@@ -267,8 +229,9 @@ const EmployeePayslipDetailIndex = ({
           duration: 3,
         });
       })
-      .finally(() => setLoadingDetail(false));
-  }, [isAllowedToGetPayslip, employeeId, refresh]);
+      .finally(() => setpraloading(false));
+    // }
+  }, [isAllowedToGetPayslips, refresh]);
 
   // 3. Event
   const onFilterPayslips = () => {
@@ -468,7 +431,7 @@ const EmployeePayslipDetailIndex = ({
                     disabled={!isAllowedToAddPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // handleAddEmployeePayslip();
+                      rt.push(`${employeeId}/addPayslip`);
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -484,7 +447,7 @@ const EmployeePayslipDetailIndex = ({
                     disabled={!isAllowedToUpdatePayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      // rt.push(`${employeeId}/addPayslip?id=${payslipId}`)
+                      rt.push(`${employeeId}/addPayslip?id=${payslipId}`);
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -500,6 +463,7 @@ const EmployeePayslipDetailIndex = ({
                     disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
+                      setPayslipId(record.id);
                       setDrawerDetail(true);
                     }}
                   >
@@ -589,7 +553,7 @@ const EmployeePayslipDetailIndex = ({
               {dataPayslip?.status === "kosong" ? (
                 <ButtonSys
                   type={!isAllowedToAddPayslip ? "primary" : "default"}
-                  // onClick={handleAddEmployeePayslip}
+                  onClick={() => rt.push(`${employeeId}/addPayslip`)}
                   disabled={!isAllowedToAddPayslip}
                 >
                   <FilePlusIconSvg color={"#35763B"} size={16} />
@@ -598,8 +562,9 @@ const EmployeePayslipDetailIndex = ({
               ) : dataPayslip?.status === "draft" ? (
                 <ButtonSys
                   type={!isAllowedToUpdatePayslip ? "primary" : "default"}
-                  // onClick={() => rt.push(`${employeeId}/addPayslip?id=${payslipId}`)}
-                  onClick={() => rt.push(`${employeeId}/addPayslip?id=1`)}
+                  onClick={() =>
+                    rt.push(`${employeeId}/addPayslip?id=${payslipId}`)
+                  }
                   disabled={!isAllowedToUpdatePayslip}
                 >
                   <EditIconSvg color={"#35763B"} size={16} />
@@ -746,10 +711,12 @@ const EmployeePayslipDetailIndex = ({
       {/* Drawer Payslip Detail */}
       <AccessControl hasPermission={EMPLOYEE_PAYSLIP_GET}>
         <DrawerPayslipDetail
-          title={`Slip Gaji (Oktober 2022)`}
+          initProps={initProps}
+          title={`Slip Gaji ${moment().format("MMMM YYYY")}`}
           visible={drawerDetail}
           onvisible={setDrawerDetail}
           isAllowedToGetPayslip={isAllowedToGetPayslip}
+          payslipId={payslipId}
         />
       </AccessControl>
     </LayoutDashboard>
@@ -799,7 +766,7 @@ export async function getServerSideProps({ req, res, params }) {
     }
   );
   const resjsonGE = await resourcesGE.json();
-  const employeeName = resjsonGE?.data?.name;
+  const employeeName = resjsonGE?.data?.name || "-";
 
   return {
     props: {
