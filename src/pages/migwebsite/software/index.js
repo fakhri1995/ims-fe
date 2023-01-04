@@ -14,6 +14,7 @@ import { transparent } from "daisyui/src/colors/index.js";
 import moment from "moment";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { React, useEffect, useRef, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -25,12 +26,15 @@ import { objectToFormData } from "lib/helper";
 
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function Software({}) {
   const [form] = Form.useForm();
   const { TextArea } = Input;
+
   const handleSubmit = (value) => {
     // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addMessage`, {
     //   method: "POST",
@@ -333,16 +337,16 @@ function Software({}) {
       val.replace(/\$\s?|(\.*)/g, "").replace(/(\,{1})/g, ".")
     ).toFixed(2);
   };
+  const router = useRouter();
 
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   useEffect(() => {}, []);
   return (
     <Layout>
       <Head>
-        <title>Develop Custom Software to Digitalize your Business - MIG</title>
-        <meta
-          name="description"
-          content="Improve efficiency by implementing digital technologies in your business. Build custom software with our outstanding tech team. Book a call today!"
-        />
+        <title>{t.softwaremetatitle}</title>
+        <meta name="description" content={t.softwaremetadescription} />
       </Head>
       {showForm == false && (
         <section
@@ -887,18 +891,16 @@ function Software({}) {
             <div className={"hidden md:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <p className={"text-[32px] font-gilroyboldold"}>
-                  Simplify and automate the process through digitalization
+                  {t.softwareherosection}
                 </p>
                 <p className={"mt-8 font-gilroyregular text-base"}>
-                  High competition, need transformation, and slow operations
-                  force you to be more effective and efficient in order to grow
-                  rapidly.
+                  {t.softwareheosectionsubtitle}
                 </p>
                 <div className={"mt-[40px]"}>
                   <p
                     className={"font-gilroyboldold text-primarygreen text-base"}
                   >
-                    Reach us to get more information
+                    {t.hardwarereachus}
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
                     <Input
@@ -910,7 +912,7 @@ function Software({}) {
                           company_email: e.target.value,
                         });
                       }}
-                      placeholder="Enter your email here."
+                      placeholder={t.hardwareenteremail}
                     />
                     <button
                       onClick={handleLetsTalk}
@@ -952,7 +954,7 @@ function Software({}) {
                             "text-base text-blackmig font-gilroyregular"
                           }
                         >
-                          Let us help you to achieve business goals with :
+                          {t.softwareherosectionboxtitle}
                         </p>
                         <ul>
                           <li>
@@ -964,9 +966,9 @@ function Software({}) {
                               {""}
                               <span className={"font-gilroysemibold"}>
                                 {" "}
-                                Customized
+                                {t.softwareherosectionboxsubtitle1bold}
                               </span>{" "}
-                              software solutions
+                              {t.softwareherosectionboxsubtitle1}
                             </p>
                           </li>
                           <li>
@@ -977,9 +979,9 @@ function Software({}) {
                             >
                               {""}
                               <span className={"font-gilroysemibold"}>
-                                Automated
+                                {t.softwareherosectionboxsubtitle2bold}
                               </span>{" "}
-                              business operations
+                              {t.softwareherosectionboxsubtitle2}
                             </p>
                           </li>
                         </ul>
@@ -999,7 +1001,7 @@ function Software({}) {
                     "text-blackmig text-xl text-center font-gilroysemibold"
                   }
                 >
-                  Simplify and automate the process through digitalization
+                  {t.softwareherosection}
                 </p>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
@@ -1010,14 +1012,12 @@ function Software({}) {
                     "py-6 text-center text-base font-gilroyregular text-blackmig"
                   }
                 >
-                  High competition, need transformation, and slow operations
-                  force you to be more effective and efficient in order to grow
-                  rapidly.
+                  {t.softwareheosectionsubtitle}
                 </p>
               </div>
               <div>
                 <p className={"font-gilroysemibold text-primarygreen text-sm"}>
-                  Reach us to get more information
+                  {t.hardwarereachus}
                 </p>
                 <div className={"flex flex-row items-center mt-1"}>
                   <Input
@@ -1026,7 +1026,7 @@ function Software({}) {
                     onChange={(e) => {
                       setEmail(e.target.value);
                     }}
-                    placeholder="Enter your email here."
+                    placeholder={t.hardwareenteremail}
                   />
                   <button
                     className={
@@ -1052,7 +1052,7 @@ function Software({}) {
                   />
                   <div>
                     <p className={"text-sm text-blackmig font-gilroyregular"}>
-                      Let us help you to achieve business goals with :
+                      {t.softwareherosectionboxtitle}
                     </p>
                     <ul className={""}>
                       <li className={"mt-1"}>
@@ -1060,8 +1060,10 @@ function Software({}) {
                           className={"text-sm text-blackmig font-gilroyregular"}
                         >
                           {""}
-                          <span className={"font-bold"}>Customized</span>{" "}
-                          software solutions
+                          <span className={"font-bold"}>
+                            {t.softwareherosectionboxsubtitle1bold}
+                          </span>{" "}
+                          {t.softwareherosectionboxsubtitle1}
                         </p>
                       </li>
                       <li className={"mt-1"}>
@@ -1069,8 +1071,10 @@ function Software({}) {
                           className={"text-sm text-blackmig font-gilroyregular"}
                         >
                           {""}
-                          <span className={"font-bold"}>Automated</span>{" "}
-                          business operations
+                          <span className={"font-bold"}>
+                            {t.softwareherosectionboxsubtitle2bold}
+                          </span>{" "}
+                          {t.softwareherosectionboxsubtitle2}
                         </p>
                       </li>
                     </ul>
@@ -1090,16 +1094,16 @@ function Software({}) {
                 "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
-              Let’s see some of{" "}
+              {t.softwarepastworksectiontitle1}{" "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                our past works
+                {t.softwarepastworksectiontitle2}
               </span>{" "}
-              in digitalizing businesses
+              {t.softwarepastworksectiontitle3}
             </p>
             <div className={"flex flex-row"}>
               <button onClick={() => slider2?.current?.slickPrev()}>
@@ -1464,15 +1468,14 @@ function Software({}) {
                   </div>
                   <div className={"mt-1"}>
                     <p className={"font-gilroyregular text-blackmig text-sm"}>
-                      An enterprise resource planning that built to enhance
-                      employee’s performance and productivity:{" "}
+                      {t.migsysdescription}{" "}
                     </p>
                     <ul className={"font-gilroyregular text-blackmig text-sm"}>
-                      <li>Task & Recruitment Process</li>
-                      <li>Warehouse Managed Service</li>
-                      <li>Contract, Order, and Service for Assets</li>
-                      <li>Attendance Tracking</li>
-                      <li>Tickets, and more</li>
+                      <li>{t.migsysdetail1}</li>
+                      <li>{t.migsysdetail2}</li>
+                      <li>{t.migsysdetail3}</li>
+                      <li>{t.migsysdetail4}</li>
+                      <li>{t.migsysdetail5}</li>
                     </ul>
                   </div>
                 </div>
@@ -1547,8 +1550,7 @@ function Software({}) {
                     "text-base text-blackmig font-gilroyregular text-center w-[646px] mx-auto px-2"
                   }
                 >
-                  We support your companies to simplify and automate the process
-                  through digitalization with all framework that you want.
+                  {t.softwarepastworksectionlast}
                 </p>
               </div>
               <img className={"m-auto w-full"} src="/image-software.png"></img>
@@ -1587,16 +1589,16 @@ function Software({}) {
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
                 <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-                  Why you should{" "}
+                  {t.softwarewhyussectiontitle1}{" "}
                   <span
                     style={{
                       borderBottom: "solid 3px #188E4D",
                       paddingBottom: "2.5px",
                     }}
                   >
-                    trust us
+                    {t.softwarewhyussectiontitle2}
                   </span>{" "}
-                  in building your IT projects?
+                  {t.softwarewhyussectiontitle3}
                 </h4>
                 <div className={"block md:hidden mx-auto my-[17px]"}>
                   <img
@@ -1612,11 +1614,10 @@ function Software({}) {
                   />
                   <div>
                     <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                      Build Software Based on Your Needs
+                      {t.softwarehyyousectionlist1}
                     </h5>
                     <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                      Giving you customization software to simplify and automate
-                      your business.
+                      {t.softwarewhyyousectionsublist1}
                     </p>
                   </div>
                 </div>
@@ -1627,11 +1628,10 @@ function Software({}) {
                   />
                   <div>
                     <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                      Excellent Talent Support
+                      {t.softwarehyyousectionlist2}
                     </h5>
                     <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                      We develops software to help you achieve business process
-                      automation with our IT talent pool
+                      {t.softwarewhyyousectionsublist2}
                     </p>
                   </div>
                 </div>
@@ -1642,11 +1642,10 @@ function Software({}) {
                   />
                   <div>
                     <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                      Enhance Productivity & Efficiency
+                      {t.softwarehyyousectionlist3}
                     </h5>
                     <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                      We can discuss about project also provide the best cost
-                      with a mutual agreement based on time, and complexity
+                      {t.softwarewhyyousectionsublist3}
                     </p>
                   </div>
                 </div>
@@ -1690,14 +1689,7 @@ function Software({}) {
                       "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                     }
                   >
-                    Custom project-based collaboration
-                  </p>
-                  <p
-                    className={
-                      "text-base text-blackmig font-gilroyregular text-center"
-                    }
-                  >
-                    One-stop service to develop tailored products
+                    {t.softwarehowitwork1}
                   </p>
                 </div>
               </div>
@@ -1718,15 +1710,7 @@ function Software({}) {
                     "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
-                  Providing all the resources you’ll need
-                </p>
-                <p
-                  className={
-                    "text-base text-blackmig font-gilroyregular text-center"
-                  }
-                >
-                  We have extensive talents and technologies tobuild the best
-                  project for you and your companies
+                  {t.softwarehowitwork2}
                 </p>
               </div>
               <div className={"self-center"}>
@@ -1746,15 +1730,7 @@ function Software({}) {
                     "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
                   }
                 >
-                  Clear and detailed project development
-                </p>
-                <p
-                  className={
-                    "text-base text-blackmig font-gilroyregular text-center"
-                  }
-                >
-                  We do multiple iterations and input before you’re receiving
-                  the end-product
+                  {t.softwarehowitwork3}
                 </p>
               </div>
             </div>
@@ -1782,10 +1758,7 @@ function Software({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Custom project-based collaboration
-                </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
-                  One-stop service to develop tailored products
+                  {t.softwarehowitwork1}
                 </p>
               </div>
             </div>
@@ -1796,11 +1769,7 @@ function Software({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Providing all the resources you’ll need
-                </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
-                  We have extensive talents and technologies tobuild the best
-                  project for you and your companies
+                  {t.softwarehowitwork2}
                 </p>
               </div>
             </div>
@@ -1811,11 +1780,7 @@ function Software({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Clear and detailed project development
-                </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
-                  We do multiple iterations and input before you’re receiving
-                  the end-product
+                  {t.softwarehowitwork3}
                 </p>
               </div>
             </div>

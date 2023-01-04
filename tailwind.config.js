@@ -70,7 +70,8 @@ module.exports = {
         bgtalents:"#F8F8F8",
         redmig:"#FF3D3F",
         transp45:"rgba(24, 142, 77, 0.45)",
-        bgtable:"#F9F9F9"
+        bgtable:"#F9F9F9",
+        bgadvantagecard:"#E9FFE8",
       },
       borderColor: {
         primary: "#1890ff",
@@ -109,6 +110,8 @@ module.exports = {
         transp45:"rgba(24, 142, 77, 0.45)",
         bordermig:"#F4F4F4",
         borderProduct:"#BABABA",
+        advantagecard:"#E9FFE8",
+        advantage:"#C3FDC0",
       },
       textColor: {
         primary: "#1890ff",
@@ -149,7 +152,8 @@ module.exports = {
         lightgrey: "#B8B8B8",
         redmig2: "#D66B42",
         accentpink:"#BE658A",
-        bluemig:"#304FFE"
+        bluemig:"#304FFE",
+        bgadvantagecard:"#E9FFE8",
       },
       gradientColorStops: {
         state1: `#799F0C`,

@@ -15,6 +15,7 @@ import {
 import moment from "moment";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { React, useEffect, useRef, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -25,11 +26,17 @@ import { objectToFormData } from "lib/helper";
 
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function Talents({}) {
   const { Panel } = Collapse;
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   const [form] = Form.useForm();
   const { Option } = Select;
   const { TextArea } = Input;
@@ -557,13 +564,8 @@ function Talents({}) {
   return (
     <Layout>
       <Head>
-        <title>
-          Top Tech Talent, IT Outsourcing & Recruitment Solution - MIG
-        </title>
-        <meta
-          name="description"
-          content="Simplify the process of finding and managing talent with our Headhunt and IT Staff Augmentation service. Address your need & speak with our team now!"
-        />
+        <title>{t.talentmetatitle}</title>
+        <meta name="description" content={t.talentmetadescription} />
       </Head>
       {showForm == false && (
         <section
