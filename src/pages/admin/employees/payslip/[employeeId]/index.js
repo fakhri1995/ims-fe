@@ -29,7 +29,6 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../../../components/button";
-import DrawerCore from "../../../../../components/drawer/drawerCore";
 import DrawerPayslipDetail from "../../../../../components/drawer/employees/drawerPayslipDetail";
 import {
   AlertIconSvg,
@@ -328,14 +327,16 @@ const EmployeePayslipDetailIndex = ({
     },
     {
       title: "Periode",
-      dataIndex: "period",
-      // TODO: sort by month
+      dataIndex: "tanggal_dibayarkan",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex flex-row space-x-2 items-center">
-              {/* <p>{record.period}</p> */}
-              <p>Oktober 2022</p>
+              <p>
+                {moment(record.tanggal_dibayarkan).isValid()
+                  ? moment(record.tanggal_dibayarkan).format("MMMM YYYY")
+                  : "-"}
+              </p>
               {record.is_main_salary_changed && (
                 <Tooltip
                   placement="top"
@@ -353,33 +354,34 @@ const EmployeePayslipDetailIndex = ({
         };
       },
       sorter: isAllowedToGetPayslips
-        ? (a, b) => a.period?.toLowerCase() > b.period?.toLowerCase()
+        ? (a, b) => a?.tanggal_dibayarkan?.localeCompare(b?.tanggal_dibayarkan)
         : false,
+      defaultSortOrder: "descend",
     },
     {
       title: "Penerimaan (IDR)",
-      dataIndex: "receive",
+      dataIndex: "total_gross_penerimaan",
       render: (text, record, index) => {
         return {
-          children: <>{record.receive || "-"}</>,
+          children: <>{record.total_gross_penerimaan || "-"}</>,
         };
       },
     },
     {
       title: "Pengurangan (IDR)",
-      dataIndex: "reduction",
+      dataIndex: "total_gross_pengurangan",
       render: (text, record, index) => {
         return {
-          children: <>{record.reduction || "-"}</>,
+          children: <>{record.total_gross_pengurangan || "-"}</>,
         };
       },
     },
     {
       title: "Total (IDR)",
-      dataIndex: "total",
+      dataIndex: "take_home_pay",
       render: (text, record, index) => {
         return {
-          children: <>{record.total || "-"}</>,
+          children: <>{record.take_home_pay || "-"}</>,
         };
       },
     },
@@ -390,20 +392,22 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.status === "kosong" ? (
-                <p
-                  className="bg-mono30 bg-opacity-10 text-mono30 
-                  py-1 px-7 rounded-md text-center"
-                >
-                  Kosong
-                </p>
-              ) : record.status === "draft" ? (
-                <p
-                  className="bg-state2 bg-opacity-10 text-state2 
-                  py-1 px-7 rounded-md text-center"
-                >
-                  Draft
-                </p>
+              {record.is_posted === 0 ? (
+                record.id === null ? (
+                  <p
+                    className="bg-mono30 bg-opacity-10 text-mono30 
+                    py-1 px-7 rounded-md text-center"
+                  >
+                    Kosong
+                  </p>
+                ) : (
+                  <p
+                    className="bg-state2 bg-opacity-10 text-state2 
+                    py-1 px-7 rounded-md text-center"
+                  >
+                    Draft
+                  </p>
+                )
               ) : (
                 <p
                   className="bg-primary100 bg-opacity-10 text-primary100 
@@ -424,8 +428,8 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.status == "kosong" ? (
-                <div className="flex flex-col space-y-2">
+              {record.is_posted == 0 ? (
+                record.id === null ? (
                   <ButtonSys
                     type={isAllowedToAddPayslip ? "default" : "primary"}
                     disabled={!isAllowedToAddPayslip}
@@ -439,9 +443,7 @@ const EmployeePayslipDetailIndex = ({
                       <p className="whitespace-nowrap">Buat Slip Gaji</p>
                     </div>
                   </ButtonSys>
-                </div>
-              ) : record.status == "draft" ? (
-                <div className="flex flex-col space-y-2">
+                ) : (
                   <ButtonSys
                     type={isAllowedToUpdatePayslip ? "default" : "primary"}
                     disabled={!isAllowedToUpdatePayslip}
@@ -455,7 +457,7 @@ const EmployeePayslipDetailIndex = ({
                       <p className="whitespace-nowrap">Edit Draft</p>
                     </div>
                   </ButtonSys>
-                </div>
+                )
               ) : (
                 <div className="flex flex-row space-x-2 items-center">
                   <ButtonSys
@@ -712,7 +714,6 @@ const EmployeePayslipDetailIndex = ({
       <AccessControl hasPermission={EMPLOYEE_PAYSLIP_GET}>
         <DrawerPayslipDetail
           initProps={initProps}
-          title={`Slip Gaji ${moment().format("MMMM YYYY")}`}
           visible={drawerDetail}
           onvisible={setDrawerDetail}
           isAllowedToGetPayslip={isAllowedToGetPayslip}

@@ -1,8 +1,10 @@
 import { UpOutlined } from "@ant-design/icons";
 import { Collapse, Form, Input, Select, Spin, Table, notification } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import CurrencyFormat from "react-currency-format";
+import convertTerbilang from "terbilang-ts";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -48,6 +50,9 @@ const DrawerPayslipDetail = ({
     total_hari_kerja: 0,
   });
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [detailReceive, setDetailReceive] = useState([]);
+  const [detailReduction, setDetailReduction] = useState([]);
+  console.log(detailReduction);
 
   // 2. useEffect
   // 2.1 Get employee payslip detail
@@ -72,7 +77,31 @@ const DrawerPayslipDetail = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setDetailPayslip(response2.data);
+            const payslipDetail = response2.data;
+
+            // Seperate receive and reduction benefit
+            const receiveBenefits = payslipDetail?.salaries?.filter(
+              (benefit) => benefit?.column?.type === 1
+            );
+            const reductionBenefits = payslipDetail?.salaries?.filter(
+              (benefit) => benefit?.column?.type === 2
+            );
+
+            // Then merge "Gaji Pokok" to receive, and "PPh 21" to reduction
+            receiveBenefits.unshift({
+              column: { name: "Gaji Pokok" },
+              value: payslipDetail?.gaji_pokok,
+            });
+            reductionBenefits.unshift({
+              column: { name: "PPh 21" },
+              value: payslipDetail?.pph,
+            });
+
+            //TODO: add BPJS to reductionBenefit
+
+            setDetailPayslip(payslipDetail);
+            setDetailReceive(receiveBenefits);
+            setDetailReduction(reductionBenefits);
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -93,165 +122,151 @@ const DrawerPayslipDetail = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={title}
+      title={`Slip Gaji ${
+        moment(detailPayslip.tanggal_dibayarkan).isValid()
+          ? moment(detailPayslip.tanggal_dibayarkan).format("MMMM YYYY")
+          : "-"
+      }`}
       visible={visible}
       onClose={() => onvisible(false)}
     >
-      <div className="grid grid-cols-2 gap-x-8 gap-y-5">
-        <div className="flex flex-col">
-          <p className="mig-caption--medium text-mono80">Total Hari Kerja</p>
-          <p>{detailPayslip?.total_hari_kerja}</p>
-        </div>
-        <div className="flex flex-col">
-          <p className="mig-caption--medium text-mono80">Tanggal Dibayarkan</p>
-          <p>{momentFormatDate(detailPayslip?.tanggal_dibayarkan, "-")}</p>
-        </div>
-        <div className="flex flex-col col-span-2">
-          <p className="mig-caption--medium text-mono80">Jumlah Diterima</p>
-          <div className="flex flex-row">
-            <CurrencyFormat
-              displayType="text"
-              value={detailPayslip?.take_home_pay}
-              thousandSeparator={"."}
-              decimalSeparator={","}
-              prefix={"Rp"}
-              suffix={",00"}
-            />
-            <p>&nbsp;(Lima Juta Dua Ratus Lima Puluh Ribu Rupiah)</p>
+      {loadingDetail ? (
+        <>
+          <Spin />
+        </>
+      ) : (
+        <div className="grid grid-cols-2 gap-x-8 gap-y-5">
+          <div className="flex flex-col">
+            <p className="mig-caption--medium text-mono80">Total Hari Kerja</p>
+            <p>{detailPayslip?.total_hari_kerja || "-"}</p>
           </div>
+          <div className="flex flex-col">
+            <p className="mig-caption--medium text-mono80">
+              Tanggal Dibayarkan
+            </p>
+            <p>{momentFormatDate(detailPayslip?.tanggal_dibayarkan, "-")}</p>
+          </div>
+          <div className="flex flex-col col-span-2">
+            <p className="mig-caption--medium text-mono80">Jumlah Diterima</p>
+            <div className="flex flex-row">
+              <p>Rp{detailPayslip?.take_home_pay.toLocaleString("id-ID")}</p>
+              <p>
+                &nbsp;({convertTerbilang(detailPayslip?.take_home_pay) || "Nol"}{" "}
+                Rupiah)
+              </p>
+            </div>
+          </div>
+          <hr className="col-span-2" />
+          <Collapse
+            className="col-span-2 bg-transparent "
+            bordered={false}
+            expandIconPosition="right"
+            expandIcon={({ isActive }) => (
+              <UpOutlined rotate={isActive ? 180 : 0} />
+            )}
+            defaultActiveKey={["1", "2"]}
+          >
+            <Collapse.Panel
+              key={"1"}
+              header={
+                <p className="text-sm font-bold text-primary100">
+                  Detail Penerimaan
+                </p>
+              }
+            >
+              <Table
+                // bordered={true}
+                className="border-2 rounded-md"
+                pagination={false}
+                size={"small"}
+                columns={[
+                  {
+                    title: "DESKRIPSI",
+                    dataIndex: "name",
+                    render: (text, record) => <p>{record?.column?.name}</p>,
+                  },
+                  {
+                    title: "PENERIMAAN (IDR)",
+                    dataIndex: "value",
+                    render: (text) => (
+                      <p className="font-bold text-right">
+                        {text?.toLocaleString("id-ID") || "-"}
+                      </p>
+                    ),
+                  },
+                ]}
+                dataSource={detailReceive}
+                summary={() => (
+                  <Table.Summary fixed>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} className="font-bold">
+                        Total Penerimaan
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell
+                        index={1}
+                        className="font-bold text-right"
+                      >
+                        {detailPayslip?.total_gross_penerimaan?.toLocaleString(
+                          "id-ID"
+                        )}
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )}
+              />
+            </Collapse.Panel>
+            <Collapse.Panel
+              key={"2"}
+              header={
+                <p className="text-sm font-bold text-primary100">
+                  Detail Pengurangan
+                </p>
+              }
+            >
+              <Table
+                // bordered={true}
+                className="border-2 rounded-md"
+                pagination={false}
+                size={"small"}
+                columns={[
+                  {
+                    title: "DESKRIPSI",
+                    dataIndex: "name",
+                    render: (text, record) => <p>{record?.column?.name}</p>,
+                  },
+                  {
+                    title: "PENGURANGAN (IDR)",
+                    dataIndex: "value",
+                    render: (text) => (
+                      <p className="font-bold text-right">
+                        {text?.toLocaleString("id-ID") || "-"}
+                      </p>
+                    ),
+                  },
+                ]}
+                dataSource={detailReduction}
+                summary={() => (
+                  <Table.Summary fixed>
+                    <Table.Summary.Row>
+                      <Table.Summary.Cell index={0} className="font-bold">
+                        Total Pengurangan
+                      </Table.Summary.Cell>
+                      <Table.Summary.Cell
+                        index={1}
+                        className="font-bold text-right"
+                      >
+                        {detailPayslip?.total_gross_pengurangan?.toLocaleString(
+                          "id-ID"
+                        )}
+                      </Table.Summary.Cell>
+                    </Table.Summary.Row>
+                  </Table.Summary>
+                )}
+              />
+            </Collapse.Panel>
+          </Collapse>
         </div>
-        <hr className="col-span-2" />
-        <Collapse
-          className="col-span-2 bg-transparent "
-          bordered={false}
-          expandIconPosition="right"
-          expandIcon={({ isActive }) => (
-            <UpOutlined rotate={isActive ? 180 : 0} />
-          )}
-          defaultActiveKey={["1", "2"]}
-        >
-          <Collapse.Panel
-            key={"1"}
-            header={
-              <p className="text-sm font-bold text-primary100">
-                Detail Penerimaan
-              </p>
-            }
-          >
-            <Table
-              // bordered={true}
-              className="border-2 rounded-md"
-              pagination={false}
-              size={"small"}
-              columns={[
-                {
-                  title: "DESKRIPSI",
-                  dataIndex: "description",
-                },
-                {
-                  title: "PENERIMAAN (IDR)",
-                  dataIndex: "receive",
-                  render: (text) => (
-                    <p className="font-bold text-right">{text}</p>
-                  ),
-                },
-              ]}
-              dataSource={[
-                {
-                  key: "1",
-                  description: "Gaji Pokok",
-                  receive: "3,500,000",
-                },
-                {
-                  key: "2",
-                  description: "Tunjangan Uang Makan",
-                  receive: "550,000",
-                },
-              ]}
-              summary={() => (
-                <Table.Summary fixed>
-                  <Table.Summary.Row>
-                    <Table.Summary.Cell index={0} className="font-bold">
-                      Total Penerimaan
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell
-                      index={1}
-                      className="font-bold text-right"
-                    >
-                      <CurrencyFormat
-                        displayType="text"
-                        value={detailPayslip?.total_gross_penerimaan}
-                        thousandSeparator={"."}
-                        decimalSeparator={","}
-                      />
-                    </Table.Summary.Cell>
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )}
-            />
-          </Collapse.Panel>
-          <Collapse.Panel
-            key={"2"}
-            header={
-              <p className="text-sm font-bold text-primary100">
-                Detail Pengurangan
-              </p>
-            }
-          >
-            <Table
-              // bordered={true}
-              className="border-2 rounded-md"
-              pagination={false}
-              size={"small"}
-              columns={[
-                {
-                  title: "DESKRIPSI",
-                  dataIndex: "description",
-                },
-                {
-                  title: "PENGURANGAN (IDR)",
-                  dataIndex: "receive",
-                  render: (text) => (
-                    <p className="font-bold text-right">{text}</p>
-                  ),
-                },
-              ]}
-              dataSource={[
-                {
-                  key: "1",
-                  description: "Gaji Pokok",
-                  receive: "3,500,000",
-                },
-                {
-                  key: "2",
-                  description: "Tunjangan Uang Makan",
-                  receive: "550,000",
-                },
-              ]}
-              summary={() => (
-                <Table.Summary fixed>
-                  <Table.Summary.Row>
-                    <Table.Summary.Cell index={0} className="font-bold">
-                      Total Pengurangan
-                    </Table.Summary.Cell>
-                    <Table.Summary.Cell
-                      index={1}
-                      className="font-bold text-right"
-                    >
-                      <CurrencyFormat
-                        displayType="text"
-                        value={detailPayslip?.total_gross_pengurangan}
-                        thousandSeparator={"."}
-                        decimalSeparator={","}
-                      />
-                    </Table.Summary.Cell>
-                  </Table.Summary.Row>
-                </Table.Summary>
-              )}
-            />
-          </Collapse.Panel>
-        </Collapse>
-      </div>
+      )}
     </DrawerCore>
   );
 };
