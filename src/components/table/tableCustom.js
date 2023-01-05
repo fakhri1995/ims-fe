@@ -2106,7 +2106,7 @@ const TableCustomEmployeeList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&contract_status_ids=${selectedContractStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?role_ids=${selectedRoleId}&placements=${selectedPlacement}&contract_status_ids=${selectedContractStatusId}&is_employee_active=${isEmployeeActive}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2380,7 +2380,7 @@ const TableCustomPayslipEmployeeList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?is_employee_active=1&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2407,7 +2407,7 @@ const TableCustomPayslipEmployeeList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployees?payslip_status_ids=${selectedPayslipStatusId}&sort_by=${
+              }/getEmployeePayslips?payslip_status_ids=${selectedPayslipStatusId}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -2439,7 +2439,7 @@ const TableCustomPayslipEmployeeList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?payslip_status_ids=${selectedPayslipStatusId}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?payslip_status_ids=${selectedPayslipStatusId}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
@@ -2461,11 +2461,11 @@ const TableCustomPayslipEmployeeList = ({
           onMouseOver: () => {
             setrowstate(record.id);
           },
-          // onClick: () => {
-          //   record?.status === "posted"
-          //     ? rt.push(`/admin/employees/payslip/${record.id}`)
-          //     : rt.push(`/admin/employees/payslip/addPayslip?id=${record.id}`);
-          // },
+          onClick: () => {
+            record?.is_posted === 0 &&
+              record.id &&
+              rt.push(`/admin/employees/payslip/addPayslip?id=${record.id}`);
+          },
         };
       }}
       rowClassName={(record, idx) => {
