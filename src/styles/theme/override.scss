@@ -282,6 +282,23 @@ ol {
   border-color: #35763b;
 }
 
+/* TAG */
+.ant-tag-checkable-checked {
+  color: white;
+  background-color: #35763b;
+}
+
+.ant-tag-checkable-checked:active,
+.ant-tag-checkable:not(.ant-tag-checkable-checked):hover {
+  opacity: 0.85;
+  color: white;
+  background-color: #35763b;
+}
+
+.ant-tag-checkable:not(.ant-tag-checkable-checked) {
+  @apply text-primary100;
+}
+
 /* TABLE */
 .tableTypeTask .ant-table-column-sorter-up.active,
 .tableTypeTask .ant-table-column-sorter-down.active {
