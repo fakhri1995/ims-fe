@@ -2048,28 +2048,34 @@ function LandingPage({}) {
                 your needs.
               </p>
             </div>
-            <Linkk href="/contactus">
-              <button
-                className={
-                  "text-sm w-[145px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen"
-                }
-              >
-                <div className={"flex flex-row"}>
-                  <p
+            <div className="mt-3.5 flex flex-row justify-center">
+              <div className={"mr-3.5"}>
+                <Linkk href="/contactus">
+                  <button
                     className={
-                      "text-base gilroy-semibold font-gilroysemibold ml-4 mr-3.5"
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    Contact Us
-                  </p>
-                  <img
-                    className={"self-center"}
-                    style={{ height: "20px", width: "20px" }}
-                    src="/image/landingpage/arrow_forward_ios2.png"
-                  />
-                </div>
-              </button>
-            </Linkk>
+                    <p className={"text-base font-gilroysemibold"}>
+                      Contact Us
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      Learn More
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"justify-end  self-end"}>
