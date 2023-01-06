@@ -10,9 +10,11 @@ import {
   notification,
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import dynamic from "next/dynamic";
 // import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import "react-quill/dist/quill.snow.css";
 import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
@@ -45,6 +47,24 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   /**
    * Dependencies
    */
+  // Text Editor Config
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link"],
+    ],
+  };
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
+  const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
@@ -68,7 +88,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     artikel_image: "",
     artikel_image_file: null,
   });
-
+  const [isiArtikel, setisiArtikel] = useState("");
   const [artikelEdit, setArtikelEdit] = useState(null);
   const [loadingupload, setLoadingupload] = useState(false);
   const [loadingcreate, setLoadingcreate] = useState(false);
@@ -160,6 +180,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
               : "Add Article Success!",
             duration: 3,
           });
+          rt.push("admin/blog");
         } else if (!res2.success) {
           notification["error"]({
             message: articleId
@@ -176,6 +197,12 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
       ...artikelBlog,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const onChangeText = (text) => {
+    console.log("called");
+    text = text !== "<p><br></p>" ? text : "";
+    setisiArtikel(text);
   };
 
   const beforeUploadProfileImage = (file) => {
@@ -326,11 +353,13 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       },
                     ]}
                   >
-                    <TextArea
-                      rows={5}
-                      value={artikelBlog.isi}
-                      name={`isi`}
-                      onChange={onChangeCreateArtikel}
+                    <ReactQuill
+                      theme="snow"
+                      defaultValue={artikelBlog.isi}
+                      modules={modules}
+                      formats={formats}
+                      className="h-44 pb-10"
+                      onChange={onChangeText}
                     />
                   </Form.Item>
                   <Upload
