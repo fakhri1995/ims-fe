@@ -10,6 +10,7 @@ import {
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
+import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
@@ -53,6 +54,7 @@ const DrawerCandidateUpdate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
+    links: [],
   });
 
   const [modalUpdate, setModalUpdate] = useState(false);
@@ -69,6 +71,7 @@ const DrawerCandidateUpdate = ({
   // 2.1. set initial dataUpdate from dataRecruitment
   useEffect(() => {
     setDataUpdate({
+      ...dataUpdate,
       id: Number(dataRecruitment.id),
       name: dataRecruitment.name,
       email: dataRecruitment.email,
@@ -77,16 +80,20 @@ const DrawerCandidateUpdate = ({
       recruitment_jalur_daftar_id: dataRecruitment.recruitment_jalur_daftar_id,
       recruitment_stage_id: dataRecruitment.recruitment_stage_id,
       recruitment_status_id: dataRecruitment.recruitment_status_id,
+      // links: dataRecruitment?.links,
     });
   }, [dataRecruitment, visible]);
 
   // 2.2. Validate input field
   useEffect(() => {
-    let allFilled = Object.values(dataUpdate).every(
-      (value) => value !== "" && value !== null
+    let allFilled = Object.values(dataUpdate).every((value) => value);
+
+    let linkIsFilled = dataUpdate?.links?.every(
+      (link) => link.link_title && link.link_value
     );
+
     // console.log(allFilled)
-    if (allFilled) {
+    if (allFilled && linkIsFilled) {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
@@ -399,6 +406,76 @@ const DrawerCandidateUpdate = ({
                 </Select>
               </div>
             </Form.Item>
+
+            <p className="my-2">Daftar Tautan</p>
+            {dataUpdate?.links?.map((link, idx) => (
+              <div className="col-span-2 flex flex-row mb-4">
+                <Input
+                  value={link?.link_title}
+                  name={"link_title"}
+                  placeholder={"Judul tautan"}
+                  className="mr-2"
+                  onChange={(e) => {
+                    let temp = [...dataUpdate.links];
+                    temp[idx].link_title = e.target.value;
+
+                    setDataUpdate((prev) => ({
+                      ...prev,
+                      links: temp,
+                    }));
+                  }}
+                />
+                <Input
+                  value={link?.link_value}
+                  name={"link_value"}
+                  type={"url"}
+                  placeholder="URL tautan"
+                  onChange={(e) => {
+                    let temp = [...dataUpdate.links];
+                    temp[idx].link_value = e.target.value;
+                    setDataUpdate((prev) => ({
+                      ...prev,
+                      links: temp,
+                    }));
+                  }}
+                />
+
+                <button
+                  className="ml-2"
+                  onClick={() => {
+                    const temp = [...dataUpdate.links];
+                    temp.splice(idx, 1);
+                    setDataUpdate((prev) => ({
+                      ...prev,
+                      links: temp,
+                    }));
+                  }}
+                >
+                  <TrashIconSvg size={18} color={`#BF4A40`} />
+                </button>
+              </div>
+            ))}
+            <div className="col-span-2">
+              <ButtonSys
+                type={"dashed"}
+                onClick={() => {
+                  setDataUpdate((prev) => ({
+                    ...prev,
+                    links: [
+                      ...prev.links,
+                      {
+                        link_title: "",
+                        link_value: "",
+                      },
+                    ],
+                  }));
+                }}
+              >
+                <p className="text-primary100 hover:text-primary75">
+                  + Tambah Tautan
+                </p>
+              </ButtonSys>
+            </div>
           </Form>
         </div>
       </Spin>

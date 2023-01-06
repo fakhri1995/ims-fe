@@ -199,6 +199,19 @@ const RecruitmentDetailIndex = ({
         .then((response2) => {
           if (response2.success) {
             setDataRecruitment(response2.data);
+            // setDataRecruitment({
+            //   ...response2.data,
+            //   links: [
+            //     {
+            //       link_title: "judul",
+            //       link_value: "https://blog.logrocket.com/usestate-vs-useref/",
+            //     },
+            //     {
+            //       link_title: "judul",
+            //       link_value: "https://blog.logrocket.com/usestate-vs-useref/",
+            //     },
+            //   ],
+            // });
             setResumeId(response2.data.resume?.id);
           } else {
             notification.error({
@@ -701,7 +714,7 @@ const RecruitmentDetailIndex = ({
               </ButtonSys>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Email</p>
-                <p className="text-md">{dataRecruitment.email}</p>
+                <p className="text-md">{dataRecruitment.email || "-"}</p>
               </div>
               {/* <div className="space-y-2">
 							<p className="mig-caption--medium text-mono80">Password</p>
@@ -709,21 +722,25 @@ const RecruitmentDetailIndex = ({
 						</div> */}
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Universitas</p>
-                <p className="text-md">{dataRecruitment.university}</p>
+                <p className="text-md">{dataRecruitment.university || "-"}</p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">
                   Role yang Didaftarkan
                 </p>
-                <p className="text-md">{dataRecruitment.role?.name}</p>
+                <p className="text-md">{dataRecruitment.role?.name || "-"}</p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Tipe Role</p>
-                <p className="text-md">{dataRecruitment.role?.type?.name}</p>
+                <p className="text-md">
+                  {dataRecruitment.role?.type?.name || "-"}
+                </p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Jalur Daftar</p>
-                <p className="text-md">{dataRecruitment.jalur_daftar?.name}</p>
+                <p className="text-md">
+                  {dataRecruitment.jalur_daftar?.name || "-"}
+                </p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">
@@ -733,6 +750,23 @@ const RecruitmentDetailIndex = ({
                   {moment(dataRecruitment.created_at).format("LL")},&nbsp;
                   {moment(dataRecruitment.created_at).format("LT")}
                 </p>
+              </div>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">Daftar Tautan</p>
+                {dataRecruitment?.links?.length > 0 ? (
+                  <ul>
+                    {dataRecruitment?.links?.map((link, idx) => (
+                      <li key={idx}>
+                        <p className="font-bold">{link.link_title}</p>
+                        <a href={link.link_value} target={"_blank"}>
+                          <p className="text-md">{link.link_value}</p>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  "-"
+                )}
               </div>
               <ButtonSys
                 type={"primary"}

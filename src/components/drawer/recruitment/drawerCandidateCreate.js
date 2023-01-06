@@ -49,6 +49,7 @@ const DrawerCandidateCreate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
+    links: [],
   });
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [disabledcreate, setdisabledcreate] = useState(true);
@@ -138,6 +139,7 @@ const DrawerCandidateCreate = ({
               recruitment_jalur_daftar_id: null,
               recruitment_stage_id: null,
               recruitment_status_id: null,
+              links: [],
             });
           }, 500);
         } else {
@@ -159,11 +161,12 @@ const DrawerCandidateCreate = ({
 
   // USEEFFECT
   useEffect(() => {
-    let allFilled = Object.values(dataCandidate).every(
-      (value) => value !== "" && value !== null
+    let allFilled = Object.values(dataCandidate).every((value) => value);
+    let linkIsFilled = dataCandidate?.links?.every(
+      (link) => link.link_title && link.link_value
     );
     // console.log(allFilled)
-    if (allFilled) {
+    if (allFilled && linkIsFilled) {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
@@ -184,6 +187,7 @@ const DrawerCandidateCreate = ({
           recruitment_jalur_daftar_id: null,
           recruitment_stage_id: null,
           recruitment_status_id: null,
+          links: [],
         });
         onvisible(false);
       }}
@@ -399,6 +403,76 @@ const DrawerCandidateCreate = ({
                 </Select>
               </div>
             </Form.Item>
+
+            <p className="my-2">Daftar Tautan</p>
+            {dataCandidate?.links?.map((link, idx) => (
+              <div className="col-span-2 flex flex-row mb-4">
+                <Input
+                  value={link?.link_title}
+                  name={"link_title"}
+                  placeholder={"Judul tautan"}
+                  className="mr-2"
+                  onChange={(e) => {
+                    let temp = [...dataCandidate.links];
+                    temp[idx].link_title = e.target.value;
+
+                    setDataCandidate((prev) => ({
+                      ...prev,
+                      links: temp,
+                    }));
+                  }}
+                />
+                <Input
+                  value={link?.link_value}
+                  name={"link_value"}
+                  type={"url"}
+                  placeholder="URL tautan"
+                  onChange={(e) => {
+                    let temp = [...dataCandidate.links];
+                    temp[idx].link_value = e.target.value;
+                    setDataCandidate((prev) => ({
+                      ...prev,
+                      links: temp,
+                    }));
+                  }}
+                />
+
+                <button
+                  className="ml-2"
+                  onClick={() => {
+                    const temp = [...dataCandidate.links];
+                    temp.splice(idx, 1);
+                    setDataCandidate((prev) => ({
+                      ...prev,
+                      links: temp,
+                    }));
+                  }}
+                >
+                  <TrashIconSvg size={18} color={`#BF4A40`} />
+                </button>
+              </div>
+            ))}
+            <div className="col-span-2">
+              <ButtonSys
+                type={"dashed"}
+                onClick={() => {
+                  setDataCandidate((prev) => ({
+                    ...prev,
+                    links: [
+                      ...prev.links,
+                      {
+                        link_title: "",
+                        link_value: "",
+                      },
+                    ],
+                  }));
+                }}
+              >
+                <p className="text-primary100 hover:text-primary75">
+                  + Tambah Tautan
+                </p>
+              </ButtonSys>
+            </div>
           </Form>
         </div>
       </Spin>
