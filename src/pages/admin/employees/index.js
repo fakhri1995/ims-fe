@@ -798,7 +798,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <Collapse.Panel
               header={<div className="mig-heading--4">Statistik</div>}
             >
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-3 gap-2 lg:gap-6">
                 {/* CHART PENEMPATAN KARYAWAN */}
                 {loadingChart ? (
                   <Spin />
