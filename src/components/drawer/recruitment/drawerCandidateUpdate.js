@@ -54,7 +54,7 @@ const DrawerCandidateUpdate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
-    links: [],
+    attachments: [],
   });
 
   const [modalUpdate, setModalUpdate] = useState(false);
@@ -80,7 +80,7 @@ const DrawerCandidateUpdate = ({
       recruitment_jalur_daftar_id: dataRecruitment.recruitment_jalur_daftar_id,
       recruitment_stage_id: dataRecruitment.recruitment_stage_id,
       recruitment_status_id: dataRecruitment.recruitment_status_id,
-      // links: dataRecruitment?.links,
+      // attachments: dataRecruitment?.attachments,
     });
   }, [dataRecruitment, visible]);
 
@@ -88,12 +88,12 @@ const DrawerCandidateUpdate = ({
   useEffect(() => {
     let allFilled = Object.values(dataUpdate).every((value) => value);
 
-    let linkIsFilled = dataUpdate?.links?.every(
-      (link) => link.link_title && link.link_value
+    let attachmentIsFilled = dataUpdate?.attachments?.every(
+      (attachment) => attachment.title && attachment.value
     );
 
     // console.log(allFilled)
-    if (allFilled && linkIsFilled) {
+    if (allFilled && attachmentIsFilled) {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
@@ -407,35 +407,35 @@ const DrawerCandidateUpdate = ({
               </div>
             </Form.Item>
 
-            <p className="my-2">Daftar Tautan</p>
-            {dataUpdate?.links?.map((link, idx) => (
+            <p className="my-2">Daftar Lampiran</p>
+            {dataUpdate?.attachments?.map((attachment, idx) => (
               <div className="col-span-2 flex flex-row mb-4">
                 <Input
-                  value={link?.link_title}
-                  name={"link_title"}
-                  placeholder={"Judul tautan"}
+                  value={attachment?.title}
+                  name={"title"}
+                  placeholder={"Judul lampiran"}
                   className="mr-2"
                   onChange={(e) => {
-                    let temp = [...dataUpdate.links];
-                    temp[idx].link_title = e.target.value;
+                    let temp = [...dataUpdate.attachments];
+                    temp[idx].title = e.target.value;
 
                     setDataUpdate((prev) => ({
                       ...prev,
-                      links: temp,
+                      attachments: temp,
                     }));
                   }}
                 />
                 <Input
-                  value={link?.link_value}
-                  name={"link_value"}
+                  value={attachment?.value}
+                  name={"value"}
                   type={"url"}
-                  placeholder="URL tautan"
+                  placeholder="Isi lampiran"
                   onChange={(e) => {
-                    let temp = [...dataUpdate.links];
-                    temp[idx].link_value = e.target.value;
+                    let temp = [...dataUpdate.attachments];
+                    temp[idx].value = e.target.value;
                     setDataUpdate((prev) => ({
                       ...prev,
-                      links: temp,
+                      attachments: temp,
                     }));
                   }}
                 />
@@ -443,11 +443,11 @@ const DrawerCandidateUpdate = ({
                 <button
                   className="ml-2"
                   onClick={() => {
-                    const temp = [...dataUpdate.links];
+                    const temp = [...dataUpdate.attachments];
                     temp.splice(idx, 1);
                     setDataUpdate((prev) => ({
                       ...prev,
-                      links: temp,
+                      attachments: temp,
                     }));
                   }}
                 >
@@ -461,18 +461,18 @@ const DrawerCandidateUpdate = ({
                 onClick={() => {
                   setDataUpdate((prev) => ({
                     ...prev,
-                    links: [
-                      ...prev.links,
+                    attachments: [
+                      ...prev.attachments,
                       {
-                        link_title: "",
-                        link_value: "",
+                        title: "",
+                        value: "",
                       },
                     ],
                   }));
                 }}
               >
                 <p className="text-primary100 hover:text-primary75">
-                  + Tambah Tautan
+                  + Tambah Lampiran
                 </p>
               </ButtonSys>
             </div>

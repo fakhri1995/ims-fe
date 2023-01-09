@@ -21,6 +21,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Html from "react-pdf-html";
+import isURL from "validator/lib/isURL";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -52,7 +53,6 @@ import {
   DotsIconSvg,
   DownloadIconSvg,
   EditIconSvg,
-  ExternalLinkIconSvg,
   InfoCircleIconSvg,
   MailForwardIconSvg,
   OneUserIconSvg,
@@ -201,14 +201,14 @@ const RecruitmentDetailIndex = ({
             setDataRecruitment(response2.data);
             // setDataRecruitment({
             //   ...response2.data,
-            //   links: [
+            //   attachments: [
             //     {
-            //       link_title: "judul",
-            //       link_value: "https://blog.logrocket.com/usestate-vs-useref/",
+            //       title: "judul",
+            //       value: "https://blog.logrocket.com/usestate-vs-useref/",
             //     },
             //     {
-            //       link_title: "judul",
-            //       link_value: "https://blog.logrocket.com/usestate-vs-useref/",
+            //       title: "judul",
+            //       value: "test non url",
             //     },
             //   ],
             // });
@@ -752,15 +752,21 @@ const RecruitmentDetailIndex = ({
                 </p>
               </div>
               <div className="space-y-2">
-                <p className="mig-caption--medium text-mono80">Daftar Tautan</p>
-                {dataRecruitment?.links?.length > 0 ? (
-                  <ul>
-                    {dataRecruitment?.links?.map((link, idx) => (
+                <p className="mig-caption--medium text-mono80">
+                  Daftar Lampiran
+                </p>
+                {dataRecruitment?.attachments?.length > 0 ? (
+                  <ul className="space-y-2">
+                    {dataRecruitment?.attachments?.map((attachment, idx) => (
                       <li key={idx}>
-                        <p className="font-bold">{link.link_title}</p>
-                        <a href={link.link_value} target={"_blank"}>
-                          <p className="text-md">{link.link_value}</p>
-                        </a>
+                        <p className="font-bold">{attachment.title}</p>
+                        {isURL(attachment.value) ? (
+                          <a href={attachment.value} target={"_blank"}>
+                            <p className="text-md">{attachment.value}</p>
+                          </a>
+                        ) : (
+                          <p className="text-md">{attachment.value}</p>
+                        )}
                       </li>
                     ))}
                   </ul>
