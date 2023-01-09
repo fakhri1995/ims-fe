@@ -49,6 +49,7 @@ const DrawerCandidateCreate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
+    attachments: [],
   });
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [disabledcreate, setdisabledcreate] = useState(true);
@@ -138,6 +139,7 @@ const DrawerCandidateCreate = ({
               recruitment_jalur_daftar_id: null,
               recruitment_stage_id: null,
               recruitment_status_id: null,
+              attachments: [],
             });
           }, 500);
         } else {
@@ -159,11 +161,12 @@ const DrawerCandidateCreate = ({
 
   // USEEFFECT
   useEffect(() => {
-    let allFilled = Object.values(dataCandidate).every(
-      (value) => value !== "" && value !== null
+    let allFilled = Object.values(dataCandidate).every((value) => value);
+    let attachmentIsFilled = dataCandidate?.attachments?.every(
+      (attachment) => attachment.title && attachment.value
     );
     // console.log(allFilled)
-    if (allFilled) {
+    if (allFilled && attachmentIsFilled) {
       setdisabledcreate(false);
     } else {
       setdisabledcreate(true);
@@ -184,6 +187,7 @@ const DrawerCandidateCreate = ({
           recruitment_jalur_daftar_id: null,
           recruitment_stage_id: null,
           recruitment_status_id: null,
+          attachments: [],
         });
         onvisible(false);
       }}
@@ -399,6 +403,76 @@ const DrawerCandidateCreate = ({
                 </Select>
               </div>
             </Form.Item>
+
+            <p className="my-2">Daftar Lampiran</p>
+            {dataCandidate?.attachments?.map((attachment, idx) => (
+              <div className="col-span-2 flex flex-row mb-4">
+                <Input
+                  value={attachment?.title}
+                  name={"title"}
+                  placeholder={"Judul Lampiran"}
+                  className="mr-2"
+                  onChange={(e) => {
+                    let temp = [...dataCandidate.attachments];
+                    temp[idx].title = e.target.value;
+
+                    setDataCandidate((prev) => ({
+                      ...prev,
+                      attachments: temp,
+                    }));
+                  }}
+                />
+                <Input
+                  value={attachment?.value}
+                  name={"value"}
+                  type={"url"}
+                  placeholder="URL Lampiran"
+                  onChange={(e) => {
+                    let temp = [...dataCandidate.attachments];
+                    temp[idx].value = e.target.value;
+                    setDataCandidate((prev) => ({
+                      ...prev,
+                      attachments: temp,
+                    }));
+                  }}
+                />
+
+                <button
+                  className="ml-2"
+                  onClick={() => {
+                    const temp = [...dataCandidate.attachments];
+                    temp.splice(idx, 1);
+                    setDataCandidate((prev) => ({
+                      ...prev,
+                      attachments: temp,
+                    }));
+                  }}
+                >
+                  <TrashIconSvg size={18} color={`#BF4A40`} />
+                </button>
+              </div>
+            ))}
+            <div className="col-span-2">
+              <ButtonSys
+                type={"dashed"}
+                onClick={() => {
+                  setDataCandidate((prev) => ({
+                    ...prev,
+                    attachments: [
+                      ...prev.attachments,
+                      {
+                        title: "",
+                        value: "",
+                      },
+                    ],
+                  }));
+                }}
+              >
+                <p className="text-primary100 hover:text-primary75">
+                  + Tambah Lampiran
+                </p>
+              </ButtonSys>
+            </div>
           </Form>
         </div>
       </Spin>
