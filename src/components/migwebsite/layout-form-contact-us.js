@@ -3,41 +3,49 @@ import Link from "next/link";
 import Linkk from "next/link";
 import React from "react";
 
-function LayoutFormContactUs({ children }) {
+function LayoutFormContactUs({ title, description, button_title }) {
   return (
     <div>
       <section
         className={
-          "youronestop mt-24 md:relative hidden md:block md:flex bg-bgfooter pt-8"
+          "youronestop mt-10 hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-8"
         }
       >
-        <div className={"justify-start self-end "}>
+        <div className={"justify-start self-end bg-red"}>
           <img
             style={{ width: "332px", height: "142px" }}
             src="/image/landingpage/footer-left.png"
           />
         </div>
-        <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-20  -mt-24 py-4 px-8">
-            <p className={"text-2xl font-bold"}>
-              Fulfill your IT needs easily!
+        <div className={"container w-1/2 mx-auto"}>
+          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
+            <p className={"text-2xl font-gilroysemibold text-black"}>
+              {title ? title : "Fulfill your IT needs easily!"}
             </p>
-            <p className={"py-5 text-base"}>
-              Need help in providing your needs? Whether they related to
+            <p className={"py-5 text-base font-gilroyregular text-black"}>
+              {description
+                ? description
+                : `Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+              what service can we offer to you and your company!`}
             </p>
-            <Linkk href="/hardware">
+            <Linkk href="/contactus">
               <button
                 className={
-                  "text-sm text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-sm w-[145px] -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
+                  <p
+                    className={
+                      "text-base gilroy-semibold font-gilroysemibold mr-2"
+                    }
+                  >
+                    {button_title ? button_title : `Contact Us`}
+                  </p>
                   <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
+                    className={"self-center"}
+                    style={{ height: "15px", width: "8px" }}
                     src="/image/landingpage/arrow-forward.png"
                   />
                 </div>
@@ -45,9 +53,9 @@ function LayoutFormContactUs({ children }) {
             </Linkk>
           </div>
         </div>
-        <div className={"justify-end self-end "}>
+        <div className={"justify-end  self-end"}>
           <img
-            style={{ width: "332px", height: "142px" }}
+            className={"w-[332px] h-[142px]"}
             src="/image/landingpage/footer-right.png"
           />
         </div>
@@ -59,22 +67,26 @@ function LayoutFormContactUs({ children }) {
       >
         <div className={"container mx-auto"}>
           <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
-            <p className={"text-xl font-semibold"}>
-              Fulfill your IT needs easily!
+            <p className={"text-xl font-gilroysemibold"}>
+              {title ? title : "Fulfill your IT needs easily!"}
             </p>
-            <p className={"py-5 text-sm Gilroy-regular"}>
-              Need help in providing your needs? Whether they related to
+            <p className={"py-5 text-sm font-gilroyregular"}>
+              {description
+                ? description
+                : `Need help in providing your needs? Whether they related to
               hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+              what service can we offer to you and your company!`}
             </p>
-            <Linkk href="/hardware">
+            <Linkk href="/contactus">
               <button
                 className={
-                  "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-base text-center rounded  text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
+                  <p className={"px-1"}>
+                    {button_title ? button_title : "Contact Us"}
+                  </p>
                   <img
                     className={"py-1 px-1"}
                     style={{ width: "15px" }}
@@ -85,7 +97,7 @@ function LayoutFormContactUs({ children }) {
             </Linkk>
           </div>
         </div>
-        <div className={"flex justify-between self-end"}>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
           <img
             style={{ width: "160px", height: "69px" }}
             src="/image/landingpage/footer-left.png"

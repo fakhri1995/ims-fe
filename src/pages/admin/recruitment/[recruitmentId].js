@@ -8,6 +8,7 @@ import {
   Popover,
   Select,
   Spin,
+  Switch,
   Tag,
   Timeline,
   notification,
@@ -20,6 +21,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Html from "react-pdf-html";
+import isURL from "validator/lib/isURL";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -39,16 +41,18 @@ import {
   RECRUITMENT_UPDATE_STAGE,
   RECRUITMENT_UPDATE_STATUS,
   RESUME_GET,
+  RESUME_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
 import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/drawerCandidateSendEmail";
 import DrawerCandidateUpdate from "../../../components/drawer/recruitment/drawerCandidateUpdate";
 import {
+  AlertIconSvg,
+  AlerttriangleIconSvg,
   DotsIconSvg,
   DownloadIconSvg,
   EditIconSvg,
-  ExternalLinkIconSvg,
   InfoCircleIconSvg,
   MailForwardIconSvg,
   OneUserIconSvg,
@@ -99,13 +103,18 @@ const RecruitmentDetailIndex = ({
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
   const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
   const isAllowedToGetResume = hasPermission(RESUME_GET);
+  const isAllowedToUpdateResume = hasPermission(RESUME_UPDATE);
   const isAllowedToUpdateCandidateAccess = hasPermission(GUEST_STATUS);
 
   //INIT
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
-  // console.log(pathArr);
-  pathArr[pathArr.length - 1] = "Detail Kandidat";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 2);
+  pathTitleArr.splice(1, 2, "Rekrutmen", "Detail Kandidat");
 
   // 1. STATE
   // 1.1. display
@@ -144,6 +153,7 @@ const RecruitmentDetailIndex = ({
   const [moreMode, setMoreMode] = useState("");
 
   // 1.5. Update Stage & Status
+  const [isAddNote, setIsAddNote] = useState(false);
   const [modalUpdate, setModalUpdate] = useState(false);
   const [modeUpdate, setModeUpdate] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -163,7 +173,7 @@ const RecruitmentDetailIndex = ({
   const [isEmailDrawerShown, setEmailDrawerShown] = useState(false);
 
   // 1.7. Download Profile/Resume
-  const [openDownloadModal, setOpenDownloadModal] = useState(false);
+  const [openAccessModal, setOpenAccessModal] = useState(false);
 
   // 2. USE EFFECT
   // 2.1 Get recruitment candidate detail
@@ -189,6 +199,19 @@ const RecruitmentDetailIndex = ({
         .then((response2) => {
           if (response2.success) {
             setDataRecruitment(response2.data);
+            // setDataRecruitment({
+            //   ...response2.data,
+            //   attachments: [
+            //     {
+            //       title: "judul",
+            //       value: "https://blog.logrocket.com/usestate-vs-useref/",
+            //     },
+            //     {
+            //       title: "judul",
+            //       value: "test non url",
+            //     },
+            //   ],
+            // });
             setResumeId(response2.data.resume?.id);
           } else {
             notification.error({
@@ -365,10 +388,10 @@ const RecruitmentDetailIndex = ({
 
   // 2.7. Disable update stage and status
   useEffect(() => {
-    let allFilled = Object.values(dataUpdateStage).every(
-      (value) => value !== "" && value !== null
-    );
-    // console.log(allFilled)
+    let allFilled =
+      dataUpdateStage.id !== null &&
+      dataUpdateStage.recruitment_stage_id !== null;
+
     if (allFilled) {
       setDisableUpdate(false);
     } else {
@@ -377,10 +400,10 @@ const RecruitmentDetailIndex = ({
   }, [dataUpdateStage]);
 
   useEffect(() => {
-    let allFilled = Object.values(dataUpdateStatus).every(
-      (value) => value !== "" && value !== null
-    );
-    // console.log(allFilled)
+    let allFilled =
+      dataUpdateStatus.id !== null &&
+      dataUpdateStatus.recruitment_status_id !== null;
+
     if (allFilled) {
       setDisableUpdate(false);
     } else {
@@ -613,16 +636,16 @@ const RecruitmentDetailIndex = ({
   };
 
   const handleUpdateCandidateAccess = () => {
-    const payload = {
-      user_id: dataRecruitment.owner_id,
-      is_enabled: false,
-    };
-
     if (!isAllowedToUpdateCandidateAccess) {
       permissionWarningNotification("Mengubah", "Status Akses Kandidat");
       setLoadingUpdate(false);
       return;
     }
+
+    const payload = {
+      user_id: dataRecruitment.owner_id,
+      is_enabled: false,
+    };
 
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/guestActivation`, {
@@ -641,7 +664,7 @@ const RecruitmentDetailIndex = ({
             message: res2.message,
             duration: 3,
           });
-          setOpenDownloadModal(false);
+          setOpenAccessModal(false);
         } else {
           notification["error"]({
             message: `Gagal mengubah status akses kandidat ${res2.message}`,
@@ -667,506 +690,578 @@ const RecruitmentDetailIndex = ({
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
-      <div className="flex flex-row gap-4 w-full">
-        {/* Left Column */}
-        <div className="flex flex-col gap-4 w-1/3">
-          {/* Card Primary Info */}
-          <div className="flex flex-col shadow-lg rounded-md bg-white p-4 space-y-4">
-            <div className="flex flex-row space-x-2 items-center justify-center">
-              <OneUserIconSvg size={32} color="#4D4D4D" />
-              <h3 className="mig-heading--3">{dataRecruitment.name}</h3>
-            </div>
-            <ButtonSys
-              type={isAllowedToUpdateRecruitment ? "default" : "primary"}
-              onClick={() => setDrawerUpdate(true)}
-              disabled={!isAllowedToUpdateRecruitment}
-            >
-              <div className="flex flex-row space-x-3 items-center">
-                <EditIconSvg size={16} color="#35763B" />
-                <p>Ubah Kandidat</p>
+      <div className="grid grid-cols-1">
+        <div className="flex flex-col md:flex-row gap-4 w-full">
+          {/* Left Column */}
+          <div className="flex flex-col gap-4 md:w-1/3">
+            {/* Card Primary Info */}
+            <div className="flex flex-col shadow-lg rounded-md bg-white p-4 space-y-4">
+              <div className="flex flex-row space-x-2 items-center justify-center">
+                <OneUserIconSvg size={32} color="#4D4D4D" />
+                <h3 className="mig-heading--3">{dataRecruitment.name}</h3>
               </div>
-            </ButtonSys>
-            <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Email</p>
-              <p className="text-md">{dataRecruitment.email}</p>
-            </div>
-            {/* <div className="space-y-2">
+              <ButtonSys
+                type={isAllowedToUpdateRecruitment ? "default" : "primary"}
+                onClick={() => setDrawerUpdate(true)}
+                disabled={!isAllowedToUpdateRecruitment}
+              >
+                <div className="flex flex-row space-x-3 items-center">
+                  <EditIconSvg size={16} color="#35763B" />
+                  <p>Ubah Kandidat</p>
+                </div>
+              </ButtonSys>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">Email</p>
+                <p className="text-md">{dataRecruitment.email || "-"}</p>
+              </div>
+              {/* <div className="space-y-2">
 							<p className="mig-caption--medium text-mono80">Password</p>
 							<p className="text-md">pass</p>
 						</div> */}
-            <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Universitas</p>
-              <p className="text-md">{dataRecruitment.university}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">
-                Role yang Didaftarkan
-              </p>
-              <p className="text-md">{dataRecruitment.role?.name}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Tipe Role</p>
-              <p className="text-md">{dataRecruitment.role?.type?.name}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Jalur Daftar</p>
-              <p className="text-md">{dataRecruitment.jalur_daftar?.name}</p>
-            </div>
-            <div className="space-y-2">
-              <p className="mig-caption--medium text-mono80">Tanggal Daftar</p>
-              <p className="text-md">
-                {moment(dataRecruitment.created_at).format("LL")},&nbsp;
-                {moment(dataRecruitment.created_at).format("LT")}
-              </p>
-            </div>
-            <ButtonSys
-              type={"primary"}
-              onClick={() => setEmailDrawerShown(true)}
-              disabled={!isAllowedToSendEmailRecruitment}
-            >
-              <div className="flex flex-row space-x-3 items-center">
-                <MailForwardIconSvg size={16} color="#FFFFFF" />
-                <p>Kirim Email</p>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">Universitas</p>
+                <p className="text-md">{dataRecruitment.university || "-"}</p>
               </div>
-            </ButtonSys>
-          </div>
-
-          {/* Card Catatan */}
-          <div className="shadow-lg rounded-md bg-white p-4">
-            <div className="flex flex-row justify-between items-center mb-6">
-              <h4 className="mig-heading--4">Catatan</h4>
-              {isAllowedToAddRecruitmentLogNotes && (
-                <button
-                  className="bg-transparent"
-                  onClick={() => setModalNotes(true)}
-                >
-                  <PlusIconSvg size={24} color="#35763B" />
-                </button>
-              )}
-            </div>
-            <Spin spinning={loadingActivities}>
-              {dataActivities?.slice(0, 5).map((activity) => (
-                <div key={activity.id} className="mb-6">
-                  <p className="text-md mb-2">{activity.notes}</p>
-                  <div className="flex flex-row justify-between flex-wrap items-center">
-                    <div className="flex flex-row text-wrap w-30">
-                      <img
-                        src="/default-users.jpeg"
-                        className="rounded-full w-5 h-5 mr-2"
-                      ></img>
-                      <p className="mig-caption--medium text-primary100 ">
-                        {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
-                      </p>
-                    </div>
-                    <p className="text-sm text-mono80">
-                      {/* {moment(activity.created_at).format('ll')},&nbsp;
-											{moment(activity.created_at).format('LT')} */}
-                      {moment(activity.created_at).calendar()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {dataActivities.length > 5 && (
-                <p
-                  className="flex justify-end mig-caption hover:text-mono50 
-                  cursor-pointer"
-                  onClick={() => {
-                    setMoreMode("notes");
-                    setModalMore(true);
-                  }}
-                >
-                  Lihat Semua
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">
+                  Role yang Didaftarkan
                 </p>
-              )}
-            </Spin>
-          </div>
-
-          {/* Card Aktivitas */}
-          <div className="shadow-lg rounded-md bg-white p-4">
-            <h4 className="mig-heading--4 mb-6">Aktivitas</h4>
-            <Spin spinning={loadingActivities}>
-              {dataActivities?.slice(0, 5).map((activity) => (
-                <div key={activity.id} className="mb-6">
-                  <p className="text-md mb-2">{activity.description}</p>
-                  <div className="flex flex-row justify-between flex-wrap items-center">
-                    <div className="flex flex-row text-wrap w-30">
-                      <img
-                        src="/default-users.jpeg"
-                        className="rounded-full w-5 h-5 mr-2"
-                      ></img>
-                      <p className="mig-caption--medium text-primary100 ">
-                        {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
-                      </p>
-                    </div>
-                    <p className="text-sm text-mono80 ">
-                      {/* {moment(activity.created_at).format('ll')},&nbsp;
-											{moment(activity.created_at).format('LT')} */}
-                      {moment(activity.created_at).calendar()}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              {dataActivities.length > 5 && (
-                <p
-                  className="flex justify-end mig-caption hover:text-mono50 
-                  cursor-pointer"
-                  onClick={() => {
-                    setMoreMode("activity");
-                    setModalMore(true);
-                  }}
-                >
-                  Lihat Semua
-                </p>
-              )}
-            </Spin>
-          </div>
-        </div>
-
-        {/* Right Column */}
-        <div className="flex flex-col gap-6 w-2/3">
-          {/* Card Stage & Status */}
-          <div
-            className="shadow-lg rounded-md bg-white py-2 px-4 
-						flex flex-row gap-4 items-center"
-          >
-            <div className="flex flex-col space-y-2 w-full py-4">
-              <div className="flex flex-row justify-between items-center">
-                <p>Stage</p>
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item key={"update_stage"}>
-                        <button
-                          className="flex flex-row space-x-2 items-center 
-													bg-transparent w-full border-0"
-                          onClick={() => {
-                            setModalUpdate(true);
-                            setModeUpdate("stage");
-                          }}
-                          disabled={!canUpdateStage}
-                        >
-                          <EditIconSvg size={20} color="#4D4D4D" />
-                          <p
-                            className={
-                              canUpdateStage
-                                ? `mig-caption--medium text-mono30`
-                                : `mig-caption--medium text-gray-300`
-                            }
-                          >
-                            Ubah Stage
-                          </p>
-                        </button>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                  placement="bottomRight"
-                >
-                  <Button
-                    icon={<DotsIconSvg size={16} color="#4D4D4D" />}
-                    ghost={true}
-                  />
-                </Dropdown>
+                <p className="text-md">{dataRecruitment.role?.name || "-"}</p>
               </div>
-              <div className="flex flex-row space-x-1 items-center">
-                <h4 className="mig-heading--4">
-                  {dataRecruitment.stage?.name}
-                </h4>
-                {checkStageIsAvailable(dataRecruitment.stage?.name) ===
-                  false && (
-                  <Popover
-                    content={
-                      <div className="flex flex-row space-x-4 w-80">
-                        <InfoCircleIconSvg color={"#BF4A40"} size={18} />
-                        <p>
-                          Stage {dataRecruitment.stage?.name} telah dihapus.
-                          Silahkan lakukan pengubahan Stage.
-                        </p>
-                      </div>
-                    }
-                  >
-                    <Button
-                      icon={<InfoCircleIconSvg size={16} color="#4D4D4D" />}
-                      className="border-0"
-                      size="small"
-                    />
-                  </Popover>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">Tipe Role</p>
+                <p className="text-md">
+                  {dataRecruitment.role?.type?.name || "-"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">Jalur Daftar</p>
+                <p className="text-md">
+                  {dataRecruitment.jalur_daftar?.name || "-"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">
+                  Tanggal Daftar
+                </p>
+                <p className="text-md">
+                  {moment(dataRecruitment.created_at).format("LL")},&nbsp;
+                  {moment(dataRecruitment.created_at).format("LT")}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">
+                  Daftar Lampiran
+                </p>
+                {dataRecruitment?.attachments?.length > 0 ? (
+                  <ul className="space-y-2">
+                    {dataRecruitment?.attachments?.map((attachment, idx) => (
+                      <li key={idx}>
+                        <p className="font-bold">{attachment.title}</p>
+                        {isURL(attachment.value) ? (
+                          <a href={attachment.value} target={"_blank"}>
+                            <p className="text-md">{attachment.value}</p>
+                          </a>
+                        ) : (
+                          <p className="text-md">{attachment.value}</p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  "-"
                 )}
               </div>
-            </div>
-
-            <div className="flex flex-col space-y-2 w-full py-4">
-              <div className="flex flex-row justify-between items-center">
-                <p>Status</p>
-                <Dropdown
-                  overlay={
-                    <Menu>
-                      <Menu.Item key={"update_status"}>
-                        <button
-                          className="flex flex-row space-x-2 items-center 
-													bg-transparent w-full"
-                          onClick={() => {
-                            setModalUpdate(true);
-                            setModeUpdate("status");
-                          }}
-                          disabled={!canUpdateStatus}
-                        >
-                          <EditIconSvg size={20} color="#4D4D4D" />
-                          <p
-                            className={
-                              canUpdateStatus
-                                ? `mig-caption--medium text-mono30`
-                                : `mig-caption--medium text-gray-300`
-                            }
-                          >
-                            Ubah Status
-                          </p>
-                        </button>
-                      </Menu.Item>
-                    </Menu>
-                  }
-                  placement="bottomRight"
-                >
-                  <Button
-                    icon={<DotsIconSvg size={16} color="#4D4D4D" />}
-                    ghost={true}
-                  />
-                </Dropdown>
-              </div>
-              <div className="flex flex-row space-x-2 items-center">
-                <div
-                  className="rounded-full w-4 h-4"
-                  style={{
-                    backgroundColor: `${dataRecruitment.status?.color}`,
-                  }}
-                />
-                <h4 className="mig-heading--4">
-                  {dataRecruitment.status?.name}
-                </h4>
-                {checkStatusIsAvailable(dataRecruitment.status?.name) ===
-                  false && (
-                  <Popover
-                    content={
-                      <div className="flex flex-row space-x-4 w-80">
-                        <InfoCircleIconSvg color={"#BF4A40"} size={18} />
-                        <p>
-                          Status {dataRecruitment.status?.name} telah dihapus.
-                          Silahkan lakukan pengubahan Status.
-                        </p>
-                      </div>
-                    }
-                  >
-                    <Button
-                      icon={<InfoCircleIconSvg size={16} color="#4D4D4D" />}
-                      className="border-0"
-                      size="small"
-                    />
-                  </Popover>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Card Profil Kandidat */}
-          <div className="shadow-lg rounded-md bg-white p-4 divide-y-2">
-            <div className="flex flex-row justify-between items-center mb-4">
-              <h4 className="mig-heading--4">Profil Kandidat</h4>
               <ButtonSys
-                type={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                    ? "primary"
-                    : "default"
-                }
-                onClick={() => setOpenDownloadModal(true)}
-                disabled={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                }
+                type={"primary"}
+                onClick={() => setEmailDrawerShown(true)}
+                disabled={!isAllowedToSendEmailRecruitment}
               >
-                <div className="flex flex-row space-x-2">
-                  <DownloadIconSvg size={16} color={"#35763B"} />
-                  <p>Unduh Profil</p>
+                <div className="flex flex-row space-x-3 items-center">
+                  <MailForwardIconSvg size={16} color="#FFFFFF" />
+                  <p>Kirim Email</p>
                 </div>
               </ButtonSys>
             </div>
-            <div className="flex flex-col pt-4 pb-8">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Informasi Dasar
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col space-y-2">
-                  <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p className="text-md">{dataResume.name}</p>
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <p className="mig-caption--medium text-mono80">
-                    Nomor Telepon
-                  </p>
-                  <p className="text-md">{dataResume.telp}</p>
-                </div>
-                <div className="flex flex-col space-y-2">
-                  <p className="mig-caption--medium text-mono80">Email</p>
-                  <p className="text-md">{dataResume.email}</p>
-                </div>
-                <div className="flex flex-col space-y-2 col-span-2">
-                  <p className="mig-caption--medium text-mono80">Alamat</p>
-                  <p className="text-md">
-                    {`${dataResume.city}, ${dataResume.province}`}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-9">
-                Pengalaman Kerja
-              </p>
-              <Timeline className="pl-6">
-                {dataResume.experiences?.map((experience) => (
-                  <Timeline.Item color="#35763B" key={experience.id}>
-                    <p className="text-sm text-mono30 font-bold mb-1">
-                      {experience.role}
-                    </p>
-                    <div className="flex flex-row">
-                      <p className="mig-caption text-mono50 mb-2">
-                        {experience.company},&nbsp;
-                      </p>
-                      <p className="mig-caption text-mono80">
-                        {moment(experience.start_date).format("MMMM YYYY")}{" "}
-                        -&nbsp;
-                        {moment(experience.end_date).format("MMMM YYYY")}
-                      </p>
-                    </div>
-                    <p className="mig-caption text-mono50">
-                      {parse(experience.description || "")}
-                    </p>
-                  </Timeline.Item>
-                ))}
-              </Timeline>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-9">
-                Riwayat Pendidikan
-              </p>
-              <Timeline className="pl-6">
-                {dataResume.educations?.map((edu) => (
-                  <Timeline.Item color="#35763B" key={edu.id}>
-                    <p className="text-sm text-mono30 font-bold mb-1">
-                      {edu.university}
-                    </p>
-                    <div className="flex flex-row">
-                      <p className="mig-caption text-mono50 mb-2">
-                        {edu.major},&nbsp;
-                      </p>
-                      <p className="mig-caption text-mono80">
-                        {moment(edu.graduation_year).format("YYYY")}
-                      </p>
-                    </div>
-                  </Timeline.Item>
-                ))}
-              </Timeline>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">Skill</p>
-              <div className="flex flex-wrap">
-                {dataResume.skills?.map((skill) => (
-                  <Tag
-                    key={skill.id}
-                    color="#35763B1A"
-                    className="text-primary100 mb-3"
+
+            {/* Card Catatan */}
+            <div className="shadow-lg rounded-md bg-white p-4">
+              <div className="flex flex-row justify-between items-center mb-6">
+                <h4 className="mig-heading--4">Catatan</h4>
+                {isAllowedToAddRecruitmentLogNotes && (
+                  <button
+                    className="bg-transparent"
+                    onClick={() => setModalNotes(true)}
                   >
-                    {skill.name}
-                  </Tag>
-                ))}
+                    <PlusIconSvg size={24} color="#35763B" />
+                  </button>
+                )}
               </div>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">Proyek</p>
-              <div className="flex flex-col space-y-4">
-                {dataResume.projects?.map((proj) => (
-                  <div key={proj.id}>
-                    <p className="text-sm text-mono30 font-bold mb-1">
-                      {proj.name}
-                    </p>
-                    <p className="mig-caption text-mono50 mb-2">
-                      {proj.description}
-                    </p>
-                    <p className="mig-caption text-mono80">
-                      {moment(proj.year).format("YYYY")}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Pelatihan
-              </p>
-              <div className="flex flex-col space-y-4">
-                {dataResume.trainings?.map((train) => (
-                  <div key={train.id}>
-                    <p className="text-sm text-mono30 font-bold mb-1">
-                      {train.name}
-                    </p>
-                    <p className="mig-caption text-mono50 mb-2">
-                      {train.organizer}, {moment(train.year).format("YYYY")}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Lisensi dan Sertifikasi
-              </p>
-              <div className="flex flex-col space-y-4">
-                {dataResume.certificates?.map((certif) => (
-                  <div key={certif.id}>
-                    <p className="text-sm text-mono30 font-bold mb-1">
-                      {certif.name}
-                    </p>
-                    <p className="mig-caption text-mono50 mb-2">
-                      {certif.organizer}, {moment(certif.year).format("YYYY")}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Penghargaan
-              </p>
-              <div className="flex flex-col space-y-4">
-                {dataResume.achievements?.map((achiev) => (
-                  <div key={achiev.id}>
-                    <p className="text-sm text-mono30 font-bold mb-1">
-                      {achiev.name}
-                    </p>
-                    <p className="mig-caption text-mono50 mb-2">
-                      {achiev.organizer}, {moment(achiev.year).format("YYYY")}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex flex-col pt-4 pb-4">
-              <p className="text-sm font-bold text-primary100 mb-4">
-                Hasil Technical Assessment
-              </p>
-              <ul>
-                {dataResume.assessment_results?.map((result) => (
-                  <li key={result.id}>
-                    <div className="flex flex-row justify-between mb-1">
-                      <p className="text-mono50 mr-2">{result.criteria}</p>
-                      <p className="text-primary100 font-bold">
-                        {result.value}
+              <Spin spinning={loadingActivities}>
+                {dataActivities?.slice(0, 5).map((activity) => (
+                  <div key={activity.id} className="mb-6">
+                    <p className="text-md mb-2">{activity.notes}</p>
+                    <div className="flex flex-row justify-between flex-wrap items-center">
+                      <div className="flex flex-row text-wrap w-30">
+                        <img
+                          src="/default-users.jpeg"
+                          className="rounded-full w-5 h-5 mr-2"
+                        ></img>
+                        <p className="mig-caption--medium text-primary100 ">
+                          {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
+                        </p>
+                      </div>
+                      <p className="text-sm text-mono80">
+                        {/* {moment(activity.created_at).format('ll')},&nbsp;
+											{moment(activity.created_at).format('LT')} */}
+                        {moment(activity.created_at).calendar()}
                       </p>
                     </div>
-                  </li>
+                  </div>
                 ))}
-              </ul>
+                {dataActivities.length > 5 && (
+                  <p
+                    className="flex justify-end mig-caption hover:text-mono50 
+                  cursor-pointer"
+                    onClick={() => {
+                      setMoreMode("notes");
+                      setModalMore(true);
+                    }}
+                  >
+                    Lihat Semua
+                  </p>
+                )}
+              </Spin>
+            </div>
+
+            {/* Card Aktivitas */}
+            <div className="shadow-lg rounded-md bg-white p-4">
+              <h4 className="mig-heading--4 mb-6">Aktivitas</h4>
+              <Spin spinning={loadingActivities}>
+                {dataActivities?.slice(0, 5).map((activity) => (
+                  <div key={activity.id} className="mb-6">
+                    <p className="text-md mb-2">{activity.description}</p>
+                    <div className="flex flex-row justify-between flex-wrap items-center">
+                      <div className="flex flex-row text-wrap w-30">
+                        <img
+                          src="/default-users.jpeg"
+                          className="rounded-full w-5 h-5 mr-2"
+                        ></img>
+                        <p className="mig-caption--medium text-primary100 ">
+                          {`${activity.causer?.name} - ${activity.causer?.roles[0].name}`}
+                        </p>
+                      </div>
+                      <p className="text-sm text-mono80 ">
+                        {/* {moment(activity.created_at).format('ll')},&nbsp;
+											{moment(activity.created_at).format('LT')} */}
+                        {moment(activity.created_at).calendar()}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                {dataActivities.length > 5 && (
+                  <p
+                    className="flex justify-end mig-caption hover:text-mono50 
+                  cursor-pointer"
+                    onClick={() => {
+                      setMoreMode("activity");
+                      setModalMore(true);
+                    }}
+                  >
+                    Lihat Semua
+                  </p>
+                )}
+              </Spin>
+            </div>
+          </div>
+
+          {/* Right Column */}
+          <div className="flex flex-col gap-6 md:w-2/3">
+            {/* Card Stage & Status */}
+            <div
+              className="shadow-lg rounded-md bg-white py-2 px-4 
+						  flex flex-row gap-4 items-center"
+            >
+              <div className="flex flex-col space-y-2 w-full py-4">
+                <div className="flex flex-row justify-between items-center">
+                  <p>Stage</p>
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        <Menu.Item key={"update_stage"}>
+                          <button
+                            className="flex flex-row space-x-2 items-center 
+													bg-transparent w-full border-0"
+                            onClick={() => {
+                              setModalUpdate(true);
+                              setModeUpdate("stage");
+                            }}
+                            disabled={!canUpdateStage}
+                          >
+                            <EditIconSvg size={20} color="#4D4D4D" />
+                            <p
+                              className={
+                                canUpdateStage
+                                  ? `mig-caption--medium text-mono30`
+                                  : `mig-caption--medium text-gray-300`
+                              }
+                            >
+                              Ubah Stage
+                            </p>
+                          </button>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                    placement="bottomRight"
+                  >
+                    <Button
+                      icon={<DotsIconSvg size={16} color="#4D4D4D" />}
+                      ghost={true}
+                    />
+                  </Dropdown>
+                </div>
+                <div className="flex flex-row space-x-1 items-center">
+                  <h4 className="mig-heading--4">
+                    {dataRecruitment.stage?.name}
+                  </h4>
+                  {checkStageIsAvailable(dataRecruitment.stage?.name) ===
+                    false && (
+                    <Popover
+                      content={
+                        <div className="flex flex-row space-x-4 w-80">
+                          <InfoCircleIconSvg color={"#BF4A40"} size={18} />
+                          <p>
+                            Stage {dataRecruitment.stage?.name} telah dihapus.
+                            Silahkan lakukan pengubahan Stage.
+                          </p>
+                        </div>
+                      }
+                    >
+                      <Button
+                        icon={<InfoCircleIconSvg size={16} color="#4D4D4D" />}
+                        className="border-0"
+                        size="small"
+                      />
+                    </Popover>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col space-y-2 w-full py-4">
+                <div className="flex flex-row justify-between items-center">
+                  <p>Status</p>
+                  <Dropdown
+                    overlay={
+                      <Menu>
+                        <Menu.Item key={"update_status"}>
+                          <button
+                            className="flex flex-row space-x-2 items-center 
+													bg-transparent w-full"
+                            onClick={() => {
+                              setModalUpdate(true);
+                              setModeUpdate("status");
+                            }}
+                            disabled={!canUpdateStatus}
+                          >
+                            <EditIconSvg size={20} color="#4D4D4D" />
+                            <p
+                              className={
+                                canUpdateStatus
+                                  ? `mig-caption--medium text-mono30`
+                                  : `mig-caption--medium text-gray-300`
+                              }
+                            >
+                              Ubah Status
+                            </p>
+                          </button>
+                        </Menu.Item>
+                      </Menu>
+                    }
+                    placement="bottomRight"
+                  >
+                    <Button
+                      icon={<DotsIconSvg size={16} color="#4D4D4D" />}
+                      ghost={true}
+                    />
+                  </Dropdown>
+                </div>
+                <div className="flex flex-row space-x-2 items-center">
+                  <div
+                    className="rounded-full w-4 h-4"
+                    style={{
+                      backgroundColor: `${dataRecruitment.status?.color}`,
+                    }}
+                  />
+                  <h4 className="mig-heading--4">
+                    {dataRecruitment.status?.name}
+                  </h4>
+                  {checkStatusIsAvailable(dataRecruitment.status?.name) ===
+                    false && (
+                    <Popover
+                      content={
+                        <div className="flex flex-row space-x-4 w-80">
+                          <InfoCircleIconSvg color={"#BF4A40"} size={18} />
+                          <p>
+                            Status {dataRecruitment.status?.name} telah dihapus.
+                            Silahkan lakukan pengubahan Status.
+                          </p>
+                        </div>
+                      }
+                    >
+                      <Button
+                        icon={<InfoCircleIconSvg size={16} color="#4D4D4D" />}
+                        className="border-0"
+                        size="small"
+                      />
+                    </Popover>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Card Profil Kandidat */}
+            <div className="shadow-lg rounded-md bg-white p-4 divide-y-2">
+              <div className="flex flex-row justify-between items-center mb-4">
+                <h4 className="mig-heading--4">Profil Kandidat</h4>
+                <div
+                  className="space-x-0 xl:space-x-2 flex flex-col xl:flex-row  
+                space-y-2 xl:space-y-0"
+                >
+                  {isOnClient && (
+                    <PDFDownloadLink
+                      document={<ResumePDFTemplate dataResume={dataResume} />}
+                      fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+                    >
+                      <ButtonSys
+                        type={
+                          !resumeId || !isAllowedToGetResume
+                            ? "primary"
+                            : "default"
+                        }
+                        disabled={!resumeId || !isAllowedToGetResume}
+                      >
+                        <div className="flex flex-row space-x-2 items-center">
+                          <DownloadIconSvg size={16} color={"#35763B"} />
+                          <p>Unduh Resume</p>
+                        </div>
+                      </ButtonSys>
+                    </PDFDownloadLink>
+                  )}
+                  <ButtonSys
+                    type={
+                      !isAllowedToUpdateResume || !dataRecruitment?.resume
+                        ? "primary"
+                        : "default"
+                    }
+                    disabled={
+                      !isAllowedToUpdateResume || !dataRecruitment?.resume
+                    }
+                    onClick={() => rt.push(`${recruitmentId}/${resumeId}`)}
+                  >
+                    <div className="flex flex-row space-x-3 items-center">
+                      <EditIconSvg size={16} color="#35763B" />
+                      <p>Ubah Resume</p>
+                    </div>
+                  </ButtonSys>
+                  <ButtonSys
+                    type={
+                      !isAllowedToUpdateCandidateAccess ||
+                      !dataRecruitment?.user?.is_enabled
+                        ? "primary"
+                        : "default"
+                    }
+                    color={"danger"}
+                    disabled={
+                      !isAllowedToUpdateCandidateAccess ||
+                      !dataRecruitment?.user?.is_enabled
+                    }
+                    onClick={() => setOpenAccessModal(true)}
+                  >
+                    <div className="flex flex-row space-x-3 items-center">
+                      <AlertIconSvg size={20} color="#BF4A40" />
+                      <p>Hentikan Akses</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-8">
+                <p className="text-sm font-bold text-primary100 mb-4">
+                  Informasi Dasar
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="flex flex-col space-y-2">
+                    <p className="mig-caption--medium text-mono80">Nama</p>
+                    <p className="text-md">{dataResume.name}</p>
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <p className="mig-caption--medium text-mono80">
+                      Nomor Telepon
+                    </p>
+                    <p className="text-md">{dataResume.telp}</p>
+                  </div>
+                  <div className="flex flex-col space-y-2">
+                    <p className="mig-caption--medium text-mono80">Email</p>
+                    <p className="text-md">{dataResume.email}</p>
+                  </div>
+                  <div className="flex flex-col space-y-2 col-span-2">
+                    <p className="mig-caption--medium text-mono80">Alamat</p>
+                    <p className="text-md">
+                      {`${dataResume.city}, ${dataResume.province}`}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-9">
+                  Pengalaman Kerja
+                </p>
+                <Timeline className="pl-6">
+                  {dataResume.experiences?.map((experience) => (
+                    <Timeline.Item color="#35763B" key={experience.id}>
+                      <p className="text-sm text-mono30 font-bold mb-1">
+                        {experience.role}
+                      </p>
+                      <div className="flex flex-row">
+                        <p className="mig-caption text-mono50 mb-2">
+                          {experience.company},&nbsp;
+                        </p>
+                        <p className="mig-caption text-mono80">
+                          {moment(experience.start_date).format("MMMM YYYY")}{" "}
+                          -&nbsp;
+                          {moment(experience.end_date).format("MMMM YYYY")}
+                        </p>
+                      </div>
+                      <p className="mig-caption text-mono50">
+                        {parse(experience.description || "")}
+                      </p>
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-9">
+                  Riwayat Pendidikan
+                </p>
+                <Timeline className="pl-6">
+                  {dataResume.educations?.map((edu) => (
+                    <Timeline.Item color="#35763B" key={edu.id}>
+                      <p className="text-sm text-mono30 font-bold mb-1">
+                        {edu.university}
+                      </p>
+                      <div className="flex flex-row">
+                        <p className="mig-caption text-mono50 mb-2">
+                          {edu.major},&nbsp;
+                        </p>
+                        <p className="mig-caption text-mono80">
+                          {moment(edu.graduation_year).format("YYYY")}
+                        </p>
+                      </div>
+                    </Timeline.Item>
+                  ))}
+                </Timeline>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-4">Skill</p>
+                <div className="flex flex-wrap">
+                  {dataResume.skills?.map((skill) => (
+                    <Tag
+                      key={skill.id}
+                      color="#35763B1A"
+                      className="text-primary100 mb-3"
+                    >
+                      {skill.name}
+                    </Tag>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-4">Proyek</p>
+                <div className="flex flex-col space-y-4">
+                  {dataResume.projects?.map((proj) => (
+                    <div key={proj.id}>
+                      <p className="text-sm text-mono30 font-bold mb-1">
+                        {proj.name}
+                      </p>
+                      <p className="mig-caption text-mono50 mb-2">
+                        {proj.description}
+                      </p>
+                      <p className="mig-caption text-mono80">
+                        {moment(proj.year).format("YYYY")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-4">
+                  Pelatihan
+                </p>
+                <div className="flex flex-col space-y-4">
+                  {dataResume.trainings?.map((train) => (
+                    <div key={train.id}>
+                      <p className="text-sm text-mono30 font-bold mb-1">
+                        {train.name}
+                      </p>
+                      <p className="mig-caption text-mono50 mb-2">
+                        {train.organizer}, {moment(train.year).format("YYYY")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-4">
+                  Lisensi dan Sertifikasi
+                </p>
+                <div className="flex flex-col space-y-4">
+                  {dataResume.certificates?.map((certif) => (
+                    <div key={certif.id}>
+                      <p className="text-sm text-mono30 font-bold mb-1">
+                        {certif.name}
+                      </p>
+                      <p className="mig-caption text-mono50 mb-2">
+                        {certif.organizer}, {moment(certif.year).format("YYYY")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-4">
+                  Penghargaan
+                </p>
+                <div className="flex flex-col space-y-4">
+                  {dataResume.achievements?.map((achiev) => (
+                    <div key={achiev.id}>
+                      <p className="text-sm text-mono30 font-bold mb-1">
+                        {achiev.name}
+                      </p>
+                      <p className="mig-caption text-mono50 mb-2">
+                        {achiev.organizer}, {moment(achiev.year).format("YYYY")}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col pt-4 pb-4">
+                <p className="text-sm font-bold text-primary100 mb-4">
+                  Hasil Technical Assessment
+                </p>
+                <ul>
+                  {dataResume.assessment_results?.map((result) => (
+                    <li key={result.id}>
+                      <div className="flex flex-row justify-between mb-1">
+                        <p className="text-mono50 mr-2">{result.criteria}</p>
+                        <p className="text-primary100 font-bold">
+                          {result.value}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -1181,9 +1276,7 @@ const RecruitmentDetailIndex = ({
           onvisible={setDrawerUpdate}
           setRefresh={setRefresh}
           trigger={triggerUpdate}
-          isAllowedToGetRecruitment={isAllowedToGetRecruitment}
           isAllowedToUpdateRecruitment={isAllowedToUpdateRecruitment}
-          isAllowedToDeleteRecruitment={isAllowedToDeleteRecruitment}
           setModalDelete={setModalDelete}
         />
       </AccessControl>
@@ -1255,19 +1348,31 @@ const RecruitmentDetailIndex = ({
                   ))}
                 </Select>
               </div>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStage.notes ? dataUpdateStage.notes : null}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStage.notes ? dataUpdateStage.notes : null}
+                  onChange={(event) => {
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           ) : (
@@ -1301,19 +1406,30 @@ const RecruitmentDetailIndex = ({
                   ))}
                 </Select>
               </div>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStatus.notes ? dataUpdateStatus.notes : null}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStatus.notes ? dataUpdateStatus.notes : null}
+                  onChange={(event) => {
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           )}
@@ -1417,48 +1533,38 @@ const RecruitmentDetailIndex = ({
         </ModalCore>
       </AccessControl>
 
-      {/* Modal Unduh Profil */}
-      <AccessControl hasPermission={RESUME_GET}>
+      {/* Modal Hentikan Akses */}
+      <AccessControl hasPermission={GUEST_STATUS}>
         <ModalCore
-          title={"Apakah Anda yakin ingin mengunduh profil?"}
-          visible={openDownloadModal}
-          onCancel={() => setOpenDownloadModal(false)}
+          title={"Apakah Anda yakin ingin menghentikan akses?"}
+          visible={openAccessModal}
+          onCancel={() => setOpenAccessModal(false)}
           footer={
-            <PDFDownloadLink
-              document={<ResumePDFTemplate dataResume={dataResume} />}
-              fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+            <ButtonSys
+              onClick={handleUpdateCandidateAccess}
+              type={
+                !resumeId ||
+                !isAllowedToGetResume ||
+                dataRecruitment.user?.is_enabled === 0
+                  ? "primary"
+                  : "default"
+              }
               disabled={
                 !resumeId ||
                 !isAllowedToGetResume ||
                 dataRecruitment.user?.is_enabled === 0
               }
             >
-              <ButtonSys
-                onClick={handleUpdateCandidateAccess}
-                type={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                    ? "primary"
-                    : "default"
-                }
-                disabled={
-                  !resumeId ||
-                  !isAllowedToGetResume ||
-                  dataRecruitment.user?.is_enabled === 0
-                }
-              >
-                Ya, Saya Yakin
-              </ButtonSys>
-            </PDFDownloadLink>
+              Ya, Saya Yakin
+            </ButtonSys>
           }
         >
           <Spin spinning={loadingDataResume}>
             {isOnClient && (
               <div className="flex flex-col space-y-5">
                 <p className="text-center">
-                  Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, profil
-                  akan terunduh dan akses kandidat dengan nama&nbsp;
+                  Dengan mengklik tombol <strong>Ya, Saya Yakin</strong>, akses
+                  kandidat dengan nama&nbsp;
                   <strong>{dataResume.name}</strong> ke resume builder akan
                   terhapus.
                 </p>

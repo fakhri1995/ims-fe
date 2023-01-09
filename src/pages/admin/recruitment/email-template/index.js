@@ -497,7 +497,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
 
       {/* Drawer Template Detail */}
-      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATES_GET}>
+      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATE_GET}>
         <DrawerCore
           title={dataTemplate.name}
           visible={isReadDrawerShown}
@@ -554,7 +554,12 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_EMAIL_TEMPLATE_UPDATE}>
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_EMAIL_TEMPLATE_UPDATE,
+          RECRUITMENT_EMAIL_TEMPLATE_GET,
+        ]}
+      >
         <DrawerEmailTemplateUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}

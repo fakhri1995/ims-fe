@@ -5,20 +5,32 @@ import Link from "next/link";
 import Linkk from "next/link";
 import React from "react";
 
-function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
+function RightContactUs({
+  feedback,
+  heightt,
+  form,
+  handleSubmit,
+  Option,
+  dataContactUs,
+  setDataContactUs,
+}) {
   return (
-    <div className={"w-full md:w-1/2"}>
+    <div className={"w-full md:w-3/5"}>
       <div className={"w-full"}>
-        <p className={"text-3xl font-bold pb-8 pt-10"}>
+        <p
+          className={
+            "text-xl pt-6 md:pt-0 md:text-3xl font-gilroysemibold text-blackmig"
+          }
+        >
           Send us your questions
         </p>
-        <p className={"text-lg pb-4"}>
+        <p className={"text-xs md:text-sm mt-1 md:mt-3 text-blackmig mb-5"}>
           Fill in your contact information, and our sales team will contact you
           shortly.
         </p>
         <div
           hidden={feedback}
-          className={"bg-white"}
+          className={"bg-white hidden md:block"}
           style={{ height: `${heightt}` }}
         >
           <div className={"h-1/3"}></div>
@@ -41,7 +53,38 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
               <p className={"text-3xl gilroy-bold"}>
                 Thank you for your interest in MIG
               </p>
-              <p className={"text-xl gilroy-medium"}>
+              <p className={"text-xl font-gilroyregular"}>
+                Someone from our team will be contact you shortly.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          hidden={feedback}
+          className={"bg-white md:hidden"}
+          style={{ height: `${heightt}` }}
+        >
+          <div className={"h-1/3"}></div>
+          <div
+            className={
+              "px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 text-center"
+            }
+          >
+            <div className={"mx-auto my-auto"}>
+              <p
+                className={"text-3xl md:text-4xl gilroy-bold py-0"}
+                style={{ color: "#188E4D" }}
+              >
+                <CheckCircleTwoTone
+                  className={"relative -top-2"}
+                  twoToneColor="#188E4D"
+                />
+                &nbsp;Submited !
+              </p>
+              <p className={"text-3xl gilroy-bold"}>
+                Thank you for your interest in MIG
+              </p>
+              <p className={"text-xl font-gilroyregular"}>
                 Someone from our team will be contact you shortly.
               </p>
             </div>
@@ -54,94 +97,98 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
           onFinish={handleSubmit}
           form={form}
         >
-          <div className={"flex"}>
-            <div className={"w-1/2 mr-2"}>
-              <Form.Item
+          <div className={""}>
+            <Form.Item
+              name={"Company Name"}
+              className={"font-gilroyregular text-xl"}
+              label="Company Name"
+              rules={[{ required: true }]}
+            >
+              <Input
+                style={{ border: "1px solid #B8B8B8" }}
                 name={"Company Name"}
-                className={"gilroy-medium text-xl"}
-                label="Company Name"
-                rules={[{ required: true }]}
-              >
-                <Input
-                  name={"Company Name"}
-                  onChange={(e) => {
-                    setDataContactUs({
-                      ...dataContactUs,
-                      company_name: e.target.value,
-                    });
-                  }}
-                  placeholder=""
-                />
-              </Form.Item>
-              <Form.Item
+                onChange={(e) => {
+                  setDataContactUs({
+                    ...dataContactUs,
+                    company_name: e.target.value,
+                  });
+                }}
+                placeholder=""
+              />
+            </Form.Item>
+            <Form.Item
+              name={"Email"}
+              className={"font-gilroyregular text-xl"}
+              label="Email"
+              rules={[{ required: true, type: "email" }]}
+            >
+              <Input
+                style={{ border: "1px solid #B8B8B8" }}
                 name={"Email"}
-                className={"gilroy-medium text-xl"}
-                label="Email"
-                rules={[{ required: true, type: "email" }]}
-              >
-                <Input
-                  name={"Email"}
-                  onChange={(e) => {
-                    setDataContactUs({
-                      ...dataContactUs,
-                      company_email: e.target.value,
-                    });
-                  }}
-                  placeholder=""
-                />
-              </Form.Item>
-            </div>
-            <div className={"w-1/2 ml-2"}>
-              <Form.Item
-                name={"Contact Name"}
-                className={"gilroy-medium text-xl"}
-                label="Contact Name"
-                rules={[{ required: true }]}
-              >
-                <Input
-                  name={"Contact Name"}
-                  onChange={(e) => {
-                    setDataContactUs({
-                      ...dataContactUs,
-                      name: e.target.value,
-                    });
-                  }}
-                  placeholder=""
-                />
-              </Form.Item>
-              <Form.Item
-                name={"Phone Number"}
-                className={"gilroy-medium text-xl"}
-                label="Phone Number"
-                rules={[
-                  {
-                    required: true,
-                    pattern: new RegExp("^[0-9]*$"),
-                    message: "Please input valid phone number",
-                  },
-                ]}
-              >
-                <Input
-                  addonBefore="+62"
-                  name={"Phone Number"}
-                  onChange={(e) => {
-                    setDataContactUs({
-                      ...dataContactUs,
-                      phone_number: parseInt(e.target.value),
-                    });
-                  }}
-                  placeholder=""
-                />
-              </Form.Item>
-            </div>
+                onChange={(e) => {
+                  setDataContactUs({
+                    ...dataContactUs,
+                    company_email: e.target.value,
+                  });
+                }}
+                placeholder=""
+              />
+            </Form.Item>
           </div>
+          <div className={""}>
+            <Form.Item
+              name={"Contact Name"}
+              className={"font-gilroyregular text-xl"}
+              label="Contact Name"
+              rules={[{ required: true }]}
+            >
+              <Input
+                style={{ border: "1px solid #B8B8B8" }}
+                name={"Contact Name"}
+                onChange={(e) => {
+                  setDataContactUs({
+                    ...dataContactUs,
+                    name: e.target.value,
+                  });
+                }}
+                placeholder=""
+              />
+            </Form.Item>
+            <Form.Item
+              name={"Phone Number"}
+              className={"font-gilroyregular text-xl"}
+              label="Phone Number"
+              rules={[
+                {
+                  required: true,
+                  pattern: new RegExp("^[0-9]*$"),
+                  message: "Please input valid phone number",
+                },
+              ]}
+            >
+              <Input
+                // style={{ border: "1px solid #B8B8B8" }}
+                addonBefore="+62"
+                name={"Phone Number"}
+                onChange={(e) => {
+                  setDataContactUs({
+                    ...dataContactUs,
+                    phone_number: parseInt(e.target.value),
+                  });
+                }}
+                placeholder=""
+              />
+            </Form.Item>
+          </div>
+
           <Form.Item
             name="Interest"
-            className={"gilroy-medium text-xl"}
+            className={"font-gilroyregular text-xl"}
             label="Interest"
             rules={[{ required: true }]}
           >
             <Select
+              // style={{ border: "1px solid #B8B8B8" }}
               dropdownStyle={{ backgroundColor: "green" }}
               name="Interest"
               onChange={(value) => {
@@ -160,11 +207,12 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
           </Form.Item>
           <Form.Item
             name="Message"
-            className={"gilroy-medium text-xl"}
+            className={"font-gilroyregular text-xl"}
             label="Message"
             rules={[{ required: true }]}
           >
             <Input.TextArea
+              style={{ border: "1px solid #B8B8B8" }}
               name="Message"
               onChange={(e) => {
                 setDataContactUs({
@@ -186,7 +234,10 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
               },
             ]}
           >
-            <Checkbox name="checkbox">
+            <Checkbox
+              name="checkbox"
+              className="text-xs md:text-base text-blackmig font-gilroyregular"
+            >
               By proceeding, I agree that MIG's representative may contact me by
               email, phone, or SMS (including by automatic telephone dialing
               system) at the email address or number I provide, including for
@@ -194,18 +245,18 @@ function RightContactUs({ feedback, heightt, form, handleSubmit, Option }) {
             </Checkbox>
           </Form.Item>
           <Form.Item>
-            <div className={"w-full flex justify-start pb-8"}>
+            <div className={"w-full flex justify-start"}>
               <button
                 type={"submit"}
                 className={
-                  "text-sm text-center text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                  "text-center rounded w-[113px] h-[40px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1 text-base"}>Submit</p>
+                  <p className={"text-base font-gilroysemibold"}>Submit</p>
                   <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
+                    className={"self-center"}
+                    style={{ width: "8px", height: "15px" }}
                     src="/image/landingpage/arrow-forward.png"
                   />
                 </div>

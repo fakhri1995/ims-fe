@@ -55,10 +55,10 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const StatuisAllowedToGetStatusesList = hasPermission(
+  const isAllowedToGetStatusesList = hasPermission(
     RECRUITMENT_STATUSES_LIST_GET
   );
-  const StatuisAllowedToGetStatuses = hasPermission(RECRUITMENT_STATUSES_GET);
+  const isAllowedToGetStatuses = hasPermission(RECRUITMENT_STATUSES_GET);
   const isAllowedToGetStatus = hasPermission(RECRUITMENT_STATUS_GET);
   const isAllowedToAddStatus = hasPermission(RECRUITMENT_STATUS_ADD);
   const isAllowedToUpdateStatus = hasPermission(RECRUITMENT_STATUS_UPDATE);
@@ -142,7 +142,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect
   // 3.1. Get Status List
   useEffect(() => {
-    if (!StatuisAllowedToGetStatusesList) {
+    if (!isAllowedToGetStatusesList) {
       permissionWarningNotification(
         "Mendapatkan",
         "Data Recruitment Status List"
@@ -178,11 +178,11 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingStatusList(false);
       });
-  }, [StatuisAllowedToGetStatusesList, refresh]);
+  }, [isAllowedToGetStatusesList, refresh]);
 
   // 3.2. Get Status
   useEffect(() => {
-    if (!StatuisAllowedToGetStatuses) {
+    if (!isAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Dafta");
       setLoadingStatus(false);
       return;
@@ -218,7 +218,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingStatus(false);
       });
-  }, [StatuisAllowedToGetStatuses, refresh]);
+  }, [isAllowedToGetStatuses, refresh]);
 
   // 4. Event
   const onFilterStatus = () => {
@@ -350,7 +350,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: StatuisAllowedToGetStatuses
+      sorter: isAllowedToGetStatuses
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
@@ -385,7 +385,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.recruitments_count}</>,
         };
       },
-      sorter: StatuisAllowedToGetStatuses
+      sorter: isAllowedToGetStatuses
         ? (a, b) => a.recruitments_count > b.recruitments_count
         : false,
     },
@@ -477,14 +477,14 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!StatuisAllowedToGetStatuses}
+                  disabled={!isAllowedToGetStatuses}
                 />
               </div>
 
               <ButtonSys
                 type={`primary`}
                 onClick={onFilterStatus}
-                disabled={!StatuisAllowedToGetStatuses}
+                disabled={!isAllowedToGetStatuses}
               >
                 <div className="flex flex-row space-x-2.5 w-full items-center">
                   <SearchIconSvg size={15} color={`#ffffff`} />
@@ -527,7 +527,9 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_STATUS_UPDATE}>
+      <AccessControl
+        hasPermission={[RECRUITMENT_STATUS_UPDATE, RECRUITMENT_STATUS_GET]}
+      >
         <DrawerStatusUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
@@ -573,35 +575,25 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="flex flex-col">
             <div className="flex flex-row justify-between mb-5">
               <div>
-                <p className="text-gray-400 mb-2">Nama</p>
-                <div className="flex flex-row items-center space-x-3">
-                  <p>{dataStatus.name}</p>
-                </div>
-              </div>
-
-              <div>
                 <p className="text-gray-400 mb-2">Warna</p>
                 <div
                   className="w-6 h-6 rounded-sm"
                   style={{ backgroundColor: `${dataStatus.color}` }}
                 ></div>
               </div>
-            </div>
-          </div>
-          <div className="flex flex-col">
-            <div className="flex flex-row justify-between mb-5">
               <div>
                 <p className="text-gray-400 mb-2">Jumlah Kandidat</p>
                 <div className="flex flex-row items-center space-x-3">
                   <p>{dataStatus.recruitments_count}</p>
                 </div>
               </div>
-              <div>
-                <p className="text-gray-400 mb-2">Deskripsi</p>
-                <div className="flex flex-row items-center space-x-3">
-                  <p>{dataStatus.description}</p>
-                </div>
-              </div>
+            </div>
+          </div>
+
+          <div>
+            <p className="text-gray-400 mb-2">Deskripsi</p>
+            <div className="flex flex-row items-center space-x-3">
+              <p>{dataStatus.description}</p>
             </div>
           </div>
         </DrawerCore>
@@ -616,12 +608,12 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           onCancel={() => {
             setModalDelete(false);
           }}
-          itemName={"Status"}
+          itemName={"status"}
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
           Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
-          berada pada Status
+          berada pada status
           {"\n"}
           <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
           melanjutkan penghapusan?

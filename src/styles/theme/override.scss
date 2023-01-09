@@ -13,7 +13,18 @@ ul {
   list-style-type: disc;
   margin-left: 24px;
 }
-
+@font-face {
+  font-family: "Gilroy-semibold";
+  src: url("../../../public/fonts/GIlroy-semibold.ttf");
+}
+@font-face {
+  font-family: "Gilroy-bold";
+  src: url("../../../public/fonts/Gilroy-Bold.ttf");
+}
+@font-face {
+  font-family: "Gilroy-regular";
+  src: url("../../../public/fonts/Gilroy-Regular.ttf");
+}
 ol {
   list-style-type: decimal;
   margin-left: 20px;
@@ -75,6 +86,17 @@ ol {
 }
 .ant-radio-inner::after {
   background-color: #35763b;
+}
+
+/* BUTTON */
+/* default */
+.ant-btn-default:not(.ant-btn:disabled, .ant-btn-background-ghost) {
+  color: #35763b;
+  border-color: #35763b;
+}
+
+.ant-btn-default:hover {
+  opacity: 0.8;
 }
 
 /* MENU */
@@ -168,21 +190,21 @@ ol {
 }
 
 /* SELECT */
-.ant-select:not(.ant-select-disabled):hover .ant-select-selector {
-  border-color: #35763b;
-  border-radius: 5px;
-}
-.ant-select:not(.ant-select-customize-input) .ant-select-selector {
-  border-color: #35763b;
-  border-radius: 5px;
-}
-.ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
-  .ant-select-selector {
-  border-color: #65976a;
-  outline: 0;
-  -webkit-box-shadow: 0 0 0 1px #35763b;
-  box-shadow: 0 0 0 1px #35763b;
-}
+// .ant-select:not(.ant-select-disabled):hover .ant-select-selector {
+//   border-color: #B8B8B8;
+//   border-radius: 5px;
+// }
+// .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+//   border-color: #B8B8B8;
+//   border-radius: 5px;
+// }
+// .ant-select-focused:not(.ant-select-disabled).ant-select:not(.ant-select-customize-input)
+//   .ant-select-selector {
+//   border-color: #65976a;
+//   outline: 0;
+//   -webkit-box-shadow: 0 0 0 1px #35763b;
+//   box-shadow: 0 0 0 1px #35763b;
+// }
 
 /* TREE SELECT */
 .dontShow .ant-select-selection-item {
@@ -289,14 +311,6 @@ ol {
 .tableTask .ant-btn-link {
   color: #35763b;
 }
-.ant-dropdown-menu-item-selected,
-.ant-dropdown-menu-submenu-title-selected {
-  color: #35763b;
-  background-color: #d8e8da;
-}
-.ant-table-filter-trigger.active {
-  color: #35763b;
-}
 
 .slick-dots li button:before {
   color: green !important;
@@ -311,19 +325,19 @@ ol {
 }
 
 /* TREESELECT */
-.ant-select-tree
-  .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
-  /** Dropdown tree item yang ter-select */
-  background-color: #c4d8c7;
-}
-.ant-select-tree
-  .ant-select-tree-treenode:not(.ant-select-tree
-    .ant-select-tree-treenode-disabled).filter-node
-  .ant-select-tree-title {
-  /** Dropdown tree item yang ter-highlight */
-  color: #35763b;
-  font-weight: 600;
-}
+// .ant-select-tree
+//   .ant-select-tree-node-content-wrapper.ant-select-tree-node-selected {
+//   /** Dropdown tree item yang ter-select */
+//   background-color: #c4d8c7;
+// }
+// .ant-select-tree
+//   .ant-select-tree-treenode:not(.ant-select-tree
+//     .ant-select-tree-treenode-disabled).filter-node
+//   .ant-select-tree-title {
+//   /** Dropdown tree item yang ter-highlight */
+//   color: #35763b;
+//   font-weight: 600;
+// }
 
 /* TABS */
 .ant-tabs-tab {
@@ -374,14 +388,73 @@ ol {
     }
   }
 }
-.slick-prev:before {
-  content: "<";
-  color: red;
-  font-size: 30px;
+.ant-input {
+  border-color: #b8b8b8;
+  outline: 0;
+}
+.ant-input lg {
+  border-color: #b8b8b8;
+  outline: 0;
+}
+.ant-input-affix-wrapper {
+  border-color: #b8b8b8;
+  outline: 0;
+}
+.ant-input .ant-input lg {
+  border-color: #b8b8b8;
+  outline: 0;
+}
+.ant-input:focus {
+  border-color: #b8b8b8;
+  outline: 0;
+  -webkit-box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
+  box-shadow: 0 0 0 2px rgba(87, 168, 233, 0.2);
+}
+// .slick-dots li button:before {
+//   background-color: "#D9D9D9";
+//   color:#D9D9D9;
+//   overflow: hidden;
+// }
+// #D9D9D9
+.slick-dots li.slick-active button:before {
+  color: #b8b8b8 !important;
+}
+.slick-dots li button:before {
+  color: #d9d9d9 !important;
 }
 
-.slick-next:before {
-  content: "->";
-  color: red;
-  font-size: 30px;
+.ant-upload.ant-upload-drag {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background: #e5e7e6;
+  border: 1px dashed #0059a0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.ant-checkbox .ant-checkbox-inner {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-color: "#262626";
+  border-radius: 4px;
+}
+
+.ant-checkbox-disabled .ant-checkbox-inner {
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border-color: "#262626";
+  border-radius: 4px;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  width: 20px;
+  height: 20px;
+  background-color: red;
+  border-color: "#262626";
+  border-radius: 4px;
 }

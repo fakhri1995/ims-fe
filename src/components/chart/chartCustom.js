@@ -176,4 +176,101 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
   );
 };
 
-export { ChartDoughnut, ChartHorizontalBar };
+const ChartVerticalBar = ({ dataChart, objName, value, colorBarList }) => {
+  return (
+    <div className="flex flex-col shadow-md rounded-md bg-white p-5 my-6">
+      <div className="flex items-center justify-between mb-4">
+        <H1>Penggunaan Terbanyak</H1>
+      </div>
+      <div className=" w-full flex justify-center">
+        <Bar
+          data={{
+            labels: dataChart.map((doc) => doc[objName].split(" ")),
+            datasets: [
+              {
+                data: dataChart.map((doc) => doc[value]),
+                backgroundColor: dataChart.map(
+                  (doc, idx) =>
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                ),
+                borderColor: dataChart.map(
+                  (doc, idx) =>
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                ),
+                barPercentage: 1.0,
+                barThickness: 32,
+                maxBarThickness: 32,
+                minBarLength: 2,
+                borderRadius: 5,
+              },
+            ],
+          }}
+          options={{
+            title: {
+              display: false,
+            },
+            legend: {
+              display: false,
+            },
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                grid: {
+                  display: false,
+                  drawBorder: false,
+                },
+                ticks: {
+                  font: {
+                    family: "Montserrat, sans-serif",
+                    size: 10,
+                  },
+                },
+              },
+              y: {
+                grid: {
+                  display: false,
+                },
+                ticks: {
+                  display: false,
+                },
+                display: false,
+              },
+            },
+            plugins: {
+              tooltip: {
+                callbacks: {
+                  title: (context) => {
+                    return context[0].label.replaceAll(",", " ");
+                  },
+                },
+              },
+            },
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col w-full">
+        {dataChart.map((doc, idx) => (
+          <div key={idx} className="flex justify-between items-center mb-1">
+            <div className="flex">
+              <div
+                className="w-1 mr-2"
+                style={{
+                  backgroundColor: `${
+                    colorBarList[idx + (1 % colorBarList.length) - 1]
+                  }`,
+                }}
+              ></div>
+              <Text>{doc[objName]}</Text>
+            </div>
+            <div className="flex">
+              <H2>{doc[value]}</H2>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export { ChartDoughnut, ChartHorizontalBar, ChartVerticalBar };

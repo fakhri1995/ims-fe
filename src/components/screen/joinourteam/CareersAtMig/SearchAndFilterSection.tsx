@@ -69,13 +69,16 @@ export const SearchAndFilter: FC = () => {
   return (
     <Form
       form={form}
-      className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6"
+      className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 md:px-[122px]"
       onFinish={onFormSubmitted}
       onValuesChange={onFormValueChanged}
     >
       {/* Search */}
       <Form.Item noStyle name="keyword">
-        <Input placeholder="Search jobs..." />
+        <Input
+          style={{ height: "37px", border: "1px solid #B8B8B8" }}
+          placeholder="Search jobs..."
+        />
       </Form.Item>
 
       {/* Filter: Employment type */}
@@ -95,7 +98,20 @@ export const SearchAndFilter: FC = () => {
       </div>
 
       {/* Button search */}
-      <Button className={styles.ctaButton} onClick={onSearchButtonClicked}>
+      <Button
+        className={
+          "bg-primarygreen hidden md:block rounded text-white text-base w-[85px] h-[40px]"
+        }
+        onClick={onSearchButtonClicked}
+      >
+        Search
+      </Button>
+      <Button
+        className={
+          "bg-primarygreen md:hidden rounded text-white text-base w-full h-[40px]"
+        }
+        onClick={onSearchButtonClicked}
+      >
         Search
       </Button>
     </Form>

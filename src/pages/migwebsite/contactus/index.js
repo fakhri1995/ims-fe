@@ -8,8 +8,10 @@ import LayoutFormContactUs from "../../../components/migwebsite/layout-form-cont
 import Layout from "../../../components/migwebsite/layout.js";
 import LeftContactUs from "../../../components/migwebsite/left-contact-us.js";
 import RightContactUs from "../../../components/migwebsite/right-contact-us.js";
+import useAnalyticsEventTracker from "../../../components/migwebsite/useAnalyticsEventTracker.js";
 
 function ContactUs({}) {
+  const gaEventTracker = useAnalyticsEventTracker("Contact us");
   const [form] = Form.useForm();
   const { Option } = Select;
   const handleSubmit = () => {
@@ -58,15 +60,17 @@ function ContactUs({}) {
       </Head>
       <section
         className={
-          "hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "hidden md:block px-4 py-16 sm:py-8 sm:px-[61px] md:py-16 md:px-[112px]"
         }
       >
-        <div className={"container mx-auto  md:flex"}>
-          <LeftContactUs />
+        <div className={"container md:flex "}>
+          <LeftContactUs analytics={gaEventTracker} />
           <RightContactUs
             feedback={feedback}
             heightt={heightt}
             form={form}
+            dataContactUs={dataContactUs}
+            setDataContactUs={setDataContactUs}
             handleSubmit={handleSubmit}
             Option={Option}
           />
@@ -82,13 +86,58 @@ function ContactUs({}) {
             feedback={feedback}
             heightt={heightt}
             form={form}
+            dataContactUs={dataContactUs}
+            setDataContactUs={setDataContactUs}
             handleSubmit={handleSubmit}
             Option={Option}
           />
           <LeftContactUs />
         </div>
       </section>
-      <LayoutFormContactUs />
+      <section
+        className={
+          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
+        }
+      >
+        <div className={"container mx-auto"}>
+          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+            <p className={"text-xl font-gilroysemibold"}>
+              Fulfill your IT needs easily!
+            </p>
+            <p className={"py-5 text-sm font-gilroyregular"}>
+              Need help in providing your needs? Whether they related to
+              hardware, software, or even talent hiring? Contact us and hear
+              what service can we offer to you and your company!
+            </p>
+            <Link href="/hardware">
+              <button
+                className={
+                  "text-base text-center text-white border-2 bg-primarygreen rounded border-primarygreen px-4 py-2 md:px-4 mt-4"
+                }
+              >
+                <div className={"flex flex-row justify-between"}>
+                  <p className={"px-1"}>Contact Us</p>
+                  <img
+                    className={"py-1 px-1"}
+                    style={{ width: "15px" }}
+                    src="/image/landingpage/arrow-forward.png"
+                  />
+                </div>
+              </button>
+            </Link>
+          </div>
+        </div>
+        <div className={"flex justify-between self-end"}>
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
     </Layout>
   );
 }

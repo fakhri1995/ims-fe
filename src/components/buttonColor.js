@@ -61,7 +61,7 @@ const ButtonSysColor = ({
             form={form}
             onClick={onClick}
             type={buttonType}
-            className={defaultButtonClassName}
+            className={`${defaultButtonClassName} bg-transparent hover:bg-transparent`}
           >
             {children}
           </Button>

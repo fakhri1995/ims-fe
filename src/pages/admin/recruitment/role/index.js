@@ -97,7 +97,6 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     sort_by: "",
     sort_type: "",
   });
-  // const typeOrder = ['Internship', 'Contract', 'Part Time', 'Full Time']
 
   const [searchingFilterRoles, setSearchingFilterRoles] = useState("");
   const [roleTypeId, setRoleTypeId] = useState(0);
@@ -552,7 +551,9 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
         />
       </AccessControl>
 
-      <AccessControl hasPermission={RECRUITMENT_ROLE_UPDATE}>
+      <AccessControl
+        hasPermission={[RECRUITMENT_ROLE_GET, RECRUITMENT_ROLE_UPDATE]}
+      >
         <DrawerRoleUpdate
           id={tempIdUpdate}
           visible={isUpdateDrawerShown}
@@ -562,6 +563,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           trigger={triggerUpdate}
           isAllowedToGetRole={isAllowedToGetRole}
           isAllowedToUpdateRole={isAllowedToUpdateRole}
+          isAllowedToDeleteRole={isAllowedToDeleteRole}
           dataRoleTypes={dataRoleTypes}
           setLoadingUpdate={setLoadingUpdate}
           loadingUpdate={loadingUpdate}
@@ -582,7 +584,8 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           loading={loadingDelete}
           // disabled={candidateCount > 0}
         >
-          Ada <strong>{dataDelete.recruitments_count}</strong> yang melamar role
+          Ada <strong>{dataDelete.recruitments_count} kandidat</strong> yang
+          melamar role
           {"\n"}
           <strong>{dataDelete.name}</strong>. Apakah Anda yakin ingin
           melanjutkan penghapusan?

@@ -116,7 +116,7 @@ export const JobListTable: FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-y-8">
+    <div className="grid grid-cols-1 mt-5  md:gap-y-8 px-4 md:px-[112px]">
       <p
         dangerouslySetInnerHTML={{
           __html: searchMessage,
@@ -139,8 +139,14 @@ export const JobListTable: FC = () => {
       {data && (
         <div className="flex flex-col justify-center items-center space-y-4">
           <p>
-            Showing <strong>{data?.to}</strong> out of{" "}
-            <strong>{data?.total} jobs</strong>
+            Showing{" "}
+            <span className={"text-base text-blackmig font-gilroysemibold"}>
+              {data?.to}
+            </span>{" "}
+            out of{" "}
+            <span className={"text-base text-blackmig font-gilroysemibold"}>
+              {data?.total} jobs
+            </span>
           </p>
 
           <Button

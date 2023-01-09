@@ -10,6 +10,7 @@ import {
   RECRUITMENT_ROLES_LIST_GET,
 } from "lib/features";
 
+import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
@@ -53,6 +54,7 @@ const DrawerCandidateUpdate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
+    attachments: [],
   });
 
   const [modalUpdate, setModalUpdate] = useState(false);
@@ -69,6 +71,7 @@ const DrawerCandidateUpdate = ({
   // 2.1. set initial dataUpdate from dataRecruitment
   useEffect(() => {
     setDataUpdate({
+      ...dataUpdate,
       id: Number(dataRecruitment.id),
       name: dataRecruitment.name,
       email: dataRecruitment.email,
@@ -77,16 +80,20 @@ const DrawerCandidateUpdate = ({
       recruitment_jalur_daftar_id: dataRecruitment.recruitment_jalur_daftar_id,
       recruitment_stage_id: dataRecruitment.recruitment_stage_id,
       recruitment_status_id: dataRecruitment.recruitment_status_id,
+      // attachments: dataRecruitment?.attachments,
     });
   }, [dataRecruitment, visible]);
 
   // 2.2. Validate input field
   useEffect(() => {
-    let allFilled = Object.values(dataUpdate).every(
-      (value) => value !== "" && value !== null
+    let allFilled = Object.values(dataUpdate).every((value) => value);
+
+    let attachmentIsFilled = dataUpdate?.attachments?.every(
+      (attachment) => attachment.title && attachment.value
     );
+
     // console.log(allFilled)
-    if (allFilled) {
+    if (allFilled && attachmentIsFilled) {
       setDisabledUpdate(false);
     } else {
       setDisabledUpdate(true);
@@ -400,65 +407,75 @@ const DrawerCandidateUpdate = ({
               </div>
             </Form.Item>
 
-            {/* <Form.Item
-              label="Stage"
-              name={"stage"}
-              rules={[
-                {
-                  required: true,
-                  message: "Stage wajib diisi",
-                },
-              ]}
-            >
-              <div>
-                <Select
-                  placeholder="Pilih stage..."
-                  defaultValue={dataUpdate.recruitment_stage_id}
-                  onChange={(value) => {
-                    setDataUpdate({
-                      ...dataUpdate,
-                      recruitment_stage_id: value,
-                    });
-                  }}
-                >
-                  {dataStageList?.map((stage) => (
-                    <Select.Option key={stage.id} value={stage.id}>
-                      {stage.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-            </Form.Item> */}
+            <p className="my-2">Daftar Lampiran</p>
+            {dataUpdate?.attachments?.map((attachment, idx) => (
+              <div className="col-span-2 flex flex-row mb-4">
+                <Input
+                  value={attachment?.title}
+                  name={"title"}
+                  placeholder={"Judul lampiran"}
+                  className="mr-2"
+                  onChange={(e) => {
+                    let temp = [...dataUpdate.attachments];
+                    temp[idx].title = e.target.value;
 
-            {/* <Form.Item
-              label="Status"
-              name={"status"}
-              rules={[
-                {
-                  required: true,
-                  message: "Status wajib diisi",
-                },
-              ]}
-            >
-              <div>
-                <Select
-                  placeholder="Pilih status..."
-                  defaultValue={dataUpdate.recruitment_status_id}
-                  onChange={(value) => {
-                    setDataUpdate({
-                      ...dataUpdate,
-                      recruitment_status_id: value,
-                    });
+                    setDataUpdate((prev) => ({
+                      ...prev,
+                      attachments: temp,
+                    }));
+                  }}
+                />
+                <Input
+                  value={attachment?.value}
+                  name={"value"}
+                  type={"url"}
+                  placeholder="Isi lampiran"
+                  onChange={(e) => {
+                    let temp = [...dataUpdate.attachments];
+                    temp[idx].value = e.target.value;
+                    setDataUpdate((prev) => ({
+                      ...prev,
+                      attachments: temp,
+                    }));
+                  }}
+                />
+
+                <button
+                  className="ml-2"
+                  onClick={() => {
+                    const temp = [...dataUpdate.attachments];
+                    temp.splice(idx, 1);
+                    setDataUpdate((prev) => ({
+                      ...prev,
+                      attachments: temp,
+                    }));
                   }}
                 >
-                  {dataStatusList?.map((status) => (
-                    <Select.Option key={status.id} value={status.id}>
-                      {status.name}
-                    </Select.Option>
-                  ))}
-                </Select>
+                  <TrashIconSvg size={18} color={`#BF4A40`} />
+                </button>
               </div>
-            </Form.Item> */}
+            ))}
+            <div className="col-span-2">
+              <ButtonSys
+                type={"dashed"}
+                onClick={() => {
+                  setDataUpdate((prev) => ({
+                    ...prev,
+                    attachments: [
+                      ...prev.attachments,
+                      {
+                        title: "",
+                        value: "",
+                      },
+                    ],
+                  }));
+                }}
+              >
+                <p className="text-primary100 hover:text-primary75">
+                  + Tambah Lampiran
+                </p>
+              </ButtonSys>
+            </div>
           </Form>
         </div>
       </Spin>

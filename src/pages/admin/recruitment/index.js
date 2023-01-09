@@ -8,6 +8,7 @@ import {
   Menu,
   Select,
   Spin,
+  Switch,
   Table,
   notification,
 } from "antd";
@@ -28,6 +29,8 @@ import {
   RECRUITMENTS_ADD,
   RECRUITMENTS_DELETE,
   RECRUITMENTS_GET,
+  RECRUITMENTS_UPDATE_STAGE,
+  RECRUITMENTS_UPDATE_STATUS,
   RECRUITMENT_ACCOUNT_GENERATE,
   RECRUITMENT_ACCOUNT_TOKEN_GET,
   RECRUITMENT_ADD,
@@ -41,7 +44,6 @@ import {
   RECRUITMENT_ROLES_LIST_GET,
   RECRUITMENT_STAGES_LIST_GET,
   RECRUITMENT_STATUSES_LIST_GET,
-  RECRUITMENT_UPDATE,
   RECRUITMENT_UPDATE_STAGE,
   RECRUITMENT_UPDATE_STATUS,
   SIDEBAR_RECRUITMENT_SETUP,
@@ -115,13 +117,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
   const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
   const isAllowedToAddRecruitments = hasPermission(RECRUITMENTS_ADD);
-  const isAllowedToUpdateRecruitment = hasPermission(RECRUITMENT_UPDATE);
   const isAllowedToDeleteRecruitments = hasPermission(RECRUITMENTS_DELETE);
   const isAllowedToGetRecruitmentCount = hasPermission(RECRUITMENT_COUNT_GET);
-  const canUpdateRecruitment = hasPermission([
-    RECRUITMENT_UPDATE,
-    RECRUITMENT_GET,
-  ]);
 
   const isAllowedToGetRecruitmentRolesList = hasPermission(
     RECRUITMENT_ROLES_LIST_GET
@@ -138,6 +135,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
   const canUpdateStage = hasPermission(RECRUITMENT_UPDATE_STAGE);
   const canUpdateStatus = hasPermission(RECRUITMENT_UPDATE_STATUS);
+
+  const canUpdateStages = hasPermission(RECRUITMENTS_UPDATE_STAGE);
+  const canUpdateStatuses = hasPermission(RECRUITMENTS_UPDATE_STATUS);
 
   const isAllowedToSendEmailRecruitment = hasPermission(RECRUITMENT_EMAIL_SEND);
 
@@ -159,7 +159,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 1. Init
   const rt = useRouter();
+  // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 1, "Rekrutmen");
 
   const [instanceForm] = Form.useForm();
   // 2. Use state
@@ -246,6 +252,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [verificationLink, setVerificationLink] = useState("");
 
   // 2.4 Update Stage & Status
+  const [isAddNote, setIsAddNote] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disableUpdate, setDisableUpdate] = useState(false);
 
@@ -363,7 +370,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingRecruitments(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=10&page=${pageRecruitments}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=${rowsRecruitment}&page=${pageRecruitments}`,
       {
         method: `GET`,
         headers: {
@@ -546,13 +553,13 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [isAllowedToGetRecruitmentVerification, modalSendAccess, refresh]);
 
   // 3.6. Disable update stage or status if notes empty
-  useEffect(() => {
-    dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
-  }, [dataUpdateStage]);
+  // useEffect(() => {
+  //   dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
+  // }, [dataUpdateStage]);
 
-  useEffect(() => {
-    dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
-  }, [dataUpdateStatus]);
+  // useEffect(() => {
+  //   dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
+  // }, [dataUpdateStatus]);
 
   // 3.7. Set options in import excel
   useEffect(() => {
@@ -799,7 +806,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       notes: dataUpdateStage.notes,
     };
 
-    if (!canUpdateStage) {
+    if (!canUpdateStages) {
       permissionWarningNotification("Mengubah", "Stage Kandidat");
       setLoadingUpdate(false);
       return;
@@ -853,7 +860,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       notes: dataUpdateStatus.notes,
     };
 
-    if (!canUpdateStatus) {
+    if (!canUpdateStatuses) {
       permissionWarningNotification("Mengubah", "Status Kandidat");
       setLoadingUpdate(false);
       return;
@@ -1051,6 +1058,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           onClick={() => {
             setCreateDrawerShown(true);
           }}
+          disabled={!isAllowedToAddRecruitment}
         >
           <PlusIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">Tambah Perorangan</p>
@@ -1062,6 +1070,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           className="flex flex-row space-x-2 items-center
 					bg-transparent w-full px-2.5 py-2"
           onClick={() => setModalSheetImport(true)}
+          disabled={!isAllowedToAddRecruitments}
         >
           <FilePlusIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">Masukkan dari Excel</p>
@@ -1073,6 +1082,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           className="flex flex-row space-x-2 items-center 
 					bg-transparent w-full px-2.5 py-2"
           onClick={handleDownloadExcelTemplate}
+          disabled={!isAllowedToDownloadTemplate}
         >
           <DownloadIconSvg size={20} color="#4D4D4D" />
           <p className="mig-caption--medium text-mono30">
@@ -1098,12 +1108,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             setModalBulk(true);
             setBulkMode("stage");
           }}
-          disabled={!canUpdateStage}
+          disabled={!canUpdateStages}
         >
           <TrendingUpIconSvg size={16} />
           <p
             className={
-              canUpdateStage
+              canUpdateStages
                 ? `mig-caption--medium text-mono30`
                 : `mig-caption--medium text-gray-300`
             }
@@ -1121,12 +1131,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             setModalBulk(true);
             setBulkMode("status");
           }}
-          disabled={!canUpdateStatus}
+          disabled={!canUpdateStatuses}
         >
           <InfoSquareIconSvg size={16} />
           <p
             className={
-              canUpdateStatus
+              canUpdateStatuses
                 ? `mig-caption--medium text-mono30`
                 : `mig-caption--medium text-gray-300`
             }
@@ -1379,11 +1389,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       sidemenu={sidemenu}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-2 lg:grid-cols-3 md:px-5 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:px-5 gap-6">
           <div
-            className="col-span-2 flex flex-row items-center w-full 
+            className="lg:col-span-2 flex flex-row items-center w-full 
 						justify-between px-6 py-2 shadow-md rounded-md bg-white
 						divide-x divide-gray-300"
           >
@@ -1439,7 +1450,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div> */}
 
           {/* Table Kandidat */}
-          <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+          <div className="lg:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">Semua Kandidat</h4>
               {isBulk === false ? (
@@ -1463,7 +1474,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                       type={"primary"}
                       className="btn btn-sm text-white font-semibold px-6 border 
                         bg-primary100 hover:bg-primary75 border-primary100 
-                        hover:border-primary75 focus:bg-primary100 focus:border-primary100"
+                        hover:border-primary75 focus:bg-primary100 focus:border-primary100 
+                        flex-nowrap"
                       icon={<UserPlusIconSvg size={16} color="#FFFFFF" />}
                     >
                       Tambah Kandidat
@@ -1658,9 +1670,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             />
 
             {/* Start: Search criteria */}
-            <div className="flex flex-row justify-between w-full space-x-4 items-center mb-4">
+            <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
               {/* Search by keyword (kata kunci) */}
-              <div className="w-4/12">
+              <div className="w-full md:w-4/12">
                 <Input
                   value={
                     searchingFilterRecruitments === ""
@@ -1683,7 +1695,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by role (dropdown) */}
-              <div className="w-2/12">
+              <div className="w-full md:w-2/12">
                 <Select
                   value={selectedRoleId === 0 ? null : selectedRoleId}
                   allowClear
@@ -1707,7 +1719,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by stage */}
-              <div className="w-2/12">
+              <div className="w-full md:w-2/12">
                 <Select
                   value={selectedStage === 0 ? null : selectedStage}
                   allowClear
@@ -1732,7 +1744,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by status (dropdown) */}
-              <div className="w-2/12">
+              <div className="w-full md:w-2/12">
                 <Select
                   value={selectedStatus === 0 ? null : selectedStatus}
                   allowClear
@@ -1762,16 +1774,18 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </Select>
               </div>
 
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterRecruitments}
-                disabled={!isAllowedToGetRecruitments}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
-                </div>
-              </ButtonSys>
+              <div className="flex justify-end">
+                <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterRecruitments}
+                  disabled={!isAllowedToGetRecruitments}
+                >
+                  <div className="flex flex-row space-x-2.5 w-full items-center">
+                    <SearchIconSvg size={15} color={`#ffffff`} />
+                    <p>Cari</p>
+                  </div>
+                </ButtonSys>
+              </div>
             </div>
             {/* End: Search criteria */}
 
@@ -1783,6 +1797,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 loading={loadingRecruitments}
                 setpraloading={setLoadingRecruitments}
                 pageSize={rowsRecruitment}
+                setPageSize={setRowsRecruitments}
                 total={dataRawRecruitments?.total}
                 initProps={initProps}
                 setpage={setPageRecruitments}
@@ -1876,7 +1891,9 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Modal Update Stage */}
-      <AccessControl hasPermission={RECRUITMENT_UPDATE_STAGE}>
+      <AccessControl
+        hasPermission={[RECRUITMENT_UPDATE_STAGE, RECRUITMENTS_UPDATE_STAGE]}
+      >
         <ModalUbah
           title={`Konfirmasi Perubahan`}
           visible={modalUpdateStage}
@@ -1903,19 +1920,31 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }`}
                 </p>
               ))}
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStage.notes}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStage.notes}
+                  onChange={(event) => {
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
               <p>
                 Apakah Anda yakin ingin mengubah stage menjadi{" "}
                 <strong>{dataUpdateStage.recruitment_stage_name}</strong>?
@@ -1931,19 +1960,30 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <p className="font-bold">
                 {`Stage ${dataUpdateStage.prev_recruitment_stage_name} → ${dataUpdateStage.recruitment_stage_name}`}
               </p>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStage.notes}
-                onChange={(event) => {
-                  setDataUpdateStage({
-                    ...dataUpdateStage,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStage.notes}
+                  onChange={(event) => {
+                    setDataUpdateStage({
+                      ...dataUpdateStage,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           )}
@@ -1978,23 +2018,35 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }`}
                 </p>
               ))}
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStatus.notes}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    notes: event.target.value,
-                  });
-                }}
-              />
-              <p>
-                Apakah Anda yakin ingin mengubah status menjadi{" "}
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStatus.notes}
+                  onChange={(event) => {
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
+
+              <div className="flex flex-wrap space-x-1">
+                <p>Apakah Anda yakin ingin mengubah status menjadi</p>
                 <strong>{dataUpdateStatus.recruitment_status_name}</strong>?
-              </p>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -2006,19 +2058,30 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               <p className="font-bold">
                 {`Status ${dataUpdateStatus.prev_recruitment_status_name} → ${dataUpdateStatus.recruitment_status_name}`}
               </p>
-              <p>Tambah catatan:</p>
-              <Input.TextArea
-                // placeholder="Masukkan catatan"
-                required={true}
-                rows={2}
-                value={dataUpdateStatus.notes}
-                onChange={(event) => {
-                  setDataUpdateStatus({
-                    ...dataUpdateStatus,
-                    notes: event.target.value,
-                  });
-                }}
-              />
+              <div className="flex flex-row items-center space-x-2">
+                <p>Tambah catatan:</p>
+                <Switch
+                  defaultChecked={false}
+                  onChange={(checked) => {
+                    setIsAddNote(checked);
+                  }}
+                />
+              </div>
+
+              {isAddNote && (
+                <Input.TextArea
+                  // placeholder="Masukkan catatan"
+                  required={true}
+                  rows={2}
+                  value={dataUpdateStatus.notes}
+                  onChange={(event) => {
+                    setDataUpdateStatus({
+                      ...dataUpdateStatus,
+                      notes: event.target.value,
+                    });
+                  }}
+                />
+              )}
               <p>Apakah Anda yakin ingin menyimpan perubahan?</p>
             </div>
           )}
@@ -2049,7 +2112,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }
                     setModalBulk(false);
                   }}
-                  // disabled={disabled}
+                  disabled={
+                    bulkMode === "stage"
+                      ? !dataUpdateStage.recruitment_stage_id
+                      : !dataUpdateStatus.recruitment_status_id
+                  }
                 >
                   <div className="flex flex-row space-x-2">
                     <CheckIconSvg size={16} color={`white`} />
@@ -2082,6 +2149,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   },
                 ]}
                 dataSource={selectedRecruitments}
+                pagination={false}
+                scroll={{
+                  y: 150,
+                }}
               ></Table>
             </div>
 
@@ -2163,7 +2234,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       </AccessControl>
 
       {/* Modal/Drawer Send Access Verification */}
-      <AccessControl hasPermission={RECRUITMENT_ACCOUNT_GENERATE}>
+      <AccessControl
+        hasPermission={[
+          RECRUITMENT_ACCOUNT_GENERATE,
+          RECRUITMENT_ACCOUNT_TOKEN_GET,
+        ]}
+      >
         {dataRowClicked.owner_id === null ? (
           <ModalCore
             title={`Apakah Anda yakin ingin memberikan 

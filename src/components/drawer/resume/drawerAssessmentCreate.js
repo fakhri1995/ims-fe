@@ -143,6 +143,7 @@ const DrawerAssessmentCreate = ({
                 name="name"
                 defaultValue={datacreate.name}
                 onChange={onChangeInput}
+                placeholder="Masukkan nama form"
               ></Input>
             </div>
           </div>
@@ -167,7 +168,7 @@ const DrawerAssessmentCreate = ({
                 <div key={idx} className="flex flex-row mb-3">
                   <Input
                     value={add.criteria}
-                    placeholder="Nama kriteria"
+                    placeholder="Masukkan kriteria"
                     onChange={(e) => {
                       var temp = [...datacreate.add];
                       temp[idx].criteria = e.target.value;
