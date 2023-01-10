@@ -108,7 +108,16 @@ const EmployeePayslipDetailIndex = ({
 
   // 1.2. Table Payslips
   // filter data
-  const [dataPayslipStatusList, setDataContractStatusList] = useState([]);
+  const dataPayslipStatusList = [
+    {
+      id: 1,
+      name: "Draft",
+    },
+    {
+      id: 2,
+      name: "Diterbitkan",
+    },
+  ];
 
   // filter search & selected options
   const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
@@ -121,7 +130,6 @@ const EmployeePayslipDetailIndex = ({
   });
 
   // table data
-  const [loadingPayslips, setLoadingPayslips] = useState(true);
   const [dataPayslips, setDataPayslips] = useState([]);
   const [dataRawPayslips, setDataRawPayslips] = useState({
     current_page: "",
@@ -202,7 +210,7 @@ const EmployeePayslipDetailIndex = ({
     // if (employeeId) {
     setpraloading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?rows=${rowsPayslips}&is_employee_active=1&page=${pagePayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?employee_id=${employeeId}&rows=${rowsPayslips}&page=${pagePayslips}`,
       {
         method: `GET`,
         headers: {
@@ -234,9 +242,15 @@ const EmployeePayslipDetailIndex = ({
 
   // 3. Event
   const onFilterPayslips = () => {
-    setLoadingPayslips(true);
+    setpraloading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&payslip_status_id=${selectedPayslipStatusId}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/getEmployeePayslips?employee_id=${employeeId}&sort_by=${
+        sortingPayslips.sort_by
+      }&sort_type=${sortingPayslips.sort_type}&is_posted=${
+        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+      }&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
         headers: {
@@ -255,14 +269,14 @@ const EmployeePayslipDetailIndex = ({
             duration: 3,
           });
         }
-        setLoadingPayslips(false);
+        setpraloading(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingPayslips(false);
+        setpraloading(false);
       });
   };
 
@@ -449,7 +463,7 @@ const EmployeePayslipDetailIndex = ({
                     disabled={!isAllowedToUpdatePayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      rt.push(`${employeeId}/addPayslip?id=${payslipId}`);
+                      rt.push(`${employeeId}/addPayslip?id=${record.id}`);
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
@@ -598,14 +612,14 @@ const EmployeePayslipDetailIndex = ({
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.role_name || "-"}</p>
+                  <p>{dataEmployee?.contracts[0]?.role?.name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
                   <p>
-                    {dataEmployee?.contracts[0]?.contract_status_name || "-"}
+                    {dataEmployee?.contracts[0]?.contract_status?.name || "-"}
                   </p>
                 </div>
                 <div className="flex flex-col space-y-1">
@@ -654,18 +668,15 @@ const EmployeePayslipDetailIndex = ({
             {/* Filter by payslip status (dropdown) */}
             <div className="w-3/12">
               <Select
-                value={
-                  selectedPayslipStatusId === 0 ? null : selectedPayslipStatusId
-                }
+                value={selectedPayslipStatusId ? selectedPayslipStatusId : null}
                 allowClear
                 name={`status`}
-                // disabled={!isAllowedToGetRoleTypeList}
                 placeholder="Semua Status Slip Gaji"
-                defaultValue={0}
+                defaultValue={null}
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   typeof value === "undefined"
-                    ? setSelectedPayslipStatusId(0)
+                    ? setSelectedPayslipStatusId(null)
                     : setSelectedPayslipStatusId(value);
                 }}
               >
@@ -706,6 +717,7 @@ const EmployeePayslipDetailIndex = ({
             sorting={sortingPayslips}
             searching={searchingFilterPayslips}
             selectedPayslipStatusId={selectedPayslipStatusId}
+            employeeId={employeeId}
           />
         </div>
       </div>

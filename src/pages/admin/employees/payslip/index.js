@@ -116,10 +116,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   pathTitleArr.splice(1, 2);
   pathTitleArr.splice(1, 2, "Daftar Karyawan", "Slip Gaji");
 
-  // 2. Use state
+  // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
-  const [payslipStatusCount, setTopCompanyCount] = useState([
+  const [payslipStatusCount, setPayslipStatusCount] = useState([
     {
       name: "Diterbitkan",
       status_count: 20,
@@ -141,9 +141,16 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [loadingRoleList, setLoadingRoleList] = useState(false);
   const [dataRoleList, setDataRoleList] = useState([]);
 
-  const [loadingContractStatusList, setLoadingContractStatusList] =
-    useState(false);
-  const [dataPayslipStatusList, setDataContractStatusList] = useState([]);
+  const dataPayslipStatusList = [
+    {
+      id: 1,
+      name: "Draft",
+    },
+    {
+      id: 2,
+      name: "Diterbitkan",
+    },
+  ];
 
   // filter search & selected options
   const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
@@ -204,7 +211,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?rows=${rowsPayslips}&is_employee_active=${isEmployeeActive}&page=${pagePayslips}`,
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/getEmployeePayslips?rows=${rowsPayslips}&page=${pagePayslips}&is_posted=${
+        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+      }`,
       {
         method: `GET`,
         headers: {
@@ -309,6 +320,47 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetRoleList, refresh]);
 
+  // 3.4. Get Payslip Status Count
+  useEffect(() => {
+    // TODO: change feature permission
+    if (!isAllowedToGetEmployeesPayslips) {
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Data Chart Status Karyawan"
+      );
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeStatusCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setPayslipStatusCount(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingChart(false);
+      });
+  }, [isAllowedToGetEmployeesPayslips, refresh]);
+
   // 4. Event
   const handlePostPayslips = () => {
     if (!isAllowedToPostEmployeesPayslips) {
@@ -353,7 +405,13 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${sortingPayslips.sort_by}&sort_type=${sortingPayslips.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${
+        sortingPayslips.sort_by
+      }&sort_type=${
+        sortingPayslips.sort_type
+      }&role_ids=${selectedRoleId}&placements=${selectedPlacement}&is_posted=${
+        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+      }&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
         headers: {
@@ -426,7 +484,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.placement || "-"}</>,
+          children: <>{record?.employee?.contract?.placement || "-"}</>,
         };
       },
     },
@@ -435,7 +493,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.role?.name || "-"}</>,
+          children: <>{record?.employee?.contract?.role?.name || "-"}</>,
         };
       },
     },
@@ -639,7 +697,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 value={selectedPlacement === 0 ? null : selectedPlacement}
                 allowClear
-                name={`role`}
+                name={`placement`}
                 disabled={!isAllowedToGetCompanyList}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
@@ -661,23 +719,20 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by payslip status (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={
-                  selectedPayslipStatusId === 0 ? null : selectedPayslipStatusId
-                }
+                value={selectedPayslipStatusId ? selectedPayslipStatusId : null}
                 allowClear
                 name={`status`}
-                // disabled={!isAllowedToGetRoleTypeList}
                 placeholder="Semua Status Slip Gaji"
-                defaultValue={0}
+                defaultValue={null}
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   typeof value === "undefined"
-                    ? setSelectedPayslipStatusId(0)
+                    ? setSelectedPayslipStatusId(null)
                     : setSelectedPayslipStatusId(value);
                 }}
               >
-                {dataPayslipStatusList.map((status) => (
-                  <Select.Option key={status.id} value={status.id}>
+                {dataPayslipStatusList.map((status, idx) => (
+                  <Select.Option key={idx} value={status.id}>
                     <p>{status.name}</p>
                   </Select.Option>
                 ))}
