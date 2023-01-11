@@ -26,6 +26,7 @@ import {
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_GET,
+  EMPLOYEE_PAYSLIP_STATUS_COUNT_GET,
   EMPLOYEE_SALARY_COLUMNS_GET,
   EMPLOYEE_SALARY_COLUMN_ADD,
   EMPLOYEE_SALARY_COLUMN_DELETE,
@@ -85,12 +86,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetEmployeesPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
+  const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
-  const isAllowedToPostEmployeesPayslips = hasPermission(
-    EMPLOYEES_PAYSLIPS_POST
-  );
+  const isAllowedToPostPayslips = hasPermission(EMPLOYEES_PAYSLIPS_POST);
 
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
@@ -104,6 +103,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
   const isAllowedToUpdateSalaryColumn = hasPermission(
     EMPLOYEE_SALARY_COLUMN_UPDATE
+  );
+  const isAllowedToGetPayslipStatusCount = hasPermission(
+    EMPLOYEE_PAYSLIP_STATUS_COUNT_GET
   );
 
   // 1. Init
@@ -119,16 +121,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
-  const [payslipStatusCount, setPayslipStatusCount] = useState([
-    {
-      name: "Diterbitkan",
-      status_count: 20,
-    },
-    {
-      name: "Draft",
-      status_count: 30,
-    },
-  ]);
+  const [payslipStatusCount, setPayslipStatusCount] = useState([]);
   const [dataColorBar, setDataColorBar] = useState(["#35763B", "#E5C471"]);
 
   // 2.2. Table Employee List
@@ -203,7 +196,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect
   // 3.1. Get Payslips
   useEffect(() => {
-    if (!isAllowedToGetEmployeesPayslips) {
+    if (!isAllowedToGetPayslips) {
       permissionWarningNotification("Mendapatkan", "Daftar Slip Gaji");
       setLoadingPayslips(false);
       return;
@@ -244,7 +237,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingPayslips(false);
       });
-  }, [isAllowedToGetEmployeesPayslips, refresh]);
+  }, [isAllowedToGetPayslips, refresh]);
 
   // 3.2. Get Company Client List
   useEffect(() => {
@@ -322,8 +315,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.4. Get Payslip Status Count
   useEffect(() => {
-    // TODO: change feature permission
-    if (!isAllowedToGetEmployeesPayslips) {
+    if (!isAllowedToGetPayslipStatusCount) {
       permissionWarningNotification(
         "Mendapatkan",
         "Data Chart Status Karyawan"
@@ -333,16 +325,26 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingChart(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeStatusCount`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslipStatusCount`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setPayslipStatusCount(res2.data);
+          let statusCountRes = res2.data;
+          let mappedStatusCount = statusCountRes.reverse().map((data) => {
+            return {
+              total: data?.total,
+              is_posted: Number(data?.is_posted) ? "Aktif" : "Tidak Aktif",
+            };
+          });
+          setPayslipStatusCount(mappedStatusCount);
         } else {
           notification.error({
             message: `${res2.message}`,
@@ -359,11 +361,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingChart(false);
       });
-  }, [isAllowedToGetEmployeesPayslips, refresh]);
+  }, [isAllowedToGetPayslipStatusCount, refresh]);
 
   // 4. Event
   const handlePostPayslips = () => {
-    if (!isAllowedToPostEmployeesPayslips) {
+    if (!isAllowedToPostPayslips) {
       permissionWarningNotification("Menerbitkan", "Slip Gaji Semua Karyawan");
       return;
     }
@@ -465,7 +467,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record?.employee?.name || "-"}</>,
         };
       },
-      sorter: isAllowedToGetEmployeesPayslips
+      sorter: isAllowedToGetPayslips
         ? (a, b) =>
             a.employee?.name?.toLowerCase() > b.employee?.name?.toLowerCase()
         : false,
@@ -605,8 +607,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           ) : (
             <ChartHorizontalBar
               dataChart={payslipStatusCount}
-              objName="name"
-              value="status_count"
+              objName="is_posted"
+              value="total"
               colorBarList={dataColorBar}
             />
           )}
@@ -631,9 +633,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               </ButtonSys>
               <ButtonSys
-                type={isAllowedToPostEmployeesPayslips ? "primary" : "default"}
+                type={isAllowedToPostPayslips ? "primary" : "default"}
                 onClick={() => setModalPost(true)}
-                disabled={!isAllowedToPostEmployeesPayslips}
+                disabled={!isAllowedToPostPayslips}
               >
                 <div className="flex space-x-2 items-center">
                   <CheckIconSvg size={16} color="#FFFFFF" />
@@ -664,7 +666,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                   }
                 }}
                 onKeyPress={onKeyPressHandler}
-                disabled={!isAllowedToGetEmployeesPayslips}
+                disabled={!isAllowedToGetPayslips}
               />
             </div>
 
@@ -742,7 +744,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             <ButtonSys
               type={`primary`}
               onClick={onFilterPayslips}
-              disabled={!isAllowedToGetEmployeesPayslips}
+              disabled={!isAllowedToGetPayslips}
             >
               <div className="flex flex-row space-x-2.5 w-full items-center">
                 <SearchIconSvg size={15} color={`#ffffff`} />
@@ -800,7 +802,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalPost}
           onOk={handlePostPayslips}
           loading={loadingPost}
-          disabled={!isAllowedToPostEmployeesPayslips}
+          disabled={!isAllowedToPostPayslips}
           closable={false}
           okButtonText="Ya, saya yakin"
         >

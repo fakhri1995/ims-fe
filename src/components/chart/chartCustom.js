@@ -99,7 +99,7 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
       <div className="w-2/3 h-24">
         <Bar
           data={{
-            labels: dataChart.map((doc) => doc[objName].split(" ")),
+            labels: dataChart.map((doc) => doc[objName]),
             datasets: [
               {
                 data: dataChart.map((doc) => doc[value]),
