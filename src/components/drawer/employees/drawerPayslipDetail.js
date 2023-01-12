@@ -52,7 +52,6 @@ const DrawerPayslipDetail = ({
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [detailReceive, setDetailReceive] = useState([]);
   const [detailReduction, setDetailReduction] = useState([]);
-  console.log(detailReduction);
 
   // 2. useEffect
   // 2.1 Get employee payslip detail
@@ -92,10 +91,10 @@ const DrawerPayslipDetail = ({
               column: { name: "Gaji Pokok" },
               value: payslipDetail?.gaji_pokok,
             });
-            reductionBenefits.unshift({
-              column: { name: "PPh 21" },
-              value: payslipDetail?.pph,
-            });
+            // reductionBenefits.unshift({
+            //   column: { name: "PPh 21" },
+            //   value: payslipDetail?.pph,
+            // });
 
             //TODO: add BPJS to reductionBenefit
 
