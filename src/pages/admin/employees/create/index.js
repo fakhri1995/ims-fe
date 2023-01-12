@@ -95,13 +95,16 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   // 1. USE STATE
   const [refresh, setRefresh] = useState(-1);
   const [loadingAdd, setLoadingAdd] = useState(false);
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
-  const [showSuccessIcon, setShowSuccessIcon] = useState(false);
-  const [disablePublish, setDisablePublish] = useState(true);
 
+  // Use for auto save
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [showSuccessIcon, setShowSuccessIcon] = useState(false);
   const [currentTab, setCurrentTab] = useState("1");
   const prevTab = useRef();
+
+  const [disablePublish, setDisablePublish] = useState(true);
   const [dataEmployee, setDataEmployee] = useState({
     id: null,
     id_card_photo: null,
@@ -566,6 +569,50 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
+  const handleCancelAddEmployee = () => {
+    let requiredDraftField = dataEmployee.name || dataEmployee.nip;
+
+    if (!requiredDraftField) {
+      setLoadingDelete(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployee?id=${employeeId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: JSON.parse(initProps),
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            notification.success({
+              message: response2.message,
+              duration: 3,
+            });
+            rt.push("/admin/employees");
+          } else {
+            notification.error({
+              message: `Gagal menghapus karyawan. ${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal menghapus karyawan. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingDelete(false);
+        });
+    } else {
+      rt.push("/admin/employees");
+    }
+  };
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -598,7 +645,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   color={"danger"}
                   className="flex flex-row"
                   onClick={() => {
-                    rt.push("/admin/employees");
+                    handleCancelAddEmployee();
                   }}
                 >
                   <XIconSvg size={18} color={`#BF4A40`} />

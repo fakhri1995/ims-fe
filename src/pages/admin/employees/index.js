@@ -798,7 +798,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <Collapse.Panel
               header={<div className="mig-heading--4">Statistik</div>}
             >
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-3 gap-2 lg:gap-6">
                 {/* CHART PENEMPATAN KARYAWAN */}
                 {loadingChart ? (
                   <Spin />
@@ -909,7 +909,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     : setSelectedPlacement(value);
                 }}
               >
-                {/* <Select.Option value={0}>Semua Role</Select.Option> */}
                 {dataCompanyList.map((company) => (
                   <Select.Option key={company.id} value={company.name}>
                     {company.name}
@@ -933,7 +932,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                     : setSelectedRoleId(value);
                 }}
               >
-                {/* <Select.Option value={0}>Semua Role</Select.Option> */}
                 {dataRoleList.map((role) => (
                   <Select.Option key={role.id} value={role.id}>
                     {role.name}

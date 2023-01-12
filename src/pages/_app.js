@@ -32,7 +32,7 @@ function MyApp({ Component, pageProps }) {
 
   useEffect(() => {
     const handleRouteChange = (url) => {
-      console.log("url ", url);
+      // console.log("url ", url);
       gtag.pageview(url);
     };
     rt.events.on("routeChangeComplete", handleRouteChange);
