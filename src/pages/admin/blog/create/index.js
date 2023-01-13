@@ -26,8 +26,10 @@ import { getBase64 } from "lib/helper";
 
 import { RequesterService } from "apis/user";
 
+import CustomTextEditor from "../../../../components/CustomTextEditor";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
+import RichText from "../../../../components/migwebsite/RichText";
 import { objectToFormData } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
@@ -82,12 +84,31 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   //useState
   const [artikelBlog, setArtikelBlog] = useState({
     id: null,
-    judul: "",
-    isi: "",
-    slug: "",
-    artikel_image: "",
+    title: "",
+    description: "",
+    content: "",
+    pagePath: "",
+    tags: "",
     artikel_image_file: null,
+    company_name: "",
+    company_image: "",
+    company_image_file: null,
+    quote: "",
+    author: "",
+    job_title: "",
+    meta_title: "",
+    meta_description: "",
+    title_id: "",
+    description_id: "",
+    content_id: "",
+    pagePathId: "",
+    tagsId: "",
+    quoteId: "",
+    job_title_id: "",
+    meta_title_id: "",
+    meta_description_id: "",
   });
+  const [articleType, setArticleType] = useState("Customer Stories");
   const [isiArtikel, setisiArtikel] = useState("");
   const [artikelEdit, setArtikelEdit] = useState(null);
   const [loadingupload, setLoadingupload] = useState(false);
@@ -97,7 +118,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   const [praloading, setpraloading] = useState(true);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [refresh, setRefresh] = useState(-1);
-
+  const [language, setLanguage] = useState("English");
   //handleCreateButton
 
   useEffect(() => {
@@ -145,15 +166,66 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     }
   }, [refresh]);
 
+  const handleSetLanguage = (value) => {
+    setLanguage(value);
+  };
+
   const handleCreateArticle = () => {
-    let title_lowercase = artikelBlog.judul.toLowerCase();
-    let dataArticle = {
-      id: articleId ? articleId : null,
-      title: artikelBlog.judul,
-      description: artikelBlog.isi,
-      slug: title_lowercase.replace(/ /g, "-"),
-      attachment: artikelBlog.artikel_image_file,
-    };
+    let dataArticle = "";
+    if (articleType == "Customer Stories") {
+      dataArticle = {
+        id: articleId ? articleId : null,
+        title: artikelBlog.title,
+        description: artikelBlog.description,
+        content: artikelBlog.content,
+        page_path: artikelBlog.pagePath,
+        tags: artikelBlog.tags,
+        company_name: artikelBlog.company_name,
+        quote: artikelBlog.quote,
+        author: artikelBlog.author,
+        job_title: artikelBlog.job_title,
+        meta_title: artikelBlog.meta_title,
+        meta_description: artikelBlog.meta_description,
+        title_id: artikelBlog.title_id,
+        description_id: artikelBlog.description_id,
+        content_id: artikelBlog.content_id,
+        page_path_id: artikelBlog.pagePathId,
+        tags_id: artikelBlog.tagsId,
+        job_title_id: artikelBlog.job_title_id,
+        meta_title_id: artikelBlog.meta_title_id,
+        meta_description_id: artikelBlog.meta_description_id,
+        attachment: artikelBlog.artikel_image_file,
+        company_logo: artikelBlog.company_image_file,
+        article_type: articleType,
+      };
+    } else {
+      dataArticle = {
+        id: articleId ? articleId : null,
+        article_type: articleType,
+        title: artikelBlog.title,
+        description: artikelBlog.description,
+        content: artikelBlog.content,
+        page_path: artikelBlog.pagePath,
+        tags: artikelBlog.tags,
+        company_name: "",
+        quote: "",
+        author: "",
+        job_title: "",
+        meta_title: artikelBlog.meta_title,
+        meta_description: artikelBlog.meta_description,
+        title_id: artikelBlog.title_id,
+        description_id: artikelBlog.description_id,
+        content_id: artikelBlog.content_id,
+        page_path_id: artikelBlog.pagePathId,
+        tags_id: artikelBlog.tagsId,
+        job_title_id: "",
+        meta_title_id: artikelBlog.meta_title_id,
+        meta_description_id: artikelBlog.meta_description_id,
+        attachment: artikelBlog.artikel_image_file,
+        company_logo: artikelBlog.company_image_file,
+      };
+    }
+    console.log("data article ", dataArticle);
 
     let formData = objectToFormData(dataArticle);
     let url = "";
@@ -180,7 +252,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
               : "Add Article Success!",
             duration: 3,
           });
-          rt.push("admin/blog");
+          rt.push("/admin/blog");
         } else if (!res2.success) {
           notification["error"]({
             message: articleId
@@ -199,10 +271,55 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     });
   };
 
-  const onChangeText = (text) => {
-    console.log("called");
-    text = text !== "<p><br></p>" ? text : "";
-    setisiArtikel(text);
+  const handleChangeArticleType = (value) => {
+    setArticleType(value);
+  };
+
+  const onChangeCreatePagePath = (e) => {
+    console.log("e berubah ", e);
+    setArtikelBlog({
+      ...artikelBlog,
+      pagePath: e.target.value,
+    });
+  };
+
+  const onChangeTextDescription = (text) => {
+    setArtikelBlog({
+      ...artikelBlog,
+      description: text,
+    });
+  };
+  const onChangeTextDescriptionId = (text) => {
+    setArtikelBlog({
+      ...artikelBlog,
+      description_id: text,
+    });
+  };
+  const onChangeTextContentQuote = (text) => {
+    setArtikelBlog({
+      ...artikelBlog,
+      quote: text,
+    });
+  };
+  const onChangeTextContentQuoteId = (text) => {
+    setArtikelBlog({
+      ...artikelBlog,
+      quote_id: text,
+    });
+  };
+
+  const onChangeTextContent = (text) => {
+    setArtikelBlog({
+      ...artikelBlog,
+      content: text,
+    });
+  };
+
+  const onChangeTextContentId = (text) => {
+    setArtikelBlog({
+      ...artikelBlog,
+      content_id: text,
+    });
   };
 
   const beforeUploadProfileImage = (file) => {
@@ -233,6 +350,23 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         ...artikelBlog,
         artikel_image: base64Data,
         artikel_image_file: blobFile,
+      });
+    }
+  };
+
+  const onChangeCompanyLogo = async (info) => {
+    if (info.file.status === "uploading") {
+      setLoadingupload(true);
+      return;
+    }
+    if (info.file.status === "done") {
+      const blobFile = info.file.originFileObj;
+      const base64Data = await getBase64(blobFile);
+
+      setArtikelBlog({
+        ...artikelBlog,
+        company_image: base64Data,
+        company_image_file: blobFile,
       });
     }
   };
@@ -317,71 +451,549 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                   )}
                 </Upload>
               </div> */}
-              <div className="p-3 col-span-1 md:col-span-3">
-                <Form
-                  layout="vertical"
-                  className="createAgentsForm"
-                  onFinish={handleCreateArticle}
-                  form={instanceForm}
-                >
-                  <Form.Item
-                    label="Judul Artikel"
-                    required
-                    initialValue={artikelBlog.judul}
-                    name="judul"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Judul Artikel wajib diisi",
-                      },
-                    ]}
+              {language == "English" ? (
+                <div className="p-3 col-span-1 md:col-span-3">
+                  <Form
+                    layout="vertical"
+                    className="createAgentsForm"
+                    onFinish={handleCreateArticle}
+                    form={instanceForm}
                   >
-                    <Input
-                      value={artikelBlog.judul}
-                      name={`judul`}
-                      onChange={onChangeCreateArtikel}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    label="Isi Artikel"
-                    required
-                    name="isi"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Isi artikel wajib diisi",
-                      },
-                    ]}
-                  >
-                    <ReactQuill
+                    <div className={"flex flex-row"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-base textmig self-center mr-2"
+                        }
+                      >
+                        Article type:
+                      </p>
+                      <Select
+                        defaultValue={articleType}
+                        style={{ width: 200 }}
+                        allowClear
+                        onChange={handleChangeArticleType}
+                        options={[
+                          {
+                            value: "Customer Stories",
+                            label: "Customer Stories",
+                          },
+                          {
+                            value: "Blog",
+                            label: "Blog",
+                          },
+                        ]}
+                      />
+                    </div>
+                    <div className={"flex flex-row mt-3 mb-3"}>
+                      <p
+                        className={
+                          language == "English"
+                            ? "p-3 text-base text-blackmig bg-lightgrey"
+                            : "p-3 text-base text-blackmig"
+                        }
+                        onClick={() => handleSetLanguage("English")}
+                      >
+                        English
+                      </p>
+                      <p
+                        className={
+                          language == "Indonesia"
+                            ? "p-3 text-base text-blackmig bg-lightgrey"
+                            : "p-3 text-base text-blackmig"
+                        }
+                        onClick={() => handleSetLanguage("Indonesia")}
+                      >
+                        Indonesia
+                      </p>
+                    </div>
+                    <Form.Item
+                      label="Page Path"
+                      required
+                      initialValue={artikelBlog.pagePath}
+                      name="pagePath"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Page Path wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Input
+                        value={artikelBlog.pagePath}
+                        name={`pagePath`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Article Title"
+                      required
+                      initialValue={artikelBlog.title}
+                      name="title"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Judul Artikel wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Input
+                        value={artikelBlog.title}
+                        name={`title`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Description"
+                      required
+                      name="description"
+                      rules={[
+                        {
+                          required: true,
+                          message: "description wajib diisi",
+                        },
+                      ]}
+                    >
+                      <RichText
+                        value={artikelBlog.description}
+                        placeholder={"Description"}
+                        onChange={onChangeTextDescription}
+                      />
+                      {/* <ReactQuill
                       theme="snow"
                       defaultValue={artikelBlog.isi}
                       modules={modules}
                       formats={formats}
                       className="h-44 pb-10"
                       onChange={onChangeText}
-                    />
-                  </Form.Item>
-                  <Upload
-                    name="artikel_image"
-                    listType="picture-card"
-                    className="profileImage"
-                    showUploadList={false}
-                    beforeUpload={beforeUploadProfileImage}
-                    onChange={onChangeProfileImage}
-                  >
-                    {artikelBlog.artikel_image ? (
-                      <img
-                        src={artikelBlog.artikel_image}
-                        alt="avatar"
-                        style={{ width: "100%" }}
+                    /> */}
+                    </Form.Item>
+
+                    <Upload
+                      name="artikel_image"
+                      listType="picture-card"
+                      className="profileImage"
+                      showUploadList={false}
+                      beforeUpload={beforeUploadProfileImage}
+                      onChange={onChangeProfileImage}
+                    >
+                      {artikelBlog.artikel_image ? (
+                        <img
+                          src={artikelBlog.artikel_image}
+                          alt="avatar"
+                          style={{ width: "100%" }}
+                        />
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+                    <Form.Item
+                      label="Content"
+                      required
+                      name="content"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Isi artikel wajib diisi",
+                        },
+                      ]}
+                    >
+                      <RichText
+                        value={artikelBlog.content}
+                        placeholder={"isi Content"}
+                        onChange={onChangeTextContent}
                       />
-                    ) : (
-                      uploadButton
+                      {/* <ReactQuill
+                      theme="snow"
+                      defaultValue={artikelBlog.isi}
+                      modules={modules}
+                      formats={formats}
+                      className="h-44 pb-10"
+                      onChange={onChangeText}
+                    /> */}
+                    </Form.Item>
+                    <Form.Item
+                      label="Tags   "
+                      required
+                      initialValue={artikelBlog.tags}
+                      name="tags"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Tags wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Input
+                        value={artikelBlog.tags}
+                        name={`tags`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <p className={"font-gilroysemibold text-blackmig text-xl"}>
+                      Company Detail
+                    </p>
+                    <Form.Item
+                      label="Company Name"
+                      initialValue={artikelBlog.company_name}
+                      name="company_name"
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Page Path wajib diisi",
+                      //   },
+                      // ]}
+                    >
+                      <Input
+                        value={artikelBlog.company_name}
+                        name={`company_name`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <p className={"text-blackmig text-base font-gilroyregular"}>
+                      Company logo
+                    </p>
+                    <Upload
+                      name="company_logo"
+                      listType="picture-card"
+                      className="profileImage"
+                      showUploadList={false}
+                      beforeUpload={beforeUploadProfileImage}
+                      onChange={onChangeCompanyLogo}
+                    >
+                      {artikelBlog.company_image ? (
+                        <img
+                          src={artikelBlog.company_image}
+                          alt="avatar"
+                          style={{ width: "100%" }}
+                        />
+                      ) : (
+                        uploadButton
+                      )}
+                    </Upload>
+                    {/* company stories */}
+                    {articleType == "Customer Stories" && (
+                      <div>
+                        <p
+                          className={
+                            "font-gilroysemibold text-blackmig text-xl"
+                          }
+                        >
+                          Testimonial
+                        </p>
+                        <Form.Item
+                          label="Quote"
+                          name="quote"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Isi artikel wajib diisi",
+                          //   },
+                          // ]}
+                        >
+                          <RichText
+                            value={artikelBlog.quote}
+                            placeholder={"isi Quote"}
+                            onChange={onChangeTextContentQuote}
+                          />
+                          {/* <ReactQuill
+                      theme="snow"
+                      defaultValue={artikelBlog.isi}
+                      modules={modules}
+                      formats={formats}
+                      className="h-44 pb-10"
+                      onChange={onChangeText}
+                    /> */}
+                        </Form.Item>
+                        <Form.Item
+                          label="Author"
+                          // required
+                          initialValue={artikelBlog.author}
+                          name="author"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Page Path wajib diisi",
+                          //   },
+                          // ]}
+                        >
+                          <Input
+                            value={artikelBlog.author}
+                            name={`author`}
+                            onChange={onChangeCreateArtikel}
+                          />
+                        </Form.Item>
+                        <Form.Item
+                          label="Job Title"
+                          initialValue={artikelBlog.job_title}
+                          name="job_title"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Page Path wajib diisi",
+                          //   },
+                          // ]}
+                        >
+                          <Input
+                            value={artikelBlog.job_title}
+                            name={`job_title`}
+                            onChange={onChangeCreateArtikel}
+                          />
+                        </Form.Item>
+                      </div>
                     )}
-                  </Upload>
-                </Form>
-              </div>
+                    <p className={"font-gilroysemibold text-blackmig text-xl"}>
+                      SEO
+                    </p>
+                    <Form.Item
+                      label="Meta Title"
+                      required
+                      initialValue={artikelBlog.meta_title}
+                      name="meta_title"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Meta title wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Input
+                        value={artikelBlog.meta_title}
+                        name={`meta_title`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Meta Description"
+                      required
+                      initialValue={artikelBlog.meta_description}
+                      name="meta_description"
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Page Path wajib diisi",
+                      //   },
+                      // ]}
+                    >
+                      <Input
+                        value={artikelBlog.meta_description}
+                        name={`meta_description`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                  </Form>
+                </div>
+              ) : (
+                <div className="p-3 col-span-1 md:col-span-3">
+                  <Form
+                    layout="vertical"
+                    className="createAgentsForm"
+                    onFinish={handleCreateArticle}
+                    form={instanceForm}
+                  >
+                    <div className={"flex flex-row"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-base textmig self-center mr-2"
+                        }
+                      >
+                        Article type:
+                      </p>
+                      <Select
+                        defaultValue={articleType}
+                        style={{ width: 200 }}
+                        allowClear
+                        onChange={handleChangeArticleType}
+                        options={[
+                          {
+                            value: "Customer Stories",
+                            label: "Customer Stories",
+                          },
+                          {
+                            value: "Blog",
+                            label: "Blog",
+                          },
+                        ]}
+                      />
+                    </div>
+                    <div className={"flex flex-row mt-3 mb-3"}>
+                      <p
+                        className={
+                          language == "English"
+                            ? "p-3 text-base text-blackmig bg-lightgrey"
+                            : "p-3 text-base text-blackmig"
+                        }
+                        onClick={() => handleSetLanguage("English")}
+                      >
+                        English
+                      </p>
+                      <p
+                        className={
+                          language == "Indonesia"
+                            ? "p-3 text-base text-blackmig bg-lightgrey"
+                            : "p-3 text-base text-blackmig"
+                        }
+                        onClick={() => handleSetLanguage("Indonesia")}
+                      >
+                        Indonesia
+                      </p>
+                    </div>
+                    <Form.Item
+                      label="Page Path ID"
+                      required
+                      initialValue={artikelBlog.pagePathId}
+                      name="pagePathId"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Page Path wajib diisi",
+                        },
+                      ]}
+                    >
+                      <Input
+                        value={artikelBlog.pagePathId}
+                        name={`pagePathId`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Judul Artikel ID"
+                      initialValue={artikelBlog.title_id}
+                      name="title_id"
+                    >
+                      <Input
+                        value={artikelBlog.title_id}
+                        name={`title_id`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <Form.Item label="Description ID" name="description_id">
+                      <RichText
+                        value={artikelBlog.description_id}
+                        placeholder={"isi Artikel Text"}
+                        onChange={onChangeTextDescriptionId}
+                      />
+                      {/* <ReactQuill
+                      theme="snow"
+                      defaultValue={artikelBlog.isi}
+                      modules={modules}
+                      formats={formats}
+                      className="h-44 pb-10"
+                      onChange={onChangeText}
+                    /> */}
+                    </Form.Item>
+                    <Form.Item label="Content ID" name="content_id">
+                      <RichText
+                        value={artikelBlog.content_id}
+                        placeholder={"isi Content"}
+                        onChange={onChangeTextContentId}
+                      />
+                      {/* <ReactQuill
+                      theme="snow"
+                      defaultValue={artikelBlog.isi}
+                      modules={modules}
+                      formats={formats}
+                      className="h-44 pb-10"
+                      onChange={onChangeText}
+                    /> */}
+                    </Form.Item>
+                    <Form.Item
+                      label="Tags ID "
+                      initialValue={artikelBlog.tagsId}
+                      name="tagsId"
+                    >
+                      <Input
+                        value={artikelBlog.tagsId}
+                        name={`tagsId`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    {/* customer stories id */}
+                    {articleType == "Customer Stories" && (
+                      <div>
+                        <p
+                          className={
+                            "font-gilroysemibold text-blackmig text-xl"
+                          }
+                        >
+                          Testimonial
+                        </p>
+                        <Form.Item
+                          label="Quote ID"
+                          name="quoteId"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Isi artikel wajib diisi",
+                          //   },
+                          // ]}
+                        >
+                          <RichText
+                            value={artikelBlog.quoteId}
+                            placeholder={"isi Quote"}
+                            onChange={onChangeTextContentQuoteId}
+                          />
+                          {/* <ReactQuill
+                      theme="snow"
+                      defaultValue={artikelBlog.isi}
+                      modules={modules}
+                      formats={formats}
+                      className="h-44 pb-10"
+                      onChange={onChangeText}
+                    /> */}
+                        </Form.Item>
+                        <Form.Item
+                          label="Judul Pekerjaan"
+                          initialValue={artikelBlog.job_title_id}
+                          name="job_title_id"
+                        >
+                          <Input
+                            value={artikelBlog.job_title_id}
+                            name={`job_title_id`}
+                            onChange={onChangeCreateArtikel}
+                          />
+                        </Form.Item>
+                      </div>
+                    )}
+                    <p className={"font-gilroysemibold text-blackmig text-xl"}>
+                      SEO
+                    </p>
+                    <Form.Item
+                      label="Meta Title ID"
+                      initialValue={artikelBlog.meta_title_id}
+                      name="meta_title_id"
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Page Path wajib diisi",
+                      //   },
+                      // ]}
+                    >
+                      <Input
+                        value={artikelBlog.meta_title_id}
+                        name={`meta_title_id`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label="Meta Description ID"
+                      initialValue={artikelBlog.meta_description_id}
+                      name="meta_description_id"
+                      // rules={[
+                      //   {
+                      //     required: true,
+                      //     message: "Page Path wajib diisi",
+                      //   },
+                      // ]}
+                    >
+                      <Input
+                        value={artikelBlog.meta_description_id}
+                        name={`meta_description_id`}
+                        onChange={onChangeCreateArtikel}
+                      />
+                    </Form.Item>
+                  </Form>
+                </div>
+              )}
             </div>
           </div>
         </div>

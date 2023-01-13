@@ -17,11 +17,37 @@ import Layout from "../../../components/migwebsite/layout";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
-function Blog({}) {
+function Blog({ dataBlog }) {
   const handleChange = () => {};
+  const [currentPage, setCurrentPage] = useState(1);
+  const [articleList, setArticleList] = useState(null);
+  const pageSize = 10;
+
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticleList`, {
+      method: `GET`,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setArticleList(res2.data);
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
+  }, []);
+
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
+      {console.log("data blogs ", dataBlog)}
       <Head>
         <title>Blog</title>
       </Head>
@@ -231,183 +257,238 @@ function Blog({}) {
           Most Popular
         </p>
         <div className={"hidden md:grid md:grid-cols-2 gap-4 mt-4"}>
-          <Linkk href="/blog/1">
-            <div
-              className={
-                "flex w-full rounded-lg md:h-[181px] mx-1 flex-row bg-white mt-[21px] p-4"
-              }
-            >
-              <img
-                className={
-                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
-                }
-                // style={{ width: "200px", height: "142px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p
+          {dataBlog &&
+            dataBlog.map((data1) => (
+              <Linkk href="/blog/1">
+                <div
                   className={
-                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
+                    "flex w-full rounded-lg md:h-[181px] w-[598px] mx-1 flex-row bg-white mt-[21px] p-4"
                   }
                 >
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
+                  <img
+                    className={
+                      "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
+                    }
+                    // style={{ width: "200px", height: "142px" }}
+                    src="/image/blog.png"
+                  />
+                  <div className={"pl-4"}>
+                    <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                      by{" "}
+                      <span className={"font-gilroysemibold"}>
+                        Mayfa Shadrina{" "}
+                      </span>
+                      on{" "}
+                      <span className={"font-gilroysemibold"}>
+                        August 8th, 2022
+                      </span>
+                    </p>
+                    <p
+                      className={
+                        "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
+                      }
+                    >
+                      {data1.title}
+                    </p>
+
+                    {/* <p
+                                className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                              >
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                                do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                              </p> */}
+                    <div
+                      className="mt-1.5"
+                      dangerouslySetInnerHTML={{ __html: data1.description }}
+                    />
+                    <div className={"mt-1.5"}>
+                      <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                        Hardware
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={
-                "flex w-full rounded-lg md:h-[181px] mx-1 mt-[21px] flex-row bg-white mt-6 p-4"
-              }
-            >
-              <img
-                className={
-                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
-                }
-                // style={{ width: "200px", height: "142px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p
-                  className={
-                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
-                  }
-                >
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={
-                "flex w-full rounded-lg md:h-[181px] mx-1 flex-row bg-white mt-[21px] p-4"
-              }
-            >
-              <img
-                className={
-                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
-                }
-                // style={{ width: "200px", height: "142px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p
-                  className={
-                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
-                  }
-                >
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={
-                "flex w-full rounded-lg md:h-[181px] mx-1 mt-[21px] flex-row bg-white mt-6 p-4"
-              }
-            >
-              <img
-                className={
-                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
-                }
-                // style={{ width: "200px", height: "142px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] md:text-sm text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p
-                  className={
-                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
-                  }
-                >
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
+              </Linkk>
+            ))}
         </div>
+        {/* <div className={"hidden md:grid md:grid-cols-2 gap-4 mt-4"}>
+          <Linkk href="/blog/1">
+            <div
+              className={
+                "flex w-full rounded-lg md:h-[181px] mx-1 flex-row bg-white mt-[21px] p-4"
+              }
+            >
+              <img
+                className={
+                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
+                }
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+          <Linkk href="/blog/1">
+            <div
+              className={
+                "flex w-full rounded-lg md:h-[181px] mx-1 mt-[21px] flex-row bg-white mt-6 p-4"
+              }
+            >
+              <img
+                className={
+                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
+                }
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+          <Linkk href="/blog/1">
+            <div
+              className={
+                "flex w-full rounded-lg md:h-[181px] mx-1 flex-row bg-white mt-[21px] p-4"
+              }
+            >
+              <img
+                className={
+                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
+                }
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+          <Linkk href="/blog/1">
+            <div
+              className={
+                "flex w-full rounded-lg md:h-[181px] mx-1 mt-[21px] flex-row bg-white mt-6 p-4"
+              }
+            >
+              <img
+                className={
+                  "rounded-lg md:w-[200px] md:h-[142px] w-[103px] h-[131px]"
+                }
+                // style={{ width: "200px", height: "142px" }}
+                src="/image/blog.png"
+              />
+              <div className={"pl-4"}>
+                <p className={"text-[10px] md:text-sm text-darkgrey"}>
+                  by{" "}
+                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
+                  on{" "}
+                  <span className={"font-gilroysemibold"}>
+                    August 8th, 2022
+                  </span>
+                </p>
+                <p
+                  className={
+                    "font-bold text-blackmig bold text-sm md:text-base mt-1.5"
+                  }
+                >
+                  This is a Title This is a Title This is a Title This is a
+                  Title
+                </p>
+                <p
+                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+                >
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </p>
+                <div className={"mt-1.5"}>
+                  <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                    Hardware
+                  </span>
+                </div>
+              </div>
+            </div>
+          </Linkk>
+        </div> */}
         <div className={"md:hidden "}>
           <Linkk href="/blog/1">
             <div
@@ -606,271 +687,49 @@ function Blog({}) {
             />
           </div>
         </div>
-        <div className={"hidden grid md:grid-cols-4 gap-4"}>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div className={"bg-white w-full mt-4 p-4"}>
-              <img
-                className={"w-[260px] h-[184px] rounded-lg"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-3"}>
-                <p className={"text-xs text-darkgrey"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-bold text-blackmig text-base mt-3"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
+        <div className={"hidden md:grid md:grid-cols-4 gap-4"}>
+          {articleList
+            ? articleList.map((dataarticle) => (
+                <Linkk href="/blog/1">
+                  <div className={"bg-white w-[292px] mt-4 p-4"}>
+                    <img
+                      className={"w-[260px] h-[184px] rounded-lg"}
+                      src="/image/blog.png"
+                    />
+                    <div className={"mt-3"}>
+                      <p className={"text-xs text-darkgrey"}>
+                        by{" "}
+                        <span className={"font-gilroysemibold"}>
+                          Mayfa Shadrina{" "}
+                        </span>
+                        on{" "}
+                        <span className={"font-gilroysemibold"}>
+                          August 8th, 2022
+                        </span>
+                      </p>
+                      <p className={"font-bold text-blackmig text-base mt-3"}>
+                        This is a Title This is a Title This is a Title This is
+                        a Title
+                      </p>
+                      <p
+                        className={
+                          " text-blackmig font-gilroyregular text-xs mt-1.5"
+                        }
+                      >
+                        Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                        sed do eiusmod tempor incididunt ut labore et dolore
+                        magna aliqua.
+                      </p>
+                      <div className={"mt-1.5"}>
+                        <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                          Hardware
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Linkk>
+              ))
+            : ""}
         </div>
         <div className={"md:hidden"}>
           <Linkk href="/blog/1">
@@ -1248,6 +1107,28 @@ function Blog({}) {
       </section>
     </Layout>
   );
+}
+
+export async function getStaticProps() {
+  let dataBlogs = null;
+
+  try {
+    const resources = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticlePopularList`,
+      {
+        method: `GET`,
+      }
+    );
+    console.log("hasil get api ", resources);
+    const resjson = await resources.json();
+    dataBlogs = resjson.data;
+  } catch {}
+  return {
+    props: {
+      dataBlog: dataBlogs || [],
+    },
+    revalidate: 60,
+  };
 }
 
 export default Blog;

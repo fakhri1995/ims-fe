@@ -715,20 +715,12 @@ function Hardware({}) {
                 </p>
               </Link>
               <Link href={{ pathname: "/software" }}>
-                <p
-                  className={
-                    "cursor-pointer flex-col gilroy-medium text-lg mx-4"
-                  }
-                >
+                <p className={"cursor-pointer flex-col  text-lg mx-4"}>
                   Software
                 </p>
               </Link>
               <Link href={{ pathname: "/talents" }}>
-                <p
-                  className={
-                    "cursor-pointer flex-col gilroy-medium text-lg mx-4"
-                  }
-                >
+                <p className={"cursor-pointer flex-col  text-lg mx-4"}>
                   Talents
                 </p>
               </Link>
@@ -766,7 +758,7 @@ function Hardware({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Company Name"}
-                        className={"gilroy-medium text-xl"}
+                        className={" text-xl"}
                         label="Company Name"
                         rules={[{ required: true }]}
                       >
@@ -788,7 +780,7 @@ function Hardware({}) {
                       <Form.Item
                         name={"Email"}
                         initialValue={dataHardware.company_email}
-                        className={"gilroy-medium text-xl -mt-2"}
+                        className={" text-xl -mt-2"}
                         label="Email"
                         rules={[{ required: true, type: "email" }]}
                       >
@@ -809,7 +801,7 @@ function Hardware({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Contact Name"}
-                        className={"gilroy-medium text-xl -mt-2"}
+                        className={" text-xl -mt-2"}
                         label="Contact Name"
                         rules={[{ required: true }]}
                       >
@@ -830,7 +822,7 @@ function Hardware({}) {
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
-                        className={"gilroy-medium text-xl -mt-2"}
+                        className={" text-xl -mt-2"}
                         label="Phone Number"
                         rules={[
                           {
@@ -1366,7 +1358,7 @@ function Hardware({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_need_product"
-                      className={"gilroy-medium text-xl"}
+                      className={" text-xl"}
                       label="*How soon do you need the product?"
                       rules={[
                         {
@@ -1397,7 +1389,7 @@ function Hardware({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_used"
-                      className={"gilroy-medium text-xl"}
+                      className={" text-xl"}
                       label="How long do you need the product?"
                       rules={[
                         {
@@ -1425,7 +1417,7 @@ function Hardware({}) {
                   <div className={"mt-8"}>
                     <Form.Item
                       name={"product"}
-                      className={"gilroy-medium text-xl"}
+                      className={" text-xl"}
                       label={
                         <p>
                           *What product in{" "}
@@ -1581,7 +1573,7 @@ function Hardware({}) {
                     </Form.Item>
                     <Form.Item
                       name={"Details"}
-                      className={"gilroy-medium text-xl"}
+                      className={" text-xl"}
                       label="Details (Optional)"
                       // rules={[{ required: true }]}
                     >
@@ -1958,9 +1950,7 @@ function Hardware({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"gilroy-semibold font-gilroysemibold"}>
-                          Let's talk!
-                        </p>
+                        <p className={" font-gilroysemibold"}>Let's talk!</p>
                         <img
                           className={"w-[20px] h-[20px] self-center"}
                           src="/image/landingpage/arrow-circle-right.png"
@@ -2468,7 +2458,7 @@ function Hardware({}) {
                 <div className={"mt-7 px-2"}>
                   <p
                     className={
-                      "text-base text-left gilroy-semibold text-blackmig font-gilroysemibold"
+                      "text-base text-left  text-blackmig font-gilroysemibold"
                     }
                   >
                     Workstation
@@ -2518,7 +2508,7 @@ function Hardware({}) {
                 <div className={"mt-7 px-2"}>
                   <p
                     className={
-                      "text-base text-left gilroy-semibold text-blackmig font-gilroysemibold"
+                      "text-base text-left  text-blackmig font-gilroysemibold"
                     }
                   >
                     Server & Hosting
@@ -2589,11 +2579,7 @@ function Hardware({}) {
                       "text-sm md:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
                     }
                   >
-                    <p
-                      className={
-                        "text-base gilroy-semibold font-gilroysemibold mr-2"
-                      }
-                    >
+                    <p className={"text-base  font-gilroysemibold mr-2"}>
                       Contact our sales team
                     </p>
                   </button>
@@ -2711,7 +2697,7 @@ function Hardware({}) {
                   />
                   <p
                     className={
-                      "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm md:text-base  font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.hardwarehowitworksection1}
@@ -2732,7 +2718,7 @@ function Hardware({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.hardwarehowitworksection2}
@@ -2752,7 +2738,7 @@ function Hardware({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.hardwarehowitworksection3}
@@ -2828,7 +2814,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-gilroysemibold mb-[42px]"
+                "text-xl md:text-3xl text-center  font-gilroysemibold mb-[42px]"
               }
             >
               What they say{" "}
@@ -2855,11 +2841,11 @@ function Hardware({}) {
                     }}
                   >
                     <div className="">
-                      <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-sm text italic  font-gilroysemibold">
                         "
                       </p>
 
-                      <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                      <p className="pb-4  text-sm mx-auto text-left">
                         I had a wonderful experience working with Mitramas
                         Infosys Global. Lorem ipsum dolor sit amet, consectetur
                         adipiscing elit, sed do eiusmod tempor incididunt ut
@@ -2867,7 +2853,7 @@ function Hardware({}) {
                         <br className="hidden xl:block"></br> optimize your cost
                         and productivity
                       </p>
-                      <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-sm text italic  font-gilroysemibold">
                         "
                       </p>
                       <div className="flex flex-col items-center">
@@ -2879,10 +2865,10 @@ function Hardware({}) {
                             alt=""
                           />
                           <div className="self-center">
-                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
+                            <p className="text-sm font-gilroysemibold  text-black">
                               Fachri Fauzan
                             </p>
-                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
+                            <p className="text-sm font-gilroysemibold  text-darkgrey">
                               Talent Acquisition at Bukopin
                             </p>
                           </div>
@@ -2927,11 +2913,11 @@ function Hardware({}) {
                     }}
                   >
                     <div className="">
-                      <p className="text-3xl text italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-3xl text italic  font-gilroysemibold">
                         "
                       </p>
 
-                      <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                      <p className="pb-4  text-sm mx-auto text-left">
                         I had a wonderful experience working with Mitramas
                         Infosys Global. Lorem ipsum dolor sit amet, consectetur
                         adipiscing elit, sed do eiusmod tempor incididunt ut
@@ -2939,7 +2925,7 @@ function Hardware({}) {
                         <br className="hidden xl:block"></br> optimize your cost
                         and productivity
                       </p>
-                      <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-sm text italic  font-gilroysemibold">
                         "
                       </p>
                       <div className="flex flex-col items-center">
@@ -2951,10 +2937,10 @@ function Hardware({}) {
                             alt=""
                           />
                           <div className="self-center">
-                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
+                            <p className="text-sm font-gilroysemibold  text-black">
                               Fachri Fauzan
                             </p>
-                            <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
+                            <p className="text-sm font-gilroysemibold  text-darkgrey">
                               Talent Acquisition at Bukopin
                             </p>
                           </div>
@@ -3017,10 +3003,10 @@ function Hardware({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -3093,7 +3079,7 @@ function Hardware({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -3110,10 +3096,10 @@ function Hardware({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -3186,7 +3172,7 @@ function Hardware({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -3203,10 +3189,10 @@ function Hardware({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic  font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -3279,7 +3265,7 @@ function Hardware({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -3316,7 +3302,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-center gilroy-semibold font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
               }
             >
               What they say{" "}
@@ -3337,11 +3323,11 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
 
-                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                    <p className="pb-4  text-sm mx-auto text-left">
                       I had a{" "}
                       <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
@@ -3355,7 +3341,7 @@ function Hardware({}) {
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3367,10 +3353,10 @@ function Hardware({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold  text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold  text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3383,11 +3369,11 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
 
-                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                    <p className="pb-4  text-sm mx-auto text-left">
                       I had a{" "}
                       <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
@@ -3401,7 +3387,7 @@ function Hardware({}) {
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3413,10 +3399,10 @@ function Hardware({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold  text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold  text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3429,11 +3415,11 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
 
-                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                    <p className="pb-4  text-sm mx-auto text-left">
                       I had a{" "}
                       <span className={"text-primarygreen font-gilroysemibold"}>
                         wonderful experience{" "}
@@ -3447,7 +3433,7 @@ function Hardware({}) {
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                    <p className="text-sm text italic  font-gilroysemibold">
                       "
                     </p>
                     <div className="flex flex-col">
@@ -3459,10 +3445,10 @@ function Hardware({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold  text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold  text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -3477,7 +3463,7 @@ function Hardware({}) {
                 <div className={"flex flex-row justify-around"}>
                   <p
                     className={
-                      "text-base text-primarygreen gilroy-semibold font-gilroysemibold"
+                      "text-base text-primarygreen  font-gilroysemibold"
                     }
                   >
                     Read More
@@ -3499,7 +3485,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl md:text-3xl text-blackmig text-center gilroy-semibold font-gilroysemibold py-8 md:py-0 mb-10"
+                "text-xl md:text-3xl text-blackmig text-center  font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
               Coverages
@@ -3657,7 +3643,7 @@ function Hardware({}) {
           >
             <p
               className={
-                "text-xl text-blackmig text-center gilroy-semibold font-gilroysemibold"
+                "text-xl text-blackmig text-center  font-gilroysemibold"
               }
             >
               Coverages
@@ -3833,11 +3819,7 @@ function Hardware({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p
-                        className={
-                          "text-base gilroy-semibold font-gilroysemibold mr-2"
-                        }
-                      >
+                      <p className={"text-base  font-gilroysemibold mr-2"}>
                         Contact Us
                       </p>
                       <img
@@ -3875,7 +3857,7 @@ function Hardware({}) {
                 <Link href="/hardware">
                   <button
                     className={
-                      "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none gilroy-medium hover:text-white hover:bg-black bg-white"
+                      "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none  hover:text-white hover:bg-black bg-white"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
