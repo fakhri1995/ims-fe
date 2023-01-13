@@ -2258,7 +2258,13 @@ const TableCustomPayslipList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?is_employee_active=1&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${
+              process.env.NEXT_PUBLIC_BACKEND_URL
+            }/getEmployeePayslips?sort_by=${sorting.sort_by}&sort_type=${
+              sorting.sort_type
+            }&role_ids=${selectedRoleId}&placements=${selectedPlacement}&is_posted=${
+              selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+            }&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2285,7 +2291,9 @@ const TableCustomPayslipList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?role_ids=${selectedRoleId}&payslip_status_ids=${selectedPayslipStatusId}&placements=${selectedPlacement}&sort_by=${
+              }/getEmployeePayslips?role_ids=${selectedRoleId}&is_posted=${
+                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+              }&placements=${selectedPlacement}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
@@ -2317,7 +2325,13 @@ const TableCustomPayslipList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?role_ids=${selectedRoleId}&payslip_status_ids=${selectedPayslipStatusId}&placements=${selectedPlacement}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${
+                process.env.NEXT_PUBLIC_BACKEND_URL
+              }/getEmployeePayslips?role_ids=${selectedRoleId}&is_posted=${
+                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+              }&placements=${selectedPlacement}&sort_by=&sort_type=&keyword=${searching}&page=${
+                pagination.current
+              }&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
@@ -2373,6 +2387,7 @@ const TableCustomPayslipEmployeeList = ({
   sorting,
   searching,
   selectedPayslipStatusId,
+  employeeId,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -2395,7 +2410,13 @@ const TableCustomPayslipEmployeeList = ({
           setpraloading(true);
           setpage(page);
           fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&payslip_status_ids=${selectedPayslipStatusId}&keyword=${searching}&page=${page}&rows=${pageSize}`,
+            `${
+              process.env.NEXT_PUBLIC_BACKEND_URL
+            }/getEmployeePayslips?employee_id=${employeeId}&sort_by=${
+              sorting.sort_by
+            }&sort_type=${sorting.sort_type}&is_posted=${
+              selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+            }&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
               headers: {
@@ -2422,9 +2443,9 @@ const TableCustomPayslipEmployeeList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?payslip_status_ids=${selectedPayslipStatusId}&sort_by=${
-                sorter.column.dataIndex
-              }&sort_type=${
+              }/getEmployeePayslips?employee_id=${employeeId}&is_posted=${
+                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+              }&sort_by=${sorter.column.dataIndex}&sort_type=${
                 sorter.order === "ascend" ? "asc" : "desc"
               }&keyword=${searching}&page=${pagination.current}&rows=${
                 pagination.pageSize
@@ -2454,7 +2475,13 @@ const TableCustomPayslipEmployeeList = ({
             setpraloading(true);
             setsorting({ sort_by: "", sort_type: "" });
             fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?payslip_status_ids=${selectedPayslipStatusId}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
+              `${
+                process.env.NEXT_PUBLIC_BACKEND_URL
+              }/getEmployeePayslips?employee_id=${employeeId}&is_posted=${
+                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+              }&sort_by=&sort_type=&keyword=${searching}&page=${
+                pagination.current
+              }&rows=${pagination.pageSize}`,
               {
                 method: `GET`,
                 headers: {
@@ -2479,7 +2506,9 @@ const TableCustomPayslipEmployeeList = ({
           onClick: () => {
             record?.is_posted === 0 &&
               record.id &&
-              rt.push(`/admin/employees/payslip/addPayslip?id=${record.id}`);
+              rt.push(
+                `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+              );
           },
         };
       }}

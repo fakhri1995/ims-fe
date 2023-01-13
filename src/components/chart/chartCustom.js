@@ -36,7 +36,7 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
   return (
     <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
       <h4 className="mig-heading--4 mb-4">{title}</h4>
-      <div className="w-10/12 lg:w-11/12 xl:w-8/12 flex mx-auto">
+      <div className="w-9/12 xl:w-7/12 flex mx-auto">
         <Doughnut
           data={{
             labels: dataChart.map((doc) => doc[objName]),
@@ -99,7 +99,7 @@ const ChartHorizontalBar = ({ dataChart, objName, value, colorBarList }) => {
       <div className="w-2/3 h-24">
         <Bar
           data={{
-            labels: dataChart.map((doc) => doc[objName].split(" ")),
+            labels: dataChart.map((doc) => doc[objName]),
             datasets: [
               {
                 data: dataChart.map((doc) => doc[value]),

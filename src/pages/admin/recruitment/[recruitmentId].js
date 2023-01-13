@@ -21,6 +21,7 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 import Html from "react-pdf-html";
+import isURL from "validator/lib/isURL";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -52,7 +53,6 @@ import {
   DotsIconSvg,
   DownloadIconSvg,
   EditIconSvg,
-  ExternalLinkIconSvg,
   InfoCircleIconSvg,
   MailForwardIconSvg,
   OneUserIconSvg,
@@ -199,6 +199,19 @@ const RecruitmentDetailIndex = ({
         .then((response2) => {
           if (response2.success) {
             setDataRecruitment(response2.data);
+            // setDataRecruitment({
+            //   ...response2.data,
+            //   attachments: [
+            //     {
+            //       title: "judul",
+            //       value: "https://blog.logrocket.com/usestate-vs-useref/",
+            //     },
+            //     {
+            //       title: "judul",
+            //       value: "test non url",
+            //     },
+            //   ],
+            // });
             setResumeId(response2.data.resume?.id);
           } else {
             notification.error({
@@ -701,7 +714,7 @@ const RecruitmentDetailIndex = ({
               </ButtonSys>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Email</p>
-                <p className="text-md">{dataRecruitment.email}</p>
+                <p className="text-md">{dataRecruitment.email || "-"}</p>
               </div>
               {/* <div className="space-y-2">
 							<p className="mig-caption--medium text-mono80">Password</p>
@@ -709,21 +722,25 @@ const RecruitmentDetailIndex = ({
 						</div> */}
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Universitas</p>
-                <p className="text-md">{dataRecruitment.university}</p>
+                <p className="text-md">{dataRecruitment.university || "-"}</p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">
                   Role yang Didaftarkan
                 </p>
-                <p className="text-md">{dataRecruitment.role?.name}</p>
+                <p className="text-md">{dataRecruitment.role?.name || "-"}</p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Tipe Role</p>
-                <p className="text-md">{dataRecruitment.role?.type?.name}</p>
+                <p className="text-md">
+                  {dataRecruitment.role?.type?.name || "-"}
+                </p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">Jalur Daftar</p>
-                <p className="text-md">{dataRecruitment.jalur_daftar?.name}</p>
+                <p className="text-md">
+                  {dataRecruitment.jalur_daftar?.name || "-"}
+                </p>
               </div>
               <div className="space-y-2">
                 <p className="mig-caption--medium text-mono80">
@@ -733,6 +750,29 @@ const RecruitmentDetailIndex = ({
                   {moment(dataRecruitment.created_at).format("LL")},&nbsp;
                   {moment(dataRecruitment.created_at).format("LT")}
                 </p>
+              </div>
+              <div className="space-y-2">
+                <p className="mig-caption--medium text-mono80">
+                  Daftar Lampiran
+                </p>
+                {dataRecruitment?.attachments?.length > 0 ? (
+                  <ul className="space-y-2">
+                    {dataRecruitment?.attachments?.map((attachment, idx) => (
+                      <li key={idx}>
+                        <p className="font-bold">{attachment.title}</p>
+                        {isURL(attachment.value) ? (
+                          <a href={attachment.value} target={"_blank"}>
+                            <p className="text-md">{attachment.value}</p>
+                          </a>
+                        ) : (
+                          <p className="text-md">{attachment.value}</p>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  "-"
+                )}
               </div>
               <ButtonSys
                 type={"primary"}

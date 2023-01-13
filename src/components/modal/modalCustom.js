@@ -1254,9 +1254,9 @@ const ModalManageSalaryVar = ({
             <Checkbox defaultChecked={true} disabled={true}>
               BPJS TK-JP (3% Perusahaan)
             </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
+            {/* <Checkbox defaultChecked={true} disabled={true}>
               PPh 21
-            </Checkbox>
+            </Checkbox> */}
 
             {reductionVarOptions?.map((option, idx) => (
               <div
@@ -1357,6 +1357,8 @@ const ModalAddSalaryVar = ({
   isAllowedToGetSalaryColumns,
   isAllowedToAddSalaryColumn,
   isAllowedToDeleteSalaryColumn,
+  payslipId,
+  dataPayslip,
 }) => {
   // 1. Use State
   const [praLoading, setPraLoading] = useState(false);
@@ -1372,6 +1374,8 @@ const ModalAddSalaryVar = ({
   const [receiveVarOptions, setReceiveVarOptions] = useState([]);
   const [reductionVarOptions, setReductionVarOptions] = useState([]);
 
+  const [currentVariableIds, setCurrentVariableIds] = useState(-1);
+
   // 2. Use Effect
   // 2.1. Get salary variable list
   useEffect(() => {
@@ -1380,7 +1384,6 @@ const ModalAddSalaryVar = ({
       setPraLoading(false);
       return;
     }
-
     if (visible === true) {
       setPraLoading(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
@@ -1419,6 +1422,30 @@ const ModalAddSalaryVar = ({
         .finally(() => setPraLoading(false));
     }
   }, [isAllowedToGetSalaryColumns, refresh, visible]);
+
+  /**
+   * If form already has payslip Id, then checked variable in modal &
+   * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip)
+   * */
+  useEffect(() => {
+    if (payslipId) {
+      const dataVarIds = dataPayslip?.salaries?.map(
+        (variable) => variable.employee_salary_column_id
+      );
+
+      const dataVarReceive = dataPayslip?.salaries
+        ?.filter((variable) => variable.column?.type === 1)
+        ?.map((variable) => variable.column);
+
+      const dataVarReduction = dataPayslip?.salaries
+        ?.filter((variable) => variable.column?.type === 2)
+        ?.map((variable) => variable.column);
+
+      setCurrentVariableIds(dataVarIds);
+      setReceiveVarFields(dataVarReceive);
+      setReductionVarFields(dataVarReduction);
+    }
+  }, [dataPayslip]);
 
   // 3. Event
   const handleAddVariable = () => {
@@ -1552,72 +1579,83 @@ const ModalAddSalaryVar = ({
               </Tag>
             </div>
             {receiveVarOptions?.map((option, idx) => (
-              <div key={idx}>
-                {option.required ? (
-                  <div className="flex flex-row items-center justify-between">
-                    <Checkbox
-                      checked={option.required}
-                      disabled={option.required}
-                    >
-                      {option.name}
-                    </Checkbox>
+              <div
+                key={idx}
+                className="flex flex-row justify-between items-center"
+              >
+                {payslipId ? (
+                  <Checkbox
+                    defaultChecked={
+                      currentVariableIds?.includes(option.id) ? true : false
+                    }
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setReceiveVarFields((prev) => [...prev, option]);
+                      } else {
+                        // handle benefit fields in form
+                        const newReceiveVarFields = receiveVarFields.filter(
+                          (variable) => variable.id !== option.id
+                        );
+                        setReceiveVarFields(newReceiveVarFields);
 
-                    {/* Show tag "BPJS" if the variable is selected as multiplier */}
-                    {selectedTags.some((tag) => tag.name == option.name) && (
-                      <Tag color="#35763B" className="rounded text-white m-0">
-                        BPJS
-                      </Tag>
-                    )}
-                  </div>
+                        // use for removing BPJS tag if uncheck
+                        const newSelectedTags = selectedTags.filter(
+                          (tag) => tag.id !== option.id
+                        );
+                        setSelectedTags(newSelectedTags);
+                      }
+                    }}
+                  >
+                    {option.name}
+                  </Checkbox>
                 ) : (
-                  <div className="flex flex-row justify-between items-center">
-                    <Checkbox
-                      // checked={receiveVarFields}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setReceiveVarFields((prev) => [...prev, option]);
-                        } else {
-                          // handle benefit fields in form
-                          const newReceiveVarFields = receiveVarFields.filter(
-                            (variable) => variable.id !== option.id
-                          );
-                          setReceiveVarFields(newReceiveVarFields);
+                  <Checkbox
+                    defaultChecked={option.required}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setReceiveVarFields((prev) => [...prev, option]);
+                      } else {
+                        // handle benefit fields in form
+                        const newReceiveVarFields = receiveVarFields.filter(
+                          (variable) => variable.id !== option.id
+                        );
+                        setReceiveVarFields(newReceiveVarFields);
 
-                          // use for removing BPJS tag if uncheck
-                          const newSelectedTags = selectedTags.filter(
-                            (tag) => tag.id !== option.id
-                          );
-                          setSelectedTags(newSelectedTags);
-                        }
-                      }}
-                    >
-                      {option.name}
-                    </Checkbox>
-                    <div className="flex flex-row items-center space-x-1">
-                      {/* Show tag "BPJS" if the variable is selected as multiplier */}
-                      {selectedTags.some((tag) => tag.name == option.name) && (
-                        <Tag color="#35763B" className="rounded text-white m-0">
-                          BPJS
-                        </Tag>
-                      )}
-                      <Popconfirm
-                        title={
-                          <p className="w-40">
-                            Apakah Anda yakin ingin menghapus variabel{" "}
-                            <strong>{option.name}</strong>?
-                          </p>
-                        }
-                        okText={"Ya"}
-                        cancelText={"Tidak"}
-                        onConfirm={() => handleDeleteVariable(option.id)}
-                      >
-                        <button className="flex items-center bg-transparent hover:opacity-70">
-                          <XIconSvg color={"#BF4A40"} size={16} />
-                        </button>
-                      </Popconfirm>
-                    </div>
-                  </div>
+                        // use for removing BPJS tag if uncheck
+                        const newSelectedTags = selectedTags.filter(
+                          (tag) => tag.id !== option.id
+                        );
+                        setSelectedTags(newSelectedTags);
+                      }
+                    }}
+                  >
+                    {option.name}
+                  </Checkbox>
                 )}
+
+                <div className="flex flex-row items-center space-x-1">
+                  {/* Show tag "BPJS" if the variable is selected as multiplier */}
+                  {selectedTags.some((tag) => tag.name == option.name) && (
+                    <Tag color="#35763B" className="rounded text-white m-0">
+                      BPJS
+                    </Tag>
+                  )}
+                  <Popconfirm
+                    title={
+                      <p className="w-40">
+                        Apakah Anda yakin ingin menghapus variabel{" "}
+                        <strong>{option.name}</strong>?
+                      </p>
+                    }
+                    okText={"Ya"}
+                    cancelText={"Tidak"}
+                    onConfirm={() => handleDeleteVariable(option.id)}
+                  >
+                    <button className="flex items-center bg-transparent hover:opacity-70">
+                      <XIconSvg color={"#BF4A40"} size={16} />
+                    </button>
+                  </Popconfirm>
+                </div>
               </div>
             ))}
           </div>
@@ -1685,21 +1723,17 @@ const ModalAddSalaryVar = ({
             <Checkbox defaultChecked={true} disabled={true}>
               BPJS TK-JP (3% Perusahaan)
             </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
+            {/* <Checkbox defaultChecked={true} disabled={true}>
               PPh 21
-            </Checkbox>
+            </Checkbox> */}
             {reductionVarOptions?.map((option, idx) => (
               <div key={idx}>
-                {option.required ? (
-                  <Checkbox
-                    checked={option.required}
-                    disabled={option.required}
-                  >
-                    {option.name}
-                  </Checkbox>
-                ) : (
-                  <div className="flex flex-row justify-between items-center">
+                <div className="flex flex-row justify-between items-center">
+                  {payslipId ? (
                     <Checkbox
+                      defaultChecked={
+                        currentVariableIds?.includes(option.id) ? true : false
+                      }
                       onChange={(e) => {
                         if (e.target.checked) {
                           setReductionVarFields((prev) => [...prev, option]);
@@ -1714,24 +1748,40 @@ const ModalAddSalaryVar = ({
                     >
                       {option.name}
                     </Checkbox>
-
-                    <Popconfirm
-                      title={
-                        <p className="w-40">
-                          Apakah Anda yakin ingin menghapus variabel{" "}
-                          <strong>{option.name}</strong>?
-                        </p>
-                      }
-                      okText={"Ya"}
-                      cancelText={"Tidak"}
-                      onConfirm={() => handleDeleteVariable(option.id)}
+                  ) : (
+                    <Checkbox
+                      defaultChecked={option.required}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setReductionVarFields((prev) => [...prev, option]);
+                        } else {
+                          const newReductionVarFields =
+                            reductionVarFields.filter(
+                              (variable) => variable.id !== option.id
+                            );
+                          setReductionVarFields(newReductionVarFields);
+                        }
+                      }}
                     >
-                      <button className="flex items-center bg-transparent hover:opacity-70">
-                        <XIconSvg color={"#BF4A40"} size={16} />
-                      </button>
-                    </Popconfirm>
-                  </div>
-                )}
+                      {option.name}
+                    </Checkbox>
+                  )}
+                  <Popconfirm
+                    title={
+                      <p className="w-40">
+                        Apakah Anda yakin ingin menghapus variabel{" "}
+                        <strong>{option.name}</strong>?
+                      </p>
+                    }
+                    okText={"Ya"}
+                    cancelText={"Tidak"}
+                    onConfirm={() => handleDeleteVariable(option.id)}
+                  >
+                    <button className="flex items-center bg-transparent hover:opacity-70">
+                      <XIconSvg color={"#BF4A40"} size={16} />
+                    </button>
+                  </Popconfirm>
+                </div>
               </div>
             ))}
           </div>
