@@ -1091,7 +1091,7 @@ function Software({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold py-8 md:py-0 mb-10"
+                "text-xl md:text-[32px] text-center font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
               {t.softwarepastworksectiontitle1}{" "}
@@ -1129,10 +1129,10 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -1205,7 +1205,7 @@ function Software({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -1222,10 +1222,10 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -1298,7 +1298,7 @@ function Software({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -1315,10 +1315,10 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -1391,7 +1391,7 @@ function Software({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -1426,11 +1426,7 @@ function Software({}) {
               "section3software block md:hidden bg-bgjoinmig px-6 pt-9 pb-[72px]"
             }
           >
-            <p
-              className={
-                "text-xl text-center gilroy-semibold font-gilroysemibold"
-              }
-            >
+            <p className={"text-xl text-center font-gilroysemibold"}>
               Let’s see what{" "}
               <span
                 style={{
@@ -1561,11 +1557,7 @@ function Software({}) {
                       "text-sm md:w-[209px] rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
                     }
                   >
-                    <p
-                      className={
-                        "text-base gilroy-semibold font-gilroysemibold mr-2"
-                      }
-                    >
+                    <p className={"text-base font-gilroysemibold mr-2"}>
                       Contact our sales team
                     </p>
                   </button>
@@ -1686,7 +1678,7 @@ function Software({}) {
                   />
                   <p
                     className={
-                      "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm md:text-base font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.softwarehowitwork1}
@@ -1707,7 +1699,7 @@ function Software({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork2}
@@ -1727,7 +1719,7 @@ function Software({}) {
                 />
                 <p
                   className={
-                    "text-blackmig text-sm md:text-base Gilroy-semibold font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-base font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork3}
@@ -1793,7 +1785,7 @@ function Software({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold mb-[42px]"
+                "text-xl md:text-[32px] text-center font-gilroysemibold mb-[42px]"
               }
             >
               What they say{" "}
@@ -1831,10 +1823,10 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -1907,7 +1899,7 @@ function Software({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -1924,10 +1916,10 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -2000,7 +1992,7 @@ function Software({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -2017,10 +2009,10 @@ function Software({}) {
                     style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                   >
                     <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
-                      <p className="text-[32px] text-darkgrey italic gilroy-semibold font-gilroysemibold">
+                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
                         "
                       </p>
                     </div>
@@ -2093,7 +2085,7 @@ function Software({}) {
                       </div>
                       <a href="#">
                         <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold gilroy-semibold">
+                          <p className="text-base text-primarygreen font-gilroysemibold ">
                             Read more
                           </p>
                           <img
@@ -2130,7 +2122,7 @@ function Software({}) {
           >
             <p
               className={
-                "text-xl md:text-[32px] text-center gilroy-semibold font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                "text-xl md:text-[32px] text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
               }
             >
               What they say{" "}
@@ -2151,9 +2143,7 @@ function Software({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
@@ -2169,9 +2159,7 @@ function Software({}) {
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
                     <div className="flex flex-col">
                       <div className="flex flex-row mt-2">
                         <img
@@ -2181,10 +2169,10 @@ function Software({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -2197,9 +2185,7 @@ function Software({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
@@ -2215,9 +2201,7 @@ function Software({}) {
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
                     <div className="flex flex-col">
                       <div className="flex flex-row mt-2">
                         <img
@@ -2227,10 +2211,10 @@ function Software({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -2243,9 +2227,7 @@ function Software({}) {
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
                   <div className="">
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
 
                     <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
                       I had a{" "}
@@ -2261,9 +2243,7 @@ function Software({}) {
                       <br className="hidden xl:block"></br> optimize your cost
                       and productivity
                     </p>
-                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                      "
-                    </p>
+                    <p className="text-sm text italic font-gilroysemibold">"</p>
                     <div className="flex flex-col">
                       <div className="flex flex-row mt-2">
                         <img
@@ -2273,10 +2253,10 @@ function Software({}) {
                           alt=""
                         />
                         <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-black">
+                          <p className="text-xs font-gilroysemibold text-black">
                             Fachri Fauzan
                           </p>
-                          <p className="text-xs font-gilroysemibold Gilroy-semibold text-darkgrey">
+                          <p className="text-xs font-gilroysemibold text-darkgrey">
                             Talent Acquisition at Bukopin
                           </p>
                         </div>
@@ -2291,7 +2271,7 @@ function Software({}) {
                 <div className={"flex flex-row justify-around"}>
                   <p
                     className={
-                      "text-base text-primarygreen gilroy-semibold font-gilroysemibold"
+                      "text-base text-primarygreen font-gilroysemibold"
                     }
                   >
                     Read More
@@ -2333,11 +2313,7 @@ function Software({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p
-                        className={
-                          "text-base gilroy-semibold font-gilroysemibold mr-2"
-                        }
-                      >
+                      <p className={"text-base font-gilroysemibold mr-2"}>
                         Contact Us
                       </p>
                       <img

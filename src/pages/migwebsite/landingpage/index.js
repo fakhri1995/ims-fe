@@ -12,17 +12,18 @@ import Slider from "react-slick";
 
 import Layout from "../../../components/migwebsite/layout";
 import useAnalyticsEventTracker from "../../../components/migwebsite/useAnalyticsEventTracker";
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import en from "../../../locales/en";
 import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
-function LandingPage({}) {
+function LandingPage({ dataBlog }) {
   const gaEventTracker = useAnalyticsEventTracker("Landing Page");
   const rt = useRouter();
   const { locale } = rt;
   const t = locale === "en" ? en : id;
-
+  const [dataTestimonial, setDataTestimonial] = useState(null);
   const flickityOptions = {
     initialIndex: 0,
     // wrapAround: 'true',
@@ -121,9 +122,28 @@ function LandingPage({}) {
     rt.push("/freeconsultation");
   };
 
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialLandingPage`, {
+      method: `GET`,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("get data testimonial ", res2);
+        if (res2.success) {
+          setDataTestimonial(res2.data);
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
+  }, []);
+
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
+      {console.log("data blogs ", dataBlog)}
       <Head>
         <title>{t.landingpagemetatitle}</title>
         <meta name="description" content={t.landingpagemetadescription} />
@@ -304,61 +324,79 @@ function LandingPage({}) {
               <Linkk href="/freeconsultation">
                 <button
                   className={
-                    "flex text-xl text-white border-2 bg-primarygreen rounded border-primarygreen px-3 py-2 md:px-4 md:py-3 mt-9"
+                    "flex text-base text-white border-2 rounded bg-primarygreen rounded border-primarygreen px-4 py-2 mt-9"
                   }
                 >
-                  <p className={"pl-4 pr-8 font-gilroysemibold"}>
+                  <p className={"font-gilroysemibold"}>
                     {t.landingpagefreeconsultation}
                   </p>
                 </button>
               </Linkk>
             </div>
           </div>
-          <div className={"flex-col center"}>
-            <div className={"mx-auto"}>
-              <Link
-                activeClass="active"
-                to="youronestopmobile"
-                spy={true}
-                smooth={true}
-                offset={-70}
-                duration={500}
-              >
-                <div className="grid justify-items-center text-center">
-                  <button
-                    className={
-                      "flex text-xl text-primarygreen px-3 py-2 md:px-4 md:py-3 mt-4 focus:outline-none bg-white font-gilroysemibold justify-center items-center"
-                    }
-                  >
-                    <p className={""}>Explore More</p>
-                    <img
-                      className={"w-5 h-5 ml-3"}
-                      src="/image/landingpage/arrow-down-green.png"
-                    />
-                  </button>
-                </div>
-              </Link>
-            </div>
-          </div>
-          <div className={"container mx-auto mt-2 px-[20.5px]"}>
-            <div className={"border rounded-lg p-4 bg-green15"}>
-              <div className={"flex flex-row"}>
-                <img
-                  className={"mr-1"}
-                  src="/image/landingpage/info.png"
-                  style={{ width: "20px", height: "20px" }}
-                />
-                <p className={"text-base font-gilroyregular"}>
-                  <span className={"font-gilroysemibold"}>Trusted </span>
-                  in more than
-                  <span className={"font-gilroysemibold"}> 45+ cities</span> and
-                  <span className={"font-gilroysemibold"}> 10+ companies </span>
-                  in providing their
-                  <span className={"font-gilroysemibold"}> IT & Business </span>
-                  needs!
-                </p>
+          <div className={"mx-auto"}>
+            <Link
+              activeClass="active"
+              to="youronestopmobile"
+              spy={true}
+              smooth={true}
+              offset={-70}
+              duration={500}
+            >
+              <div className="grid justify-items-center text-center">
+                <button
+                  className={
+                    "flex text-base text-primarygreen px-3 py-2 md:px-4 md:py-3 mt-8 bg-white font-gilroysemibold justify-center items-center"
+                  }
+                >
+                  <p className={""}>Explore Solutions</p>
+                  <img
+                    className={"w-4 h-4 ml-3"}
+                    src="/image/landingpage/arrow-down-green.png"
+                  />
+                </button>
               </div>
-            </div>
+            </Link>
+          </div>
+          <div className={"mt-8 px-4"}>
+            <p
+              className={
+                "text-sm text-blackmig font-gilroysemibold text-center"
+              }
+            >
+              {t.landingpagetitlelogo}
+            </p>
+          </div>
+          <div className={"flex flex-row justify-center mt-6"}>
+            <img
+              className={"mr-[42.4px]"}
+              style={{ width: "47.5px", height: "40px" }}
+              src="/image/landingpage/client1.png"
+            />
+            <img
+              className={"mr-[42.4px]"}
+              style={{ width: "27.54px", height: "32px" }}
+              src="/image/landingpage/client2.png"
+            />
+            <img
+              className={"mr-[42.4px]"}
+              style={{ width: "40px", height: "40px" }}
+              src="/image/landingpage/client3.png"
+            />
+            <img
+              className={""}
+              style={{ width: "35.27px", height: "40px" }}
+              src="/image/landingpage/client4.png"
+            />
+          </div>
+          <div className={"mt-7 text-center"}>
+            <p className={"text-blackmig font-gilroysemibold text-sm px-4"}>
+              <span className={"text-primarygreen"}>45+ </span>
+              {t.cities},<span className={"text-primarygreen"}> 9000+ </span>
+              {t.managed}.<span className={"text-primarygreen"}> 100+ </span>
+              {t.techproject}.<span className={"text-primarygreen"}> 10+ </span>
+              {t.companies}.
+            </p>
           </div>
         </div>
         {/* ------------ */}
@@ -540,137 +578,120 @@ function LandingPage({}) {
             IT solutions
           </p>
         </div>
-        <Slider {...sliderSettingsPhone}>
-          <div>
-            <div
-              className="bg-lightblue px-4 py-6 rounded-lg w-[287px] h-[388px] mx-auto"
-              style={{
-                boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
-              }}
-            >
-              <div className={"grid justify-items-center text-center"}>
-                <img
-                  src="/image/landingpage/Hardware.png"
-                  className={"w-full h-full"}
-                  style={{ width: "200px", height: "116px" }}
-                />
-              </div>
-              <p className="text-base text-accentblue text-left mt-4 font-gilroybold font-bold">
-                Hardware
-              </p>
-              <p className="text-sm text-black text-left mt-1 gilroy-semibold font-gilroysemibold">
-                Lighten up your heavy capital in IT infrastructure
-              </p>
-              <p className="text-sm text-black text-left mt-1 font-gilroyregular font-regular">
-                {t.hardwaredescription}
-              </p>
-              <div className={"flex mt-3 justify-end"}>
-                <Linkk href="/hardware">
-                  <button
-                    className={
-                      "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 focus:outline-none"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1 text-base"}>Learn More</p>
-                      <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
-                        src="/image/landingpage/arrow-forward.png"
-                      />
-                    </div>
-                  </button>
-                </Linkk>
-              </div>
+        <div>
+          <div className="bg-lightgreen px-[16.5px] py-3 rounded-lg w-[287px] h-[388px] mx-auto">
+            <div className={"grid justify-items-center text-center"}>
+              <img
+                src="/image/landingpage/hero-talent.png"
+                className={"w-full h-full"}
+                style={{ width: "200px", height: "115.32px" }}
+              />
+            </div>
+            <p className="text-base text-primary text-left mt-4 font-gilroybold">
+              Hardware
+            </p>
+            <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
+              Lighten up your heavy capital in IT infrastructure
+            </p>
+            <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
+              {t.hardwaredescription}
+            </p>
+            <div className={"flex mt-3 justify-end"}>
+              <Linkk href="/hardware">
+                <button
+                  className={
+                    "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                  }
+                >
+                  <div className={"flex flex-row justify-between"}>
+                    <p className={"text-base"}>Get Yours</p>
+                    <img
+                      className={"self-center ml-[13.52px]"}
+                      style={{ width: "8.95px", height: "15.64px" }}
+                      src="/image/landingpage/arrow-forward.png"
+                    />
+                  </div>
+                </button>
+              </Linkk>
             </div>
           </div>
-          <div>
-            <div
-              className="bg-lightgreen rounded-lg px-4 py-6 w-[287px] h-[388px] mx-auto"
-              style={{
-                boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
-              }}
-            >
-              <div className={"grid justify-items-center text-center"}>
-                <img
-                  src="/image/landingpage/Software.png"
-                  className={"w-full h-full"}
-                  style={{ width: "200px", height: "116px" }}
-                />
-              </div>
-              <p className="text-base text-darkgreen text-left mt-4 font-gilroybold">
-                Software
-              </p>
-              <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
-                Automate your business
-              </p>
-              <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
-                {t.softwaredescription}
-              </p>
-              <div className={"flex mt-[55.53px] justify-end"}>
-                <Linkk href="/software">
-                  <button
-                    className={
-                      "text-sm text-center  text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 "
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1 text-base"}>Learn More</p>
-                      <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
-                        src="/image/landingpage/arrow-forward.png"
-                      />
-                    </div>
-                  </button>
-                </Linkk>
-              </div>
+        </div>
+        <div>
+          <div className="bg-lightblue rounded-lg px-[16.5px] py-3 w-[287px] h-[388px] mt-7 mx-auto">
+            <div className={"grid justify-items-center text-center"}>
+              <img
+                src="/image/landingpage/Software.png"
+                className={"w-full h-full"}
+                style={{ width: "200px", height: "116px" }}
+              />
+            </div>
+            <p className="text-base text-accentblue text-left mt-4 font-gilroybold">
+              Software
+            </p>
+            <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
+              Automate your business
+            </p>
+            <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
+              {t.softwaredescription}
+            </p>
+            <div className={"flex mt-[55.53px] justify-end"}>
+              <Linkk href="/software">
+                <button
+                  className={
+                    "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                  }
+                >
+                  <div className={"flex flex-row justify-between"}>
+                    <p className={"text-base"}>Build Now</p>
+                    <img
+                      className={"self-center ml-[13.52px]"}
+                      style={{ width: "8.95px", height: "15.64px" }}
+                      src="/image/landingpage/arrow-forward.png"
+                    />
+                  </div>
+                </button>
+              </Linkk>
             </div>
           </div>
-          <div>
-            <div
-              className="bg-lightgrey rounded-lg px-4 py-6 w-[287px] h-[388px] mx-auto"
-              style={{
-                boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
-              }}
-            >
-              <div className={"grid justify-items-center text-center"}>
-                <img
-                  src="/image/landingpage/Talents.png"
-                  className={"w-full h-full"}
-                  style={{ width: "200px", height: "116px" }}
-                />
-              </div>
-              <p className="text-base text-accentpurple text-left mt-4 font-gilroybold">
-                Talents
-              </p>
-              <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
-                {t.talentsubtitle}
-              </p>
-              <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
-                {t.talentdescription}
-              </p>
-              <div className={"flex mt-[34.53px] justify-end"}>
-                <Linkk href="/talents">
-                  <button
-                    className={
-                      "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 focus:outline-none"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1 text-base"}>Learn More</p>
-                      <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
-                        src="/image/landingpage/arrow-forward.png"
-                      />
-                    </div>
-                  </button>
-                </Linkk>
-              </div>
+        </div>
+        <div>
+          <div className="bg-lightgrey rounded-lg px-[16.5px] py-3 w-[287px] h-[388px] mt-7 mx-auto">
+            <div className={"grid justify-items-center text-center"}>
+              <img
+                src="/image/landingpage/Talents.png"
+                className={"w-full h-full"}
+                style={{ width: "200px", height: "116px" }}
+              />
+            </div>
+            <p className="text-base text-accentpurple text-left mt-4 font-gilroybold">
+              Talents
+            </p>
+            <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
+              {t.talentsubtitle}
+            </p>
+            <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
+              {t.talentdescription}
+            </p>
+            <div className={"flex mt-[34.53px] justify-end"}>
+              <Linkk href="/talents">
+                <button
+                  className={
+                    "text-sm text-center rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                  }
+                >
+                  <div className={"flex flex-row justify-between"}>
+                    <p className={"text-base"}>Hire Now</p>
+                    <img
+                      className={"self-center ml-[13.52px]"}
+                      style={{ width: "8.95px", height: "15.64px" }}
+                      src="/image/landingpage/arrow-forward.png"
+                    />
+                  </div>
+                </button>
+              </Linkk>
             </div>
           </div>
-        </Slider>
+        </div>
       </section>
       {/* <section
         className={
@@ -1054,336 +1075,116 @@ function LandingPage({}) {
             style={{ maxWidth: 1000 }}
           >
             <Slider {...sliderSettings2} ref={slider}>
-              <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
-                <div className={"flex flex-row justify-between"}>
-                  <div className={"w-[45%]"}>
-                    <div className={"flex relative self-center "}>
-                      <img
-                        className={"w-[356px] h-[237px] "}
-                        src="/image/landingpage/testimonial.png"
-                        alt=""
-                      />
-                      <div
-                        className={
-                          "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
-                        }
-                        style={{
-                          boxShadow: "0px 16px 40px rgba(113, 176, 112, 0.2)",
-                        }}
-                      >
-                        <p className={"text-xs text-blackmig"}>
-                          “MIG catalyzes your core business with{" "}
-                          <span className={"font-gilroysemibold"}>
-                            IT hardware solutions, software development, and
-                            tech talents.{" "}
-                          </span>
-                          We serve you the{" "}
-                          <span className={"font-gilroysemibold"}>
-                            best resource{" "}
-                          </span>{" "}
-                          with low cost, but high maintenance.”
-                        </p>
-                        <div
-                          className={"mt-3 border border-dividermig w-[144px]"}
-                        />
-                        <p
-                          className={
-                            "mt-1 text-[10px] text-blackmig font-gilroysemibold"
-                          }
-                        >
-                          Mayfa Shadrina Siddi
-                        </p>
-                        <p
-                          className={
-                            "mt-1 text-[10px] text-blackmig  font-gilroyregular"
-                          }
-                        >
-                          CTO of Bukopin
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={"w-[45%]"}>
-                    <div className={"flex flex-row justify-between"}>
-                      <div>
-                        <p
-                          className={
-                            "text-blackmig text-2xl font-gilroysemibold"
-                          }
-                        >
-                          Ini judul artikel
-                        </p>
-                        <p
-                          className={
-                            "text-primarygreen text-base font-gilroysemibold mt-1"
-                          }
-                        >
-                          KB Bukopin
-                        </p>
-                      </div>
-                      <div>
-                        <img
-                          className={"w-[58.5px] h-[42.5px]"}
-                          src="/image/landingpage/testimonial-client.png"
-                        />
-                      </div>
-                    </div>
-                    <p
-                      className={
-                        "mt-4 text-blackmig font-gilroyregular text-base"
-                      }
-                    >
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                      Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur.
-                    </p>
-                    <Linkk href="/talents">
-                      <button
-                        className={
-                          "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
-                        }
-                      >
-                        <div className={"flex flex-row justify-between"}>
-                          <p
-                            className={
-                              "pr-[13.52px] text-base font-gilroysemibold"
-                            }
-                          >
-                            Read Story
-                          </p>
-                          <img
-                            className={"w-5 h-5"}
-                            src="/image/landingpage/arrow_forward_ios2.png"
-                          />
+              {dataTestimonial
+                ? dataTestimonial.map((data1) => (
+                    <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
+                      <div className={"flex flex-row justify-between"}>
+                        <div className={"w-[45%]"}>
+                          <div className={"flex relative self-center "}>
+                            <img
+                              className={"w-[356px] h-[237px] "}
+                              src={generateStaticAssetUrl(
+                                data1.attachment_article.link
+                              )}
+                              alt=""
+                            />
+                            <div
+                              className={
+                                "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
+                              }
+                              style={{
+                                boxShadow:
+                                  "0px 16px 40px rgba(113, 176, 112, 0.2)",
+                              }}
+                            >
+                              <div
+                                className=""
+                                dangerouslySetInnerHTML={{
+                                  __html: data1.quote,
+                                }}
+                              />
+                              <div
+                                className={
+                                  "mt-3 border border-dividermig w-[144px]"
+                                }
+                              />
+                              <p
+                                className={
+                                  "mt-1 text-[10px] text-blackmig font-gilroysemibold"
+                                }
+                              >
+                                {data1.author}
+                              </p>
+                              <p
+                                className={
+                                  "mt-1 text-[10px] text-blackmig  font-gilroyregular"
+                                }
+                              >
+                                {data1.job_title}
+                              </p>
+                            </div>
+                          </div>
                         </div>
-                      </button>
-                    </Linkk>
-                  </div>
-                </div>
-              </div>
-              <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
-                <div className={"flex flex-row justify-between"}>
-                  <div className={"w-[45%]"}>
-                    <div className={"flex relative self-center "}>
-                      <img
-                        className={"w-[356px] h-[237px] "}
-                        src="/image/landingpage/testimonial.png"
-                        alt=""
-                      />
-                      <div
-                        className={
-                          "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
-                        }
-                        style={{
-                          boxShadow: "0px 16px 40px rgba(113, 176, 112, 0.2)",
-                        }}
-                      >
-                        <p className={"text-xs text-blackmig"}>
-                          “MIG catalyzes your core business with{" "}
-                          <span className={"font-gilroysemibold"}>
-                            IT hardware solutions, software development, and
-                            tech talents.{" "}
-                          </span>
-                          We serve you the{" "}
-                          <span className={"font-gilroysemibold"}>
-                            best resource{" "}
-                          </span>{" "}
-                          with low cost, but high maintenance.”
-                        </p>
-                        <div
-                          className={"mt-3 border border-dividermig w-[144px]"}
-                        />
-                        <p
-                          className={
-                            "mt-1 text-[10px] text-blackmig font-gilroysemibold"
-                          }
-                        >
-                          Mayfa Shadrina Siddi
-                        </p>
-                        <p
-                          className={
-                            "mt-1 text-[10px] text-blackmig  font-gilroyregular"
-                          }
-                        >
-                          CTO of Bukopin
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className={"w-[45%]"}>
-                    <div className={"flex flex-row justify-between"}>
-                      <div>
-                        <p
-                          className={
-                            "text-blackmig text-2xl font-gilroysemibold"
-                          }
-                        >
-                          Ini judul artikel
-                        </p>
-                        <p
-                          className={
-                            "text-primarygreen text-base font-gilroysemibold mt-1"
-                          }
-                        >
-                          KB Bukopin
-                        </p>
-                      </div>
-                      <div>
-                        <img
-                          className={"w-[58.5px] h-[42.5px]"}
-                          src="/image/landingpage/testimonial-client.png"
-                        />
-                      </div>
-                    </div>
-                    <p
-                      className={
-                        "mt-4 text-blackmig font-gilroyregular text-base"
-                      }
-                    >
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                      Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur.
-                    </p>
-                    <Linkk href="/talents">
-                      <button
-                        className={
-                          "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
-                        }
-                      >
-                        <div className={"flex flex-row justify-between"}>
-                          <p
-                            className={
-                              "pr-[13.52px] text-base font-gilroysemibold"
-                            }
-                          >
-                            Read Story
-                          </p>
-                          <img
-                            className={"w-5 h-5"}
-                            src="/image/landingpage/arrow_forward_ios2.png"
+                        <div className={"w-[45%]"}>
+                          <div className={"flex flex-row justify-between"}>
+                            <div>
+                              <p
+                                className={
+                                  "text-blackmig text-2xl font-gilroysemibold"
+                                }
+                              >
+                                {data1.title}
+                              </p>
+                              <p
+                                className={
+                                  "text-primarygreen text-base font-gilroysemibold mt-1"
+                                }
+                              >
+                                {data1.company_name}
+                              </p>
+                            </div>
+                            <div>
+                              <img
+                                className={"w-[58.5px] h-[42.5px]"}
+                                src={generateStaticAssetUrl(
+                                  data1.company_logo.link
+                                )}
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="mt-4"
+                            dangerouslySetInnerHTML={{
+                              __html: data1.description,
+                            }}
                           />
+
+                          <Linkk href="/talents">
+                            <button
+                              className={
+                                "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                              }
+                            >
+                              <div className={"flex flex-row justify-between"}>
+                                <p
+                                  className={
+                                    "pr-[13.52px] text-base font-gilroysemibold"
+                                  }
+                                >
+                                  Read Story
+                                </p>
+                                <img
+                                  className={"w-5 h-5"}
+                                  src="/image/landingpage/arrow_forward_ios2.png"
+                                />
+                              </div>
+                            </button>
+                          </Linkk>
                         </div>
-                      </button>
-                    </Linkk>
-                  </div>
-                </div>
-              </div>
-              <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
-                <div className={"flex flex-row justify-between"}>
-                  <div className={"w-[45%]"}>
-                    <div className={"flex relative self-center "}>
-                      <img
-                        className={"w-[356px] h-[237px] "}
-                        src="/image/landingpage/testimonial.png"
-                        alt=""
-                      />
-                      <div
-                        className={
-                          "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
-                        }
-                        style={{
-                          boxShadow: "0px 16px 40px rgba(113, 176, 112, 0.2)",
-                        }}
-                      >
-                        <p className={"text-xs text-blackmig"}>
-                          “MIG catalyzes your core business with{" "}
-                          <span className={"font-gilroysemibold"}>
-                            IT hardware solutions, software development, and
-                            tech talents.{" "}
-                          </span>
-                          We serve you the{" "}
-                          <span className={"font-gilroysemibold"}>
-                            best resource{" "}
-                          </span>{" "}
-                          with low cost, but high maintenance.”
-                        </p>
-                        <div
-                          className={"mt-3 border border-dividermig w-[144px]"}
-                        />
-                        <p
-                          className={
-                            "mt-1 text-[10px] text-blackmig font-gilroysemibold"
-                          }
-                        >
-                          Mayfa Shadrina Siddi
-                        </p>
-                        <p
-                          className={
-                            "mt-1 text-[10px] text-blackmig  font-gilroyregular"
-                          }
-                        >
-                          CTO of Bukopin
-                        </p>
                       </div>
                     </div>
-                  </div>
-                  <div className={"w-[45%]"}>
-                    <div className={"flex flex-row justify-between"}>
-                      <div>
-                        <p
-                          className={
-                            "text-blackmig text-2xl font-gilroysemibold"
-                          }
-                        >
-                          Ini judul artikel
-                        </p>
-                        <p
-                          className={
-                            "text-primarygreen text-base font-gilroysemibold mt-1"
-                          }
-                        >
-                          KB Bukopin
-                        </p>
-                      </div>
-                      <div>
-                        <img
-                          className={"w-[58.5px] h-[42.5px]"}
-                          src="/image/landingpage/testimonial-client.png"
-                        />
-                      </div>
-                    </div>
-                    <p
-                      className={
-                        "mt-4 text-blackmig font-gilroyregular text-base"
-                      }
-                    >
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                      Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur.
-                    </p>
-                    <Linkk href="/talents">
-                      <button
-                        className={
-                          "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
-                        }
-                      >
-                        <div className={"flex flex-row justify-between"}>
-                          <p
-                            className={
-                              "pr-[13.52px] text-base font-gilroysemibold"
-                            }
-                          >
-                            Read Story
-                          </p>
-                          <img
-                            className={"w-5 h-5"}
-                            src="/image/landingpage/arrow_forward_ios2.png"
-                          />
-                        </div>
-                      </button>
-                    </Linkk>
-                  </div>
-                </div>
-              </div>
+                  ))
+                : ""}
             </Slider>
           </div>
           <button onClick={() => slider?.current?.slickNext()}>
@@ -1404,7 +1205,7 @@ function LandingPage({}) {
       {/* testimonial mobile */}
       <section
         className={
-          "sectiontestimonialmobile block md:hidden bg-transp60 pt-8 pb-14 px-[30px] md:px-10"
+          "sectiontestimonialmobile block md:hidden bg-white pt-8 pb-14 px-[30px] md:px-10"
         }
       >
         <p
@@ -1425,249 +1226,172 @@ function LandingPage({}) {
         </p>
         <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
           <Slider {...sliderSettingsPhone}>
-            <div
-              className="py-4 px-8 bg-white rounded-lg"
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <div className="">
-                <p className="text-sm text italic font-gilroysemibold">"</p>
-
-                <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
-                  I had a{" "}
-                  <span className={"text-primarygreen font-gilroysemibold"}>
-                    wonderful experience{" "}
-                  </span>
-                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
-                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                  <span className={"text-primarygreen font-gilroysemibold"}>
-                    tempor incididunt{" "}
-                  </span>
-                  ut labore et dolore magna aliqua.
-                  <br className="hidden xl:block"></br> optimize your cost and
-                  productivity
+            <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
+              <div className={"flex flex-row justify-between"}>
+                <p className={"font-gilroybold text-sm text-blackmig"}>
+                  Ini Judul Artikel
                 </p>
-                <p className="text-sm text italic font-gilroysemibold">"</p>
-                <div className="flex flex-col">
-                  <div className="flex flex-row mt-2">
-                    <img
-                      className="rounded-full"
-                      src="/image/landingpage/testimonial-user.png"
-                      style={{ height: "40px", width: "40px" }}
-                      alt=""
-                    />
-                    <div className="self-center ml-[17px]">
-                      <p className="text-xs font-gilroysemibold  text-black">
-                        Fachri Fauzan
-                      </p>
-                      <p className="text-xs font-gilroysemibold text-darkgrey">
-                        Talent Acquisition at Bukopin
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div
+                <img
+                  className="rounded-full"
+                  src="/image/landingpage/testimonial-client.png"
+                  style={{ height: "24px", width: "28.24px" }}
+                  alt=""
+                />
+              </div>
+              <p className={"mt-1 text-primarygreen text-xs font-gilroybold"}>
+                KB Bukopin
+              </p>
+              <p className={"mt-2 text-blackmig text-xs font-gilroyregular"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <div
+                className={"mt-2 bg-white p-3"}
+                style={{ boxShadow: "0px 16px 40px rgba(112, 144, 176, 0.2)" }}
+              >
+                <p className={"text-xs text-blackmig"}>
+                  “MIG catalyzes your core business with{" "}
+                  <span className={"font-gilroysemibold"}>
+                    IT hardware solutions, software development, and tech
+                    talents.{" "}
+                  </span>{" "}
+                  We serve you the{" "}
+                  <span className={"font-gilroysemibold"}>best resource</span>{" "}
+                  with low cost, but high maintenance.”
+                </p>
+                <div className={"mt-3 border border-dividermig w-1/2"} />
+                <p
                   className={
-                    "mt-2 px-2 py-1 bg-greenTrans20 rounded-[20px] w-[113px]"
+                    "mt-1 text-[10px] font-gilroysemibold text-blackmig"
                   }
                 >
-                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
-                    <span className="font-gilroysemibold">Industry: </span>{" "}
-                    Banking
-                  </p>
-                </div>
-                <div
+                  Mayfa Shadrina Siddi
+                </p>
+                <p
                   className={
-                    "mt-2 px-2 py-1 bg-lightblue rounded-[20px] w-[163px]"
+                    "mt-1 text-[10px] font-gilroyregular text-blackmig"
                   }
                 >
-                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
-                    <span className="font-gilroysemibold">Service: </span>{" "}
-                    Hardware, Talents
+                  CTO of Bukopin
+                </p>
+              </div>
+              <div className={"mt-3 flex justify-end"}>
+                <button
+                  className={
+                    "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
+                  }
+                >
+                  <p className={"text-base text-white font-gilroysemibold"}>
+                    Read Story
                   </p>
-                </div>
+                  <img
+                    className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                    src="/image/landingpage/arrow_forward_ios2.png"
+                    alt=""
+                  />
+                </button>
               </div>
             </div>
-            <div
-              className="py-4 px-8 bg-white rounded-lg"
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <div className="">
-                <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                  "
+            <div className={"p-4 bg-lightblue rounded-lg"}>
+              <div className={"flex flex-row justify-between"}>
+                <p className={"font-gilroybold text-sm text-blackmig"}>
+                  Ini Judul Artikel
                 </p>
-
-                <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
-                  I had a{" "}
-                  <span className={"text-primarygreen font-gilroysemibold"}>
-                    wonderful experience{" "}
-                  </span>
-                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
-                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                  <span className={"text-primarygreen font-gilroysemibold"}>
-                    tempor incididunt{" "}
-                  </span>
-                  ut labore et dolore magna aliqua.
-                  <br className="hidden xl:block"></br> optimize your cost and
-                  productivity
-                </p>
-                <p className="text-sm text italic font-gilroysemibold">"</p>
-                <div className="flex flex-col">
-                  <div className="flex flex-row mt-2">
-                    <img
-                      className="rounded-full"
-                      src="/image/landingpage/testimonial-user.png"
-                      style={{ height: "40px", width: "40px" }}
-                      alt=""
-                    />
-                    <div className="self-center ml-[17px]">
-                      <p className="text-xs font-gilroysemibold  text-black">
-                        Fachri Fauzan
-                      </p>
-                      <p className="text-xs font-gilroysemibold text-darkgrey">
-                        Talent Acquisition at Bukopin
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div
+                <img
+                  className="rounded-full"
+                  src="/image/landingpage/testimonial-client.png"
+                  style={{ height: "24px", width: "28.24px" }}
+                  alt=""
+                />
+              </div>
+              <p className={"mt-1 text-primarygreen text-xs font-gilroybold"}>
+                KB Bukopin
+              </p>
+              <p className={"mt-2 text-blackmig text-xs font-gilroyregular"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <p
+                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <p
+                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <div className={"mt-[40px] flex justify-end"}>
+                <button
                   className={
-                    "mt-2 px-2 py-1 bg-greenTrans20 rounded-[20px] w-[113px]"
+                    "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
                   }
                 >
-                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
-                    <span className="font-gilroysemibold">Industry: </span>{" "}
-                    Banking
+                  <p className={"text-base text-white font-gilroysemibold"}>
+                    Read Story
                   </p>
-                </div>
-                <div
-                  className={
-                    "mt-2 px-2 py-1 bg-lightblue rounded-[20px] w-[163px]"
-                  }
-                >
-                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
-                    <span className="font-gilroysemibold">Service: </span>{" "}
-                    Hardware, Talents
-                  </p>
-                </div>
+                  <img
+                    className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                    src="/image/landingpage/arrow_forward_ios2.png"
+                    alt=""
+                  />
+                </button>
               </div>
             </div>
-            <div
-              className="py-4 px-8 bg-white rounded-lg"
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <div className="">
-                <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                  "
+            <div className={"p-4 bg-lightgrey rounded-lg"}>
+              <div className={"flex flex-row justify-between"}>
+                <p className={"font-gilroybold text-sm text-blackmig"}>
+                  Ini Judul Artikel
                 </p>
-
-                <p className="pb-4 font-gilroyregular text-sm mx-auto text-left">
-                  I had a{" "}
-                  <span className={"text-primarygreen font-gilroysemibold"}>
-                    wonderful experience{" "}
-                  </span>
-                  working with Mitramas Infosys Global. Lorem ipsum dolor sit
-                  amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                  <span className={"text-primarygreen font-gilroysemibold"}>
-                    tempor incididunt{" "}
-                  </span>
-                  ut labore et dolore magna aliqua.
-                  <br className="hidden xl:block"></br> optimize your cost and
-                  productivity
-                </p>
-                <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                  "
-                </p>
-                <div className="flex flex-col">
-                  <div className="flex flex-row mt-2">
-                    <img
-                      className="rounded-full"
-                      src="/image/landingpage/testimonial-user.png"
-                      style={{ height: "40px", width: "40px" }}
-                      alt=""
-                    />
-                    <div className="self-center ml-[17px]">
-                      <p className="text-xs font-gilroysemibold  text-black">
-                        Fachri Fauzan
-                      </p>
-                      <p className="text-xs font-gilroysemibold text-darkgrey">
-                        Talent Acquisition at Bukopin
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div
+                <img
+                  className="rounded-full"
+                  src="/image/landingpage/testimonial-client.png"
+                  style={{ height: "24px", width: "28.24px" }}
+                  alt=""
+                />
+              </div>
+              <p className={"mt-1 text-primarygreen text-xs font-gilroybold"}>
+                KB Bukopin
+              </p>
+              <p className={"mt-2 text-blackmig text-xs font-gilroyregular"}>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <p
+                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <p
+                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
+              >
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt ut labore et dolore magna aliqua.
+              </p>
+              <div className={"mt-[40px] flex justify-end"}>
+                <button
                   className={
-                    "mt-2 px-2 py-1 bg-greenTrans20 rounded-[20px] w-[113px]"
+                    "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
                   }
                 >
-                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
-                    <span className="font-gilroysemibold">Industry: </span>{" "}
-                    Banking
+                  <p className={"text-base text-white font-gilroysemibold"}>
+                    Read Story
                   </p>
-                </div>
-                <div
-                  className={
-                    "mt-2 px-2 py-1 bg-lightblue rounded-[20px] w-[163px]"
-                  }
-                >
-                  <p className={"text-xs text-primarygreen font-gilroyregular"}>
-                    <span className="font-gilroysemibold">Service: </span>{" "}
-                    Hardware, Talents
-                  </p>
-                </div>
+                  <img
+                    className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                    src="/image/landingpage/arrow_forward_ios2.png"
+                    alt=""
+                  />
+                </button>
               </div>
             </div>
           </Slider>
         </div>
-        <p
-          className={
-            "text-xs text-darkgrey font-gilroysemibold text-center mt-[48px] px-[29px]"
-          }
-        >
-          Join hundreds of our clients and partners in fulfilling your needs
-        </p>
-        <div className={"flex flex-row justify-center mt-6"}>
-          <img
-            className={"mr-[38px]"}
-            style={{ width: "59.38px", height: "50px" }}
-            src="/image/landingpage/client3.png"
-          />
-          <img
-            className={"mr-[38px]"}
-            style={{ width: "34.43px", height: "40px" }}
-            src="/image/landingpage/client4.png"
-          />
-          <img
-            className={"mr-[38px]"}
-            style={{ width: "59px", height: "50px" }}
-            src="/image/landingpage/client1.png"
-          />
-          <img
-            className={""}
-            style={{ width: "44px", height: "50px" }}
-            src="/image/landingpage/client2.png"
-          />
-        </div>
-        <div className={"block md:hidden mt-16 flex justify-center"}>
-          <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
-            <div className={"flex flex-row justify-around"}>
-              <p
-                className={
-                  "text-base text-primarygreen gilroy-semibold font-gilroysemibold"
-                }
-              >
-                Read More
-              </p>
-              <img
-                className={"self-center"}
-                style={{ height: "15.64px", width: "8.95px" }}
-                src="/image/landingpage/arrow-forward-ios.png"
-              />
-            </div>
-          </button>
-        </div>
       </section>
-      <section className={"session4landingpage py-4 md:py-16 text-center"}>
+      <section className={"session4landingpage py-4 px-4 md:py-16 text-center"}>
         <div className={"container mx-auto"}>
           <p
             className={
@@ -1769,10 +1493,7 @@ function LandingPage({}) {
           </div>
         </div>
         <div className={"md:hidden"}>
-          <div
-            className="flex mt-7 h-[112px] w-[328px] bg-white rounded-lg mx-auto px-4"
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
+          <div className="flex mt-7 w-[328px] border border-advantage bg-bgadvantagecard rounded-lg mx-auto py-3 px-4">
             {/* <div className={""}> */}
             <img
               className="w-[64px] h-[84px] my-[14px]"
@@ -1798,10 +1519,7 @@ function LandingPage({}) {
               </p>
             </div> */}
           </div>
-          <div
-            className="flex mt-4 h-[112px] w-[328px] bg-white rounded-lg mx-auto px-4"
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
+          <div className="flex mt-4 w-[328px] border border-advantage bg-bgadvantagecard rounded-lg mx-auto py-3 px-4">
             <img
               className="w-[64px] h-[84px] my-[14px]"
               src="/image/landingpage/reliable_partner.png"
@@ -1816,10 +1534,7 @@ function LandingPage({}) {
               </p>
             </div>
           </div>
-          <div
-            className="flex mt-4 h-[112px] w-[328px] bg-white rounded-lg mx-auto px-4"
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
+          <div className="flex mt-4 w-[328px] border border-advantage bg-bgadvantagecard rounded-lg mx-auto py-3 px-4">
             <img
               className="w-[64px] h-[74px] my-[18.78px]"
               src="/image/landingpage/competitive_rates.png"
@@ -1834,10 +1549,7 @@ function LandingPage({}) {
               </p>
             </div>
           </div>
-          <div
-            className="flex mt-4 h-[112px] w-[328px] mb-12 bg-white rounded-lg mx-auto px-4"
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
+          <div className="flex mt-4 w-[328px] mb-12 border border-advantage bg-bgadvantagecard rounded-lg mx-auto py-3 px-4">
             <img
               src="/image/landingpage/cost_efficient.png"
               alt=""
@@ -1940,7 +1652,7 @@ function LandingPage({}) {
       </section>
 
       <section
-        className={"section2landingpagephone block md:hidden px-4 bg-bgjoinmig"}
+        className={"section2landingpagephone block md:hidden px-4 bg-white"}
       >
         <p className={"text-xl text-center font-gilroysemibold py-8 md:py-0"}>
           Interested in{" "}
@@ -2004,12 +1716,12 @@ function LandingPage({}) {
         <div className="self-end mt-5">
           <a href="#">
             <div className="flex mt-5 justify-end mr-5">
-              <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
-                Apply for jobs
+              <p className="text-base mr-[13.52px] text-primarygreen font-gilroysemibold">
+                Apply for Jobs
               </p>
               <img
-                className={"py-1"}
-                style={{ width: "8px" }}
+                className={"self-center"}
+                style={{ width: "8.95px", height: "15.64px" }}
                 src="/image/landingpage/arrow-forward-ios.png"
               />
             </div>
@@ -2086,9 +1798,7 @@ function LandingPage({}) {
         </div>
       </section>
       <section
-        className={
-          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
-        }
+        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div
@@ -2135,6 +1845,26 @@ function LandingPage({}) {
       </section>
     </Layout>
   );
+}
+
+export async function getStaticProps() {
+  let dataBlogs = null;
+
+  const resources = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticle`,
+    {
+      method: `GET`,
+    }
+  );
+  console.log("hasil get api ", resources);
+  const resjson = await resources.json();
+  dataBlogs = resjson.data;
+  return {
+    props: {
+      dataBlog: dataBlogs || [],
+    },
+    revalidate: 60,
+  };
 }
 
 export default LandingPage;
