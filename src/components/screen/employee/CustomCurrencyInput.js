@@ -26,7 +26,7 @@ const CustomCurrencyInput = ({
 
       return () => clearTimeout(timer);
     }
-  }, [value, disabled]);
+  }, [value]);
 
   return (
     <CurrencyFormat

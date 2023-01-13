@@ -149,6 +149,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     new_office: "",
     resign_at: "",
     benefit: {},
+    gaji_pokok: 0,
+    salaries: [],
   });
 
   const [inventoryList, setInventoryList] = useState([]);

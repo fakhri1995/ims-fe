@@ -157,7 +157,7 @@ const EmployeePayslipAddIndex = ({
 
   // Count total gross penerimaan & pengurangan
   const sumValues = (arr) => {
-    return arr.reduce((a, b) => a + b, 0);
+    return arr?.reduce((a, b) => a + b, 0);
   };
 
   // Count BPJS value
@@ -344,12 +344,7 @@ const EmployeePayslipAddIndex = ({
       take_home_pay: newTotalGrossPenerimaan - newTotalGrossPengurangan,
     }));
     // }
-  }, [
-    dataPayslip?.salaries,
-    dataPayslip?.gaji_pokok,
-    // dataPayslip?.pph,
-    dataPayslip?.bpjs,
-  ]);
+  }, [dataPayslip?.salaries, dataPayslip?.gaji_pokok, dataPayslip?.bpjs]);
 
   // 4. Handler
   // 4.1. Handle input change
