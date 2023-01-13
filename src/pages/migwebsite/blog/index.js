@@ -303,7 +303,7 @@ function Blog({ dataBlog }) {
                     />
                     <div className={"mt-1.5"}>
                       <span class="text-xs h-[26px] font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                        Hardware
+                        {data1.tags}
                       </span>
                     </div>
                   </div>

@@ -143,7 +143,7 @@ function LandingPage({ dataBlog }) {
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
-      {console.log("data blogs ", dataBlog)}
+      {console.log("locale ", locale)}
       <Head>
         <title>{t.landingpagemetatitle}</title>
         <meta name="description" content={t.landingpagemetadescription} />
@@ -445,14 +445,14 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/hardware">
                   <button
                     className={
-                      "text-sm rounded h-[40px] w-[125px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      "text-sm rounded h-[40px] text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1"}>{t.hardwarebuttontitle}</p>
+                      <p className={"mr-[13.52px]"}>{t.hardwarebuttontitle}</p>
                       <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
+                        className={"self-center"}
+                        style={{ width: "8px", height: "15px" }}
                         src="/image/landingpage/arrow-forward.png"
                       />
                     </div>
@@ -496,14 +496,14 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/software">
                   <button
                     className={
-                      "text-sm rounded h-[40px] w-[125px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      "text-sm rounded h-[40px]  text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1"}>{t.softwarebuttontitle}</p>
+                      <p className={"mr-[13.52px]"}>{t.softwarebuttontitle}</p>
                       <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
+                        className={"self-center"}
+                        style={{ height: "15px", width: "8px" }}
                         src="/image/landingpage/arrow-forward.png"
                       />
                     </div>
@@ -533,14 +533,14 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/talents">
                   <button
                     className={
-                      "text-sm rounded h-[40px] w-[125px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      "text-sm rounded h-[40px] text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1"}>{t.talentbuttontitle}</p>
+                      <p className={"mr-[13.52px]"}>{t.talentbuttontitle}</p>
                       <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
+                        className={"self-center"}
+                        style={{ height: "15px", width: "8px" }}
                         src="/image/landingpage/arrow-forward.png"
                       />
                     </div>
@@ -1097,12 +1097,28 @@ function LandingPage({ dataBlog }) {
                                   "0px 16px 40px rgba(113, 176, 112, 0.2)",
                               }}
                             >
-                              <div
-                                className=""
-                                dangerouslySetInnerHTML={{
-                                  __html: data1.quote,
-                                }}
-                              />
+                              {locale == "en" ? (
+                                <div
+                                  className=""
+                                  dangerouslySetInnerHTML={{
+                                    __html: data1.quote,
+                                  }}
+                                />
+                              ) : locale == "id" && data1.quote_id != null ? (
+                                <div
+                                  className=""
+                                  dangerouslySetInnerHTML={{
+                                    __html: data1.quote_id,
+                                  }}
+                                />
+                              ) : (
+                                <div
+                                  className=""
+                                  dangerouslySetInnerHTML={{
+                                    __html: data1.quote,
+                                  }}
+                                />
+                              )}
                               <div
                                 className={
                                   "mt-3 border border-dividermig w-[144px]"
@@ -1120,7 +1136,11 @@ function LandingPage({ dataBlog }) {
                                   "mt-1 text-[10px] text-blackmig  font-gilroyregular"
                                 }
                               >
-                                {data1.job_title}
+                                {locale == "en"
+                                  ? data1.job_title
+                                  : locale == "id" && data1.job_title_id != null
+                                  ? data1.job_title_id
+                                  : data1.job_title}
                               </p>
                             </div>
                           </div>
@@ -1133,7 +1153,11 @@ function LandingPage({ dataBlog }) {
                                   "text-blackmig text-2xl font-gilroysemibold"
                                 }
                               >
-                                {data1.title}
+                                {locale == "en"
+                                  ? data1.title
+                                  : locale == "id" && data1.title_id != null
+                                  ? data1.title_id
+                                  : data1.title}
                               </p>
                               <p
                                 className={
