@@ -1,11 +1,8 @@
-import moment from "moment";
 import React from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
 import { momentFormatDate } from "../../../../../lib/helper";
-
-moment.locale("id");
 
 const EmployeeProfileDetail = ({ dataEmployee }) => {
   /**

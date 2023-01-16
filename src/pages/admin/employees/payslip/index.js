@@ -38,7 +38,10 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
-import { createKeyPressHandler } from "../../../../lib/helper";
+import {
+  createKeyPressHandler,
+  momentFormatDate,
+} from "../../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -320,10 +323,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         if (res2.success) {
           let statusCountRes = res2.data;
-          let mappedStatusCount = statusCountRes.reverse().map((data) => {
+          let mappedStatusCount = statusCountRes.map((data) => {
             return {
               total: data?.total,
-              is_posted: Number(data?.is_posted) ? "Aktif" : "Tidak Aktif",
+              is_posted: Number(data?.is_posted) ? "Diterbitkan" : "Draft",
             };
           });
           setPayslipStatusCount(mappedStatusCount);
@@ -580,7 +583,15 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="grid grid-cols-1 md:px-5" id="mainWrapper">
         <div className="shadow-md rounded-md bg-white p-4 mb-6">
-          <h4 className="mig-heading--4 ">Status Slip Gaji (Oktober 2022)</h4>
+          <h4 className="mig-heading--4 ">
+            Status Slip Gaji (
+            {momentFormatDate(
+              dataPayslips[0]?.tanggal_dibayarkan,
+              "-",
+              "MMMM YYYY"
+            )}
+            )
+          </h4>
           {/* CHART STATUS SLIP GAJI */}
           {loadingChart ? (
             <>

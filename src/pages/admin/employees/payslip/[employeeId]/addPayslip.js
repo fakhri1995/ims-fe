@@ -8,7 +8,6 @@ import {
   Spin,
   notification,
 } from "antd";
-import parse from "html-react-parser";
 import moment from "moment";
 import "moment/locale/id";
 import { useRouter } from "next/router";
@@ -43,6 +42,7 @@ import {
 import CustomCurrencyInput from "../../../../../components/screen/employee/CustomCurrencyInput";
 import EmployeeContractForm from "../../../../../components/screen/employee/create/contract";
 import {
+  momentFormatDate,
   objectToFormData,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
@@ -994,9 +994,11 @@ const EmployeePayslipAddIndex = ({
               Apakah Anda yakin ingin menyimpan draft slip gaji untuk&nbsp;
               <strong>{dataPayslip?.employee?.name || "-"}</strong> periode{" "}
               <strong>
-                {moment(dataPayslip?.tanggal_dibayarkan).isValid()
-                  ? moment(dataPayslip?.tanggal_dibayarkan).format("MMMM YYYY")
-                  : "-"}
+                {momentFormatDate(
+                  dataPayslip?.tanggal_dibayarkan,
+                  "-",
+                  "MMMM YYYY"
+                )}
               </strong>
               ?
             </p>
@@ -1005,9 +1007,11 @@ const EmployeePayslipAddIndex = ({
               Apakah Anda yakin ingin menerbitkan slip gaji untuk&nbsp;
               <strong>{dataPayslip?.employee?.name || "-"}</strong> periode{" "}
               <strong>
-                {moment(dataPayslip?.tanggal_dibayarkan).isValid()
-                  ? moment(dataPayslip?.tanggal_dibayarkan).format("MMMM YYYY")
-                  : "-"}
+                {momentFormatDate(
+                  dataPayslip?.tanggal_dibayarkan,
+                  "-",
+                  "MMMM YYYY"
+                )}
               </strong>
               ?
             </p>

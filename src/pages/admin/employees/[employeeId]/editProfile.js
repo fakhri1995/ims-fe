@@ -1,7 +1,5 @@
 import { notification } from "antd";
 import parse from "html-react-parser";
-import moment from "moment";
-import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -24,8 +22,6 @@ import {
   permissionWarningNotification,
 } from "../../../../lib/helper";
 import httpcookie from "cookie";
-
-moment.locale("id");
 
 const EmployeeProfileEditIndex = ({
   initProps,

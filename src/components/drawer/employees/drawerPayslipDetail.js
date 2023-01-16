@@ -1,6 +1,5 @@
 import { UpOutlined } from "@ant-design/icons";
 import { Collapse, Form, Input, Select, Spin, Table, notification } from "antd";
-import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import CurrencyFormat from "react-currency-format";
@@ -121,11 +120,11 @@ const DrawerPayslipDetail = ({
   // console.log(dataCandidate);
   return (
     <DrawerCore
-      title={`Slip Gaji ${
-        moment(detailPayslip.tanggal_dibayarkan).isValid()
-          ? moment(detailPayslip.tanggal_dibayarkan).format("MMMM YYYY")
-          : "-"
-      }`}
+      title={`Slip Gaji ${momentFormatDate(
+        detailPayslip.tanggal_dibayarkan,
+        "-",
+        "MMMM YYYY"
+      )}`}
       visible={visible}
       onClose={() => onvisible(false)}
     >
