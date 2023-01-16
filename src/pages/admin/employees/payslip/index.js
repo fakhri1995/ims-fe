@@ -1,17 +1,4 @@
-import { UpOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Collapse,
-  Form,
-  Input,
-  Menu,
-  Select,
-  Spin,
-  Switch,
-  Tag,
-  notification,
-} from "antd";
-import moment from "moment";
+import { Input, Select, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -42,8 +29,6 @@ import {
   CircleCheckIconSvg,
   EditIconSvg,
   SearchIconSvg,
-  TrashIconSvg,
-  UserPlusIconSvg,
 } from "../../../../components/icon";
 import { DownloadIconSvg, SettingsIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
@@ -53,7 +38,6 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
-import { H2 } from "../../../../components/typography";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import {
   ArcElement,
@@ -126,8 +110,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2.2. Table Employee List
   // filter data
-  const [isEmployeeActive, setIsEmployeeActive] = useState(1);
-
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
   const [dataCompanyList, setDataCompanyList] = useState([]);
 

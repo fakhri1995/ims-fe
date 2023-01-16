@@ -143,10 +143,7 @@ const EmployeePayslipAddIndex = ({
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disablePublish, setDisablePublish] = useState(false);
 
-  // 1.3. Delete
-  const [loadingDelete, setLoadingDelete] = useState(false);
-
-  // 1.4. Modal salary variable
+  // 1.3. Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
   const [selectedMultipliers, setSelectedMultipliers] = useState([]);
@@ -592,7 +589,6 @@ const EmployeePayslipAddIndex = ({
               />
             </>
           </Form.Item>
-
           <div className="flex flex-col">
             <p className="mig-heading--5 mb-3">PENERIMAAN</p>
             <Form.Item
