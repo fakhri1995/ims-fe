@@ -32,6 +32,11 @@ const nextConfig = {
       source: "/blog/:blog_id",
       destination: "/migwebsite/blog/[blog_id]",
     },
+    { source: "/customerstories", destination: "/migwebsite/customerstories" },
+    {
+      source: "/customerstories/:stories_id",
+      destination: "/migwebsite/customerstories/[stories_id]",
+    },
     { source: "/sitemap", destination: "/migwebsite/sitemap" },
     { source: "/term", destination: "/migwebsite/termofuse" },
     { source: "/privacy", destination: "/migwebsite/privacy" },

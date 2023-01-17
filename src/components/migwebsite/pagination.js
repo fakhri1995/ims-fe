@@ -6,30 +6,56 @@ const Pagination = ({ items, pageSize, currentPage, onPageChange }) => {
 
   return (
     <div>
-      <ul
-        className={""}
-        style={{
-          display: flex,
-          justifyContent: space - between,
-          alignItems: center,
-          listStyle: none,
-        }}
-      >
-        {pages.map((page) => (
-          <li
-            key={page}
-            className={
-              page === currentPage
-                ? "flex justify-items-center items-center w-8 h-8 border border-pageActive rounded-lg bg-redmig "
-                : "flex justify-items-center items-center w-8 h-8 border border-pageActive rounded-lg"
-            }
+      <div className={"flex flex-row justify-center"}>
+        {pagesCount > 1 && (
+          <a
+            className={"cursor-pointer "}
+            onClick={() => onPageChange(currentPage - 1)}
           >
-            <a className={"cursor-pointer"} onClick={() => onPageChange(page)}>
-              {page}
-            </a>
-          </li>
-        ))}
-      </ul>
+            <img
+              src="/image/landingpage/before-pagination.png"
+              className={"h-[15.82px] w-[9.33px] self-center"}
+            />
+          </a>
+        )}
+        <ul
+          className={""}
+          style={{
+            display: "flex",
+            listStyle: "none",
+          }}
+        >
+          {console.log("pages ", pages)}
+          {pages.map((page) => (
+            <li
+              key={page}
+              className={
+                page === currentPage
+                  ? "text-primarygreen text-base font-gilroysemibold mx-2"
+                  : "text-blackmig text-base font-gilroyregular mx-2"
+              }
+            >
+              <a
+                className={"cursor-pointer "}
+                onClick={() => onPageChange(page)}
+              >
+                {page}
+              </a>
+            </li>
+          ))}
+        </ul>
+        {pagesCount > 1 && (
+          <a
+            className={"cursor-pointer "}
+            onClick={() => onPageChange(currentPage + 1)}
+          >
+            <img
+              src="/image/landingpage/after-pagination.png"
+              className={"h-[15.82px] w-[9.33px] self-center"}
+            />
+          </a>
+        )}
+      </div>
     </div>
   );
 };
