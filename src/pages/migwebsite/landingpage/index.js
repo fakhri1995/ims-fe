@@ -154,7 +154,7 @@ function LandingPage({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:mx-auto md:relative"
+          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:mx-auto md:relative px-[113.5px]"
         }
       >
         {/* Browser View */}
@@ -236,48 +236,93 @@ function LandingPage({ dataBlog }) {
               {t.landingpagetitlelogo}
             </p>
           </div>
-          <div className={"flex flex-row justify-center mt-6"}>
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "59px", height: "50px" }}
-              src="/image/landingpage/client1.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "34px", height: "40px" }}
-              src="/image/landingpage/client2.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "50px", height: "50px" }}
-              src="/image/landingpage/client3.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "44px", height: "50px" }}
-              src="/image/landingpage/client4.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "59px", height: "50px" }}
-              src="/image/landingpage/client1.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "34px", height: "40px" }}
-              src="/image/landingpage/client2.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "50px", height: "50px" }}
-              src="/image/landingpage/client3.png"
-            />
-            <img
-              className={"mx-[26.5px]"}
-              style={{ width: "44px", height: "50px" }}
-              src="/image/landingpage/client4.png"
-            />
+          <div className={"px-10"}>
+            <marquee>
+              <div className={"flex flex-row justify-center mt-6"}>
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "59px", height: "50px" }}
+                  src="/image/landingpage/client1.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "34px", height: "40px" }}
+                  src="/image/landingpage/client2.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "50px", height: "50px" }}
+                  src="/image/landingpage/client3.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "44px", height: "50px" }}
+                  src="/image/landingpage/client4.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "59px", height: "50px" }}
+                  src="/image/landingpage/client1.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "34px", height: "40px" }}
+                  src="/image/landingpage/client2.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "50px", height: "50px" }}
+                  src="/image/landingpage/client3.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "44px", height: "50px" }}
+                  src="/image/landingpage/client4.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "59px", height: "50px" }}
+                  src="/image/landingpage/client1.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "34px", height: "40px" }}
+                  src="/image/landingpage/client2.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "50px", height: "50px" }}
+                  src="/image/landingpage/client3.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "44px", height: "50px" }}
+                  src="/image/landingpage/client4.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "59px", height: "50px" }}
+                  src="/image/landingpage/client1.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "34px", height: "40px" }}
+                  src="/image/landingpage/client2.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "50px", height: "50px" }}
+                  src="/image/landingpage/client3.png"
+                />
+                <img
+                  className={"mx-[26.5px]"}
+                  style={{ width: "44px", height: "50px" }}
+                  src="/image/landingpage/client4.png"
+                />
+              </div>
+            </marquee>
           </div>
+
           <div className={"mt-6 text-center"}>
             <p className={"text-blackmig font-gilroysemibold text-base"}>
               <span className={"text-primarygreen"}>45+ </span>
@@ -1182,8 +1227,7 @@ function LandingPage({ dataBlog }) {
                               __html: data1.description,
                             }}
                           />
-
-                          <Linkk href="/talents">
+                          <Linkk href={`/customerstories/${data1.page_path}`}>
                             <button
                               className={
                                 "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"

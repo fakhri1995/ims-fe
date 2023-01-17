@@ -71,7 +71,12 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToAddRequester = hasPermission(REQUESTER_ADD);
   const isAllowedToGetClientCompanyList = hasPermission(COMPANY_CLIENTS_GET);
-
+  const [skillSuggestion, setSkillSuggestion] = useState([
+    "Hardware",
+    "Software",
+    "Talents",
+  ]);
+  const [productSelected, setProductSelected] = useState([]);
   const axiosClient = useAxiosClient();
   const rt = useRouter();
   const { id: articleId, prevpath } = rt.query;
@@ -119,6 +124,9 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   const [loadingEmployee, setLoadingEmployee] = useState(false);
   const [refresh, setRefresh] = useState(-1);
   const [language, setLanguage] = useState("English");
+  const [tagSelected, setTagSelected] = useState(null);
+  const [tagIdSelected, setTagIdSelected] = useState(null);
+  const [form] = Form.useForm();
   //handleCreateButton
 
   useEffect(() => {
@@ -170,6 +178,30 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     setLanguage(value);
   };
 
+  const handleSuggestionSkill = (skill) => {
+    // let arr_product = productSelected;
+    // arr_product.push(skill);
+    setTagSelected(skill);
+    instanceForm.setFieldValue(form, "tags", "");
+  };
+  const handleSuggestionSkillId = (skill) => {
+    // let arr_product = productSelected;
+    // arr_product.push(skill);
+    setTagSelected(skill);
+    instanceForm.setFieldValue(form, "tagsId", "");
+  };
+  const handleInputTags = (e) => {
+    console.log("input ", e);
+    setTagSelected(artikelBlog.tags);
+    instanceForm.setFieldsValue({ tags: null });
+  };
+
+  const handleInputTagsId = (e) => {
+    console.log("input ", e);
+    setTagSelected(artikelBlog.tagsId);
+    instanceForm.setFieldsValue({ tagsId: null });
+  };
+
   const handleCreateArticle = () => {
     let dataArticle = "";
     if (articleType == "Customer Stories") {
@@ -179,7 +211,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         description: artikelBlog.description,
         content: artikelBlog.content,
         page_path: artikelBlog.pagePath,
-        tags: artikelBlog.tags,
+        tags: tagSelected,
         company_name: artikelBlog.company_name,
         quote: artikelBlog.quote,
         author: artikelBlog.author,
@@ -190,7 +222,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         description_id: artikelBlog.description_id,
         content_id: artikelBlog.content_id,
         page_path_id: artikelBlog.pagePathId,
-        tags_id: artikelBlog.tagsId,
+        tags_id: tagIdSelected,
         job_title_id: artikelBlog.job_title_id,
         meta_title_id: artikelBlog.meta_title_id,
         meta_description_id: artikelBlog.meta_description_id,
@@ -206,7 +238,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         description: artikelBlog.description,
         content: artikelBlog.content,
         page_path: artikelBlog.pagePath,
-        tags: artikelBlog.tags,
+        tags: tagSelected,
         company_name: "",
         quote: "",
         author: "",
@@ -217,7 +249,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
         description_id: artikelBlog.description_id,
         content_id: artikelBlog.content_id,
         page_path_id: artikelBlog.pagePathId,
-        tags_id: artikelBlog.tagsId,
+        tags_id: tagIdSelected,
         job_title_id: "",
         meta_title_id: artikelBlog.meta_title_id,
         meta_description_id: artikelBlog.meta_description_id,
@@ -567,7 +599,9 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       onChange={onChangeText}
                     /> */}
                     </Form.Item>
-
+                    <p className={"text-blackmig text-base font-gilroyregular"}>
+                      Article Image
+                    </p>
                     <Upload
                       name="artikel_image"
                       listType="picture-card"
@@ -612,64 +646,103 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     /> */}
                     </Form.Item>
                     <Form.Item
-                      label="Tags   "
-                      required
+                      label="Tags"
                       initialValue={artikelBlog.tags}
                       name="tags"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Tags wajib diisi",
-                        },
-                      ]}
                     >
                       <Input
                         value={artikelBlog.tags}
                         name={`tags`}
                         onChange={onChangeCreateArtikel}
+                        onPressEnter={handleInputTags}
                       />
                     </Form.Item>
-                    <p className={"font-gilroysemibold text-blackmig text-xl"}>
-                      Company Detail
-                    </p>
-                    <Form.Item
-                      label="Company Name"
-                      initialValue={artikelBlog.company_name}
-                      name="company_name"
-                      // rules={[
-                      //   {
-                      //     required: true,
-                      //     message: "Page Path wajib diisi",
-                      //   },
-                      // ]}
-                    >
-                      <Input
-                        value={artikelBlog.company_name}
-                        name={`company_name`}
-                        onChange={onChangeCreateArtikel}
-                      />
-                    </Form.Item>
-                    <p className={"text-blackmig text-base font-gilroyregular"}>
-                      Company logo
-                    </p>
-                    <Upload
-                      name="company_logo"
-                      listType="picture-card"
-                      className="profileImage"
-                      showUploadList={false}
-                      beforeUpload={beforeUploadProfileImage}
-                      onChange={onChangeCompanyLogo}
-                    >
-                      {artikelBlog.company_image ? (
-                        <img
-                          src={artikelBlog.company_image}
-                          alt="avatar"
-                          style={{ width: "100%" }}
-                        />
-                      ) : (
-                        uploadButton
-                      )}
-                    </Upload>
+                    {tagSelected && (
+                      <div
+                        className={
+                          "bg-transp45 rounded-[20px]  mt-3 py-1 pl-2 pr-1.5 w-[100px] flex justify-center"
+                        }
+                      >
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
+                          {tagSelected}
+                        </p>
+                      </div>
+                    )}
+                    {skillSuggestion.length > 0 && (
+                      <div className={"flex flex-row mt-3"}>
+                        {skillSuggestion.map((data, index) => (
+                          <button
+                            onClick={() => handleSuggestionSkill(data)}
+                            className={
+                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                            }
+                          >
+                            <p
+                              className={
+                                "text-sm text-darkgrey font-gilroyregular"
+                              }
+                            >
+                              {data}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    {articleType == "Customer Stories" && (
+                      <div>
+                        <p
+                          className={
+                            "font-gilroysemibold text-blackmig text-xl"
+                          }
+                        >
+                          Company Detail
+                        </p>
+                        <Form.Item
+                          label="Company Name"
+                          initialValue={artikelBlog.company_name}
+                          name="company_name"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Page Path wajib diisi",
+                          //   },
+                          // ]}
+                        >
+                          <Input
+                            value={artikelBlog.company_name}
+                            name={`company_name`}
+                            onChange={onChangeCreateArtikel}
+                          />
+                        </Form.Item>
+                        <p
+                          className={
+                            "text-blackmig text-base font-gilroyregular"
+                          }
+                        >
+                          Company logo
+                        </p>
+                        <Upload
+                          name="company_logo"
+                          listType="picture-card"
+                          className="profileImage"
+                          showUploadList={false}
+                          beforeUpload={beforeUploadProfileImage}
+                          onChange={onChangeCompanyLogo}
+                        >
+                          {artikelBlog.company_image ? (
+                            <img
+                              src={artikelBlog.company_image}
+                              alt="avatar"
+                              style={{ width: "100%" }}
+                            />
+                          ) : (
+                            uploadButton
+                          )}
+                        </Upload>
+                      </div>
+                    )}
                     {/* company stories */}
                     {articleType == "Customer Stories" && (
                       <div>
@@ -774,7 +847,8 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       //   },
                       // ]}
                     >
-                      <Input
+                      <Input.TextArea
+                        rows={4}
                         value={artikelBlog.meta_description}
                         name={`meta_description`}
                         onChange={onChangeCreateArtikel}
@@ -905,8 +979,29 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         value={artikelBlog.tagsId}
                         name={`tagsId`}
                         onChange={onChangeCreateArtikel}
+                        onPressEnter={handleInputTagsId}
                       />
                     </Form.Item>
+                    {skillSuggestion.length > 0 && (
+                      <div className={"flex flex-row mt-3"}>
+                        {skillSuggestion.map((data, index) => (
+                          <button
+                            onClick={() => handleSuggestionSkillId(data)}
+                            className={
+                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                            }
+                          >
+                            <p
+                              className={
+                                "text-sm text-darkgrey font-gilroyregular"
+                              }
+                            >
+                              {data}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     {/* customer stories id */}
                     {articleType == "Customer Stories" && (
                       <div>

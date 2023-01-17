@@ -24,15 +24,26 @@ const RichText = ({ placeholder, value, onChange }) => {
   const modules = {
     toolbar: [
       ["bold", "italic", "underline"],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
       [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link", "image"],
     ],
   };
 
-  const formats = ["bold", "italic", "underline", "list", "bullet", "indent"];
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "header",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
 
   return (
     <div className="text-editor">
-      <CustomToolbar />
+      {/* <CustomToolbar /> */}
       <ReactQuill
         theme="snow"
         value={value}
