@@ -94,9 +94,6 @@ const EmployeeContractForm = ({
   const [praLoading, setPraLoading] = useState(false);
   const [refresh, setRefresh] = useState(-1);
 
-  const [modalSalaryVar, setModalSalaryVar] = useState(false);
-  const [loadingSave, setLoadingSave] = useState(false);
-
   const [loadingPositonList, setLoadingPositionList] = useState(false);
   const [dataPositionList, setDataPositionList] = useState([]);
 
@@ -113,8 +110,42 @@ const EmployeeContractForm = ({
   const [receiveVarFields, setReceiveVarFields] = useState([]);
   const [reductionVarFields, setReductionVarFields] = useState([]);
 
-  // 2. USE EFFECT
-  // 2.1. Get Position List
+  // Modal salary variable
+  const [modalSalaryVar, setModalSalaryVar] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false);
+  const [selectedMultipliers, setSelectedMultipliers] = useState([]);
+
+  // 2. HELPER FUNCTION
+  // 2.1. Format string variable name. e.g. "tunjangan_transport"
+  const formatVariableName = (name) => name.toLowerCase().split(" ").join("_");
+
+  // 2.2. Count total gross penerimaan & pengurangan
+  const sumValues = (arr) => {
+    return arr?.reduce((a, b) => a + b, 0);
+  };
+
+  // 2.3. Count BPJS value
+  const countBenefitValue = (percent) => {
+    // Get penerimaan field value which selected as multiplier
+    const selectedMultiplierIds = selectedMultipliers.map(
+      (multiplier) => multiplier.id
+    );
+    const selectedMultiplierValues = dataContract?.salaries
+      ?.filter((benefit) =>
+        selectedMultiplierIds.includes(benefit.employee_salary_column_id)
+      )
+      ?.map((multiplier) => multiplier.value);
+
+    // Sum with gaji pokok, then calculate final result
+    const totalMultiplier =
+      (dataContract?.gaji_pokok ?? 0) + sumValues(selectedMultiplierValues);
+    let result = Math.round(totalMultiplier * (percent / 100) * 100) / 100;
+
+    return result || 0;
+  };
+
+  // 3. USE EFFECT
+  // 3.1. Get Position List
   useEffect(() => {
     if (!isAllowedToGetRoleList) {
       permissionWarningNotification("Mendapatkan", "Daftar Role");
@@ -151,7 +182,7 @@ const EmployeeContractForm = ({
       });
   }, [isAllowedToGetRoleList]);
 
-  // 2.2. Get Company Client List
+  // 3.2. Get Company Client List
   useEffect(() => {
     if (!isAllowedToGetCompanyList) {
       permissionWarningNotification("Mendapatkan", "Daftar Company Client");
@@ -188,7 +219,7 @@ const EmployeeContractForm = ({
       });
   }, [isAllowedToGetCompanyList]);
 
-  // 2.3. Get Role/Position Type List
+  // 3.3. Get Role/Position Type List
   useEffect(() => {
     if (!isAllowedToGetRoleTypeList) {
       permissionWarningNotification("Mendapatkan", "Daftar Tipe Role");
@@ -228,7 +259,7 @@ const EmployeeContractForm = ({
       });
   }, [isAllowedToGetRoleTypeList]);
 
-  // 2.4 Get salary variable list
+  // 3.4 Get salary variable list
   useEffect(() => {
     if (!isAllowedToGetSalaryColumns) {
       permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
@@ -279,7 +310,7 @@ const EmployeeContractForm = ({
       .finally(() => setPraLoading(false));
   }, [isAllowedToGetSalaryColumns]);
 
-  // 2.5. Display contract file when available
+  // 3.5. Display contract file when available
   useEffect(() => {
     if (dataContract?.contract_file?.link) {
       const currentFileName = dataContract?.contract_file?.link?.split("/")[2];
@@ -287,8 +318,8 @@ const EmployeeContractForm = ({
     }
   }, [dataContract?.contract_file]);
 
-  // 3. HANDLER
-  // 3.1. Handle input change and auto save in "Tambah Karyawan"
+  // 4. HANDLER
+  // 4.1. Handle input change and auto save in "Tambah Karyawan"
   const onChangeInput = (e) => {
     setDataContract({
       ...dataContract,
@@ -333,7 +364,7 @@ const EmployeeContractForm = ({
     }
   };
 
-  // 3.2. Handle upload file
+  // 4.2. Handle upload file
   const beforeUploadDocument = useCallback((uploadedFile) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
@@ -704,10 +735,22 @@ const EmployeeContractForm = ({
           ]}
         >
           <div>
-            <CustomCurrencyInput
-              fieldLabel={"gaji pokok"}
-              fieldName={"gaji_pokok"}
-              setDataForm={setDataContract}
+            <CurrencyFormat
+              customInput={Input}
+              placeholder={"Masukkan gaji pokok"}
+              value={dataContract?.gaji_pokok || 0}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"Rp"}
+              allowNegative={false}
+              onValueChange={(values) => {
+                const { formattedValue, value, floatValue } = values;
+                setDataContract((prev) => ({
+                  ...prev,
+                  gaji_pokok: floatValue || 0,
+                }));
+              }}
+              renderText={(value) => <p>{value}</p>}
             />
           </div>
         </Form.Item>
@@ -716,7 +759,7 @@ const EmployeeContractForm = ({
           <Form.Item
             key={idx}
             label={variable.name}
-            name={`${variable.name}`}
+            name={formatVariableName(variable?.name)}
             rules={[
               {
                 required: variable.required,
@@ -727,12 +770,18 @@ const EmployeeContractForm = ({
             <div className="flex flex-row items-center space-x-2">
               <CustomCurrencyInput
                 fieldLabel={`${variable.name.toLowerCase()}`}
-                fieldName={`${variable.name
-                  .toLowerCase()
-                  .split(" ")
-                  .join("_")}`}
+                dataForm={dataContract}
                 setDataForm={setDataContract}
-                // value={dataContract?.benefit?.meal_allowance}
+                value={
+                  dataContract?.salaries?.find(
+                    (benefit) =>
+                      benefit?.employee_salary_column_id === variable.id
+                  )?.value
+                }
+                idx={idx}
+                dataColumn={variable}
+                payslipId={dataContract?.id}
+                disabled={true} //TODO: delete if API is done
               />
               {/* {!variable.required && (
                     <Button
@@ -766,9 +815,10 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs ks`}
               fieldName={"bpjs_ks"}
+              benefitType={"bpjs"}
               setDataForm={setDataContract}
+              value={countBenefitValue(5)}
               disabled
-              // value={dataContract?.benefit?.bpjs_ks}
             />
           </div>
         </Form.Item>
@@ -786,9 +836,10 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jht`}
               fieldName={"bpjs_tk_jht"}
+              benefitType={"bpjs"}
               setDataForm={setDataContract}
+              value={countBenefitValue(5.7)}
               disabled
-              // value={dataPayslip?.benefit?.bpjs_tk_jht}
             />
           </div>
         </Form.Item>
@@ -806,9 +857,10 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jkk`}
               fieldName={"bpjs_tk_jkk"}
+              benefitType={"bpjs"}
               setDataForm={setDataContract}
+              value={countBenefitValue(0.24)}
               disabled
-              // value={dataPayslip?.benefit?.bpjs_tk_jkk}
             />
           </div>
         </Form.Item>
@@ -826,9 +878,10 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jkm`}
               fieldName={"bpjs_tk_jkm"}
+              benefitType={"bpjs"}
               setDataForm={setDataContract}
+              value={countBenefitValue(0.3)}
               disabled
-              // value={dataPayslip?.benefit?.bpjs_tk_jkm}
             />
           </div>
         </Form.Item>
@@ -846,14 +899,15 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jp`}
               fieldName={"bpjs_tk_jp"}
+              benefitType={"bpjs"}
               setDataForm={setDataContract}
+              value={countBenefitValue(3)}
               disabled
-              // value={dataPayslip?.benefit?.bpjs_tk_jp}
             />
           </div>
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label="PPh 21"
           name={"pph"}
           rules={[
@@ -872,33 +926,42 @@ const EmployeeContractForm = ({
               // value={dataPayslip?.benefit?.pph}
             />
           </>
-        </Form.Item>
+        </Form.Item> */}
         {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
-        {reductionVarFields.map((variable) => (
-          <Form.Item
-            label={variable.name}
-            name={`${variable.name}`}
-            rules={[
-              {
-                required: variable.required,
-                message: `${variable.name} wajib diisi`,
-              },
-            ]}
-          >
-            <div>
-              <CustomCurrencyInput
-                fieldLabel={`${variable.name.toLowerCase()}`}
-                fieldName={`${variable.name
-                  .toLowerCase()
-                  .split(" ")
-                  .join("_")}`}
-                setDataForm={setDataContract}
-                disabled={variable.required}
-                // value={dataContract?.benefit[`${variable.name}
-              />
-            </div>
-          </Form.Item>
-        ))}
+        {reductionVarFields.map((variable, idx) => {
+          let reductionFieldId = receiveVarFields.length + idx;
+          return (
+            <Form.Item
+              key={reductionFieldId}
+              label={variable.name}
+              name={formatVariableName(variable.name)}
+              rules={[
+                {
+                  required: variable.required,
+                  message: `${variable.name} wajib diisi`,
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={`${variable.name.toLowerCase()}`}
+                  dataForm={dataContract}
+                  setDataForm={setDataContract}
+                  value={
+                    dataContract?.salaries?.find(
+                      (benefit) =>
+                        benefit?.employee_salary_column_id === variable.id
+                    )?.value
+                  }
+                  idx={reductionFieldId}
+                  dataColumn={variable}
+                  payslipId={dataContract?.id}
+                  disabled={true} //TODO: delete if API is done
+                />
+              </div>
+            </Form.Item>
+          );
+        })}
       </div>
       <div className="col-span-2 mt-3">
         <ButtonSys
@@ -915,7 +978,6 @@ const EmployeeContractForm = ({
       </div>
 
       {/* Modal Add Salary Variable */}
-      {/* TODO: change hasPermission */}
       <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
         <ModalAddSalaryVar
           initProps={initProps}
@@ -933,6 +995,10 @@ const EmployeeContractForm = ({
           setReductionVarFields={setReductionVarFields}
           refresh={refresh}
           setRefresh={setRefresh}
+          selectedTags={selectedMultipliers}
+          setSelectedTags={setSelectedMultipliers}
+          // payslipId={payslipId}
+          // dataPayslip={dataPayslip}
           // disabled
         />
       </AccessControl>
