@@ -1,19 +1,11 @@
 import { UpOutlined } from "@ant-design/icons";
 import { Collapse, Form, Input, Select, Spin, Table, notification } from "antd";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import CurrencyFormat from "react-currency-format";
 import convertTerbilang from "terbilang-ts";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { EMPLOYEE_PAYSLIP_GET } from "lib/features";
-
 import { momentFormatDate } from "../../../lib/helper";
-import ButtonSys from "../../button";
-import { TrashIconSvg } from "../../icon";
-import { InputRequired } from "../../input";
-import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 const DrawerPayslipDetail = ({
@@ -34,8 +26,6 @@ const DrawerPayslipDetail = ({
   if (isAccessControlPending) {
     return null;
   }
-
-  const [instanceForm] = Form.useForm();
 
   // useState
   const [detailPayslip, setDetailPayslip] = useState({
@@ -85,7 +75,7 @@ const DrawerPayslipDetail = ({
               (benefit) => benefit?.column?.type === 2
             );
 
-            // Then merge "Gaji Pokok" to receive, and "PPh 21" to reduction
+            // Then merge "Gaji Pokok" to receive
             receiveBenefits.unshift({
               column: { name: "Gaji Pokok" },
               value: payslipDetail?.gaji_pokok,
@@ -173,10 +163,10 @@ const DrawerPayslipDetail = ({
               }
             >
               <Table
-                // bordered={true}
                 className="border-2 rounded-md"
                 pagination={false}
                 size={"small"}
+                tableLayout="fixed"
                 columns={[
                   {
                     title: "DESKRIPSI",
@@ -222,10 +212,10 @@ const DrawerPayslipDetail = ({
               }
             >
               <Table
-                // bordered={true}
                 className="border-2 rounded-md"
                 pagination={false}
                 size={"small"}
+                tableLayout="fixed"
                 columns={[
                   {
                     title: "DESKRIPSI",
