@@ -50,6 +50,8 @@ const EmployeeProfileForm = ({
     if (dataEmployee?.id_card_photo?.link) {
       const currentFileName = dataEmployee?.id_card_photo?.link?.split("/")[2];
       setFileList([{ name: currentFileName }]);
+    } else {
+      setFileList([]);
     }
   }, [dataEmployee?.id_card_photo]);
 
