@@ -458,3 +458,15 @@ ol {
 //   border-color: "#262626";
 //   border-radius: 4px;
 // }
+.container-running-logo {
+  position: relative;
+  display: flex;
+  margin-top: 24px;
+}
+.running-logo {
+  display: flex;
+  -webkit-box-pack: center;
+  justify-content: center;
+  flex-shrink: 0;
+  animation: 20s linear 0s infinite normal none running;
+}
