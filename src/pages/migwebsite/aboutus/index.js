@@ -46,7 +46,7 @@ function AboutUs({}) {
           </p>
         </div>
       </section>
-      <section className={"block bg-transp60 py-4 md:py-6 px-4 md:px-[112px]"}>
+      <section className={"block bg-white py-4 md:py-6 px-4 md:px-[112px]"}>
         <p
           className={"font-gilroysemibold text-left pb-0 text-base md:text-2xl"}
         >

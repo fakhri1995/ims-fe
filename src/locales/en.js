@@ -23,16 +23,17 @@ export default {
   aboutusmetadescription:
     "We are MIG, a people-centric business that offers a seamless technology experience with hardware, software, and IT outsourcing solutions.",
   landingpagesection1:
-    "Accelerate your business, overcome tech challenges with us.",
+    "Accelerate your business, fortify your tech capabilities with us",
   landingpagetitlelogo:
-    "Proven nationwide success serving tech & business needs in diverse industries. ",
+    "Proven nationwide success in serving diverse businesses",
   cities: "cities",
-  managed: "managed & leased devices",
-  techproject: "tech projects completed",
+  managed: "managed-service devices",
+  techproject: "tech talents",
   companies: "companies",
   landingpagesection2: `MIG catalyzes your core business with `,
-  landingpagesection3:
-    "We provide you with the best resources at an efficient cost and guaranteed level of service. ",
+  landingpagesection3: `We provide you with ✔️ Cutting-edge resources
+    ✔️ Efficient and competitive cost
+    ✔️ Guaranteed level of service`,
   findout: "Find out",
   howourexpertise: "how our expertise",
   helpyou: "can help you",

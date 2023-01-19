@@ -39,6 +39,7 @@ const RichText = ({ placeholder, value, onChange }) => {
     "bullet",
     "indent",
     "link",
+    "image",
   ];
 
   return (

@@ -1847,7 +1847,7 @@ function Talents({}) {
         <div>
           <section
             className={
-              "section2talents py-4 md:py-12 px-4 mx-auto mt:4 md:mt-12"
+              "section2talents py-4 md:py-12 md:px-[113.5px] px-4 mx-auto mt:4 md:mt-12"
             }
           >
             <div className={"hidden md:flex justify-between container mx-auto"}>
@@ -3241,7 +3241,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section5talents bg-white py-4 md:py-12 px-4 sm:px-10 md:px-10"
+              "section5talents bg-white py-4 md:py-12 px-4 sm:px-10 md:px-[112px]"
             }
           >
             <p
@@ -3388,7 +3388,7 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"mt-4"}>
+            <div className={"mt-4 "}>
               <p
                 className={
                   "text-sm text-blackmig font-gilroysemibold text-center"
@@ -3415,7 +3415,521 @@ function Talents({}) {
                 service?
               </p>
             </div>
-            <div className={"mt-[17.39px]"}>
+            <div className={"mt-4 hidden md:block"}>
+              <div className={"flex flex-row"}>
+                <div
+                  className={"border border-dividermig  bg-white text-center"}
+                >
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  ></p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig py-3 px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-primarygreen font-gilroysemibold text-[14px]"
+                      }
+                    >
+                      MIG’s IT Staff Augmentation
+                    </p>
+                    <p className={"text-blackmig mt-2 text-xs"}>
+                      All talent contract matters will be handled by MIG.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig py-3 px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-primarygreen font-gilroysemibold text-[14px]"
+                      }
+                    >
+                      MIG’s Headhunt
+                    </p>
+                    <p className={"text-blackmig mt-2 text-xs"}>
+                      All talent contract matters will be handled by clients.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig py-3 px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <p
+                      className={
+                        "text-darkgrey font-gilroybold text-[14px] self-center"
+                      }
+                    >
+                      Common Recruitment (CV Search, Job Portal, etc)
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div
+                  className={"border border-dividermig  bg-white text-center"}
+                >
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    Managing high-demand tech talent
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Leave it to us, we’ll manage everything for you.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      We’ll take care of it all for you.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      But, do you feel overwhelmed sometimes?
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div className={"border border-dividermig  bg-white"}>
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    Large, top-tier tech talent pool
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      We have tech talent at all levels.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Let’s meet our superior tech talents!
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      A time-consuming search for top talent, right?
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div
+                  className={"border border-dividermig  bg-white text-center"}
+                >
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    Budget matching
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      We’re a cost-effective solution for you.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Pay per use, and optimize your budget.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Potentially higher than expected cost!
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div
+                  className={"border border-dividermig  bg-white text-center"}
+                >
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    Rigorous technical screening
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      No need to repeat complex technical tests and interviews
+                      on your own.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      We'll conduct multiple rounds of technical tests and
+                      interviews.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      One more user interview for more understanding.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div className={"border border-dividermig  bg-white"}>
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    Guaranteed talent availability
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Talent headcounts & work periods, level, and tenure, all
+                      set!
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Anything talent hiring-related, all covered!
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      They may decline your offer, and you'll have to start
+                      over.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div className={"border border-dividermig bg-white"}>
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    Covering all administration tasks; from payroll to
+                    offboarding.
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Focus on your work, and leave their needs to us.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      If you want us to do it, check out our IT Staff
+                      Augmentation
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      The responsibility is yours to fulfill.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className={"flex flex-row"}>
+                <div className={"border border-dividermig  bg-white"}>
+                  <p
+                    className={
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                    }
+                  >
+                    New candidates are assured, if there’s a resignation.
+                  </p>
+                </div>
+                <div class="flex flex-row">
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CheckOutlined
+                      width={"17.59px"}
+                      height={"13.41px"}
+                      style={{ color: "#188E4D" }}
+                    />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      You can expect to meet them soon. There’s no charge!
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Pay as you go, and we’ll handle it.
+                    </p>
+                  </div>
+                  <div
+                    className={
+                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
+                    }
+                  >
+                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
+                    <p
+                      className={
+                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                      }
+                    >
+                      Spend the money and time on the recruitment process,
+                      again.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className={"mt-[17.39px] md:hidden"}>
               <div className={"flex flex-row overflow-x-auto"}>
                 <div className={"border border-dividermig w-[100px] bg-white"}>
                   <p

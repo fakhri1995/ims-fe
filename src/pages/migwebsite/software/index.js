@@ -887,7 +887,9 @@ function Software({}) {
         </div>
       ) : (
         <div className={"noform"}>
-          <section className={"section2software py-4 md:py-16 px-4 md:mx-auto"}>
+          <section
+            className={"section2software py-4 md:py-16 px-4 md:px-[113.5px]"}
+          >
             <div className={"hidden md:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <p className={"text-[32px] font-gilroyboldold"}>
@@ -1124,283 +1126,121 @@ function Software({}) {
                 style={{ maxWidth: "1145px" }}
               >
                 <Slider {...sliderSettings2} ref={slider}>
-                  <div
-                    className="pt-6 pb-8 md:px-16 bg-white rounded-lg"
-                    style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-                  >
-                    <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
-                        "
-                      </p>
-                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
-                        "
-                      </p>
-                    </div>
-                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
-                      I had a{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        wonderful experience
-                      </span>{" "}
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        tempor incididunt
-                      </span>{" "}
-                      ut labore et dolore magna aliqua.
-                    </p>
-                    <div
-                      className={
-                        " border w-[417px] border-dividermig mt-6 mx-auto"
-                      }
-                    ></div>
-                    <div className="flex flex-col items-center mt-6">
-                      <div className="flex justify-center">
-                        <img
-                          className="rounded-full mr-4"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "68px", width: "68px" }}
-                          alt=""
-                        />
-                        <div className="self-center">
+                  <div className={"py-8 px-[16.25px] rounded-lg"}>
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"w-[480px] h-[283px]"}
+                        // style={{ width: "284.29px", height: "159px" }}
+                        src="/image/landingpage/migsys_browser.png"
+                      />
+                      <div className={"ml-11 mt-2"}>
+                        <p
+                          className={
+                            "text-primarygreen font-gilroyregular text-[14px] rounded-[20px] w-[161px] px-2 py-1 bg-greenTrans20"
+                          }
+                        >
+                          Website Development
+                        </p>
+                        <p
+                          className={
+                            "font-gilroybold text-blackmig text-2xl mt-4"
+                          }
+                        >
+                          MIGSys
+                        </p>
+                        <div className={"mt-4"}>
                           <p
                             className={
-                              "text-blackmig font-gilroysemibold text-base"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
-                            Fachri Fauzan
+                            {t.migsysdescription}{" "}
                           </p>
-                          <p
+                          <ul
                             className={
-                              "text-darkgrey font-gilroysemibold text-sm"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                        <div className="ml-6">
-                          <img
-                            style={{ height: "68px", width: "81px" }}
-                            src="/image/landingpage/testimonial-client.png"
-                            alt=""
-                          />
+                            <li>{t.migsysdetail1}</li>
+                            <li>{t.migsysdetail2}</li>
+                            <li>{t.migsysdetail3}</li>
+                            <li>{t.migsysdetail4}</li>
+                            <li>{t.migsysdetail5}</li>
+                          </ul>
                         </div>
                       </div>
-                      <div className="flex flex-row justify-center mx-2 mt-6">
-                        <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen font-gilroyregular">
-                            <span className={"font-gilroysemibold"}>
-                              Industry :{" "}
-                            </span>
-                            Banking
-                          </p>
-                        </div>
-                        <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen font-gilroyregular">
-                            <span className={"font-gilroysemibold"}>
-                              Service :{" "}
-                            </span>
-                            Hardware, Talents
-                          </p>
-                        </div>
-                      </div>
-                      <a href="#">
-                        <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold ">
-                            Read more
-                          </p>
-                          <img
-                            className={"self-center"}
-                            style={{ width: "8px", height: "15px" }}
-                            src="/image/landingpage/arrow-forward-ios.png"
-                          />
-                        </div>
-                      </a>
                     </div>
                   </div>
-                  <div
-                    className="pt-6 pb-8 md:px-16 bg-white rounded-lg"
-                    style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-                  >
-                    <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
-                        "
-                      </p>
-                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
-                        "
-                      </p>
-                    </div>
-                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
-                      I had a{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        wonderful experience
-                      </span>{" "}
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        tempor incididunt
-                      </span>{" "}
-                      ut labore et dolore magna aliqua.
-                    </p>
-                    <div
-                      className={
-                        " border w-[417px] border-dividermig mt-6 mx-auto"
-                      }
-                    ></div>
-                    <div className="flex flex-col items-center mt-6">
-                      <div className="flex justify-center">
-                        <img
-                          className="rounded-full mr-4"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "68px", width: "68px" }}
-                          alt=""
-                        />
-                        <div className="self-center">
+                  <div className={"py-8 px-[16.25px] rounded-lg"}>
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"w-[480px] h-[283px]"}
+                        // style={{ width: "284.29px", height: "159px" }}
+                        src="/image/landingpage/lms-browser.png"
+                      />
+                      <div className={"ml-11 mt-2"}>
+                        <p
+                          className={
+                            "text-primarygreen font-gilroyregular text-[14px] rounded-[20px] w-[161px] px-2 py-1 bg-greenTrans20"
+                          }
+                        >
+                          Website Development
+                        </p>
+                        <p
+                          className={
+                            "font-gilroybold text-blackmig text-2xl mt-4"
+                          }
+                        >
+                          AQL Learning Management System (LMS)
+                        </p>
+                        <div className={"mt-4"}>
                           <p
                             className={
-                              "text-blackmig font-gilroysemibold text-base"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
-                            Fachri Fauzan
-                          </p>
-                          <p
-                            className={
-                              "text-darkgrey font-gilroysemibold text-sm"
-                            }
-                          >
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                        <div className="ml-6">
-                          <img
-                            style={{ height: "68px", width: "81px" }}
-                            src="/image/landingpage/testimonial-client.png"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-row justify-center mx-2 mt-6">
-                        <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen font-gilroyregular">
-                            <span className={"font-gilroysemibold"}>
-                              Industry :{" "}
-                            </span>
-                            Banking
-                          </p>
-                        </div>
-                        <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen font-gilroyregular">
-                            <span className={"font-gilroysemibold"}>
-                              Service :{" "}
-                            </span>
-                            Hardware, Talents
+                            A web-based educational platform that built to
+                            digitalize learning programs; plan, implement and
+                            assess learning programs at AQL Islamic Center.
                           </p>
                         </div>
                       </div>
-                      <a href="#">
-                        <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold ">
-                            Read more
-                          </p>
-                          <img
-                            className={"self-center"}
-                            style={{ width: "8px", height: "15px" }}
-                            src="/image/landingpage/arrow-forward-ios.png"
-                          />
-                        </div>
-                      </a>
                     </div>
                   </div>
-                  <div
-                    className="pt-6 pb-8 md:px-16 bg-white rounded-lg"
-                    style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-                  >
-                    <div className="flex flex-row justify-between">
-                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
-                        "
-                      </p>
-                      <p className="text-[32px] text-darkgrey italic font-gilroysemibold">
-                        "
-                      </p>
-                    </div>
-                    <p className="pb-4 font-gilroyregular text-xl text-blackmig mx-auto text-center">
-                      I had a{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        wonderful experience
-                      </span>{" "}
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        tempor incididunt
-                      </span>{" "}
-                      ut labore et dolore magna aliqua.
-                    </p>
-                    <div
-                      className={
-                        " border w-[417px] border-dividermig mt-6 mx-auto"
-                      }
-                    ></div>
-                    <div className="flex flex-col items-center mt-6">
-                      <div className="flex justify-center">
-                        <img
-                          className="rounded-full mr-4"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "68px", width: "68px" }}
-                          alt=""
-                        />
-                        <div className="self-center">
+                  <div className={"py-8 px-[16.25px] rounded-lg"}>
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"w-[480px] h-[283px]"}
+                        // style={{ width: "284.29px", height: "159px" }}
+                        src="/image/landingpage/warung_lebaran_browser.png"
+                      />
+                      <div className={"ml-11 mt-2"}>
+                        <p
+                          className={
+                            "text-primarygreen font-gilroyregular text-[14px] rounded-[20px] w-[161px] px-2 py-1 bg-greenTrans20"
+                          }
+                        >
+                          Website Development
+                        </p>
+                        <p
+                          className={
+                            "font-gilroybold text-blackmig text-2xl mt-4"
+                          }
+                        >
+                          Warung Lebaran
+                        </p>
+                        <div className={"mt-4"}>
                           <p
                             className={
-                              "text-blackmig font-gilroysemibold text-base"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
-                            Fachri Fauzan
-                          </p>
-                          <p
-                            className={
-                              "text-darkgrey font-gilroysemibold text-sm"
-                            }
-                          >
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                        <div className="ml-6">
-                          <img
-                            style={{ height: "68px", width: "81px" }}
-                            src="/image/landingpage/testimonial-client.png"
-                            alt=""
-                          />
-                        </div>
-                      </div>
-                      <div className="flex flex-row justify-center mx-2 mt-6">
-                        <div className="bg-greenTrans20 mr-6 px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen font-gilroyregular">
-                            <span className={"font-gilroysemibold"}>
-                              Industry :{" "}
-                            </span>
-                            Banking
-                          </p>
-                        </div>
-                        <div className="bg-lightblue px-2 py-2 rounded-[20px]">
-                          <p className="text-sm text-primarygreen font-gilroyregular">
-                            <span className={"font-gilroysemibold"}>
-                              Service :{" "}
-                            </span>
-                            Hardware, Talents
+                            A web-based hardware managed service to enhance the
+                            efficiency of distributions between seller and
+                            consumer.
                           </p>
                         </div>
                       </div>
-                      <a href="#">
-                        <div className="flex justify-between mx-auto mt-6 py-2 px-4 w-[142px]">
-                          <p className="text-base text-primarygreen font-gilroysemibold ">
-                            Read more
-                          </p>
-                          <img
-                            className={"self-center"}
-                            style={{ width: "8px", height: "15px" }}
-                            src="/image/landingpage/arrow-forward-ios.png"
-                          />
-                        </div>
-                      </a>
                     </div>
                   </div>
                 </Slider>
