@@ -258,14 +258,19 @@ export const isValidDate = (dateValue: any) => {
 };
 
 /**
- * Return formatted date "DD MMMM YYYYY" using moment
+ * Return formatted date using moment, default format: "DD MMMM YYYY"
  *
  * @param dateValue Received date value from backend
  * @param emptyValue Desired value if date is empty
+ * @param dateFormat Desired date format
  */
-export const momentFormatDate = (dateValue: string, emptyValue: string) => {
+export const momentFormatDate = (
+  dateValue: string,
+  emptyValue: string,
+  dateFormat: string = "DD MMMM YYYY"
+) => {
   if (moment(dateValue).isValid()) {
-    return moment(dateValue).format("DD MMMM YYYY");
+    return moment(dateValue).format(dateFormat);
   } else {
     return emptyValue;
   }

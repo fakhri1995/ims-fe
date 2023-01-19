@@ -1,7 +1,4 @@
 import { Form, Tabs, notification } from "antd";
-import parse from "html-react-parser";
-import moment from "moment";
-import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -28,8 +25,6 @@ import EmployeeInventoryDetail from "../../components/screen/employee/detail/inv
 import EmployeePayslipDetail from "../../components/screen/employee/detail/payslip";
 import EmployeeProfileDetail from "../../components/screen/employee/detail/profile";
 import httpcookie from "cookie";
-
-moment.locale("id");
 
 const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   /**

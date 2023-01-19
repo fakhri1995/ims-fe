@@ -8,8 +8,6 @@ import {
   Tooltip,
   notification,
 } from "antd";
-import moment from "moment";
-import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -50,12 +48,11 @@ import {
 } from "../../../../../components/table/tableCustom";
 import {
   generateStaticAssetUrl,
+  momentFormatDate,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import { createKeyPressHandler } from "../../../../../lib/helper";
 import httpcookie from "cookie";
-
-moment.locale("id");
 
 const EmployeePayslipDetailIndex = ({
   initProps,
@@ -347,9 +344,7 @@ const EmployeePayslipDetailIndex = ({
           children: (
             <div className="flex flex-row space-x-2 items-center">
               <p>
-                {moment(record.tanggal_dibayarkan).isValid()
-                  ? moment(record.tanggal_dibayarkan).format("MMMM YYYY")
-                  : "-"}
+                {momentFormatDate(record?.tanggal_dibayarkan, "-", "MMMM YYYY")}
               </p>
               {record.is_main_salary_changed && (
                 <Tooltip
@@ -544,10 +539,7 @@ const EmployeePayslipDetailIndex = ({
               <div className="flex flex-col space-y-2 justify-between">
                 <p className="mig-caption--medium text-mono80">
                   Status Slip Gaji (
-                  {moment(dataPayslip.month).isValid()
-                    ? moment(dataPayslip.month).format("MMMM YYYY")
-                    : "-"}
-                  )
+                  {momentFormatDate(dataPayslip.month, "-", "MMMM YYYY")})
                 </p>
                 {dataPayslip?.status === "kosong" ? (
                   <div className="flex flex-row space-x-2 items-center">

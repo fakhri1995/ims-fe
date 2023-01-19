@@ -1,17 +1,4 @@
-import { UpOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Collapse,
-  Form,
-  Input,
-  Menu,
-  Select,
-  Spin,
-  Switch,
-  Tag,
-  notification,
-} from "antd";
-import moment from "moment";
+import { Input, Select, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
@@ -42,8 +29,6 @@ import {
   CircleCheckIconSvg,
   EditIconSvg,
   SearchIconSvg,
-  TrashIconSvg,
-  UserPlusIconSvg,
 } from "../../../../components/icon";
 import { DownloadIconSvg, SettingsIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
@@ -53,8 +38,10 @@ import {
   ModalUbah,
 } from "../../../../components/modal/modalCustom";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
-import { H2 } from "../../../../components/typography";
-import { createKeyPressHandler } from "../../../../lib/helper";
+import {
+  createKeyPressHandler,
+  momentFormatDate,
+} from "../../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -126,8 +113,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2.2. Table Employee List
   // filter data
-  const [isEmployeeActive, setIsEmployeeActive] = useState(1);
-
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
   const [dataCompanyList, setDataCompanyList] = useState([]);
 
@@ -338,10 +323,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         if (res2.success) {
           let statusCountRes = res2.data;
-          let mappedStatusCount = statusCountRes.reverse().map((data) => {
+          let mappedStatusCount = statusCountRes.map((data) => {
             return {
               total: data?.total,
-              is_posted: Number(data?.is_posted) ? "Aktif" : "Tidak Aktif",
+              is_posted: Number(data?.is_posted) ? "Diterbitkan" : "Draft",
             };
           });
           setPayslipStatusCount(mappedStatusCount);
@@ -598,7 +583,15 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     >
       <div className="grid grid-cols-1 md:px-5" id="mainWrapper">
         <div className="shadow-md rounded-md bg-white p-4 mb-6">
-          <h4 className="mig-heading--4 ">Status Slip Gaji (Oktober 2022)</h4>
+          <h4 className="mig-heading--4 ">
+            Status Slip Gaji (
+            {momentFormatDate(
+              dataPayslips[0]?.tanggal_dibayarkan,
+              "-",
+              "MMMM YYYY"
+            )}
+            )
+          </h4>
           {/* CHART STATUS SLIP GAJI */}
           {loadingChart ? (
             <>

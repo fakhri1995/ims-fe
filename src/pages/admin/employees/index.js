@@ -345,7 +345,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setPlacementCount(res2.data);
+          let resData = res2.data;
+          let finalPlacementCount = getFinalStatisticCount(
+            resData,
+            "placement",
+            "placement_count"
+          );
+          setPlacementCount(finalPlacementCount);
         } else {
           notification.error({
             message: `${res2.message}`,
@@ -382,14 +388,21 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          let roleCountRes = res2.data;
-          let mappedRoleCount = roleCountRes.map((data) => {
+          let resData = res2.data;
+          let mappedRoleCount = resData.map((data) => {
             return {
               role_count: data.role_count,
               role_name: data.role?.name,
             };
           });
-          setRoleCount(mappedRoleCount);
+
+          let finalRoleCount = getFinalStatisticCount(
+            mappedRoleCount,
+            "role_name",
+            "role_count"
+          );
+
+          setRoleCount(finalRoleCount);
         } else {
           notification.error({
             message: `${res2.message}`,
@@ -427,7 +440,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         if (res2.success) {
           let statusCountRes = res2.data;
-          let mappedStatusCount = statusCountRes.map((data) => {
+          let mappedStatusCount = statusCountRes.reverse().map((data) => {
             return {
               status_count: data.status_count,
               is_employee_active: Number(data.is_employee_active)
@@ -590,6 +603,28 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       setIsEmployeeActive(1);
     }
     setPageEmployees(1);
+  };
+
+  // Use in statistic for displaying only top 5 data and "Lainnya"
+  const getFinalStatisticCount = (resData, attrName, attrCount) => {
+    resData.sort((a, b) => b[attrCount] - a[attrCount]);
+    let top5Data = resData.filter((data) => data[attrName]).slice(0, 5);
+    let top5Name = top5Data.map((data) => data[attrName]);
+
+    let othersData = resData.filter(
+      (data) => !top5Name.includes(data[attrName])
+    );
+    let othersSum = othersData.reduce(
+      (total, data) => total + data[attrCount],
+      0
+    );
+
+    top5Data.push({
+      [attrName]: "Lainnya",
+      [attrCount]: othersSum,
+    });
+
+    return top5Data;
   };
 
   // "Daftar Karyawan" Table's columns
