@@ -34,41 +34,41 @@ export default {
   landingpagesection3: `We provide you with ✔️ Cutting-edge resources
     ✔️ Efficient and competitive cost
     ✔️ Guaranteed level of service`,
-  findout: "Find out",
+  findout: "Discover",
   howourexpertise: "how our expertise",
-  helpyou: "can help you",
+  helpyou: "can enhance your business",
   hardwaredescription:
-    "Take advantage of our managed service model: from predictable monthly cost to the best service experience you've been dreaming of.",
+    "Transform your traditional procurement into a managed service model, guaranteeing predictable monthly costs and excellent service levels.",
   hardwarebuttontitle: "Get yours",
   softwaredescription:
-    "Digitalize your business processes to improve efficiency. Our team can help customize a system that's unique to you.",
+    "Bringing your ideas to reality. Our team can help you develop various platforms that are unique to your needs.",
   softwarebuttontitle: "Build now",
-  talentsubtitle: "Our talent, your growth.",
+  talentsubtitle: "Remove fullstop at the end",
   talentdescription:
-    "Speed up your hiring process with our on-demand expertise, flexible talent headcounts and tailored work periods. Relax and let us handle it.",
+    "Build or expand your team with our streamlined hiring process, on-demand expertise, flexible headcounts, and talent working periods.",
   talentbuttontitle: "Hire now",
-  landingpagewhyus1: "You can enjoy all these benefits under ",
-  landingpagewhyus2: "our roof.",
-  whyustitle1: "On Demand Services:",
+  landingpagewhyus1: "Collaborate with us and enjoy ",
+  landingpagewhyus2: "these benefits ",
+  whyustitle1: "On Demand Services",
   whyussubtitle1:
-    "We custom solutions to help you optimize, transform, and excel.",
-  whyustitle2: "Trustworthy Partner:",
+    "Our comprehensive services can fulfill all types of business needs to help you optimize, transform, and excel.",
+  whyustitle2: "Reliable Partner",
   whyussubtitle2:
-    "15+ years of successful nationwide experience. We're a long-term partner you can rely on.",
-  whyustitle3: "Competitive Rate:",
+    "20 years of successful nationwide experience. We're a long-term partner you can rely on.",
+  whyustitle3: "Competitive Pricing",
   whyussubtitle3:
-    "We offer the best services, tailored to your needs. All at the best prices.",
-  whyustitle4: "Cost-Efficient:",
+    "We offer the best services tailored to your needs at the best prices.",
+  whyustitle4: "Efficient Solutions",
   whyussubtitle4:
-    "Our solution can help your business grow and become more efficient.",
+    "Optimize your business and streamline operations with our all-in-one solutions.",
   aboutustitle:
     "Improve the efficiency and agility of your business operations.",
   aboutussubtitle:
     "Our team at Mitramas Infosys global is here to support you with tech staff augmentation, custom software development, and hardware managed services. We have a track record of delivering top-quality solutions to a wide range of industries, including financial service companies, start ups, and government agencies. We strive to bring the best solutions to all of our clients, including you.",
   hardwaresolution: "hardware solutions",
   softwaredevelopment: "software development",
-  and: "dan",
-  techtalent: "tech talents",
+  and: "and",
+  techtalent: "tech talent solutions",
   landingpageoursolution: "Explore our solutions",
   landingpagefreeconsultation: "Get free consultation",
   whoweare: "Our history",

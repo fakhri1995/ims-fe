@@ -185,7 +185,31 @@ function LandingPage({ dataBlog }) {
               <span className={"font-gilroysemibold text-blackmig"}>
                 {t.techtalent}
               </span>
-              .{t.landingpagesection3}
+              .
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-xl font-gilroyregular text-blackmig mt-4"}
+            >
+              We provide you with:
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-xl font-gilroyregular text-blackmig"}
+            >
+              ✔️ Cutting-edge resources
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-xl font-gilroyregular text-blackmig"}
+            >
+              ✔️ Efficient and competitive cost
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-xl font-gilroyregular text-blackmig"}
+            >
+              ✔️ Guaranteed level of service
             </p>
             <div className={"mt-[34px]"}>
               <div className={"flex flex-row justify-between w-[512px]"}>
@@ -476,9 +500,10 @@ function LandingPage({ dataBlog }) {
         }
       >
         <div className={"container mx-auto"}>
-          <p
+          <h2
+            style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-[32px] text-blackmig font-gilroysemibold md:py-0"
+              "text-xl md:text-[36px] text-blackmig font-gilroysemibold md:py-0"
             }
           >
             {t.findout}{" "}
@@ -491,22 +516,29 @@ function LandingPage({ dataBlog }) {
               {t.howourexpertise}
             </span>{" "}
             {t.helpyou}
-          </p>
+          </h2>
         </div>
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
             <div className={"text-left max-w-[609px]"}>
-              <p className={"font-gilroybold text-primarygreen text-[32px]"}>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={"font-gilroybold text-primarygreen text-2xl"}
+              >
                 Hardware
-              </p>
-              <p
+              </h2>
+              <h2
+                style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 Lighten up your heavy capital in IT infrastructure
-              </p>
-              <p className={" text-blackmig text-sm font-gilroyregular mt-5"}>
+              </h2>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+              >
                 {t.hardwaredescription}
               </p>
               <div className={"mt-5"}>
@@ -547,17 +579,24 @@ function LandingPage({ dataBlog }) {
               />
             </div>
             <div className={"text-left max-w-[609px] justify-end"}>
-              <p className={"font-gilroybold text-primarygreen text-[32px]"}>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={"font-gilroybold text-primarygreen text-2xl"}
+              >
                 Software
-              </p>
-              <p
+              </h2>
+              <h2
+                style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
-                Delivering custom-made software
-              </p>
-              <p className={" text-blackmig text-sm font-gilroyregular mt-5"}>
+                Delivering tailor-made solutions for your business
+              </h2>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+              >
                 {t.softwaredescription}
               </p>
               <div className={"mt-5"}>
@@ -584,17 +623,24 @@ function LandingPage({ dataBlog }) {
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
             <div className={"text-left max-w-[609px]"}>
-              <p className={"font-gilroybold text-primarygreen text-[32px]"}>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={"font-gilroybold text-primarygreen text-2xl"}
+              >
                 Talents
-              </p>
-              <p
+              </h2>
+              <h2
+                style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.talentsubtitle}
-              </p>
-              <p className={" text-blackmig text-sm font-gilroyregular mt-5"}>
+              </h2>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+              >
                 {t.talentdescription}
               </p>
               <div className={"mt-5"}>
@@ -672,7 +718,7 @@ function LandingPage({ dataBlog }) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base"}>Get Yours</p>
+                    <p className={"font-gilroysemibold text-xl"}>Get Yours</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "8.95px", height: "15.64px" }}
@@ -710,7 +756,7 @@ function LandingPage({ dataBlog }) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base"}>Build Now</p>
+                    <p className={"font-gilroysemibold text-xl"}>Build Now</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "8.95px", height: "15.64px" }}
@@ -748,7 +794,7 @@ function LandingPage({ dataBlog }) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base"}>Hire Now</p>
+                    <p className={"font-gilroysemibold text-xl"}>Hire Now</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "8.95px", height: "15.64px" }}
@@ -1484,9 +1530,10 @@ function LandingPage({ dataBlog }) {
       </section>
       <section className={"session4landingpage py-4 px-4 md:py-16 text-center"}>
         <div className={"container mx-auto"}>
-          <p
+          <h2
+            style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-[32px] mt-12 font-gilroysemibold text-blackmig"
+              "text-xl md:text-[36px] mt-12 font-gilroysemibold text-blackmig"
             }
           >
             {t.landingpagewhyus1}{" "}
@@ -1498,7 +1545,7 @@ function LandingPage({ dataBlog }) {
             >
               {t.landingpagewhyus2}
             </span>{" "}
-          </p>
+          </h2>
         </div>
         <div
           className={
@@ -1514,10 +1561,16 @@ function LandingPage({ dataBlog }) {
             />
             {/* </div> */}
             <div className=" ml-6 self-center">
-              <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
+              <h3
+                style={{ lineHeight: "120%" }}
+                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+              >
                 {t.whyustitle1}
-              </h5>
-              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
+              </h3>
+              <p
+                style={{ lineHeight: "150%" }}
+                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+              >
                 {t.whyussubtitle1}
               </p>
             </div>
@@ -1538,10 +1591,16 @@ function LandingPage({ dataBlog }) {
               alt=""
             />
             <div className=" ml-6 self-center">
-              <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
+              <h3
+                style={{ lineHeight: "120%" }}
+                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+              >
                 {t.whyustitle2}
-              </h5>
-              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
+              </h3>
+              <p
+                style={{ lineHeight: "150%" }}
+                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+              >
                 {t.whyussubtitle2}
               </p>
             </div>
@@ -1559,10 +1618,16 @@ function LandingPage({ dataBlog }) {
               alt=""
             />
             <div className=" ml-6 self-center">
-              <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
+              <h3
+                style={{ lineHeight: "120%" }}
+                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+              >
                 {t.whyustitle3}
-              </h5>
-              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
+              </h3>
+              <p
+                style={{ lineHeight: "150%" }}
+                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+              >
                 {t.whyussubtitle3}
               </p>
             </div>
@@ -1574,10 +1639,16 @@ function LandingPage({ dataBlog }) {
               className="w-[117px] h-[136px]"
             />
             <div className=" ml-6 self-center">
-              <h5 className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen ">
+              <h3
+                style={{ lineHeight: "120%" }}
+                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+              >
                 {t.whyustitle4}
-              </h5>
-              <p className="text-left text-sm md:text-base text-blackmig font-gilroyregular">
+              </h3>
+              <p
+                style={{ lineHeight: "150%" }}
+                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+              >
                 {t.whyussubtitle4}
               </p>
             </div>
@@ -1679,33 +1750,42 @@ function LandingPage({ dataBlog }) {
           </div>
           <div className={"w-[589px] justify-self-start"}>
             <div className="flex flex-col items-start">
-              <h4 className="mb-2 text-2xl font-gilroysemibold text-blackmig">
-                Interested in joining MIG?
-              </h4>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className="mb-2 text-[28px] font-gilroysemibold text-blackmig"
+              >
+                Looking for jobs instead? Apply for Jobs
+              </h2>
               <div className="flex flex-row items-center mt-5">
                 <div className="">
-                  <img
-                    src="/image/landingpage/career-icon1.png"
-                    className="w-[42px] h-[42px]"
-                  />
-                </div>
-                <div>
-                  <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                    We love to empower our team members to solve problems that
-                    matter
-                  </p>
-                </div>
-              </div>
-              <div className="flex flex-row items-center mt-3">
-                <div className="w-11">
                   <img
                     src="/image/landingpage/career-icon2.png"
                     className="w-[42px] h-[42px]"
                   />
                 </div>
                 <div>
-                  <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                    We offer diverse industry exposures and hands-on experience
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                  >
+                    Hands-on experience from a variety of leading industries.
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-row items-center mt-3">
+                <div className="w-11">
+                  <img
+                    src="/image/landingpage/career-icon1.png"
+                    className="w-[42px] h-[42px]"
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                  >
+                    Opportunities to find solutions and make a difference, with
+                    our support.
                   </p>
                 </div>
               </div>
@@ -1717,17 +1797,20 @@ function LandingPage({ dataBlog }) {
                   />
                 </div>
                 <div>
-                  <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                    We support personal growth through constant experiment and
-                    learning
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                  >
+                    Resources to enhance your personal and professional
+                    development.
                   </p>
                 </div>
               </div>
               <div className="mt-3">
                 <a href="/contactus">
                   <div className="flex mt-5 justify-end mr-5">
-                    <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
-                      Apply for jobs
+                    <p className="text-xl mr-2 text-primarygreen font-gilroysemibold">
+                      Know More
                     </p>
                     <img
                       className={"py-1"}
@@ -1837,18 +1920,22 @@ function LandingPage({ dataBlog }) {
               "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
-            <p className={"text-2xl font-gilroysemibold text-black"}>
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={"text-[28px] font-gilroysemibold text-black"}
+            >
               Enjoy seamless tech solutions without the hassle.
-            </p>
+            </h2>
             <div
               className={
-                "mt-3.5 text-base font-gilroyregular text-center text-black"
+                "mt-3.5 text-xl font-gilroyregular text-center text-black"
               }
             >
-              <p>What technology solutions are you looking for?</p>
-              <p>
-                Our team is here to help you find the right resources to meet
-                your needs.
+              <p style={{ lineHeight: "120%" }}>
+                What technology solutions are you looking for?
+              </p>
+              <p style={{ lineHeight: "120%" }}>
+                Our team has the expertise and resources to meet your needs.
               </p>
             </div>
             <div className="mt-3.5 flex flex-row justify-center">
@@ -1859,22 +1946,18 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-base font-gilroysemibold"}>
-                      Contact Us
-                    </p>
+                    <p className={"text-xl font-gilroysemibold"}>Contact Us</p>
                   </button>
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/contactus">
+                <Linkk href="/about">
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-base font-gilroysemibold"}>
-                      Learn More
-                    </p>
+                    <p className={"text-xl font-gilroysemibold"}>Learn More</p>
                   </button>
                 </Linkk>
               </div>
