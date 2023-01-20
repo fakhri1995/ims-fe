@@ -553,6 +553,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       })
       .finally(() => {
         setLoadingDelete(false);
+        setModalDelete(false);
       });
   };
 
