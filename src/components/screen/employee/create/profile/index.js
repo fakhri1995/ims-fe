@@ -50,6 +50,8 @@ const EmployeeProfileForm = ({
     if (dataEmployee?.id_card_photo?.link) {
       const currentFileName = dataEmployee?.id_card_photo?.link?.split("/")[2];
       setFileList([{ name: currentFileName }]);
+    } else {
+      setFileList([]);
     }
   }, [dataEmployee?.id_card_photo]);
 
@@ -159,9 +161,9 @@ const EmployeeProfileForm = ({
           fileList={fileList}
         >
           <Button
-            className="btn-sm btn text-white font-semibold px-6 border
-            text-primary100 hover:bg-primary75 border-primary100 
-            hover:border-primary75 hover:text-white bg-white space-x-2
+            className="btn-sm btn font-semibold px-6 space-x-2 border
+            text-primary100 bg-white  border-primary100 
+            hover:bg-primary75 hover:border-primary75  
             focus:border-primary75 focus:text-primary100"
           >
             <UploadIconSvg size={16} color="#35763B" />
