@@ -3,9 +3,7 @@ import { size } from "lodash";
 import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
-import React, { useEffect, useRef } from "react";
-import { useState } from "react";
-import { useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -183,14 +181,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((res2) => {
           if (res2.success) {
             setDataEmployee(res2.data);
-            // if (prevpath === "add") {
-            //   setDataContract({
-            //     ...res2.data?.contracts[0],
-            //     is_employee_active: 1,
-            //   });
-            // } else {
-            //   setDataContract(res2.data?.contracts[0]);
-            // }
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -218,44 +208,46 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    if (dataEmployee?.contracts[0]?.id) {
-      setLoadingEmployee(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${dataEmployee?.contracts[0]?.id}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            if (prevpath === "add") {
-              setDataContract({
-                ...res2.data,
-                is_employee_active: 1,
-              });
+    if (currentTab == "2") {
+      if (dataEmployee?.contracts[0]?.id) {
+        setLoadingEmployee(true);
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${dataEmployee?.contracts[0]?.id}`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(initProps),
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((res2) => {
+            if (res2.success) {
+              if (prevpath === "add") {
+                setDataContract({
+                  ...res2.data,
+                  is_employee_active: 1,
+                });
+              } else {
+                setDataContract(res2.data);
+              }
             } else {
-              setDataContract(res2.data);
+              notification.error({
+                message: `${res2.message}`,
+                duration: 3,
+              });
             }
-          } else {
+          })
+          .catch((err) => {
             notification.error({
-              message: `${res2.message}`,
+              message: `${err.response}`,
               duration: 3,
             });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
+          })
+          .finally(() => {
+            setLoadingEmployee(false);
           });
-        })
-        .finally(() => {
-          setLoadingEmployee(false);
-        });
+      }
     }
   }, [isAllowedToGetEmployeeContract, refresh]);
 
@@ -403,16 +395,15 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response2) => {
           setRefresh((prev) => prev + 1);
           if (response2.success) {
-            // notification.success({
-            //   message: `Draft karyawan berhasil disimpan.`,
-            //   duration: 3,
-            // });
             setShowSuccessIcon(true);
             setTimeout(() => setShowSuccessIcon(false), 1000);
             if (isPosted === 1) {
               setTimeout(() => {
-                setDataEmployee({});
                 rt.push(`/admin/employees`);
+                notification.success({
+                  message: `Data karyawan berhasil disimpan.`,
+                  duration: 3,
+                });
               }, 500);
             }
           } else {
@@ -456,10 +447,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         .then((response2) => {
           setRefresh((prev) => prev + 1);
           if (response2.success) {
-            // notification.success({
-            //   message: `Draft karyawan berhasil disimpan.`,
-            //   duration: 3,
-            // });
             setShowSuccessIcon(true);
             setTimeout(() => setShowSuccessIcon(false), 1000);
           } else {
@@ -534,10 +521,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((response2) => {
         setRefresh((prev) => prev + 1);
         if (response2.success) {
-          // notification.success({
-          //   message: `Draft karyawan berhasil disimpan.`,
-          //   duration: 3,
-          // });
           setShowSuccessIcon(true);
           setTimeout(() => setShowSuccessIcon(false), 1000);
         } else {
@@ -659,7 +642,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   className="flex flex-row"
                   onClick={() => {
                     let numTab = Number(currentTab);
-                    currentTab <= 3 && setCurrentTab(String(numTab - 1));
+                    currentTab > 1 && setCurrentTab(String(numTab - 1));
                     handleAutoSaveOnTabChange();
                   }}
                 >

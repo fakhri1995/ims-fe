@@ -91,6 +91,8 @@ const InventoryForm = ({
         ?.toString()
         .split("/")[2];
       setAssignFileList([{ name: currentFileName }]);
+    } else {
+      setAssignFileList([]);
     }
   }, [idx, inventoryList[idx]?.delivery_file]);
 
@@ -100,6 +102,8 @@ const InventoryForm = ({
         ?.toString()
         .split("/")[2];
       setReturnFileList([{ name: currentFileName }]);
+    } else {
+      setReturnFileList([]);
     }
   }, [idx, inventoryList[idx]?.return_file]);
 

@@ -315,6 +315,8 @@ const EmployeeContractForm = ({
     if (dataContract?.contract_file?.link) {
       const currentFileName = dataContract?.contract_file?.link?.split("/")[2];
       setFileList([{ name: currentFileName }]);
+    } else {
+      setFileList([]);
     }
   }, [dataContract?.contract_file]);
 
