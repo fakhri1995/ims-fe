@@ -998,347 +998,369 @@ function LandingPage({ dataBlog }) {
         </div>
       </section> */}
       {/* testimonial */}
-      <section
-        className={
-          "section3landingpageadvantages hidden md:block bg-white py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
-        }
-      >
-        <p
+      {dataTestimonial && (
+        <section
           className={
-            "text-xl md:text-3xl text-center font-gilroysemibold mb-[42px]"
+            "section3landingpageadvantages hidden md:block bg-white py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
           }
         >
-          What they say{" "}
-          <span
-            style={{
-              borderBottom: "solid 3px #188E4D",
-              paddingBottom: "2.5px",
-            }}
+          <p
+            className={
+              "text-xl md:text-3xl text-center font-gilroysemibold mb-[42px]"
+            }
           >
-            about us
-          </span>{" "}
-          ?
-        </p>
-        <div
-          className={"center md:content-around block md:hidden"}
-          style={{ maxWidth: 1000 }}
-        >
-          <Slider {...sliderSettingsPhone}>
-            <div>
-              <Card
-                bordered
-                style={{
-                  boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
-                }}
-              >
-                <div className="">
-                  <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                    "
-                  </p>
-
-                  <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
-                    I had a wonderful experience working with Mitramas Infosys
-                    Global. Lorem ipsum dolor sit amet, consectetur adipiscing
-                    elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua.
-                    <br className="hidden xl:block"></br> optimize your cost and
-                    productivity
-                  </p>
-                  <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                    "
-                  </p>
-                  <div className="flex flex-col items-center">
-                    <div className="flex justify-center mt-2">
-                      <img
-                        className="rounded-full mr-4"
-                        src="/image/landingpage/testimonial-user.png"
-                        style={{ height: "40px", width: "60px" }}
-                        alt=""
-                      />
-                      <div className="self-center">
-                        <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
-                          Fachri Fauzan
-                        </p>
-                        <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
-                          Talent Acquisition at Bukopin
-                        </p>
-                      </div>
-                    </div>
-                    <div className="self-start">
-                      <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
-                        <p className="text-sm text-primarygreen font-gilroysemibold ">
-                          Industry :
-                          <span
-                            style={{
-                              fontWeight: "regular",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            Banking
-                          </span>
-                        </p>
-                      </div>
-                      <div className="bg-lightblue px-4 rounded-[20px] mt-2">
-                        <p className="text-sm text-primarygreen font-gilroysemibold ">
-                          Service:
-                          <span
-                            style={{
-                              fontWeight: "regular",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            Hardware, Talents
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </div>
-            <div>
-              <Card
-                bordered
-                style={{
-                  boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)",
-                }}
-              >
-                <div className="">
-                  <p className="text-3xl text italic gilroy-semibold font-gilroysemibold">
-                    "
-                  </p>
-
-                  <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
-                    I had a wonderful experience working with Mitramas Infosys
-                    Global. Lorem ipsum dolor sit amet, consectetur adipiscing
-                    elit, sed do eiusmod tempor incididunt ut labore et dolore
-                    magna aliqua.
-                    <br className="hidden xl:block"></br> optimize your cost and
-                    productivity
-                  </p>
-                  <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
-                    "
-                  </p>
-                  <div className="flex flex-col items-center">
-                    <div className="flex justify-center mt-2">
-                      <img
-                        className="rounded-full mr-4"
-                        src="/image/landingpage/testimonial-user.png"
-                        style={{ height: "40px", width: "60px" }}
-                        alt=""
-                      />
-                      <div className="self-center">
-                        <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
-                          Fachri Fauzan
-                        </p>
-                        <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
-                          Talent Acquisition at Bukopin
-                        </p>
-                      </div>
-                    </div>
-                    <div className="self-start">
-                      <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
-                        <p className="text-sm text-primarygreen font-gilroysemibold ">
-                          Industry :
-                          <span
-                            style={{
-                              fontWeight: "regular",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            Banking
-                          </span>
-                        </p>
-                      </div>
-                      <div className="bg-lightblue px-4 rounded-[20px] mt-2">
-                        <p className="text-sm text-primarygreen font-gilroysemibold ">
-                          Service:
-                          <span
-                            style={{
-                              fontWeight: "regular",
-                              marginLeft: "5px",
-                            }}
-                          >
-                            Hardware, Talents
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            </div>
-          </Slider>
-        </div>
-        <div className={"flex flex-row"}>
-          <button onClick={() => slider?.current?.slickPrev()}>
-            <div
-              className={
-                "self-center flex items-center justify-center  absolute left-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
-              }
+            What they say{" "}
+            <span
+              style={{
+                borderBottom: "solid 3px #188E4D",
+                paddingBottom: "2.5px",
+              }}
             >
-              <img
-                className={"grid justify-items-center"}
-                style={{ width: "40px", height: "40px" }}
-                src="/image/landingpage/arrow-sm-left.png"
-              />
-            </div>
-          </button>
+              about us
+            </span>{" "}
+            ?
+          </p>
           <div
-            className={"center md:content-around hidden md:block"}
+            className={"center md:content-around block md:hidden"}
             style={{ maxWidth: 1000 }}
           >
-            <Slider {...sliderSettings2} ref={slider}>
-              {dataTestimonial
-                ? dataTestimonial.map((data1) => (
-                    <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
-                      <div className={"flex flex-row justify-between"}>
-                        <div className={"w-[45%]"}>
-                          <div className={"flex relative self-center "}>
-                            <img
-                              className={"w-[356px] h-[237px] "}
-                              src={generateStaticAssetUrl(
-                                data1.attachment_article.link
-                              )}
-                              alt=""
-                            />
-                            <div
-                              className={
-                                "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
-                              }
+            <Slider {...sliderSettingsPhone}>
+              <div>
+                <Card
+                  bordered
+                  style={{
+                    boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)",
+                  }}
+                >
+                  <div className="">
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                      "
+                    </p>
+
+                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                      I had a wonderful experience working with Mitramas Infosys
+                      Global. Lorem ipsum dolor sit amet, consectetur adipiscing
+                      elit, sed do eiusmod tempor incididunt ut labore et dolore
+                      magna aliqua.
+                      <br className="hidden xl:block"></br> optimize your cost
+                      and productivity
+                    </p>
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                      "
+                    </p>
+                    <div className="flex flex-col items-center">
+                      <div className="flex justify-center mt-2">
+                        <img
+                          className="rounded-full mr-4"
+                          src="/image/landingpage/testimonial-user.png"
+                          style={{ height: "40px", width: "60px" }}
+                          alt=""
+                        />
+                        <div className="self-center">
+                          <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
+                            Fachri Fauzan
+                          </p>
+                          <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
+                            Talent Acquisition at Bukopin
+                          </p>
+                        </div>
+                      </div>
+                      <div className="self-start">
+                        <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
+                          <p className="text-sm text-primarygreen font-gilroysemibold ">
+                            Industry :
+                            <span
                               style={{
-                                boxShadow:
-                                  "0px 16px 40px rgba(113, 176, 112, 0.2)",
+                                fontWeight: "regular",
+                                marginLeft: "5px",
                               }}
                             >
-                              {locale == "en" ? (
-                                <div
-                                  className=""
-                                  dangerouslySetInnerHTML={{
-                                    __html: data1.quote,
-                                  }}
-                                />
-                              ) : locale == "id" && data1.quote_id != null ? (
-                                <div
-                                  className=""
-                                  dangerouslySetInnerHTML={{
-                                    __html: data1.quote_id,
-                                  }}
-                                />
-                              ) : (
-                                <div
-                                  className=""
-                                  dangerouslySetInnerHTML={{
-                                    __html: data1.quote,
-                                  }}
-                                />
-                              )}
-                              <div
-                                className={
-                                  "mt-3 border border-dividermig w-[144px]"
-                                }
-                              />
-                              <p
-                                className={
-                                  "mt-1 text-[10px] text-blackmig font-gilroysemibold"
-                                }
-                              >
-                                {data1.author}
-                              </p>
-                              <p
-                                className={
-                                  "mt-1 text-[10px] text-blackmig  font-gilroyregular"
-                                }
-                              >
-                                {locale == "en"
-                                  ? data1.job_title
-                                  : locale == "id" && data1.job_title_id != null
-                                  ? data1.job_title_id
-                                  : data1.job_title}
-                              </p>
-                            </div>
-                          </div>
+                              Banking
+                            </span>
+                          </p>
                         </div>
-                        <div className={"w-[45%]"}>
-                          <div className={"flex flex-row justify-between"}>
-                            <div>
-                              <p
-                                className={
-                                  "text-blackmig text-2xl font-gilroysemibold"
-                                }
-                              >
-                                {locale == "en"
-                                  ? data1.title
-                                  : locale == "id" && data1.title_id != null
-                                  ? data1.title_id
-                                  : data1.title}
-                              </p>
-                              <p
-                                className={
-                                  "text-primarygreen text-base font-gilroysemibold mt-1"
-                                }
-                              >
-                                {data1.company_name}
-                              </p>
-                            </div>
-                            <div>
-                              <img
-                                className={"w-[58.5px] h-[42.5px]"}
-                                src={generateStaticAssetUrl(
-                                  data1.company_logo.link
-                                )}
-                              />
-                            </div>
-                          </div>
-                          <div
-                            className="mt-4"
-                            dangerouslySetInnerHTML={{
-                              __html: data1.description,
-                            }}
-                          />
-                          <Linkk href={`/customerstories/${data1.page_path}`}>
-                            <button
-                              className={
-                                "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
-                              }
+                        <div className="bg-lightblue px-4 rounded-[20px] mt-2">
+                          <p className="text-sm text-primarygreen font-gilroysemibold ">
+                            Service:
+                            <span
+                              style={{
+                                fontWeight: "regular",
+                                marginLeft: "5px",
+                              }}
                             >
-                              <div className={"flex flex-row justify-between"}>
-                                <p
-                                  className={
-                                    "pr-[13.52px] text-base font-gilroysemibold"
-                                  }
-                                >
-                                  Read Story
-                                </p>
-                                <img
-                                  className={"w-5 h-5"}
-                                  src="/image/landingpage/arrow_forward_ios2.png"
-                                />
-                              </div>
-                            </button>
-                          </Linkk>
+                              Hardware, Talents
+                            </span>
+                          </p>
                         </div>
                       </div>
                     </div>
-                  ))
-                : ""}
+                  </div>
+                </Card>
+              </div>
+              <div>
+                <Card
+                  bordered
+                  style={{
+                    boxShadow: "5px 8px 24px 5px rgba(208, 216, 243, 0.6)",
+                  }}
+                >
+                  <div className="">
+                    <p className="text-3xl text italic gilroy-semibold font-gilroysemibold">
+                      "
+                    </p>
+
+                    <p className="pb-4 gilroy-medium text-sm mx-auto text-left">
+                      I had a wonderful experience working with Mitramas Infosys
+                      Global. Lorem ipsum dolor sit amet, consectetur adipiscing
+                      elit, sed do eiusmod tempor incididunt ut labore et dolore
+                      magna aliqua.
+                      <br className="hidden xl:block"></br> optimize your cost
+                      and productivity
+                    </p>
+                    <p className="text-sm text italic gilroy-semibold font-gilroysemibold">
+                      "
+                    </p>
+                    <div className="flex flex-col items-center">
+                      <div className="flex justify-center mt-2">
+                        <img
+                          className="rounded-full mr-4"
+                          src="/image/landingpage/testimonial-user.png"
+                          style={{ height: "40px", width: "60px" }}
+                          alt=""
+                        />
+                        <div className="self-center">
+                          <p className="text-sm font-gilroysemibold Gilroy-semibold text-black">
+                            Fachri Fauzan
+                          </p>
+                          <p className="text-sm font-gilroysemibold Gilroy-semibold text-darkgrey">
+                            Talent Acquisition at Bukopin
+                          </p>
+                        </div>
+                      </div>
+                      <div className="self-start">
+                        <div className="bg-greenTrans20 px-4 rounded-[20px] mt-2">
+                          <p className="text-sm text-primarygreen font-gilroysemibold ">
+                            Industry :
+                            <span
+                              style={{
+                                fontWeight: "regular",
+                                marginLeft: "5px",
+                              }}
+                            >
+                              Banking
+                            </span>
+                          </p>
+                        </div>
+                        <div className="bg-lightblue px-4 rounded-[20px] mt-2">
+                          <p className="text-sm text-primarygreen font-gilroysemibold ">
+                            Service:
+                            <span
+                              style={{
+                                fontWeight: "regular",
+                                marginLeft: "5px",
+                              }}
+                            >
+                              Hardware, Talents
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </div>
             </Slider>
           </div>
-          <button onClick={() => slider?.current?.slickNext()}>
+          <div className={"flex flex-row"}>
+            {dataTestimonial ? (
+              dataTestimonial.length > 1 ? (
+                <button onClick={() => slider?.current?.slickPrev()}>
+                  <div
+                    className={
+                      "self-center flex items-center justify-center  absolute left-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                    }
+                  >
+                    <img
+                      className={"grid justify-items-center"}
+                      style={{ width: "40px", height: "40px" }}
+                      src="/image/landingpage/arrow-sm-left.png"
+                    />
+                  </div>
+                </button>
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
             <div
-              className={
-                "self-center flex items-center justify-center  absolute right-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
-              }
+              className={"center md:content-around hidden md:block"}
+              style={{ maxWidth: 1000 }}
             >
-              <img
-                className={"grid justify-items-center"}
-                style={{ width: "40px", height: "40px" }}
-                src="/image/landingpage/arrow-sm-right.png"
-              />
+              <Slider {...sliderSettings2} ref={slider}>
+                {dataTestimonial
+                  ? dataTestimonial.map((data1) => (
+                      <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
+                        <div className={"flex flex-row justify-between"}>
+                          <div className={"w-[45%]"}>
+                            <div className={"flex relative self-center "}>
+                              <img
+                                className={"w-[356px] h-[237px] "}
+                                src={generateStaticAssetUrl(
+                                  data1.attachment_article.link
+                                )}
+                                alt=""
+                              />
+                              <div
+                                className={
+                                  "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
+                                }
+                                style={{
+                                  boxShadow:
+                                    "0px 16px 40px rgba(113, 176, 112, 0.2)",
+                                }}
+                              >
+                                {locale == "en" ? (
+                                  <div
+                                    className=""
+                                    dangerouslySetInnerHTML={{
+                                      __html: data1.quote,
+                                    }}
+                                  />
+                                ) : locale == "id" && data1.quote_id != null ? (
+                                  <div
+                                    className=""
+                                    dangerouslySetInnerHTML={{
+                                      __html: data1.quote_id,
+                                    }}
+                                  />
+                                ) : (
+                                  <div
+                                    className=""
+                                    dangerouslySetInnerHTML={{
+                                      __html: data1.quote,
+                                    }}
+                                  />
+                                )}
+                                <div
+                                  className={
+                                    "mt-3 border border-dividermig w-[144px]"
+                                  }
+                                />
+                                <p
+                                  className={
+                                    "mt-1 text-[10px] text-blackmig font-gilroysemibold"
+                                  }
+                                >
+                                  {data1.author}
+                                </p>
+                                <p
+                                  className={
+                                    "mt-1 text-[10px] text-blackmig  font-gilroyregular"
+                                  }
+                                >
+                                  {locale == "en"
+                                    ? data1.job_title
+                                    : locale == "id" &&
+                                      data1.job_title_id != null
+                                    ? data1.job_title_id
+                                    : data1.job_title}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          <div className={"w-[45%]"}>
+                            <div className={"flex flex-row justify-between"}>
+                              <div>
+                                <h2
+                                  style={{ lineHeight: "120%" }}
+                                  className={
+                                    "text-blackmig text-[36px] font-gilroysemibold"
+                                  }
+                                >
+                                  {locale == "en"
+                                    ? data1.title
+                                    : locale == "id" && data1.title_id != null
+                                    ? data1.title_id
+                                    : data1.title}
+                                </h2>
+                                <p
+                                  className={
+                                    "text-primarygreen text-base font-gilroysemibold mt-1"
+                                  }
+                                >
+                                  {data1.company_name}
+                                </p>
+                              </div>
+                              <div>
+                                <img
+                                  className={"w-[58.5px] h-[42.5px]"}
+                                  src={generateStaticAssetUrl(
+                                    data1.company_logo.link
+                                  )}
+                                />
+                              </div>
+                            </div>
+                            <div
+                              className="mt-4"
+                              dangerouslySetInnerHTML={{
+                                __html: data1.description,
+                              }}
+                            />
+                            <Linkk href={`/customerstories/${data1.page_path}`}>
+                              <button
+                                className={
+                                  "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                }
+                              >
+                                <div
+                                  className={"flex flex-row justify-between"}
+                                >
+                                  <p
+                                    className={
+                                      "pr-[13.52px] text-base font-gilroysemibold"
+                                    }
+                                  >
+                                    Read Story
+                                  </p>
+                                  <img
+                                    className={"w-5 h-5"}
+                                    src="/image/landingpage/arrow_forward_ios2.png"
+                                  />
+                                </div>
+                              </button>
+                            </Linkk>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  : ""}
+              </Slider>
             </div>
-          </button>
-        </div>
-      </section>
+            {dataTestimonial ? (
+              dataTestimonial.length > 1 ? (
+                <button onClick={() => slider?.current?.slickNext()}>
+                  <div
+                    className={
+                      "self-center flex items-center justify-center  absolute right-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                    }
+                  >
+                    <img
+                      className={"grid justify-items-center"}
+                      style={{ width: "40px", height: "40px" }}
+                      src="/image/landingpage/arrow-sm-right.png"
+                    />
+                  </div>
+                </button>
+              ) : (
+                ""
+              )
+            ) : (
+              ""
+            )}
+          </div>
+        </section>
+      )}
       {/* testimonial mobile */}
       <section
         className={
