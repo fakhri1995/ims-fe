@@ -76,15 +76,17 @@ function Software({}) {
       setShowEmailError(true);
       setEmailError("you must filled email first");
     } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\[A-Z]{2,4}$/i.test(
-        dataSoftware.company_email
-      )
+      dataSoftware.company_email
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
     ) {
-      setShowEmailError(true);
-      setEmailError("your email is invalid");
-    } else {
       setShowEmailError(false);
       setShowform(true);
+    } else {
+      setShowEmailError(true);
+      setEmailError("your email is invalid");
     }
   };
 
@@ -892,21 +894,29 @@ function Software({}) {
           >
             <div className={"hidden md:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
-                <p className={"text-[32px] font-gilroyboldold"}>
+                <h1
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[36px] font-gilroysemibold"}
+                >
                   {t.softwareherosection}
-                </p>
-                <p className={"mt-8 font-gilroyregular text-base"}>
+                </h1>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt-8 font-gilroyregular text-xl"}
+                >
                   {t.softwareheosectionsubtitle}
                 </p>
                 <div className={"mt-[40px]"}>
                   <p
-                    className={"font-gilroyboldold text-primarygreen text-base"}
+                    style={{ lineHeight: "150%" }}
+                    className={"font-gilroysemibold text-primarygreen text-xl"}
                   >
                     {t.hardwarereachus}
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
                     <Input
                       name={"email"}
+                      style={{ fontSize: 16 }}
                       className={"w-1/2 h-[37px]"}
                       onChange={(e) => {
                         setDataSoftware({
@@ -919,11 +929,16 @@ function Software({}) {
                     <button
                       onClick={handleLetsTalk}
                       className={
-                        "text-base ml-4 rounded text-white py-2 pl-4 pr-2.5 bg-primarygreen border-primarygreen bg-white"
+                        "text-[18px] ml-4 rounded text-white py-2 pl-4 pr-2.5 bg-primarygreen border-primarygreen bg-white"
                       }
                     >
                       <div className={"flex flex-row justify-between gap-2"}>
-                        <p className={"font-gilroysemibold"}>Let's talk!</p>
+                        <p
+                          style={{ lineHeight: "120%" }}
+                          className={"font-gilroysemibold"}
+                        >
+                          Let's talk!
+                        </p>
                         <img
                           className={"w-[20px] h-[20px] self-center"}
                           src="/image/landingpage/arrow-circle-right.png"
@@ -947,7 +962,7 @@ function Software({}) {
                   >
                     <div className={"flex flex-row"}>
                       <img
-                        className={"w-5 h-5 mr-1"}
+                        className={"w-5 h-5 mr-2.5"}
                         src="/image/landingpage/info.png"
                       />
                       <div>
@@ -1091,9 +1106,10 @@ function Software({}) {
               "section3software hidden md:block bg-bgjoinmig px-[52px] py-12"
             }
           >
-            <p
+            <h2
+              style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-[32px] text-center font-gilroysemibold py-8 md:py-0 mb-10"
+                "text-xl md:text-[36px] text-center font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
               {t.softwarepastworksectiontitle1}{" "}
@@ -1106,7 +1122,7 @@ function Software({}) {
                 {t.softwarepastworksectiontitle2}
               </span>{" "}
               {t.softwarepastworksectiontitle3}
-            </p>
+            </h2>
             <div className={"flex flex-row"}>
               <button onClick={() => slider2?.current?.slickPrev()}>
                 <div
@@ -1142,23 +1158,26 @@ function Software({}) {
                           Website Development
                         </p>
                         <p
+                          style={{ lineHeight: "120%" }}
                           className={
-                            "font-gilroybold text-blackmig text-2xl mt-4"
+                            "font-gilroybold text-blackmig text-[28px] mt-4"
                           }
                         >
                           MIGSys
                         </p>
                         <div className={"mt-4"}>
                           <p
+                            style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-base"
+                              "font-gilroyregular text-blackmig text-xl"
                             }
                           >
                             {t.migsysdescription}{" "}
                           </p>
                           <ul
+                            style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-base"
+                              "font-gilroyregular text-blackmig text-xl"
                             }
                           >
                             <li>{t.migsysdetail1}</li>
@@ -1187,16 +1206,18 @@ function Software({}) {
                           Website Development
                         </p>
                         <p
+                          style={{ lineHeight: "120%" }}
                           className={
-                            "font-gilroybold text-blackmig text-2xl mt-4"
+                            "font-gilroybold text-blackmig text-[28px] mt-4"
                           }
                         >
                           AQL Learning Management System (LMS)
                         </p>
                         <div className={"mt-4"}>
                           <p
+                            style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-base"
+                              "font-gilroyregular text-blackmig text-xl"
                             }
                           >
                             A web-based educational platform that built to
@@ -1223,16 +1244,18 @@ function Software({}) {
                           Website Development
                         </p>
                         <p
+                          style={{ lineHeight: "120%" }}
                           className={
-                            "font-gilroybold text-blackmig text-2xl mt-4"
+                            "font-gilroybold text-blackmig text-[28px] mt-4"
                           }
                         >
                           Warung Lebaran
                         </p>
                         <div className={"mt-4"}>
                           <p
+                            style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-base"
+                              "font-gilroyregular text-blackmig text-xl"
                             }
                           >
                             A web-based hardware managed service to enhance the
@@ -1289,7 +1312,7 @@ function Software({}) {
                     src="/image/software/migsys.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
-                    <p className={"font-gilroyboldold text-blackmig text-sm"}>
+                    <p className={"font-gilroysemibold text-blackmig text-sm"}>
                       MIGSys
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
@@ -1324,7 +1347,7 @@ function Software({}) {
                     src="/image/software/lms.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
-                    <p className={"font-gilroyboldold text-blackmig text-sm"}>
+                    <p className={"font-gilroysemibold text-blackmig text-sm"}>
                       MIGSys
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
@@ -1355,7 +1378,7 @@ function Software({}) {
                     src="/image/software/warung-lebaran.png"
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
-                    <p className={"font-gilroyboldold text-blackmig text-sm"}>
+                    <p className={"font-gilroysemibold text-blackmig text-sm"}>
                       MIGSys
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
@@ -1394,10 +1417,10 @@ function Software({}) {
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm md:w-[209px] rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
+                      "text-sm md:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
                     }
                   >
-                    <p className={"text-base font-gilroysemibold mr-2"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       Contact our sales team
                     </p>
                   </button>
@@ -1420,7 +1443,10 @@ function Software({}) {
                 />
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
-                <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className="mb-2 text-[28px] text-left font-gilroysemibold text-blackmig"
+                >
                   {t.softwarewhyussectiontitle1}{" "}
                   <span
                     style={{
@@ -1431,7 +1457,7 @@ function Software({}) {
                     {t.softwarewhyussectiontitle2}
                   </span>{" "}
                   {t.softwarewhyussectiontitle3}
-                </h4>
+                </h2>
                 <div className={"block md:hidden mx-auto my-[17px]"}>
                   <img
                     src="/image/people/People-Solution.png"
@@ -1445,10 +1471,16 @@ function Software({}) {
                     className="w-[42px] h-[42px] self-center"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       {t.softwarehyyousectionlist1}
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    >
                       {t.softwarewhyyousectionsublist1}
                     </p>
                   </div>
@@ -1459,10 +1491,16 @@ function Software({}) {
                     className="w-[42px] h-[42px] self-center"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       {t.softwarehyyousectionlist2}
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    >
                       {t.softwarewhyyousectionsublist2}
                     </p>
                   </div>
@@ -1473,10 +1511,16 @@ function Software({}) {
                     className="w-[42px] h-[42px] self-center"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       {t.softwarehyyousectionlist3}
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    >
                       {t.softwarewhyyousectionsublist3}
                     </p>
                   </div>
@@ -1491,9 +1535,10 @@ function Software({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <p
+              <h2
+                style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl md:text-2xl font-gilroyboldold py-8 md:py-0"
+                  "text-xl md:text-[36px] font-gilroysemibold py-8 md:py-0"
                 }
               >
                 How it{" "}
@@ -1506,7 +1551,7 @@ function Software({}) {
                   works
                 </span>{" "}
                 ?
-              </p>
+              </h2>
             </div>
             <div className={"flex flex-row justify-between md:px-20 mt-10"}>
               <div className={""}>
@@ -1517,8 +1562,9 @@ function Software({}) {
                     style={{ width: "145px", height: "145px" }}
                   />
                   <p
+                    style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm md:text-base font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm md:text-xl font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.softwarehowitwork1}
@@ -1538,8 +1584,9 @@ function Software({}) {
                   style={{ width: "145px", height: "145px" }}
                 />
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-base font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-xl font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork2}
@@ -1558,8 +1605,9 @@ function Software({}) {
                   style={{ width: "145px", height: "145px" }}
                 />
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-base font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-xl font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork3}
@@ -2138,10 +2186,16 @@ function Software({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
-                <p className={"text-2xl font-gilroysemibold text-black"}>
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[28px] font-gilroysemibold text-black"}
+                >
                   Fulfill your IT needs easily!
-                </p>
-                <p className={"py-5 text-base font-gilroyregular text-black"}>
+                </h2>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"py-5 text-xl font-gilroyregular text-black"}
+                >
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!
@@ -2153,7 +2207,7 @@ function Software({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-gilroysemibold mr-2"}>
+                      <p className={"text-xl font-gilroysemibold mr-2"}>
                         Contact Us
                       </p>
                       <img

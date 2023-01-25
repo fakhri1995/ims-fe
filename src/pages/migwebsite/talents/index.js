@@ -1852,21 +1852,31 @@ function Talents({}) {
           >
             <div className={"hidden md:flex justify-between container mx-auto"}>
               <div className={"flex-col w-2/5"}>
-                <p className={"text-3xl pb-4 font-gilroybold"}>
+                <h1
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[36px] pb-4 font-gilroysemibold"}
+                >
                   Enabling you to assemble the best team
-                </p>
-                <p className={"mt-8 font-gilroyregular text-base"}>
+                </h1>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt-8 font-gilroyregular text-xl"}
+                >
                   Large quantity of profiles coming in with widely different
                   qualities. Your turnover rate is high and you have to do it
                   all over again.
                 </p>
                 <div className={"mt-[40px]"}>
-                  <p className={"font-gilroybold text-primarygreen text-base"}>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={"font-gilroybold text-primarygreen text-xl"}
+                  >
                     Reach us to get more information
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
                     <Input
                       name={"email"}
+                      style={{ fontSize: 16 }}
                       className={"w-1/2 h-[37px]"}
                       onChange={(e) => {
                         setDataPeople({
@@ -1879,11 +1889,16 @@ function Talents({}) {
                     <button
                       onClick={handleHireNow}
                       className={
-                        "text-base text-center ml-4 rounded text-white border-2 bg-primarygreen border-primarygree py-2 pl-4 pr-3"
+                        "text-[18px] text-center ml-4 rounded text-white border-2 bg-primarygreen border-primarygree py-2 pl-4 pr-3"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"font-gilroysemibold"}>Hire now!</p>
+                        <p
+                          style={{ lineHeight: "120%" }}
+                          className={"font-gilroysemibold"}
+                        >
+                          Hire now!
+                        </p>
                         <img
                           className={"w-[20px] h-[20px] self-center ml-2.5"}
                           src="/image/landingpage/arrow-circle-right.png"
@@ -1910,7 +1925,7 @@ function Talents({}) {
                         className={"w-[20px] h-[20px]"}
                         src="/image/landingpage/info.png"
                       />
-                      <div className={"ml-2"}>
+                      <div className={"ml-2.5"}>
                         <p
                           className={
                             "text-base text-blackmig font-gilroyregular"
@@ -2054,8 +2069,11 @@ function Talents({}) {
               "section3talents bg-bgjoinmig py-9 md:py-12 px-4 md:px-[112px]"
             }
           >
-            <p
-              className={"text-xl md:text-3xl text-center font-gilroysemibold"}
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={
+                "text-xl md:text-[36px] text-center font-gilroysemibold"
+              }
             >
               Let’s see what{" "}
               <span
@@ -2067,7 +2085,7 @@ function Talents({}) {
                 IT Talents
               </span>{" "}
               we can provide
-            </p>
+            </h2>
             <div
               className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
             >
@@ -2091,20 +2109,25 @@ function Talents({}) {
                   >
                     <div>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentblue font-gilroybold text-base md:text-xl"
+                          "text-accentblue font-gilroybold text-base md:text-2xl"
                         }
                       >
                         Engineering
                       </p>
                     </div>
                     <div className={"mt-2 md:mt-0"}>
-                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
+                      <p
+                        style={{ lineHeight: "120%" }}
+                        className={"text-base font-gilroyregular text-darkgrey"}
+                      >
                         Typical Roles
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
+                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
                         Website Developer, Android/IOS Developer, and more
@@ -2154,20 +2177,25 @@ function Talents({}) {
                   >
                     <div>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentpink font-gilroybold text-base md:text-xl"
+                          "text-accentpink font-gilroybold text-base md:text-2xl"
                         }
                       >
                         Data
                       </p>
                     </div>
                     <div className={"mt-2 md:mt-0"}>
-                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
+                      <p
+                        style={{ lineHeight: "120%" }}
+                        className={"text-base font-gilroyregular text-darkgrey"}
+                      >
                         Typical Roles
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
+                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
                         Data Scientist, Data/Business Intelligence Analyst, and
@@ -2224,20 +2252,25 @@ function Talents({}) {
                   >
                     <div>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentpurple font-gilroybold text-base md:text-xl"
+                          "text-accentpurple font-gilroybold text-base md:text-2xl"
                         }
                       >
                         Design
                       </p>
                     </div>
                     <div className={""}>
-                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
+                      <p
+                        style={{ lineHeight: "120%" }}
+                        className={"text-base font-gilroyregular text-darkgrey"}
+                      >
                         Typical Roles
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
+                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
                         Product Designer, Web Designer, Graphic Designer, and
@@ -2288,20 +2321,25 @@ function Talents({}) {
                   >
                     <div>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-primarygreen font-gilroybold text-lg md:text-xl"
+                          "text-primarygreen font-gilroybold text-lg md:text-2xl"
                         }
                       >
                         Product
                       </p>
                     </div>
                     <div className={"mt-2 md:mt-0"}>
-                      <p className={"text-xs font-gilroyregular text-darkgrey"}>
+                      <p
+                        style={{ lineHeight: "120%" }}
+                        className={"text-base font-gilroyregular text-darkgrey"}
+                      >
                         Typical Roles
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-sm font-gilroysemibold"
+                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
                         Product Manager, Product Analyst, Project Manager, and
@@ -2339,13 +2377,19 @@ function Talents({}) {
               }
             >
               <p
+                style={{ lineHeight: "150%" }}
                 className={
-                  "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-base"
+                  " font-gilroysemibold text-sm px-2 md:px-0  md:text-xl"
                 }
               >
-                <span className={"font-gilroysemibold"}>
-                  Didn’t find what you were looking for?
-                </span>{" "}
+                Didn’t find what you were looking for?
+              </p>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={
+                  "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-xl"
+                }
+              >
                 Reach us to get your orders customized based on your IT talent
                 needs
               </p>
@@ -2357,7 +2401,7 @@ function Talents({}) {
                     "text-sm md:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-bgjoinmig border-primarygreen px-4 py-2 md:px-2 mt-4"
                   }
                 >
-                  <p className={"text-base  font-gilroysemibold mr-2"}>
+                  <p className={"text-xl  font-gilroysemibold"}>
                     Contact our team
                   </p>
                 </button>

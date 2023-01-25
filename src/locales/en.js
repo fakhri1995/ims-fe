@@ -43,13 +43,13 @@ export default {
   softwaredescription:
     "Bringing your ideas to reality. Our team can help you develop various platforms that are unique to your needs.",
   softwarebuttontitle: "Build now",
-  talentsubtitle: "Remove fullstop at the end",
+  talentsubtitle: "Our talent, your growth",
   talentdescription:
     "Build or expand your team with our streamlined hiring process, on-demand expertise, flexible headcounts, and talent working periods.",
   talentbuttontitle: "Hire now",
   landingpagewhyus1: "Collaborate with us and enjoy ",
   landingpagewhyus2: "these benefits ",
-  whyustitle1: "On Demand Services",
+  whyustitle1: "On-Demand Services",
   whyussubtitle1:
     "Our comprehensive services can fulfill all types of business needs to help you optimize, transform, and excel.",
   whyustitle2: "Reliable Partner",
