@@ -630,15 +630,17 @@ function Hardware({}) {
       setShowEmailError(true);
       setEmailError("you must filled email first");
     } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\[A-Z]{2,4}$/i.test(
-        dataHardware.company_email
-      )
+      dataHardware.company_email
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
     ) {
-      setShowEmailError(true);
-      setEmailError("your email is invalid");
-    } else {
       setShowEmailError(false);
       setShowform(true);
+    } else {
+      setShowEmailError(true);
+      setEmailError("your email is invalid");
     }
   };
 
@@ -1921,20 +1923,32 @@ function Hardware({}) {
               }
             >
               <div className={"flex-col w-[495px]"}>
-                <p className={"text-xl md:text-[32px] pb-4 font-gilroybold"}>
+                <h1
+                  style={{ lineHeight: "120%" }}
+                  className={"text-xl md:text-[36px] pb-4 font-gilroysemibold"}
+                >
                   {t.hardwareherosection}
-                </p>
-                <p className={"mt:4 md:mt-8 font-gilroyregular text-base"}>
+                </h1>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt:4 md:mt-8 font-gilroyregular text-xl"}
+                >
                   {t.hardwareherosectionsubtitle}
                 </p>
                 <div className={"mt-10"}>
-                  <p className={"font-gilroybold text-primarygreen text-base"}>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={"font-gilroybold text-primarygreen text-xl"}
+                  >
                     {t.hardwarereachus}
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
                     <Input
                       name={"email"}
                       className={"w-[253px] h-[40px]"}
+                      style={{
+                        fontSize: 16,
+                      }}
                       onChange={(e) => {
                         setDataHardware({
                           ...dataHardware,
@@ -1946,11 +1960,16 @@ function Hardware({}) {
                     <button
                       onClick={handleLetsTalk}
                       className={
-                        "text-base text-center rounded ml-4 md:w-[131px] py-1 md:py-2 pl-2 pr-1 md:pl-4 md:pr-3 text-white border-2 bg-primarygreen border-primarygreen"
+                        "text-[18px] text-center rounded ml-4 md:w-[131px] py-1 md:py-2 pl-2 pr-1 md:pl-4 md:pr-3 text-white border-2 bg-primarygreen border-primarygreen"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={" font-gilroysemibold"}>Let's talk!</p>
+                        <p
+                          style={{ lineHeight: "120%" }}
+                          className={" font-gilroysemibold"}
+                        >
+                          Let's talk!
+                        </p>
                         <img
                           className={"w-[20px] h-[20px] self-center"}
                           src="/image/landingpage/arrow-circle-right.png"
@@ -1974,12 +1993,14 @@ function Hardware({}) {
                   >
                     <div className={"flex flex-row"}>
                       <img
-                        className={"w-[20px] h-[20px] mr-1"}
+                        className={"w-[20px] h-[20px] mr-2.5"}
                         src="/image/landingpage/info.png"
                       />
                       <div>
                         <p
-                          className={"text-sm text-blackmig font-gilroyregular"}
+                          className={
+                            "text-base text-blackmig font-gilroyregular"
+                          }
                         >
                           Let us help you to scale and manage your IT
                           infrastructure with :
@@ -1988,7 +2009,7 @@ function Hardware({}) {
                           <li className={"mt-1"}>
                             <p
                               className={
-                                "text-sm text-blackmig font-gilroyregular"
+                                "text-base text-blackmig font-gilroyregular"
                               }
                             >
                               {""}
@@ -2001,7 +2022,7 @@ function Hardware({}) {
                           <li className={"mt-1"}>
                             <p
                               className={
-                                "text-sm text-blackmig font-gilroyregular"
+                                "text-base text-blackmig font-gilroyregular"
                               }
                             >
                               {""}
@@ -2117,9 +2138,10 @@ function Hardware({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <p
+              <h2
+                style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl md:text-[32px] px-8 md:px-0 font-gilroysemibold"
+                  "text-xl md:text-[36px] px-8 md:px-0 font-gilroysemibold"
                 }
               >
                 Let’s see what{" "}
@@ -2132,7 +2154,7 @@ function Hardware({}) {
                   IT hardwares
                 </span>{" "}
                 we can offer
-              </p>
+              </h2>
               <div className={"hidden md:block"}>
                 {dataBanking && (
                   <div className={"flex flex-row mt-[42px] justify-center"}>
@@ -2141,12 +2163,18 @@ function Hardware({}) {
                         "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightblue rounded-lg p-3"
                       }
                     >
-                      <p className={"text-xl font-gilroybold text-accentblue"}>
+                      <p
+                        style={{ lineHeight: "150%" }}
+                        className={
+                          "text-[22px] font-gilroybold text-accentblue"
+                        }
+                      >
                         Banking Machinery
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-xs font-gilroysemibold italic text-blackmig"
+                          "text-base font-gilroysemibold italic text-blackmig"
                         }
                       >
                         {t.hardwarebankingsubtitle}
@@ -2158,12 +2186,12 @@ function Hardware({}) {
                         >
                           <div
                             className={
-                              "flex flex-row justify-between px-4 pb-3"
+                              "flex flex-row justify-between px-4 py-3"
                             }
                           >
                             <p
                               className={
-                                "text-base text-accentblue font-gilroysemibold"
+                                "text-xl text-accentblue font-gilroysemibold"
                               }
                             >
                               Get yours
@@ -2191,7 +2219,10 @@ function Hardware({}) {
                               className={"w-[128px] h-[90px] self-center"}
                               alt=""
                             />
-                            <p className={"mt-3 font-gilroybold text-base"}>
+                            <p
+                              style={{ lineHeight: "120%" }}
+                              className={"mt-3 font-gilroybold text-xl"}
+                            >
                               {data.name_product}
                             </p>
                           </button>
@@ -2208,13 +2239,17 @@ function Hardware({}) {
                       }
                     >
                       <p
-                        className={"text-xl font-gilroybold text-primarygreen"}
+                        style={{ lineHeight: "150%" }}
+                        className={
+                          "text-[22px] font-gilroybold text-primarygreen"
+                        }
                       >
                         Workstation
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-xs font-gilroysemibold italic text-blackmig"
+                          "text-base font-gilroysemibold italic text-blackmig"
                         }
                       >
                         {t.hardwareworkstationsubtitle}
@@ -2226,12 +2261,12 @@ function Hardware({}) {
                         >
                           <div
                             className={
-                              "flex flex-row justify-between px-4 pb-3"
+                              "flex flex-row justify-between px-4 py-3"
                             }
                           >
                             <p
                               className={
-                                "text-base text-primarygreen font-gilroysemibold"
+                                "text-xl text-primarygreen font-gilroysemibold"
                               }
                             >
                               Get yours
@@ -2259,7 +2294,10 @@ function Hardware({}) {
                               className={"w-[128px] h-[90px] self-center"}
                               alt=""
                             />
-                            <p className={"mt-3 font-gilroybold text-base"}>
+                            <p
+                              style={{ lineHeight: "120%" }}
+                              className={"mt-3 font-gilroybold text-xl"}
+                            >
                               {data.name_product}
                             </p>
                           </button>
@@ -2276,13 +2314,17 @@ function Hardware({}) {
                       }
                     >
                       <p
-                        className={"text-xl font-gilroybold text-accentpurple"}
+                        style={{ lineHeight: "150%" }}
+                        className={
+                          "text-[22px] font-gilroybold text-accentpurple"
+                        }
                       >
                         Server & Hosting
                       </p>
                       <p
+                        style={{ lineHeight: "150%" }}
                         className={
-                          "text-xs font-gilroysemibold italic text-blackmig"
+                          "text-base font-gilroysemibold italic text-blackmig"
                         }
                       >
                         {t.hardwareserversubtitle}
@@ -2294,12 +2336,12 @@ function Hardware({}) {
                         >
                           <div
                             className={
-                              "flex flex-row justify-between px-4 pb-3"
+                              "flex flex-row justify-between px-4 py-3"
                             }
                           >
                             <p
                               className={
-                                "text-base text-accentpurple font-gilroysemibold"
+                                "text-xl text-accentpurple font-gilroysemibold"
                               }
                             >
                               Get yours
@@ -2327,7 +2369,10 @@ function Hardware({}) {
                               className={"w-[128px] h-[90px] self-center"}
                               alt=""
                             />
-                            <p className={"mt-3 font-gilroybold text-base"}>
+                            <p
+                              style={{ lineHeight: "120%" }}
+                              className={"mt-3 font-gilroybold text-xl"}
+                            >
                               {data.name_product}
                             </p>
                           </button>
@@ -2344,12 +2389,18 @@ function Hardware({}) {
                         "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightpink rounded-lg p-3"
                       }
                     >
-                      <p className={"text-xl font-gilroybold text-accentblue"}>
+                      <p
+                        style={{ lineHeight: "150%" }}
+                        className={
+                          "text-[22px] font-gilroybold text-accentblue"
+                        }
+                      >
                         UPS
                       </p>
                       <p
+                        style={{ lineHeight: "120%" }}
                         className={
-                          "text-xs font-gilroysemibold italic text-blackmig"
+                          "text-base font-gilroysemibold italic text-blackmig"
                         }
                       >
                         {t.hardwareupssubtitle}
@@ -2361,12 +2412,12 @@ function Hardware({}) {
                         >
                           <div
                             className={
-                              "flex flex-row justify-between px-4 pb-3"
+                              "flex flex-row justify-between px-4 py-3"
                             }
                           >
                             <p
                               className={
-                                "text-base text-accentpink font-gilroysemibold"
+                                "text-xl text-accentpink font-gilroysemibold"
                               }
                             >
                               Get yours
@@ -2394,7 +2445,10 @@ function Hardware({}) {
                               className={"w-[128px] h-[90px] self-center"}
                               alt=""
                             />
-                            <p className={"mt-3 font-gilroybold text-base"}>
+                            <p
+                              style={{ lineHeight: "120%" }}
+                              className={"mt-3 font-gilroybold text-xl"}
+                            >
                               {data.name_product}
                             </p>
                           </button>
@@ -2562,13 +2616,19 @@ function Hardware({}) {
                 }
               >
                 <p
+                  style={{ lineHeight: "120%" }}
                   className={
-                    "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-base"
+                    "font-gilroysemibold text-sm px-2 md:px-0  md:text-xl"
                   }
                 >
-                  <span className={"font-gilroysemibold"}>
-                    Didn’t find what you were looking for?
-                  </span>{" "}
+                  Didn’t find what you were looking for?
+                </p>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "font-gilroyregular text-sm px-2 md:px-0  md:text-xl"
+                  }
+                >
                   Reach us to get your orders customized based on your IT needs
                 </p>
               </div>
@@ -2576,10 +2636,10 @@ function Hardware({}) {
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm md:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
+                      "text-sm -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
                     }
                   >
-                    <p className={"text-base  font-gilroysemibold mr-2"}>
+                    <p className={"text-xl  font-gilroysemibold"}>
                       Contact our sales team
                     </p>
                   </button>
@@ -2602,7 +2662,10 @@ function Hardware({}) {
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
                 {
-                  <h4 className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
+                  <h2
+                    style={{ lineHeight: "120%" }}
+                    className="mb-2 text-[28px] text-left font-gilroysemibold text-blackmig"
+                  >
                     Why you should{" "}
                     <span
                       style={{
@@ -2613,7 +2676,7 @@ function Hardware({}) {
                       trust us
                     </span>{" "}
                     in taking care of your IT hardwares?
-                  </h4>
+                  </h2>
                 }
                 <div className={"block md:hidden mx-auto my-[17px]"}>
                   <img
@@ -2628,10 +2691,16 @@ function Hardware({}) {
                     className="w-[42px] h-[42px]"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       {t.hardwarewhyussection1}
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    >
                       {t.hardwarewhyussection1description}
                     </p>
                   </div>
@@ -2642,10 +2711,16 @@ function Hardware({}) {
                     className="w-[42px] h-[42px]"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       {t.hardwarewhyussection2}
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    >
                       {t.hardwarewhyussection2description}
                     </p>
                   </div>
@@ -2656,10 +2731,16 @@ function Hardware({}) {
                     className="w-[42px] h-[42px]"
                   />
                   <div>
-                    <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       {t.hardwarewhyussection3}
                     </h5>
-                    <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    >
                       {t.hardwarewhyussection3description}
                     </p>
                   </div>
@@ -2674,7 +2755,12 @@ function Hardware({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <p className={"text-xl md:text-2xl font-gilroybold py-8 md:py-0"}>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={
+                  "text-xl md:text-[36px] font-gilroybold py-8 md:py-0"
+                }
+              >
                 How it{" "}
                 <span
                   style={{
@@ -2685,7 +2771,7 @@ function Hardware({}) {
                   works
                 </span>{" "}
                 ?
-              </p>
+              </h2>
             </div>
             <div className={"flex flex-row justify-between md:px-20 mt-10"}>
               <div className={""}>
@@ -2696,8 +2782,9 @@ function Hardware({}) {
                     style={{ width: "145px", height: "145px" }}
                   />
                   <p
+                    style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm md:text-base  font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.hardwarehowitworksection1}
@@ -2717,8 +2804,9 @@ function Hardware({}) {
                   style={{ width: "145px", height: "145px" }}
                 />
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-base  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.hardwarehowitworksection2}
@@ -2737,8 +2825,9 @@ function Hardware({}) {
                   style={{ width: "145px", height: "145px" }}
                 />
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-base  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.hardwarehowitworksection3}
@@ -3483,20 +3572,19 @@ function Hardware({}) {
               "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
             }
           >
-            <p
+            <h2
+              style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-3xl text-blackmig text-center  font-gilroysemibold py-8 md:py-0 mb-10"
+                "text-xl md:text-[36px] text-blackmig text-center  font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
               Coverages
-            </p>
+            </h2>
             <div
-              className={
-                "bg-white p-12 items-center w-[788px] h-[408px] mx-auto"
-              }
+              className={"bg-white p-12 items-center w-[788px] mx-auto"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
-              <ul className={"coverage-list"}>
+              <ul className={"coverage-list text-[18px]"}>
                 <li>
                   <p href="">Banda Aceh</p>
                 </li>
@@ -3804,10 +3892,16 @@ function Hardware({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
-                <p className={"text-2xl font-gilroysemibold text-black"}>
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[28px] font-gilroysemibold text-black"}
+                >
                   Fulfill your IT needs easily!
-                </p>
-                <p className={"py-5 text-base font-gilroyregular text-black"}>
+                </h2>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"py-5 text-xl font-gilroyregular text-black"}
+                >
                   Need help in providing your needs? Whether they related to
                   hardware, software, or even talent hiring? Contact us and hear
                   what service can we offer to you and your company!
@@ -3815,11 +3909,11 @@ function Hardware({}) {
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm w-[145px] -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                      "text-sm  -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base  font-gilroysemibold mr-2"}>
+                      <p className={"text-xl font-gilroysemibold mr-2"}>
                         Contact Us
                       </p>
                       <img

@@ -545,7 +545,7 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/hardware">
                   <button
                     className={
-                      "text-sm rounded h-[40px] text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                      "text-xl font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
@@ -603,7 +603,7 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/software">
                   <button
                     className={
-                      "text-sm rounded h-[40px]  text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                      "text-xl font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
@@ -647,7 +647,7 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/talents">
                   <button
                     className={
-                      "text-sm rounded h-[40px] text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                      "text-xl font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
@@ -1973,7 +1973,7 @@ function LandingPage({ dataBlog }) {
                 </Linkk>
               </div>
               <div>
-                <Linkk href="/about">
+                <Linkk href="/aboutus">
                   <button
                     className={
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
