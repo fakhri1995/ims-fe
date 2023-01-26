@@ -3069,9 +3069,10 @@ function Talents({}) {
               "section4talents hidden md:block bg-bgtalents py-4 md:py-12 px-4 sm:px-10 md:px-10"
             }
           >
-            <p
+            <h2
+              style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-3xl text-center  font-gilroysemibold py-8 md:py-0"
+                "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
               }
             >
               Why you should{" "}
@@ -3084,10 +3085,11 @@ function Talents({}) {
                 trust us
               </span>{" "}
               in building your team?
-            </p>
+            </h2>
             <p
+              style={{ lineHeight: "150%" }}
               className={
-                "text-center text-sm  md:text-base text-black font-gilroyregular pt-6"
+                "text-center text-sm  md:text-xl text-black font-gilroyregular pt-6"
               }
             >
               With on-demand expertise and flexibility in talent head counts and
@@ -3111,10 +3113,16 @@ function Talents({}) {
                     />
                   </div>
                   <div>
-                    <h5 className="px-5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="px-5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       Customization Based on Your Needs
                     </h5>
-                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left px-5 text-xl text-blackmig font-gilroyregular"
+                    >
                       Numbers of talent and their working period can be tailored
                       as per required by project.
                     </p>
@@ -3128,10 +3136,16 @@ function Talents({}) {
                     />
                   </div>
                   <div>
-                    <h5 className="px-5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                    <h5
+                      style={{ lineHeight: "150%" }}
+                      className="px-5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                    >
                       Full Flexibility
                     </h5>
-                    <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className="text-left px-5 text-xl text-blackmig font-gilroyregular"
+                    >
                       You have full flexibility to rotate and rematch to make
                       your quality criteria fullfiled.
                     </p>
@@ -3148,11 +3162,17 @@ function Talents({}) {
                     style={{ width: "42px", height: "42px" }}
                     src="/image/people/icon-talents1.png"
                   />
-                  <div className={"ml-[14px] text-blackmig text-base"}>
-                    <p className={"font-gilroysemibold"}>
+                  <div className={"ml-[14px] text-blackmig text-xl"}>
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className={"font-gilroysemibold"}
+                    >
                       Tight Candidate Selection
                     </p>
-                    <p className={"font-gilroyregular"}>
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className={"font-gilroyregular"}
+                    >
                       Only less than 10% of all candidates from various industry
                       backgrounds and top tier universities are selected as our
                       top talent.
@@ -3164,11 +3184,17 @@ function Talents({}) {
                     style={{ width: "42px", height: "42px" }}
                     src="/image/people/icon-talents2.png"
                   />
-                  <div className={"ml-[14px] text-blackmig text-base"}>
-                    <p className={"font-gilroysemibold"}>
+                  <div className={"ml-[14px] text-blackmig text-xl"}>
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className={"font-gilroysemibold"}
+                    >
                       Excellent Capability
                     </p>
-                    <p className={"font-gilroyregular"}>
+                    <p
+                      style={{ lineHeight: "150%" }}
+                      className={"font-gilroyregular"}
+                    >
                       Extensive test and interview process covering tech stacks,
                       coding algorithm, systems design, and soft skills are
                       given to ensure you having qualified talents.
@@ -3288,9 +3314,10 @@ function Talents({}) {
               "section5talents bg-white py-4 md:py-12 px-4 sm:px-10 md:px-[112px]"
             }
           >
-            <p
+            <h2
+              style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-[32px] text-center  font-gilroysemibold py-8 md:py-0"
+                "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
               }
             >
               Which{" "}
@@ -3303,16 +3330,16 @@ function Talents({}) {
                 recruitment scheme
               </span>{" "}
               we provided?
-            </p>
+            </h2>
             <div className={"hidden md:block"}>
               <div
                 className={
-                  "md:mt-[42px] md: w-[1216px] md:h-[183px] flex md:flex-row justify-between mx-auto"
+                  "md:mt-[42px] md: w-[1216px]  flex md:flex-row justify-between mx-auto"
                 }
               >
                 <div
                   className={
-                    "bg-greenTrans5 md:w-[598px] md:h-[183px] py-[23.5px] px-4 flex md:flex-row"
+                    "bg-greenTrans5 md:w-[598px]  py-[23.5px] px-4 flex md:flex-row"
                   }
                 >
                   <img
@@ -3320,12 +3347,16 @@ function Talents({}) {
                     src="/image/people/head-hunt.png"
                   />
                   <div className={"ml-6 "}>
-                    <p className={"text-primarygreen text-xl font-gilroybold"}>
+                    <h3
+                      style={{ lineHeight: "120%" }}
+                      className={"text-primarygreen text-2xl font-gilroybold"}
+                    >
                       Head-Hunt
-                    </p>
+                    </h3>
                     <ul
+                      style={{ lineHeight: "150%" }}
                       className={
-                        "text-blackmig text-sm font-gilroyregular mt-2"
+                        "text-blackmig text-xl font-gilroyregular mt-2"
                       }
                     >
                       <li>
@@ -3345,7 +3376,7 @@ function Talents({}) {
                 </div>
                 <div
                   className={
-                    "bg-greenTrans5 md:w-[598px] md:h-[183px] py-[23.5px] px-4 flex md:flex-row"
+                    "bg-greenTrans5 md:w-[598px] py-[23.5px] px-4 flex md:flex-row"
                   }
                 >
                   <img
@@ -3353,12 +3384,16 @@ function Talents({}) {
                     src="/image/people/it-staff.png"
                   />
                   <div className={"ml-6 "}>
-                    <p className={"text-primarygreen text-xl font-gilroybold"}>
+                    <h3
+                      style={{ lineHeight: "120%" }}
+                      className={"text-primarygreen text-2xl font-gilroybold"}
+                    >
                       IT Staff Augmentation
-                    </p>
+                    </h3>
                     <ul
+                      style={{ lineHeight: "150%" }}
                       className={
-                        "text-blackmig text-sm font-gilroyregular mt-2"
+                        "text-blackmig text-xl font-gilroyregular mt-2"
                       }
                     >
                       <li>
@@ -3390,7 +3425,10 @@ function Talents({}) {
                   >
                     Head Hunt
                   </p>
-                  <ul className={"text-blackmig text-xs font-gilroyregular"}>
+                  <ul
+                    style={{ lineHeight: "150%" }}
+                    className={"text-blackmig text-xl font-gilroyregular"}
+                  >
                     <li>
                       Conduct end-to-end hiring process to provide dedicated
                       talents for your business
@@ -3432,7 +3470,7 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"mt-4 "}>
+            <div className={"mt-4 md:hidden"}>
               <p
                 className={
                   "text-sm text-blackmig font-gilroysemibold text-center"
@@ -3459,14 +3497,42 @@ function Talents({}) {
                 service?
               </p>
             </div>
-            <div className={"mt-4 hidden md:block"}>
+            <div className={"mt-[42px] hidden md:block"}>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={
+                  "text-[36px] text-blackmig font-gilroysemibold text-center"
+                }
+              >
+                How does our{" "}
+                <span
+                  style={{
+                    borderBottom: "solid 3px #188E4D",
+                    paddingBottom: "2.5px",
+                  }}
+                >
+                  Headhunt
+                </span>{" "}
+                service differ from our{" "}
+                <span
+                  style={{
+                    borderBottom: "solid 3px #188E4D",
+                    paddingBottom: "2.5px",
+                  }}
+                >
+                  Tech Staff Augmentation
+                </span>{" "}
+                service?
+              </h2>
+            </div>
+            <div className={"mt-4 hidden md:block flex justify-center"}>
               <div className={"flex flex-row"}>
                 <div
                   className={"border border-dividermig  bg-white text-center"}
                 >
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   ></p>
                 </div>
@@ -3478,7 +3544,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-primarygreen font-gilroysemibold text-[14px]"
+                        "text-primarygreen font-gilroysemibold text-[18px]"
                       }
                     >
                       MIG’s IT Staff Augmentation
@@ -3494,7 +3560,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-primarygreen font-gilroysemibold text-[14px]"
+                        "text-primarygreen font-gilroysemibold text-[18px]"
                       }
                     >
                       MIG’s Headhunt
@@ -3510,7 +3576,7 @@ function Talents({}) {
                   >
                     <p
                       className={
-                        "text-darkgrey font-gilroybold text-[14px] self-center"
+                        "text-darkgrey font-gilroybold text-[18px] self-center"
                       }
                     >
                       Common Recruitment (CV Search, Job Portal, etc)
@@ -3524,7 +3590,7 @@ function Talents({}) {
                 >
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     Managing high-demand tech talent
@@ -3543,7 +3609,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Leave it to us, we’ll manage everything for you.
@@ -3557,7 +3623,7 @@ function Talents({}) {
                     <CheckOutlined style={{ color: "#188E4D" }} />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       We’ll take care of it all for you.
@@ -3575,7 +3641,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       But, do you feel overwhelmed sometimes?
@@ -3587,7 +3653,7 @@ function Talents({}) {
                 <div className={"border border-dividermig  bg-white"}>
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     Large, top-tier tech talent pool
@@ -3606,7 +3672,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       We have tech talent at all levels.
@@ -3624,7 +3690,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Let’s meet our superior tech talents!
@@ -3638,7 +3704,7 @@ function Talents({}) {
                     <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       A time-consuming search for top talent, right?
@@ -3671,7 +3737,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       We’re a cost-effective solution for you.
@@ -3689,7 +3755,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Pay per use, and optimize your budget.
@@ -3703,7 +3769,7 @@ function Talents({}) {
                     <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Potentially higher than expected cost!
@@ -3736,7 +3802,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       No need to repeat complex technical tests and interviews
@@ -3755,7 +3821,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       We'll conduct multiple rounds of technical tests and
@@ -3774,7 +3840,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       One more user interview for more understanding.
@@ -3786,7 +3852,7 @@ function Talents({}) {
                 <div className={"border border-dividermig  bg-white"}>
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     Guaranteed talent availability
@@ -3805,7 +3871,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Talent headcounts & work periods, level, and tenure, all
@@ -3824,7 +3890,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Anything talent hiring-related, all covered!
@@ -3838,7 +3904,7 @@ function Talents({}) {
                     <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       They may decline your offer, and you'll have to start
@@ -3851,7 +3917,7 @@ function Talents({}) {
                 <div className={"border border-dividermig bg-white"}>
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     Covering all administration tasks; from payroll to
@@ -3871,7 +3937,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Focus on your work, and leave their needs to us.
@@ -3885,7 +3951,7 @@ function Talents({}) {
                     <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       If you want us to do it, check out our IT Staff
@@ -3904,7 +3970,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       The responsibility is yours to fulfill.
@@ -3916,7 +3982,7 @@ function Talents({}) {
                 <div className={"border border-dividermig  bg-white"}>
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     New candidates are assured, if there’s a resignation.
@@ -3935,7 +4001,7 @@ function Talents({}) {
                     />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       You can expect to meet them soon. There’s no charge!
@@ -3949,7 +4015,7 @@ function Talents({}) {
                     <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Pay as you go, and we’ll handle it.
@@ -3963,7 +4029,7 @@ function Talents({}) {
                     <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
                     <p
                       className={
-                        "text-blackmig font-gilroyregular text-[14px] mt-[9.29px]"
+                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
                       }
                     >
                       Spend the money and time on the recruitment process,
@@ -4961,20 +5027,25 @@ function Talents({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
-                <p className={"text-2xl font-gilroysemibold text-black"}>
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[28px] font-gilroysemibold text-black"}
+                >
                   Fulfill your IT needs easily!
-                </p>
+                </h2>
                 <div
                   className={
-                    "mt-3.5 text-base font-gilroyregular text-center text-black"
+                    "mt-3.5 text-xl font-gilroyregular text-center text-black"
                   }
                 >
-                  <p>
+                  <p style={{ lineHeight: "150%" }}>
                     Need help in providing your needs? Whether they related to
                     hardware,{" "}
                   </p>
-                  <p>software, or even talent hiring?</p>
-                  <p>
+                  <p style={{ lineHeight: "150%" }}>
+                    software, or even talent hiring?
+                  </p>
+                  <p style={{ lineHeight: "150%" }}>
                     Contact us and hear what service can we offer to you and
                     your company!
                   </p>
@@ -4982,17 +5053,17 @@ function Talents({}) {
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm w-[145px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
+                      "text-sm text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-gilroysemibold"}>
+                      <p className={"text-xl font-gilroysemibold"}>
                         Contact Us
                       </p>
                       <img
-                        className={"self-center"}
-                        style={{ height: "15px", width: "8px" }}
-                        src="/image/landingpage/arrow-forward.png"
+                        className={"self-center ml-2"}
+                        style={{ height: "20px", width: "20px" }}
+                        src="/image/landingpage/arrow_forward.png"
                       />
                     </div>
                   </button>

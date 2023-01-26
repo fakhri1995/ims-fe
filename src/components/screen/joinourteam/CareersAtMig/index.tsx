@@ -8,10 +8,16 @@ export const CareersAtMig: FC = () => {
     <section className="section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 space-y-8">
       {/* Section Heading */}
       <div>
-        <h3 className="text-center gilroy-semibold text-2xl text-blackmig font-semibold md:text-3xl pb-8">
+        <h2
+          style={{ lineHeight: "120%" }}
+          className="text-center gilroy-semibold text-2xl text-blackmig font-semibold md:text-[36px] pb-8"
+        >
           Careers at MIG
-        </h3>
-        <p className="pb-8 text-center text-base gilroy-regular text-blackmig">
+        </h2>
+        <p
+          style={{ lineHeight: "150%" }}
+          className="pb-8 text-center text-xl gilroy-regular text-blackmig"
+        >
           Want to advance your career with us ? See our job openings below for
           our current financial services and government projects.
         </p>

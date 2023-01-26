@@ -76,7 +76,7 @@ export const SearchAndFilter: FC = () => {
       {/* Search */}
       <Form.Item noStyle name="keyword">
         <Input
-          style={{ height: "37px", border: "1px solid #B8B8B8" }}
+          style={{ height: "37px", border: "1px solid #B8B8B8", fontSize: 18 }}
           placeholder="Search jobs..."
         />
       </Form.Item>

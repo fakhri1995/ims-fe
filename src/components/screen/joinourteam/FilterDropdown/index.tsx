@@ -104,7 +104,7 @@ export const FilterDropdown: FC<FilterDropdownProps> = memo(
           type="text"
           disabled={data.length === 0}
         >
-          <span className="block text-left flex-grow">{label}</span>
+          <span className="block text-left flex-grow text-[18px]">{label}</span>
 
           <div className="flex items-center flex-shrink-0 space-x-3">
             <span className={countOptionIndicatorClassName}>

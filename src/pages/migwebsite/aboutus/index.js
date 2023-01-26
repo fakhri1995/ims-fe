@@ -29,17 +29,19 @@ function AboutUs({}) {
         }
       >
         <div className={""}>
-          <p
+          <h1
+            style={{ lineHeight: "120%" }}
             className={
-              "text-2xl md:text-[32px] font-gilroysemibold text-blackmig"
+              "text-2xl md:text-[36px] font-gilroysemibold text-blackmig"
             }
           >
             {t.aboutustitle}
-          </p>
+          </h1>
 
           <p
+            style={{ lineHeight: "150%" }}
             className={
-              "text-sm md:text-base text-blackmig font-gilroyregular mt-12 md:mt-4 px-4 md:px-0"
+              "text-sm md:text-xl text-blackmig font-gilroyregular mt-12 md:mt-4 px-4 md:px-0"
             }
           >
             {t.aboutussubtitle}
@@ -47,19 +49,28 @@ function AboutUs({}) {
         </div>
       </section>
       <section className={"block bg-white py-4 md:py-6 px-4 md:px-[112px]"}>
-        <p
-          className={"font-gilroysemibold text-left pb-0 text-base md:text-2xl"}
+        <h2
+          style={{ lineHeight: "120%" }}
+          className={
+            "font-gilroysemibold text-left pb-0 text-base md:text-[32px]"
+          }
         >
           {t.whoweare}
-        </p>
+        </h2>
         {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
-        <p className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-base"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+        >
           {t.whowearedescription}
         </p>
 
-        <p className={"mt-4 text-sm md:text-base font-gilroyregular"}>
+        <p
+          style={{ lineHeight: "120%" }}
+          className={"mt-4 text-sm md:text-xl font-gilroyregular"}
+        >
           <Link href="joinourteam">
             <em className={"cursor-pointer text-primarygreen underline"}>
               Careers
@@ -71,17 +82,213 @@ function AboutUs({}) {
       <section
         className={"pt-12 md:pt-[40px] pb-12 md:pb-8 px-4 md:px-[112px]"}
       >
-        <p
-          className={"text-base md:text-2xl font-gilroysemibold text-blackmig"}
+        <h2
+          style={{ lineHeight: "120%" }}
+          className={
+            "text-base md:text-[32px] font-gilroysemibold text-blackmig"
+          }
         >
           {t.supportyourbusiness}
-        </p>
+        </h2>
         <div>
-          <p className={"text-sm md:text-base mt-3 md:mt-4 font-gilroyregular"}>
+          <p
+            style={{ lineHeight: "150%" }}
+            className={"text-sm md:text-xl mt-3 md:mt-4 font-gilroyregular"}
+          >
             {t.supportyourbusinessdetail}{" "}
           </p>
         </div>
-        <div className={"hidden md:flex md:flex-row mt-4"}>
+        {/* hardware, software, talent */}
+        <div className={"mt-[118px] w-[1122px] flex flex-row justify-between"}>
+          <div className={"flex flex-col items-center"}>
+            <div
+              className={
+                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] pb-8 px-4 relative pt-24"
+              }
+            >
+              <div className={"grid justify-items-center"}>
+                <img
+                  src="/image/landingpage/hero-talent.png"
+                  alt=""
+                  className={
+                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                  }
+                />
+              </div>
+              <div>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-center text-2xl text-accentblue font-gilroybold font-bold"
+                  }
+                >
+                  Hardware
+                </p>
+                <p
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
+                  }
+                >
+                  Lighten up your heavy capital in IT infrastructure
+                </p>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-xl font-gilroyregular mt-5"
+                  }
+                >
+                  Transform yours into managed service model, guaranteeing you
+                  with predictable monthly cost and excelent service level.
+                </p>
+
+                <div className={"text-center mt-5"}>
+                  <Linkk href="/hardware">
+                    <button
+                      className={
+                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"px-1"}>Get Yours</p>
+                        <img
+                          className={"py-1 px-1"}
+                          style={{ width: "15px" }}
+                          src="/image/landingpage/arrow-forward.png"
+                        />
+                      </div>
+                    </button>
+                  </Linkk>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={"flex flex-col items-center"}>
+            <div
+              className={
+                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] pb-8 px-4 relative pt-24"
+              }
+            >
+              <div className={"grid justify-items-center"}>
+                <img
+                  src="/image/landingpage/hero-software.png"
+                  alt=""
+                  className={
+                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                  }
+                />
+              </div>
+              <div>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-center text-2xl text-darkgreen font-gilroybold font-bold"
+                  }
+                >
+                  Software
+                </p>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold font-gilroysemibold mt-1 pb-[42.5px]"
+                  }
+                >
+                  Delivering custom-made software
+                </p>
+                <p
+                  className={
+                    "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px]"
+                  }
+                >
+                  Simplify and digitalize your business process. Customize your
+                  system with us.
+                </p>
+
+                <div className={"text-center"}>
+                  <Linkk href="/software">
+                    <button
+                      className={
+                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"px-1"}>Get Yours</p>
+                        <img
+                          className={"py-1 px-1"}
+                          style={{ width: "15px" }}
+                          src="/image/landingpage/arrow-forward.png"
+                        />
+                      </div>
+                    </button>
+                  </Linkk>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={"flex flex-col items-center"}>
+            <div
+              className={
+                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] pb-8 px-4 relative pt-24"
+              }
+            >
+              <div className={"grid justify-items-center"}>
+                <img
+                  src="/image/landingpage/hero-hardware.png"
+                  alt=""
+                  className={
+                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                  }
+                />
+              </div>
+              <div>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-center text-2xl text-accentpurple font-gilroybold font-bold"
+                  }
+                >
+                  Talents
+                </p>
+                <p
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold mt-1 pb-8"
+                  }
+                >
+                  Our people, your growth
+                </p>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-xl font-gilroyregular pb-8"
+                  }
+                >
+                  Let us streamline your hiring process with on-demand
+                  expertise, giving you flexible headcounts and talents working
+                  period.
+                </p>
+
+                <div className={"text-center"}>
+                  <Linkk href="/talents">
+                    <button
+                      className={
+                        "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"px-1"}>Hire Now</p>
+                        <img
+                          className={"py-1 px-1"}
+                          style={{ width: "15px" }}
+                          src="/image/landingpage/arrow-forward.png"
+                        />
+                      </div>
+                    </button>
+                  </Linkk>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* <div className={"hidden md:flex md:flex-row mt-4"}>
           <div
             className={
               "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] mr-5 border-dividermig rounded-lg hover:shadow-lg"
@@ -211,7 +418,7 @@ function AboutUs({}) {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         <div className={"block md:hidden mt-3"}>
           <div
             className={
@@ -354,17 +561,23 @@ function AboutUs({}) {
         className={"px-4 md:px-[112px] pt-4 md:pt-8 md:pb-[130px] bg-transp60"}
       >
         <div>
-          <p
+          <h2
+            style={{ lineHeight: "120%" }}
             className={
-              "font-gilroysemibold text-2xl text-blackmig md:text-2xl pb-2"
+              "font-gilroysemibold text-2xl text-blackmig md:text-[32px] pb-2"
             }
           >
             MIG Location
-          </p>
-          <p className={"font-gilroysemibold pb-2 text-xl text-blackmig"}>
+          </h2>
+          <p
+            style={{ lineHeight: "120%" }}
+            className={
+              "font-gilroysemibold pb-2 text-xl md:text2xl text-blackmig"
+            }
+          >
             Headquarter
           </p>
-          <p className={"text-base "}>
+          <p style={{ lineHeight: "120%" }} className={"text-xl "}>
             <span className="font-gilroysemibold text-darkgrey">
               Location:{" "}
             </span>
@@ -394,14 +607,19 @@ function AboutUs({}) {
               help@mitrasolusi.group
             </a>
           </div>
-          <p className={"py-4 text-blackmig font-gilroysemibold text-xl"}>
+          <h2
+            style={{ lineHeight: "120%" }}
+            className={
+              "py-4 text-blackmig font-gilroysemibold text-xl md:text-[32px]"
+            }
+          >
             Coverages
-          </p>
+          </h2>
           <div
             className={"bg-white p-6 rounded-lg"}
             style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
           >
-            <div className={"flex flex-row justify-between"}>
+            <div className={"flex flex-row justify-between text-[18px]"}>
               <div>
                 <ul>
                   <li>
@@ -566,20 +784,25 @@ function AboutUs({}) {
         </div>
         <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
-            <p className={"text-2xl font-gilroysemibold text-black"}>
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={"text-[28px] font-gilroysemibold text-black"}
+            >
               Fulfill your IT needs easily!
-            </p>
+            </h2>
             <div
               className={
-                "mt-3.5 text-base font-gilroyregular text-center text-black"
+                "mt-3.5 text-xl font-gilroyregular text-center text-black"
               }
             >
-              <p>
+              <p style={{ lineHeight: "150%" }}>
                 Need help in providing your needs? Whether they related to
                 hardware,{" "}
               </p>
-              <p>software, or even talent hiring?</p>
-              <p>
+              <p style={{ lineHeight: "150%" }}>
+                software, or even talent hiring?
+              </p>
+              <p style={{ lineHeight: "150%" }}>
                 Contact us and hear what service can we offer to you and your
                 company!
               </p>
@@ -587,19 +810,17 @@ function AboutUs({}) {
             <Link href="/contactus">
               <button
                 className={
-                  "text-sm w-[145px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
+                  "text-sm text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p
-                    className={"text-base gilroy-semibold font-gilroysemibold"}
-                  >
+                  <p className={"text-xl gilroy-semibold font-gilroysemibold"}>
                     Contact Us
                   </p>
                   <img
-                    className={"self-center"}
-                    style={{ height: "15px", width: "8px" }}
-                    src="/image/landingpage/arrow-forward.png"
+                    className={"self-center ml-2"}
+                    style={{ height: "20px", width: "20px" }}
+                    src="/image/landingpage/arrow_forward.png"
                   />
                 </div>
               </button>

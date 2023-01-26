@@ -6,10 +6,16 @@ import React from "react";
 function LeftContactUs({ children }) {
   return (
     <div className={"w-full md:w-2/5"}>
-      <p className={"text-2xl font-gilroysemibold text-blackmig"}>
+      <p
+        style={{ lineHeight: "120%" }}
+        className={"text-[30px] font-gilroysemibold text-blackmig"}
+      >
         We’d love to hear from you
       </p>
-      <p className={"text-sm font-gilroyregular mt-3 w-[400px]"}>
+      <p
+        style={{ lineHeight: "150%" }}
+        className={"text-[18px] font-gilroyregular mt-3 w-[400px]"}
+      >
         Have questions about our products, features, or company? Our teams will
         help you.
       </p>
@@ -43,37 +49,56 @@ function LeftContactUs({ children }) {
         ></iframe>
       </div>
       <div className={"flex flex-row mt-6"}>
-        <p className={"font-gilroysemibold text-sm md:text-base text-blackmig"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
+        >
           Location:&nbsp;
         </p>
-        <p classNamme={"text-sm md:text-base text-blackmig font-gilroyregular"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          classNamme={"text-sm md:text-[18px] text-blackmig font-gilroyregular"}
+        >
           Tebet raya no. 72 South Jakarta, DKI Jakarta,12820
         </p>
       </div>
       <div className={"flex flex-row mt-3"}>
-        <p className={"font-gilroysemibold text-sm md:text-base text-blackmig"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
+        >
           Phone:&nbsp;
         </p>
         <a href="tel:+62218314522">
-          <p className={"text-accentblue text-sm md:text-base underline"}>
+          <p
+            style={{ lineHeight: "150%" }}
+            className={"text-accentblue text-sm md:text-[18px] underline"}
+          >
             +62-21-831-4522
           </p>
         </a>
       </div>
       <div className={"flex flex-row mt-3"}>
-        <p className={"font-gilroysemibold text-sm md:text-base text-blackmig"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
+        >
           Email:&nbsp;
         </p>
         <a
           href="mailto:help@mitrasolusi.group"
-          className={"text-accentblue text-sm md:text-base underline"}
+          style={{ lineHeight: "150%" }}
+          className={"text-accentblue text-sm md:text-[18px] underline"}
         >
           help@mitrasolusi.group
         </a>
       </div>
 
       <div className={"mt-[54px] hidden md:block"}>
-        <p className={"text-sm text-blackmig font-gilroysemibold"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"text-[18px] text-blackmig font-gilroysemibold"}
+        >
           Or reach us through:
         </p>
         <div className={"flex flex-row mt-2"}>

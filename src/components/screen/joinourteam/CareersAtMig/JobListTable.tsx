@@ -140,11 +140,11 @@ export const JobListTable: FC = () => {
         <div className="flex flex-col justify-center items-center space-y-4">
           <p>
             Showing{" "}
-            <span className={"text-base text-blackmig font-gilroysemibold"}>
+            <span className={"text-[18px] text-blackmig font-gilroysemibold"}>
               {data?.to}
             </span>{" "}
             out of{" "}
-            <span className={"text-base text-blackmig font-gilroysemibold"}>
+            <span className={"text-[18px] text-blackmig font-gilroysemibold"}>
               {data?.total} jobs
             </span>
           </p>

@@ -1204,13 +1204,23 @@ function LandingPage({ dataBlog }) {
                         <div className={"flex flex-row justify-between"}>
                           <div className={"w-[45%]"}>
                             <div className={"flex relative self-center "}>
-                              <img
-                                className={"w-[356px] h-[237px] "}
-                                src={generateStaticAssetUrl(
-                                  data1.attachment_article.link
-                                )}
-                                alt=""
-                              />
+                              {data1.attachment_article ? (
+                                <img
+                                  className={"w-[356px] h-[237px] "}
+                                  src={generateStaticAssetUrl(
+                                    data1.attachment_article.link
+                                  )}
+                                  alt=""
+                                />
+                              ) : (
+                                <img
+                                  className={"w-[356px] h-[237px] "}
+                                  src={
+                                    "/image/landingpage/testimonial-client.png"
+                                  }
+                                  alt=""
+                                />
+                              )}
                               <div
                                 className={
                                   "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
@@ -1293,12 +1303,21 @@ function LandingPage({ dataBlog }) {
                                 </p>
                               </div>
                               <div>
-                                <img
-                                  className={"w-[58.5px] h-[42.5px]"}
-                                  src={generateStaticAssetUrl(
-                                    data1.company_logo.link
-                                  )}
-                                />
+                                {data1.company_logo ? (
+                                  <img
+                                    className={"w-[58.5px] h-[42.5px]"}
+                                    src={generateStaticAssetUrl(
+                                      data1.company_logo.link
+                                    )}
+                                  />
+                                ) : (
+                                  <img
+                                    className={"w-[58.5px] h-[42.5px]"}
+                                    src={
+                                      "/image/landingpage/testimonial-client.png"
+                                    }
+                                  />
+                                )}
                               </div>
                             </div>
                             <div
