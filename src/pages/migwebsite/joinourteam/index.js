@@ -107,16 +107,18 @@ function JoinOurTeam({ dataCareers, empData }) {
         <div className={"block md:flex"}>
           <div className={"flex-col w-1/2 self-center"}>
             <div className={""}>
-              <p
+              <h1
+                style={{ lineHeight: "120%" }}
                 className={
-                  "text-2xl md:text-[32px] text-center md:text-left font-gilroysemibold text-blackmig"
+                  "text-2xl md:text-[36px] text-center md:text-left font-gilroysemibold text-blackmig"
                 }
               >
                 {t.careersatmig}
-              </p>
+              </h1>
               <p
+                style={{ lineHeight: "150%" }}
                 className={
-                  "text-base font-gilroyregular text-blackmig my-4 md:my-8"
+                  "text-xl font-gilroyregular text-blackmig my-4 md:my-8"
                 }
               >
                 {t.careersatmigsubtitle}
@@ -186,13 +188,14 @@ function JoinOurTeam({ dataCareers, empData }) {
 
       <section className={"section3careers bg-transp60"}>
         <div className={"py-4 md:py-6 px-4 md:px-[112px]"}>
-          <p
+          <h2
+            style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-[32px] font-gilroysemibold text-blackmig text-center "
+              "text-xl md:text-[36px] font-gilroysemibold text-blackmig text-center "
             }
           >
             {t.careersatmigvaluesectiontitle}
-          </p>
+          </h2>
           {/*tampilan dekstpp */}
           <div className={"hidden md:flex md:flex-row md:justify-between mt-6"}>
             <div
@@ -208,13 +211,17 @@ function JoinOurTeam({ dataCareers, empData }) {
                   />
                 </div>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg md:text-xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg md:text-2xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Agility
                 </p>
-                <p className={"text-blackmig text-sm md:text-base mt-2"}>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"text-blackmig text-sm md:text-xl mt-2"}
+                >
                   We are adapting to fast-changing environments.
                 </p>
               </div>
@@ -233,13 +240,14 @@ function JoinOurTeam({ dataCareers, empData }) {
                   />
                 </div>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg md:text-xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg md:text-2xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Perseverance
                 </p>
-                <p className={"text-black text-sm md:text-base mt-2"}>
+                <p className={"text-black text-sm md:text-xl mt-2"}>
                   We aim high and constantly strive for excellence.
                 </p>
               </div>
@@ -257,14 +265,18 @@ function JoinOurTeam({ dataCareers, empData }) {
                   />
                 </div>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg md:text-xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg md:text-2xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Integrity
                 </p>
 
-                <p className={"text-blackmig mt-2 text-sm md:text-base"}>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"text-blackmig mt-2 text-sm md:text-xl"}
+                >
                   We are dedicated to adhering to positive ethical values.
                 </p>
               </div>
@@ -338,15 +350,19 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
 
       <section className={"section6careers hidden md:block py-8 md:py-16"}>
-        <p
+        <h2
+          style={{ lineHeight: "120%" }}
           className={
-            "text-center text-blackmig font-gilroysemibold text-2xl md:text-[32px]"
+            "text-center text-blackmig font-gilroysemibold text-2xl md:text-[36px]"
           }
         >
           {t.careersatmigbenefitsection}
-        </p>
+        </h2>
         <div className={"px-4 md:px-[112px] mt-4"}>
-          <p className={"text-base font-gilroyregular text-blackmig"}>
+          <p
+            style={{ lineHeight: "150%" }}
+            className={"text-xl font-gilroyregular text-blackmig"}
+          >
             {t.careersatmigbenefitsectionsubtitle}
           </p>
           <div className={"block md:flex md:flex-row justify-center mt-4"}>
@@ -360,8 +376,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                 ></img>
 
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint1}
@@ -373,8 +390,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ height: "44px", width: "44px" }}
                 ></img>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint2}
@@ -386,8 +404,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ height: "44px", width: "44px" }}
                 ></img>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint3}
@@ -403,8 +422,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ height: "44px", width: "44px" }}
                 ></img>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
                   We provide unique and competitive packages to launch your
@@ -417,8 +437,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ height: "44px", width: "44px" }}
                 ></img>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
                   We value informal social bonding to offer a enjoyable working
@@ -431,8 +452,9 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ height: "44px", width: "44px" }}
                 ></img>
                 <p
+                  style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-base text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
                   We create engaging environment and believe everyone has a

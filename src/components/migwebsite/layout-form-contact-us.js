@@ -19,10 +19,16 @@ function LayoutFormContactUs({ title, description, button_title }) {
         </div>
         <div className={"container w-1/2 mx-auto"}>
           <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
-            <p className={"text-2xl font-gilroysemibold text-black"}>
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={"text-[28px] font-gilroysemibold text-black"}
+            >
               {title ? title : "Fulfill your IT needs easily!"}
-            </p>
-            <p className={"py-5 text-base font-gilroyregular text-black"}>
+            </h2>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={"py-5 text-xl font-gilroyregular text-black"}
+            >
               {description
                 ? description
                 : `Need help in providing your needs? Whether they related to
@@ -32,21 +38,21 @@ function LayoutFormContactUs({ title, description, button_title }) {
             <Linkk href="/contactus">
               <button
                 className={
-                  "text-sm w-[145px] -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                  "text-sm -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
                   <p
                     className={
-                      "text-base gilroy-semibold font-gilroysemibold mr-2"
+                      "text-xl gilroy-semibold font-gilroysemibold mr-2"
                     }
                   >
                     {button_title ? button_title : `Contact Us`}
                   </p>
                   <img
-                    className={"self-center"}
-                    style={{ height: "15px", width: "8px" }}
-                    src="/image/landingpage/arrow-forward.png"
+                    className={"self-center ml-2"}
+                    style={{ height: "20px", width: "20px" }}
+                    src="/image/landingpage/arrow_forward.png"
                   />
                 </div>
               </button>

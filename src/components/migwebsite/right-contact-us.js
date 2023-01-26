@@ -18,13 +18,17 @@ function RightContactUs({
     <div className={"w-full md:w-3/5"}>
       <div className={"w-full"}>
         <p
+          style={{ lineHeight: "120%" }}
           className={
-            "text-xl pt-6 md:pt-0 md:text-3xl font-gilroysemibold text-blackmig"
+            "text-xl pt-6 md:pt-0 md:text-[30px] font-gilroysemibold text-blackmig"
           }
         >
           Send us your questions
         </p>
-        <p className={"text-xs md:text-sm mt-1 md:mt-3 text-blackmig mb-5"}>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"text-xs md:text-[18px] mt-1 md:mt-3 text-blackmig mb-5"}
+        >
           Fill in your contact information, and our sales team will contact you
           shortly.
         </p>
@@ -100,12 +104,12 @@ function RightContactUs({
           <div className={""}>
             <Form.Item
               name={"Company Name"}
-              className={"font-gilroyregular text-xl"}
+              className={"font-gilroyregular text-[16px]"}
               label="Company Name"
               rules={[{ required: true }]}
             >
               <Input
-                style={{ border: "1px solid #B8B8B8" }}
+                style={{ border: "1px solid #B8B8B8", fontSize: 16 }}
                 name={"Company Name"}
                 onChange={(e) => {
                   setDataContactUs({
@@ -118,12 +122,12 @@ function RightContactUs({
             </Form.Item>
             <Form.Item
               name={"Email"}
-              className={"font-gilroyregular text-xl"}
+              className={"font-gilroyregular text-[16px]"}
               label="Email"
               rules={[{ required: true, type: "email" }]}
             >
               <Input
-                style={{ border: "1px solid #B8B8B8" }}
+                style={{ border: "1px solid #B8B8B8", fontSize: 16 }}
                 name={"Email"}
                 onChange={(e) => {
                   setDataContactUs({
@@ -138,12 +142,12 @@ function RightContactUs({
           <div className={""}>
             <Form.Item
               name={"Contact Name"}
-              className={"font-gilroyregular text-xl"}
+              className={"font-gilroyregular text-[16px]"}
               label="Contact Name"
               rules={[{ required: true }]}
             >
               <Input
-                style={{ border: "1px solid #B8B8B8" }}
+                style={{ border: "1px solid #B8B8B8", fontSize: 16 }}
                 name={"Contact Name"}
                 onChange={(e) => {
                   setDataContactUs({
@@ -156,7 +160,7 @@ function RightContactUs({
             </Form.Item>
             <Form.Item
               name={"Phone Number"}
-              className={"font-gilroyregular text-xl"}
+              className={"font-gilroyregular text-[16px]"}
               label="Phone Number"
               rules={[
                 {
@@ -168,6 +172,7 @@ function RightContactUs({
             >
               <Input
                 // style={{ border: "1px solid #B8B8B8" }}
+                style={{ fontSize: 16 }}
                 addonBefore="+62"
                 name={"Phone Number"}
                 onChange={(e) => {
@@ -183,12 +188,13 @@ function RightContactUs({
 
           <Form.Item
             name="Interest"
-            className={"font-gilroyregular text-xl"}
+            className={"font-gilroyregular text-[16px]"}
             label="Interest"
             rules={[{ required: true }]}
           >
             <Select
               // style={{ border: "1px solid #B8B8B8" }}
+              style={{ fontSize: 16 }}
               dropdownStyle={{ backgroundColor: "green" }}
               name="Interest"
               onChange={(value) => {
@@ -207,12 +213,12 @@ function RightContactUs({
           </Form.Item>
           <Form.Item
             name="Message"
-            className={"font-gilroyregular text-xl"}
+            className={"font-gilroyregular text-[16px]"}
             label="Message"
             rules={[{ required: true }]}
           >
             <Input.TextArea
-              style={{ border: "1px solid #B8B8B8" }}
+              style={{ border: "1px solid #B8B8B8", fontSize: 16 }}
               name="Message"
               onChange={(e) => {
                 setDataContactUs({
@@ -249,11 +255,16 @@ function RightContactUs({
               <button
                 type={"submit"}
                 className={
-                  "text-center rounded w-[113px] h-[40px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                  "text-center rounded w-[113px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"text-base font-gilroysemibold"}>Submit</p>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={"text-[18px] font-gilroysemibold"}
+                  >
+                    Submit
+                  </p>
                   <img
                     className={"self-center"}
                     style={{ width: "8px", height: "15px" }}
