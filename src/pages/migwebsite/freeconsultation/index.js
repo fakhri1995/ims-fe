@@ -39,6 +39,7 @@ function FreeConsultation({}) {
   };
 
   const submitFormConsultation = () => {
+    console.log("submit free consultation ");
     localStorage.setItem("dataForm", JSON.stringify(dataHardware));
     if (kindOfHardware == null || kindOfHardware == "Hardware") {
       rt.push("/hardware");
@@ -73,7 +74,7 @@ function FreeConsultation({}) {
               id="formcontact"
               hidden={!feedback}
               layout={"vertical"}
-              onFinish={() => submitFormConsultation}
+              onFinish={submitFormConsultation}
               form={form}
             >
               <div className={"w-[495px]"}>
@@ -325,8 +326,7 @@ function FreeConsultation({}) {
               <Form.Item>
                 <div className={"w-full flex justify-start mt-2"}>
                   <button
-                    type="primary"
-                    htmlType="submit"
+                    type={"submit"}
                     className={
                       "rounded w-[190px] h-[54px] text-white border-2 bg-primarygreen border-primarygreen py-3 pl-6 pr-[19px] mt-9"
                     }

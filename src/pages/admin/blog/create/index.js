@@ -30,7 +30,10 @@ import CustomTextEditor from "../../../../components/CustomTextEditor";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import RichText from "../../../../components/migwebsite/RichText";
-import { objectToFormData } from "../../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  objectToFormData,
+} from "../../../../lib/helper";
 import httpcookie from "cookie";
 
 // function modifData(dataa) {
@@ -126,6 +129,8 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   const [language, setLanguage] = useState("English");
   const [tagSelected, setTagSelected] = useState(null);
   const [tagIdSelected, setTagIdSelected] = useState(null);
+  const [articleImageChange, setArticleImageChange] = useState(false);
+  const [companyLogoChange, setCompanyLogoChange] = useState(false);
   const [form] = Form.useForm();
   //handleCreateButton
 
@@ -143,17 +148,49 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
       )
         .then((res) => res.json())
         .then((res2) => {
+          console.log("res article ", res2);
           if (res2.success) {
             if (prevpath === "add") {
             } else {
               instanceForm.setFieldsValue({
-                judul: res2.data.title,
-                isi: res2.data.description,
+                pagePath: res2.data.page_path,
+                pagePathId: res2.data.page_path_id,
+                title: res2.data.title,
+                description: res2.data.description,
+                author: res2.data.author,
+                content: res2.data.content,
+                tags: res2.data.tags,
+                quote: res2.data.quote,
+                quoteId: res2.data.quote_id,
+                job_title: res2.data.job_title,
+                job_title_id: res2.data.job_title_id,
+                meta_title: res2.data.meta_title,
+                meta_title_id: res2.data.meta_title_id,
+                meta_description: res2.data.meta_description,
+                meta_description_id: res2.data.meta_description_id,
+                company_name: res2.data.company_name,
               });
               setArtikelBlog({
-                judul: res2.data.title,
-                isi: res2.data.description,
+                pagePath: res2.data.page_path,
+                pagePathId: res2.data.page_path_id,
+                company_name: res2.data.company_name,
+                title: res2.data.title,
+                description: res2.data.description,
+                author: res2.data.author,
+                content: res2.data.content,
+                tags: res2.data.tags,
+                quote: res2.data.quote,
+                quoteId: res2.data.quote_id,
+                job_title: res2.data.job_title,
+                job_title_id: res2.data.job_title_id,
+                meta_title: res2.data.meta_title,
+                meta_title_id: res2.data.meta_title_id,
+                meta_description: res2.data.meta_description,
+                meta_description_id: res2.data.meta_description_id,
+                artikel_image: res2.data?.attachment_article?.link,
+                company_image: res2.data?.company_logo?.link,
               });
+              setArticleType(res2.data.article_type);
             }
           } else {
             notification.error({
@@ -204,60 +241,119 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
 
   const handleCreateArticle = () => {
     let dataArticle = "";
-    if (articleType == "Customer Stories") {
-      dataArticle = {
-        id: articleId ? articleId : null,
-        title: artikelBlog.title,
-        description: artikelBlog.description,
-        content: artikelBlog.content,
-        page_path: artikelBlog.pagePath,
-        tags: tagSelected,
-        company_name: artikelBlog.company_name,
-        quote: artikelBlog.quote,
-        author: artikelBlog.author,
-        job_title: artikelBlog.job_title,
-        meta_title: artikelBlog.meta_title,
-        meta_description: artikelBlog.meta_description,
-        title_id: artikelBlog.title_id,
-        description_id: artikelBlog.description_id,
-        content_id: artikelBlog.content_id,
-        page_path_id: artikelBlog.pagePathId,
-        tags_id: tagIdSelected,
-        job_title_id: artikelBlog.job_title_id,
-        meta_title_id: artikelBlog.meta_title_id,
-        meta_description_id: artikelBlog.meta_description_id,
-        attachment: artikelBlog.artikel_image_file,
-        company_logo: artikelBlog.company_image_file,
-        article_type: articleType,
-      };
+    if (articleId) {
+      if (articleType == "Customer Stories") {
+        dataArticle = {
+          id: articleId ? articleId : null,
+          title: artikelBlog.title,
+          description: artikelBlog.description,
+          content: artikelBlog.content,
+          page_path: artikelBlog.pagePath,
+          tags: tagSelected,
+          company_name: artikelBlog.company_name,
+          quote: artikelBlog.quote,
+          author: artikelBlog.author,
+          job_title: artikelBlog.job_title,
+          meta_title: artikelBlog.meta_title,
+          meta_description: artikelBlog.meta_description,
+          title_id: artikelBlog.title_id,
+          description_id: artikelBlog.description_id,
+          content_id: artikelBlog.content_id,
+          page_path_id: artikelBlog.pagePathId,
+          tags_id: tagIdSelected,
+          job_title_id: artikelBlog.job_title_id,
+          meta_title_id: artikelBlog.meta_title_id,
+          meta_description_id: artikelBlog.meta_description_id,
+          attachment: companyLogoChange ? artikelBlog.artikel_image_file : null,
+          company_logo: articleImageChange
+            ? artikelBlog.company_image_file
+            : null,
+          article_type: articleType,
+        };
+      } else {
+        dataArticle = {
+          id: articleId ? articleId : null,
+          article_type: articleType,
+          title: artikelBlog.title,
+          description: artikelBlog.description,
+          content: artikelBlog.content,
+          page_path: artikelBlog.pagePath,
+          tags: tagSelected,
+          company_name: "",
+          quote: "",
+          author: "",
+          job_title: "",
+          meta_title: artikelBlog.meta_title,
+          meta_description: artikelBlog.meta_description,
+          title_id: artikelBlog.title_id,
+          description_id: artikelBlog.description_id,
+          content_id: artikelBlog.content_id,
+          page_path_id: artikelBlog.pagePathId,
+          tags_id: tagIdSelected,
+          job_title_id: "",
+          meta_title_id: artikelBlog.meta_title_id,
+          meta_description_id: artikelBlog.meta_description_id,
+          attachment: companyLogoChange ? artikelBlog.artikel_image_file : null,
+          company_logo: articleImageChange
+            ? artikelBlog.company_image_file
+            : null,
+        };
+      }
     } else {
-      dataArticle = {
-        id: articleId ? articleId : null,
-        article_type: articleType,
-        title: artikelBlog.title,
-        description: artikelBlog.description,
-        content: artikelBlog.content,
-        page_path: artikelBlog.pagePath,
-        tags: tagSelected,
-        company_name: "",
-        quote: "",
-        author: "",
-        job_title: "",
-        meta_title: artikelBlog.meta_title,
-        meta_description: artikelBlog.meta_description,
-        title_id: artikelBlog.title_id,
-        description_id: artikelBlog.description_id,
-        content_id: artikelBlog.content_id,
-        page_path_id: artikelBlog.pagePathId,
-        tags_id: tagIdSelected,
-        job_title_id: "",
-        meta_title_id: artikelBlog.meta_title_id,
-        meta_description_id: artikelBlog.meta_description_id,
-        attachment: artikelBlog.artikel_image_file,
-        company_logo: artikelBlog.company_image_file,
-      };
+      if (articleType == "Customer Stories") {
+        dataArticle = {
+          id: articleId ? articleId : null,
+          title: artikelBlog.title,
+          description: artikelBlog.description,
+          content: artikelBlog.content,
+          page_path: artikelBlog.pagePath,
+          tags: tagSelected,
+          company_name: artikelBlog.company_name,
+          quote: artikelBlog.quote,
+          author: artikelBlog.author,
+          job_title: artikelBlog.job_title,
+          meta_title: artikelBlog.meta_title,
+          meta_description: artikelBlog.meta_description,
+          title_id: artikelBlog.title_id,
+          description_id: artikelBlog.description_id,
+          content_id: artikelBlog.content_id,
+          page_path_id: artikelBlog.pagePathId,
+          tags_id: tagIdSelected,
+          job_title_id: artikelBlog.job_title_id,
+          meta_title_id: artikelBlog.meta_title_id,
+          meta_description_id: artikelBlog.meta_description_id,
+          attachment: artikelBlog.artikel_image_file,
+          company_logo: artikelBlog.company_image_file,
+          article_type: articleType,
+        };
+      } else {
+        dataArticle = {
+          id: articleId ? articleId : null,
+          article_type: articleType,
+          title: artikelBlog.title,
+          description: artikelBlog.description,
+          content: artikelBlog.content,
+          page_path: artikelBlog.pagePath,
+          tags: tagSelected,
+          company_name: "",
+          quote: "",
+          author: "",
+          job_title: "",
+          meta_title: artikelBlog.meta_title,
+          meta_description: artikelBlog.meta_description,
+          title_id: artikelBlog.title_id,
+          description_id: artikelBlog.description_id,
+          content_id: artikelBlog.content_id,
+          page_path_id: artikelBlog.pagePathId,
+          tags_id: tagIdSelected,
+          job_title_id: "",
+          meta_title_id: artikelBlog.meta_title_id,
+          meta_description_id: artikelBlog.meta_description_id,
+          attachment: artikelBlog.artikel_image_file,
+          company_logo: artikelBlog.company_image_file,
+        };
+      }
     }
-    console.log("data article ", dataArticle);
 
     let formData = objectToFormData(dataArticle);
     let url = "";
@@ -377,7 +473,9 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     if (info.file.status === "done") {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
-
+      if (articleId) {
+        setArticleImageChange(true);
+      }
       setArtikelBlog({
         ...artikelBlog,
         artikel_image: base64Data,
@@ -394,7 +492,9 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
     if (info.file.status === "done") {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
-
+      if (articleId) {
+        setCompanyLogoChange(true);
+      }
       setArtikelBlog({
         ...artikelBlog,
         company_image: base64Data,
@@ -602,24 +702,47 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     <p className={"text-blackmig text-base font-gilroyregular"}>
                       Article Image
                     </p>
-                    <Upload
-                      name="artikel_image"
-                      listType="picture-card"
-                      className="profileImage"
-                      showUploadList={false}
-                      beforeUpload={beforeUploadProfileImage}
-                      onChange={onChangeProfileImage}
-                    >
-                      {artikelBlog.artikel_image ? (
-                        <img
-                          src={artikelBlog.artikel_image}
-                          alt="avatar"
-                          style={{ width: "100%" }}
-                        />
-                      ) : (
-                        uploadButton
-                      )}
-                    </Upload>
+                    {articleId ? (
+                      <Upload
+                        name="artikel_image"
+                        listType="picture-card"
+                        className="profileImage"
+                        showUploadList={false}
+                        beforeUpload={beforeUploadProfileImage}
+                        onChange={onChangeProfileImage}
+                      >
+                        {artikelBlog.artikel_image ? (
+                          <img
+                            src={generateStaticAssetUrl(
+                              artikelBlog.artikel_image
+                            )}
+                            alt="avatar"
+                            style={{ width: "100%" }}
+                          />
+                        ) : (
+                          uploadButton
+                        )}
+                      </Upload>
+                    ) : (
+                      <Upload
+                        name="artikel_image"
+                        listType="picture-card"
+                        className="profileImage"
+                        showUploadList={false}
+                        beforeUpload={beforeUploadProfileImage}
+                        onChange={onChangeProfileImage}
+                      >
+                        {artikelBlog.artikel_image ? (
+                          <img
+                            src={artikelBlog.artikel_image}
+                            alt="avatar"
+                            style={{ width: "100%" }}
+                          />
+                        ) : (
+                          uploadButton
+                        )}
+                      </Upload>
+                    )}
                     <Form.Item
                       label="Content"
                       required
@@ -723,24 +846,47 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         >
                           Company logo
                         </p>
-                        <Upload
-                          name="company_logo"
-                          listType="picture-card"
-                          className="profileImage"
-                          showUploadList={false}
-                          beforeUpload={beforeUploadProfileImage}
-                          onChange={onChangeCompanyLogo}
-                        >
-                          {artikelBlog.company_image ? (
-                            <img
-                              src={artikelBlog.company_image}
-                              alt="avatar"
-                              style={{ width: "100%" }}
-                            />
-                          ) : (
-                            uploadButton
-                          )}
-                        </Upload>
+                        {articleId ? (
+                          <Upload
+                            name="company_logo"
+                            listType="picture-card"
+                            className="profileImage"
+                            showUploadList={false}
+                            beforeUpload={beforeUploadProfileImage}
+                            onChange={onChangeCompanyLogo}
+                          >
+                            {artikelBlog.company_image ? (
+                              <img
+                                src={generateStaticAssetUrl(
+                                  artikelBlog.company_image
+                                )}
+                                alt="avatar"
+                                style={{ width: "100%" }}
+                              />
+                            ) : (
+                              uploadButton
+                            )}
+                          </Upload>
+                        ) : (
+                          <Upload
+                            name="company_logo"
+                            listType="picture-card"
+                            className="profileImage"
+                            showUploadList={false}
+                            beforeUpload={beforeUploadProfileImage}
+                            onChange={onChangeCompanyLogo}
+                          >
+                            {artikelBlog.company_image ? (
+                              <img
+                                src={artikelBlog.company_image}
+                                alt="avatar"
+                                style={{ width: "100%" }}
+                              />
+                            ) : (
+                              uploadButton
+                            )}
+                          </Upload>
+                        )}
                       </div>
                     )}
                     {/* company stories */}
