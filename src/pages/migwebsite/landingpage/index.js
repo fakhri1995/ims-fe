@@ -154,12 +154,12 @@ function LandingPage({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:mx-auto md:relative px-[113.5px]"
+          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] px-[113.5px]"
         }
       >
         {/* Browser View */}
-        <div className={"hidden md:flex container mx-auto relative"}>
-          <div className={"flex-col w-2/5"}>
+        <div className={"hidden md:flex container relative mx-auto"}>
+          <div className={"flex-col w-1/2"}>
             <h1
               style={{ lineHeight: "120%" }}
               className={
@@ -247,7 +247,7 @@ function LandingPage({ dataBlog }) {
               </div>
             </div>
           </div>
-          <div className={"flex-col w-3/5 self-end"}>
+          <div className={"flex-col w-1/2"}>
             <img
               src="/image/landingpage/image-section1.png"
               className={"w-[742px] h-[395px]  "}
@@ -496,7 +496,7 @@ function LandingPage({ dataBlog }) {
       {/*section it resource */}
       <section
         className={
-          "youronestop hidden md:block py-4 md:py-12 md:px-[112px] 2xl:px-[224px] bg-white text-center"
+          "youronestop hidden md:block py-4 md:py-12 md:px-[113.5px] 2xl:px-[226px] bg-white text-center"
         }
       >
         <div className={"container mx-auto"}>

@@ -30,7 +30,7 @@ export default {
   managed: "managed-service devices",
   techproject: "tech talents",
   companies: "companies",
-  landingpagesection2: `MIG catalyzes your core business with `,
+  landingpagesection2: `MIG catalyzes the growth of your core business with `,
   landingpagesection3: `We provide you with ✔️ Cutting-edge resources
     ✔️ Efficient and competitive cost
     ✔️ Guaranteed level of service`,
