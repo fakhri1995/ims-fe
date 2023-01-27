@@ -159,7 +159,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 description: res2.data.description,
                 author: res2.data.author,
                 content: res2.data.content,
-                tags: res2.data.tags,
+                // tags: res2.data.tags,
                 quote: res2.data.quote,
                 quoteId: res2.data.quote_id,
                 job_title: res2.data.job_title,
@@ -179,6 +179,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 author: res2.data.author,
                 content: res2.data.content,
                 tags: res2.data.tags,
+                tagsId: res2.data.tags_id,
                 quote: res2.data.quote,
                 quoteId: res2.data.quote_id,
                 job_title: res2.data.job_title,
@@ -191,6 +192,8 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 company_image: res2.data?.company_logo?.link,
               });
               setArticleType(res2.data.article_type);
+              setTagSelected(res2.data.tags);
+              setTagIdSelected(res2.data.tags_id);
             }
           } else {
             notification.error({
@@ -703,26 +706,47 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       Article Image
                     </p>
                     {articleId ? (
-                      <Upload
-                        name="artikel_image"
-                        listType="picture-card"
-                        className="profileImage"
-                        showUploadList={false}
-                        beforeUpload={beforeUploadProfileImage}
-                        onChange={onChangeProfileImage}
-                      >
-                        {artikelBlog.artikel_image ? (
-                          <img
-                            src={generateStaticAssetUrl(
-                              artikelBlog.artikel_image
-                            )}
-                            alt="avatar"
-                            style={{ width: "100%" }}
-                          />
-                        ) : (
-                          uploadButton
-                        )}
-                      </Upload>
+                      articleImageChange ? (
+                        <Upload
+                          name="artikel_image"
+                          listType="picture-card"
+                          className="profileImage"
+                          showUploadList={false}
+                          beforeUpload={beforeUploadProfileImage}
+                          onChange={onChangeProfileImage}
+                        >
+                          {artikelBlog.artikel_image ? (
+                            <img
+                              src={artikelBlog.artikel_image}
+                              alt="avatar"
+                              style={{ width: "100%" }}
+                            />
+                          ) : (
+                            uploadButton
+                          )}
+                        </Upload>
+                      ) : (
+                        <Upload
+                          name="artikel_image"
+                          listType="picture-card"
+                          className="profileImage"
+                          showUploadList={false}
+                          beforeUpload={beforeUploadProfileImage}
+                          onChange={onChangeProfileImage}
+                        >
+                          {artikelBlog.artikel_image ? (
+                            <img
+                              src={generateStaticAssetUrl(
+                                artikelBlog.artikel_image
+                              )}
+                              alt="avatar"
+                              style={{ width: "100%" }}
+                            />
+                          ) : (
+                            uploadButton
+                          )}
+                        </Upload>
+                      )
                     ) : (
                       <Upload
                         name="artikel_image"
@@ -847,26 +871,47 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                           Company logo
                         </p>
                         {articleId ? (
-                          <Upload
-                            name="company_logo"
-                            listType="picture-card"
-                            className="profileImage"
-                            showUploadList={false}
-                            beforeUpload={beforeUploadProfileImage}
-                            onChange={onChangeCompanyLogo}
-                          >
-                            {artikelBlog.company_image ? (
-                              <img
-                                src={generateStaticAssetUrl(
-                                  artikelBlog.company_image
-                                )}
-                                alt="avatar"
-                                style={{ width: "100%" }}
-                              />
-                            ) : (
-                              uploadButton
-                            )}
-                          </Upload>
+                          companyLogoChange ? (
+                            <Upload
+                              name="company_logo"
+                              listType="picture-card"
+                              className="profileImage"
+                              showUploadList={false}
+                              beforeUpload={beforeUploadProfileImage}
+                              onChange={onChangeCompanyLogo}
+                            >
+                              {artikelBlog.company_image ? (
+                                <img
+                                  src={artikelBlog.company_image}
+                                  alt="avatar"
+                                  style={{ width: "100%" }}
+                                />
+                              ) : (
+                                uploadButton
+                              )}
+                            </Upload>
+                          ) : (
+                            <Upload
+                              name="company_logo"
+                              listType="picture-card"
+                              className="profileImage"
+                              showUploadList={false}
+                              beforeUpload={beforeUploadProfileImage}
+                              onChange={onChangeCompanyLogo}
+                            >
+                              {artikelBlog.company_image ? (
+                                <img
+                                  src={generateStaticAssetUrl(
+                                    artikelBlog.company_image
+                                  )}
+                                  alt="avatar"
+                                  style={{ width: "100%" }}
+                                />
+                              ) : (
+                                uploadButton
+                              )}
+                            </Upload>
+                          )
                         ) : (
                           <Upload
                             name="company_logo"
