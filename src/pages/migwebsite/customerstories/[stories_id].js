@@ -677,7 +677,7 @@ function CustomerStoriesDetail({}) {
           </Linkk>
         </Slider>
       </section>
-      <section className={"sectioncomments md:relative py-4 px-6 md:p-20"}>
+      {/* <section className={"sectioncomments md:relative py-4 px-6 md:p-20"}>
         <p className={"text-blackmig text-base md:text-xl font-gilroysemibold"}>
           Comments (6)
         </p>
@@ -1031,7 +1031,7 @@ function CustomerStoriesDetail({}) {
             </div>
           )}
         </div>
-      </section>
+      </section> */}
       <LayoutFormContactUs
         title={"Want help on providing your IT needs?"}
         description={`Need help in providing your needs? Whether they related to hardware, software, or even talent hiring? 

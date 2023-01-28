@@ -15,7 +15,7 @@ function RightContactUs({
   setDataContactUs,
 }) {
   return (
-    <div className={"w-full md:w-3/5"}>
+    <div className={"w-full md:w-1/2"}>
       <div className={"w-full"}>
         <p
           style={{ lineHeight: "120%" }}

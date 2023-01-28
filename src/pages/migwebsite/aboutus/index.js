@@ -795,16 +795,13 @@ function AboutUs({}) {
                 "mt-3.5 text-xl font-gilroyregular text-center text-black"
               }
             >
-              <p style={{ lineHeight: "150%" }}>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={"py-5 text-xl font-gilroyregular text-black"}
+              >
                 Need help in providing your needs? Whether they related to
-                hardware,{" "}
-              </p>
-              <p style={{ lineHeight: "150%" }}>
-                software, or even talent hiring?
-              </p>
-              <p style={{ lineHeight: "150%" }}>
-                Contact us and hear what service can we offer to you and your
-                company!
+                hardware, software, or even talent hiring? Contact us and hear
+                what service can we offer to you and your company!
               </p>
             </div>
             <Link href="/contactus">

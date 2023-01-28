@@ -5,22 +5,22 @@ export default {
   career: "Karir di MIG",
   contactus: "Kontak Kita",
   landingpagemetatitle:
-    "Mitramas Infosys Global: Hardware, Software, IT Outsourcing.",
+    "Sewa Laptop, Buat Software, dan IT Outsourcing bersama MIG.",
   landingpagemetadescription:
-    "Temukan beragam solusi teknologi dengan biaya efektif: Layanan pengelolaan hardware, Jasa pembuatan software, dan IT Outsourcing terbaik. Hubungi kami.",
+    "Dapatkan sewa laptop, PC, ATM, pembuatan website & software, dan IT Outsourcing terbaik dengan biaya efektif milik konsultan IT MIG. Hubungi kami!",
   hardwaremetatitle:
-    "Hardware Managed Service Model dengan Biaya Efektif - MIG",
+    "Managed Service dengan Biaya Efektif: Sewa Laptop, PC, ATM - MIG",
   hardwaremetadescription:
-    "Maksimalkan efektivitas biaya dengan hardware yang kami sewakan dan rawat dengan baik. Dapatkan hardware yang sesuai dengan kebutuhan Anda. Kontak kami.",
-  talentmetatitle:
-    "Solusi Rekrutmen Tech Talent dan IT Outsourcing Terbaik - MIG ",
+    "Sewa laptop, PC, dan ATM di MIG. Kami rawat hardware dengan baik untuk maksimalkan efektivitas biaya. Dapatkan sesuai kebutuhan Anda. Kontak kami!",
+  talentmetatitle: "Solusi Rekrutmen dan Sourcing Tech Talent Terbaik - MIG ",
   talentmetadescription:
-    "Mudahkan proses mencari dan mengelola talenta teknologi dengan layanan Headhunt dan IT Staff Augmentation kami. Diskusikan kebutuhan Anda sekarang!",
+    "Rekrut software engineer dan tech talent lain lewat IT Outsourcing dan Headhunting MIG dengan mudah. Diskusikan kebutuhan Anda sekarang.",
   softwaremetatitle:
     "Pengembangan Software untuk Digitalisasi Bisnis Anda - MIG",
   softwaremetadescription:
-    "Tingkatkan efisiensi bisnis Anda dengan teknologi digital. Beritahu custom software impian Anda, wujudkan dengan tim teknologi terbaik kami sekarang!",
-  aboutusmetatitle: "Sekilas perjalanan Mitramas Infosys Global (MIG)",
+    "Software, apps, dan website development. Digitalisasi bisnis untuk tingkatkan efisiensi. Wujudkan dengan tim teknologi MIG sekarang!",
+  aboutusmetatitle:
+    "Mitramas Infosys Global, perusahaan people-centric dengan solusi teknologi terbaik lewat layanan sewa hardware, pembuatan software, dan IT outsourcing.",
   aboutusmetadescription:
     "Kami, Mitramas Infosys Global, perusahaan people-centric yang menawarkan pengalaman teknologi lancar melalui solusi hardware, software, dan IT outsourcing.",
   landingpagesection1:
@@ -47,6 +47,9 @@ export default {
   talentdescription:
     "Percepat proses rekrutmen Anda dengan layanan on-demand expertise kami. Headcounts dan periode kerja talenta dapat disesuaikan dengan kebutuhan. Kami akan menangani semuanya.",
   talentbuttontitle: "Rekrut sekarang",
+  careermetatitle: "Karir di Mitramas Infosys Global - MIG",
+  careermetadescription:
+    "Tingkatkan karir di bidang teknologi bersama MIG, temukan beragam lowongan pekerjaan untuk para tech talent terbaik.",
   landingpagewhyus1: "Dapatkan seluruh manfaat di bawah ",
   landingpagewhyus2: "satu atap.",
   whyustitle1: "On-Demand Services:",

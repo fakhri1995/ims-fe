@@ -405,11 +405,19 @@ function Software({}) {
           >
             {formActive == "first" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-[30px] text-primarygreen font-gilroysemibold"
+                  }
+                >
                   Thank you for your interest in providing your IT needs through
                   Mitramas Infosys Global
                 </p>
-                <p className={"mt-4 text-base text-blackmig"}>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt-4 text-xl text-blackmig"}
+                >
                   Before we reach you out, we’d like to ask a few questions to
                   better understand your business & IT needs.
                 </p>
@@ -424,7 +432,7 @@ function Software({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Company Name"}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-base"}
                         label="Company Name"
                         rules={[{ required: true }]}
                       >
@@ -432,6 +440,7 @@ function Software({}) {
                           style={{
                             border: "1px solid #B8B8B8",
                             height: "37px",
+                            fontSize: "16px",
                           }}
                           name={"Company Name"}
                           onChange={(e) => {
@@ -446,7 +455,7 @@ function Software({}) {
 
                       <Form.Item
                         name={"Contact Name"}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-base"}
                         label="Contact Name"
                         rules={[{ required: true }]}
                       >
@@ -470,13 +479,16 @@ function Software({}) {
                       <Form.Item
                         initialValue={dataSoftware.company_email}
                         name={"Email"}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-base"}
                         label="Email"
                         rules={[{ required: true, type: "email" }]}
                       >
                         <Input
                           value={"oke"}
-                          style={{ border: "1px solid #B8B8B8" }}
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            fontSize: "16px",
+                          }}
                           name={"Email"}
                           onChange={(e) => {
                             setDataSoftware({
@@ -489,7 +501,7 @@ function Software({}) {
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
-                        className={"gilroy-medium text-xl"}
+                        className={"gilroy-medium text-base"}
                         label="Phone Number"
                         rules={[
                           {
@@ -509,6 +521,7 @@ function Software({}) {
                               phone_number: parseInt(e.target.value),
                             });
                           }}
+                          style={{ fontSize: "16px" }}
                           placeholder="Enter your phone number here"
                         />
                       </Form.Item>
@@ -523,7 +536,7 @@ function Software({}) {
                           }
                         >
                           <div className={"flex flex-row justify-between"}>
-                            <p className={"text-base font-gilroysemibold"}>
+                            <p className={"text-[18px] font-gilroysemibold"}>
                               Get Started
                             </p>
                             <img
@@ -546,18 +559,21 @@ function Software({}) {
                   onFinish={() => handleSubmit("third")}
                   form={form}
                 >
-                  <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={"text-[30px] text-blackmig font-gilroysemibold"}
+                  >
                     Project Information
                   </p>
                   <Form.Item
                     name={"Kind of Project"}
-                    className={"text-blackmig text-xl"}
+                    className={"text-blackmig text-base"}
                     label="What kind of project do you want to build?"
                     rules={[{ required: true }]}
                   >
                     <TextArea
                       rows={4}
-                      style={{ border: "1px solid #B8B8B8" }}
+                      style={{ border: "1px solid #B8B8B8", fontSize: "16px" }}
                       name={"Kind of Project"}
                       onChange={(e) => {
                         setDataSoftware({
@@ -572,7 +588,7 @@ function Software({}) {
                   <div className={"mt-9"}>
                     <Form.Item
                       name={"Type of Project"}
-                      className={"text-blackmig text-xl"}
+                      className={"text-blackmig text-base"}
                       label="What type of project are you hiring us for?"
                       rules={[{ required: true }]}
                     >
@@ -584,7 +600,7 @@ function Software({}) {
                         <Space direction="vertical">
                           {dataTypeProject.map((name) => (
                             <Radio
-                              className="text-blackmig text-sm"
+                              className="text-blackmig text-base"
                               value={name}
                             >
                               {name}
@@ -599,7 +615,7 @@ function Software({}) {
                     <div className={"mt-1 flex flex-row"}>
                       <Form.Item
                         name={"Budget Minimal"}
-                        className={"text-blackmig text-xl"}
+                        className={"text-blackmig text-base"}
                         label="From"
                         rules={[
                           {
@@ -614,6 +630,7 @@ function Software({}) {
                             border: "1px solid #B8B8B8",
                             width: "132px",
                             height: "37px",
+                            fontSize: "16px",
                           }}
                           name={"from"}
                           formatter={(value) => formatNumber(value)}
@@ -635,7 +652,7 @@ function Software({}) {
                       </div>
                       <Form.Item
                         name={"Budget Maximal"}
-                        className={"text-blackmig text-xl"}
+                        className={"text-blackmig text-base"}
                         label="To"
                         rules={[
                           {
@@ -650,6 +667,7 @@ function Software({}) {
                             border: "1px solid #B8B8B8",
                             width: "132px",
                             height: "37px",
+                            fontSize: "16px",
                           }}
                           name={"Budget Maximal"}
                           formatter={(value) => formatNumber(value)}
@@ -709,14 +727,14 @@ function Software({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={handleForm}
                     >
-                      <p className={"text-base text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>Back</p>
                     </button>
                     <button
                       className={
                         "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
-                      <p className={"text-base text-white"}>Next</p>
+                      <p className={"text-[18px] text-white"}>Next</p>
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
@@ -728,7 +746,10 @@ function Software({}) {
               </div>
             ) : (
               <div className="w-[52%]">
-                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
                   Choose Meeting Date
                 </p>
                 <div
@@ -737,7 +758,7 @@ function Software({}) {
                   }
                 >
                   <img src={"image/software/information-circle.png"} />
-                  <p className={"ml-3 text-sm text-blackmig self-center"}>
+                  <p className={"ml-3 text-base text-blackmig self-center"}>
                     Please choose a meeting date & time with Mitramas Infosys
                     Global
                   </p>
@@ -749,12 +770,14 @@ function Software({}) {
                     </div>
                   </div>
                   <div className={"ml-8"}>
-                    <p className={"text-xs text-blackmig font-gilroysemibold"}>
+                    <p
+                      className={"text-base text-blackmig font-gilroysemibold"}
+                    >
                       Choose Time
                     </p>
                     <p
                       className={
-                        "font-xs text-blackmig font-gilroyregular mt-1"
+                        "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
                       Meeting duration: 30 minutes
@@ -762,7 +785,7 @@ function Software({}) {
                     <div className={"mt-4 flex flex-row"}>
                       <div
                         className={
-                          "text-xs text-blackmig font-gilroysemibold w-[174px]"
+                          "text-base text-blackmig font-gilroysemibold w-[174px]"
                         }
                       >
                         {dataMeetingTime.map((data) => (
@@ -792,7 +815,7 @@ function Software({}) {
                       </div>
                       <div
                         className={
-                          "text-xs text-blackmig font-gilroysemibold ml-4 w-[174px]"
+                          "text-base text-blackmig font-gilroysemibold ml-4 w-[174px]"
                         }
                       >
                         {dataMeetingTime2.map((data) => (
@@ -824,7 +847,7 @@ function Software({}) {
                   </div>
                 </div>
                 <div className={"mt-[35px]"}>
-                  <p className={"text-sm text-blackmig font-gilroyregular"}>
+                  <p className={"text-base text-blackmig font-gilroyregular"}>
                     *Meeting Time
                   </p>
 
@@ -852,7 +875,7 @@ function Software({}) {
                 </div>
                 <div className={"mt-9 flex flex-row justify-between"}>
                   <button className={"bg-white py-2 px-4"} onClick={handleForm}>
-                    <p className={"text-base text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>Back</p>
                   </button>
                   <button
                     type={"submit"}
@@ -861,7 +884,7 @@ function Software({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Submit</p>
+                    <p className={"text-[18px] text-white"}>Submit</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -962,7 +985,7 @@ function Software({}) {
                   >
                     <div className={"flex flex-row"}>
                       <img
-                        className={"w-5 h-5 mr-2.5"}
+                        className={"w-5 h-5 mt-[2.5px] mr-2.5"}
                         src="/image/landingpage/info.png"
                       />
                       <div>
@@ -1405,8 +1428,9 @@ function Software({}) {
             <div className={"container mx-auto text-center"}>
               <div className={"pb-12"}>
                 <p
+                  style={{ lineHeight: "120%" }}
                   className={
-                    "text-base text-blackmig font-gilroyregular text-center w-[646px] mx-auto px-2"
+                    "text-xl text-blackmig font-gilroyregular text-center w-[646px] mx-auto px-2"
                   }
                 >
                   {t.softwarepastworksectionlast}
@@ -1420,7 +1444,7 @@ function Software({}) {
                       "text-sm md:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
                     }
                   >
-                    <p className={"text-base font-gilroysemibold"}>
+                    <p className={"text-xl font-gilroysemibold"}>
                       Contact our sales team
                     </p>
                   </button>
