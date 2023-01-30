@@ -34,7 +34,8 @@ function JoinOurTeam({ dataCareers, empData }) {
   return (
     <Layout>
       <Head>
-        <title>Join Our Team</title>
+        <title>{t.careermetatitle}</title>
+        <meta name="description" content={t.careermetadescription} />
       </Head>
       <section
         className={"section2careers  px-4 md:px-[112px] z-50"}

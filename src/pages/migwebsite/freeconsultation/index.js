@@ -61,11 +61,17 @@ function FreeConsultation({}) {
         }
       >
         <div className="w-[52%]">
-          <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
+          <p
+            style={{ lineHeight: "120%" }}
+            className={"text-[30px] text-primarygreen font-gilroysemibold"}
+          >
             Thank you for your interest in providing your IT needs through
             Mitramas Infosys Global
           </p>
-          <p className={"mt-4 text-base text-blackmig"}>
+          <p
+            style={{ lineHeight: "150%" }}
+            className={"mt-4 text-xl text-blackmig"}
+          >
             Before we reach you out, we’d like to ask a few questions to better
             understand your business & IT needs.
           </p>
@@ -80,7 +86,7 @@ function FreeConsultation({}) {
               <div className={"w-[495px]"}>
                 <Form.Item
                   name={"Company Name"}
-                  className={"gilroy-medium text-xl"}
+                  className={"gilroy-medium text-base"}
                   label="Company Name"
                   rules={[{ required: true }]}
                 >
@@ -88,6 +94,7 @@ function FreeConsultation({}) {
                     style={{
                       border: "1px solid #B8B8B8",
                       height: "37px",
+                      fontSize: "16px",
                     }}
                     name={"Company Name"}
                     onChange={(e) => {
@@ -102,13 +109,13 @@ function FreeConsultation({}) {
                 <Form.Item
                   name={"Email"}
                   initialValue={dataHardware.company_email}
-                  className={"gilroy-medium text-xl -mt-2"}
+                  className={"gilroy-medium text-base -mt-2"}
                   label="Email"
                   rules={[{ required: true, type: "email" }]}
                 >
                   <Input
                     // disabled={true}
-                    style={{ border: "1px solid #B8B8B8" }}
+                    style={{ border: "1px solid #B8B8B8", fontSize: "16px" }}
                     name={"Email"}
                     onChange={(e) => {
                       setDataHardware({
@@ -123,7 +130,7 @@ function FreeConsultation({}) {
               <div className={"w-[495px]"}>
                 <Form.Item
                   name={"Contact Name"}
-                  className={"gilroy-medium text-xl -mt-2"}
+                  className={"gilroy-medium text-base -mt-2"}
                   label="Contact Name"
                   rules={[
                     { required: true, message: "Contact name is required" },
@@ -133,6 +140,7 @@ function FreeConsultation({}) {
                     style={{
                       border: "1px solid #B8B8B8",
                       height: "37px",
+                      fontSize: "16px",
                     }}
                     name={"Contact Name"}
                     onChange={(e) => {
@@ -146,7 +154,7 @@ function FreeConsultation({}) {
                 </Form.Item>
                 <Form.Item
                   name={"Phone Number"}
-                  className={"gilroy-medium text-xl -mt-2"}
+                  className={"gilroy-medium text-base -mt-2"}
                   label="Phone Number"
                   rules={[
                     {
@@ -166,10 +174,14 @@ function FreeConsultation({}) {
                         phone_number: parseInt(e.target.value),
                       });
                     }}
+                    style={{ fontSize: "16px" }}
                     placeholder="Enter your phone number here"
                   />
                 </Form.Item>
               </div>
+              <p className={"text-blackmig text-base font-gilroysemibold"}>
+                What kind of solution are you looking for?
+              </p>
               <div className={"flex flex-row mt-4"}>
                 <a
                   className={"bg-white"}
@@ -178,8 +190,8 @@ function FreeConsultation({}) {
                   <div
                     className={
                       kindOfHardware == "Hardware"
-                        ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                        : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] h-[122px] mr-5 px-auto"
+                        : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] h-[122px] mr-5 px-auto"
                     }
                   >
                     {kindOfHardware == "Hardware" ? (
@@ -228,8 +240,8 @@ function FreeConsultation({}) {
                   <div
                     className={
                       kindOfHardware == "Software"
-                        ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                        : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] h-[122px] mr-5 px-auto"
+                        : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] h-[122px] mr-5 px-auto"
                     }
                   >
                     {kindOfHardware == "Software" ? (
@@ -266,7 +278,7 @@ function FreeConsultation({}) {
                             : "font-gilroyregular"
                         }
                       >
-                        Workstation
+                        Software
                       </p>
                     </div>
                   </div>
@@ -278,8 +290,8 @@ function FreeConsultation({}) {
                   <div
                     className={
                       kindOfHardware == "Talents"
-                        ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                        : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] h-[122px] mr-5 px-auto"
+                        : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] h-[122px] mr-5 px-auto"
                     }
                   >
                     {kindOfHardware == "Talents" ? (
@@ -332,7 +344,7 @@ function FreeConsultation({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-base font-gilroysemibold"}>
+                      <p className={"text-[18px] font-gilroysemibold"}>
                         Get Started
                       </p>
                       <img

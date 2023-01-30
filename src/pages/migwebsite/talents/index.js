@@ -2031,7 +2031,7 @@ function Talents({}) {
               >
                 <div className={"flex flex-row"}>
                   <img
-                    className={"w-[20px] h-[20px] mr-1"}
+                    className={"w-[20px] h-[20px] mt-[2.5px] mr-2.5"}
                     src="/image/landingpage/info.png"
                   />
                   <div>
@@ -3106,12 +3106,10 @@ function Talents({}) {
               />
               <div className={"pl-[40px] self-center"}>
                 <div className="flex flex-row items-center mt-5">
-                  <div className="w-11">
-                    <img
-                      src="/image/landingpage/career-icon1.png"
-                      className="w-[42px] h-[42px]"
-                    />
-                  </div>
+                  <img
+                    src="/image/landingpage/career-icon1.png"
+                    className="w-[42px] h-[42px]"
+                  />
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
@@ -3129,12 +3127,10 @@ function Talents({}) {
                   </div>
                 </div>
                 <div className="flex flex-row items-center mt-[20px]">
-                  <div className="w-11">
-                    <img
-                      src="/image/landingpage/career-icon2.png"
-                      className="w-[42px] h-[42px]"
-                    />
-                  </div>
+                  <img
+                    src="/image/landingpage/career-icon2.png"
+                    className="w-[42px] h-[42px]"
+                  />
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
@@ -3713,12 +3709,10 @@ function Talents({}) {
                 </div>
               </div>
               <div className={"flex flex-row"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
+                <div className={"border border-dividermig  bg-white text-left"}>
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     Budget matching
@@ -3778,12 +3772,10 @@ function Talents({}) {
                 </div>
               </div>
               <div className={"flex flex-row"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
+                <div className={"border border-dividermig  bg-white text-left"}>
                   <p
                     className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[14px] w-[244px]"
+                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
                     }
                   >
                     Rigorous technical screening
@@ -5014,6 +5006,320 @@ function Talents({}) {
               </button>
             </div>
           </section>
+
+          {/* coverages */}
+          <section
+            className={
+              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+            }
+          >
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={
+                "text-xl md:text-[36px] text-blackmig text-center  font-gilroysemibold py-8 md:py-0 mb-10"
+              }
+            >
+              Coverages
+            </h2>
+            <div
+              className={"bg-white p-12 items-center w-[788px] mx-auto"}
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
+              <ul className={"coverage-list text-[18px]"}>
+                <li>
+                  <p href="">Banda Aceh</p>
+                </li>
+                <li>
+                  <p href="">Medan</p>
+                </li>
+                <li>
+                  <p href="">Padang</p>
+                </li>
+                <li>
+                  <p href="">Jambi</p>
+                </li>
+                <li>
+                  <p href="">Pekanbaru</p>
+                </li>
+                <li>
+                  <p href="">Batam</p>
+                </li>
+                <li>
+                  <p href="">Tanjung pinang</p>
+                </li>
+                <li>
+                  <p href="">Jakarta</p>
+                </li>
+                <li>
+                  <p href="">Bekasi</p>
+                </li>
+                <li>
+                  <p href="">Depok</p>
+                </li>
+                <li>
+                  <p href="">Karawang</p>
+                </li>
+                <li>
+                  <p href="">Cilegon</p>
+                </li>
+                <li>
+                  <p href="">Sukabumi</p>
+                </li>
+                <li>
+                  <p href="">Bandar lampung</p>
+                </li>
+                <li>
+                  <p href="">Palembang</p>
+                </li>
+                <li>
+                  <p href="">Bandung</p>
+                </li>
+                <li>
+                  <p href="">Tasikmalaya</p>
+                </li>
+                <li>
+                  <p href="">Cirebon</p>
+                </li>
+                <li>
+                  <p href="">Semarang</p>
+                </li>
+                <li>
+                  <p href="">Purwokerto</p>
+                </li>
+                <li>
+                  <p href="">Tegal</p>
+                </li>
+                <li>
+                  <p href="">Yogyakarta</p>
+                </li>
+                <li>
+                  <p href="">Magelang</p>
+                </li>
+                <li>
+                  <p href="">Solo</p>
+                </li>
+                <li>
+                  <p href="">Surabaya</p>
+                </li>
+                <li>
+                  <p href="">Madiun</p>
+                </li>
+                <li>
+                  <p href="">Sidoarjo</p>
+                </li>
+                <li>
+                  <p href="">Malang</p>
+                </li>
+                <li>
+                  <p href="">Kediri</p>
+                </li>
+                <li>
+                  <p href="">Bogor</p>
+                </li>
+                <li>
+                  <p href="">Probolingo</p>
+                </li>
+                <li>
+                  <p href="">Banyuwangi</p>
+                </li>
+                <li>
+                  <p href="">Jember</p>
+                </li>
+                <li>
+                  <p href="">Bali</p>
+                </li>
+                <li>
+                  <p href="">Mataram</p>
+                </li>
+                <li>
+                  <p href="">Kupang</p>
+                </li>
+                <li>
+                  <p href="">Samarinda</p>
+                </li>
+                <li>
+                  <p href="">Banjarmasin</p>
+                </li>
+                <li>
+                  <p href="">Pontianak</p>
+                </li>
+                <li>
+                  <p href="">Balikpapan</p>
+                </li>
+                <li>
+                  <p href="">Makasar</p>
+                </li>
+                <li>
+                  <p href="">Sorong</p>
+                </li>
+                <li>
+                  <p href="">Palu</p>
+                </li>
+                <li>
+                  <p href="">Manado</p>
+                </li>
+                <li>
+                  <p href="">Pare-pare</p>
+                </li>
+              </ul>
+            </div>
+          </section>
+          {/*coverages mobile */}
+          <section
+            className={
+              "sectioncoveragesmobile block md:hidden bg-transp60 pt-4 px-4 py-[118px]"
+            }
+          >
+            <p
+              className={
+                "text-xl text-blackmig text-center  font-gilroysemibold"
+              }
+            >
+              Coverages
+            </p>
+            <div
+              className={"bg-white p-6 mt-4 mx-auto"}
+              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+            >
+              <ul className={"coverage-list"}>
+                <li>
+                  <p href="">Banda Aceh</p>
+                </li>
+                <li>
+                  <p href="">Medan</p>
+                </li>
+                <li>
+                  <p href="">Padang</p>
+                </li>
+                <li>
+                  <p href="">Jambi</p>
+                </li>
+                <li>
+                  <p href="">Pekanbaru</p>
+                </li>
+                <li>
+                  <p href="">Batam</p>
+                </li>
+                <li>
+                  <p href="">Tanjung pinang</p>
+                </li>
+                <li>
+                  <p href="">Jakarta</p>
+                </li>
+                <li>
+                  <p href="">Bekasi</p>
+                </li>
+                <li>
+                  <p href="">Depok</p>
+                </li>
+                <li>
+                  <p href="">Karawang</p>
+                </li>
+                <li>
+                  <p href="">Cilegon</p>
+                </li>
+                <li>
+                  <p href="">Sukabumi</p>
+                </li>
+                <li>
+                  <p href="">Bandar lampung</p>
+                </li>
+                <li>
+                  <p href="">Palembang</p>
+                </li>
+                <li>
+                  <p href="">Bandung</p>
+                </li>
+                <li>
+                  <p href="">Tasikmalaya</p>
+                </li>
+                <li>
+                  <p href="">Cirebon</p>
+                </li>
+                <li>
+                  <p href="">Semarang</p>
+                </li>
+                <li>
+                  <p href="">Purwokerto</p>
+                </li>
+                <li>
+                  <p href="">Tegal</p>
+                </li>
+                <li>
+                  <p href="">Yogyakarta</p>
+                </li>
+                <li>
+                  <p href="">Magelang</p>
+                </li>
+                <li>
+                  <p href="">Solo</p>
+                </li>
+                <li>
+                  <p href="">Surabaya</p>
+                </li>
+                <li>
+                  <p href="">Madiun</p>
+                </li>
+                <li>
+                  <p href="">Sidoarjo</p>
+                </li>
+                <li>
+                  <p href="">Malang</p>
+                </li>
+                <li>
+                  <p href="">Kediri</p>
+                </li>
+                <li>
+                  <p href="">Bogor</p>
+                </li>
+                <li>
+                  <p href="">Probolingo</p>
+                </li>
+                <li>
+                  <p href="">Banyuwangi</p>
+                </li>
+                <li>
+                  <p href="">Jember</p>
+                </li>
+                <li>
+                  <p href="">Bali</p>
+                </li>
+                <li>
+                  <p href="">Mataram</p>
+                </li>
+                <li>
+                  <p href="">Kupang</p>
+                </li>
+                <li>
+                  <p href="">Samarinda</p>
+                </li>
+                <li>
+                  <p href="">Banjarmasin</p>
+                </li>
+                <li>
+                  <p href="">Pontianak</p>
+                </li>
+                <li>
+                  <p href="">Balikpapan</p>
+                </li>
+                <li>
+                  <p href="">Makasar</p>
+                </li>
+                <li>
+                  <p href="">Sorong</p>
+                </li>
+                <li>
+                  <p href="">Palu</p>
+                </li>
+                <li>
+                  <p href="">Manado</p>
+                </li>
+                <li>
+                  <p href="">Pare-pare</p>
+                </li>
+              </ul>
+            </div>
+          </section>
           <section
             className={
               "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
@@ -5038,16 +5344,13 @@ function Talents({}) {
                     "mt-3.5 text-xl font-gilroyregular text-center text-black"
                   }
                 >
-                  <p style={{ lineHeight: "150%" }}>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={"py-5 text-xl font-gilroyregular text-black"}
+                  >
                     Need help in providing your needs? Whether they related to
-                    hardware,{" "}
-                  </p>
-                  <p style={{ lineHeight: "150%" }}>
-                    software, or even talent hiring?
-                  </p>
-                  <p style={{ lineHeight: "150%" }}>
-                    Contact us and hear what service can we offer to you and
-                    your company!
+                    hardware, software, or even talent hiring? Contact us and
+                    hear what service can we offer to you and your company!
                   </p>
                 </div>
                 <Link href="/contactus">

@@ -7,18 +7,17 @@ export default {
   landingpagemetatitle:
     "Mitramas Infosys Global: Hardware, Software, IT Outsourcing.",
   landingpagemetadescription:
-    "We offer cost-effective technology solutions, including hardware managed service, software development, and sourcing of top IT talent. Contact us!",
-  hardwaremetatitle: "Cost-Effective Hardware Managed Service Model - MIG",
+    "Get the best laptop, PC, ATM rental, software development, and IT outsourcing services at cost-effective prices from MIG's technology solutions. Contact us!",
+  hardwaremetatitle:
+    "Managed Service | Rent Cost-Effective Laptops, PCs, and ATMs - MIG",
   hardwaremetadescription:
-    "Maximize cost-effectiveness with our leased and well-maintained electronic equipment. Get personalized hardware that meets your needs. Contact us.",
-  talentmetatitle:
-    "Top Tech Talent, IT Outsourcing & Recruitment Solution - MIG",
+    "Lease cost-effective, well-maintained laptops, PCs, and ATMs from MIG. Personalized hardware options available. Contact us for more information.",
+  talentmetatitle: "Recruitment Solution to Hire Top Tech Talent - MIG",
   talentmetadescription:
-    "Simplify the process of finding and managing talent with our Headhunt and IT Staff Augmentation service. Address your need & speak with our team now!",
-  softwaremetatitle:
-    "Develop Custom Software to Digitalize your Business - MIG",
+    "Simplify your tech talent recruitment process with our IT Outsourcing, Headhunting and IT Staff Augmentation service. Speak with our team now!",
+  softwaremetatitle: "Custom-made Software to Digitalize your Business - MIG",
   softwaremetadescription:
-    "Improve efficiency by implementing digital technologies in your business. Build custom software with our outstanding tech team. Book a call today!",
+    "Build custom software with our outstanding tech team. Improve efficiency by implementing digital technologies in your business. Book a call today!",
   aboutusmetatitle: "About Us | Mitramas Infosys Global - MIG",
   aboutusmetadescription:
     "We are MIG, a people-centric business that offers a seamless technology experience with hardware, software, and IT outsourcing solutions.",
@@ -37,6 +36,21 @@ export default {
   findout: "Discover",
   howourexpertise: "how our expertise",
   helpyou: "can enhance your business",
+  hardwaresubtitlelanding: "Lighten up your heavy capital in IT infrastructure",
+  softwaresubtitlelanding: "Delivering tailor-made solutions for your business",
+  talentsubtitlelanding: "",
+  joinmigsection: "Looking for jobs instead? Apply for Jobs",
+  joinmigsubtitle: "As a MIGhty talent, you'll get these benefits:",
+  joinmigpoint1: "Hands-on experience from a variety of leading industries.",
+  joinmigpoint2:
+    "Opportunities to find solutions and make a difference, with our support.",
+  joinmigpoint3:
+    "Resources to enhance your personal and professional development.",
+  joinmigcta: "Know More",
+  contactussectiontitle: "Enjoy seamless tech solutions without the hassle.",
+  contactussectionsubtitle1: "What technology solutions are you looking for?",
+  contactussectionsubtitle2:
+    "Our team has the expertise and resources to meet your needs.",
   hardwaredescription:
     "Transform your traditional procurement into a managed service model, guaranteeing predictable monthly costs and excellent service levels.",
   hardwarebuttontitle: "Get yours",
@@ -69,6 +83,10 @@ export default {
   softwaredevelopment: "software development",
   and: "and",
   techtalent: "tech talent solutions",
+  weprovideyou: "We provide you with:",
+  firstprovide: "✔️ Cutting-edge resources",
+  secondprovide: "✔️ Efficient and competitive cost",
+  thirdprovide: "✔️ Guaranteed level of service",
   landingpageoursolution: "Explore our solutions",
   landingpagefreeconsultation: "Get free consultation",
   whoweare: "Our history",
@@ -87,6 +105,9 @@ export default {
     "Improve efficiency by implementing digital technologies in your business.",
   talentsubtitleaboutus: "Simplify the process of finding and managing talent.",
   talentbuttontitleaboutus: "Set up your team",
+  careermetatitle: "Career at MIG - MIG Career",
+  careermetadescription:
+    "Advance your tech career with us, explore various open job for skilled tech professionals at MIG.",
   careersatmig: "Together, we have the strength to achieve MIGhty things.",
   careersatmigsubtitle:
     "We are seeking highly motivated and hardworking individuals to become new members of our MIGhty team!",

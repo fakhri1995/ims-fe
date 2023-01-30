@@ -661,10 +661,10 @@ function Hardware({}) {
     });
     setDataProduct(newArr);
   };
-  const handleInputProduct = (e) => {
-    let arr_product = productSelected;
-    arr_product.push(product);
-    setProductSelected(arr_product);
+  const handleInputProduct = (value) => {
+    console.log("value ", value);
+    const updatedCarsArray = [...productSelected, value];
+    setProductSelected(updatedCarsArray);
     form.resetFields([product]);
   };
 
@@ -691,8 +691,8 @@ function Hardware({}) {
   return (
     <Layout>
       <Head>
-        <title>{t.softwaremetatitle}</title>
-        <meta name="description" content={t.softwaremetadescription} />
+        <title>{t.hardwaremetatitle}</title>
+        <meta name="description" content={t.hardwaremetadescription} />
       </Head>
       {showForm == false && (
         <section
@@ -741,11 +741,19 @@ function Hardware({}) {
           >
             {formActive == "first" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-[30px] text-primarygreen font-gilroysemibold"
+                  }
+                >
                   Thank you for your interest in providing your IT needs through
                   Mitramas Infosys Global
                 </p>
-                <p className={"mt-4 text-base text-blackmig"}>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt-4 text-xl text-blackmig"}
+                >
                   Before we reach you out, we’d like to ask a few questions to
                   better understand your business & IT needs.
                 </p>
@@ -760,7 +768,7 @@ function Hardware({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Company Name"}
-                        className={" text-xl"}
+                        className={"text-base"}
                         label="Company Name"
                         rules={[{ required: true }]}
                       >
@@ -768,6 +776,7 @@ function Hardware({}) {
                           style={{
                             border: "1px solid #B8B8B8",
                             height: "37px",
+                            fontSize: "16px",
                           }}
                           name={"Company Name"}
                           onChange={(e) => {
@@ -782,13 +791,16 @@ function Hardware({}) {
                       <Form.Item
                         name={"Email"}
                         initialValue={dataHardware.company_email}
-                        className={" text-xl -mt-2"}
+                        className={" text-base -mt-2"}
                         label="Email"
                         rules={[{ required: true, type: "email" }]}
                       >
                         <Input
                           // disabled={true}
-                          style={{ border: "1px solid #B8B8B8" }}
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            fontSize: "16px",
+                          }}
                           name={"Email"}
                           onChange={(e) => {
                             setDataHardware({
@@ -803,7 +815,7 @@ function Hardware({}) {
                     <div className={"w-[495px]"}>
                       <Form.Item
                         name={"Contact Name"}
-                        className={" text-xl -mt-2"}
+                        className={" text-base -mt-2"}
                         label="Contact Name"
                         rules={[{ required: true }]}
                       >
@@ -811,6 +823,7 @@ function Hardware({}) {
                           style={{
                             border: "1px solid #B8B8B8",
                             height: "37px",
+                            fontSize: "16px",
                           }}
                           name={"Contact Name"}
                           onChange={(e) => {
@@ -824,7 +837,7 @@ function Hardware({}) {
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
-                        className={" text-xl -mt-2"}
+                        className={" text-base -mt-2"}
                         label="Phone Number"
                         rules={[
                           {
@@ -844,6 +857,7 @@ function Hardware({}) {
                               phone_number: parseInt(e.target.value),
                             });
                           }}
+                          style={{ fontSize: "16px" }}
                           placeholder="Enter your phone number here"
                         />
                       </Form.Item>
@@ -875,10 +889,13 @@ function Hardware({}) {
               </div>
             ) : formActive == "second" ? (
               <div className="w-[52%]">
-                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
                   General Information
                 </p>
-                <p className={"pt-9"}>
+                <p style={{ lineHeight: "120%" }} className={"pt-9 text-xl"}>
                   What is your purpose in providing IT needs through Mitramas
                   Infosys Global?
                 </p>
@@ -890,13 +907,13 @@ function Hardware({}) {
                   >
                     <Space direction="vertical">
                       <Radio
-                        className="text-blackmig text-sm"
+                        className="text-blackmig text-base"
                         value={"I want to buy the product"}
                       >
                         I want to buy the product
                       </Radio>
                       <Radio
-                        className="text-blackmig text-sm"
+                        className="text-blackmig text-base"
                         value={
                           "I want to lease the product and having hardware managed"
                         }
@@ -905,7 +922,7 @@ function Hardware({}) {
                         services
                       </Radio>
                       <Radio
-                        className="text-blackmig text-sm"
+                        className="text-blackmig text-base"
                         value={
                           "None of the above, I just want to know about the service"
                         }
@@ -921,7 +938,7 @@ function Hardware({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("first")}
                   >
-                    <p className={"text-base text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>Back</p>
                   </button>
                   <button
                     onClick={() => handleForm("third")}
@@ -929,7 +946,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Next</p>
+                    <p className={"text-[18px] text-white"}>Next</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -1071,10 +1088,13 @@ function Hardware({}) {
                     </button>
                   </div>
                 </Modal>
-                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
                   Hardware Information
                 </p>
-                <p className={"mt-9"}>
+                <p style={{ lineHeight: "150%" }} className={"mt-9 text-xl"}>
                   What kind of hardware are you looking for?
                 </p>
                 <Form
@@ -1084,9 +1104,9 @@ function Hardware({}) {
                   onFinish={() => handleAddAnotherProduct()}
                   form={form}
                 >
-                  <p className={"text-primarygreen text-sm"}>
+                  {/* <p className={"text-primarygreen text-base"}>
                     You can choose more than one
-                  </p>
+                  </p> */}
                   {/* choose product */}
                   <div className={"flex flex-row mt-4"}>
                     <a
@@ -1126,7 +1146,7 @@ function Hardware({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1178,7 +1198,7 @@ function Hardware({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1230,7 +1250,7 @@ function Hardware({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1282,7 +1302,7 @@ function Hardware({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1334,7 +1354,7 @@ function Hardware({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1353,14 +1373,16 @@ function Hardware({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
+                    <p
+                      className={"text-blackmig text-base font-gilroysemibold"}
+                    >
                       1. Hardware Specification
                     </p>
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_need_product"
-                      className={" text-xl"}
+                      className={" text-base"}
                       label="*How soon do you need the product?"
                       rules={[
                         {
@@ -1370,7 +1392,10 @@ function Hardware({}) {
                       ]}
                     >
                       <Select
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="time_need_product"
                         onChange={(value) => {
@@ -1391,7 +1416,7 @@ function Hardware({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_used"
-                      className={" text-xl"}
+                      className={" text-base"}
                       label="How long do you need the product?"
                       rules={[
                         {
@@ -1401,7 +1426,10 @@ function Hardware({}) {
                       ]}
                     >
                       <Select
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="time_used"
                         onChange={(value) => {
@@ -1419,12 +1447,12 @@ function Hardware({}) {
                   <div className={"mt-8"}>
                     <Form.Item
                       name={"product"}
-                      className={" text-xl"}
+                      className={" text-base"}
                       label={
                         <p>
                           *What product in{" "}
                           <span className={"font-gilroysemibold"}>
-                            Workstation
+                            {kindOfHardware}
                           </span>{" "}
                           do you need?
                         </p>
@@ -1433,16 +1461,23 @@ function Hardware({}) {
                     >
                       <Input
                         value={product}
-                        style={{ border: "1px solid #B8B8B8", height: "37px" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          height: "37px",
+                          fontSize: "16px",
+                        }}
                         name={"product"}
                         onChange={(e) => {
                           setProduct(e.target.value);
                         }}
-                        onPressEnter={handleInputProduct}
-                        placeholder="Enter specific roles or skills"
+                        onPressEnter={(e) => {
+                          handleInputProduct(e.target.value);
+                        }}
+                        placeholder="'Enter product"
                       />
                     </Form.Item>
                   </div>
+                  {console.log("product selected  render", productSelected)}
                   {productSelected.length > 0 && (
                     <div className={"flex flex-row mt-3"}>
                       {productSelected.map((data, index) => (
@@ -1453,7 +1488,7 @@ function Hardware({}) {
                         >
                           <p
                             className={
-                              "text-sm text-blackmig font-gilroyregular"
+                              "text-base text-blackmig font-gilroyregular"
                             }
                           >
                             {data}
@@ -1472,7 +1507,7 @@ function Hardware({}) {
                     </div>
                   )}
                   <div className={"mt-3"}>
-                    <p className={"text-sm text-blackmig"}>
+                    <p className={"text-base text-blackmig"}>
                       Popular products in Workstation
                     </p>
                     {hardwareSuggestion.length > 0 && (
@@ -1486,7 +1521,7 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-sm text-darkgrey font-gilroyregular"
+                                "text-[18px] text-darkgrey font-gilroyregular"
                               }
                             >
                               {data}
@@ -1499,14 +1534,16 @@ function Hardware({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
+                    <p
+                      className={"text-blackmig text-base font-gilroysemibold"}
+                    >
                       2. Additional Information
                     </p>
                   </div>
                   <div className={"mt-8"}>
                     <Form.Item
                       label={
-                        <p className={"text-sm"}>
+                        <p className={"text-base"}>
                           {" "}
                           How many product in{" "}
                           <span className={"font-gilroysemibold text-blackmig"}>
@@ -1531,6 +1568,7 @@ function Hardware({}) {
                           border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
+                          fontSize: "16px",
                         }}
                         onChange={onChangeManyProduct}
                       />
@@ -1543,7 +1581,7 @@ function Hardware({}) {
                     <Form.Item
                       name={"max_budget"}
                       label={
-                        <p className={"text-sm"}>
+                        <p className={"text-base"}>
                           What is your maximum budget for your new product?
                         </p>
                       }
@@ -1560,9 +1598,10 @@ function Hardware({}) {
                         min={1}
                         // max={10}
                         style={{
-                          border: "1px solid #B8B8B8",
+                          // border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
+                          fontSize: "16px",
                         }}
                         onChange={(value) => {
                           setMaxBudget(value);
@@ -1575,7 +1614,7 @@ function Hardware({}) {
                     </Form.Item>
                     <Form.Item
                       name={"Details"}
-                      className={" text-xl"}
+                      className={" text-base"}
                       label="Details (Optional)"
                       // rules={[{ required: true }]}
                     >
@@ -1627,7 +1666,7 @@ function Hardware({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("second")}
                     >
-                      <p className={"text-base text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>Back</p>
                     </button>
                     <button
                       onClick={form.submit}
@@ -1639,7 +1678,7 @@ function Hardware({}) {
                     >
                       <p
                         className={
-                          "text-base text-primarygreen font-gilroysemibold"
+                          "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
                         I want to add another product
@@ -1655,7 +1694,10 @@ function Hardware({}) {
               </div>
             ) : (
               <div className="w-[52%]">
-                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
                   Choose Meeting Date
                 </p>
                 <div
@@ -1664,7 +1706,7 @@ function Hardware({}) {
                   }
                 >
                   <img src={"image/software/information-circle.png"} />
-                  <p className={"ml-3 text-sm text-blackmig self-center"}>
+                  <p className={"ml-3 text-base text-blackmig self-center"}>
                     Please choose a meeting date & time with Mitramas Infosys
                     Global
                   </p>
@@ -1680,12 +1722,14 @@ function Hardware({}) {
                     </div>
                   </div>
                   <div className={"ml-8"}>
-                    <p className={"text-xs text-blackmig font-gilroysemibold"}>
+                    <p
+                      className={"text-base text-blackmig font-gilroysemibold"}
+                    >
                       Choose Time
                     </p>
                     <p
                       className={
-                        "font-xs text-blackmig font-gilroyregular mt-1"
+                        "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
                       Meeting duration: 30 minutes
@@ -1693,7 +1737,7 @@ function Hardware({}) {
                     <div className={"mt-4 flex flex-row"}>
                       <div
                         className={
-                          "text-xs text-blackmig font-gilroysemibold w-[174px]"
+                          "text-base text-blackmig font-gilroysemibold w-[174px]"
                         }
                       >
                         {dataMeetingTime.map((data) => (
@@ -1723,7 +1767,7 @@ function Hardware({}) {
                       </div>
                       <div
                         className={
-                          "text-xs text-blackmig font-gilroysemibold ml-4 w-[174px]"
+                          "text-base text-blackmig font-gilroysemibold ml-4 w-[174px]"
                         }
                       >
                         {dataMeetingTime2.map((data) => (
@@ -1755,7 +1799,7 @@ function Hardware({}) {
                   </div>
                 </div>
                 <div className={"mt-[35px]"}>
-                  <p className={"text-sm text-blackmig font-gilroyregular"}>
+                  <p className={"text-base text-blackmig font-gilroyregular"}>
                     *Meeting Time
                   </p>
 
@@ -1765,7 +1809,7 @@ function Hardware({}) {
                     </p>
                   ) : (
                     <div
-                      className={"text-sm text-blackmig font-gilroysemibold"}
+                      className={"text-base text-blackmig font-gilroysemibold"}
                     >
                       <p className={""}>
                         {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
@@ -1786,7 +1830,7 @@ function Hardware({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("third")}
                   >
-                    <p className={"text-base text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>Back</p>
                   </button>
                   <button
                     type={"submit"}
@@ -1795,7 +1839,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Submit</p>
+                    <p className={"text-[18px] text-white"}>Submit</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -1916,13 +1960,9 @@ function Hardware({}) {
         </div>
       ) : (
         <div className={"sectionhardware noform"}>
-          <section className={"section2hardware py-4 md:py-16 mx-auto"}>
-            <div
-              className={
-                "hidden md:flex w-[1216px] mt-16 justify-between mx-auto"
-              }
-            >
-              <div className={"flex-col w-[495px]"}>
+          <section className={"section2hardware py-4 md:py-16 md:px-[113.5px]"}>
+            <div className={"hidden md:flex  mt-16 justify-between mx-auto"}>
+              <div className={"flex-col w-1/2"}>
                 <h1
                   style={{ lineHeight: "120%" }}
                   className={"text-xl md:text-[36px] pb-4 font-gilroysemibold"}
@@ -1993,7 +2033,7 @@ function Hardware({}) {
                   >
                     <div className={"flex flex-row"}>
                       <img
-                        className={"w-[20px] h-[20px] mr-2.5"}
+                        className={"w-[20px] h-[20px] mr-2.5 mt-[2.5px]"}
                         src="/image/landingpage/info.png"
                       />
                       <div>
@@ -2038,10 +2078,10 @@ function Hardware({}) {
                   </div>
                 </div>
               </div>
-              <div className={"flex-col w-[666px]"}>
+              <div className={"w-1/2 pl-[40px]"}>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
-                  className={"w-full h-[375px]"}
+                  className={"w-4/5 h-auto"}
                 />
               </div>
             </div>
@@ -2160,7 +2200,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-[42px] justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightblue rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightblue rounded-lg p-3"
                       }
                     >
                       <p
@@ -2181,7 +2221,7 @@ function Hardware({}) {
                       </p>
                       <div className={"self-center"}>
                         <button
-                          className={"bg-lightblue w-[133px]"}
+                          className={"bg-lightblue"}
                           onClick={handleShowForm}
                         >
                           <div
@@ -2198,7 +2238,7 @@ function Hardware({}) {
                             </p>
                             <img
                               src="/image/hardware/arrow_forward_ios_blue.png"
-                              className={"w-[20px] h-[20px] self-center"}
+                              className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
                           </div>
@@ -2235,7 +2275,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-8 justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgreen rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightgreen rounded-lg p-3"
                       }
                     >
                       <p
@@ -2256,7 +2296,7 @@ function Hardware({}) {
                       </p>
                       <div className={"self-center"}>
                         <button
-                          className={"bg-lightgreen w-[133px]"}
+                          className={"bg-lightgreen"}
                           onClick={handleShowForm}
                         >
                           <div
@@ -2273,7 +2313,7 @@ function Hardware({}) {
                             </p>
                             <img
                               src="/image/hardware/arrow_forward_ios_green.png"
-                              className={"w-[20px] h-[20px] self-center"}
+                              className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
                           </div>
@@ -2310,7 +2350,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-8 justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightgrey rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightgrey rounded-lg p-3"
                       }
                     >
                       <p
@@ -2331,7 +2371,7 @@ function Hardware({}) {
                       </p>
                       <div className={"self-center"}>
                         <button
-                          className={"bg-lightgrey w-[133px]"}
+                          className={"bg-lightgrey"}
                           onClick={handleShowForm}
                         >
                           <div
@@ -2386,7 +2426,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-8 justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[146px] bg-lightpink rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightpink rounded-lg p-3"
                       }
                     >
                       <p
@@ -2407,7 +2447,7 @@ function Hardware({}) {
                       </p>
                       <div className={"self-center"}>
                         <button
-                          className={"bg-lightpink w-[133px]"}
+                          className={"bg-lightpink"}
                           onClick={handleShowForm}
                         >
                           <div

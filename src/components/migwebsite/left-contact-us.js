@@ -5,7 +5,7 @@ import React from "react";
 
 function LeftContactUs({ children }) {
   return (
-    <div className={"w-full md:w-2/5"}>
+    <div className={"w-full md:w-1/2"}>
       <p
         style={{ lineHeight: "120%" }}
         className={"text-[30px] font-gilroysemibold text-blackmig"}
