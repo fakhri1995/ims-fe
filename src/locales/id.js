@@ -24,56 +24,78 @@ export default {
   aboutusmetadescription:
     "Kami, Mitramas Infosys Global, perusahaan people-centric yang menawarkan pengalaman teknologi lancar melalui solusi hardware, software, dan IT outsourcing.",
   landingpagesection1:
-    "Tingkatkan dan kembangkan bisnis Anda, taklukkan tantangan teknologi bersama.",
-  landingpagesection2: "MIG mendorong pertumbuhan bisnis Anda dengan ",
+    "Tingkatkan performa bisnis, perkuat kemampuan teknologi bersama kami",
+  landingpagesection2: "MIG membantu bisnis Anda tumbuh lebih cepat dengan ",
   landingpagetitlelogo:
-    "Kami telah terbukti menjawab kebutuhan teknologi dan bisnis di berbagai industri.",
+    "Menjawab kebutuhan berbagai industri di seluruh negeri",
   cities: "kota",
-  managed: "hardware yang dikelola & disewa",
-  techproject: "proyek teknologi telah selesai",
+  managed: "managed service hardware",
+  techproject: "tech talents.",
   companies: "perusahaan",
   landingpagesection3:
     "Kami memberikan Anda sumber daya terbaik dengan biaya efisien, serta layanan yang terjamin.",
-  landingpageoursolution: "Pelajari solusi kami",
-  landingpagefreeconsultation: "Konsultasi gratis",
+  landingpageoursolution: "Pelajari solusi",
+  landingpagefreeconsultation: "Dapatkan konsultasi gratis",
   hardwaresolution: "solusi hardware",
   hardwaredescription:
-    "Manfaatkan managed services kami: dapatkan mulai dari biaya bulanan yang terprediksi hingga layanan terbaik yang pernah Anda impikan.",
-  hardwarebuttontitle: "Cek opsi hardware",
+    "Tranformasikan pengadaan tradisional Anda menjadi managed service model, dengan biaya bulanan yang terprediksi dan tingkat layanan terbaik.",
+  hardwarebuttontitle: "Dapatkan Hardware",
   softwaredescription:
-    "Digitalisasi proses bisnis Anda dan tingkatkan efisiensi. Tim kami dapat membantu menciptakan sistem khusus untuk Anda.",
-  softwarebuttontitle: "Mulai sekarang",
+    "Membuat ide Anda menjadi nyata. Tim kami siap membantu menciptakan platform yang sesuai dengan kebutuhan Anda.",
+  softwarebuttontitle: "Bangun Software",
+  joinmigsection: "Sedang mencari pekerjaan? Lamar pekerjaan sekarang",
+  joinmigsubtitle: "Gabung jadi talent MIGhty, dapatkan keuntungan ini:",
+  joinmigpoint1:
+    "Kesempatan untuk dapat hands-on experience dari berbagai industri terkemuka.",
+  joinmigpoint2:
+    "Dukungan penuh dari kami agar kamu terus bisa membuat berbagai perubahan.",
+  joinmigpoint3:
+    "Fasilitas untuk menunjang perkembangan personal dan maupun karirmu.",
+  joinmigcta: "Selengkapnya",
+  contactussectiontitle: "Dapatkan berbagai solusi teknologi tanpa rasa sulit",
+  contactussectionsubtitle1: "Sedang mencari solusi teknologi?",
+  contactussectionsubtitle2:
+    "Tim kami dapat menjawab seluruh kebutuhan bisnis Anda.",
   talentsubtitle: "Talenta kami, untuk pertumbuhan Anda",
   talentdescription:
-    "Percepat proses rekrutmen Anda dengan layanan on-demand expertise kami. Headcounts dan periode kerja talenta dapat disesuaikan dengan kebutuhan. Kami akan menangani semuanya.",
-  talentbuttontitle: "Rekrut sekarang",
+    "Bangun dan kembangkan tim Anda dengan kami. Dapatkan keahlian on-demand, serta jumlah talent dan periode kerja yang sesuai dengan kebutuhan.",
+  talentbuttontitle: "Rekrut Talent",
   careermetatitle: "Karir di Mitramas Infosys Global - MIG",
   careermetadescription:
     "Tingkatkan karir di bidang teknologi bersama MIG, temukan beragam lowongan pekerjaan untuk para tech talent terbaik.",
-  landingpagewhyus1: "Dapatkan seluruh manfaat di bawah ",
-  landingpagewhyus2: "satu atap.",
+  landingpagewhyus1: "Seluruh manfaat ini ada di bawah ",
+  landingpagewhyus2: "atap kami",
   whyustitle1: "On-Demand Services:",
-  whyussubtitle1: "Solusi kami membantu bisnis lebih optimal dan berkembang.",
-  whyustitle2: "Partner Terpercaya",
-  whyussubtitle2: "Pengalaman sukses lebih dari 15 tahun di Indonesia.",
+  whyussubtitle1:
+    "Layanan terlengkap, mampu memenuhi berbagai kebutuhan bisnis berbeda.",
+  whyustitle2: "Mitra Terpercaya",
+  whyussubtitle2:
+    "Pengalaman sukses selama 20 tahun di Indonesia. Andalkan kami jadi mitra.",
   whyustitle3: "Harga Kompetitif",
   whyussubtitle3:
     "Layanan terbaik sesuai kebutuhan, semua dengan harga terbaik.",
-  whyustitle4: "Biaya Efisien",
+  whyustitle4: "Solusi Efisien",
   whyussubtitle4:
-    "Tingkatkan bisnis secara maksimal, efisienkan biaya pengeluaran.",
+    "Optimalkan bisnis Anda, efisiensikan operasi dengan solusi kami.",
   aboutustitle: "Buat operasional bisnis Anda menjadi lebih efisien dan agile.",
   aboutussubtitle: `Tim kami di Mitramas Infosys Global siap mendukung peningkatan dan pertumbuhan bisnis Anda dengan tech staff augmentation, pengembangan software, dan hardware managed services. 
 
   Kami berpengalaman menyediakan berbagai solusi terbaik untuk beragam industri, mulai dari perusahaan penyedia jasa finansial, start up, hingga pemerintahan.
   
   Kami akan memberikan jawaban terbaik atas masalah teknologi mitra kami, tak terkecuali Anda.`,
-  findout: "Pelajari",
-  howourexpertise: "berbagai",
-  helpyou: "solusi kami",
-  softwaredevelopment: "pengembangan software",
+  findout: "Solusi ",
+  howourexpertise: "teknologi kami",
+  helpyou: " dapat tingkatkan bisnis Anda",
+  softwaredevelopment: "software development",
+  weprovideyou: "Kami memberikan Anda:",
+  firstprovide: "✔️ Sumber daya terbaik & terkini",
+  secondprovide: "✔️ Biaya efisien, harga kompetitif",
+  thirdprovide: "✔️ Tingkat layanan terjamin",
   and: "dan",
   whoweare: "Perjalanan kami",
+  hardwaresubtitlelanding: "Ringkankan beban modal dalam infrastruktur IT",
+  softwaresubtitlelanding: "Solusi digital sesuai kebutuhan bisnis Anda",
+  talentsubtitlelanding: "",
   whowearedescription: `Mitramas Infosys Global (MIG) didirikan pada tahun 2003 dan bekerja sama langsung dengan provider berskala global, serta talenta teknologi lokal untuk memberikan pengalaman teknologi tanpa hambatan. 
 
   Dengan pengalaman lebih dari satu dekade di seluruh nusantara, kami memiliki pemahaman yang mendalam mengenai penggunaan teknologi untuk mendorong pertumbuhan bisnis. 
@@ -89,7 +111,7 @@ export default {
   hardwaresubtitle:
     "Maksimalkan efektivitas biaya dengan hardware yang kami sewakan dan rawat dengan sempurna.",
   hardwarebuttontitleaboutus: "Cek pilihan",
-  techtalent: "supply talenta teknologi",
+  techtalent: "tech talents",
   softwaresubtitle:
     "Tingkatkan efisiensi bisnis dengan penggunaan teknologi digital terkini milik kami.",
   talentsubtitleaboutus:

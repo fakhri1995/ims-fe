@@ -661,10 +661,10 @@ function Hardware({}) {
     });
     setDataProduct(newArr);
   };
-  const handleInputProduct = (e) => {
-    let arr_product = productSelected;
-    arr_product.push(product);
-    setProductSelected(arr_product);
+  const handleInputProduct = (value) => {
+    console.log("value ", value);
+    const updatedCarsArray = [...productSelected, value];
+    setProductSelected(updatedCarsArray);
     form.resetFields([product]);
   };
 
@@ -1104,9 +1104,9 @@ function Hardware({}) {
                   onFinish={() => handleAddAnotherProduct()}
                   form={form}
                 >
-                  <p className={"text-primarygreen text-base"}>
+                  {/* <p className={"text-primarygreen text-base"}>
                     You can choose more than one
-                  </p>
+                  </p> */}
                   {/* choose product */}
                   <div className={"flex flex-row mt-4"}>
                     <a
@@ -1452,7 +1452,7 @@ function Hardware({}) {
                         <p>
                           *What product in{" "}
                           <span className={"font-gilroysemibold"}>
-                            Workstation
+                            {kindOfHardware}
                           </span>{" "}
                           do you need?
                         </p>
@@ -1470,11 +1470,14 @@ function Hardware({}) {
                         onChange={(e) => {
                           setProduct(e.target.value);
                         }}
-                        onPressEnter={handleInputProduct}
-                        placeholder="Enter specific roles or skills"
+                        onPressEnter={(e) => {
+                          handleInputProduct(e.target.value);
+                        }}
+                        placeholder="'Enter product"
                       />
                     </Form.Item>
                   </div>
+                  {console.log("product selected  render", productSelected)}
                   {productSelected.length > 0 && (
                     <div className={"flex flex-row mt-3"}>
                       {productSelected.map((data, index) => (
@@ -1595,7 +1598,7 @@ function Hardware({}) {
                         min={1}
                         // max={10}
                         style={{
-                          border: "1px solid #B8B8B8",
+                          // border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
                           fontSize: "16px",

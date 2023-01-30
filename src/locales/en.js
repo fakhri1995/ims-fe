@@ -36,6 +36,21 @@ export default {
   findout: "Discover",
   howourexpertise: "how our expertise",
   helpyou: "can enhance your business",
+  hardwaresubtitlelanding: "Lighten up your heavy capital in IT infrastructure",
+  softwaresubtitlelanding: "Delivering tailor-made solutions for your business",
+  talentsubtitlelanding: "",
+  joinmigsection: "Looking for jobs instead? Apply for Jobs",
+  joinmigsubtitle: "As a MIGhty talent, you'll get these benefits:",
+  joinmigpoint1: "Hands-on experience from a variety of leading industries.",
+  joinmigpoint2:
+    "Opportunities to find solutions and make a difference, with our support.",
+  joinmigpoint3:
+    "Resources to enhance your personal and professional development.",
+  joinmigcta: "Know More",
+  contactussectiontitle: "Enjoy seamless tech solutions without the hassle.",
+  contactussectionsubtitle1: "What technology solutions are you looking for?",
+  contactussectionsubtitle2:
+    "Our team has the expertise and resources to meet your needs.",
   hardwaredescription:
     "Transform your traditional procurement into a managed service model, guaranteeing predictable monthly costs and excellent service levels.",
   hardwarebuttontitle: "Get yours",
@@ -68,6 +83,10 @@ export default {
   softwaredevelopment: "software development",
   and: "and",
   techtalent: "tech talent solutions",
+  weprovideyou: "We provide you with:",
+  firstprovide: "✔️ Cutting-edge resources",
+  secondprovide: "✔️ Efficient and competitive cost",
+  thirdprovide: "✔️ Guaranteed level of service",
   landingpageoursolution: "Explore our solutions",
   landingpagefreeconsultation: "Get free consultation",
   whoweare: "Our history",

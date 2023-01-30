@@ -22,6 +22,8 @@ function layout({ children }) {
   const { locale } = router;
   const t = locale === "en" ? en : id;
   const { Header, Content, Footer } = Layout;
+  const [countArticle, setCountArticle] = useState(null);
+  const [countStories, setCountStories] = useState(null);
   const menu = (
     <div
       className={"bg-white w-96 h-auto p-2 top-6 relative"}
@@ -129,40 +131,99 @@ function layout({ children }) {
       </Link>
     </div>
   );
+
+  const menuResources = (
+    <div
+      className={"bg-white px-2 py-4 top-6 bottom-6 relative flex flex-col"}
+      // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
+    >
+      {countStories > 0 && (
+        <Link href="/customerstories">
+          <Button
+            className={"bg-transparent border-0 border-white "}
+            // onClick={() => changeLanguage("en")}
+          >
+            <div className={"flex flex-row"}>
+              <img
+                className={"self-center"}
+                width={37}
+                height={37}
+                src={"/image/english.png"}
+              />
+              <div className={"ml-4"}>
+                <p className={"text-lg gilroy-medium self-center"}>
+                  Customer Stories
+                </p>
+              </div>
+            </div>
+          </Button>
+        </Link>
+      )}
+      {console.log("jumlah article ", countStories)}
+
+      {countArticle > 0 && (
+        <Link href="/blog">
+          <Button
+            className={"bg-transparent border-0 border-white  my-4 pb-4"}
+            // onClick={() => changeLanguage("id")}
+          >
+            <div className={"flex flex-row"}>
+              <img
+                className={"relative"}
+                width={37}
+                height={37}
+                src={"/image/indonesia.png"}
+              />
+              <div className={"ml-4"}>
+                <p className={"text-lg gilroy-medium self-center"}>Blog</p>
+              </div>
+            </div>
+          </Button>
+        </Link>
+      )}
+    </div>
+  );
   const menuLanguanges = (
     <div
-      className={
-        "bg-white w-auto h-auto px-2 py-4 top-6 relative flex flex-col"
-      }
+      className={"bg-white px-2 py-4 top-6 bottom-6 relative flex flex-col"}
       // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
     >
       <Button
-        className={"bg-transparent border-0 border-white hover:bg-primarygreen"}
+        className={"bg-transparent border-0 border-white "}
         onClick={() => changeLanguage("en")}
       >
         <div className={"flex flex-row"}>
-          <img className={"relative"} width={37} src={"/image/english.png"} />
+          <img
+            className={"self-center"}
+            width={37}
+            height={37}
+            src={"/image/english.png"}
+          />
           <div className={"ml-4"}>
-            <p className={"text-lg gilroy-medium "}>English</p>
+            <p className={"text-lg gilroy-medium self-center"}>English</p>
           </div>
         </div>
       </Button>
       <Button
-        className={
-          "bg-transparent border-0 border-white hover:bg-primarygreen my-4"
-        }
+        className={"bg-transparent border-0 border-white  my-4 pb-4"}
         onClick={() => changeLanguage("id")}
       >
         <div className={"flex flex-row"}>
-          <img className={"relative"} width={37} src={"/image/indonesia.png"} />
+          <img
+            className={"relative"}
+            width={37}
+            height={37}
+            src={"/image/indonesia.png"}
+          />
           <div className={"ml-4"}>
-            <p className={"text-lg gilroy-medium"}>Indonesia</p>
+            <p className={"text-lg gilroy-medium self-center"}>Indonesia</p>
           </div>
         </div>
       </Button>
     </div>
   );
   const [kelas, setKelas] = useState("notShadow");
+
   const handleScroll = () => {
     setKelas("notShadow");
   };
@@ -171,6 +232,47 @@ function layout({ children }) {
       handleScroll();
     };
   }, []);
+
+  useEffect(() => {
+    getCountArticle();
+    getCountStories();
+  }, []);
+  const getCountArticle = () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountArticle`, {
+      method: `GET`,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("get data testimonial ", res2);
+        if (res2.success) {
+          // setDataTestimonial(res2.data);
+          setCountArticle(res2.data);
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
+  };
+  const getCountStories = () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountCustomerStories`, {
+      method: `GET`,
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("get data testimonial ", res2);
+        if (res2.success) {
+          // setDataTestimonial(res2.data);
+          setCountStories(res2.data);
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
+  };
 
   const [navbar, setNavbar] = useState(true); //true for hidden
   const [navbarBottom, setNavbarBottom] = useState(true); //true for hidden
@@ -322,11 +424,38 @@ function layout({ children }) {
                 {t.career}
               </a>
             </Link>
-            <Link href="/blog">
-              <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
-                Blog
-              </a>
-            </Link>
+            {countArticle > 0 || countStories > 0 ? (
+              <Dropdown overlay={menuResources} placement="bottomCenter">
+                <Button
+                  type={"text"}
+                  style={{ background: "white" }}
+                  className={
+                    "ant-dropdown-link text-lg text-black hover:text-black"
+                  }
+                  onClick={(e) => e.preventDefault()}
+                >
+                  <p
+                    className={
+                      "text-base font-gilroyregular text-blackmig  menu-underlined hover:text-green-500"
+                    }
+                  >
+                    Resource{" "}
+                    <CaretDownOutlined
+                      style={{
+                        display: "inline-block",
+                        verticalAlign: "middle",
+                      }}
+                    />
+                  </p>
+                </Button>
+              </Dropdown>
+            ) : (
+              <Link href="">
+                <a className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500">
+                  Resource
+                </a>
+              </Link>
+            )}
             <Link href="/contactus">
               <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
                 {t.contactus}
@@ -591,24 +720,28 @@ function layout({ children }) {
                       Career&nbsp;in&nbsp;MIG
                     </p>
                   </Link>
-                  <Link href="/blog">
-                    <p
-                      className={
-                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
-                      }
-                    >
-                      Blog
-                    </p>
-                  </Link>
-                  <Link href="/contactus">
-                    <p
-                      className={
-                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
-                      }
-                    >
-                      Customer Stories
-                    </p>
-                  </Link>
+                  {countArticle > 0 && (
+                    <Link href="/blog">
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Blog
+                      </p>
+                    </Link>
+                  )}
+                  {countStories > 0 && (
+                    <Link href="/customerstories">
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Customer Stories
+                      </p>
+                    </Link>
+                  )}
                 </div>
                 <div className={"flex-col pr-2 my-2 lg:my-0 lg:px-16"}>
                   <p
@@ -630,7 +763,9 @@ function layout({ children }) {
                 </div>
                 <div className={"flex-col my-2 lg:my-0 lg:px-16"}>
                   <p
-                    className={"font-gilroysemibold py-1 text-sm text-blackmig"}
+                    className={
+                      "font-gilroysemibold py-1 text-base text-blackmig"
+                    }
                   >
                     Follow
                   </p>
@@ -641,7 +776,7 @@ function layout({ children }) {
                     />
                     <a
                       className={
-                        "font-gilroyregular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
+                        "font-gilroyregular text-[14px] cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -657,7 +792,7 @@ function layout({ children }) {
                     />
                     <a
                       className={
-                        "font-gilroyregular text-xs cursor-pointer menu-underlined py-1 hover:text-green-500"
+                        "font-gilroyregular text-[14px] cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
                       href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
                       target="_blank"

@@ -191,25 +191,25 @@ function LandingPage({ dataBlog }) {
               style={{ lineHeight: "150%" }}
               className={" text-xl font-gilroyregular text-blackmig mt-4"}
             >
-              We provide you with:
+              {t.weprovideyou}
             </p>
             <p
               style={{ lineHeight: "150%" }}
               className={" text-xl font-gilroyregular text-blackmig"}
             >
-              ✔️ Cutting-edge resources
+              {t.firstprovide}
             </p>
             <p
               style={{ lineHeight: "150%" }}
               className={" text-xl font-gilroyregular text-blackmig"}
             >
-              ✔️ Efficient and competitive cost
+              {t.secondprovide}
             </p>
             <p
               style={{ lineHeight: "150%" }}
               className={" text-xl font-gilroyregular text-blackmig"}
             >
-              ✔️ Guaranteed level of service
+              {t.thirdprovide}
             </p>
             <div className={"mt-[34px]"}>
               <div className={"flex flex-row justify-between w-[512px]"}>
@@ -533,7 +533,7 @@ function LandingPage({ dataBlog }) {
                   " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
-                Lighten up your heavy capital in IT infrastructure
+                {t.hardwaresubtitlelanding}
               </h2>
               <p
                 style={{ lineHeight: "150%" }}
@@ -591,7 +591,7 @@ function LandingPage({ dataBlog }) {
                   " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
-                Delivering tailor-made solutions for your business
+                {t.softwaresubtitlelanding}
               </h2>
               <p
                 style={{ lineHeight: "150%" }}
@@ -705,7 +705,7 @@ function LandingPage({ dataBlog }) {
               Hardware
             </p>
             <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
-              Lighten up your heavy capital in IT infrastructure
+              {t.hardwaresubtitlelanding}
             </p>
             <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
               {t.hardwaredescription}
@@ -807,196 +807,6 @@ function LandingPage({ dataBlog }) {
           </div>
         </div>
       </section>
-      {/* <section
-        className={
-          "youronestop hidden md:block md:pt-[49px] md:pb-12 bg-bgjoinmig"
-        }
-      >
-        <div className={"container mx-auto"}>
-          <p
-            className={
-              "text-xl text-center md:text-2xl font-gilroysemibold py-8 md:py-0"
-            }
-          >
-            A trusted partner after 15+ years of experience across Indonesia!
-          </p>
-          <div className={"flex justify-center md:mt-12"}>
-            <div className={"flex-col text-black md:w-40 mr-8 md:mr-16"}>
-              <p
-                className={
-                  "text-2xl text-primarygreen md:text-[32px] text-center font-gilroyregular font-semibold "
-                }
-              >
-                <CountUp end={45} />+
-              </p>
-              <p
-                className={
-                  "hidden md:block text-lg md:text-2xl  text-center text-darkgrey font-gilroysemibold mt-0.5"
-                }
-              >
-                cities
-              </p>
-              <p
-                className={
-                  "block md:hidden text-base md:text-xl text-center text-darkgrey font-gilroysemibold"
-                }
-              >
-                cities
-              </p>
-            </div>
-            <div className={"flex-col text-black md:w-[227px] mr-16"}>
-              <p
-                className={
-                  "text-2xl text-primarygreen md:text-[32px] text-center font-gilroyregular font-semibold"
-                }
-              >
-                <CountUp end={9000} />+
-              </p>
-              <p
-                className={
-                  "hidden w-[227px] md:block text-2xl text-center text-darkgrey font-gilroysemibold mt-0.5"
-                }
-              >
-                managed & leased devices
-              </p>
-              <p
-                className={
-                  "block md:hidden text-base md:text-xl text-center text-darkgrey font-gilroysemibold"
-                }
-              >
-                managed & leased devices
-              </p>
-            </div>
-            <div className={"flex-col text-black"}>
-              <p
-                className={
-                  "text-2xl text-primarygreen md:text-[32px] text-center font-gilroyregular font-semibold"
-                }
-              >
-                <CountUp end={100} />+
-              </p>
-              <p
-                className={
-                  "hidden md:block text-lg md:text-2xl text-center text-darkgrey font-gilroysemibold mt-0.5"
-                }
-              >
-                IT projects
-              </p>
-              <p
-                className={
-                  "block md:hidden text-base md:text-xl text-center text-darkgrey font-gilroysemibold"
-                }
-              >
-                IT projects
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className={"flex justify-between -mt-48"}>
-          <div className={"justify-start"}>
-            <img
-              style={{ width: "214px", height: "202px" }}
-              src="/image/landingpage/image-left.png"
-            />
-          </div>
-          <div className={"justify-end"}>
-            <img
-              style={{ width: "214px", height: "202px" }}
-              src="/image/landingpage/image-right.png"
-            />
-          </div>
-        </div>
-      </section> */}
-      {/*section trusted mobile */}
-      {/* <section
-        className={
-          "phonetrustedpartnermobile bg-bgjoinmig block md:hidden py-4 mt-12 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 md:relative md:bottom-32 text-center"
-        }
-      >
-        <div className={"container mx-auto"}>
-          <p className={"text-xl md:text-2xl font-gilroysemibold py-8 md:py-0"}>
-            A trusted partner after 15+ years of experience across Indonesia!
-          </p>
-          <div className="flex">
-            <div className={"justify-start self-end"}>
-              <img
-                style={{ width: "36px", height: "74px" }}
-                src="/image/landingpage/trusted-left.png"
-              />
-            </div>
-            <div className={"container mx-auto"}>
-              <div className={"flex justify-around"}>
-                <div
-                  className={
-                    "flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52"
-                  }
-                >
-                  <p
-                    className={
-                      "text-xl text-primarygreen md:text-5xl lg:text-5xl text-center font-gilroysemibold "
-                    }
-                  >
-                    <CountUp end={45} />+
-                  </p>
-                  <p
-                    className={
-                      "text-xs text-center font-gilroysemibold text-darkgrey"
-                    }
-                  >
-                    cities
-                  </p>
-                </div>
-                <div
-                  className={
-                    "flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52"
-                  }
-                >
-                  <p
-                    className={
-                      "text-xl text-primarygreen md:text-5xl lg:text-5xl text-center font-gilroysemibold "
-                    }
-                  >
-                    <CountUp end={9000} />+
-                  </p>
-                  <p
-                    className={
-                      "text-xs text-center font-gilroysemibold text-darkgrey"
-                    }
-                  >
-                    managed and leased devices
-                  </p>
-                </div>
-                <div
-                  className={
-                    "flex-col text-black p-1 md:px-4 md:py-2 mx-auto md:w-40 lg:w-52"
-                  }
-                >
-                  <p
-                    className={
-                      "text-xl text-primarygreen md:text-5xl lg:text-5xl text-center gilroy-semibold font-gilroysemibold"
-                    }
-                  >
-                    <CountUp end={100} />+
-                  </p>
-                  <p
-                    className={
-                      "text-xs text-center gilroy-semibold font-gilroysemibold text-darkgrey"
-                    }
-                  >
-                    IT projects
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className={"justify-end self-end"}>
-              <img
-                style={{ width: "36px", height: "74px" }}
-                src="/image/landingpage/trusted-right.png"
-              />
-            </div>
-          </div>
-        </div>
-      </section> */}
       {/* testimonial */}
       {dataTestimonial && (
         <section
@@ -1789,15 +1599,21 @@ function LandingPage({ dataBlog }) {
               alt=""
             />
           </div>
-          <div className={"w-[589px] justify-self-start"}>
+          <div className={"w-[600px] justify-self-start"}>
             <div className="flex flex-col items-start">
               <h2
                 style={{ lineHeight: "120%" }}
                 className="mb-2 text-[28px] font-gilroysemibold text-blackmig"
               >
-                Looking for jobs instead? Apply for Jobs
+                {t.joinmigsection}
               </h2>
-              <div className="flex flex-row items-center mt-5">
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={"text-2xl font-gilroysemibold text-blackmig mt-5"}
+              >
+                {t.joinmigsubtitle}
+              </h2>
+              <div className="flex flex-row items-center mt-3">
                 <div className="">
                   <img
                     src="/image/landingpage/career-icon2.png"
@@ -1809,7 +1625,7 @@ function LandingPage({ dataBlog }) {
                     style={{ lineHeight: "150%" }}
                     className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
                   >
-                    Hands-on experience from a variety of leading industries.
+                    {t.joinmigpoint1}
                   </p>
                 </div>
               </div>
@@ -1825,8 +1641,7 @@ function LandingPage({ dataBlog }) {
                     style={{ lineHeight: "150%" }}
                     className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
                   >
-                    Opportunities to find solutions and make a difference, with
-                    our support.
+                    {t.joinmigpoint2}
                   </p>
                 </div>
               </div>
@@ -1842,8 +1657,7 @@ function LandingPage({ dataBlog }) {
                     style={{ lineHeight: "150%" }}
                     className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
                   >
-                    Resources to enhance your personal and professional
-                    development.
+                    {t.joinmigpoint3}
                   </p>
                 </div>
               </div>
@@ -1851,7 +1665,7 @@ function LandingPage({ dataBlog }) {
                 <a href="/contactus">
                   <div className="flex mt-5 justify-end mr-5">
                     <p className="text-xl mr-2 text-primarygreen font-gilroysemibold">
-                      Know More
+                      {t.joinmigcta}
                     </p>
                     <img
                       className={"py-1"}
@@ -1965,7 +1779,7 @@ function LandingPage({ dataBlog }) {
               style={{ lineHeight: "120%" }}
               className={"text-[28px] font-gilroysemibold text-black"}
             >
-              Enjoy seamless tech solutions without the hassle.
+              {t.contactussectiontitle}
             </h2>
             <div
               className={
@@ -1973,10 +1787,10 @@ function LandingPage({ dataBlog }) {
               }
             >
               <p style={{ lineHeight: "120%" }}>
-                What technology solutions are you looking for?
+                {t.contactussectionsubtitle1}
               </p>
               <p style={{ lineHeight: "120%" }}>
-                Our team has the expertise and resources to meet your needs.
+                {t.contactussectionsubtitle2}
               </p>
             </div>
             <div className="mt-3.5 flex flex-row justify-center">

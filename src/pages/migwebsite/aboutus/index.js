@@ -124,21 +124,21 @@ function AboutUs({}) {
                 >
                   Hardware
                 </p>
-                <p
+                {/* <p
                   className={
                     "text-center text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
                   }
                 >
                   Lighten up your heavy capital in IT infrastructure
-                </p>
+                </p> */}
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
                     "text-center text-blackmig text-xl font-gilroyregular mt-5"
                   }
                 >
-                  Transform yours into managed service model, guaranteeing you
-                  with predictable monthly cost and excelent service level.
+                  Optimize your cost by leasing and maintenances variety of
+                  electronic equipments
                 </p>
 
                 <div className={"text-center mt-5"}>
@@ -186,21 +186,21 @@ function AboutUs({}) {
                 >
                   Software
                 </p>
-                <p
+                {/* <p
                   style={{ lineHeight: "150%" }}
                   className={
                     "text-center text-blackmig text-base font-gilroysemibold font-gilroysemibold mt-1 pb-[42.5px]"
                   }
                 >
                   Delivering custom-made software
-                </p>
+                </p> */}
                 <p
                   className={
-                    "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px]"
+                    "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
                   }
                 >
-                  Simplify and digitalize your business process. Customize your
-                  system with us.
+                  We support your companies to simplify and automate the process
+                  through digitalization
                 </p>
 
                 <div className={"text-center"}>
@@ -211,7 +211,7 @@ function AboutUs({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>Get Yours</p>
+                        <p className={"px-1"}>Build Now</p>
                         <img
                           className={"py-1 px-1"}
                           style={{ width: "15px" }}
@@ -248,22 +248,21 @@ function AboutUs({}) {
                 >
                   Talents
                 </p>
-                <p
+                {/* <p
                   className={
                     "text-center text-blackmig text-base font-gilroysemibold mt-1 pb-8"
                   }
                 >
                   Our people, your growth
-                </p>
+                </p> */}
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-center text-blackmig text-xl font-gilroyregular pb-8"
+                    "text-center text-blackmig text-xl font-gilroyregular pb-8 mt-5"
                   }
                 >
-                  Let us streamline your hiring process with on-demand
-                  expertise, giving you flexible headcounts and talents working
-                  period.
+                  We help you reduce complexity in talent sourcing and
+                  management
                 </p>
 
                 <div className={"text-center"}>
@@ -577,7 +576,7 @@ function AboutUs({}) {
           >
             Headquarter
           </p>
-          <p style={{ lineHeight: "120%" }} className={"text-xl "}>
+          <p style={{ lineHeight: "120%" }} className={"text-2xl "}>
             <span className="font-gilroysemibold text-darkgrey">
               Location:{" "}
             </span>
@@ -587,22 +586,32 @@ function AboutUs({}) {
           </p>
 
           <div className={"flex flex-row mt-3"}>
-            <p className={"font-gilroysemibold text-base text-darkgrey"}>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={"font-gilroysemibold text-xl text-darkgrey"}
+            >
               Phone:&nbsp;
             </p>
             <a href="tel:+62218314522">
-              <p className={"text-accentblue text-base underline"}>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={"text-accentblue text-xl underline"}
+              >
                 +62-21-831-4522
               </p>
             </a>
           </div>
           <div className={"flex flex-row mt-3"}>
-            <p className={"font-gilroysemibold text-base text-darkgrey"}>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={"font-gilroysemibold text-xl text-darkgrey"}
+            >
               Email:&nbsp;
             </p>
             <a
               href="mailto:help@mitrasolusi.group"
-              className={"text-accentblue text-base underline"}
+              style={{ lineHeight: "150%" }}
+              className={"text-accentblue text-xl underline"}
             >
               help@mitrasolusi.group
             </a>
