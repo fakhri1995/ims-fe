@@ -1,6 +1,7 @@
 import {
   CheckCircleTwoTone,
   CloudUploadOutlined,
+  ConsoleSqlOutlined,
   InboxOutlined,
 } from "@ant-design/icons";
 import {
@@ -298,7 +299,8 @@ function Hardware({}) {
   ];
 
   const deleteProduct = (index) => {
-    let arr_product = productSelected;
+    let arr_product = [...productSelected];
+    console.log("delete product ", index);
     arr_product.splice(index, 1);
     setProductSelected([...arr_product]);
   };
@@ -412,6 +414,7 @@ function Hardware({}) {
   };
 
   const handleAddAnotherProduct = () => {
+    console.log("oe ", statusEdit);
     if (
       productSelected.length == 0 ||
       urgently == null ||
@@ -439,6 +442,7 @@ function Hardware({}) {
         setMaxBudgetErrorStatus(true);
       }
     } else {
+      console.log("status edit ", statusEdit);
       if (statusEdit == true) {
         let array_hardwares = [];
         for (let i = 0; i < dataHardwareSummary.length; i++) {
@@ -494,13 +498,88 @@ function Hardware({}) {
     }
   };
 
+  const handleUpdateProduct = () => {
+    console.log("update ", statusEdit);
+    console.log("1 ", productSelected.length);
+    console.log("2 ", urgently);
+    console.log("3 ", manyTalent);
+    console.log("4 ", timeUsed);
+    console.log("5 ", maxBudget);
+    if (
+      productSelected.length == 0 ||
+      urgently == null ||
+      urgently == "" ||
+      manyTalent == null ||
+      manyTalent == 0 ||
+      timeUsed == null ||
+      timeUsed == "" ||
+      maxBudget == null ||
+      maxBudget == 0
+    ) {
+      if (productSelected.length == 0) {
+        setProductErrorStatus(true);
+      }
+      if (urgently == null || urgently == "") {
+        setUrgentlyErrorStatus(true);
+      }
+      if (manyTalent == null || manyTalent == 0) {
+        setManyTalentErrorStatus(true);
+      }
+      if (timeUsed == null || timeUsed == "") {
+        setTimeUsedErrorStatus(true);
+      }
+      if (maxBudget == null || maxBudget == 0) {
+        setMaxBudgetErrorStatus(true);
+      }
+    } else {
+      console.log("status edit ", statusEdit);
+
+      let array_hardwares = [];
+      for (let i = 0; i < dataHardwareSummary.length; i++) {
+        if (i == indexEdit) {
+          array_hardwares.push({
+            kindOfHardware: kindOfHardware,
+            product: productSelected,
+            manyTalent: manyTalent,
+            urgently: urgently,
+            timeUsed: timeUsed,
+            maxBudget: maxBudget,
+            details: details,
+            attachment: attachment,
+          });
+        } else {
+          array_hardwares.push({
+            kindOfHardware: dataHardware[i].kindOfHardware,
+            product: dataHardware[i].product,
+            manyTalent: dataHardware[i].manyTalent,
+            urgently: dataHardware[i].urgently,
+            timeUsed: dataHardware[i].timeUsed,
+            maxBudget: dataHardware[i].maxBudget,
+            details: dataHardware[i].details,
+            attachment: dataHardware[i].attachment,
+          });
+        }
+      }
+      setDataHardwareSummary([...array_hardwares]);
+      setStatusEdit(false);
+      notification.success({
+        message: "Edit Hardware Product success!",
+        duration: 3,
+      });
+
+      handleClearForm();
+    }
+  };
   const handleEdit = (index) => {
     setStatusEdit(true);
     setIndexEdit(index);
     setProductSelected(dataHardwareSummary[index].product);
     setKindOfHardware(dataHardwareSummary[index].kindOfHardware);
+    setMaxBudget(dataHardwareSummary[index].maxBudget);
+    setUrgently(dataHardwareSummary[index].urgently);
     setManyTalent(dataHardwareSummary[index].manyTalent);
     handleSetForm(index);
+    handleKindOfHardware(dataHardwareSummary[index].kindOfHardware);
   };
   const handleSetForm = (index) => {
     form.setFieldsValue({
@@ -662,10 +741,25 @@ function Hardware({}) {
     setDataProduct(newArr);
   };
   const handleInputProduct = (value) => {
-    console.log("value ", value);
-    const updatedCarsArray = [...productSelected, value];
-    setProductSelected(updatedCarsArray);
-    form.resetFields([product]);
+    let arr_product = productSelected.length > 0 ? productSelected : [];
+    arr_product.push(value);
+    setProductSelected([...arr_product]);
+    // form.resetFields([product]);
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      let numbersCopy = [];
+      let i = -1;
+
+      while (++i < productSelected.length) {
+        numbersCopy[i] = productSelected[i];
+      }
+      numbersCopy.push(e.target.value);
+      console.log("numbers copy ", numbersCopy);
+      setProductSelected([...numbersCopy]);
+      form.resetFields([product]);
+    }
   };
 
   const onChangeFile = async (info) => {
@@ -1473,17 +1567,17 @@ function Hardware({}) {
                         onPressEnter={(e) => {
                           handleInputProduct(e.target.value);
                         }}
-                        placeholder="'Enter product"
+                        placeholder="Enter product"
                       />
                     </Form.Item>
                   </div>
                   {console.log("product selected  render", productSelected)}
                   {productSelected.length > 0 && (
-                    <div className={"flex flex-row mt-3"}>
+                    <div className={"flex flex-wrap w-full mt-3"}>
                       {productSelected.map((data, index) => (
                         <div
                           className={
-                            "bg-transp45 rounded-[20px] py-1 pl-2 pr-1.5 flex flex-row mr-3"
+                            "bg-transp45 rounded-[20px] py-1 pl-2 pr-1.5 flex flex-row mr-3 mt-2"
                           }
                         >
                           <p
@@ -1493,15 +1587,11 @@ function Hardware({}) {
                           >
                             {data}
                           </p>
-                          <button
-                            className={"bg-transparent ml-2"}
+                          <img
                             onClick={() => deleteProduct(index)}
-                          >
-                            <img
-                              className={"w-5 h-5"}
-                              src="/image/hardware/cancel.png"
-                            />
-                          </button>
+                            className={"w-5 h-5"}
+                            src="/image/hardware/cancel.png"
+                          />
                         </div>
                       ))}
                     </div>
@@ -1514,12 +1604,13 @@ function Hardware({}) {
                       <div className={"flex flex-row mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
                           <button
-                            onClick={() => handleSuggestionHardware(data)}
+                            // onClick={() => handleSuggestionHardware(data)}
                             className={
                               " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
                             }
                           >
                             <p
+                              onClick={() => handleSuggestionHardware(data)}
                               className={
                                 "text-[18px] text-darkgrey font-gilroyregular"
                               }
@@ -1668,27 +1759,51 @@ function Hardware({}) {
                     >
                       <p className={"text-[18px] text-primarygreen"}>Back</p>
                     </button>
-                    <button
-                      onClick={form.submit}
-                      // type="submit"
-                      // onClick={handleAddAnotherProduct}
-                      className={
-                        "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
-                      }
-                    >
-                      <p
+                    {statusEdit ? (
+                      <button
+                        // onClick={form.submit}
+                        // type="submit"
+                        onClick={() => handleUpdateProduct()}
                         className={
-                          "text-[18px] text-primarygreen font-gilroysemibold"
+                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                         }
                       >
-                        I want to add another product
-                      </p>
-                      <img
-                        className={"self-center"}
-                        style={{ width: "20px", height: "20px" }}
-                        src="/image/plus.png"
-                      />
-                    </button>
+                        <p
+                          className={
+                            "text-[18px] text-primarygreen font-gilroysemibold"
+                          }
+                        >
+                          I want to Update product
+                        </p>
+                        <img
+                          className={"self-center"}
+                          style={{ width: "20px", height: "20px" }}
+                          src="/image/plus.png"
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={form.submit}
+                        // type="submit"
+                        // onClick={handleAddAnotherProduct}
+                        className={
+                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                        }
+                      >
+                        <p
+                          className={
+                            "text-[18px] text-primarygreen font-gilroysemibold"
+                          }
+                        >
+                          I want to add another product
+                        </p>
+                        <img
+                          className={"self-center"}
+                          style={{ width: "20px", height: "20px" }}
+                          src="/image/plus.png"
+                        />
+                      </button>
+                    )}
                   </div>
                 </Form>
               </div>
@@ -1894,12 +2009,17 @@ function Hardware({}) {
                                   "text-blackmig text-xs font-gilroysemibold"
                                 }
                               >
-                                Hardware:
-                                <span>
-                                  {data.product.map((data, index) => {
-                                    data + " , ";
-                                  })}
-                                </span>
+                                Hardware:{" "}
+                                {data.product.map((data, index) => (
+                                  <span
+                                    className={
+                                      "text-xs text-blackmig font-gilroyregular"
+                                    }
+                                  >
+                                    {data}
+                                    {" ,"}
+                                  </span>
+                                ))}
                               </p>
                             </div>
                           </div>

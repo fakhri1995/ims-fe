@@ -1391,7 +1391,7 @@ function Talents({}) {
                       <InputNumber
                         // value={manyTalent}
                         style={{
-                          border: "1px solid #B8B8B8",
+                          // border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
                         }}
@@ -1499,7 +1499,7 @@ function Talents({}) {
                       <InputNumber
                         // value={manyTalent}
                         style={{
-                          border: "1px solid #B8B8B8",
+                          // border: "1px solid #B8B8B8",
                           height: "37px",
                           width: "170px",
                         }}
@@ -1551,7 +1551,7 @@ function Talents({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        I want to add another product
+                        I want to request more talent
                       </p>
                       <img
                         className={"self-center"}

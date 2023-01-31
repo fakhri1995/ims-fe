@@ -212,7 +212,7 @@ function Software({}) {
     "New idea or project",
     "Existing project that needs more resources",
     "Ongoing assistance or consultation",
-    "None of the above, I'm just looking to learn more about Toptal",
+    "None of the above, I just want to know about the service",
   ];
   const [heightt, setHeightt] = useState("");
   const NextArrow = (props) => {
