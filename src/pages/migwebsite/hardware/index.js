@@ -326,8 +326,9 @@ function Hardware({}) {
       for (let deviceObject of devicesObjectList) {
         Object.assign(allDevicesObject, deviceObject);
       }
+      let payloadFormData;
 
-      let dataSoftwarePost = {
+      let dataHardwarePost = {
         company_name: dataHardware.company_name,
         contact_name: dataHardware.name,
         company_email: dataHardware.company_email,
@@ -338,16 +339,19 @@ function Hardware({}) {
           moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
       };
       let inventoryDataWithDevice = {
-        ...dataSoftwarePost,
+        ...dataHardwarePost,
         ...allDevicesObject,
       };
+      payloadFormData = objectToFormData(inventoryDataWithDevice);
+
+      console.log("datahardware ", payloadFormData);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionHardware`, {
         method: "POST",
         headers: {
           // "Content-Type": "multipart/form-data",
           Accept: "*/*",
         },
-        body: dataHardwarePost,
+        body: payloadFormData,
       })
         .then((res) => res.json())
         .then((res2) => {
