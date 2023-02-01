@@ -45,6 +45,7 @@ export default {
   softwarebuttontitle: "Bangun Software",
   joinmigsection: "Sedang mencari pekerjaan? Lamar pekerjaan sekarang",
   joinmigsubtitle: "Gabung jadi talent MIGhty, dapatkan keuntungan ini:",
+  contactuscta: "Hubungi Kami",
   joinmigpoint1:
     "Kesempatan untuk dapat hands-on experience dari berbagai industri terkemuka.",
   joinmigpoint2:

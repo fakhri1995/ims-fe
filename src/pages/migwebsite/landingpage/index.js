@@ -1,6 +1,7 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Card, Col, Row, Space } from "antd";
+import { data } from "flickity";
 import Head from "next/head";
 import Linkk from "next/link";
 import { useRouter } from "next/router";
@@ -154,7 +155,7 @@ function LandingPage({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] px-[113.5px]"
+          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:px-[113.5px]"
         }
       >
         {/* Browser View */}
@@ -386,7 +387,7 @@ function LandingPage({ dataBlog }) {
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
-                Providing the best IT solution for your business needs
+                Accelerate your business, fortify your tech capabilities with us
               </p>
             </div>
           </div>
@@ -408,9 +409,34 @@ function LandingPage({ dataBlog }) {
               {t.softwaredevelopment}
             </span>
             ,{t.and} <span className="font-gilroysemibold">{t.techtalent}</span>
-            . We
-            {t.landingpagesection3}
+            .
           </p>
+          <div className={"text-center"}>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-sm font-gilroyregular text-blackmig mt-4"}
+            >
+              {t.weprovideyou}
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-sm font-gilroyregular text-blackmig"}
+            >
+              {t.firstprovide}
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-sm font-gilroyregular text-blackmig"}
+            >
+              {t.secondprovide}
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={" text-sm font-gilroyregular text-blackmig"}
+            >
+              {t.thirdprovide}
+            </p>
+          </div>
           <div className={"flex-col center"}>
             <div className={"grid justify-items-center text-center"}>
               <Linkk href="/freeconsultation">
@@ -486,8 +512,7 @@ function LandingPage({ dataBlog }) {
               <span className={"text-primarygreen"}>45+ </span>
               {t.cities},<span className={"text-primarygreen"}> 9000+ </span>
               {t.managed}.<span className={"text-primarygreen"}> 100+ </span>
-              {t.techproject}.<span className={"text-primarygreen"}> 10+ </span>
-              {t.companies}.
+              {t.techproject}.
             </p>
           </div>
         </div>
@@ -680,16 +705,16 @@ function LandingPage({ dataBlog }) {
       >
         <div className={"container mx-auto"}>
           <p className={"text-xl md:text-2xl font-gilroysemibold py-8 md:py-0"}>
-            We are your one stop{" "}
+            Discover how our expertise{" "}
             <span
               style={{
                 borderBottom: "solid 3px #188E4D",
                 paddingBottom: "2.5px",
               }}
             >
-              cost efficient
+              can enhance
             </span>{" "}
-            IT solutions
+            your business
           </p>
         </div>
         <div>
@@ -743,7 +768,7 @@ function LandingPage({ dataBlog }) {
               Software
             </p>
             <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
-              Automate your business
+              Delivering tailor-made solutions for your business
             </p>
             <p className="text-sm text-blackmig text-left mt-1 font-gilroyregular">
               {t.softwaredescription}
@@ -1191,194 +1216,107 @@ function LandingPage({ dataBlog }) {
         </section>
       )}
       {/* testimonial mobile */}
-      <section
-        className={
-          "sectiontestimonialmobile block md:hidden bg-white pt-8 pb-14 px-[30px] md:px-10"
-        }
-      >
-        <p
+      {dataTestimonial && (
+        <section
           className={
-            "text-xl  text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
+            "sectiontestimonialmobile block md:hidden bg-white pt-8 pb-14 px-[30px] md:px-10"
           }
         >
-          What they say{" "}
-          <span
-            style={{
-              borderBottom: "solid 3px #188E4D",
-              paddingBottom: "2.5px",
-            }}
+          <p
+            className={
+              "text-xl  text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
+            }
           >
-            about us
-          </span>{" "}
-          ?
-        </p>
-        <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
-          <Slider {...sliderSettingsPhone}>
-            <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
-              <div className={"flex flex-row justify-between"}>
-                <p className={"font-gilroybold text-sm text-blackmig"}>
-                  Ini Judul Artikel
-                </p>
-                <img
-                  className="rounded-full"
-                  src="/image/landingpage/testimonial-client.png"
-                  style={{ height: "24px", width: "28.24px" }}
-                  alt=""
-                />
-              </div>
-              <p className={"mt-1 text-primarygreen text-xs font-gilroybold"}>
-                KB Bukopin
-              </p>
-              <p className={"mt-2 text-blackmig text-xs font-gilroyregular"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <div
-                className={"mt-2 bg-white p-3"}
-                style={{ boxShadow: "0px 16px 40px rgba(112, 144, 176, 0.2)" }}
-              >
-                <p className={"text-xs text-blackmig"}>
-                  “MIG catalyzes your core business with{" "}
-                  <span className={"font-gilroysemibold"}>
-                    IT hardware solutions, software development, and tech
-                    talents.{" "}
-                  </span>{" "}
-                  We serve you the{" "}
-                  <span className={"font-gilroysemibold"}>best resource</span>{" "}
-                  with low cost, but high maintenance.”
-                </p>
-                <div className={"mt-3 border border-dividermig w-1/2"} />
-                <p
-                  className={
-                    "mt-1 text-[10px] font-gilroysemibold text-blackmig"
-                  }
-                >
-                  Mayfa Shadrina Siddi
-                </p>
-                <p
-                  className={
-                    "mt-1 text-[10px] font-gilroyregular text-blackmig"
-                  }
-                >
-                  CTO of Bukopin
-                </p>
-              </div>
-              <div className={"mt-3 flex justify-end"}>
-                <button
-                  className={
-                    "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                  }
-                >
-                  <p className={"text-base text-white font-gilroysemibold"}>
-                    Read Story
+            What they say{" "}
+            <span
+              style={{
+                borderBottom: "solid 3px #188E4D",
+                paddingBottom: "2.5px",
+              }}
+            >
+              about us
+            </span>{" "}
+            ?
+          </p>
+          <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
+            <Slider {...sliderSettingsPhone}>
+              {dataTestimonial.map((data1) => (
+                <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
+                  <div className={"flex flex-row justify-between"}>
+                    <p className={"font-gilroybold text-sm text-blackmig"}>
+                      {data1.title}
+                    </p>
+                    {data1.company_logo ? (
+                      <img
+                        className="rounded-full"
+                        src={generateStaticAssetUrl(data1.company_logo.link)}
+                        style={{ height: "24px", width: "28.24px" }}
+                        alt=""
+                      />
+                    ) : (
+                      <img
+                        className="rounded-full"
+                        src="/image/landingpage/testimonial-client.png"
+                        style={{ height: "24px", width: "28.24px" }}
+                        alt=""
+                      />
+                    )}
+                  </div>
+                  <p
+                    className={"mt-1 text-primarygreen text-xs font-gilroybold"}
+                  >
+                    KB Bukopin
                   </p>
-                  <img
-                    className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                    src="/image/landingpage/arrow_forward_ios2.png"
-                    alt=""
-                  />
-                </button>
-              </div>
-            </div>
-            <div className={"p-4 bg-lightblue rounded-lg"}>
-              <div className={"flex flex-row justify-between"}>
-                <p className={"font-gilroybold text-sm text-blackmig"}>
-                  Ini Judul Artikel
-                </p>
-                <img
-                  className="rounded-full"
-                  src="/image/landingpage/testimonial-client.png"
-                  style={{ height: "24px", width: "28.24px" }}
-                  alt=""
-                />
-              </div>
-              <p className={"mt-1 text-primarygreen text-xs font-gilroybold"}>
-                KB Bukopin
-              </p>
-              <p className={"mt-2 text-blackmig text-xs font-gilroyregular"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <p
-                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <p
-                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <div className={"mt-[40px] flex justify-end"}>
-                <button
-                  className={
-                    "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                  }
-                >
-                  <p className={"text-base text-white font-gilroysemibold"}>
-                    Read Story
+                  <p
+                    className={"mt-2 text-blackmig text-xs font-gilroyregular"}
+                  >
+                    {data1.description}
                   </p>
-                  <img
-                    className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                    src="/image/landingpage/arrow_forward_ios2.png"
-                    alt=""
-                  />
-                </button>
-              </div>
-            </div>
-            <div className={"p-4 bg-lightgrey rounded-lg"}>
-              <div className={"flex flex-row justify-between"}>
-                <p className={"font-gilroybold text-sm text-blackmig"}>
-                  Ini Judul Artikel
-                </p>
-                <img
-                  className="rounded-full"
-                  src="/image/landingpage/testimonial-client.png"
-                  style={{ height: "24px", width: "28.24px" }}
-                  alt=""
-                />
-              </div>
-              <p className={"mt-1 text-primarygreen text-xs font-gilroybold"}>
-                KB Bukopin
-              </p>
-              <p className={"mt-2 text-blackmig text-xs font-gilroyregular"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <p
-                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <p
-                className={"mt-[18px] text-blackmig text-xs font-gilroyregular"}
-              >
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <div className={"mt-[40px] flex justify-end"}>
-                <button
-                  className={
-                    "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                  }
-                >
-                  <p className={"text-base text-white font-gilroysemibold"}>
-                    Read Story
-                  </p>
-                  <img
-                    className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                    src="/image/landingpage/arrow_forward_ios2.png"
-                    alt=""
-                  />
-                </button>
-              </div>
-            </div>
-          </Slider>
-        </div>
-      </section>
+                  <div
+                    className={"mt-2 bg-white p-3"}
+                    style={{
+                      boxShadow: "0px 16px 40px rgba(112, 144, 176, 0.2)",
+                    }}
+                  >
+                    <p className={"text-xs text-blackmig"}>“{data1.quote}”</p>
+                    <div className={"mt-3 border border-dividermig w-1/2"} />
+                    <p
+                      className={
+                        "mt-1 text-[10px] font-gilroysemibold text-blackmig"
+                      }
+                    >
+                      {data1.author}
+                    </p>
+                    <p
+                      className={
+                        "mt-1 text-[10px] font-gilroyregular text-blackmig"
+                      }
+                    >
+                      {data1.job_title}
+                    </p>
+                  </div>
+                  <div className={"mt-3 flex justify-end"}>
+                    <button
+                      className={
+                        "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
+                      }
+                    >
+                      <p className={"text-base text-white font-gilroysemibold"}>
+                        Read Story
+                      </p>
+                      <img
+                        className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                        src="/image/landingpage/arrow_forward_ios2.png"
+                        alt=""
+                      />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </Slider>
+          </div>
+        </section>
+      )}
       <section className={"session4landingpage py-4 px-4 md:py-16 text-center"}>
         <div className={"container mx-auto"}>
           <h2
@@ -1609,7 +1547,7 @@ function LandingPage({ dataBlog }) {
               </h2>
               <h2
                 style={{ lineHeight: "120%" }}
-                className={"text-2xl font-gilroysemibold text-blackmig mt-5"}
+                className={"text-2xl font-gilroyregular text-blackmig mt-5"}
               >
                 {t.joinmigsubtitle}
               </h2>
@@ -1662,7 +1600,7 @@ function LandingPage({ dataBlog }) {
                 </div>
               </div>
               <div className="mt-3">
-                <a href="/contactus">
+                <a href="/joinourteam">
                   <div className="flex mt-5 justify-end mr-5">
                     <p className="text-xl mr-2 text-primarygreen font-gilroysemibold">
                       {t.joinmigcta}
@@ -1850,7 +1788,7 @@ function LandingPage({ dataBlog }) {
                 }
               >
                 <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
+                  <p className={"px-1"}>{t.contactuscta}</p>
                   <img
                     className={"py-1 px-1"}
                     style={{ width: "15px" }}
