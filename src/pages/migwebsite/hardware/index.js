@@ -326,8 +326,9 @@ function Hardware({}) {
       for (let deviceObject of devicesObjectList) {
         Object.assign(allDevicesObject, deviceObject);
       }
+      let payloadFormData;
 
-      let dataSoftwarePost = {
+      let dataHardwarePost = {
         company_name: dataHardware.company_name,
         contact_name: dataHardware.name,
         company_email: dataHardware.company_email,
@@ -338,16 +339,19 @@ function Hardware({}) {
           moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
       };
       let inventoryDataWithDevice = {
-        ...dataSoftwarePost,
+        ...dataHardwarePost,
         ...allDevicesObject,
       };
+      payloadFormData = objectToFormData(inventoryDataWithDevice);
+
+      console.log("datahardware ", payloadFormData);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionHardware`, {
         method: "POST",
         headers: {
           // "Content-Type": "multipart/form-data",
           Accept: "*/*",
         },
-        body: dataHardwarePost,
+        body: payloadFormData,
       })
         .then((res) => res.json())
         .then((res2) => {
@@ -1598,7 +1602,7 @@ function Hardware({}) {
                   )}
                   <div className={"mt-3"}>
                     <p className={"text-base text-blackmig"}>
-                      Popular products in Workstation
+                      Popular products in {kindOfHardware ? kindOfHardware : ""}
                     </p>
                     {hardwareSuggestion.length > 0 && (
                       <div className={"flex flex-row mt-3"}>
@@ -1638,7 +1642,7 @@ function Hardware({}) {
                           {" "}
                           How many product in{" "}
                           <span className={"font-gilroysemibold text-blackmig"}>
-                            Workstation{" "}
+                            {kindOfHardware ? kindOfHardware : ""}{" "}
                           </span>
                           you need? (pieces)
                         </p>
@@ -1656,8 +1660,8 @@ function Hardware({}) {
                         name={"manyproduct"}
                         // max={10}
                         style={{
-                          border: "1px solid #B8B8B8",
-                          height: "37px",
+                          // border: "1px solid #B8B8B8",
+                          // height: "37px",
                           width: "170px",
                           fontSize: "16px",
                         }}
@@ -1690,7 +1694,7 @@ function Hardware({}) {
                         // max={10}
                         style={{
                           // border: "1px solid #B8B8B8",
-                          height: "37px",
+                          // height: "37px",
                           width: "170px",
                           fontSize: "16px",
                         }}
