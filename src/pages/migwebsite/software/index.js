@@ -627,9 +627,9 @@ function Software({}) {
                       >
                         <InputNumber
                           style={{
-                            border: "1px solid #B8B8B8",
+                            // border: "1px solid #B8B8B8",
                             width: "132px",
-                            height: "37px",
+                            // height: "37px",
                             fontSize: "16px",
                           }}
                           name={"from"}
@@ -664,9 +664,9 @@ function Software({}) {
                       >
                         <InputNumber
                           style={{
-                            border: "1px solid #B8B8B8",
+                            // border: "1px solid #B8B8B8",
                             width: "132px",
-                            height: "37px",
+                            // height: "37px",
                             fontSize: "16px",
                           }}
                           name={"Budget Maximal"}

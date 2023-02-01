@@ -300,10 +300,14 @@ function Talents({}) {
       setShowEmailError(true);
       setEmailError("you must filled email first");
     } else if (
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\[A-Z]{2,4}$/i.test(dataPeople.company_email)
+      dataPeople.company_email
+        .toLowerCase()
+        .match(
+          /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        )
     ) {
-      setShowEmailError(true);
-      setEmailError("your email is invalid");
+      setShowEmailError(false);
+      setShowform(true);
     } else {
       setShowEmailError(false);
       setShowform(true);
@@ -422,6 +426,7 @@ function Talents({}) {
         }
       }
       setDataTalents([...array_talents]);
+      setStatusEdit(false);
       notification.success({
         message: "Edit Talent success!",
         duration: 3,
@@ -460,6 +465,7 @@ function Talents({}) {
     form.resetFields(["urgently_need"]);
     form.resetFields(["max_budget"]);
     form.resetFields(["Details"]);
+    setProductSelected([]);
   };
 
   const handleKindOfTalent = (value) => {
@@ -766,14 +772,17 @@ function Talents({}) {
                   onFinish={() => handleSubmit("third")}
                   form={form}
                 >
-                  <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={"text-[30px] text-blackmig font-gilroysemibold"}
+                  >
                     General Information
                   </p>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
                   <div className={"mt-9"}>
                     <Form.Item
                       name={"type project"}
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="How many people are employed at your company?"
                       rules={[{ required: true }]}
                     >
@@ -785,7 +794,7 @@ function Talents({}) {
                         <Space direction="vertical">
                           {dataTypeProject.map((name) => (
                             <Radio
-                              className="text-blackmig text-sm"
+                              className="text-blackmig text-base"
                               value={name}
                             >
                               {name}
@@ -798,7 +807,7 @@ function Talents({}) {
                   <div className={"mt-9"}>
                     <Form.Item
                       name={"kind project"}
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="What kind of project are you hiring for?"
                       rules={[{ required: true }]}
                     >
@@ -810,7 +819,7 @@ function Talents({}) {
                         <Space direction="vertical">
                           {dataKindProject.map((name) => (
                             <Radio
-                              className="text-blackmig text-sm"
+                              className="text-blackmig text-base"
                               value={name}
                             >
                               {name}
@@ -826,14 +835,14 @@ function Talents({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("first")}
                     >
-                      <p className={"text-base text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>Back</p>
                     </button>
                     <button
                       className={
                         "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
-                      <p className={"text-base text-white"}>Next</p>
+                      <p className={"text-[18px] text-white"}>Next</p>
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
@@ -874,7 +883,7 @@ function Talents({}) {
                       </p>
                       <p
                         className={
-                          "mt-4 text-base text-blackmig font-gilroyregular"
+                          "mt-4 text-[18px] text-blackmig font-gilroyregular"
                         }
                       >
                         Are you sure you want to remove talent{" "}
@@ -888,7 +897,9 @@ function Talents({}) {
                       className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
                       onClick={handleDeleteConfirm}
                     >
-                      <p className={"text-base text-white font-gilroysemibold"}>
+                      <p
+                        className={"text-[18px] text-white font-gilroysemibold"}
+                      >
                         Yes, delete talent request
                       </p>
                     </button>
@@ -900,7 +911,7 @@ function Talents({}) {
                     >
                       <p
                         className={
-                          "text-base text-primarygreen font-gilroysemibold"
+                          "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
                         Cancel
@@ -938,7 +949,7 @@ function Talents({}) {
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
                         className={
-                          "mt-4 text-base text-blackmig font-gilroyregular"
+                          "mt-4 text-[18px] text-blackmig font-gilroyregular"
                         }
                       >
                         Are you sure you want to submit your request with only{" "}
@@ -952,7 +963,9 @@ function Talents({}) {
                       className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
                       onClick={handleSubmitConfirm}
                     >
-                      <p className={"text-base text-white font-gilroysemibold"}>
+                      <p
+                        className={"text-[18px] text-white font-gilroysemibold"}
+                      >
                         Yes, continue with {dataTalents.length} talent
                       </p>
                     </button>
@@ -964,7 +977,7 @@ function Talents({}) {
                     >
                       <p
                         className={
-                          "text-base text-primarygreen font-gilroysemibold"
+                          "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
                         No, I want to complete my request{" "}
@@ -972,10 +985,13 @@ function Talents({}) {
                     </button>
                   </div>
                 </Modal>
-                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
                   Talent Information
                 </p>
-                <p className={"mt-9"}>
+                <p className={"mt-9 text-base"}>
                   What kind of talent are you looking for?
                 </p>
                 <Form
@@ -1024,7 +1040,7 @@ function Talents({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1076,7 +1092,7 @@ function Talents({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1128,7 +1144,7 @@ function Talents({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1180,7 +1196,7 @@ function Talents({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1232,7 +1248,7 @@ function Talents({}) {
                         </div>
                         <div
                           className={
-                            "mt-1 mb-1 text-center text-sm text-blackmig "
+                            "mt-1 mb-1 text-center text-base text-blackmig "
                           }
                         >
                           <p
@@ -1270,7 +1286,11 @@ function Talents({}) {
                     >
                       <Input
                         value={product}
-                        style={{ border: "1px solid #B8B8B8", height: "37px" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          height: "37px",
+                          fontSize: "16px",
+                        }}
                         name={"product"}
                         onChange={(e) => {
                           setProduct(e.target.value);
@@ -1290,7 +1310,7 @@ function Talents({}) {
                         >
                           <p
                             className={
-                              "text-sm text-blackmig font-gilroyregular"
+                              "text-base text-blackmig font-gilroyregular"
                             }
                           >
                             {data}
@@ -1310,7 +1330,7 @@ function Talents({}) {
                   )}
                   {kindOfTalent != null && (
                     <div className={"mt-4"}>
-                      <p className={"text-sm text-blackmig"}>
+                      <p className={"text-base text-blackmig"}>
                         Popular roles or skills for{" "}
                         {kindOfTalent == "Engineering"
                           ? "Software Engineer"
@@ -1349,7 +1369,7 @@ function Talents({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="level_employee"
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="What level of employee you would like to see in your new hire?"
                       rules={[{ required: true }]}
                     >
@@ -1372,7 +1392,7 @@ function Talents({}) {
                     <Form.Item
                       // name={"product"}
                       name={"many_talent"}
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label={
                         <p className={"text-blackmig"}>
                           How many talent in{" "}
@@ -1392,7 +1412,7 @@ function Talents({}) {
                         // value={manyTalent}
                         style={{
                           // border: "1px solid #B8B8B8",
-                          height: "37px",
+
                           width: "170px",
                         }}
                         name={"many_talent"}
@@ -1407,19 +1427,24 @@ function Talents({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
+                    <p
+                      className={"text-blackmig text-base font-gilroysemibold"}
+                    >
                       2. Additional Information
                     </p>
                   </div>
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="urgently_need"
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="How soon do you need the talent?"
                       rules={[{ required: true }]}
                     >
                       <Select
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="urgently_need"
                         onChange={(value) => {
@@ -1441,12 +1466,15 @@ function Talents({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="time_used"
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="How long do you need the the talent?"
                       rules={[{ required: true }]}
                     >
                       <Select
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="time_used"
                         onChange={(value) => {
@@ -1465,12 +1493,15 @@ function Talents({}) {
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
                       name="open_remote"
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="Are you open in hiring our remote talent? (work from home)"
                       rules={[{ required: true }]}
                     >
                       <Select
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="open_remote"
                         onChange={(value) => {
@@ -1488,7 +1519,7 @@ function Talents({}) {
                     <Form.Item
                       // name={"product"}
                       name={"max_budget"}
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label={
                         <p className={"text-blackmig"}>
                           What is your maximum budget for your new hire?
@@ -1500,6 +1531,7 @@ function Talents({}) {
                         // value={manyTalent}
                         style={{
                           // border: "1px solid #B8B8B8",
+                          fontSize: "16px",
                           height: "37px",
                           width: "170px",
                         }}
@@ -1517,12 +1549,15 @@ function Talents({}) {
                     </Form.Item>
                     <Form.Item
                       name={"Details"}
-                      className={"font-gilroyregular text-xl"}
+                      className={"font-gilroyregular text-base"}
                       label="Details (Optional)"
                       // rules={[{ required: true }]}
                     >
                       <TextArea
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         name={"Details"}
                         onChange={(value) => {
                           setDetails(value.target.value);
@@ -1538,7 +1573,7 @@ function Talents({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("second")}
                     >
-                      <p className={"text-base text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>Back</p>
                     </button>
                     <button
                       onClick={handleAddAnotherProduct}
@@ -1548,10 +1583,12 @@ function Talents({}) {
                     >
                       <p
                         className={
-                          "text-base text-primarygreen font-gilroysemibold"
+                          "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
-                        I want to request more talent
+                        {statusEdit
+                          ? "I want to Update Talent"
+                          : "I want to request more talent"}
                       </p>
                       <img
                         className={"self-center"}
@@ -1565,7 +1602,10 @@ function Talents({}) {
             ) : (
               <div className="w-[52%]">
                 {console.log("form active ", formActive)}
-                <p className={"text-2xl text-blackmig font-gilroysemibold"}>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
                   Choose Meeting Date
                 </p>
                 <div
@@ -1574,7 +1614,7 @@ function Talents({}) {
                   }
                 >
                   <img src={"image/software/information-circle.png"} />
-                  <p className={"ml-3 text-sm text-blackmig self-center"}>
+                  <p className={"ml-3 text-base text-blackmig self-center"}>
                     Please choose a meeting date & time with Mitramas Infosys
                     Global
                   </p>
@@ -1586,12 +1626,14 @@ function Talents({}) {
                     </div>
                   </div>
                   <div className={"ml-8"}>
-                    <p className={"text-xs text-blackmig font-gilroysemibold"}>
+                    <p
+                      className={"text-base text-blackmig font-gilroysemibold"}
+                    >
                       Choose Time
                     </p>
                     <p
                       className={
-                        "font-xs text-blackmig font-gilroyregular mt-1"
+                        "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
                       Meeting duration: 30 minutes
@@ -1599,7 +1641,7 @@ function Talents({}) {
                     <div className={"mt-4 flex flex-row"}>
                       <div
                         className={
-                          "text-xs text-blackmig font-gilroysemibold w-[174px]"
+                          "text-base text-blackmig font-gilroysemibold w-[174px]"
                         }
                       >
                         {dataMeetingTime.map((data) => (
@@ -1629,7 +1671,7 @@ function Talents({}) {
                       </div>
                       <div
                         className={
-                          "text-xs text-blackmig font-gilroysemibold ml-4 w-[174px]"
+                          "text-base text-blackmig font-gilroysemibold ml-4 w-[174px]"
                         }
                       >
                         {dataMeetingTime2.map((data) => (
@@ -1661,17 +1703,17 @@ function Talents({}) {
                   </div>
                 </div>
                 <div className={"mt-[35px]"}>
-                  <p className={"text-sm text-blackmig font-gilroyregular"}>
+                  <p className={"text-base text-blackmig font-gilroyregular"}>
                     *Meeting Time
                   </p>
 
                   {valueDateTemp == null ? (
-                    <p className={"mt-1 text-redmig text-xs"}>
+                    <p className={"mt-1 text-redmig text-base"}>
                       Please choose your date first on the calendar
                     </p>
                   ) : (
                     <div
-                      className={"text-sm text-blackmig font-gilroysemibold"}
+                      className={"text-base text-blackmig font-gilroysemibold"}
                     >
                       <p className={""}>
                         {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
@@ -1692,7 +1734,7 @@ function Talents({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("third")}
                   >
-                    <p className={"text-base text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>Back</p>
                   </button>
                   <button
                     type={"submit"}
@@ -1701,7 +1743,7 @@ function Talents({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Submit</p>
+                    <p className={"text-[18px] text-white"}>Submit</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -1798,23 +1840,25 @@ function Talents({}) {
                     <button
                       onClick={handleSubmitTalents}
                       className={
-                        "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
+                        "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] rounded"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
                         <p
-                          className={"text-white text-base font-gilroysemibold"}
+                          className={
+                            "text-white text-[18px] font-gilroysemibold"
+                          }
                         >
                           Submit Request
                         </p>
                         <div
                           className={
-                            "w-[22px] h-[22px] bg-white rounded-[100px] items-center self-center"
+                            "w-[30px] h-[30px] ml-4 bg-white rounded-[100px] items-center self-center"
                           }
                         >
                           <p
                             className={
-                              "text-primarygreen text-base font-gilroysemibold"
+                              "text-primarygreen text-[18px] font-gilroysemibold"
                             }
                           >
                             {dataTalents.length}

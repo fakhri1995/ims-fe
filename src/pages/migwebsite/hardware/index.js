@@ -1602,7 +1602,7 @@ function Hardware({}) {
                   )}
                   <div className={"mt-3"}>
                     <p className={"text-base text-blackmig"}>
-                      Popular products in Workstation
+                      Popular products in {kindOfHardware ? kindOfHardware : ""}
                     </p>
                     {hardwareSuggestion.length > 0 && (
                       <div className={"flex flex-row mt-3"}>
@@ -1642,7 +1642,7 @@ function Hardware({}) {
                           {" "}
                           How many product in{" "}
                           <span className={"font-gilroysemibold text-blackmig"}>
-                            Workstation{" "}
+                            {kindOfHardware ? kindOfHardware : ""}{" "}
                           </span>
                           you need? (pieces)
                         </p>
@@ -1660,8 +1660,8 @@ function Hardware({}) {
                         name={"manyproduct"}
                         // max={10}
                         style={{
-                          border: "1px solid #B8B8B8",
-                          height: "37px",
+                          // border: "1px solid #B8B8B8",
+                          // height: "37px",
                           width: "170px",
                           fontSize: "16px",
                         }}
@@ -1694,7 +1694,7 @@ function Hardware({}) {
                         // max={10}
                         style={{
                           // border: "1px solid #B8B8B8",
-                          height: "37px",
+                          // height: "37px",
                           width: "170px",
                           fontSize: "16px",
                         }}
