@@ -571,12 +571,12 @@ function AboutUs({}) {
           <p
             style={{ lineHeight: "120%" }}
             className={
-              "font-gilroysemibold pb-2 text-xl md:text2xl text-blackmig"
+              "font-gilroysemibold pb-2 text-xl md:text-2xl text-blackmig"
             }
           >
             Headquarter
           </p>
-          <p style={{ lineHeight: "120%" }} className={"text-2xl "}>
+          <p style={{ lineHeight: "120%" }} className={"text-xl "}>
             <span className="font-gilroysemibold text-darkgrey">
               Location:{" "}
             </span>

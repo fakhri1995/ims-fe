@@ -47,6 +47,7 @@ export default {
   joinmigpoint3:
     "Resources to enhance your personal and professional development.",
   joinmigcta: "Know More",
+  contactuscta: "Contact Us",
   contactussectiontitle: "Enjoy seamless tech solutions without the hassle.",
   contactussectionsubtitle1: "What technology solutions are you looking for?",
   contactussectionsubtitle2:
