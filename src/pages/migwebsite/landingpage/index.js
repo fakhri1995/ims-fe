@@ -1,7 +1,6 @@
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Card, Col, Row, Space } from "antd";
-import { data } from "flickity";
 import Head from "next/head";
 import Linkk from "next/link";
 import { useRouter } from "next/router";
