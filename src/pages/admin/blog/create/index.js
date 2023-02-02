@@ -1193,6 +1193,103 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         ))}
                       </div>
                     )}
+                    {articleType == "Customer Stories" && (
+                      <div>
+                        <p
+                          className={
+                            "font-gilroysemibold text-blackmig text-xl"
+                          }
+                        >
+                          Company Detail
+                        </p>
+                        <Form.Item
+                          label="Company Name"
+                          initialValue={artikelBlog.company_name}
+                          name="company_name"
+                          // rules={[
+                          //   {
+                          //     required: true,
+                          //     message: "Page Path wajib diisi",
+                          //   },
+                          // ]}
+                        >
+                          <Input
+                            value={artikelBlog.company_name}
+                            name={`company_name`}
+                            onChange={onChangeCreateArtikel}
+                          />
+                        </Form.Item>
+                        <p
+                          className={
+                            "text-blackmig text-base font-gilroyregular"
+                          }
+                        >
+                          Company logo
+                        </p>
+                        {articleId ? (
+                          companyLogoChange ? (
+                            <Upload
+                              name="company_logo"
+                              listType="picture-card"
+                              className="profileImage"
+                              showUploadList={false}
+                              beforeUpload={beforeUploadProfileImage}
+                              onChange={onChangeCompanyLogo}
+                            >
+                              {artikelBlog.company_image ? (
+                                <img
+                                  src={artikelBlog.company_image}
+                                  alt="avatar"
+                                  style={{ width: "100%" }}
+                                />
+                              ) : (
+                                uploadButton
+                              )}
+                            </Upload>
+                          ) : (
+                            <Upload
+                              name="company_logo"
+                              listType="picture-card"
+                              className="profileImage"
+                              showUploadList={false}
+                              beforeUpload={beforeUploadProfileImage}
+                              onChange={onChangeCompanyLogo}
+                            >
+                              {artikelBlog.company_image ? (
+                                <img
+                                  src={generateStaticAssetUrl(
+                                    artikelBlog.company_image
+                                  )}
+                                  alt="avatar"
+                                  style={{ width: "100%" }}
+                                />
+                              ) : (
+                                uploadButton
+                              )}
+                            </Upload>
+                          )
+                        ) : (
+                          <Upload
+                            name="company_logo"
+                            listType="picture-card"
+                            className="profileImage"
+                            showUploadList={false}
+                            beforeUpload={beforeUploadProfileImage}
+                            onChange={onChangeCompanyLogo}
+                          >
+                            {artikelBlog.company_image ? (
+                              <img
+                                src={artikelBlog.company_image}
+                                alt="avatar"
+                                style={{ width: "100%" }}
+                              />
+                            ) : (
+                              uploadButton
+                            )}
+                          </Upload>
+                        )}
+                      </div>
+                    )}
                     {/* customer stories id */}
                     {articleType == "Customer Stories" && (
                       <div>
