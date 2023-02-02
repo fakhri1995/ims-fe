@@ -50,7 +50,7 @@ function CustomerStories({ dataBlog }) {
       {/* <section className={'container mx-auto'}> */}
       {console.log("data blogs ", dataBlog)}
       <Head>
-        <title>Blog</title>
+        <title>Customer Stories</title>
       </Head>
       <section
         className={
