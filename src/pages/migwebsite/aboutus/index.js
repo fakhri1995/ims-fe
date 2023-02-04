@@ -25,7 +25,7 @@ function AboutUs({}) {
 
       <section
         className={
-          "section2people pt-8 md:pt-[16] pb-5 md:pb-[40px] px-4 md:px-[112px] text-center"
+          "section2people pt-8 md:pt-16 pb-5 md:pb-[40px] px-4 md:px-[113.5px] text-center"
         }
       >
         <div className={""}>
@@ -48,7 +48,7 @@ function AboutUs({}) {
           </p>
         </div>
       </section>
-      <section className={"block bg-white py-4 md:py-6 px-4 md:px-[112px]"}>
+      <section className={"block bg-white py-4 md:py-6 px-4 md:px-[113.5px]"}>
         <h2
           style={{ lineHeight: "120%" }}
           className={
@@ -80,7 +80,7 @@ function AboutUs({}) {
         </p>
       </section>
       <section
-        className={"pt-12 md:pt-[40px] pb-12 md:pb-8 px-4 md:px-[112px]"}
+        className={"pt-12 md:pt-[40px] pb-12 md:pb-8 px-4 md:px-[113.5px]"}
       >
         <h2
           style={{ lineHeight: "120%" }}
@@ -557,7 +557,9 @@ function AboutUs({}) {
       </section>
 
       <section
-        className={"px-4 md:px-[112px] pt-4 md:pt-8 md:pb-[130px] bg-transp60"}
+        className={
+          "px-4 md:px-[113.5px] pt-4 md:pt-8 md:pb-[145px] bg-transp60"
+        }
       >
         <div>
           <h2
@@ -792,7 +794,7 @@ function AboutUs({}) {
           />
         </div>
         <div className={"container w-1/2 mx-auto"}>
-          <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
+          <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[120px] py-[31.38px] px-4">
             <h2
               style={{ lineHeight: "120%" }}
               className={"text-[28px] font-gilroysemibold text-black"}

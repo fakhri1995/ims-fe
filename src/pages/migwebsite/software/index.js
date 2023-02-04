@@ -1151,7 +1151,7 @@ function Software({}) {
           {/*section software portofolio */}
           <section
             className={
-              "section3software hidden md:block bg-bgjoinmig px-[52px] py-12"
+              "section3software hidden md:block bg-bgjoinmig px-[52px] md:px-[113.5px] py-12"
             }
           >
             <h2
@@ -1172,7 +1172,7 @@ function Software({}) {
               {t.softwarepastworksectiontitle3}
             </h2>
             <div className={"flex flex-row"}>
-              <button onClick={() => slider2?.current?.slickPrev()}>
+              <button onClick={() => slider?.current?.slickPrev()}>
                 <div
                   className={
                     "self-center flex items-center justify-center  absolute left-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
@@ -1316,7 +1316,7 @@ function Software({}) {
                   </div>
                 </Slider>
               </div>
-              <button onClick={() => slider2?.current?.slickNext()}>
+              <button onClick={() => slider?.current?.slickNext()}>
                 <div
                   className={
                     "self-center flex items-center justify-center  absolute right-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
@@ -1449,7 +1449,7 @@ function Software({}) {
               </Slider>
             </div>
           </section>
-          <section className={"px-8 md:px-[166.5px] py-4 md:py-16"}>
+          <section className={"px-8 md:px-[113.5px] py-4 md:py-16"}>
             <div className={"container mx-auto text-center"}>
               <div className={"pb-12"}>
                 <p
@@ -1480,7 +1480,7 @@ function Software({}) {
           {/* section 3 software why you should */}
           <section
             className={
-              "section3softwarebrowser bg-transp60 py-4 md:py-12 md:px-[140px]"
+              "section3softwarebrowser bg-transp60 py-4 md:py-12 md:px-[113.5px]"
             }
           >
             <div className={"flex md:flex-row"}>
@@ -1580,7 +1580,7 @@ function Software({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 md:py-16 px-4 md:px-[85.5]"
+              "section4howitworkbrowser bg-white py-4 md:py-16 px-4 md:px-[113.5]"
             }
           >
             <div className={"container text-center mx-auto"}>

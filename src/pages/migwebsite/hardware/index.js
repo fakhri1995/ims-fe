@@ -2321,7 +2321,7 @@ function Hardware({}) {
           {/* section jenis hardware */}
           <section
             className={
-              "section2somehardwarebrowser bg-bgjoinmig py-4 md:py-12 px-4 md:px-[112px]"
+              "section2somehardwarebrowser bg-bgjoinmig py-4 md:py-12 px-4 md:px-[113.5px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -2836,7 +2836,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "section3hardwarebrowser bg-transp60 py-4 md:py-12 md:px-[130.4px]"
+              "section3hardwarebrowser bg-transp60 py-4 md:py-12 md:px-[113.5px]"
             }
           >
             <div className={"flex md:flex-row"}>
@@ -2938,7 +2938,7 @@ function Hardware({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 md:py-8 md:mb-10 hidden md:block px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+              "section4howitworkbrowser bg-white py-4 md:py-16 md:mb-10 hidden md:block px-4 sm:px-10 md:px-[113.5px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -2960,7 +2960,7 @@ function Hardware({}) {
                 ?
               </h2>
             </div>
-            <div className={"flex flex-row justify-between md:px-20 mt-10"}>
+            <div className={"flex flex-row justify-between mt-10"}>
               <div className={""}>
                 <div className={"w-[360px]"}>
                   <img
@@ -3508,7 +3508,7 @@ function Hardware({}) {
           {/* coverages */}
           <section
             className={
-              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-[113.5px]"
             }
           >
             <h2
@@ -3820,7 +3820,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-8"
+              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[113.5px]"
             }
           >
             <div className={"justify-start self-end"}>
@@ -3830,7 +3830,7 @@ function Hardware({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
+              <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[170px] py-4 px-8">
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}
