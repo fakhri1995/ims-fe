@@ -2135,7 +2135,7 @@ function Talents({}) {
 
           <section
             className={
-              "section3talents bg-bgjoinmig py-9 md:py-12 px-4 md:px-[112px]"
+              "section3talents bg-bgjoinmig py-9 md:py-12 px-4 md:px-[113.5px]"
             }
           >
             <h2
@@ -3135,7 +3135,7 @@ function Talents({}) {
           {/*section why you should */}
           <section
             className={
-              "section4talents hidden md:block bg-bgtalents py-4 md:py-12 px-4 sm:px-10 md:px-10"
+              "section4talents hidden md:block bg-bgtalents py-4 md:py-12 px-4 sm:px-10 md:px-[113.5px]"
             }
           >
             <h2
@@ -4998,7 +4998,7 @@ function Talents({}) {
           {/* coverages */}
           <section
             className={
-              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-[113.5px]"
             }
           >
             <h2

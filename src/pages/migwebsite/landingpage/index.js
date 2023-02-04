@@ -544,7 +544,7 @@ function LandingPage({ dataBlog }) {
         </div>
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
-            <div className={"text-left max-w-[609px]"}>
+            <div className={"text-left w-1/2"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={"font-gilroybold text-primarygreen text-2xl"}
@@ -584,25 +584,25 @@ function LandingPage({ dataBlog }) {
                 </Linkk>
               </div>
             </div>
-            <div className={"flex justify-end "}>
+            <div className={"flex justify-end w-1/2 "}>
               <img
                 src="/image/landingpage/hero-talent.png"
                 alt=""
-                className={"w-[444px] h-[256px]"}
+                className={"w-2/3 h-auto"}
               />
             </div>
           </div>
         </div>
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
-            <div className={""}>
+            <div className={"w-1/2"}>
               <img
                 src="/image/landingpage/hero-software.png"
                 alt=""
-                className={"w-[444px] h-[259px]"}
+                className={"w-2/3 h-auto"}
               />
             </div>
-            <div className={"text-left max-w-[609px] justify-end"}>
+            <div className={"text-left w-1/2 self-end"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={"font-gilroybold text-primarygreen text-2xl"}
@@ -646,7 +646,7 @@ function LandingPage({ dataBlog }) {
         </div>
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
-            <div className={"text-left max-w-[609px]"}>
+            <div className={"text-left w-1/2"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={"font-gilroybold text-primarygreen text-2xl"}
@@ -686,11 +686,11 @@ function LandingPage({ dataBlog }) {
                 </Linkk>
               </div>
             </div>
-            <div className={"flex justify-end "}>
+            <div className={"flex justify-end w-1/2"}>
               <img
                 src="/image/landingpage/hero-hardware.png"
                 alt=""
-                className={"w-[444px] h-[259px]"}
+                className={"w-2/3 h-auto"}
               />
             </div>
           </div>
