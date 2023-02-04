@@ -57,7 +57,7 @@ function LeftContactUs({ children }) {
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          classNamme={"text-sm md:text-[18px] text-blackmig font-gilroyregular"}
+          className={"text-sm md:text-[18px] text-blackmig font-gilroyregular"}
         >
           Tebet raya no. 72 South Jakarta, DKI Jakarta,12820
         </p>

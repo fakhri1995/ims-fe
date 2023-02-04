@@ -1621,16 +1621,7 @@ function LandingPage({ dataBlog }) {
         className={"section2landingpagephone block md:hidden px-4 bg-white"}
       >
         <p className={"text-xl text-center font-gilroysemibold py-8 md:py-0"}>
-          Interested in{" "}
-          <span
-            style={{
-              borderBottom: "solid 3px #188E4D",
-              paddingBottom: "2.5px",
-            }}
-          >
-            joining{" "}
-          </span>{" "}
-          MIG?
+          {t.joinmigsection}
         </p>
         <div className={"grid justify-items-center text-center"}>
           <img
@@ -1638,6 +1629,9 @@ function LandingPage({ dataBlog }) {
             className={"w-full h-full"}
             style={{ width: "235px", height: "150px" }}
           />
+        </div>
+        <div className={"py-3 px-2"}>
+          <p className={"text-base text-blackmig"}>{t.joinmigsubtitle}</p>
         </div>
         <div className="flex flex-row py-3 px-2">
           <div className="w-11">
@@ -1648,7 +1642,7 @@ function LandingPage({ dataBlog }) {
           </div>
           <div>
             <p className="text-left px-5 text-sm text-black">
-              We love to empower our team members to solve problems that matter
+              {t.joinmigpoint1}
             </p>
           </div>
         </div>
@@ -1661,7 +1655,7 @@ function LandingPage({ dataBlog }) {
           </div>
           <div>
             <p className="text-left px-5 text-sm text-black">
-              We offer diverse industry exposures and hands-on experience
+              {t.joinmigpoint2}
             </p>
           </div>
         </div>
@@ -1674,8 +1668,7 @@ function LandingPage({ dataBlog }) {
           </div>
           <div>
             <p className="text-left px-5 text-sm text-black">
-              We support personal growth through constant experiment and
-              learning
+              {t.joinmigpoint3}
             </p>
           </div>
         </div>
@@ -1683,7 +1676,7 @@ function LandingPage({ dataBlog }) {
           <a href="#">
             <div className="flex mt-5 justify-end mr-5">
               <p className="text-base mr-[13.52px] text-primarygreen font-gilroysemibold">
-                Apply for Jobs
+                {t.joinmigcta}
               </p>
               <img
                 className={"self-center"}
@@ -1738,7 +1731,9 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>Contact Us</p>
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
                   </button>
                 </Linkk>
               </div>
@@ -1749,7 +1744,9 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>Learn More</p>
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
                   </button>
                 </Linkk>
               </div>

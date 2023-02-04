@@ -673,7 +673,7 @@ function Talents({}) {
                       <Form.Item
                         name={"Company Name"}
                         className={"font-gilroyregular text-xl"}
-                        label="Company Name"
+                        label={<p style={{ fontSize: "16px" }}>Company Name</p>}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -695,7 +695,7 @@ function Talents({}) {
                         initialValue={dataPeople.company_email}
                         name={"Email"}
                         className={"font-gilroyregular text-xl"}
-                        label="Email"
+                        label={<p style={{ fontSize: "16px" }}>Email</p>}
                         rules={[{ required: true, type: "email" }]}
                       >
                         <Input
@@ -716,7 +716,7 @@ function Talents({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={"font-gilroyregular text-xl"}
-                        label="Contact Name"
+                        label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -737,7 +737,7 @@ function Talents({}) {
                       <Form.Item
                         name={"Phone Number"}
                         className={"font-gilroyregular text-xl"}
-                        label="Phone Number"
+                        label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
                         rules={[
                           {
                             required: true,
@@ -804,7 +804,11 @@ function Talents({}) {
                     <Form.Item
                       name={"type project"}
                       className={"font-gilroyregular text-base"}
-                      label="How many people are employed at your company?"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          How many people are employed at your company?
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Radio.Group
@@ -829,7 +833,11 @@ function Talents({}) {
                     <Form.Item
                       name={"kind project"}
                       className={"font-gilroyregular text-base"}
-                      label="What kind of project are you hiring for?"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          What kind of project are you hiring for?
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Radio.Group
@@ -1298,7 +1306,7 @@ function Talents({}) {
 
                       className={"font-gilroyregular text-xl"}
                       label={
-                        <p>
+                        <p style={{ fontSize: "16px" }}>
                           What roles/skills would you like to see in your new
                           hire?
                         </p>
@@ -1391,7 +1399,12 @@ function Talents({}) {
                     <Form.Item
                       name="level_employee"
                       className={"font-gilroyregular text-base"}
-                      label="What level of employee you would like to see in your new hire?"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          What level of employee you would like to see in your
+                          new hire?
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Select
@@ -1417,11 +1430,7 @@ function Talents({}) {
                       label={
                         <p className={"text-blackmig"}>
                           How many talent in{" "}
-                          <span
-                            className={
-                              "font-gilroysemibold font-gilroysemibold"
-                            }
-                          >
+                          <span className={"font-gilroysemibold text-base"}>
                             {kindOfTalent}
                           </span>{" "}
                           you want to hire??
@@ -1458,7 +1467,14 @@ function Talents({}) {
                     <Form.Item
                       name="urgently_need"
                       className={"font-gilroyregular text-base"}
-                      label="How soon do you need the talent?"
+                      label={
+                        <p
+                          style={{ fontSize: "16px" }}
+                          className={"text-base font-gilroyregular"}
+                        >
+                          How soon do you need the talent?
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Select
@@ -1488,7 +1504,14 @@ function Talents({}) {
                     <Form.Item
                       name="time_used"
                       className={"font-gilroyregular text-base"}
-                      label="How long do you need the the talent?"
+                      label={
+                        <p
+                          style={{ fontSize: "16px" }}
+                          className={"text-base font-gilroyregular"}
+                        >
+                          How long do you need the the talent?
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Select
@@ -1515,7 +1538,12 @@ function Talents({}) {
                     <Form.Item
                       name="open_remote"
                       className={"font-gilroyregular text-base"}
-                      label="Are you open in hiring our remote talent? (work from home)"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          Are you open in hiring our remote talent? (work from
+                          home)
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Select
@@ -1542,7 +1570,7 @@ function Talents({}) {
                       name={"max_budget"}
                       className={"font-gilroyregular text-base"}
                       label={
-                        <p className={"text-blackmig"}>
+                        <p className={"text-blackmig text-base"}>
                           What is your maximum budget for your new hire?
                         </p>
                       }
@@ -1571,7 +1599,12 @@ function Talents({}) {
                     <Form.Item
                       name={"Details"}
                       className={"font-gilroyregular text-base"}
-                      label="Details (Optional)"
+                      label={
+                        <p className={"text-blackmig text-base"}>
+                          Details (Optional)
+                        </p>
+                      }
+
                       // rules={[{ required: true }]}
                     >
                       <TextArea

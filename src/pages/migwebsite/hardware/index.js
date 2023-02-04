@@ -889,7 +889,8 @@ function Hardware({}) {
                       <Form.Item
                         name={"Company Name"}
                         className={"text-base"}
-                        label="Company Name"
+                        label={<p style={{ fontSize: "16px" }}>Company Name</p>}
+                        style={{ fontSize: "16px" }}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -912,7 +913,7 @@ function Hardware({}) {
                         name={"Email"}
                         initialValue={dataHardware.company_email}
                         className={" text-base -mt-2"}
-                        label="Email"
+                        label=<p style={{ fontSize: "16px" }}>Email</p>
                         rules={[{ required: true, type: "email" }]}
                       >
                         <Input
@@ -936,7 +937,7 @@ function Hardware({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={" text-base -mt-2"}
-                        label="Contact Name"
+                        label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -958,7 +959,7 @@ function Hardware({}) {
                       <Form.Item
                         name={"Phone Number"}
                         className={" text-base -mt-2"}
-                        label="Phone Number"
+                        label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
                         rules={[
                           {
                             required: true,
@@ -1503,7 +1504,11 @@ function Hardware({}) {
                     <Form.Item
                       name="time_need_product"
                       className={" text-base"}
-                      label="*How soon do you need the product?"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          *How soon do you need the product?
+                        </p>
+                      }
                       rules={[
                         {
                           required: true,
@@ -1537,7 +1542,11 @@ function Hardware({}) {
                     <Form.Item
                       name="time_used"
                       className={" text-base"}
-                      label="How long do you need the product?"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          How long do you need the product?
+                        </p>
+                      }
                       rules={[
                         {
                           required: true,
@@ -1569,7 +1578,7 @@ function Hardware({}) {
                       name={"product"}
                       className={" text-base"}
                       label={
-                        <p>
+                        <p style={{ fontSize: "16px" }}>
                           *What product in{" "}
                           <span className={"font-gilroysemibold"}>
                             {kindOfHardware}
@@ -1732,7 +1741,9 @@ function Hardware({}) {
                     <Form.Item
                       name={"Details"}
                       className={" text-base"}
-                      label="Details (Optional)"
+                      label={
+                        <p style={{ fontSize: "16px" }}>Details (Optional)</p>
+                      }
                       // rules={[{ required: true }]}
                     >
                       <TextArea
@@ -1745,7 +1756,9 @@ function Hardware({}) {
                         placeholder="Tell us more about your talent details"
                       />
                     </Form.Item>
-                    <Form.Item label="Attachment">
+                    <Form.Item
+                      label={<p style={{ fontSize: "16px" }}>Attachment</p>}
+                    >
                       <Form.Item
                         name="dragger"
                         valuePropName="fileList"
@@ -2347,7 +2360,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-[42px] justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightblue rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[300px] bg-lightblue rounded-lg p-3"
                       }
                     >
                       <p
@@ -2396,7 +2409,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataBanking.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
                             onClick={handleShowForm}
                           >
                             <img
@@ -2422,7 +2435,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-8 justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightgreen rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[300px] bg-lightgreen rounded-lg p-3"
                       }
                     >
                       <p
@@ -2471,7 +2484,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataWorkstation.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
                             onClick={handleShowForm}
                           >
                             <img
@@ -2497,7 +2510,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-8 justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightgrey rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[300px] bg-lightgrey rounded-lg p-3"
                       }
                     >
                       <p
@@ -2546,7 +2559,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataServer.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
                             onClick={handleShowForm}
                           >
                             <img
@@ -2573,7 +2586,7 @@ function Hardware({}) {
                   <div className={"flex flex-row mt-8 justify-center"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[241px] h-[152px] bg-lightpink rounded-lg p-3"
+                        "flex flex-col justify-between text-center w-[300px] bg-lightpink rounded-lg p-3"
                       }
                     >
                       <p
@@ -2622,7 +2635,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataUps.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full h-[146px] text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
                             onClick={handleShowForm}
                           >
                             <img

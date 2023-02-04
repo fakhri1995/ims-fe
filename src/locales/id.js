@@ -37,6 +37,8 @@ export default {
   landingpageoursolution: "Pelajari solusi",
   landingpagefreeconsultation: "Dapatkan konsultasi gratis",
   hardwaresolution: "solusi hardware",
+  ctacontactuslandingpage: "Hubungi Kami",
+  ctalearnmorelandingpage: "Selengkapnya",
   hardwaredescription:
     "Tranformasikan pengadaan tradisional Anda menjadi managed service model, dengan biaya bulanan yang terprediksi dan tingkat layanan terbaik.",
   hardwarebuttontitle: "Dapatkan Hardware",

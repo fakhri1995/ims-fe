@@ -87,7 +87,7 @@ function FreeConsultation({}) {
                 <Form.Item
                   name={"Company Name"}
                   className={"gilroy-medium text-base"}
-                  label="Company Name"
+                  label={<p style={{ fontSize: "16px" }}>Company Name</p>}
                   rules={[{ required: true }]}
                 >
                   <Input
@@ -110,7 +110,7 @@ function FreeConsultation({}) {
                   name={"Email"}
                   initialValue={dataHardware.company_email}
                   className={"gilroy-medium text-base -mt-2"}
-                  label="Email"
+                  label={<p style={{ fontSize: "16px" }}>Email</p>}
                   rules={[{ required: true, type: "email" }]}
                 >
                   <Input
@@ -131,7 +131,7 @@ function FreeConsultation({}) {
                 <Form.Item
                   name={"Contact Name"}
                   className={"gilroy-medium text-base -mt-2"}
-                  label="Contact Name"
+                  label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
                   rules={[
                     { required: true, message: "Contact name is required" },
                   ]}
@@ -155,7 +155,7 @@ function FreeConsultation({}) {
                 <Form.Item
                   name={"Phone Number"}
                   className={"gilroy-medium text-base -mt-2"}
-                  label="Phone Number"
+                  label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
                   rules={[
                     {
                       required: true,
