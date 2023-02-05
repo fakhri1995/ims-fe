@@ -68,7 +68,7 @@ export default {
     "Tingkatkan karir di bidang teknologi bersama MIG, temukan beragam lowongan pekerjaan untuk para tech talent terbaik.",
   landingpagewhyus1: "Seluruh manfaat ini ada di bawah ",
   landingpagewhyus2: "atap kami",
-  whyustitle1: "On-Demand Services:",
+  whyustitle1: "On-Demand Services",
   whyussubtitle1:
     "Layanan terlengkap, mampu memenuhi berbagai kebutuhan bisnis berbeda.",
   whyustitle2: "Mitra Terpercaya",
