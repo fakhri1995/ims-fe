@@ -105,7 +105,7 @@ function RightContactUs({
             <Form.Item
               name={"Company Name"}
               className={"font-gilroyregular text-[16px]"}
-              label="Company Name"
+              label={<p style={{ fontSize: "16px" }}>Company Name</p>}
               rules={[{ required: true }]}
             >
               <Input
@@ -123,7 +123,7 @@ function RightContactUs({
             <Form.Item
               name={"Email"}
               className={"font-gilroyregular text-[16px]"}
-              label="Email"
+              label={<p style={{ fontSize: "16px" }}>Email</p>}
               rules={[{ required: true, type: "email" }]}
             >
               <Input
@@ -143,7 +143,7 @@ function RightContactUs({
             <Form.Item
               name={"Contact Name"}
               className={"font-gilroyregular text-[16px]"}
-              label="Contact Name"
+              label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
               rules={[{ required: true }]}
             >
               <Input
@@ -161,7 +161,7 @@ function RightContactUs({
             <Form.Item
               name={"Phone Number"}
               className={"font-gilroyregular text-[16px]"}
-              label="Phone Number"
+              label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
               rules={[
                 {
                   required: true,
@@ -189,7 +189,7 @@ function RightContactUs({
           <Form.Item
             name="Interest"
             className={"font-gilroyregular text-[16px]"}
-            label="Interest"
+            label={<p style={{ fontSize: "16px" }}>Interest</p>}
             rules={[{ required: true }]}
           >
             <Select
@@ -214,7 +214,7 @@ function RightContactUs({
           <Form.Item
             name="Message"
             className={"font-gilroyregular text-[16px]"}
-            label="Message"
+            label={<p style={{ fontSize: "16px" }}>Message</p>}
             rules={[{ required: true }]}
           >
             <Input.TextArea

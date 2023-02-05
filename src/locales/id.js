@@ -37,6 +37,8 @@ export default {
   landingpageoursolution: "Pelajari solusi",
   landingpagefreeconsultation: "Dapatkan konsultasi gratis",
   hardwaresolution: "solusi hardware",
+  ctacontactuslandingpage: "Hubungi Kami",
+  ctalearnmorelandingpage: "Selengkapnya",
   hardwaredescription:
     "Tranformasikan pengadaan tradisional Anda menjadi managed service model, dengan biaya bulanan yang terprediksi dan tingkat layanan terbaik.",
   hardwarebuttontitle: "Dapatkan Hardware",
@@ -66,7 +68,7 @@ export default {
     "Tingkatkan karir di bidang teknologi bersama MIG, temukan beragam lowongan pekerjaan untuk para tech talent terbaik.",
   landingpagewhyus1: "Seluruh manfaat ini ada di bawah ",
   landingpagewhyus2: "atap kami",
-  whyustitle1: "On-Demand Services:",
+  whyustitle1: "On-Demand Services",
   whyussubtitle1:
     "Layanan terlengkap, mampu memenuhi berbagai kebutuhan bisnis berbeda.",
   whyustitle2: "Mitra Terpercaya",

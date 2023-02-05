@@ -28,6 +28,8 @@ export default {
   cities: "cities",
   managed: "managed-service devices",
   techproject: "tech talents",
+  ctacontactuslandingpage: "Contact Us",
+  ctalearnmorelandingpage: "Learn More",
   companies: "companies",
   landingpagesection2: `MIG catalyzes the growth of your core business with `,
   landingpagesection3: `We provide you with ✔️ Cutting-edge resources

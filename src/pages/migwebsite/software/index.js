@@ -454,7 +454,7 @@ function Software({}) {
                       <Form.Item
                         name={"Company Name"}
                         className={"gilroy-medium text-base"}
-                        label="Company Name"
+                        label={<p style={{ fontSize: "16px" }}>Company Name</p>}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -477,7 +477,7 @@ function Software({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={"gilroy-medium text-base"}
-                        label="Contact Name"
+                        label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -501,7 +501,7 @@ function Software({}) {
                         initialValue={dataSoftware.company_email}
                         name={"Email"}
                         className={"gilroy-medium text-base"}
-                        label="Email"
+                        label={<p style={{ fontSize: "16px" }}>Email</p>}
                         rules={[{ required: true, type: "email" }]}
                       >
                         <Input
@@ -523,7 +523,7 @@ function Software({}) {
                       <Form.Item
                         name={"Phone Number"}
                         className={"gilroy-medium text-base"}
-                        label="Phone Number"
+                        label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
                         rules={[
                           {
                             required: true,
@@ -589,7 +589,11 @@ function Software({}) {
                   <Form.Item
                     name={"Kind of Project"}
                     className={"text-blackmig text-base"}
-                    label="What kind of project do you want to build?"
+                    label={
+                      <p style={{ fontSize: "16px" }}>
+                        What kind of project do you want to build?
+                      </p>
+                    }
                     rules={[{ required: true }]}
                   >
                     <TextArea
@@ -610,7 +614,11 @@ function Software({}) {
                     <Form.Item
                       name={"Type of Project"}
                       className={"text-blackmig text-base"}
-                      label="What type of project are you hiring us for?"
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          What type of project are you hiring us for?
+                        </p>
+                      }
                       rules={[{ required: true }]}
                     >
                       <Radio.Group
@@ -637,7 +645,7 @@ function Software({}) {
                       <Form.Item
                         name={"Budget Minimal"}
                         className={"text-blackmig text-base"}
-                        label="From"
+                        label={<p style={{ fontSize: "16px" }}>From</p>}
                         rules={[
                           {
                             required: true,
@@ -674,7 +682,7 @@ function Software({}) {
                       <Form.Item
                         name={"Budget Maximal"}
                         className={"text-blackmig text-base"}
-                        label="To"
+                        label={<p style={{ fontSize: "16px" }}>To</p>}
                         rules={[
                           {
                             required: true,
@@ -705,7 +713,9 @@ function Software({}) {
                     </div>
                   </div>
                   <div className={"mt-9"}>
-                    <Form.Item label="Attachment">
+                    <Form.Item
+                      label={<p style={{ fontSize: "16px" }}>Attachment</p>}
+                    >
                       <Form.Item
                         name="dragger"
                         valuePropName="fileList"
