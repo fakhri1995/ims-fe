@@ -33,11 +33,15 @@ export const CareersAtMig: FC = () => {
       <div className="flex flex-col justify-center items-center">
         <span className="h-[2px] bg-primarygreen w-[200px] md:w-60 block" />
 
-        <p className="pb-12 md:pb-8 text-base text-black text-center mt-4">
+        <p
+          style={{ lineHeight: "150%" }}
+          className="pb-12 md:pb-8 text-xl text-black text-center mt-4"
+        >
           Didn't find the role that best describes your skills ? Send your CV to{" "}
           <a
+            style={{ lineHeight: "150%" }}
             href="mailto:recruitment@mitrasolusi.group"
-            className="text-base text-blackmig font-semibold"
+            className="text-xl text-blackmig font-semibold"
           >
             recruitment@mitrasolusi.group
           </a>{" "}

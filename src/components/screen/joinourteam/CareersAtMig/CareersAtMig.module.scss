@@ -1,6 +1,6 @@
 .jobListTable {
   :global(.ant-table-thead tr th) {
-    @apply border-b border-black;
+    @apply border-b border-black text-xl;
   }
 
   :global(.ant-table-thead .ant-table-cell) {
