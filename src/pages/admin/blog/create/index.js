@@ -148,17 +148,21 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
       )
         .then((res) => res.json())
         .then((res2) => {
-          console.log("res article ", res2);
+          // console.log("res article ", res2);
           if (res2.success) {
             if (prevpath === "add") {
             } else {
+              // console.log('description id ',res2.data.description_id)
               instanceForm.setFieldsValue({
                 pagePath: res2.data.page_path,
                 pagePathId: res2.data.page_path_id,
                 title: res2.data.title,
+                title_id: res2.data.title_id,
                 description: res2.data.description,
+                description_id: res2.data.description_id,
                 author: res2.data.author,
                 content: res2.data.content,
+                content_id: res2.data.content_id,
                 // tags: res2.data.tags,
                 quote: res2.data.quote,
                 quoteId: res2.data.quote_id,
@@ -175,9 +179,12 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                 pagePathId: res2.data.page_path_id,
                 company_name: res2.data.company_name,
                 title: res2.data.title,
+                title_id: res2.data.title_id,
                 description: res2.data.description,
+                description_id: res2.data.description_id,
                 author: res2.data.author,
                 content: res2.data.content,
+                content_id: res2.data.content_id,
                 tags: res2.data.tags,
                 tagsId: res2.data.tags_id,
                 quote: res2.data.quote,
@@ -227,18 +234,18 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   const handleSuggestionSkillId = (skill) => {
     // let arr_product = productSelected;
     // arr_product.push(skill);
-    setTagSelected(skill);
+    // console.log('suggestion id ',skill)
+    handleInputTagsId(skill);
     instanceForm.setFieldValue(form, "tagsId", "");
   };
   const handleInputTags = (e) => {
-    console.log("input ", e);
-    setTagSelected(artikelBlog.tags);
+    setTagSelected("Handle");
     instanceForm.setFieldsValue({ tags: null });
   };
 
   const handleInputTagsId = (e) => {
-    console.log("input ", e);
-    setTagSelected(artikelBlog.tagsId);
+    // console.log("input tags id", e);
+    setTagIdSelected(artikelBlog.tagsId);
     instanceForm.setFieldsValue({ tagsId: null });
   };
 
@@ -255,11 +262,12 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
           tags: tagSelected,
           company_name: artikelBlog.company_name,
           quote: artikelBlog.quote,
+          quote_id: artikelBlog.quoteId,
           author: artikelBlog.author,
           job_title: artikelBlog.job_title,
           meta_title: artikelBlog.meta_title,
           meta_description: artikelBlog.meta_description,
-          title_id: artikelBlog.title_id,
+          title_id: artikelBlog.title_id ? artikelBlog.title_id : "",
           description_id: artikelBlog.description_id,
           content_id: artikelBlog.content_id,
           page_path_id: artikelBlog.pagePathId,
@@ -284,6 +292,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
           tags: tagSelected,
           company_name: "",
           quote: "",
+          quote_id: "",
           author: "",
           job_title: "",
           meta_title: artikelBlog.meta_title,
@@ -313,6 +322,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
           tags: tagSelected,
           company_name: artikelBlog.company_name,
           quote: artikelBlog.quote,
+          quote_id: artikelBlog.quoteId,
           author: artikelBlog.author,
           job_title: artikelBlog.job_title,
           meta_title: artikelBlog.meta_title,
@@ -340,6 +350,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
           tags: tagSelected,
           company_name: "",
           quote: "",
+          quote_id: "",
           author: "",
           job_title: "",
           meta_title: artikelBlog.meta_title,
@@ -396,6 +407,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   };
 
   const onChangeCreateArtikel = (e) => {
+    console.log("onchange form ", e.target.name);
     setArtikelBlog({
       ...artikelBlog,
       [e.target.name]: e.target.value,
@@ -407,7 +419,6 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   };
 
   const onChangeCreatePagePath = (e) => {
-    console.log("e berubah ", e);
     setArtikelBlog({
       ...artikelBlog,
       pagePath: e.target.value,
@@ -1173,23 +1184,30 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                         onPressEnter={handleInputTagsId}
                       />
                     </Form.Item>
+                    {tagIdSelected && (
+                      <div
+                        className={
+                          "bg-transp45 rounded-[20px]  mt-3 py-1 pl-2 pr-1.5 w-[100px] flex justify-center"
+                        }
+                      >
+                        <p
+                          className={"text-sm text-blackmig font-gilroyregular"}
+                        >
+                          {tagIdSelected}
+                        </p>
+                      </div>
+                    )}
                     {skillSuggestion.length > 0 && (
                       <div className={"flex flex-row mt-3"}>
                         {skillSuggestion.map((data, index) => (
-                          <button
+                          <p
                             onClick={() => handleSuggestionSkillId(data)}
                             className={
-                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                              "text-sm text-darkgrey font-gilroyregular border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
                             }
                           >
-                            <p
-                              className={
-                                "text-sm text-darkgrey font-gilroyregular"
-                              }
-                            >
-                              {data}
-                            </p>
-                          </button>
+                            {data}
+                          </p>
                         ))}
                       </div>
                     )}

@@ -102,7 +102,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
       <section
         className={
-          "section1careers hidden md:block py-4 md:py-16 md:px-[112px]"
+          "section1careers hidden md:block py-4 md:py-16 md:px-[113.5px]"
         }
       >
         <div className={"block md:flex"}>
@@ -188,7 +188,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       <section className={"h-8 hidden md:block"}></section>
 
       <section className={"section3careers bg-transp60"}>
-        <div className={"py-4 md:py-6 px-4 md:px-[112px]"}>
+        <div className={"py-4 md:py-6 px-4 md:px-[113.5px]"}>
           <h2
             style={{ lineHeight: "120%" }}
             className={

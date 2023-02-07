@@ -60,7 +60,7 @@ function ContactUs({}) {
       </Head>
       <section
         className={
-          "hidden md:block px-4 py-16 sm:py-8 sm:px-[61px] md:py-16 md:px-[112px]"
+          "hidden md:block px-4 py-16 sm:py-8 sm:px-[61px] md:py-16 md:px-[113.5px]"
         }
       >
         <div className={"container md:flex "}>

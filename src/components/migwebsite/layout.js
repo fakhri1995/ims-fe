@@ -309,7 +309,7 @@ function layout({ children }) {
             position: "fixed",
             zIndex: 31,
             width: "100%",
-            boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
+            // boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Link href="/">

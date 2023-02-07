@@ -131,13 +131,13 @@ export const JobListTable: FC = () => {
         loading={isLoading}
         pagination={false}
         scroll={{ x: "max-content" }}
-        rowClassName="hover:cursor-pointer hover:opacity-75 transition-opacity duration-300 shadow-md"
+        rowClassName="hover:cursor-pointer hover:opacity-75 transition-opacity duration-300 shadow-md text-[18px]"
         onRow={(career) => ({
           onClick: () => onRowClicked(career),
         })}
       />
       {data && (
-        <div className="flex flex-col justify-center items-center space-y-4">
+        <div className="flex flex-col justify-center items-center space-y-4 text-[18px]">
           <p>
             Showing{" "}
             <span className={"text-[18px] text-blackmig font-gilroysemibold"}>
