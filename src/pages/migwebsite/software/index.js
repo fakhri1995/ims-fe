@@ -14,6 +14,7 @@ import { transparent } from "daisyui/src/colors/index.js";
 import moment from "moment";
 import Head from "next/head";
 import Link from "next/link";
+import Linkk from "next/link";
 import { useRouter } from "next/router";
 import { React, useEffect, useRef, useState } from "react";
 import Calendar from "react-calendar";
@@ -21,8 +22,8 @@ import "react-calendar/dist/Calendar.css";
 import ReCAPTCHA from "react-google-recaptcha";
 import Slider from "react-slick";
 
+import { generateStaticAssetUrl, objectToFormData } from "lib/helper";
 import { getBase64 } from "lib/helper";
-import { objectToFormData } from "lib/helper";
 
 import Layout from "../../../components/migwebsite/layout.js";
 import ThankForm from "../../../components/migwebsite/thank-form.js";
