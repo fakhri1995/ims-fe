@@ -8,7 +8,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
     <div>
       <section
         className={
-          "youronestop mt-10 hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-8"
+          "youronestop mt-16 hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[90px]"
         }
       >
         <div className={"justify-start self-end bg-red"}>
@@ -18,7 +18,7 @@ function LayoutFormContactUs({ title, description, button_title }) {
           />
         </div>
         <div className={"container w-1/2 mx-auto"}>
-          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-32 py-4 px-8">
+          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-16 py-4 px-8">
             <h2
               style={{ lineHeight: "120%" }}
               className={"text-[28px] font-gilroysemibold text-black"}

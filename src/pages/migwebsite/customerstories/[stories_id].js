@@ -13,6 +13,7 @@ import {
   Select,
   Space,
 } from "antd";
+import moment from "moment";
 import Head from "next/head";
 import Linkk from "next/link";
 import { useRouter } from "next/router";
@@ -25,11 +26,14 @@ import Slider from "react-slick";
 // import { LikeFillIconSvg, LikeIconSvg,ReplyIconSvg } from "../../../components/icon";
 import Layout from "../../../components/migwebsite/layout";
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function CustomerStoriesDetail({}) {
   const [form] = Form.useForm();
+  const [detailBlog, setDetailBlog] = useState(null);
+  const [dataOthers, setDataOthers] = useState(null);
   const { TextArea } = Input;
   const router = useRouter();
   const [dataContactUs, setDataContactUs] = useState({
@@ -70,6 +74,7 @@ function CustomerStoriesDetail({}) {
         console.log("get data testimonial ", res2);
         if (res2.success) {
           //   setDataTestimonial(res2.data);
+          setDetailBlog(res2.data[0]);
         } else {
         }
       })
@@ -77,7 +82,31 @@ function CustomerStoriesDetail({}) {
       .finally(() => {
         // setLoadingEmployees(false);
       });
-  }, []);
+    getOther();
+  }, [router.query]);
+
+  const getOther = () => {
+    let page = router.query.stories_id;
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getOtherTestimonial?pagepath=${page}`,
+      {
+        method: `GET`,
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("get data testimonial 2 ", res2);
+        if (res2.success) {
+          //   setDataTestimonial(res2.data);
+          setDataOthers(res2.data);
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
+  };
 
   return (
     <Layout>
@@ -97,12 +126,24 @@ function CustomerStoriesDetail({}) {
               "text-2xl md:text-[32px] text-blackmig font-gilroysemibold"
             }
           >
-            This is a Title This is a Title This is a Title
+            {detailBlog?.title}
           </p>
           <div className={"flex flex-row justify-between my-[17px]"}>
             <p className={"text-xs text-darkgrey"}>
-              by <span className={"font-bold"}>Mayfa Shadrina </span>
-              on <span className={"font-bold"}>August 8th, 2022</span>
+              by{" "}
+              <span className={"font-bold"}>
+                {detailBlog
+                  ? detailBlog.author
+                    ? detailBlog.author
+                    : "Admin"
+                  : ""}{" "}
+              </span>
+              on{" "}
+              <span className={"font-bold"}>
+                {detailBlog
+                  ? moment(detailBlog.created_at).format("DD MMMM YYYY")
+                  : "-"}
+              </span>
             </p>
             <p className={"text-sm text-darkgrey font-gilroyregular"}>
               9 MINUTE READ
@@ -111,7 +152,15 @@ function CustomerStoriesDetail({}) {
         </div>
         <div className={"flex flex-row py-2"}>
           <div className={"w-5/6"}>
-            <img src="/image/blog.png" className={"w-full h-full"} alt="" />
+            {detailBlog ? (
+              <img
+                src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
+                className={"w-full h-full"}
+                alt=""
+              />
+            ) : (
+              <img src="/image/blog.png" className={"w-full h-full"} alt="" />
+            )}
           </div>
           <div
             className={
@@ -187,65 +236,24 @@ function CustomerStoriesDetail({}) {
             </div>
           </div>
           <div className={"w-3/5 ml-12"}>
-            <p className={"indent-5 text-base font-gilroyregular"}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <p className={"indent-5 text-base font-gilroyregular"}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <p className={"indent-5 text-base font-gilroyregular"}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <div className={"grid justify-items-center pt-4"}>
-              <img
-                src="/image/blog.png"
-                style={{ width: "515px", height: "289px" }}
-                alt=""
+            {detailBlog && (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: detailBlog.description,
+                }}
               />
-              <p
-                className={
-                  "text-xs text-darkgrey font-gilroyregular font-regular pt-2 mb-4"
-                }
-              >
-                This is a caption for the image above
-              </p>
+            )}
+            <div className={" pt-4"}>
+              {detailBlog && (
+                <div
+                  className=""
+                  dangerouslySetInnerHTML={{
+                    __html: detailBlog.content,
+                  }}
+                />
+              )}
             </div>
-            <p className={"indent-5 text-base font-gilroyregular"}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
-            <p className={"indent-5 text-base font-gilroyregular"}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-              reprehenderit in voluptate velit esse cillum dolore eu fugiat
-              nulla pariatur. Excepteur sint occaecat cupidatat non proident,
-              sunt in culpa qui officia deserunt mollit anim id est laborum.
-            </p>
           </div>
         </div>
       </section>
@@ -258,11 +266,23 @@ function CustomerStoriesDetail({}) {
           <p
             className={"text-2xl md:text-3xl text-blackmig font-gilroysemibold"}
           >
-            This is a Title This is a Title This is a Title
+            {detailBlog?.title}
           </p>
           <p className={"text-xs text-blackmig font-gilroyregular mt-3 mb-4"}>
-            by <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-            on <span className={"font-gilroysemibold"}>August 8th, 2022</span>
+            by{" "}
+            <span className={"font-gilroysemibold"}>
+              {detailBlog
+                ? detailBlog.author
+                  ? detailBlog.author
+                  : "Admin"
+                : ""}{" "}
+            </span>
+            on{" "}
+            <span className={"font-gilroysemibold"}>
+              {detailBlog
+                ? moment(detailBlog.created_at).format("DD MMMM YYYY")
+                : "-"}
+            </span>
           </p>
           <img
             src="/image/blog.png"
@@ -340,66 +360,24 @@ function CustomerStoriesDetail({}) {
           </div>
         </div>
         <div className={"px-2 mt-6"}>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <div className={"grid justify-items-center pt-4"}>
-            <img
-              src="/image/blog.png"
-              className={"rounded-lg"}
-              style={{ width: "244px", height: "124px" }}
-              alt=""
+          {detailBlog && (
+            <div
+              className=""
+              dangerouslySetInnerHTML={{
+                __html: detailBlog.description,
+              }}
             />
-            <p
-              className={
-                "text-xs text-darkgrey font-gilroyregular font-regular pt-2 mb-4"
-              }
-            >
-              This is a caption for the image above
-            </p>
+          )}
+          <div className={" pt-4"}>
+            {detailBlog && (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: detailBlog.content,
+                }}
+              />
+            )}
           </div>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
         </div>
       </section>
       {/* <section
@@ -479,12 +457,12 @@ function CustomerStoriesDetail({}) {
       </section> */}
       <section
         className={
-          "section2blog hidden md:block md:pt-[25px] md:px-[112px] md:pb-6 bg-bgjoinmig "
+          "section2blog hidden md:block md:pt-[25px] md:px-[113.5px] md:pb-6 bg-bgjoinmig "
         }
       >
         <div className={"flex flex-row justify-between"}>
           <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
-            Read Other Articles
+            Read Other Stories
           </p>
           <p
             className={
@@ -495,94 +473,35 @@ function CustomerStoriesDetail({}) {
           </p>
         </div>
         <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
-          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
-            <img
-              className={"w-full h-[184px] rounded-lg"}
-              src="/image/blog.png"
-            />
-            <div className={"mt-3"}>
-              <p className={"text-xs text-darkgrey"}>
-                by <span className={"font-bold"}>Mayfa Shadrina </span>
-                on <span className={"font-bold"}>August 8th, 2022</span>
-              </p>
-              <p className={"font-bold text-blackmig text-base mt-3"}>
-                This is a Title This is a Title This is a Title This is a Title
-              </p>
-              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                Hardware
-              </span>
-            </div>
-          </div>
-          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
-            <img
-              className={"w-full h-[184px] rounded-lg"}
-              src="/image/blog.png"
-            />
-            <div className={"mt-3"}>
-              <p className={"text-xs text-darkgrey"}>
-                by <span className={"font-bold"}>Mayfa Shadrina </span>
-                on <span className={"font-bold"}>August 8th, 2022</span>
-              </p>
-              <p className={"font-bold text-blackmig text-base mt-3"}>
-                This is a Title This is a Title This is a Title This is a Title
-              </p>
-              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                Hardware
-              </span>
-            </div>
-          </div>
-          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
-            <img
-              className={"w-full h-[184px] rounded-lg"}
-              src="/image/blog.png"
-            />
-            <div className={"mt-3"}>
-              <p className={"text-xs text-darkgrey"}>
-                by <span className={"font-bold"}>Mayfa Shadrina </span>
-                on <span className={"font-bold"}>August 8th, 2022</span>
-              </p>
-              <p className={"font-bold text-blackmig text-base mt-3"}>
-                This is a Title This is a Title This is a Title This is a Title
-              </p>
-              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                Hardware
-              </span>
-            </div>
-          </div>
-          <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
-            <img
-              className={"w-full h-[184px] rounded-lg"}
-              src="/image/blog.png"
-            />
-            <div className={"mt-3"}>
-              <p className={"text-xs text-darkgrey"}>
-                by <span className={"font-bold"}>Mayfa Shadrina </span>
-                on <span className={"font-bold"}>August 8th, 2022</span>
-              </p>
-              <p className={"font-bold text-blackmig text-base mt-3"}>
-                This is a Title This is a Title This is a Title This is a Title
-              </p>
-              <p className={" text-blackmig font-gilroyregular text-xs mt-1.5"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-                eiusmod tempor incididunt ut labore et dolore magna aliqua.
-              </p>
-              <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                Hardware
-              </span>
-            </div>
-          </div>
+          {dataOthers
+            ? dataOthers.map((dataarticle) => (
+                <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
+                  <img
+                    className={"w-full h-[184px] rounded-lg"}
+                    src="/image/blog.png"
+                  />
+                  <div className={"mt-3"}>
+                    <p className={"text-xs text-darkgrey"}>
+                      by <span className={"font-bold"}>Mayfa Shadrina </span>
+                      on <span className={"font-bold"}>August 8th, 2022</span>
+                    </p>
+                    <p className={"font-bold text-blackmig text-base mt-3"}>
+                      {dataarticle.title}
+                    </p>
+                    <p
+                      className={
+                        " text-blackmig font-gilroyregular text-xs mt-1.5"
+                      }
+                    >
+                      {dataarticle.description}
+                    </p>
+                    <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                      Hardware
+                    </span>
+                  </div>
+                </div>
+              ))
+            : ""}
         </div>
       </section>
       <section className={"section2blog block md:hidden p-4 bg-bgjoinmig "}>
