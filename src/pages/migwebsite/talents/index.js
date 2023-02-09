@@ -1960,22 +1960,20 @@ function Talents({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[36px] pb-4 font-gilroysemibold"}
                 >
-                  Enabling you to assemble the best team
+                  {t.talentherotitle}
                 </h1>
                 <p
                   style={{ lineHeight: "150%" }}
                   className={"mt-8 font-gilroyregular text-xl"}
                 >
-                  Large quantity of profiles coming in with widely different
-                  qualities. Your turnover rate is high and you have to do it
-                  all over again.
+                  {t.talentherodescription}
                 </p>
                 <div className={"mt-[40px]"}>
                   <p
                     style={{ lineHeight: "150%" }}
                     className={"font-gilroybold text-primarygreen text-xl"}
                   >
-                    Reach us to get more information
+                    {t.talentheroreachus}
                   </p>
                   <div className={"flex flex-row items-center mt-1"}>
                     <Input
@@ -1988,7 +1986,7 @@ function Talents({}) {
                           company_email: e.target.value,
                         });
                       }}
-                      placeholder="Enter your email here."
+                      placeholder={t.talentheroemailplaceholder}
                     />
                     <button
                       onClick={handleHireNow}
@@ -2019,7 +2017,7 @@ function Talents({}) {
                       </p>
                     </div>
                   )}
-                  <div
+                  {/* <div
                     className={
                       "w-full border rounded-lg shadow-lg py-2 pr-2 pl-3 bg-green15 mt-[40px]"
                     }
@@ -2069,7 +2067,7 @@ function Talents({}) {
                         </ul>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
               </div>
               <div className={"flex-col w-[55%]"}>
@@ -2179,17 +2177,20 @@ function Talents({}) {
                 "text-xl md:text-[36px] text-center font-gilroysemibold"
               }
             >
-              Let’s see what{" "}
+              {locale == "en"
+                ? "Access a wide range of "
+                : "Dapatkan akses ke beragam "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                IT Talents
+                {locale == "en" ? "tech talents " : "talenta teknologi "}
               </span>{" "}
-              we can provide
+              {locale == "en" ? "with us." : "kami."}
             </h2>
+
             <div
               className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
             >
@@ -2486,7 +2487,7 @@ function Talents({}) {
                   " font-gilroysemibold text-sm px-2 md:px-0  md:text-xl"
                 }
               >
-                Didn’t find what you were looking for?
+                {t.talentherocustomizetext}
               </p>
               <p
                 style={{ lineHeight: "150%" }}
@@ -2494,8 +2495,7 @@ function Talents({}) {
                   "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-xl"
                 }
               >
-                Reach us to get your orders customized based on your IT talent
-                needs
+                {t.talentherocustomizetext2}
               </p>
             </div>
             <div className={"mt-1 md:mt-4 flex justify-center"}>
@@ -2506,7 +2506,7 @@ function Talents({}) {
                   }
                 >
                   <p className={"text-xl  font-gilroysemibold"}>
-                    Contact our team
+                    {locale == "en" ? "Contact our team" : "Kontak tim kami"}
                   </p>
                 </button>
               </Link>
@@ -3179,18 +3179,21 @@ function Talents({}) {
                 "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
               }
             >
-              Why you should{" "}
+              {locale == "en" ? "Let us " : "Biarkan MIG"}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                trust us
+                {locale == "en" ? "assist you " : "membangun "}
               </span>{" "}
-              in building your team?
+              {locale == "en"
+                ? "in building a powerful  & capable team. "
+                : "tim yang kuat untuk Anda."}
             </h2>
-            <p
+            \
+            {/* <p
               style={{ lineHeight: "150%" }}
               className={
                 "text-center text-sm  md:text-xl text-black font-gilroyregular pt-6"
@@ -3198,7 +3201,7 @@ function Talents({}) {
             >
               With on-demand expertise and flexibility in talent head counts and
               working period,
-            </p>
+            </p> */}
             <div
               className={
                 "md:my-[40px] mx-auto h-[222px] w-[1142px] flex md:items-stretch"
@@ -3219,14 +3222,13 @@ function Talents({}) {
                       style={{ lineHeight: "150%" }}
                       className="px-5 text-sm md:text-xl font-gilroysemibold text-blackmig"
                     >
-                      Customization Based on Your Needs
+                      {t.talentpoint1}
                     </h5>
                     <p
                       style={{ lineHeight: "150%" }}
                       className="text-left px-5 text-xl text-blackmig font-gilroyregular"
                     >
-                      Numbers of talent and their working period can be tailored
-                      as per required by project.
+                      {t.talentsubpoint1}
                     </p>
                   </div>
                 </div>
@@ -3240,14 +3242,13 @@ function Talents({}) {
                       style={{ lineHeight: "150%" }}
                       className="px-5 text-sm md:text-xl font-gilroysemibold text-blackmig"
                     >
-                      Full Flexibility
+                      {t.talentpoint2}
                     </h5>
                     <p
                       style={{ lineHeight: "150%" }}
                       className="text-left px-5 text-xl text-blackmig font-gilroyregular"
                     >
-                      You have full flexibility to rotate and rematch to make
-                      your quality criteria fullfiled.
+                      {t.talentsubpoint2}
                     </p>
                   </div>
                 </div>
@@ -3267,15 +3268,13 @@ function Talents({}) {
                       style={{ lineHeight: "150%" }}
                       className={"font-gilroysemibold"}
                     >
-                      Tight Candidate Selection
+                      {t.talentpoint3}
                     </p>
                     <p
                       style={{ lineHeight: "150%" }}
                       className={"font-gilroyregular"}
                     >
-                      Only less than 10% of all candidates from various industry
-                      backgrounds and top tier universities are selected as our
-                      top talent.
+                      {t.talentsubpoint3}
                     </p>
                   </div>
                 </div>
@@ -3289,15 +3288,13 @@ function Talents({}) {
                       style={{ lineHeight: "150%" }}
                       className={"font-gilroysemibold"}
                     >
-                      Excellent Capability
+                      {t.talentpoint4}
                     </p>
                     <p
                       style={{ lineHeight: "150%" }}
                       className={"font-gilroyregular"}
                     >
-                      Extensive test and interview process covering tech stacks,
-                      coding algorithm, systems design, and soft skills are
-                      given to ensure you having qualified talents.
+                      {t.talentsubpoint4}
                     </p>
                   </div>
                 </div>
@@ -3410,11 +3407,11 @@ function Talents({}) {
             </div>
           </section>
           <section
-            className={
-              "section5talents bg-white py-4 md:py-12 px-4 sm:px-10 md:px-[112px]"
-            }
+          // className={
+          //   "section5talents bg-white py-4 md:py-12 px-4 sm:px-10 md:px-[112px]"
+          // }
           >
-            <h2
+            {/* <h2
               style={{ lineHeight: "120%" }}
               className={
                 "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
@@ -3430,8 +3427,8 @@ function Talents({}) {
                 recruitment scheme
               </span>{" "}
               we provided?
-            </h2>
-            <div className={"hidden md:block"}>
+            </h2> */}
+            {/* <div className={"hidden md:block"}>
               <div
                 className={
                   "md:mt-[42px] md: w-[1216px]  flex md:flex-row justify-between mx-auto"
@@ -3508,9 +3505,9 @@ function Talents({}) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             {/*recruitmen provided mobileview */}
-            <div
+            {/* <div
               className={"md:hidden mt-4 bg-white px-4 py-3 rounded-lg"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
@@ -3543,8 +3540,8 @@ function Talents({}) {
                   </ul>
                 </div>
               </div>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className={"md:hidden mt-4 bg-white px-4 py-3 mb-8 rounded-lg"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
@@ -3569,8 +3566,8 @@ function Talents({}) {
                   </ul>
                 </div>
               </div>
-            </div>
-            <div className={"mt-4 md:hidden"}>
+            </div> */}
+            {/* <div className={"mt-4 md:hidden"}>
               <p
                 className={
                   "text-sm text-blackmig font-gilroysemibold text-center"
@@ -3596,8 +3593,8 @@ function Talents({}) {
                 </span>{" "}
                 service?
               </p>
-            </div>
-            <div className={"mt-[42px] hidden md:block"}>
+            </div> */}
+            {/* <div className={"mt-[42px] hidden md:block"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={
@@ -3624,8 +3621,8 @@ function Talents({}) {
                 </span>{" "}
                 service?
               </h2>
-            </div>
-            <div className={"mt-4 hidden md:block flex justify-center"}>
+            </div> */}
+            {/* <div className={"mt-4 hidden md:block flex justify-center"}>
               <div className={"flex flex-row"}>
                 <div
                   className={"border border-dividermig  bg-white text-center"}
@@ -4590,7 +4587,7 @@ function Talents({}) {
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
           </section>
           {/* testimonial */}
           {dataTestimonial && (
@@ -5031,7 +5028,7 @@ function Talents({}) {
           )}
 
           {/* coverages */}
-          <section
+          {/* <section
             className={
               "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-[113.5px]"
             }
@@ -5186,9 +5183,9 @@ function Talents({}) {
                 </li>
               </ul>
             </div>
-          </section>
+          </section> */}
           {/*coverages mobile */}
-          <section
+          {/* <section
             className={
               "sectioncoveragesmobile block md:hidden bg-transp60 pt-4 px-4 py-[118px]"
             }
@@ -5342,7 +5339,7 @@ function Talents({}) {
                 </li>
               </ul>
             </div>
-          </section>
+          </section> */}
           <section
             className={
               "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
@@ -5355,45 +5352,53 @@ function Talents({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px] px-4">
+              <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}
                 >
-                  Fulfill your IT needs easily!
+                  {t.contactussectiontitle}
                 </h2>
                 <div
                   className={
                     "mt-3.5 text-xl font-gilroyregular text-center text-black"
                   }
                 >
-                  <p
-                    style={{ lineHeight: "150%" }}
-                    className={"py-5 text-xl font-gilroyregular text-black"}
-                  >
-                    Need help in providing your needs? Whether they related to
-                    hardware, software, or even talent hiring? Contact us and
-                    hear what service can we offer to you and your company!
+                  <p style={{ lineHeight: "120%" }}>
+                    {t.contactussectionsubtitle1}
+                  </p>
+                  <p style={{ lineHeight: "120%" }}>
+                    {t.contactussectionsubtitle2}
                   </p>
                 </div>
-                <Link href="/contactus">
-                  <button
-                    className={
-                      "text-sm text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"text-xl font-gilroysemibold"}>
-                        Contact Us
-                      </p>
-                      <img
-                        className={"self-center ml-2"}
-                        style={{ height: "20px", width: "20px" }}
-                        src="/image/landingpage/arrow_forward.png"
-                      />
-                    </div>
-                  </button>
-                </Link>
+                <div className="mt-3.5 flex flex-row justify-center">
+                  <div className={"mr-3.5"}>
+                    <Linkk href="/contactus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                        }
+                      >
+                        <p className={"text-xl font-gilroysemibold"}>
+                          {t.ctacontactuslandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                  <div>
+                    <Linkk href="/aboutus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                        }
+                      >
+                        <p className={"text-xl font-gilroysemibold"}>
+                          {t.ctalearnmorelandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
             <div className={"justify-end  self-end"}>

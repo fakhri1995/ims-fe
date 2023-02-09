@@ -2202,37 +2202,65 @@ function Hardware({}) {
                             "text-base text-blackmig font-gilroyregular"
                           }
                         >
-                          Let us help you to scale and manage your IT
-                          infrastructure with :
+                          {t.hardwaregreenbox}
                         </p>
-                        <ul className={""}>
-                          <li className={"mt-1"}>
-                            <p
-                              className={
-                                "text-base text-blackmig font-gilroyregular"
-                              }
-                            >
-                              {""}
-                              <span className={"font-bold"}>
-                                predictable
-                              </span>{" "}
-                              monthly cost
-                            </p>
-                          </li>
-                          <li className={"mt-1"}>
-                            <p
-                              className={
-                                "text-base text-blackmig font-gilroyregular"
-                              }
-                            >
-                              {""}
-                              <span className={"font-bold"}>
-                                guaranteed
-                              </span>{" "}
-                              service level
-                            </p>
-                          </li>
-                        </ul>
+                        {locale == "en" ? (
+                          <ul className={""}>
+                            <li className={"mt-1"}>
+                              <p
+                                className={
+                                  "text-base text-blackmig font-gilroyregular"
+                                }
+                              >
+                                {""}
+                                <span className={"font-bold"}>
+                                  A predictable
+                                </span>{" "}
+                                monthly cost
+                              </p>
+                            </li>
+                            <li className={"mt-1"}>
+                              <p
+                                className={
+                                  "text-base text-blackmig font-gilroyregular"
+                                }
+                              >
+                                {""}
+                                <span className={"font-bold"}>
+                                  A guaranteed
+                                </span>{" "}
+                                service level
+                              </p>
+                            </li>
+                          </ul>
+                        ) : (
+                          <ul className={""}>
+                            <li className={"mt-1"}>
+                              <p
+                                className={
+                                  "text-base text-blackmig font-gilroyregular"
+                                }
+                              >
+                                Biaya bulanan yang{" "}
+                                <span className={"font-bold"}>
+                                  dapat diprediksi.
+                                </span>{" "}
+                              </p>
+                            </li>
+                            <li className={"mt-1"}>
+                              <p
+                                className={
+                                  "text-base text-blackmig font-gilroyregular"
+                                }
+                              >
+                                Tingkat layanan yang {""}
+                                <span className={"font-bold"}>
+                                  terjamin.
+                                </span>{" "}
+                              </p>
+                            </li>
+                          </ul>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -2338,23 +2366,43 @@ function Hardware({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <h2
-                style={{ lineHeight: "120%" }}
-                className={
-                  "text-xl md:text-[36px] px-8 md:px-0 font-gilroysemibold"
-                }
-              >
-                Let’s see what{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
+              {locale == "en" ? (
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-xl md:text-[36px] px-8 md:px-0 font-gilroysemibold"
+                  }
                 >
-                  IT hardwares
-                </span>{" "}
-                we can offer
-              </h2>
+                  Explore our{" "}
+                  <span
+                    style={{
+                      borderBottom: "solid 3px #188E4D",
+                      paddingBottom: "2.5px",
+                    }}
+                  >
+                    hardware
+                  </span>{" "}
+                  options
+                </h2>
+              ) : (
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-xl md:text-[36px] px-8 md:px-0 font-gilroysemibold"
+                  }
+                >
+                  Jelajahi beragam{" "}
+                  <span
+                    style={{
+                      borderBottom: "solid 3px #188E4D",
+                      paddingBottom: "2.5px",
+                    }}
+                  >
+                    hardware
+                  </span>{" "}
+                  kami.
+                </h2>
+              )}
               <div className={"hidden md:block"}>
                 {dataBanking && (
                   <div className={"flex flex-row mt-[42px] justify-center"}>
@@ -2821,7 +2869,7 @@ function Hardware({}) {
                     "font-gilroysemibold text-sm px-2 md:px-0  md:text-xl"
                   }
                 >
-                  Didn’t find what you were looking for?
+                  {t.hardwarecustomizetext}
                 </p>
                 <p
                   style={{ lineHeight: "120%" }}
@@ -2829,7 +2877,7 @@ function Hardware({}) {
                     "font-gilroyregular text-sm px-2 md:px-0  md:text-xl"
                   }
                 >
-                  Reach us to get your orders customized based on your IT needs
+                  {t.hardwarecustomizetext2}
                 </p>
               </div>
               <div className={"mt-1 md:mt-4 mx-auto"}>
@@ -2840,7 +2888,7 @@ function Hardware({}) {
                     }
                   >
                     <p className={"text-xl  font-gilroysemibold"}>
-                      Contact our sales team
+                      {t.hardwarecustomizetextcta}
                     </p>
                   </button>
                 </Link>
@@ -2861,23 +2909,24 @@ function Hardware({}) {
                 />
               </div>
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
-                {
-                  <h2
-                    style={{ lineHeight: "120%" }}
-                    className="mb-2 text-[28px] text-left font-gilroysemibold text-blackmig"
+                <h2
+                  style={{ lineHeight: "120%" }}
+                  className="mb-2 text-[28px] text-left font-gilroysemibold text-blackmig"
+                >
+                  {locale == "en" ? "We are " : "Kami adalah "}
+                  <span
+                    style={{
+                      borderBottom: "solid 3px #188E4D",
+                      paddingBottom: "2.5px",
+                    }}
                   >
-                    Why you should{" "}
-                    <span
-                      style={{
-                        borderBottom: "solid 3px #188E4D",
-                        paddingBottom: "2.5px",
-                      }}
-                    >
-                      trust us
-                    </span>{" "}
-                    in taking care of your IT hardwares?
-                  </h2>
-                }
+                    {locale == "en" ? "the top choice " : "pilihan terbaik "}
+                  </span>{" "}
+                  {locale == "en"
+                    ? "for managing your hardware."
+                    : "untuk mengelola hardware Anda."}
+                </h2>
+
                 <div className={"block md:hidden mx-auto my-[17px]"}>
                   <img
                     src="/image/people/People-Solution.png"
@@ -2961,14 +3010,18 @@ function Hardware({}) {
                   "text-xl md:text-[36px] font-gilroybold py-8 md:py-0"
                 }
               >
-                How it{" "}
+                {locale == "en"
+                  ? "See how we handle your "
+                  : "Pelajari cara kami mengelola "}
                 <span
                   style={{
                     borderBottom: "solid 3px #188E4D",
                     paddingBottom: "2.5px",
                   }}
                 >
-                  works
+                  {locale == "en"
+                    ? " IT infrastructure."
+                    : "infrastruktur teknologi Anda."}
                 </span>{" "}
                 ?
               </h2>
@@ -3833,7 +3886,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[113.5px]"
+              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[113.5px] h-[173px]"
             }
           >
             <div className={"justify-start self-end"}>
@@ -3843,39 +3896,57 @@ function Hardware({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div className="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[170px] py-4 px-8">
+              <div
+                className={
+                  "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[220px] py-[31.38px]  px-[31.38px]"
+                }
+              >
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}
                 >
-                  Fulfill your IT needs easily!
+                  {t.contactussectiontitle}
                 </h2>
-                <p
-                  style={{ lineHeight: "150%" }}
-                  className={"py-5 text-xl font-gilroyregular text-black"}
+                <div
+                  className={
+                    "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                  }
                 >
-                  Need help in providing your needs? Whether they related to
-                  hardware, software, or even talent hiring? Contact us and hear
-                  what service can we offer to you and your company!
-                </p>
-                <Link href="/contactus">
-                  <button
-                    className={
-                      "text-sm  -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"text-xl font-gilroysemibold mr-2"}>
-                        Contact Us
-                      </p>
-                      <img
-                        className={"self-center"}
-                        style={{ height: "15px", width: "8px" }}
-                        src="/image/landingpage/arrow-forward.png"
-                      />
-                    </div>
-                  </button>
-                </Link>
+                  <p style={{ lineHeight: "120%" }}>
+                    {t.contactussectionsubtitle1}
+                  </p>
+                  <p style={{ lineHeight: "120%" }}>
+                    {t.contactussectionsubtitle2}
+                  </p>
+                </div>
+                <div className="mt-3.5 flex flex-row justify-center">
+                  <div className={"mr-3.5"}>
+                    <Linkk href="/contactus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                        }
+                      >
+                        <p className={"text-xl font-gilroysemibold"}>
+                          {t.ctacontactuslandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                  <div>
+                    <Linkk href="/aboutus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                        }
+                      >
+                        <p className={"text-xl font-gilroysemibold"}>
+                          {t.ctalearnmorelandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
             <div className={"justify-end  self-end"}>

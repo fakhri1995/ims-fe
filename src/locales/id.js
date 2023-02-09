@@ -28,7 +28,27 @@ export default {
   landingpagesection2: "MIG membantu bisnis Anda tumbuh lebih cepat dengan ",
   landingpagetitlelogo:
     "Menjawab kebutuhan berbagai industri di seluruh negeri",
+  talentherotitle: "Bentuk tim teknologi yang sempurna bersama kami.",
+  talentherodescription:
+    "Pencarian karyawan ideal memang terasa melelahkan dan tak berujung. Terlebih, angka turnover karyawan yang tinggi akan mempengaruhi bisnis Anda. Kami akan membantu Anda dan memberikan cara yang paling efektif dalam menemukan talenta teknologi terbaik!",
   cities: "kota",
+  talentheroreachus: "Hubungi kami untuk dapatkan detail informasi",
+  talentheroemailplaceholder: "Masukkan email Anda",
+  talentherocustomizetext: "Belum menemukan solusi yang Anda cari?",
+  talentherocustomizetext2:
+    "Kami bisa memberikan solusi tepat dan terbaik untuk kebutuhan Anda.",
+  talentpoint1: "Sesuai Kebutuhan Anda",
+  talentsubpoint1:
+    "Jumlah dan periode kerja talenta dapat disesuaikan dengan kebutuhan proyek Anda.",
+  talentpoint2: "Penuh Fleksibilitas",
+  talentsubpoint2:
+    "Bebas memilih para talenta hingga mampu memenuhi standar Anda.",
+  talentpoint3: "Proses Seleksi Ketat",
+  talentsubpoint3:
+    "Kurang dari 7% kandidat yang kami pilih! Talenta terbaik kami berasal dari beragam industri dan universitas terkemuka.",
+  talentpoint4: "Kemampuan Terbaik",
+  talentsubpoint4:
+    "Tes dan wawancara yang kompleks untuk memastikan para talenta terampil dalam tech stacks, coding algorithms, system designs, dan soft skills.",
   managed: "managed service hardware",
   techproject: "tech talents.",
   companies: "perusahaan",
@@ -42,6 +62,14 @@ export default {
   hardwaredescription:
     "Tranformasikan pengadaan tradisional Anda menjadi managed service model, dengan biaya bulanan yang terprediksi dan tingkat layanan terbaik.",
   hardwarebuttontitle: "Dapatkan Hardware",
+  hardwaregreenbox:
+    "Kami dapat mengatur dan mengelola infrastruktur IT Anda dengan:",
+  hardwarecustomizetext: "Belum menemukan solusi yang Anda cari?",
+  hardwarecustomizetext2:
+    "Kami bisa memberikan solusi tepat dan terbaik untuk kebutuhan Anda.",
+  hardwarecustomizetextcta: "Kontak tim kami",
+  hardwaregreenboxpoint1: "A predictable monthly cost.",
+  hardwaregreenboxpoint2: "A guaranteed service level.",
   softwaredescription:
     "Membuat ide Anda menjadi nyata. Tim kami siap membantu menciptakan platform yang sesuai dengan kebutuhan Anda.",
   softwarebuttontitle: "Bangun Software",
@@ -99,15 +127,15 @@ export default {
   hardwaresubtitlelanding: "Ringkankan beban modal dalam infrastruktur IT",
   softwaresubtitlelanding: "Solusi digital sesuai kebutuhan bisnis Anda",
   talentsubtitlelanding: "",
-  whowearedescription: `Mitramas Infosys Global (MIG) didirikan pada tahun 2003 dan bekerja sama langsung dengan provider berskala global, serta talenta teknologi lokal untuk memberikan pengalaman teknologi tanpa hambatan. 
-
-  Dengan pengalaman lebih dari satu dekade di seluruh nusantara, kami memiliki pemahaman yang mendalam mengenai penggunaan teknologi untuk mendorong pertumbuhan bisnis. 
-  
-  MIG memegang integritas sebagai prinsip utama dalam bekerja. Kami juga memiliki visi besar untuk meningkatkan efisiensi dan membantu mitra mencapai tujuan bisnis.
-  
-  Kami sangat menghargai kerja sama tim. Kami juga mampu menawarkan berbagai kesempatan kerja yang dapat membuat seluruh tim bertumbuh dan bergerak bersama ke arah yang lebih baik.
-  
-  Bergabunglah bersama segenap MIGhty team, lihat lowongan yang cocok untukmu di sini!`,
+  whowearedescription: `Mitramas Infosys Global (MIG) didirikan pada tahun 2003 dan bekerja sama langsung dengan provider berskala global, serta talenta teknologi lokal untuk memberikan pengalaman teknologi tanpa hambatan.`,
+  whowearedescription2: `Dengan pengalaman lebih dari satu dekade di seluruh nusantara, kami memiliki pemahaman yang mendalam mengenai penggunaan teknologi untuk mendorong pertumbuhan bisnis.`,
+  whowearedescription3: `MIG memegang integritas sebagai prinsip utama dalam bekerja. Kami juga memiliki visi besar untuk meningkatkan efisiensi dan membantu mitra mencapai tujuan bisnis.`,
+  whowearedescription4: `Kami sangat menghargai kerja sama tim. Kami juga mampu menawarkan berbagai kesempatan kerja yang dapat membuat seluruh tim bertumbuh dan bergerak bersama ke arah yang lebih baik.`,
+  whowearejoinmig: `Bergabunglah bersama segenap MIGhty team, lihat lowongan yang cocok untukmu`,
+  whowearejoinmiglink: ` di sini`,
+  aboutushardwaredescription: `Maksimalkan efektivitas biaya dengan hardware yang kami sewakan dan rawat dengan sempurna.`,
+  aboutussoftwaredescription: `Tingkatkan efisiensi bisnis dengan penggunaan teknologi digital terkini milik kami.`,
+  aboutustalentdescription: `Mudahkan proses mencari dan mengelola talenta teknologi terbaik bersama kami.`,
   supportyourbusiness: "Solusi teknologi terlengkap di bawah satu atap.",
   supportyourbusinessdetail:
     "Optimalkan biaya dan capai tujuan bisnis lewat beragam solusi teknologi yang kami rancang.",
@@ -121,6 +149,11 @@ export default {
     "Mudahkan proses mencari dan mengelola talenta teknologi terbaik bersama kami.",
   talentbuttontitleaboutus: "Dirikan tim Anda",
   careersatmig: "Bersama-sama, kita punya kekuatan untuk capai hal luar biasa.",
+  vacancylistsectiontitle: "Yuk, gabung sebagai kekuatan baru MIGhty!",
+  vacancylistsectiondescription:
+    "Mulai kariermu bersama kami. Cek lowongan berikut untuk berbagai posisi. Siapkan dirimu untuk bergabung dalam berbagai proyek masa depan!",
+  vacancylistsectiondescriptionbelow: `Belum menemukan pekerjaan yang cocok dengan skills, minat, dan pengalamanmu? Kirim resume terbaikmu ke `,
+  vacancylistsectiondescriptionbelow2: ` , temukan kesempatan kerja lainnya.`,
   careersatmigsubtitle:
     "Kami menghargai individu dengan motivasi tinggi dalam bekerja. Mari jadi anggota baru tim MIGhty kami!",
   careersatmigbuttontitle: "Lihat Posisi Tersedia",
@@ -143,6 +176,12 @@ export default {
     "Memberikan kesempatan bagi Talenta MIGhty untuk mendapatkan pengalaman dari berbagai industri.",
   careersatmigbenefitsectionpoint3:
     "Mendorong dan memfasilitasi pertumbuhan Talenta MIGhty secara berkelanjutan.",
+  careersatmigbenefitsectionpoint4:
+    "Memberikan kompensasi kompetitif, tingkatkan karir lebih jauh.",
+  careersatmigbenefitsectionpoint5:
+    "Menghargai lingkungan kerja ternyaman, teman kerja yang solid dan menyenangkan.",
+  careersatmigbenefitsectionpoint6:
+    "Mendengarkan semua pendapat, pikiran, dan ide, termasuk milikmu!",
   careersatmigcareersection: "Yuk, gabung sebagai kekuatan baru MIGhty!",
   careersatmigcareersectionsubtitle:
     "Mulai kariermu bersama kami. Cek lowongan berikut untuk berbagai posisi. Siapkan dirimu untuk bergabung dalam berbagai proyek masa depan!",

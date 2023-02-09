@@ -1183,7 +1183,7 @@ function Software({}) {
               {t.softwarepastworksectiontitle3}
             </h2>
             <div className={"flex flex-row"}>
-              <button onClick={() => slider?.current?.slickPrev()}>
+              <button onClick={() => slider2?.current?.slickPrev()}>
                 <div
                   className={
                     "self-center flex items-center justify-center  absolute left-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
@@ -1200,7 +1200,7 @@ function Software({}) {
                 className={"center md:content-around hidden md:block"}
                 style={{ maxWidth: "1145px" }}
               >
-                <Slider {...sliderSettings2} ref={slider}>
+                <Slider {...sliderSettings2} ref={slider2}>
                   <div className={"py-8 px-[16.25px] rounded-lg"}>
                     <div className={"flex flex-row"}>
                       <img
@@ -1327,7 +1327,7 @@ function Software({}) {
                   </div>
                 </Slider>
               </div>
-              <button onClick={() => slider?.current?.slickNext()}>
+              <button onClick={() => slider2?.current?.slickNext()}>
                 <div
                   className={
                     "self-center flex items-center justify-center  absolute right-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
@@ -1481,7 +1481,7 @@ function Software({}) {
                     }
                   >
                     <p className={"text-xl font-gilroysemibold"}>
-                      Contact our sales team
+                      {locale == "en" ? "Contact our team" : "Kontak tim kami"}
                     </p>
                   </button>
                 </Link>
@@ -2181,33 +2181,48 @@ function Software({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}
                 >
-                  Fulfill your IT needs easily!
+                  {t.contactussectiontitle}
                 </h2>
-                <p
-                  style={{ lineHeight: "150%" }}
-                  className={"py-5 text-xl font-gilroyregular text-black"}
+                <div
+                  className={
+                    "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                  }
                 >
-                  Need help in providing your needs? Whether they related to
-                  hardware, software, or even talent hiring? Contact us and hear
-                  what service can we offer to you and your company!
-                </p>
-                <Link href="/contactus">
-                  <button
-                    className={
-                      "text-sm text-white border-2 rounded bg-primarygreen border-primarygreen py-2 pl-4 pr-[13.67px] mt-4"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"text-xl font-gilroysemibold mr-2"}>
-                        Contact Us
-                      </p>
-                      <img
-                        className={"self-center w-[20px] h-[20px]"}
-                        src="/image/landingpage/arrow_forward.png"
-                      />
-                    </div>
-                  </button>
-                </Link>
+                  <p style={{ lineHeight: "120%" }}>
+                    {t.contactussectionsubtitle1}
+                  </p>
+                  <p style={{ lineHeight: "120%" }}>
+                    {t.contactussectionsubtitle2}
+                  </p>
+                </div>
+                <div className="mt-3.5 flex flex-row justify-center">
+                  <div className={"mr-3.5"}>
+                    <Linkk href="/contactus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                        }
+                      >
+                        <p className={"text-xl font-gilroysemibold"}>
+                          {t.ctacontactuslandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                  <div>
+                    <Linkk href="/aboutus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                        }
+                      >
+                        <p className={"text-xl font-gilroysemibold"}>
+                          {t.ctalearnmorelandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
             <div className={"justify-end  self-end"}>
