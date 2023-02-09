@@ -1,9 +1,17 @@
+import { useRouter } from "next/router";
 import type { FC } from "react";
 
+import en from "../../../../locales/en";
+import id from "../../../../locales/id";
 import { JobListTable } from "./JobListTable";
 import { SearchAndFilter } from "./SearchAndFilterSection";
 
 export const CareersAtMig: FC = () => {
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
+
   return (
     <section className="section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 space-y-8">
       {/* Section Heading */}
@@ -12,14 +20,13 @@ export const CareersAtMig: FC = () => {
           style={{ lineHeight: "120%" }}
           className="text-center gilroy-semibold text-2xl text-blackmig font-semibold md:text-[36px] pb-8"
         >
-          Careers at MIG
+          {t.vacancylistsectiontitle}
         </h2>
         <p
           style={{ lineHeight: "150%" }}
           className="pb-8 text-center text-xl gilroy-regular text-blackmig"
         >
-          Want to advance your career with us ? See our job openings below for
-          our current financial services and government projects.
+          {t.vacancylistsectiondescription}
         </p>
       </div>
 
@@ -37,7 +44,7 @@ export const CareersAtMig: FC = () => {
           style={{ lineHeight: "150%" }}
           className="pb-12 md:pb-8 text-xl text-black text-center mt-4"
         >
-          Didn't find the role that best describes your skills ? Send your CV to{" "}
+          {t.vacancylistsectiondescriptionbelow}{" "}
           <a
             style={{ lineHeight: "150%" }}
             href="mailto:recruitment@mitrasolusi.group"
@@ -45,7 +52,7 @@ export const CareersAtMig: FC = () => {
           >
             recruitment@mitrasolusi.group
           </a>{" "}
-          for potential opportunities.
+          {t.vacancylistsectiondescriptionbelow2}
         </p>
       </div>
     </section>

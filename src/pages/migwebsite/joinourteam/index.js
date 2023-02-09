@@ -1,6 +1,7 @@
 import ArrowRightOutlined from "@ant-design/icons/ArrowRightOutlined";
 import { Collapse } from "antd";
 import Head from "next/head";
+import Linkk from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
 import { Link } from "react-scroll";
@@ -125,7 +126,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 {t.careersatmigsubtitle}
               </p>
               <div className={"text-center md:text-left"}>
-                <Link href="/section7careers">
+                <Link to="section7careers" smooth={true}>
                   <button
                     className={
                       "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-gilroysemibold"
@@ -169,7 +170,7 @@ function JoinOurTeam({ dataCareers, empData }) {
           </p>
         </div>
         <div className={"flex justify-center"}>
-          <Link href="/section7careers">
+          <Link to="section7careers" smooth={true}>
             <button
               className={
                 "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-6 py-3 md:px-6 md:py-4 font-gilroysemibold"
@@ -223,7 +224,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ lineHeight: "150%" }}
                   className={"text-blackmig text-sm md:text-xl mt-2"}
                 >
-                  We are adapting to fast-changing environments.
+                  {t.careersatmigvaluesectionsubtitlebox1}
                 </p>
               </div>
             </div>
@@ -249,7 +250,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                   Perseverance
                 </p>
                 <p className={"text-black text-sm md:text-xl mt-2"}>
-                  We aim high and constantly strive for excellence.
+                  {t.careersatmigvaluesectionsubtitlebox2}
                 </p>
               </div>
             </div>
@@ -278,7 +279,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                   style={{ lineHeight: "150%" }}
                   className={"text-blackmig mt-2 text-sm md:text-xl"}
                 >
-                  We are dedicated to adhering to positive ethical values.
+                  {t.careersatmigvaluesectionsubtitlebox3}
                 </p>
               </div>
             </div>
@@ -428,8 +429,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
-                  We provide unique and competitive packages to launch your
-                  career
+                  {t.careersatmigbenefitsectionpoint4}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -443,8 +443,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
-                  We value informal social bonding to offer a enjoyable working
-                  environment
+                  {t.careersatmigbenefitsectionpoint5}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -458,8 +457,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
                   }
                 >
-                  We create engaging environment and believe everyone has a
-                  voice at the table
+                  {t.careersatmigbenefitsectionpoint6}
                 </p>
               </div>
             </div>
@@ -586,10 +584,124 @@ function JoinOurTeam({ dataCareers, empData }) {
       <section className={"section7careers"}>
         <CareersAtMig />
       </section>
-      <LayoutFormContactUs
-        description={t.careersatmigcontactussectionsubtitle}
-        button_title={t.careersatmigcontactussectionbutton}
-      />
+      <section
+        className={
+          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[50px] h-[173px]"
+        }
+      >
+        <div className={"justify-start self-end"}>
+          <img
+            style={{ width: "332px", height: "142px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+        </div>
+        <div className={"container w-1/2 mx-auto"}>
+          <div
+            className={
+              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[150px] py-[31.38px]  px-[31.38px]"
+            }
+          >
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={"text-[28px] font-gilroysemibold text-black"}
+            >
+              {t.contactussectiontitle}
+            </h2>
+            <div
+              className={
+                "mt-3.5 text-xl font-gilroyregular text-center text-black"
+              }
+            >
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle1}
+              </p>
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle2}
+              </p>
+            </div>
+            <div className="mt-3.5 flex flex-row justify-center">
+              <div className={"mr-3.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={"justify-end  self-end"}>
+          <img
+            className={"w-[332px] h-[142px]"}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
+      <section
+        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+      >
+        <div className={"container mx-auto"}>
+          <div
+            className={
+              "bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8"
+            }
+          >
+            <p className={"text-xl font-gilroysemibold"}>
+              Fulfill your IT needs easily!
+            </p>
+            <p className={"py-5 text-sm font-gilroyregular"}>
+              Need help in providing your needs? Whether they related to
+              hardware, software, or even talent hiring? Contact us and hear
+              what service can we offer to you and your company!
+            </p>
+            <Linkk href="/contactus">
+              <button
+                className={
+                  "text-base text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                }
+              >
+                <div className={"flex flex-row justify-between"}>
+                  <p className={"px-1"}>{t.contactuscta}</p>
+                  <img
+                    className={"py-1 px-1"}
+                    style={{ width: "15px" }}
+                    src="/image/landingpage/arrow-forward.png"
+                  />
+                </div>
+              </button>
+            </Linkk>
+          </div>
+        </div>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
     </Layout>
   );
 }

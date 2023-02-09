@@ -25,6 +25,9 @@ export default {
     "Accelerate your business, fortify your tech capabilities with us",
   landingpagetitlelogo:
     "Proven nationwide success in serving diverse businesses",
+  talentherotitle: "Assemble your perfect tech team with us.",
+  talentherodescription:
+    "Tired of endless search for the ideal employee? High turnover impacting your business? Looking for a more effective way to find top tech talent? We are here to provide support for you.",
   cities: "cities",
   managed: "managed-service devices",
   techproject: "tech talents",
@@ -40,6 +43,13 @@ export default {
   helpyou: "can enhance your business",
   hardwaresubtitlelanding: "Lighten up your heavy capital in IT infrastructure",
   softwaresubtitlelanding: "Delivering tailor-made solutions for your business",
+  hardwaregreenbox: "We can scale and manage your IT infrastructure with:",
+  hardwaregreenboxpoint1: "A predictable monthly cost.",
+  hardwaregreenboxpoint2: "A guaranteed service level.",
+  hardwarecustomizetext: "Don't see what you're looking for?",
+  hardwarecustomizetext2:
+    "We can create a custom solution that fits your tech needs perfectly.",
+  hardwarecustomizetextcta: "Contact our team",
   talentsubtitlelanding: "",
   joinmigsection: "Looking for jobs instead? Apply for Jobs",
   joinmigsubtitle: "As a MIGhty talent, you'll get these benefits:",
@@ -93,11 +103,15 @@ export default {
   landingpageoursolution: "Explore our solutions",
   landingpagefreeconsultation: "Get free consultation",
   whoweare: "Our history",
-  whowearedescription: `Mitramas Infosys Global (MIG) was established in 2003 and partners directly with global providers and local tech talents to offer a seamless technology experience. With more than a decade of experience serving clients across the archipelago, we have a deep understanding of the business. We value integrity as our core principle and work with our clients to improve their efficiency and reach long-term business goals.
-
-  At MIG, we believe in the power of teamwork and offer meaningful work opportunities that allow us to be better together.
-  
-  Join our forces, see the available openings here!`,
+  whowearedescription: `Mitramas Infosys Global (MIG) was established in 2003 and partners directly with global providers and local tech talents to offer a seamless technology experience. With more than a decade of experience serving clients across the archipelago, we have a deep understanding of the business. We value integrity as our core principle and work with our clients to improve their efficiency and reach long-term business goals.`,
+  whowearedescription2: `At MIG, we believe in the power of teamwork and offer meaningful work opportunities that allow us to be better together.`,
+  whowearedescription3: `MIG memegang integritas sebagai prinsip utama dalam bekerja. Kami juga memiliki visi besar untuk meningkatkan efisiensi dan membantu mitra mencapai tujuan bisnis.`,
+  whowearedescription4: `Kami sangat menghargai kerja sama tim. Kami juga mampu menawarkan berbagai kesempatan kerja yang dapat membuat seluruh tim bertumbuh dan bergerak bersama ke arah yang lebih baik.`,
+  whowearejoinmig: `Join our forces, see the available openings`,
+  whowearejoinmiglink: ` here`,
+  aboutushardwaredescription: `Optimize your cost by leasing and maintenances variety of electronic equipments`,
+  aboutussoftwaredescription: `We support your companies to simplify and automate the process through digitalization`,
+  aboutustalentdescription: `We help you reduce complexity in talent sourcing and management.`,
   supportyourbusiness: "Complete tech solutions under one roof.",
   supportyourbusinessdetail:
     "Our technology solutions are designed to help you achieve your business objectives and optimize your costs.",
@@ -116,6 +130,11 @@ export default {
     "We are seeking highly motivated and hardworking individuals to become new members of our MIGhty team!",
   careersatmigbuttontitle: "Our Job Openings",
   careersatmigvaluesectiontitle: "These core beliefs define who we are.",
+  vacancylistsectiontitle: "Join our MIGhty forces!",
+  vacancylistsectiondescription:
+    "Move forward in your career with us! See the job openings below for our current opportunities in various future projects.",
+  vacancylistsectiondescriptionbelow: `Didn't see a job that matches your skills and experience? Send your resume to `,
+  vacancylistsectiondescriptionbelow2: ` for potential openings.`,
   careersatmigvaluesectiontitlebox1: "Agility",
   careersatmigvaluesectionsubtitlebox1:
     "We are agile and able to quickly adjust in dynamic environments.",
@@ -134,6 +153,12 @@ export default {
     "We offer our team members the chance to gain exposure & hands-on experience to different industries.",
   careersatmigbenefitsectionpoint3:
     "We support the personal development of our team members through experimentation and learning.",
+  careersatmigbenefitsectionpoint4:
+    "We provide unique and competitive packages to launch your career",
+  careersatmigbenefitsectionpoint5:
+    "We value informal social bonding to offer a enjoyable working environment",
+  careersatmigbenefitsectionpoint6:
+    "We create engaging environment and believe everyone has a voice at the table",
   careersatmigcareersection: "Join our MIGhty forces!",
   careersatmigcareersectionsubtitle:
     "Move forward in your career with us! See the job openings below for our current opportunities in various future projects.",
@@ -148,6 +173,22 @@ export default {
     "Struggling to manage your hardware? Rapid change, uncertain scalability, and high capital costs causing you headaches? Leave the matter to us, we will help you focus on you business.",
   hardwarereachus: "Reach us to get more information",
   hardwareenteremail: "Enter your email here",
+  talentheroreachus: "Reach us to get more information",
+  talentheroemailplaceholder: "Enter your email here",
+  talentherocustomizetext: "Don't see what you're looking for?",
+  talentherocustomizetext2:
+    "We can create a custom solution that fits your tech needs perfectly.",
+  talentpoint1: "Tailored to Your Needs",
+  talentsubpoint1:
+    "The headcounts and woking periods of talent can be tailored to your project's unique needs.",
+  talentpoint2: "Full Range of Flexibility",
+  talentsubpoint2: "Rotate and rematch talent to meet your standards.",
+  talentpoint3: "Rigorous Selection Process",
+  talentsubpoint3:
+    "Only less than 7% candidates! We handpick the top talent from a range of industries and top-tier universities.",
+  talentpoint4: "Exceptional Capability",
+  talentsubpoint4:
+    "Our extensive test and interview process ensures you have qualified talents in tech stacks, coding algorithms, systems design, and soft skills",
   hardwarebankingsubtitle:
     "Assist in developing your financial business within the country.",
   hardwareworkstationsubtitle: "Boost the productivity of your team.",

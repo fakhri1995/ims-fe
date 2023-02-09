@@ -66,17 +66,39 @@ function AboutUs({}) {
         >
           {t.whowearedescription}
         </p>
+        <p
+          style={{ lineHeight: "150%" }}
+          className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+        >
+          {t.whowearedescription2}
+        </p>
+        {locale == "id" && (
+          <div>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+            >
+              {t.whowearedescription3}
+            </p>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+            >
+              {t.whowearedescription4}
+            </p>
+          </div>
+        )}
 
         <p
           style={{ lineHeight: "120%" }}
           className={"mt-4 text-sm md:text-xl font-gilroyregular"}
         >
+          {t.whowearejoinmig}{" "}
           <Link href="joinourteam">
             <em className={"cursor-pointer text-primarygreen underline"}>
-              Careers
+              {t.whowearejoinmiglink}
             </em>
           </Link>{" "}
-          at MIG offer meaningful work to be better together
         </p>
       </section>
       <section
@@ -103,7 +125,7 @@ function AboutUs({}) {
           <div className={"flex flex-col items-center"}>
             <div
               className={
-                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] pb-8 px-4 relative pt-24"
+                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
               }
             >
               <div className={"grid justify-items-center"}>
@@ -134,14 +156,15 @@ function AboutUs({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-center text-blackmig text-xl font-gilroyregular mt-5"
+                    locale == "en"
+                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
+                      : "text-center text-blackmig text-xl font-gilroyregular pb-[30.5px] mt-5"
                   }
                 >
-                  Optimize your cost by leasing and maintenances variety of
-                  electronic equipments
+                  {t.aboutushardwaredescription}
                 </p>
 
-                <div className={"text-center mt-5"}>
+                <div className={"text-center"}>
                   <Linkk href="/hardware">
                     <button
                       className={
@@ -149,7 +172,9 @@ function AboutUs({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>Get Yours</p>
+                        <p className={"px-1"}>
+                          {locale == "en" ? "Get Yours" : "Cek pilihan"}
+                        </p>
                         <img
                           className={"py-1 px-1"}
                           style={{ width: "15px" }}
@@ -165,7 +190,7 @@ function AboutUs({}) {
           <div className={"flex flex-col items-center"}>
             <div
               className={
-                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] pb-8 px-4 relative pt-24"
+                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
               }
             >
               <div className={"grid justify-items-center"}>
@@ -196,11 +221,12 @@ function AboutUs({}) {
                 </p> */}
                 <p
                   className={
-                    "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
+                    locale == "en"
+                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
+                      : "text-center text-blackmig text-xl font-gilroyregular pb-[65.5px] mt-5"
                   }
                 >
-                  We support your companies to simplify and automate the process
-                  through digitalization
+                  {t.aboutussoftwaredescription}
                 </p>
 
                 <div className={"text-center"}>
@@ -211,7 +237,9 @@ function AboutUs({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>Build Now</p>
+                        <p className={"px-1"}>
+                          {locale == "en" ? "Build Now" : "Mulai sekarang"}
+                        </p>
                         <img
                           className={"py-1 px-1"}
                           style={{ width: "15px" }}
@@ -227,7 +255,7 @@ function AboutUs({}) {
           <div className={"flex flex-col items-center"}>
             <div
               className={
-                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] pb-8 px-4 relative pt-24"
+                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
               }
             >
               <div className={"grid justify-items-center"}>
@@ -258,11 +286,12 @@ function AboutUs({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-center text-blackmig text-xl font-gilroyregular pb-8 mt-5"
+                    locale == "en"
+                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
+                      : "text-center text-blackmig text-xl font-gilroyregular pb-[60.5px] mt-5"
                   }
                 >
-                  We help you reduce complexity in talent sourcing and
-                  management
+                  {t.aboutustalentdescription}
                 </p>
 
                 <div className={"text-center"}>
@@ -273,7 +302,9 @@ function AboutUs({}) {
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>Hire Now</p>
+                        <p className={"px-1"}>
+                          {locale == "en" ? "Hire Now" : "Dirikan tim Anda"}
+                        </p>
                         <img
                           className={"py-1 px-1"}
                           style={{ width: "15px" }}
@@ -438,8 +469,7 @@ function AboutUs({}) {
                 Hardware
               </p>
               <p className={"font-gilroyregular text-sm text-blackmig mt-2"}>
-                Optimize your cost by leasing and maintenances variety of
-                electronic equipments
+                {t.aboutushardwaredescription}
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/hardware" }}>
@@ -453,7 +483,7 @@ function AboutUs({}) {
                         "font-gilroysemibold text-base text-primarygreen"
                       }
                     >
-                      Get yours
+                      {locale == "en" ? "Get yours" : "Cek pilihan"}
                     </p>
                     <img
                       src="/image/landingpage/arrow_right_alt.png"
@@ -483,8 +513,7 @@ function AboutUs({}) {
                 Software
               </p>
               <p className={"font-gilroyregular text-sm text-blackmig mt-2"}>
-                We support your companies to simplify and automate the process
-                through digitalization
+                {t.aboutussoftwaredescription}
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/software" }}>
@@ -498,7 +527,7 @@ function AboutUs({}) {
                         "font-gilroysemibold text-base text-primarygreen"
                       }
                     >
-                      Build now
+                      {locale == "en" ? "Build now" : "Mulai sekarang"}
                     </p>
                     <img
                       src="/image/landingpage/arrow_right_alt.png"
@@ -528,7 +557,7 @@ function AboutUs({}) {
                 Talents
               </p>
               <p className={"font-gilroyregular text-blackmig text-sm mt-2"}>
-                We help you reduce complexity in talent sourcing and management
+                {t.aboutustalentdescription}
               </p>
               <div className={"flex justify-end mt-4"}>
                 <Link href={{ pathname: "/talent" }}>
@@ -542,7 +571,7 @@ function AboutUs({}) {
                         "font-gilroysemibold text-base text-primarygreen"
                       }
                     >
-                      Set up your team
+                      {locale == "en" ? "Set up your team" : "Dirikan tim Anda"}
                     </p>
                     <img
                       src="/image/landingpage/arrow_right_alt.png"
@@ -624,7 +653,7 @@ function AboutUs({}) {
               "py-4 text-blackmig font-gilroysemibold text-xl md:text-[32px]"
             }
           >
-            Coverages
+            {locale == "en" ? "Coverages" : "Area jangkauan kami"}
           </h2>
           <div
             className={"bg-white p-6 rounded-lg"}
@@ -794,45 +823,57 @@ function AboutUs({}) {
           />
         </div>
         <div className={"container w-1/2 mx-auto"}>
-          <div class="bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[120px] py-[31.38px] px-4">
+          <div
+            className={
+              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+            }
+          >
             <h2
               style={{ lineHeight: "120%" }}
               className={"text-[28px] font-gilroysemibold text-black"}
             >
-              Fulfill your IT needs easily!
+              {t.contactussectiontitle}
             </h2>
             <div
               className={
                 "mt-3.5 text-xl font-gilroyregular text-center text-black"
               }
             >
-              <p
-                style={{ lineHeight: "150%" }}
-                className={"py-5 text-xl font-gilroyregular text-black"}
-              >
-                Need help in providing your needs? Whether they related to
-                hardware, software, or even talent hiring? Contact us and hear
-                what service can we offer to you and your company!
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle1}
+              </p>
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle2}
               </p>
             </div>
-            <Link href="/contactus">
-              <button
-                className={
-                  "text-sm text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-3.5"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p className={"text-xl gilroy-semibold font-gilroysemibold"}>
-                    Contact Us
-                  </p>
-                  <img
-                    className={"self-center ml-2"}
-                    style={{ height: "20px", width: "20px" }}
-                    src="/image/landingpage/arrow_forward.png"
-                  />
-                </div>
-              </button>
-            </Link>
+            <div className="mt-3.5 flex flex-row justify-center">
+              <div className={"mr-3.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"justify-end  self-end"}>
