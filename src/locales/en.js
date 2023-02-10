@@ -263,6 +263,9 @@ export default {
   softwarehowitwork3:
     "We engage in multiple iterations and gather input before delivering the end-product to you.",
   cookies: `This website uses cookies to ensure you get the best experience on our website`,
+  contactusleftsectiontitle: `Bringing you closer to the ultimate technology solutions`,
+  contactusleftsectiondescription: `Let's talk about your business needs, we have solutions ready for you`,
+  contactussosialmedialabel: `Connect with us`,
   button: `Got it!`,
   about: "About",
   news: "News",

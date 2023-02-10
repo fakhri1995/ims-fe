@@ -289,3 +289,21 @@ export const getFileName = (pathString: string) => {
   const splittedArr = pathString.split("/");
   return splittedArr[splittedArr.length - 1];
 };
+
+export const stripTags = (text: string) => {
+  const pattern = "<\\w+(\\s+(\"[^\"]*\"|\\'[^\\']*'|[^>])+)?>|<\\/\\w+>";
+  const reg = new RegExp(pattern, "gi");
+  return text.replace(reg, "");
+};
+
+export const wordsCount = (text: string) => {
+  const pattern = "\\w+";
+  const reg = new RegExp(pattern, "g");
+  return (text.match(reg) || []).length;
+};
+
+export const timeRead = (total: number) => {
+  const wordsPerMinute = 200;
+  let value = Math.ceil(total / wordsPerMinute);
+  return value;
+};

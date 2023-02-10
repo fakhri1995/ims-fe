@@ -1,23 +1,31 @@
 import Head from "next/head";
 import Link from "next/link";
 import Linkk from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
 
+import en from "../../locales/en";
+import id from "../../locales/id";
+
 function LeftContactUs({ children }) {
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
+
   return (
-    <div className={"w-full md:w-1/2"}>
+    <div className={"w-full md:w-1/2 md:px-4"}>
       <p
         style={{ lineHeight: "120%" }}
         className={"text-[30px] font-gilroysemibold text-blackmig"}
       >
-        We’d love to hear from you
+        {t.contactusleftsectiontitle}
       </p>
       <p
         style={{ lineHeight: "150%" }}
         className={"text-[18px] font-gilroyregular mt-3 w-[400px]"}
       >
-        Have questions about our products, features, or company? Our teams will
-        help you.
+        {t.contactusleftsectiondescription}
       </p>
       <div className="pt-6 hidden md:block">
         <iframe
@@ -53,7 +61,7 @@ function LeftContactUs({ children }) {
           style={{ lineHeight: "150%" }}
           className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
         >
-          Location:&nbsp;
+          {locale == "en" ? "Location:" : "Kantor pusat:"}&nbsp;
         </p>
         <p
           style={{ lineHeight: "150%" }}
@@ -67,7 +75,7 @@ function LeftContactUs({ children }) {
           style={{ lineHeight: "150%" }}
           className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
         >
-          Phone:&nbsp;
+          {locale == "en" ? "Phone:" : "Telepon:"}&nbsp;
         </p>
         <a href="tel:+62218314522">
           <p
@@ -99,7 +107,7 @@ function LeftContactUs({ children }) {
           style={{ lineHeight: "150%" }}
           className={"text-[18px] text-blackmig font-gilroysemibold"}
         >
-          Or reach us through:
+          {t.contactussosialmedialabel}
         </p>
         <div className={"flex flex-row mt-2"}>
           <a href="https://instagram.com/mitramasglobal">

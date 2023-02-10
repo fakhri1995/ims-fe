@@ -446,7 +446,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   const onChangeTextContentQuoteId = (text) => {
     setArtikelBlog({
       ...artikelBlog,
-      quote_id: text,
+      quoteId: text,
     });
   };
 
