@@ -140,6 +140,104 @@ function LandingPage({ dataBlog }) {
       });
   }, []);
 
+  const renderWhiteBox = (data) => {
+    if (locale == "en") {
+      if (data.author && data.job_title && data.quote) {
+        return (
+          <div
+            className={
+              "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
+            }
+            style={{
+              boxShadow: "0px 16px 40px rgba(113, 176, 112, 0.2)",
+            }}
+          >
+            {locale == "en" ? (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: data.quote,
+                }}
+              />
+            ) : locale == "id" && data.quote_id != null ? (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: data.quote_id,
+                }}
+              />
+            ) : (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: data.quote,
+                }}
+              />
+            )}
+            <div className={"mt-3 border border-dividermig w-[144px]"} />
+            <p className={"mt-1 text-[10px] text-blackmig font-gilroysemibold"}>
+              {data.author}
+            </p>
+            <p className={"mt-1 text-[10px] text-blackmig  font-gilroyregular"}>
+              {locale == "en"
+                ? data.job_title
+                : locale == "id" && data.job_title_id != null
+                ? data.job_title_id
+                : data.job_title}
+            </p>
+          </div>
+        );
+      }
+    } else {
+      if (data.author && data.job_title_id && data.quote_id) {
+        return (
+          <div
+            className={
+              "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
+            }
+            style={{
+              boxShadow: "0px 16px 40px rgba(113, 176, 112, 0.2)",
+            }}
+          >
+            {locale == "en" ? (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: data.quote_id,
+                }}
+              />
+            ) : locale == "id" && data.quote_id != null ? (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: data.quote_id,
+                }}
+              />
+            ) : (
+              <div
+                className=""
+                dangerouslySetInnerHTML={{
+                  __html: data.quote_id,
+                }}
+              />
+            )}
+            <div className={"mt-3 border border-dividermig w-[144px]"} />
+            <p className={"mt-1 text-[10px] text-blackmig font-gilroysemibold"}>
+              {data.author}
+            </p>
+            <p className={"mt-1 text-[10px] text-blackmig  font-gilroyregular"}>
+              {locale == "en"
+                ? data.job_title
+                : locale == "id" && data.job_title_id != null
+                ? data.job_title_id
+                : data.job_title}
+            </p>
+          </div>
+        );
+      }
+    }
+  };
+
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
@@ -249,7 +347,7 @@ function LandingPage({ dataBlog }) {
           </div>
           <div className={"flex-col w-1/2"}>
             <img
-              src="/image/landingpage/image-section1.png"
+              src="/image/landingpage/mitramas-infosys-global-landing-page-hero.png"
               className={"w-[742px] h-[395px]  "}
             ></img>
           </div>
@@ -1055,62 +1153,7 @@ function LandingPage({ dataBlog }) {
                                   alt=""
                                 />
                               )}
-                              <div
-                                className={
-                                  "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
-                                }
-                                style={{
-                                  boxShadow:
-                                    "0px 16px 40px rgba(113, 176, 112, 0.2)",
-                                }}
-                              >
-                                {locale == "en" ? (
-                                  <div
-                                    className=""
-                                    dangerouslySetInnerHTML={{
-                                      __html: data1.quote,
-                                    }}
-                                  />
-                                ) : locale == "id" && data1.quote_id != null ? (
-                                  <div
-                                    className=""
-                                    dangerouslySetInnerHTML={{
-                                      __html: data1.quote_id,
-                                    }}
-                                  />
-                                ) : (
-                                  <div
-                                    className=""
-                                    dangerouslySetInnerHTML={{
-                                      __html: data1.quote,
-                                    }}
-                                  />
-                                )}
-                                <div
-                                  className={
-                                    "mt-3 border border-dividermig w-[144px]"
-                                  }
-                                />
-                                <p
-                                  className={
-                                    "mt-1 text-[10px] text-blackmig font-gilroysemibold"
-                                  }
-                                >
-                                  {data1.author}
-                                </p>
-                                <p
-                                  className={
-                                    "mt-1 text-[10px] text-blackmig  font-gilroyregular"
-                                  }
-                                >
-                                  {locale == "en"
-                                    ? data1.job_title
-                                    : locale == "id" &&
-                                      data1.job_title_id != null
-                                    ? data1.job_title_id
-                                    : data1.job_title}
-                                </p>
-                              </div>
+                              {renderWhiteBox(data1)}
                             </div>
                           </div>
                           <div className={"w-[45%]"}>

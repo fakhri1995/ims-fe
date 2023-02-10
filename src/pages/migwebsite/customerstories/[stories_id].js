@@ -26,14 +26,28 @@ import Slider from "react-slick";
 // import { LikeFillIconSvg, LikeIconSvg,ReplyIconSvg } from "../../../components/icon";
 import Layout from "../../../components/migwebsite/layout";
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
-import { generateStaticAssetUrl } from "../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  stripTags,
+  timeRead,
+  wordsCount,
+} from "../../../lib/helper";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function CustomerStoriesDetail({}) {
   const [form] = Form.useForm();
+  const WORDS_PER_MIN = 275; // wpm
+
+  const IMAGE_READ_TIME = 12; // in seconds
+
+  const CHINESE_KOREAN_READ_TIME = 500; // cpm
+
+  const IMAGE_TAGS = ["img", "Image"];
+
   const [detailBlog, setDetailBlog] = useState(null);
   const [dataOthers, setDataOthers] = useState(null);
+  const [minutesRead, setMinutesRead] = useState(null);
   const { TextArea } = Input;
   const router = useRouter();
   const [dataContactUs, setDataContactUs] = useState({
@@ -75,6 +89,11 @@ function CustomerStoriesDetail({}) {
         if (res2.success) {
           //   setDataTestimonial(res2.data);
           setDetailBlog(res2.data[0]);
+          let total =
+            wordsCount(stripTags(res2.data[0].description)) +
+            wordsCount(stripTags(res2.data[0].content));
+          let minute = timeRead(total);
+          setMinutesRead(minute);
         } else {
         }
       })
@@ -106,6 +125,11 @@ function CustomerStoriesDetail({}) {
       .finally(() => {
         // setLoadingEmployees(false);
       });
+  };
+
+  const copyToClipboard = (e) => {
+    navigator.clipboard.writeText(window.location.toString());
+    alert("URL is copied");
   };
 
   return (
@@ -146,7 +170,7 @@ function CustomerStoriesDetail({}) {
               </span>
             </p>
             <p className={"text-sm text-darkgrey font-gilroyregular"}>
-              9 MINUTE READ
+              {minutesRead && minutesRead + " MINUTE READ"}
             </p>
           </div>
         </div>
@@ -193,6 +217,7 @@ function CustomerStoriesDetail({}) {
               alt=""
             />
             <img
+              onClick={copyToClipboard}
               src="/image/share-link.png"
               className={"my-4"}
               style={{ width: "42px", height: "42px" }}
@@ -476,27 +501,43 @@ function CustomerStoriesDetail({}) {
           {dataOthers
             ? dataOthers.map((dataarticle) => (
                 <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
-                  <img
-                    className={"w-full h-[184px] rounded-lg"}
-                    src="/image/blog.png"
-                  />
+                  {dataarticle.attachment_article ? (
+                    <img
+                      src={generateStaticAssetUrl(
+                        dataarticle.attachment_article.link
+                      )}
+                      className={"w-full h-[184px] rounded-lg"}
+                      alt=""
+                    />
+                  ) : (
+                    <img
+                      className={"w-full h-[184px] rounded-lg"}
+                      src="/image/blog.png"
+                    />
+                  )}
                   <div className={"mt-3"}>
                     <p className={"text-xs text-darkgrey"}>
-                      by <span className={"font-bold"}>Mayfa Shadrina </span>
-                      on <span className={"font-bold"}>August 8th, 2022</span>
+                      by{" "}
+                      <span className={"font-bold"}>
+                        {dataarticle.author ? dataarticle.author : "Admin "}{" "}
+                      </span>
+                      on{" "}
+                      <span className={"font-bold"}>
+                        {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
+                      </span>
                     </p>
                     <p className={"font-bold text-blackmig text-base mt-3"}>
                       {dataarticle.title}
                     </p>
                     <p
                       className={
-                        " text-blackmig font-gilroyregular text-xs mt-1.5"
+                        " text-blackmig font-gilroyregular text-xs mt-1.5 h-[60px]"
                       }
                     >
-                      {dataarticle.description}
+                      {stripTags(dataarticle.description)}
                     </p>
-                    <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                      Hardware
+                    <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                      {dataarticle.tags}
                     </span>
                   </div>
                 </div>

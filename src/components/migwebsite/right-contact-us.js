@@ -3,7 +3,11 @@ import { Button, Checkbox, Form, Input, Select, notification } from "antd";
 import Head from "next/head";
 import Link from "next/link";
 import Linkk from "next/link";
+import { useRouter } from "next/router";
 import React from "react";
+
+import en from "../../locales/en";
+import id from "../../locales/id";
 
 function RightContactUs({
   feedback,
@@ -14,6 +18,10 @@ function RightContactUs({
   dataContactUs,
   setDataContactUs,
 }) {
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   return (
     <div className={"w-full md:w-1/2"}>
       <div className={"w-full"}>
@@ -23,14 +31,17 @@ function RightContactUs({
             "text-xl pt-6 md:pt-0 md:text-[30px] font-gilroysemibold text-blackmig"
           }
         >
-          Send us your questions
+          {locale == "en"
+            ? "Send us your questions"
+            : "Kirimkan pertanyaan Anda di sini"}
         </p>
         <p
           style={{ lineHeight: "150%" }}
           className={"text-xs md:text-[18px] mt-1 md:mt-3 text-blackmig mb-5"}
         >
-          Fill in your contact information, and our sales team will contact you
-          shortly.
+          {locale == "en"
+            ? "Kindly provide your contact details, our team will get in touch shortly"
+            : "Isi informasi kontak Anda, tim kami akan menghubungi segera"}
         </p>
         <div
           hidden={feedback}
@@ -105,7 +116,11 @@ function RightContactUs({
             <Form.Item
               name={"Company Name"}
               className={"font-gilroyregular text-[16px]"}
-              label={<p style={{ fontSize: "16px" }}>Company Name</p>}
+              label={
+                <p style={{ fontSize: "16px" }}>
+                  {locale == "en" ? "Company Name" : "Nama Perusahaan"}
+                </p>
+              }
               rules={[{ required: true }]}
             >
               <Input
@@ -143,7 +158,11 @@ function RightContactUs({
             <Form.Item
               name={"Contact Name"}
               className={"font-gilroyregular text-[16px]"}
-              label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
+              label={
+                <p style={{ fontSize: "16px" }}>
+                  {locale == "en" ? "Contact Name" : "Nama"}
+                </p>
+              }
               rules={[{ required: true }]}
             >
               <Input
@@ -161,7 +180,11 @@ function RightContactUs({
             <Form.Item
               name={"Phone Number"}
               className={"font-gilroyregular text-[16px]"}
-              label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
+              label={
+                <p style={{ fontSize: "16px" }}>
+                  {locale == "en" ? "Phone Number" : "No. Telepon"}
+                </p>
+              }
               rules={[
                 {
                   required: true,
@@ -189,7 +212,11 @@ function RightContactUs({
           <Form.Item
             name="Interest"
             className={"font-gilroyregular text-[16px]"}
-            label={<p style={{ fontSize: "16px" }}>Interest</p>}
+            label={
+              <p style={{ fontSize: "16px" }}>
+                {locale == "en" ? "Interest" : "Solusi yang dibutuhkan"}
+              </p>
+            }
             rules={[{ required: true }]}
           >
             <Select
@@ -214,7 +241,11 @@ function RightContactUs({
           <Form.Item
             name="Message"
             className={"font-gilroyregular text-[16px]"}
-            label={<p style={{ fontSize: "16px" }}>Message</p>}
+            label={
+              <p style={{ fontSize: "16px" }}>
+                {locale == "en" ? "Message" : "Tulis Pesan & Pertanyaan"}
+              </p>
+            }
             rules={[{ required: true }]}
           >
             <Input.TextArea
@@ -244,10 +275,9 @@ function RightContactUs({
               name="checkbox"
               className="text-xs md:text-base text-blackmig font-gilroyregular"
             >
-              By proceeding, I agree that MIG's representative may contact me by
-              email, phone, or SMS (including by automatic telephone dialing
-              system) at the email address or number I provide, including for
-              marketing purposes.*
+              {locale == "en"
+                ? `*By submitting the form, I agree for MIG to contact me and provide information and interesting offers regarding technology solutions`
+                : "*Dengan mengirimkan formulir, saya setuju MIG menghubungi saya dan memberikan informasi & tawaran menarik terkait solusi teknologi."}
             </Checkbox>
           </Form.Item>
           <Form.Item>
@@ -263,7 +293,7 @@ function RightContactUs({
                     style={{ lineHeight: "150%" }}
                     className={"text-[18px] font-gilroysemibold"}
                   >
-                    Submit
+                    {locale == "en" ? "Submit" : "Kirim"}
                   </p>
                   <img
                     className={"self-center"}
