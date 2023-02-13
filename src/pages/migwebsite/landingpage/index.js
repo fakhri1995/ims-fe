@@ -23,7 +23,7 @@ function LandingPage({ dataBlog }) {
   const rt = useRouter();
   const { locale } = rt;
   const t = locale === "en" ? en : id;
-  const [dataTestimonial, setDataTestimonial] = useState(null);
+  const [dataTestimonial, setDataTestimonial] = useState([]);
   const flickityOptions = {
     initialIndex: 0,
     // wrapAround: 'true',
@@ -130,7 +130,23 @@ function LandingPage({ dataBlog }) {
       .then((res2) => {
         console.log("get data testimonial ", res2);
         if (res2.success) {
-          setDataTestimonial(res2.data);
+          if (locale == "en") {
+            setDataTestimonial(res2.data);
+          } else {
+            console.log("masuk else id ");
+            let dataTemp = [];
+            for (let i = 0; i < res2.data.length; i++) {
+              if (
+                res2.data[i].title_id != "" &&
+                res2.data[i].description_id != ""
+              ) {
+                dataTemp.push(res2.data[i]);
+                console.log("masuk push");
+              }
+            }
+            setDataTestimonial(dataTemp);
+          }
+          console.log("datanya ", dataTestimonial);
         } else {
         }
       })
@@ -138,7 +154,7 @@ function LandingPage({ dataBlog }) {
       .finally(() => {
         // setLoadingEmployees(false);
       });
-  }, []);
+  }, [rt]);
 
   const renderWhiteBox = (data) => {
     if (locale == "en") {
@@ -252,7 +268,7 @@ function LandingPage({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage bg-white md:pt-[64px] md:pb-[94px] md:px-[113.5px]"
+          "section1landingpage bg-white mx-auto md:px-[56.5px] md:pt-[64px] lg:pb-[94px] lg:px-[113.5px]"
         }
       >
         {/* Browser View */}
@@ -261,14 +277,16 @@ function LandingPage({ dataBlog }) {
             <h1
               style={{ lineHeight: "120%" }}
               className={
-                "text-[36px] mt-[34px] font-gilroysemibold text-blackmig"
+                "md:text-[32px] lg:text-[36px] mt-[34px] font-gilroysemibold text-blackmig"
               }
             >
               {t.landingpagesection1}
             </h1>
             <p
               style={{ lineHeight: "150%" }}
-              className={" text-xl font-gilroyregular text-blackmig mt-[34px]"}
+              className={
+                "text-base lg:text-xl font-gilroyregular text-blackmig mt-[34px]"
+              }
             >
               {t.landingpagesection2}
               <span className={"font-gilroysemibold text-blackmig"}>
@@ -287,25 +305,33 @@ function LandingPage({ dataBlog }) {
             </p>
             <p
               style={{ lineHeight: "150%" }}
-              className={" text-xl font-gilroyregular text-blackmig mt-4"}
+              className={
+                "text-base md:text-xl font-gilroyregular text-blackmig mt-4"
+              }
             >
               {t.weprovideyou}
             </p>
             <p
               style={{ lineHeight: "150%" }}
-              className={" text-xl font-gilroyregular text-blackmig"}
+              className={
+                "text-base md:text-xl  font-gilroyregular text-blackmig"
+              }
             >
               {t.firstprovide}
             </p>
             <p
               style={{ lineHeight: "150%" }}
-              className={" text-xl font-gilroyregular text-blackmig"}
+              className={
+                "text-base md:text-xl  font-gilroyregular text-blackmig"
+              }
             >
               {t.secondprovide}
             </p>
             <p
               style={{ lineHeight: "150%" }}
-              className={" text-xl font-gilroyregular text-blackmig"}
+              className={
+                "text-base md:text-xl font-gilroyregular text-blackmig"
+              }
             >
               {t.thirdprovide}
             </p>
@@ -930,7 +956,7 @@ function LandingPage({ dataBlog }) {
         </div>
       </section>
       {/* testimonial */}
-      {dataTestimonial && (
+      {dataTestimonial.length > 0 && (
         <section
           className={
             "section3landingpageadvantages hidden md:block bg-white py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
@@ -1104,7 +1130,7 @@ function LandingPage({ dataBlog }) {
             </Slider>
           </div>
           <div className={"flex flex-row"}>
-            {dataTestimonial ? (
+            {dataTestimonial.length > 0 ? (
               dataTestimonial.length > 1 ? (
                 <button onClick={() => slider?.current?.slickPrev()}>
                   <div
@@ -1197,12 +1223,21 @@ function LandingPage({ dataBlog }) {
                                 )}
                               </div>
                             </div>
-                            <div
-                              className="mt-4"
-                              dangerouslySetInnerHTML={{
-                                __html: data1.description,
-                              }}
-                            />
+                            {locale == "en" ? (
+                              <div
+                                className="mt-4"
+                                dangerouslySetInnerHTML={{
+                                  __html: data1.description,
+                                }}
+                              />
+                            ) : (
+                              <div
+                                className="mt-4"
+                                dangerouslySetInnerHTML={{
+                                  __html: data1.description_id,
+                                }}
+                              />
+                            )}
                             <Linkk href={`/customerstories/${data1.page_path}`}>
                               <button
                                 className={
@@ -1233,7 +1268,7 @@ function LandingPage({ dataBlog }) {
                   : ""}
               </Slider>
             </div>
-            {dataTestimonial ? (
+            {dataTestimonial.length > 0 ? (
               dataTestimonial.length > 1 ? (
                 <button onClick={() => slider?.current?.slickNext()}>
                   <div
@@ -1258,7 +1293,7 @@ function LandingPage({ dataBlog }) {
         </section>
       )}
       {/* testimonial mobile */}
-      {dataTestimonial && (
+      {dataTestimonial.length > 0 && (
         <section
           className={
             "sectiontestimonialmobile block md:hidden bg-white pt-8 pb-14 px-[30px] md:px-10"
@@ -1286,7 +1321,7 @@ function LandingPage({ dataBlog }) {
                 <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
                   <div className={"flex flex-row justify-between"}>
                     <p className={"font-gilroybold text-sm text-blackmig"}>
-                      {data1.title}
+                      {locale == "en" ? data1.title : data1.title_id}
                     </p>
                     {data1.company_logo ? (
                       <img
@@ -1307,12 +1342,12 @@ function LandingPage({ dataBlog }) {
                   <p
                     className={"mt-1 text-primarygreen text-xs font-gilroybold"}
                   >
-                    KB Bukopin
+                    {data1.company_name}
                   </p>
                   <p
                     className={"mt-2 text-blackmig text-xs font-gilroyregular"}
                   >
-                    {data1.description}
+                    {locale == "en" ? data1.description : data1.description_id}
                   </p>
                   <div
                     className={"mt-2 bg-white p-3"}
@@ -1334,7 +1369,7 @@ function LandingPage({ dataBlog }) {
                         "mt-1 text-[10px] font-gilroyregular text-blackmig"
                       }
                     >
-                      {data1.job_title}
+                      {locale == "en" ? data1.job_title : data1.job_title_id}
                     </p>
                   </div>
                   <div className={"mt-3 flex justify-end"}>
@@ -1813,29 +1848,42 @@ function LandingPage({ dataBlog }) {
             }
           >
             <p className={"text-xl font-gilroysemibold"}>
-              Fulfill your IT needs easily!
+              {t.contactussectiontitle}
             </p>
-            <p className={"py-5 text-sm font-gilroyregular"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+            <p className={" text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle1}
             </p>
-            <Linkk href="/contactus">
-              <button
-                className={
-                  "text-base text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>{t.contactuscta}</p>
-                  <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Linkk>
+            <p className={"text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle2}
+            </p>
+            <div className="mt-4 flex flex-row justify-center">
+              <div className={"mr-1.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"flex justify-between self-end mt-[7.61px]"}>

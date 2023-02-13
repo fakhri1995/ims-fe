@@ -2331,8 +2331,7 @@ function Hardware({}) {
                   />
                   <div>
                     <p className={"text-sm text-blackmig font-gilroyregular"}>
-                      Let us help you to scale and manage your IT infrastructure
-                      with :
+                      {t.hardwaregreenbox}
                     </p>
                     <ul className={""}>
                       <li className={"mt-1"}>
@@ -2340,7 +2339,9 @@ function Hardware({}) {
                           className={"text-sm text-blackmig font-gilroyregular"}
                         >
                           {""}
-                          <span className={"font-bold"}>predictable</span>{" "}
+                          <span className={"font-bold"}>
+                            A predictable
+                          </span>{" "}
                           monthly cost
                         </p>
                       </li>
@@ -2349,7 +2350,7 @@ function Hardware({}) {
                           className={"text-sm text-blackmig font-gilroyregular"}
                         >
                           {""}
-                          <span className={"font-bold"}>guaranteed</span>{" "}
+                          <span className={"font-bold"}>A guaranteed</span>{" "}
                           service level
                         </p>
                       </li>
@@ -2908,10 +2909,10 @@ function Hardware({}) {
                   alt=""
                 />
               </div>
-              <div className="flex flex-col md:w-3/5 md:ml-[40px]">
+              <div className="flex flex-col md:w-3/5 md:ml-[40px] ">
                 <h2
                   style={{ lineHeight: "120%" }}
-                  className="mb-2 text-[28px] text-left font-gilroysemibold text-blackmig"
+                  className="mb-2 text-[28px] text-center md:text-left font-gilroysemibold text-blackmig"
                 >
                   {locale == "en" ? "We are " : "Kami adalah "}
                   <span
@@ -3023,7 +3024,6 @@ function Hardware({}) {
                     ? " IT infrastructure."
                     : "infrastruktur teknologi Anda."}
                 </span>{" "}
-                ?
               </h2>
             </div>
             <div className={"flex flex-row justify-between mt-10"}>

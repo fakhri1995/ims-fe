@@ -102,7 +102,7 @@ function CustomerStoriesDetail({}) {
         // setLoadingEmployees(false);
       });
     getOther();
-  }, [router.query]);
+  }, [router.isReady]);
 
   const getOther = () => {
     let page = router.query.stories_id;

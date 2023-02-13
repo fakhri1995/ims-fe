@@ -1601,14 +1601,16 @@ function Software({}) {
                   "text-xl md:text-[36px] font-gilroysemibold py-8 md:py-0"
                 }
               >
-                How it{" "}
+                {locale == "en"
+                  ? "How do MIG's services enable the creation of "
+                  : "Bagaimana cara membuat software lewat "}
                 <span
                   style={{
                     borderBottom: "solid 3px #188E4D",
                     paddingBottom: "2.5px",
                   }}
                 >
-                  works
+                  {locale == "en" ? "top-quality software" : "layanan MIG "}
                 </span>{" "}
                 ?
               </h2>
