@@ -993,7 +993,7 @@ function Hardware({}) {
                           }
                         >
                           <div className={"flex flex-row justify-between"}>
-                            <p className={"text-base font-gilroysemibold"}>
+                            <p className={"text-[18px] font-gilroysemibold"}>
                               Get Started
                             </p>
                             <img
@@ -1016,7 +1016,10 @@ function Hardware({}) {
                 >
                   General Information
                 </p>
-                <p style={{ lineHeight: "120%" }} className={"pt-9 text-xl"}>
+                <p
+                  style={{ lineHeight: "120%", fontSize: "16px" }}
+                  className={"pt-9"}
+                >
                   What is your purpose in providing IT needs through Mitramas
                   Infosys Global?
                 </p>
@@ -1747,7 +1750,10 @@ function Hardware({}) {
                       // rules={[{ required: true }]}
                     >
                       <TextArea
-                        style={{ border: "1px solid #B8B8B8" }}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
                         name={"Details"}
                         onChange={(value) => {
                           setDetails(value.target.value);
@@ -2168,7 +2174,7 @@ function Hardware({}) {
                           style={{ lineHeight: "120%" }}
                           className={" font-gilroysemibold"}
                         >
-                          Let's talk!
+                          {locale == "en" ? "Let's talk!" : "Konsultasi gratis"}
                         </p>
                         <img
                           className={"w-[20px] h-[20px] self-center"}
@@ -2443,7 +2449,7 @@ function Hardware({}) {
                                 "text-xl text-accentblue font-gilroysemibold"
                               }
                             >
-                              Get yours
+                              {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
                               src="/image/hardware/arrow_forward_ios_blue.png"
@@ -2458,14 +2464,14 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataBanking.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
                             onClick={handleShowForm}
                           >
                             <img
                               src={generateStaticAssetUrl(
                                 data.attachment_product.link
                               )}
-                              className={"w-[128px] h-[90px] self-center"}
+                              className={"w-[128px] h-[90px]"}
                               alt=""
                             />
                             <p
@@ -2518,7 +2524,7 @@ function Hardware({}) {
                                 "text-xl text-primarygreen font-gilroysemibold"
                               }
                             >
-                              Get yours
+                              {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
                               src="/image/hardware/arrow_forward_ios_green.png"
@@ -2533,7 +2539,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataWorkstation.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
                             onClick={handleShowForm}
                           >
                             <img
@@ -2593,7 +2599,7 @@ function Hardware({}) {
                                 "text-xl text-accentpurple font-gilroysemibold"
                               }
                             >
-                              Get yours
+                              {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
                               src="/image/hardware/arrow_forward_ios_purple.png"
@@ -2608,7 +2614,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataServer.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
                             onClick={handleShowForm}
                           >
                             <img
@@ -2669,7 +2675,7 @@ function Hardware({}) {
                                 "text-xl text-accentpink font-gilroysemibold"
                               }
                             >
-                              Get yours
+                              {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
                               src="/image/hardware/arrow_forward_ios_pink.png"
@@ -2684,7 +2690,7 @@ function Hardware({}) {
                       <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
                         {dataUps.map((data, index) => (
                           <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center"
+                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
                             onClick={handleShowForm}
                           >
                             <img
@@ -3583,7 +3589,7 @@ function Hardware({}) {
                 "text-xl md:text-[36px] text-blackmig text-center  font-gilroysemibold py-8 md:py-0 mb-10"
               }
             >
-              Coverages
+              {locale == "en" ? "Coverages" : "Area jangkauan kami"}
             </h2>
             <div
               className={"bg-white p-12 items-center w-[788px] mx-auto"}
@@ -3739,7 +3745,7 @@ function Hardware({}) {
                 "text-xl text-blackmig text-center  font-gilroysemibold"
               }
             >
-              Coverages
+              {locale == "en" ? "Coverages" : "Area jangkauan kami"}
             </p>
             <div
               className={"bg-white p-6 mt-4 mx-auto"}

@@ -259,6 +259,13 @@ function Talents({}) {
 
   const handleCancel = () => {
     setModalTalents(false);
+    // setShowform(true);
+  };
+  const handleHireTalent = () => {
+    setModalTalents(false);
+    setModalTalentsData(false);
+    setModalTalentsDesign(false);
+    setModalTalentsProduct(false);
     setShowform(true);
   };
   const handleCancelDelete = () => {
@@ -1955,7 +1962,7 @@ function Talents({}) {
             }
           >
             <div className={"hidden md:flex justify-between container mx-auto"}>
-              <div className={"flex-col w-2/5"}>
+              <div className={"flex-col w-1/2"}>
                 <h1
                   style={{ lineHeight: "120%" }}
                   className={"text-[36px] pb-4 font-gilroysemibold"}
@@ -1999,7 +2006,7 @@ function Talents({}) {
                           style={{ lineHeight: "120%" }}
                           className={"font-gilroysemibold"}
                         >
-                          Hire now!
+                          {locale == "en" ? " Hire now!" : "Rekrut talent"}
                         </p>
                         <img
                           className={"w-[20px] h-[20px] self-center ml-2.5"}
@@ -2070,7 +2077,7 @@ function Talents({}) {
                   </div> */}
                 </div>
               </div>
-              <div className={"flex-col w-[55%]"}>
+              <div className={"flex-col w-1/2"}>
                 <img
                   src="/image/landingpage/Talents-2.png"
                   className={"w-full h-[389px]"}
@@ -2538,10 +2545,10 @@ function Talents({}) {
                 </div>
                 <div className={"mt-3"}>
                   <p className={"text-sm text-darkgrey font-gilroysemibold"}>
-                    Pilihan Masa Kontrak
+                    {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                   </p>
                   <p className={"text-base font-gilroyregular text-blackmig"}>
-                    1 minggu - 5 tahun
+                    {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                   </p>
                 </div>
               </div>
@@ -2560,10 +2567,10 @@ function Talents({}) {
             <div className={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
                 <p className={"text-xs text-darkgrey font-gilroysemibold"}>
-                  Pilihan Masa Kontrak
+                  {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
                 <p className={"text-sm font-gilroyregular text-blackmig"}>
-                  1 minggu - 5 tahun
+                  {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                 </p>
               </div>
               <div className={"mt-8"}>
@@ -2624,7 +2631,7 @@ function Talents({}) {
                     Interested with our talents?
                   </p>
                   <button
-                    onClick={handleCancel}
+                    onClick={handleHireTalent}
                     className={
                       "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
                     }
@@ -2704,10 +2711,10 @@ function Talents({}) {
                 </div>
                 <div className={"mt-3"}>
                   <p className={"text-xs text-darkgrey font-gilroysemibold"}>
-                    Pilihan Masa Kontrak
+                    {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                   </p>
                   <p className={"text-sm font-gilroyregular text-blackmig"}>
-                    1 minggu - 5 tahun
+                    {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                   </p>
                 </div>
               </div>
@@ -2724,10 +2731,10 @@ function Talents({}) {
             <div classname={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
                 <p className={"text-xs font-gilroysemibold"}>
-                  Pilihan Masa Kontrak
+                  {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
                 <p className={"text-sm font-gilroyregular"}>
-                  1 minggu - 5 tahun
+                  {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                 </p>
               </div>
               <div className={"mt-8"}>
@@ -2785,7 +2792,7 @@ function Talents({}) {
                   Interested with our talents?
                 </p>
                 <button
-                  onClick={handleCancelData}
+                  onClick={handleHireTalent}
                   className={
                     "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
                   }
@@ -2864,10 +2871,14 @@ function Talents({}) {
                 <div>
                   <div className={"mt-3"}>
                     <p className={"text-xs text-darkgrey font-gilroysemibold"}>
-                      Pilihan Masa Kontrak
+                      {locale == "en"
+                        ? "Working Period"
+                        : "Pilihan Masa Kontrak"}
                     </p>
                     <p className={"text-sm font-gilroyregular text-blackmig"}>
-                      1 minggu - 5 tahun
+                      {locale == "en"
+                        ? "1 week - 5 years"
+                        : "1 minggu - 5 tahun"}
                     </p>
                   </div>
                 </div>
@@ -2885,10 +2896,10 @@ function Talents({}) {
             <div className={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
                 <p className={"text-xs font-gilroysemibold"}>
-                  Pilihan Masa Kontrak
+                  {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
                 <p className={"text-sm font-gilroyregular"}>
-                  1 minggu - 5 tahun
+                  {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                 </p>
               </div>
               <div className={"mt-8"}>
@@ -2950,7 +2961,7 @@ function Talents({}) {
                   Interested with our talents?
                 </p>
                 <button
-                  onClick={handleCancelProduct}
+                  onClick={handleHireTalent}
                   className={
                     "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
                   }
@@ -3027,10 +3038,10 @@ function Talents({}) {
                 </div>
                 <div className={"mt-3"}>
                   <p className={"text-xs text-darkgrey font-gilroysemibold"}>
-                    Pilihan Masa Kontrak
+                    {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                   </p>
                   <p className={"text-sm font-gilroyregular text-blackmig"}>
-                    1 minggu - 5 tahun
+                    {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                   </p>
                 </div>
               </div>
@@ -3047,10 +3058,10 @@ function Talents({}) {
             <div className={"text-darkgrey"}>
               <div className={"mt-8 md:hidden"}>
                 <p className={"text-xs font-gilroysemibold"}>
-                  Pilihan Masa Kontrak
+                  {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
                 <p className={"text-sm font-gilroyregular"}>
-                  1 minggu - 5 tahun
+                  {locale == "en" ? "1 week - 5 years" : "1 minggu - 5 tahun"}
                 </p>
               </div>
               <div className={"mt-8"}>
@@ -3114,7 +3125,7 @@ function Talents({}) {
                   Interested with our talents?
                 </p>
                 <button
-                  onClick={handleCancelDesign}
+                  onClick={handleHireTalent}
                   className={
                     "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
                   }
@@ -3179,12 +3190,14 @@ function Talents({}) {
                 "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
               }
             >
-              {locale == "en" ? "Let us " : "Biarkan MIG"}
+              {locale == "en" ? "Let us " : "Biarkan MIG "}
               <span
-                style={{
-                  borderBottom: "solid 3px #188E4D",
-                  paddingBottom: "2.5px",
-                }}
+                style={
+                  {
+                    // borderBottom: "solid 3px #188E4D",
+                    // paddingBottom: "2.5px",
+                  }
+                }
               >
                 {locale == "en" ? "assist you " : "membangun "}
               </span>{" "}

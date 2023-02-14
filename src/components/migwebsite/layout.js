@@ -664,7 +664,7 @@ function layout({ children }) {
                       "py-1 font-gilroysemibold py-1 text-base text-blackmig "
                     }
                   >
-                    Solutions
+                    {t.solutions}
                   </p>
                   <Link href={{ pathname: "/hardware" }}>
                     <p
@@ -700,25 +700,45 @@ function layout({ children }) {
                       "font-gilroysemibold py-1 text-base text-blackmig"
                     }
                   >
-                    Company
+                    {locale == "en" ? "Company" : "Perusahaan"}
                   </p>
                   <Link href={{ pathname: "/aboutus" }}>
-                    <p
-                      className={
-                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
-                      }
-                    >
-                      About&nbsp;Us
-                    </p>
+                    {locale == "en" ? (
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        About&nbsp;Us
+                      </p>
+                    ) : (
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Tentang&nbsp;Kami
+                      </p>
+                    )}
                   </Link>
                   <Link href={{ pathname: "/joinourteam" }}>
-                    <p
-                      className={
-                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
-                      }
-                    >
-                      Career&nbsp;in&nbsp;MIG
-                    </p>
+                    {locale == "en" ? (
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Career&nbsp;in&nbsp;MIG
+                      </p>
+                    ) : (
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Karir&nbsp;di&nbsp;MIG
+                      </p>
+                    )}
                   </Link>
                   {countArticle > 0 && (
                     <Link href="/blog">
@@ -733,13 +753,23 @@ function layout({ children }) {
                   )}
                   {countStories > 0 && (
                     <Link href="/customerstories">
-                      <p
-                        className={
-                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
-                        }
-                      >
-                        Customer Stories
-                      </p>
+                      {locale == "en" ? (
+                        <p
+                          className={
+                            "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          }
+                        >
+                          Customer&nbsp;Stories
+                        </p>
+                      ) : (
+                        <p
+                          className={
+                            "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          }
+                        >
+                          Klien&nbsp;Kami
+                        </p>
+                      )}
                     </Link>
                   )}
                 </div>
@@ -749,16 +779,26 @@ function layout({ children }) {
                       "font-gilroysemibold py-1 text-base text-blackmig"
                     }
                   >
-                    Get in touch
+                    {locale == "en" ? "Get in touch" : "Hubungi Kami"}
                   </p>
                   <Link href="/contactus">
-                    <p
-                      className={
-                        "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
-                      }
-                    >
-                      Contact&nbsp;Us
-                    </p>
+                    {locale == "en" ? (
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Contact&nbsp;Us
+                      </p>
+                    ) : (
+                      <p
+                        className={
+                          "font-gilroyregular text-sm text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                        }
+                      >
+                        Kontak&nbsp;Kami
+                      </p>
+                    )}
                   </Link>
                 </div>
                 <div className={"flex-col my-2 lg:my-0 lg:px-16"}>
@@ -767,7 +807,7 @@ function layout({ children }) {
                       "font-gilroysemibold py-1 text-base text-blackmig"
                     }
                   >
-                    Follow
+                    {locale == "en" ? "Follow" : "Media Sosial"}
                   </p>
                   <div className={"flex"}>
                     <img

@@ -42,9 +42,15 @@ export const CareersAtMig: FC = () => {
 
         <p
           style={{ lineHeight: "150%" }}
-          className="pb-12 md:pb-8 text-xl text-black text-center mt-4"
+          className="pb-0 text-xl text-black text-center mt-4"
         >
           {t.vacancylistsectiondescriptionbelow}{" "}
+        </p>
+        <p
+          style={{ lineHeight: "150%" }}
+          className="pb-12 md:pb-8 text-xl text-black text-center"
+        >
+          {t.vacancylistsectiondescriptionbelow3}{" "}
           <a
             style={{ lineHeight: "150%" }}
             href="mailto:recruitment@mitrasolusi.group"

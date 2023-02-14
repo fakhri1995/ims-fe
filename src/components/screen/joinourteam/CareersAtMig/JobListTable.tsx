@@ -11,6 +11,8 @@ import {
 import { useGetPostedCareers } from "apis/career_v2/career_v2.hooks";
 import type { Career } from "apis/career_v2/career_v2.types";
 
+import en from "../../../../locales/en";
+import id from "../../../../locales/id";
 import styles from "./CareersAtMig.module.scss";
 
 const JOB_LIMIT_ADDER = 5;
@@ -115,6 +117,9 @@ export const JobListTable: FC = () => {
     router?.push(`/joinourteam/${career.slug}`);
   };
 
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
+
   return (
     <div className="grid grid-cols-1 mt-5  md:gap-y-8 px-4 md:px-[112px]">
       <p
@@ -139,13 +144,13 @@ export const JobListTable: FC = () => {
       {data && (
         <div className="flex flex-col justify-center items-center space-y-4 text-[18px]">
           <p>
-            Showing{" "}
+            {locale == "en" ? "Showing " : "Menampilkan "}
             <span className={"text-[18px] text-blackmig font-gilroysemibold"}>
               {data?.to}
             </span>{" "}
-            out of{" "}
+            {locale == "en" ? "out of " : "dari "}
             <span className={"text-[18px] text-blackmig font-gilroysemibold"}>
-              {data?.total} jobs
+              {data?.total} {locale == "en" ? "jobs" : "pekerjaan"}
             </span>
           </p>
 

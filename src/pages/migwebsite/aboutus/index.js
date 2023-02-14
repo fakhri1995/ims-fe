@@ -287,7 +287,7 @@ function AboutUs({}) {
                   style={{ lineHeight: "150%" }}
                   className={
                     locale == "en"
-                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
+                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[60.5px] mt-5"
                       : "text-center text-blackmig text-xl font-gilroyregular pb-[60.5px] mt-5"
                   }
                 >

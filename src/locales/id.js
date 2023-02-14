@@ -145,6 +145,7 @@ export default {
   techtalent: "tech talents",
   softwaresubtitle:
     "Tingkatkan efisiensi bisnis dengan penggunaan teknologi digital terkini milik kami.",
+  aboutusfooter: `Tentang&nbsp;Kami`,
   talentsubtitleaboutus:
     "Mudahkan proses mencari dan mengelola talenta teknologi terbaik bersama kami.",
   talentbuttontitleaboutus: "Dirikan tim Anda",
@@ -152,7 +153,8 @@ export default {
   vacancylistsectiontitle: "Yuk, gabung sebagai kekuatan baru MIGhty!",
   vacancylistsectiondescription:
     "Mulai kariermu bersama kami. Cek lowongan berikut untuk berbagai posisi. Siapkan dirimu untuk bergabung dalam berbagai proyek masa depan!",
-  vacancylistsectiondescriptionbelow: `Belum menemukan pekerjaan yang cocok dengan skills, minat, dan pengalamanmu? Kirim resume terbaikmu ke `,
+  vacancylistsectiondescriptionbelow: `Belum menemukan pekerjaan yang cocok dengan skills, minat, dan pengalamanmu? `,
+  vacancylistsectiondescriptionbelow3: "Kirim resume terbaikmu ke ",
   vacancylistsectiondescriptionbelow2: ` , temukan kesempatan kerja lainnya.`,
   careersatmigsubtitle:
     "Kami menghargai individu dengan motivasi tinggi dalam bekerja. Mari jadi anggota baru tim MIGhty kami!",
