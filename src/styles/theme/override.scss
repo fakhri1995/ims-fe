@@ -459,3 +459,15 @@ ol {
   flex-shrink: 0;
   animation: 20s linear 0s infinite normal none running;
 }
+.react-calendar__navigation__label {
+  font-size: 16px;
+}
+.react-calendar__month-view__weekdays__weekday {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 12px;
+}
+.react-calendar__month-view__days__day {
+  font-size: 16px;
+}

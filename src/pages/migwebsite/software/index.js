@@ -996,7 +996,7 @@ function Software({}) {
                           style={{ lineHeight: "120%" }}
                           className={"font-gilroysemibold"}
                         >
-                          Let's talk!
+                          {locale == "en" ? "Let's talk!" : "Konsultasi gratis"}
                         </p>
                         <img
                           className={"w-[20px] h-[20px] self-center"}

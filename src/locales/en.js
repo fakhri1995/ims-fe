@@ -47,6 +47,7 @@ export default {
   hardwaregreenboxpoint1: "A predictable monthly cost.",
   hardwaregreenboxpoint2: "A guaranteed service level.",
   hardwarecustomizetext: "Don't see what you're looking for?",
+  aboutusfooter: `About&nbsp;Us`,
   hardwarecustomizetext2:
     "We can create a custom solution that fits your tech needs perfectly.",
   hardwarecustomizetextcta: "Contact our team",
@@ -109,9 +110,9 @@ export default {
   whowearedescription4: `Kami sangat menghargai kerja sama tim. Kami juga mampu menawarkan berbagai kesempatan kerja yang dapat membuat seluruh tim bertumbuh dan bergerak bersama ke arah yang lebih baik.`,
   whowearejoinmig: `Join our forces, see the available openings`,
   whowearejoinmiglink: ` here`,
-  aboutushardwaredescription: `Optimize your cost by leasing and maintenances variety of electronic equipments`,
-  aboutussoftwaredescription: `We support your companies to simplify and automate the process through digitalization`,
-  aboutustalentdescription: `We help you reduce complexity in talent sourcing and management.`,
+  aboutushardwaredescription: `Maximize cost-efectiveness with leased and well-maintained electronic equipment.`,
+  aboutussoftwaredescription: `Improve efficiency by implementing digital technologies in your business.`,
+  aboutustalentdescription: `Simplify the process of finding and managing talent.`,
   supportyourbusiness: "Complete tech solutions under one roof.",
   supportyourbusinessdetail:
     "Our technology solutions are designed to help you achieve your business objectives and optimize your costs.",
@@ -133,7 +134,8 @@ export default {
   vacancylistsectiontitle: "Join our MIGhty forces!",
   vacancylistsectiondescription:
     "Move forward in your career with us! See the job openings below for our current opportunities in various future projects.",
-  vacancylistsectiondescriptionbelow: `Didn't see a job that matches your skills and experience? Send your resume to `,
+  vacancylistsectiondescriptionbelow: `Didn't see a job that matches your skills and experience? `,
+  vacancylistsectiondescriptionbelow3: "Send your resume to ",
   vacancylistsectiondescriptionbelow2: ` for potential openings.`,
   careersatmigvaluesectiontitlebox1: "Agility",
   careersatmigvaluesectionsubtitlebox1:

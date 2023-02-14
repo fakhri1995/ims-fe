@@ -390,104 +390,24 @@ function LandingPage({ dataBlog }) {
           <marquee className={"marquee-inner"}>
             <div className={"flex flex-row mt-6"}>
               <img
-                className={"mx-[26.5px]"}
-                style={{ width: "59px", height: "50px" }}
-                src="/image/landingpage/client1.png"
+                className={"mx-[26.5px] h-[50px] w-auto"}
+                src="/image/landingpage/kb-bukopin-logo.png"
               />
               <img
-                className={"mx-[26.5px]"}
-                style={{ width: "34px", height: "40px" }}
-                src="/image/landingpage/client2.png"
+                className={"mx-[26.5px] h-[50px] w-auto"}
+                src="/image/landingpage/bulog-logo-cs.png"
               />
               <img
-                className={"mx-[26.5px]"}
-                style={{ width: "50px", height: "50px" }}
-                src="/image/landingpage/client3.png"
+                className={"mx-[26.5px] h-[50px] w-auto"}
+                src="/image/landingpage/setneg-logo.png"
               />
               <img
-                className={"mx-[26.5px]"}
-                style={{ width: "44px", height: "50px" }}
-                src="/image/landingpage/client4.png"
+                className={"mx-[26.5px] h-[50px] w-auto"}
+                src="/image/landingpage/kb-bukopin-syariah-logo.png"
               />
               <img
-                className={"mx-[26.5px]"}
-                style={{ width: "59px", height: "50px" }}
-                src="/image/landingpage/client1.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "34px", height: "40px" }}
-                src="/image/landingpage/client2.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "50px", height: "50px" }}
-                src="/image/landingpage/client3.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "44px", height: "50px" }}
-                src="/image/landingpage/client4.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "59px", height: "50px" }}
-                src="/image/landingpage/client1.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "34px", height: "40px" }}
-                src="/image/landingpage/client2.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "50px", height: "50px" }}
-                src="/image/landingpage/client3.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "44px", height: "50px" }}
-                src="/image/landingpage/client4.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "59px", height: "50px" }}
-                src="/image/landingpage/client1.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "34px", height: "40px" }}
-                src="/image/landingpage/client2.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "50px", height: "50px" }}
-                src="/image/landingpage/client3.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "44px", height: "50px" }}
-                src="/image/landingpage/client4.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "59px", height: "50px" }}
-                src="/image/landingpage/client1.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "34px", height: "40px" }}
-                src="/image/landingpage/client2.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "50px", height: "50px" }}
-                src="/image/landingpage/client3.png"
-              />
-              <img
-                className={"mx-[26.5px]"}
-                style={{ width: "44px", height: "50px" }}
-                src="/image/landingpage/client4.png"
+                className={"mx-[26.5px] h-[50px] w-auto"}
+                src="/image/landingpage/shipper-logo.png"
               />
             </div>
           </marquee>
@@ -500,7 +420,7 @@ function LandingPage({ dataBlog }) {
               <span className={"text-primarygreen"}>45+ </span>
               {t.cities},<span className={"text-primarygreen"}> 9000+ </span>
               {t.managed}.<span className={"text-primarygreen"}> 200+ </span>
-              {t.techproject}.
+              {t.techproject}
             </h2>
           </div>
         </div>
@@ -962,9 +882,10 @@ function LandingPage({ dataBlog }) {
             "section3landingpageadvantages hidden md:block bg-white py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
           }
         >
-          <p
+          <h2
+            style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-3xl text-center font-gilroysemibold mb-[42px]"
+              "text-xl md:text-[36px] text-center font-gilroysemibold mb-[42px]"
             }
           >
             What they say{" "}
@@ -977,7 +898,7 @@ function LandingPage({ dataBlog }) {
               about us
             </span>{" "}
             ?
-          </p>
+          </h2>
           <div
             className={"center md:content-around block md:hidden"}
             style={{ maxWidth: 1000 }}
