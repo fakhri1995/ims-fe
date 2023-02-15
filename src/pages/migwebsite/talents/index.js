@@ -3181,7 +3181,7 @@ function Talents({}) {
           {/*section why you should */}
           <section
             className={
-              "section4talents hidden md:block bg-bgtalents py-4 md:py-12 px-4 sm:px-10 md:px-[113.5px]"
+              "section4talents hidden md:block bg-bgtalents pt-4 pb-6 md:pt-12 md:pb-24 px-4 sm:px-10 md:px-[113.5px]"
             }
           >
             <h2
@@ -5355,7 +5355,7 @@ function Talents({}) {
           </section> */}
           <section
             className={
-              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[20px] h-[173px]"
             }
           >
             <div className={"justify-start self-end"}>
@@ -5365,7 +5365,7 @@ function Talents({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
+              <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-24 py-4 px-8">
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}

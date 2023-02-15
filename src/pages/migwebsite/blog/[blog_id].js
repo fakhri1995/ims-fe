@@ -13,6 +13,7 @@ import {
   Select,
   Space,
 } from "antd";
+import moment from "moment";
 import Head from "next/head";
 import Linkk from "next/link";
 import { useRouter } from "next/router";
@@ -20,19 +21,34 @@ import React, { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import Flickity from "react-flickity-component";
 import { Link, animateScroll as scroll } from "react-scroll";
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+} from "react-share";
 import Slider from "react-slick";
 
 // import { LikeFillIconSvg, LikeIconSvg,ReplyIconSvg } from "../../../components/icon";
 import Layout from "../../../components/migwebsite/layout";
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
-import { generateStaticAssetUrl } from "../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  stripTags,
+  timeRead,
+  wordsCount,
+} from "../../../lib/helper";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 
 function BlogDetail({}) {
   const [form] = Form.useForm();
-  const { TextArea } = Input;
   const router = useRouter();
+  let { locale } = router;
+  const t = locale === "en" ? en : id;
+  const { TextArea } = Input;
+  const [minutesRead, setMinutesRead] = useState(null);
   const [detailBlog, setDetailBlog] = useState(null);
   const [dataContactUs, setDataContactUs] = useState({
     company_name: null,
@@ -52,13 +68,15 @@ function BlogDetail({}) {
     swipeToSlide: true,
     arrows: false,
   };
-  const [articleList, setArticleList] = useState(null);
+  const [articleList, setArticleList] = useState([]);
   const onChangereply = () => {
     setHideReply(!hideReply);
   };
 
+  const [fullUrl, setFullUrl] = useState("http://www.google.com");
+
   useEffect(() => {
-    console.log("router ", router);
+    setFullUrl(window.location.href);
     if (router.isReady) {
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticleDetailLanding?page_path=${router.query.blog_id}`,
@@ -74,6 +92,11 @@ function BlogDetail({}) {
           console.log("res article ", res2);
           if (res2.success) {
             setDetailBlog(res2.data[0]);
+            let total =
+              wordsCount(stripTags(res2.data[0].description)) +
+              wordsCount(stripTags(res2.data[0].content));
+            let minute = timeRead(total);
+            setMinutesRead(minute);
           } else {
           }
         })
@@ -83,6 +106,21 @@ function BlogDetail({}) {
     }
   }, [router.isReady]);
 
+  const loadContent = (content) => {
+    return (
+      <div
+        className=""
+        dangerouslySetInnerHTML={{
+          __html: content,
+        }}
+      />
+    );
+  };
+  const copyToClipboard = (e) => {
+    navigator.clipboard.writeText(window.location.toString());
+    alert("URL is copied");
+  };
+
   const getOtherArticle = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getArticlePopularList`, {
       method: `GET`,
@@ -90,8 +128,30 @@ function BlogDetail({}) {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("article popular ", res2.data);
-          setArticleList(res2.data);
+          if (locale == "en") {
+            let dataTemp = [];
+            for (let i = 0; i < res2.data.length; i++) {
+              if (res2.data[i].page_path != router.query.blog_id) {
+                dataTemp.push(res2.data[i]);
+              }
+            }
+            setArticleList(dataTemp);
+          } else {
+            let dataTemp = [];
+            for (let i = 0; i < res2.data.length; i++) {
+              if (
+                res2.data[i].title_id != "" &&
+                res2.data[i].description_id != "" &&
+                res2.data[i].page_path_id != "" &&
+                res2.data[i].content_id != "" &&
+                res2.data[i].tags_id != "" &&
+                res2.data[i].page_path_id != router.query.blog_id
+              ) {
+                dataTemp.push(res2.data[i]);
+              }
+            }
+            setArticleList(dataTemp);
+          }
         } else {
         }
       })
@@ -109,7 +169,9 @@ function BlogDetail({}) {
       </Head>
       <section
         className={
-          "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[74px]"
+          articleList.length > 0
+            ? "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[74px]"
+            : "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[174px]"
         }
       >
         <div className={"w-5/6"}>
@@ -118,15 +180,26 @@ function BlogDetail({}) {
               "text-2xl md:text-[32px] text-blackmig font-gilroysemibold"
             }
           >
-            {detailBlog?.title}
+            {locale == "en" ? detailBlog?.title : detailBlog?.title_id}
           </p>
           <div className={"flex flex-row justify-between my-[17px]"}>
             <p className={"text-xs text-darkgrey"}>
-              by <span className={"font-bold"}>Mayfa Shadrina </span>
-              on <span className={"font-bold"}>August 8th, 2022</span>
+              by{" "}
+              <span className={"font-bold"}>
+                {detailBlog
+                  ? detailBlog.author
+                    ? detailBlog.author
+                    : "Admin"
+                  : "Admin"}{" "}
+              </span>
+              on{" "}
+              <span className={"font-bold"}>
+                {detailBlog &&
+                  moment(detailBlog.createdAt).format("DD MMMM YYYY")}
+              </span>
             </p>
             <p className={"text-sm text-darkgrey font-gilroyregular"}>
-              9 MINUTE READ
+              {minutesRead} MINUTE READ
             </p>
           </div>
         </div>
@@ -144,29 +217,49 @@ function BlogDetail({}) {
                 "text-sm text-darkgrey md:text-base font-gilroysemibold"
               }
             >
-              Share
+              {locale == "en" ? "Share" : "Bagikan"}
             </p>
+            <EmailShareButton
+              url={fullUrl} //eg. https://www.example.com
+              quotes={"halo"} //"Your Quotes"
+              hashtag={"#oke"}
+            >
+              <img
+                src="/image/message-circle.png"
+                className={"my-4"}
+                style={{ width: "42px", height: "42px" }}
+                alt=""
+              />
+            </EmailShareButton>
+            <FacebookShareButton
+              url={fullUrl} //eg. https://www.example.com
+              quotes={"halo"} //"Your Quotes"
+              hashtag={"#oke"} // #hashTag
+            >
+              <img
+                src="/image/facebook-circle.png"
+                className={"my-4"}
+                style={{ width: "42px", height: "42px" }}
+                alt=""
+              />
+            </FacebookShareButton>
+
+            <TwitterShareButton
+              url={fullUrl} //eg. https://www.example.com
+              quotes={"halo"} //"Your Quotes"
+              hashtag={"#oke"} // #hashTag
+            >
+              <img
+                src="/image/twitter-circle.png"
+                className={"my-4"}
+                style={{ width: "42px", height: "42px" }}
+                alt=""
+              />
+            </TwitterShareButton>
             <img
-              src="/image/message-circle.png"
-              className={"my-4"}
-              style={{ width: "42px", height: "42px" }}
-              alt=""
-            />
-            <img
-              src="/image/facebook-circle.png"
-              className={"my-4"}
-              style={{ width: "42px", height: "42px" }}
-              alt=""
-            />
-            <img
-              src="/image/twitter-circle.png"
-              className={"my-4"}
-              style={{ width: "42px", height: "42px" }}
-              alt=""
-            />
-            <img
+              onClick={copyToClipboard}
               src="/image/share-link.png"
-              className={"my-4"}
+              className={"my-4 cursor-pointer"}
               style={{ width: "42px", height: "42px" }}
               alt=""
             />
@@ -208,23 +301,29 @@ function BlogDetail({}) {
             </div>
           </div>
           <div className={"w-3/5 ml-12"}>
-            {detailBlog && (
-              <div
-                className=""
-                dangerouslySetInnerHTML={{
-                  __html: detailBlog.description,
-                }}
-              />
-            )}
+            {
+              (locale =
+                "en" && detailBlog
+                  ? loadContent(detailBlog.description)
+                  : (locale =
+                      "id" && detailBlog ? (
+                        loadContent(detailBlog.description_id)
+                      ) : (
+                        <div></div>
+                      )))
+            }
             <div className={" pt-4"}>
-              {detailBlog && (
-                <div
-                  className=""
-                  dangerouslySetInnerHTML={{
-                    __html: detailBlog.content,
-                  }}
-                />
-              )}
+              {
+                (locale =
+                  "en" && detailBlog
+                    ? loadContent(detailBlog.content)
+                    : (locale =
+                        "id" && detailBlog ? (
+                          loadContent(detailBlog.content_id)
+                        ) : (
+                          <div></div>
+                        )))
+              }
             </div>
           </div>
         </div>
@@ -241,15 +340,33 @@ function BlogDetail({}) {
             {detailBlog?.title}
           </p>
           <p className={"text-xs text-blackmig font-gilroyregular mt-3 mb-4"}>
-            by <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-            on <span className={"font-gilroysemibold"}>August 8th, 2022</span>
+            by{" "}
+            <span className={"font-gilroysemibold"}>
+              {detailBlog
+                ? detailBlog.author
+                  ? detailBlog.author
+                  : "Admin"
+                : "Admin"}{" "}
+            </span>
+            on{" "}
+            <span className={"font-gilroysemibold"}>
+              {moment(detailBlog?.createdAt).format("DD MMMM YYYY")}
+            </span>
           </p>
           {detailBlog ? (
-            <img
-              src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
-              className={"w-full h-full rounded-lg"}
-              alt=""
-            />
+            detailBlog.attachment_article ? (
+              <img
+                src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
+                className={"w-full h-full rounded-lg"}
+                alt=""
+              />
+            ) : (
+              <img
+                src="/image/blog.png"
+                className={"w-full h-full rounded-lg"}
+                alt=""
+              />
+            )
           ) : (
             <img
               src="/image/blog.png"
@@ -267,34 +384,53 @@ function BlogDetail({}) {
             >
               Share
             </p>
+            <EmailShareButton
+              url={fullUrl} //eg. https://www.example.com
+              quotes={"halo"} //"Your Quotes"
+              hashtag={"#oke"} // #hashTag
+            >
+              <img
+                src="/image/message-circle.png"
+                className={"ml-2"}
+                style={{ width: "36px", height: "36px" }}
+                alt=""
+              />
+            </EmailShareButton>
+            <FacebookShareButton
+              url={fullUrl} //eg. https://www.example.com
+              quotes={"halo"} //"Your Quotes"
+              hashtag={"#oke"} // #hashTag
+            >
+              <img
+                src="/image/facebook-circle.png"
+                className={"ml-2"}
+                style={{ width: "36px", height: "36px" }}
+                alt=""
+              />
+            </FacebookShareButton>
+            <TwitterShareButton
+              url={fullUrl} //eg. https://www.example.com
+              quotes={"halo"} //"Your Quotes"
+              hashtag={"#oke"} // #hashTag
+            >
+              <img
+                src="/image/twitter-circle.png"
+                className={"ml-2"}
+                style={{ width: "36px", height: "36px" }}
+                alt=""
+              />
+            </TwitterShareButton>
             <img
-              src="/image/message-circle.png"
-              className={"ml-2"}
-              style={{ width: "36px", height: "36px" }}
-              alt=""
-            />
-            <img
-              src="/image/facebook-circle.png"
-              className={"ml-2"}
-              style={{ width: "36px", height: "36px" }}
-              alt=""
-            />
-            <img
-              src="/image/twitter-circle.png"
-              className={"ml-2"}
-              style={{ width: "36px", height: "36px" }}
-              alt=""
-            />
-            <img
+              onClick={copyToClipboard}
               src="/image/share-link.png"
-              className={"ml-2"}
+              className={"ml-2 cursor-pointer"}
               style={{ width: "42px", height: "42px" }}
               alt=""
             />
           </div>
           <div className={"self-center"}>
             <p className={"text-xs text-darkgrey font-gilroyregular"}>
-              9 MINUTE READ
+              {minutesRead} MINUTE READ
             </p>
           </div>
         </div>
@@ -328,66 +464,30 @@ function BlogDetail({}) {
           </div>
         </div>
         <div className={"px-2 mt-6"}>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <div className={"grid justify-items-center pt-4"}>
-            <img
-              src="/image/blog.png"
-              className={"rounded-lg"}
-              style={{ width: "244px", height: "124px" }}
-              alt=""
-            />
-            <p
-              className={
-                "text-xs text-darkgrey font-gilroyregular font-regular pt-2 mb-4"
-              }
-            >
-              This is a caption for the image above
-            </p>
+          {
+            (locale =
+              "en" && detailBlog
+                ? loadContent(detailBlog.description)
+                : (locale =
+                    "id" && detailBlog ? (
+                      loadContent(detailBlog.description_id)
+                    ) : (
+                      <div></div>
+                    )))
+          }
+          <div className={" pt-4"}>
+            {
+              (locale =
+                "en" && detailBlog
+                  ? loadContent(detailBlog.content)
+                  : (locale =
+                      "id" && detailBlog ? (
+                        loadContent(detailBlog.content_id)
+                      ) : (
+                        <div></div>
+                      )))
+            }
           </div>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p className={"indent-5 text-sm font-gilroyregular"}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </p>
         </div>
       </section>
       {/* <section
@@ -465,146 +565,142 @@ function BlogDetail({}) {
           </Linkk>
         </div>
       </section> */}
-      <section
-        className={
-          "section2blog hidden md:block md:pt-[25px] md:px-[112px] md:pb-6 bg-bgjoinmig "
-        }
-      >
-        <div className={"flex flex-row justify-between"}>
-          <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
-            Read Other Articles
-          </p>
-          <p
-            className={
-              "text-base pr-10 md:text-base gilroy-bold text-darkgreen"
-            }
-          >
-            See More
-          </p>
-        </div>
-        <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
-          {articleList &&
-            articleList.map((data1) => (
-              <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
-                <img
-                  className={"w-full h-[184px] rounded-lg"}
-                  src={generateStaticAssetUrl(data1.attachment_article.link)}
-                />
-                <div className={"mt-3"}>
-                  <p className={"text-xs text-darkgrey"}>
-                    by <span className={"font-bold"}>Mayfa Shadrina </span>
-                    on <span className={"font-bold"}>August 8th, 2022</span>
-                  </p>
-                  <p className={"font-bold text-blackmig text-base mt-3"}>
-                    {data1.title}
-                  </p>
-                  <p
-                    className={
-                      " text-blackmig font-gilroyregular text-xs mt-1.5"
-                    }
-                  >
-                    {data1.description}
-                  </p>
-                  <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    {data1.tags}
-                  </span>
-                </div>
-              </div>
-            ))}
-        </div>
-      </section>
-      <section className={"section2blog block md:hidden p-4 bg-bgjoinmig "}>
-        <p
+      {articleList.length > 0 && (
+        <section
           className={
-            "text-base md:text-xl font-gilroybold text-primarygreen px-4"
+            "section2blog hidden md:block md:pt-[25px] md:px-[112px] md:pb-[150px] bg-bgjoinmig "
           }
         >
-          Read Other Articles
-        </p>
-        <Slider {...sliderSettingsPhone}>
-          <Linkk href="/blog/1">
-            <div
-              className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <img
-                className={""}
-                style={{ width: "103px", height: "131px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] text-darkgrey font-gilroysemibold"}>
-                  August 8th, 2022
-                </p>
-                <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
-                </p>
-                <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
-                  Hardware
-                </span>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <img
-                className={""}
-                style={{ width: "103px", height: "131px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] text-darkgrey font-gilroysemibold"}>
-                  August 8th, 2022
-                </p>
-                <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
-                </p>
-                <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
-                  Hardware
-                </span>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <img
-                className={""}
-                style={{ width: "103px", height: "131px" }}
-                src="/image/blog.png"
-              />
-              <div className={"pl-4"}>
-                <p className={"text-[10px] text-darkgrey font-gilroysemibold"}>
-                  August 8th, 2022
-                </p>
-                <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p className={" text-blackmig font-gilroyregular text-xs mt-1"}>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing .....
-                </p>
-                <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
-                  Hardware
-                </span>
-              </div>
-            </div>
-          </Linkk>
-        </Slider>
-      </section>
+          <div className={"flex flex-row justify-between"}>
+            <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
+              Read Other Articles
+            </p>
+            <Linkk href={`/blog`}>
+              <p
+                className={
+                  "text-base pr-10 md:text-base gilroy-bold text-darkgreen"
+                }
+              >
+                See More
+              </p>
+            </Linkk>
+          </div>
+          <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
+            {articleList &&
+              articleList.map((data1) => (
+                <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
+                  {data1.attachment_article ? (
+                    <img
+                      className={"w-full h-[184px] rounded-lg"}
+                      src={generateStaticAssetUrl(
+                        data1.attachment_article.link
+                      )}
+                    />
+                  ) : (
+                    <img
+                      className={"w-full h-[184px] rounded-lg"}
+                      src="/image/blog.png"
+                    />
+                  )}
+                  <div className={"mt-3"}>
+                    <p className={"text-xs text-darkgrey"}>
+                      by{" "}
+                      <span className={"font-bold"}>
+                        {data1.author ? data1.author : "Admin"}{" "}
+                      </span>
+                      on{" "}
+                      <span className={"font-bold"}>
+                        {moment(data1.createdAt).format("DD MMMM YYYY")}
+                      </span>
+                    </p>
+                    <p className={"font-bold text-blackmig text-base mt-3"}>
+                      {locale == "en" ? data1.title : data1.title_id}
+                    </p>
+                    <p
+                      className={
+                        " text-blackmig font-gilroyregular text-xs mt-1.5"
+                      }
+                    >
+                      {stripTags(
+                        locale == "en"
+                          ? data1.description
+                          : data1.description_id
+                      )}
+                    </p>
+                    <span class="text-xs mt-4 font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                      {data1.tags}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </section>
+      )}
+      {articleList.length > 0 && (
+        <section className={"section2blog block md:hidden p-4 bg-bgjoinmig "}>
+          <p
+            className={
+              "text-base md:text-xl font-gilroybold text-primarygreen px-4"
+            }
+          >
+            Read Other Articles
+          </p>
+          <Slider {...sliderSettingsPhone}>
+            {articleList.map((dataarticle) => (
+              <Linkk href={`/blog/${dataarticle.page_path}`}>
+                <div
+                  className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
+                  style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+                >
+                  {dataarticle.attachment_article ? (
+                    <img
+                      className={""}
+                      style={{ width: "103px", height: "131px" }}
+                      src={generateStaticAssetUrl(
+                        dataarticle.attachment_article.link
+                      )}
+                    />
+                  ) : (
+                    <img
+                      className={""}
+                      style={{ width: "103px", height: "131px" }}
+                      src="/image/blog.png"
+                    />
+                  )}
+                  <div className={"pl-4"}>
+                    <p
+                      className={
+                        "text-[10px] text-darkgrey font-gilroysemibold"
+                      }
+                    >
+                      {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
+                    </p>
+                    <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
+                      {locale == "en"
+                        ? dataarticle.title
+                        : dataarticle.title_id}
+                    </p>
+                    <p
+                      className={
+                        " text-blackmig font-gilroyregular text-xs mt-1"
+                      }
+                    >
+                      {stripTags(
+                        locale == "en"
+                          ? dataarticle.description
+                          : dataarticle.description_id
+                      )}
+                    </p>
+                    <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
+                      {locale == "en" ? dataarticle.tags : dataarticle.tags_id}
+                    </span>
+                  </div>
+                </div>
+              </Linkk>
+            ))}
+          </Slider>
+        </section>
+      )}
       {/* <section className={"sectioncomments md:relative py-4 px-6 md:p-20"}>
         <p className={"text-blackmig text-base md:text-xl font-gilroysemibold"}>
           Comments (6)
@@ -960,12 +1056,137 @@ function BlogDetail({}) {
           )}
         </div>
       </section> */}
-      <LayoutFormContactUs
-        title={"Want help on providing your IT needs?"}
-        description={`Need help in providing your needs? Whether they related to hardware, software, or even talent hiring? 
-Learn more about what service can we offer to you and your company!`}
-        button_title={"Learn more"}
-      />
+      <section
+        className={
+          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+        }
+      >
+        <div className={"justify-start self-end"}>
+          <img
+            style={{ width: "332px", height: "142px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+        </div>
+        <div className={"container w-1/2 mx-auto"}>
+          <div
+            className={
+              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+            }
+          >
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={"text-[28px] font-gilroysemibold text-black"}
+            >
+              {t.contactussectiontitle}
+            </h2>
+            <div
+              className={
+                "mt-3.5 text-xl font-gilroyregular text-center text-black"
+              }
+            >
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle1}
+              </p>
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle2}
+              </p>
+            </div>
+            <div className="mt-3.5 flex flex-row justify-center">
+              <div className={"mr-3.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={"justify-end  self-end"}>
+          <img
+            className={"w-[332px] h-[142px]"}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
+      <section
+        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+      >
+        <div className={"container mx-auto"}>
+          <div
+            className={
+              "bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8"
+            }
+          >
+            <p className={"text-xl font-gilroysemibold"}>
+              {t.contactussectiontitle}
+            </p>
+            <p className={" text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle1}
+            </p>
+            <p className={"text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle2}
+            </p>
+            <div className="mt-4 flex flex-row justify-center">
+              <div className={"mr-1.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-left.png"
+          />
+          <img
+            style={{ width: "160px", height: "69px" }}
+            src="/image/landingpage/footer-right.png"
+          />
+        </div>
+      </section>
     </Layout>
   );
 }
