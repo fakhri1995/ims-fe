@@ -13,11 +13,16 @@ import React, { useEffect, useState } from "react";
 import CountUp from "react-countup";
 import Flickity from "react-flickity-component";
 import { Link, animateScroll as scroll } from "react-scroll";
+import {
+  EmailShareButton,
+  FacebookShareButton,
+  TwitterShareButton,
+} from "react-share";
 import Slider from "react-slick";
 
 import Layout from "../../../components/migwebsite/layout";
 import Pagination from "../../../components/migwebsite/pagination";
-import { generateStaticAssetUrl } from "../../../lib/helper";
+import { generateStaticAssetUrl, stripTags } from "../../../lib/helper";
 import en from "../../../locales/en";
 import id from "../../../locales/id";
 import "slick-carousel/slick/slick-theme.css";
@@ -27,6 +32,7 @@ function CustomerStories({ dataBlog }) {
   const handleChange = () => {};
   const [currentPage, setCurrentPage] = useState(1);
   const [articleList, setArticleList] = useState(null);
+  const [fullUrl, setFullUrl] = useState("http://www.google.com");
   const pageSize = 10;
   const router = useRouter();
 
@@ -37,6 +43,7 @@ function CustomerStories({ dataBlog }) {
   };
 
   useEffect(() => {
+    setFullUrl(window.location.href);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialLandingPage`, {
       method: `GET`,
     })
@@ -69,6 +76,10 @@ function CustomerStories({ dataBlog }) {
       });
   }, []);
 
+  const copyToClipboard = (e) => {
+    navigator.clipboard.writeText(window.location.toString());
+    alert("URL is copied");
+  };
   return (
     <Layout>
       {/* <section className={'container mx-auto'}> */}
@@ -145,27 +156,46 @@ function CustomerStories({ dataBlog }) {
                   "text-sm text-darkgrey md:text-base font-gilroysemibold"
                 }
               >
-                Share
+                {locale == "en" ? "Share" : "Bagikan"}
               </p>
-              <div className={"mt-[22px]"}>
+              <div className={"mt-[22px] flex flex-col"}>
+                <EmailShareButton
+                  url={fullUrl} //eg. https://www.example.com
+                  quotes={"halo"} //"Your Quotes"
+                  hashtag={"#oke"}
+                >
+                  <img
+                    src="/image/message-svg.png"
+                    className={"mt-[22px] w-[42.88px] h-[42.88px]"}
+                    alt=""
+                  />
+                </EmailShareButton>
+                <FacebookShareButton
+                  url={fullUrl} //eg. https://www.example.com
+                  quotes={"halo"} //"Your Quotes"
+                  hashtag={"#oke"}
+                >
+                  <img
+                    src="/image/facebook-svg.png"
+                    className={"mt-[22px] w-[43.75px] h-[43.75px]"}
+                    alt=""
+                  />
+                </FacebookShareButton>
+                <TwitterShareButton
+                  url={fullUrl} //eg. https://www.example.com
+                  quotes={"halo"} //"Your Quotes"
+                  hashtag={"#oke"}
+                >
+                  <img
+                    src="/image/twitter-svg.png"
+                    className={"mt-[22px] w-[43.75px] h-[43.75px]"}
+                    alt=""
+                  />
+                </TwitterShareButton>
                 <img
-                  src="/image/message-svg.png"
-                  className={"mt-[22px] w-[42.88px] h-[42.88px]"}
-                  alt=""
-                />
-                <img
-                  src="/image/facebook-svg.png"
-                  className={"mt-[22px] w-[43.75px] h-[43.75px]"}
-                  alt=""
-                />
-                <img
-                  src="/image/twitter-svg.png"
-                  className={"mt-[22px] w-[43.75px] h-[43.75px]"}
-                  alt=""
-                />
-                <img
+                  onClick={copyToClipboard}
                   src="/image/share-svg.png"
-                  className={"mt-[22px] w-[43.75px] h-[43.75px]"}
+                  className={"mt-[22px] w-[43.75px] h-[43.75px] cursor-pointer"}
                   alt=""
                 />
               </div>
@@ -239,30 +269,51 @@ function CustomerStories({ dataBlog }) {
                   "text-base text-darkgrey md:text-base font-gilroysemibold"
                 }
               >
-                Share
+                {locale == "en" ? "Share" : "Bagikan"}
               </p>
             </div>
             <div className={"flex flex-row justify-between mt-4 mx-auto"}>
+              <EmailShareButton
+                url={fullUrl} //eg. https://www.example.com
+                quotes={"halo"} //"Your Quotes"
+                hashtag={"#oke"}
+              >
+                <img
+                  src="/image/message-circle.png"
+                  style={{ width: "42px", height: "42px" }}
+                  alt=""
+                />
+              </EmailShareButton>
+              <FacebookShareButton
+                url={fullUrl} //eg. https://www.example.com
+                quotes={"halo"} //"Your Quotes"
+                hashtag={"#oke"}
+              >
+                <img
+                  src="/image/facebook-circle.png"
+                  className={""}
+                  style={{ width: "42px", height: "42px" }}
+                  alt=""
+                />
+              </FacebookShareButton>
+
+              <TwitterShareButton
+                url={fullUrl} //eg. https://www.example.com
+                quotes={"halo"} //"Your Quotes"
+                hashtag={"#oke"}
+              >
+                <img
+                  src="/image/twitter-circle.png"
+                  className={""}
+                  style={{ width: "42px", height: "42px" }}
+                  alt=""
+                />
+              </TwitterShareButton>
+
               <img
-                src="/image/message-circle.png"
-                style={{ width: "42px", height: "42px" }}
-                alt=""
-              />
-              <img
-                src="/image/facebook-circle.png"
-                className={""}
-                style={{ width: "42px", height: "42px" }}
-                alt=""
-              />
-              <img
-                src="/image/twitter-circle.png"
-                className={""}
-                style={{ width: "42px", height: "42px" }}
-                alt=""
-              />
-              <img
+                onClick={copyToClipboard}
                 src="/image/share-link.png"
-                className={""}
+                className={"cursor-pointer"}
                 style={{ width: "42px", height: "42px" }}
                 alt=""
               />
@@ -279,7 +330,7 @@ function CustomerStories({ dataBlog }) {
           <p
             className={"text-base md:text-xl font-gilroybold text-primarygreen"}
           >
-            All Stories
+            {locale == "en" ? "All Stories" : "Semua Testimoni"}
           </p>
           {/* <div className={"flex flex-row pr-4"}>
             <p
@@ -400,114 +451,67 @@ function CustomerStories({ dataBlog }) {
         )} */}
 
         <div className={"md:hidden"}>
-          <Linkk href="/blog/1">
-            <div
-              className={"bg-white w-full rounded-lg mt-3 p-4"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <img
-                className={"w-full h-[185px] rounded-lg flex justify-center"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-2"}>
-                <p className={"text-[10px] text-darkgrey font-gilroyregular"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-gilroybold text-blackmig text-sm mt-2"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
+          {articleList ? (
+            articleList.map((dataarticle) => (
+              <Linkk href={`/customerstories/${dataarticle.page_path}`}>
+                <div
+                  className={"bg-white w-full rounded-lg mt-3 p-4"}
+                  style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
                 >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
+                  {dataarticle.attachment_article ? (
+                    <img
+                      className={
+                        "w-full h-[185px] rounded-lg flex justify-center"
+                      }
+                      src={generateStaticAssetUrl(
+                        dataarticle.attachment_article.link
+                      )}
+                    />
+                  ) : (
+                    <img
+                      className={
+                        "w-full h-[185px] rounded-lg flex justify-center"
+                      }
+                      src="/image/blog.png"
+                    />
+                  )}
+                  <div className={"mt-2"}>
+                    <p
+                      className={"text-[10px] text-darkgrey font-gilroyregular"}
+                    >
+                      by{" "}
+                      <span className={"font-gilroysemibold"}>
+                        {dataarticle.author ? dataarticle.author : "Admin"}
+                      </span>
+                      on{" "}
+                      <span className={"font-gilroysemibold"}>
+                        {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
+                      </span>
+                    </p>
+                    <p className={"font-gilroybold text-blackmig text-sm mt-2"}>
+                      {locale == "en"
+                        ? dataarticle.title
+                        : dataarticle.title_id}
+                    </p>
+                    <p
+                      className={
+                        " text-blackmig font-gilroyregular text-xs mt-1.5"
+                      }
+                    >
+                      {stripTags(dataarticle.description)}
+                    </p>
+                    <div className={"mt-1.5"}>
+                      <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                        {dataarticle.tags}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={"bg-white w-full rounded-lg mt-3 p-4"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <img
-                className={"w-full h-[185px] rounded-lg flex justify-center"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-2"}>
-                <p className={"text-[10px] text-darkgrey font-gilroyregular"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-gilroybold text-blackmig text-sm mt-2"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
-          <Linkk href="/blog/1">
-            <div
-              className={"bg-white w-full mt-3 p-4 rounded-lg"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <img
-                className={"w-full h-[185px] rounded-lg flex justify-center"}
-                src="/image/blog.png"
-              />
-              <div className={"mt-2"}>
-                <p className={"text-[10px] text-darkgrey font-gilroyregular"}>
-                  by{" "}
-                  <span className={"font-gilroysemibold"}>Mayfa Shadrina </span>
-                  on{" "}
-                  <span className={"font-gilroysemibold"}>
-                    August 8th, 2022
-                  </span>
-                </p>
-                <p className={"font-gilroybold text-blackmig text-sm mt-2"}>
-                  This is a Title This is a Title This is a Title This is a
-                  Title
-                </p>
-                <p
-                  className={" text-blackmig font-gilroyregular text-xs mt-1.5"}
-                >
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                </p>
-                <div className={"mt-1.5"}>
-                  <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                    Hardware
-                  </span>
-                </div>
-              </div>
-            </div>
-          </Linkk>
+              </Linkk>
+            ))
+          ) : (
+            <div></div>
+          )}
         </div>
       </section>
       {/* testimonial */}
