@@ -45,7 +45,7 @@ import "slick-carousel/slick/slick.css";
 function BlogDetail({}) {
   const [form] = Form.useForm();
   const router = useRouter();
-  let { locale } = router;
+  const { locale } = router;
   const t = locale === "en" ? en : id;
   const { TextArea } = Input;
   const [minutesRead, setMinutesRead] = useState(null);
@@ -128,13 +128,17 @@ function BlogDetail({}) {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
+          console.log("get other ", res2.data);
+          console.log("language ", locale);
           if (locale == "en") {
+            console.log("masuk en ", router.query.blog_id);
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
               if (res2.data[i].page_path != router.query.blog_id) {
                 dataTemp.push(res2.data[i]);
               }
             }
+            console.log("data temp ", dataTemp);
             setArticleList(dataTemp);
           } else {
             let dataTemp = [];
@@ -205,7 +209,15 @@ function BlogDetail({}) {
         </div>
         <div className={"flex flex-row py-2"}>
           <div className={"w-5/6"}>
-            <img src="/image/blog.png" className={"w-full h-full"} alt="" />
+            {detailBlog && detailBlog.attachment_article ? (
+              <img
+                src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
+                className={"w-full h-full"}
+                alt=""
+              />
+            ) : (
+              <img src="/image/blog.png" className={"w-full h-full"} alt="" />
+            )}
           </div>
           <div
             className={
@@ -301,29 +313,21 @@ function BlogDetail({}) {
             </div>
           </div>
           <div className={"w-3/5 ml-12"}>
-            {
-              (locale =
-                "en" && detailBlog
-                  ? loadContent(detailBlog.description)
-                  : (locale =
-                      "id" && detailBlog ? (
-                        loadContent(detailBlog.description_id)
-                      ) : (
-                        <div></div>
-                      )))
-            }
+            {locale == "en" && detailBlog ? (
+              loadContent(detailBlog.description)
+            ) : locale == "id" && detailBlog ? (
+              loadContent(detailBlog.description_id)
+            ) : (
+              <div></div>
+            )}
             <div className={" pt-4"}>
-              {
-                (locale =
-                  "en" && detailBlog
-                    ? loadContent(detailBlog.content)
-                    : (locale =
-                        "id" && detailBlog ? (
-                          loadContent(detailBlog.content_id)
-                        ) : (
-                          <div></div>
-                        )))
-              }
+              {locale == "en" && detailBlog ? (
+                loadContent(detailBlog.content)
+              ) : locale == "id" && detailBlog ? (
+                loadContent(detailBlog.content_id)
+              ) : (
+                <div></div>
+              )}
             </div>
           </div>
         </div>
@@ -353,20 +357,14 @@ function BlogDetail({}) {
               {moment(detailBlog?.createdAt).format("DD MMMM YYYY")}
             </span>
           </p>
-          {detailBlog ? (
-            detailBlog.attachment_article ? (
-              <img
-                src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
-                className={"w-full h-full rounded-lg"}
-                alt=""
-              />
-            ) : (
-              <img
-                src="/image/blog.png"
-                className={"w-full h-full rounded-lg"}
-                alt=""
-              />
-            )
+          {detailBlog &&
+            console.log("attachment article ", detailBlog.attachment_article)}
+          {detailBlog && detailBlog.attachment_article ? (
+            <img
+              src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
+              className={"w-full h-full rounded-lg"}
+              alt=""
+            />
           ) : (
             <img
               src="/image/blog.png"
@@ -464,29 +462,21 @@ function BlogDetail({}) {
           </div>
         </div>
         <div className={"px-2 mt-6"}>
-          {
-            (locale =
-              "en" && detailBlog
-                ? loadContent(detailBlog.description)
-                : (locale =
-                    "id" && detailBlog ? (
-                      loadContent(detailBlog.description_id)
-                    ) : (
-                      <div></div>
-                    )))
-          }
+          {locale == "en" && detailBlog ? (
+            loadContent(detailBlog.description)
+          ) : locale == "id" && detailBlog ? (
+            loadContent(detailBlog.description_id)
+          ) : (
+            <div></div>
+          )}
           <div className={" pt-4"}>
-            {
-              (locale =
-                "en" && detailBlog
-                  ? loadContent(detailBlog.content)
-                  : (locale =
-                      "id" && detailBlog ? (
-                        loadContent(detailBlog.content_id)
-                      ) : (
-                        <div></div>
-                      )))
-            }
+            {locale == "en" && detailBlog ? (
+              loadContent(detailBlog.content)
+            ) : locale == "id" && detailBlog ? (
+              loadContent(detailBlog.content_id)
+            ) : (
+              <div></div>
+            )}
           </div>
         </div>
       </section>

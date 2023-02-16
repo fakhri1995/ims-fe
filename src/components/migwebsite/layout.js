@@ -58,7 +58,7 @@ function layout({ children }) {
                 "text-sm font-gilroyregular group-hover:text-green-500"
               }
             >
-              Optimize your cost by leasing and maintenances IT hardwares
+              {t.hardwaredescriptionnavbar}
             </p>
           </div>
         </div>
@@ -91,7 +91,7 @@ function layout({ children }) {
                 "text-sm font-gilroyregular group-hover:text-green-500"
               }
             >
-              Simplify and automate the process through digitalization
+              {t.softwaredescriptionnavbar}
             </p>
           </div>
         </div>
@@ -124,7 +124,7 @@ function layout({ children }) {
                 "text-sm font-gilroyregular group-hover:text-green-500"
               }
             >
-              Reduce complexity in talent sourcing and management
+              {t.talentdescriptionnavbar}
             </p>
           </div>
         </div>

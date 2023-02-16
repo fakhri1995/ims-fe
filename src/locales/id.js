@@ -272,6 +272,72 @@ export default {
     "Kami melakukan iterasi dan memastikan ketepatan sebelum menyampaikan hasilnya kepada Anda.",
   description: `The World Wide Web was invented by British scientist Tim Berners-Lee in 1989 while working at CERN`,
   cookies: `This website uses cookies to ensure you get the best experience on our website`,
+  hardwaredescriptionnavbar:
+    "Optimalkan pengelolaan hardware dengan layanan berskala nasional kami",
+  softwaredescriptionnavbar:
+    "Bawa bisnis ke era digital dengan solusi software kami",
+  talentdescriptionnavbar: "Bentuk tim teknologi yang sempurna bersama kami",
+  howitworktalenttitle: "Bagaimana cara rekrut talent melalui ",
+  howitworktalentpoint1: "Kami mengumpulkan semua informasi kebutuhan Anda",
+  howitworktalentpoint2:
+    "Kami mengkurasi kandidat yang memenuhi kebutuhan Anda",
+  howitworktalentpoint3: "Kami menjamin tim MIGhty terbaik untuk Anda",
+  talentpopuptypicalskills: "Kualifikasi",
+  talentpopuptypicaldeliverables: "Keahlian",
+  interestwithourtalent: "Tertarik bekerja dengan talent kami?",
+  talenthirenow: "Rekrut sekarang",
+  engineeringpopuppoint1: "Gelar sarjana Ilmu Komputer",
+  engineeringpopuppoint2: `Menguasai bahasa pemrograman, seperti C++, HTML5, JavaScript, PHP Java, Spring, Laravel, Tibco, dll.`,
+  engineeringpopuppoint3: "Pengalaman programming dasar",
+  engineeringpopuppoint4: "Pengetahuan tentang database dan operating system",
+  engineeringpopuppoint5:
+    "Kemampuan mempelajari software dan teknologi terkini secara cepat",
+  engineeringpopuppoint6: "Orientasi pada detail.",
+  engineeringpopupskill1:
+    "Integrasi elemen user-facing yang dikembangkan oleh front-end developer",
+  engineeringpopupskill2:
+    "Menyediakan dukungan dalam membangun modul software yang efisien, dapat diuji, dan dapat digunakan kembali",
+  engineeringpopupskill3:
+    "Membantu dalam memecahkan masalah performa dan tantangan arsitektur",
+  engineeringpopupskill4: "Integrasi solusi penyimpanan data",
+  datapopuppoint1: "Kemampuan matematikal yang kuat",
+  datapopuppoint2:
+    "Menguasai bahasa pemrograman, seperti SQL, Oracle, dan Python",
+  datapopuppoint3:
+    "Mahir menganalisis, membuat model, dan menginterpretasi data",
+  datapopuppoint4: "Kemampuan pemecahan masalah",
+  datapopuppoint5: "Pendekatan sistematis dan logis yang kuat dalam bekerja",
+  datapopuppoint6: "Keahlian komunikasi verbal maupun non-verbal",
+  datapopupskill1: "Memeriksa data menggunakan tool analisis data",
+  datapopupskill2:
+    "Mengumpulkan insight penting dari raw data untuk membantu pengambilan keputusan dengan mengidentifikasi berbagai pola dan tren",
+  datapopupskill3:
+    "Membersihkan dan memproses data, melakukan analisis untuk menilai kualitas data, menyiapkan laporan berdasarkan analisis, dan menyajikan temuan kepada pihak manajemen",
+  designpopuppoint1:
+    "Berpengalaman dan kompeten dalam menggunakan tools dan teknik prototype, seperti story mapping, design sprint, dan metodologi produk",
+  designpopuppoint2:
+    "Kemampuan analisis yang baik, serta intuisi kuat mengenai perilaku user",
+  designpopuppoint3: "Keahlian berkomunikasi secara verbal maupun non-verbal",
+  designpopuppoint4: "Kemampuan analisis berbagai kebutuhan bisnis",
+  designpopupskill1: "Membuat konsep visual berdasarkan kebutuhan klien",
+  designpopupskill2:
+    "Memastikan grafik dan layout telah menarik secara visual dan sesuai dengan identitas perusahaan/brand",
+  designpopupskill3:
+    "Bekerja dengan copywriter dan creative director untuk menghasilkan desain akhir",
+  designpopupskill4:
+    "Menyampaikan ide-ide desain dan temuan riset kepada audiens ataupun stakeholder",
+  productpopuppoint1:
+    "Berpengalaman dan kompeten dalam menggunakan tools dan teknik prototype, seperti story mapping, design sprint, dan metodologi produk",
+  productpopuppoint2:
+    "Kemampuan analisis yang baik, serta intuisi kuat mengenai perilaku user",
+  productpopuppoint3: "Keahlian berkomunikasi secara verbal maupun non-verbal",
+  productpopuppoint4: "Kemampuan analisis berbagai kebutuhan bisnis",
+  productpopupskill1:
+    "Melakukan riset dan analisis pasar, metrik produk, dan tren internet untuk mengidentifikasi product gaps dan menghasilkan inovasi dan ide untuk meningkatkan pengalaman konsumen",
+  productpopupskill2:
+    "Mengukur dan memprioritaskan kegiatan berdasarkan dampaknya pada bisnis dan konsumen",
+  productpopupskill3:
+    "Menganalisis kebutuhan pengguna dan membuat spesifikasi dan desain arsitektur untuk developer.",
   button: `Got it!`,
   about: "About",
   news: "News",

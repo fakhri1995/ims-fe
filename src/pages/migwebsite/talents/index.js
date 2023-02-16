@@ -2172,7 +2172,107 @@ function Talents({}) {
               </div>
             </div>
           </section>
-
+          <section
+            className={
+              "section2talentsnew py-4 md:py-12 md:px-[113.5px] px-4 mx-auto mt:4 md:mt-12"
+            }
+          >
+            <h2
+              className={
+                "text-3xl md:text-[36px] text-blackmig text-center font-gilroysemibold"
+              }
+              style={{ lineHeight: "120%" }}
+            >
+              Conventional hiring takes massive effort.
+            </h2>
+            <p
+              style={{ lineHeight: "150%" }}
+              className={"text-base md:text-xl text-blackmig text-center"}
+            >
+              Limited profiles coming in with widely different qualities.
+              Turnover rate is high and you need to do it all over again.
+            </p>
+            <div className={"mt-5"}>
+              <p
+                style={{ lineHeight: "150%" }}
+                className={"text-blackmig text-xl md:text-2xl text-center"}
+              >
+                Let us streamline your process with:
+              </p>
+            </div>
+            <div
+              className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
+            >
+              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+                <img
+                  src="/image/landingpage/career-icon1.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                    }
+                  >
+                    On-demand project-based expertise
+                  </p>
+                </div>
+              </div>
+              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+                <img
+                  src="/image/landingpage/career-icon2.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                    }
+                  >
+                    Flexible talent head counts & working period
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
+            >
+              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+                <img
+                  src="/image/landingpage/career-icon4.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                    }
+                  >
+                    Guaranteed talent quality
+                  </p>
+                </div>
+              </div>
+              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+                <img
+                  src="/image/landingpage/career-icon3.png"
+                  className="w-[42px] h-[42px]"
+                />
+                <div>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                    }
+                  >
+                    Cost and admin process efficiency
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
           <section
             className={
               "section3talents bg-bgjoinmig py-9 md:py-12 px-4 md:px-[113.5px]"
@@ -2234,7 +2334,7 @@ function Talents({}) {
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
                       >
-                        Typical Roles
+                        {locale == "en" ? "Typical Roles" : "Posisi"}
                       </p>
                       <p
                         style={{ lineHeight: "120%" }}
@@ -2242,7 +2342,8 @@ function Talents({}) {
                           "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
-                        Website Developer, Android/IOS Developer, and more
+                        Website Developer, Android/IOS Developer,{" "}
+                        {locale == "en" ? "and more" : "dan lainnya"}
                       </p>
                     </div>
                   </div>
@@ -2259,7 +2360,7 @@ function Talents({}) {
                         "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
-                      See more
+                      {locale == "en" ? "See more" : "Selengkapnya"}
                     </p>
                     <img
                       src="/image/hardware/arrow-circle-right.png"
@@ -2302,7 +2403,7 @@ function Talents({}) {
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
                       >
-                        Typical Roles
+                        {locale == "en" ? "Typical Roles" : "Posisi"}
                       </p>
                       <p
                         style={{ lineHeight: "120%" }}
@@ -2310,8 +2411,8 @@ function Talents({}) {
                           "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
-                        Data Scientist, Data/Business Intelligence Analyst, and
-                        more
+                        Data Scientist, Data/Business Intelligence Analyst,{" "}
+                        {locale == "en" ? "and more" : "dan lainnya"}
                       </p>
                     </div>
                   </div>
@@ -2328,7 +2429,7 @@ function Talents({}) {
                         "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
-                      See more
+                      {locale == "en" ? "See more" : "Selengkapnya"}
                     </p>
                     <img
                       src="/image/hardware/arrow-circle-right.png"
@@ -2377,7 +2478,7 @@ function Talents({}) {
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
                       >
-                        Typical Roles
+                        {locale == "en" ? "Typical Roles" : "Posisi"}
                       </p>
                       <p
                         style={{ lineHeight: "120%" }}
@@ -2385,8 +2486,8 @@ function Talents({}) {
                           "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
-                        Product Designer, Web Designer, Graphic Designer, and
-                        more
+                        Product Designer, Web Designer, Graphic Designer,{" "}
+                        {locale == "en" ? "and more" : "dan lainnya"}
                       </p>
                     </div>
                   </div>
@@ -2403,7 +2504,7 @@ function Talents({}) {
                         "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
-                      See more
+                      {locale == "en" ? "See more" : "Selengkapnya"}
                     </p>
                     <img
                       src="/image/hardware/arrow-circle-right.png"
@@ -2446,7 +2547,7 @@ function Talents({}) {
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
                       >
-                        Typical Roles
+                        {locale == "en" ? "Typical Roles" : "Posisi"}
                       </p>
                       <p
                         style={{ lineHeight: "120%" }}
@@ -2454,8 +2555,8 @@ function Talents({}) {
                           "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
                         }
                       >
-                        Product Manager, Product Analyst, Project Manager, and
-                        more
+                        Product Manager, Product Analyst, Project Manager,{" "}
+                        {locale == "en" ? "and more" : "dan lainnya"}
                       </p>
                     </div>
                   </div>
@@ -2472,7 +2573,7 @@ function Talents({}) {
                         "text-primarygreen text-base font-gilroysemibold"
                       }
                     >
-                      See more
+                      {locale == "en" ? "See more" : "Selengkapnya"}
                     </p>
                     <img
                       src="/image/hardware/arrow-circle-right.png"
@@ -2574,47 +2675,40 @@ function Talents({}) {
                 </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"text-sm font-gilroysemibold"}>Typical Roles</p>
+                <p className={"text-sm font-gilroysemibold"}>
+                  {locale == "en" ? "Typical Roles" : "Posisi"}
+                </p>
                 <ul className={"text-base text-blackmig font-gilroyregular"}>
                   <li>Web Developer</li>
                   <li>Mobile App Developer</li>
-                  <li>Quality Assurance Engineer, etc.</li>
-                </ul>
-              </div>
-              <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>Bachelor's degree in Computer Science, </li>
                   <li>
-                    Knowledge of primary coding languages including C++, HTML5,
-                    and JavaScript, PHP Java, Spring, Laravel,Tibco, etc.,{" "}
+                    Quality Assurance Engineer,{" "}
+                    {locale == "en" ? "etc." : "dan lainnya."}
                   </li>
-                  <li>Basic programming experience,</li>
-                  <li>Knowledge of databases and operating systems, </li>
-                  <li>
-                    Ability to learn new software and technologies quickly,{" "}
-                  </li>
-                  <li>Detail-oriented.</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
                 <p className={"font-gilroysemibold text-sm"}>
-                  Typical Deliverables
+                  {t.talentpopuptypicalskills}
                 </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>
-                    Integration of user-facing elements developed by front-end
-                    developers,
-                  </li>
-                  <li>
-                    Provide support in building efficient, testable, and
-                    reusable software modules,{" "}
-                  </li>
-                  <li>
-                    Provide assistance in solving performance problems and
-                    architectural challenges,{" "}
-                  </li>
-                  <li>Integration of data storage solutions.</li>
+                  <li>{t.engineeringpopuppoint1}, </li>
+                  <li>{t.engineeringpopuppoint2}, </li>
+                  <li>{t.engineeringpopuppoint3},</li>
+                  <li>{t.engineeringpopuppoint4}, </li>
+                  <li>{t.engineeringpopuppoint5}, </li>
+                  <li>{t.engineeringpopuppoint6}</li>
+                </ul>
+              </div>
+              <div className={"mt-8"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {t.talentpopuptypicaldeliverables}
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
+                  <li>{t.engineeringpopupskill1},</li>
+                  <li>{t.engineeringpopupskill2}, </li>
+                  <li>{t.engineeringpopupskill3}, </li>
+                  <li>{t.engineeringpopupskill4}.</li>
                 </ul>
               </div>
             </div>
@@ -2628,7 +2722,7 @@ function Talents({}) {
                       "text-base text-mig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
-                    Interested with our talents?
+                    {t.interestwithourtalent}
                   </p>
                   <button
                     onClick={handleHireTalent}
@@ -2638,7 +2732,7 @@ function Talents({}) {
                   >
                     <div className={"flex flex-row justify-between"}>
                       <p className={"text-base font-gilroysemibold"}>
-                        Hire now
+                        {t.talenthirenow}
                       </p>
                       <img
                         className={"self-center"}
@@ -2660,7 +2754,7 @@ function Talents({}) {
                       "text-base text-mig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
-                    Interested with our talents?
+                    {t.interestwithourtalent}
                   </p>
                   <button
                     onClick={handleCancel}
@@ -2738,43 +2832,39 @@ function Talents({}) {
                 </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Roles</p>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {locale == "en" ? "Typical Roles" : "Posisi"}
+                </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Data Analyst</li>
                   <li> Data Scientist</li>
-                  <li>Business Intelligence Analyst, etc.</li>
-                </ul>
-              </div>
-              <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>A high level of mathematical ability,</li>
                   <li>
-                    Programming languages, such as SQL, Oracle and Python,{" "}
+                    Business Intelligence Analyst,{" "}
+                    {locale == "en" ? "etc." : "dll."}
                   </li>
-                  <li>The ability to analyze, model and interpret data, </li>
-                  <li>Problem-solving skills, </li>
-                  <li>A systematic and logical approach, </li>
-                  <li>Written and verbal communication skills.</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
                 <p className={"font-gilroysemibold text-sm"}>
-                  Typical Deliverables
+                  {t.talentpopuptypicalskills}
                 </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>Examines information using data analysis tools.</li>
-                  <li>
-                    Generate meaningful results that pulled from the raw data
-                    and help make decisions by identifying various facts and
-                    trends.
-                  </li>
-                  <li>
-                    Typical duties includes removing corrupted data, performing
-                    initial analysis to assess the quality of the data,
-                    preparing reports based on analysis and presenting to
-                    management.
-                  </li>
+                  <li>{t.datapopuppoint1},</li>
+                  <li>{t.datapopuppoint2}, </li>
+                  <li>{t.datapopuppoint3}, </li>
+                  <li>{t.datapopuppoint4}, </li>
+                  <li>{t.datapopuppoint5}, </li>
+                  <li>{t.datapopuppoint6}.</li>
+                </ul>
+              </div>
+              <div className={"mt-8"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {t.talentpopuptypicaldeliverables}
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
+                  <li>{t.datapopupskill1}.</li>
+                  <li>{t.datapopupskill2}.</li>
+                  <li>{t.datapopupskill3}.</li>
                 </ul>
               </div>
             </div>
@@ -2789,7 +2879,7 @@ function Talents({}) {
                     "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                   }
                 >
-                  Interested with our talents?
+                  {t.interestwithourtalent}
                 </p>
                 <button
                   onClick={handleHireTalent}
@@ -2798,7 +2888,9 @@ function Talents({}) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base font-gilroysemibold"}>Hire now</p>
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.talenthirenow}
+                    </p>
                     <img
                       className={"self-center"}
                       style={{ height: "15px", width: "8px" }}
@@ -2818,7 +2910,7 @@ function Talents({}) {
                       "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
-                    Interested with our talents?
+                    {t.interestwithourtalent}
                   </p>
                   <button
                     onClick={handleCancelData}
@@ -2903,47 +2995,33 @@ function Talents({}) {
                 </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Roles</p>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {locale == "en" ? "Typical Roles" : "Posisi"}
+                </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Product Manager</li>
-                  <li>Product Analyst, etc.</li>
-                </ul>
-              </div>
-              <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>
-                    Proven experience with rapid prototyping tools and
-                    techniques, such as story mapping, design sprints, and
-                    product methodology.
-                  </li>
-                  <li>
-                    Excellent analytical skills and strong intuitions of user
-                    behaviors.{" "}
-                  </li>
-                  <li>Solid oral and written communications skills. </li>
-                  <li>Strong business requirement analysis.</li>
+                  <li>Product Analyst, {locale == "en" ? "etc." : "dll."}</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
                 <p className={"font-gilroysemibold text-sm"}>
-                  Typical Deliverables
+                  {t.talentpopuptypicalskills}
                 </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>
-                    Doing the research and analysis of the competitive
-                    landscape, product metrics, and latest internet trends to
-                    identify and fill product gaps and generate new ideas that
-                    improve customer experience.
-                  </li>
-                  <li>
-                    Scope and prioritize activities based on business and
-                    customer impact.
-                  </li>
-                  <li>
-                    Analyzing user requirements into specification and
-                    architectural design for developers
-                  </li>
+                  <li>{t.productpopuppoint1}.</li>
+                  <li>{t.productpopuppoint2}. </li>
+                  <li>{t.productpopuppoint3}. </li>
+                  <li>{t.productpopuppoint4}.</li>
+                </ul>
+              </div>
+              <div className={"mt-8"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {t.talentpopuptypicaldeliverables}
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
+                  <li>{t.productpopupskill1}.</li>
+                  <li>{t.productpopupskill2}.</li>
+                  <li>{t.productpopupskill3}</li>
                 </ul>
               </div>
             </div>
@@ -2958,7 +3036,7 @@ function Talents({}) {
                     "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                   }
                 >
-                  Interested with our talents?
+                  {t.interestwithourtalent}
                 </p>
                 <button
                   onClick={handleHireTalent}
@@ -2967,7 +3045,9 @@ function Talents({}) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base font-gilroysemibold"}>Hire now</p>
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.talenthirenow}
+                    </p>
                     <img
                       className={"self-center"}
                       style={{ height: "15px", width: "8px" }}
@@ -2987,7 +3067,7 @@ function Talents({}) {
                       "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
-                    Interested with our talents?
+                    {t.interestwithourtalent}
                   </p>
                   <button
                     onClick={handleCancelProduct}
@@ -3065,49 +3145,35 @@ function Talents({}) {
                 </p>
               </div>
               <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Roles</p>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {locale == "en" ? "Typical Roles" : "Posisi"}
+                </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
                   <li>Graphic Designer,</li>
                   <li>Product Designer,</li>
-                  <li>UI/UX Designer, etc.</li>
-                </ul>
-              </div>
-              <div className={"mt-8"}>
-                <p className={"font-gilroysemibold text-sm"}>Typical Skills</p>
-                <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>
-                    Proven experience with rapid prototyping tools and
-                    techniques, such as story mapping, design sprints, and
-                    product methodology.
-                  </li>
-                  <li>
-                    Excellent analytical skills and strong intuitions of user
-                    behaviors.{" "}
-                  </li>
-                  <li>Solid oral and written communications skills. </li>
-                  <li>Strong business requirement analysis.</li>
+                  <li>UI/UX Designer, {locale == "en" ? "etc." : "dll."}</li>
                 </ul>
               </div>
               <div className={"mt-8"}>
                 <p className={"font-gilroysemibold text-sm"}>
-                  Typical Deliverables
+                  {t.talentpopuptypicalskills}
                 </p>
                 <ul className={"text-base font-gilroyregular text-blackmig"}>
-                  <li>
-                    Conceptualizing visuals based on client’s requirements
-                  </li>
-                  <li>
-                    Ensure final graphics and layouts are visually appealing and
-                    on-brand
-                  </li>
-                  <li>
-                    Work with copywriters and creative director to produce final
-                    design
-                  </li>
-                  <li>
-                    Communicate design ideas and research findings to a range of
-                    audiences and/or stakeholders
-                  </li>
+                  <li>{t.designpopuppoint1} .</li>
+                  <li>{t.designpopuppoint2} . </li>
+                  <li>{t.designpopuppoint3}. </li>
+                  <li>{t.designpopuppoint4}.</li>
+                </ul>
+              </div>
+              <div className={"mt-8"}>
+                <p className={"font-gilroysemibold text-sm"}>
+                  {t.talentpopuptypicaldeliverables}
+                </p>
+                <ul className={"text-base font-gilroyregular text-blackmig"}>
+                  <li>{t.designpopupskill1}</li>
+                  <li>{t.designpopupskill2}</li>
+                  <li>{t.designpopupskill3}</li>
+                  <li>{t.designpopupskill4}</li>
                 </ul>
               </div>
             </div>
@@ -3122,7 +3188,7 @@ function Talents({}) {
                     "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                   }
                 >
-                  Interested with our talents?
+                  {t.interestwithourtalent}
                 </p>
                 <button
                   onClick={handleHireTalent}
@@ -3131,7 +3197,9 @@ function Talents({}) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"text-base font-gilroysemibold"}>Hire now</p>
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.talenthirenow}
+                    </p>
                     <img
                       className={"self-center"}
                       style={{ height: "15px", width: "8px" }}
@@ -3151,7 +3219,7 @@ function Talents({}) {
                       "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
                     }
                   >
-                    Interested with our talents?
+                    {t.interestwithourtalent}
                   </p>
                   <button
                     onClick={handleCancelDesign}
@@ -3205,7 +3273,6 @@ function Talents({}) {
                 ? "in building a powerful  & capable team. "
                 : "tim yang kuat untuk Anda."}
             </h2>
-            \
             {/* <p
               style={{ lineHeight: "150%" }}
               className={
@@ -3419,1188 +3486,151 @@ function Talents({}) {
               </div>
             </div>
           </section>
+          {/* section how it work */}
           <section
-          // className={
-          //   "section5talents bg-white py-4 md:py-12 px-4 sm:px-10 md:px-[112px]"
-          // }
+            className={
+              "section4howitworkbrowser bg-white py-4 md:py-16 md:mb-10 hidden md:block px-4 sm:px-10 md:px-[113.5px]"
+            }
           >
-            {/* <h2
-              style={{ lineHeight: "120%" }}
-              className={
-                "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
-              }
-            >
-              Which{" "}
+            <div className={"container text-center mx-auto"}>
+              <h2
+                style={{ lineHeight: "120%" }}
+                className={
+                  "text-xl md:text-[36px] font-gilroybold py-8 md:py-0"
+                }
+              >
+                {t.howitworktalenttitle}
+                <span
+                  style={{
+                    borderBottom: "solid 3px #188E4D",
+                    paddingBottom: "2.5px",
+                  }}
+                >
+                  MIG ?
+                </span>{" "}
+              </h2>
+            </div>
+            <div className={"flex flex-row justify-between mt-10"}>
+              <div className={""}>
+                <div className={"w-[360px]"}>
+                  <img
+                    className={"mx-auto"}
+                    src="/image/talent/talent-how-it-works-1.png"
+                    style={{ width: "145px", height: "145px" }}
+                  />
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                    }
+                  >
+                    {t.howitworktalentpoint1}
+                  </p>
+                </div>
+              </div>
+              <div className={"self-center"}>
+                <img
+                  src="/image/hardware/how-it-work-arrow.png"
+                  style={{ width: "42px", height: "21px" }}
+                />
+              </div>
+              <div className={"w-[360px]"}>
+                <img
+                  className={"mx-auto"}
+                  src="/image/talent/talent-how-it-works-2.png"
+                  style={{ width: "145px", height: "145px" }}
+                />
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                  }
+                >
+                  {t.howitworktalentpoint2}
+                </p>
+              </div>
+              <div className={"self-center"}>
+                <img
+                  src="/image/hardware/how-it-work-arrow.png"
+                  style={{ width: "42px", height: "21px" }}
+                />
+              </div>
+              <div className={"w-[360px]"}>
+                <img
+                  className={"mx-auto"}
+                  src="/image/talent/talent-how-it-works-3.png"
+                  style={{ width: "145px", height: "145px" }}
+                />
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                  }
+                >
+                  {t.howitworktalentpoint3}
+                </p>
+              </div>
+            </div>
+          </section>
+          {/* section how it work mobile */}
+          <section
+            className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
+          >
+            <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
+              How{" "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                recruitment scheme
+                it works
               </span>{" "}
-              we provided?
-            </h2> */}
-            {/* <div className={"hidden md:block"}>
-              <div
-                className={
-                  "md:mt-[42px] md: w-[1216px]  flex md:flex-row justify-between mx-auto"
-                }
-              >
-                <div
-                  className={
-                    "bg-greenTrans5 md:w-[598px]  py-[23.5px] px-4 flex md:flex-row"
-                  }
-                >
-                  <img
-                    className={"md:w-[117px] md:h-[136px]"}
-                    src="/image/people/head-hunt.png"
-                  />
-                  <div className={"ml-6 "}>
-                    <h3
-                      style={{ lineHeight: "120%" }}
-                      className={"text-primarygreen text-2xl font-gilroybold"}
-                    >
-                      Head-Hunt
-                    </h3>
-                    <ul
-                      style={{ lineHeight: "150%" }}
-                      className={
-                        "text-blackmig text-xl font-gilroyregular mt-2"
-                      }
-                    >
-                      <li>
-                        Conduct end-to-end hiring process to provide dedicated
-                        talents for your business
-                      </li>
-                      <li>
-                        Rigorous process to obtain shortlisted high-quality
-                        candidates{" "}
-                      </li>
-                      <li>
-                        Connection to our extensive talent and recruiting
-                        network
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div
-                  className={
-                    "bg-greenTrans5 md:w-[598px] py-[23.5px] px-4 flex md:flex-row"
-                  }
-                >
-                  <img
-                    className={"md:w-[117px] md:h-[136px]"}
-                    src="/image/people/it-staff.png"
-                  />
-                  <div className={"ml-6 "}>
-                    <h3
-                      style={{ lineHeight: "120%" }}
-                      className={"text-primarygreen text-2xl font-gilroybold"}
-                    >
-                      IT Staff Augmentation
-                    </h3>
-                    <ul
-                      style={{ lineHeight: "150%" }}
-                      className={
-                        "text-blackmig text-xl font-gilroyregular mt-2"
-                      }
-                    >
-                      <li>
-                        All-in service, where we provide talents, including
-                        their compensation & benefit, device, and tax
-                      </li>
-                      <li>
-                        Flexibility of talent headcount and working period{" "}
-                      </li>
-                      <li>Full access over assignments for talents</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div> */}
-            {/*recruitmen provided mobileview */}
-            {/* <div
-              className={"md:hidden mt-4 bg-white px-4 py-3 rounded-lg"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <div className={"flex flex-row"}>
-                <img
-                  className={"w-[64px] h-[84px] self-center"}
-                  src="/image/people/head-hunt.png"
-                />
-                <div className={"ml-4"}>
-                  <p
-                    className={"text-primarygreen text-sm font-gilroysemibold"}
-                  >
-                    Head Hunt
-                  </p>
-                  <ul
-                    style={{ lineHeight: "150%" }}
-                    className={"text-blackmig text-xl font-gilroyregular"}
-                  >
-                    <li>
-                      Conduct end-to-end hiring process to provide dedicated
-                      talents for your business
-                    </li>
-                    <li>
-                      Rigorous process to obtain shortlisted high-quality
-                      candidates
-                    </li>
-                    <li>
-                      Connection to our extensive talent and recruiting network
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div> */}
-            {/* <div
-              className={"md:hidden mt-4 bg-white px-4 py-3 mb-8 rounded-lg"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <div className={"flex flex-row"}>
-                <img
-                  className={"w-[64px] h-[84px] self-center"}
-                  src="/image/people/it-staff.png"
-                />
-                <div className={"ml-4"}>
-                  <p
-                    className={"text-primarygreen text-sm font-gilroysemibold"}
-                  >
-                    IT Staff Augmentation
-                  </p>
-                  <ul className={"text-blackmig text-xs font-gilroyregular"}>
-                    <li>
-                      All-in service, where we provide talents, including their
-                      compensation & benefit, device, and tax
-                    </li>
-                    <li>Flexibility of talent headcount and working period</li>
-                    <li>Full access over assignments for talents</li>
-                  </ul>
-                </div>
-              </div>
-            </div> */}
-            {/* <div className={"mt-4 md:hidden"}>
-              <p
-                className={
-                  "text-sm text-blackmig font-gilroysemibold text-center"
-                }
-              >
-                How does our{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  Headhunt
-                </span>{" "}
-                service differ from our{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  Tech Staff Augmentation
-                </span>{" "}
-                service?
-              </p>
-            </div> */}
-            {/* <div className={"mt-[42px] hidden md:block"}>
-              <h2
-                style={{ lineHeight: "120%" }}
-                className={
-                  "text-[36px] text-blackmig font-gilroysemibold text-center"
-                }
-              >
-                How does our{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  Headhunt
-                </span>{" "}
-                service differ from our{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  Tech Staff Augmentation
-                </span>{" "}
-                service?
-              </h2>
-            </div> */}
-            {/* <div className={"mt-4 hidden md:block flex justify-center"}>
-              <div className={"flex flex-row"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  ></p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig py-3 px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <p
-                      className={
-                        "text-primarygreen font-gilroysemibold text-[18px]"
-                      }
-                    >
-                      MIG’s IT Staff Augmentation
-                    </p>
-                    <p className={"text-blackmig mt-2 text-xs"}>
-                      All talent contract matters will be handled by MIG.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig py-3 px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <p
-                      className={
-                        "text-primarygreen font-gilroysemibold text-[18px]"
-                      }
-                    >
-                      MIG’s Headhunt
-                    </p>
-                    <p className={"text-blackmig mt-2 text-xs"}>
-                      All talent contract matters will be handled by clients.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig py-3 px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <p
-                      className={
-                        "text-darkgrey font-gilroybold text-[18px] self-center"
-                      }
-                    >
-                      Common Recruitment (CV Search, Job Portal, etc)
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    Managing high-demand tech talent
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Leave it to us, we’ll manage everything for you.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      We’ll take care of it all for you.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      But, do you feel overwhelmed sometimes?
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div className={"border border-dividermig  bg-white"}>
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    Large, top-tier tech talent pool
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      We have tech talent at all levels.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Let’s meet our superior tech talents!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      A time-consuming search for top talent, right?
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div className={"border border-dividermig  bg-white text-left"}>
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    Budget matching
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      We’re a cost-effective solution for you.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Pay per use, and optimize your budget.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[11px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Potentially higher than expected cost!
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div className={"border border-dividermig  bg-white text-left"}>
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    Rigorous technical screening
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      No need to repeat complex technical tests and interviews
-                      on your own.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      We'll conduct multiple rounds of technical tests and
-                      interviews.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      One more user interview for more understanding.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div className={"border border-dividermig  bg-white"}>
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    Guaranteed talent availability
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Talent headcounts & work periods, level, and tenure, all
-                      set!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Anything talent hiring-related, all covered!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      They may decline your offer, and you'll have to start
-                      over.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div className={"border border-dividermig bg-white"}>
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    Covering all administration tasks; from payroll to
-                    offboarding.
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Focus on your work, and leave their needs to us.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      If you want us to do it, check out our IT Staff
-                      Augmentation
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      The responsibility is yours to fulfill.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row"}>
-                <div className={"border border-dividermig  bg-white"}>
-                  <p
-                    className={
-                      "px-3 py-[26px]  text-mono30 font-gilroybold text-[18px] w-[244px]"
-                    }
-                  >
-                    New candidates are assured, if there’s a resignation.
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CheckOutlined
-                      width={"17.59px"}
-                      height={"13.41px"}
-                      style={{ color: "#188E4D" }}
-                    />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      You can expect to meet them soon. There’s no charge!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Pay as you go, and we’ll handle it.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig pb-3 pt-[17.29px] px-[12px] bg-white text-center w-[325px]"
-                    }
-                  >
-                    <CloseOutlined size={"14px"} style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[18px] mt-[9.29px]"
-                      }
-                    >
-                      Spend the money and time on the recruitment process,
-                      again.
-                    </p>
-                  </div>
-                </div>
+              ?
+            </p>
+            <div className={"mt-4 flex flex-row"}>
+              <img
+                src="/image/hardware/how-it-work-mobile-1.png"
+                className="w-[44px] h-[44px]"
+              />
+              <div className={"ml-3"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
+                  We find high quality hardware products
+                </p>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                  We have extensive network and partnerships with hardware
+                  principles ready to be leveraged for your advantage
+                </p>
               </div>
             </div>
-            <div className={"mt-[17.39px] md:hidden"}>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div className={"border border-dividermig w-[100px] bg-white"}>
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs w-[100px]"
-                    }
-                  ></p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <p
-                      className={
-                        "text-primarygreen font-gilroysemibold text-xs"
-                      }
-                    >
-                      MIG’s IT Staff Augmentation
-                    </p>
-                    <p className={"text-blackmig mt-2 text-xs"}>
-                      All talent contract matters will be handled by MIG.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <p
-                      className={
-                        "text-primarygreen font-gilroysemibold text-xs"
-                      }
-                    >
-                      MIG’s Headhunt
-                    </p>
-                    <p className={"text-blackmig mt-2 text-xs"}>
-                      All talent contract matters will be handled by clients.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <p
-                      className={
-                        "text-darkgrey font-gilroybold text-xs self-center"
-                      }
-                    >
-                      All talent contract matters will be handled by clients.
-                    </p>
-                  </div>
-                </div>
+            <div className={"mt-4 flex flex-row"}>
+              <img
+                src="/image/hardware/how-it-work-mobile-2.png"
+                className="w-[44px] h-[44px]"
+              />
+              <div className={"ml-3"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
+                  Custom match with your needs
+                </p>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                  We customize our procurement with your specification needs
+                </p>
               </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs w-[100px]"
-                    }
-                  >
-                    Managing high-demand tech talent
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Leave it to us, we’ll manage everything for you.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      We’ll take care of it all for you.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      But, do you feel overwhelmed sometimes?
-                    </p>
-                  </div>
-                </div>
+            </div>
+            <div className={"mt-4 flex flex-row"}>
+              <img
+                src="/image/hardware/how-it-work-mobile-3.png"
+                className="w-[44px] h-[44px]"
+              />
+              <div className={"ml-3"}>
+                <p className={"text-sm text-blackmig font-gilroysemibold"}>
+                  We conduct full operation and maintenance for your hardware
+                </p>
+                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                  We ensure guaranteed level of hardware performance throughout
+                </p>
               </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div className={"border border-dividermig  bg-white"}>
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs w-[100px] text-center"
-                    }
-                  >
-                    Large, top-tier tech talent pool
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      We have tech talent at all levels.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Let’s meet our superior tech talents!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CloseOutlined style={{ color: "#B8B8B8" }} />
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      A time-consuming search for top talent, right?
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold w-[100px] text-xs"
-                    }
-                  >
-                    Budget matching
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      We’re a cost-effective solution for you.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Pay per use, and optimize your budget.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CloseOutlined style={{ color: "#B8B8B8" }} />
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Potentially higher than expected cost!
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div
-                  className={"border border-dividermig  bg-white text-center"}
-                >
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs w-[100px]"
-                    }
-                  >
-                    Rigorous technical screening
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      No need to repeat complex technical tests and interviews
-                      on your own.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      We'll conduct multiple rounds of technical tests and
-                      interviews.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      One more user interview for more understanding.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div className={"border border-dividermig  bg-white"}>
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs w-[100px] text-center"
-                    }
-                  >
-                    Guaranteed talent availability
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Talent headcounts & work periods, level, and tenure, all
-                      set!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Anything talent hiring-related, all covered!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CloseOutlined style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      They may decline your offer, and you'll have to start
-                      over.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div className={"border border-dividermig bg-white"}>
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs w-[100px] text-center"
-                    }
-                  >
-                    Covering all administration tasks; from payroll to
-                    offboarding.
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Focus on your work, and leave their needs to us.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CloseOutlined style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      If you want us to do it, check out our IT Staff
-                      Augmentation
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      The responsibility is yours to fulfill.
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className={"flex flex-row overflow-x-auto"}>
-                <div className={"border border-dividermig  bg-white"}>
-                  <p
-                    className={
-                      "p-3  text-mono30 font-gilroybold text-xs text-center w-[100px]"
-                    }
-                  >
-                    New candidates are assured, if there’s a resignation.
-                  </p>
-                </div>
-                <div class="flex flex-row">
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CheckOutlined style={{ color: "#188E4D" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      You can expect to meet them soon. There’s no charge!
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CloseOutlined style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Pay as you go, and we’ll handle it.
-                    </p>
-                  </div>
-                  <div
-                    className={
-                      "border border-dividermig p-3 bg-white text-center w-[132px]"
-                    }
-                  >
-                    <CloseOutlined style={{ color: "#B8B8B8" }} />{" "}
-                    <p
-                      className={
-                        "text-blackmig font-gilroyregular text-[10px] mt-[8.41px]"
-                      }
-                    >
-                      Spend the money and time on the recruitment process,
-                      again.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div> */}
+            </div>
           </section>
           {/* testimonial */}
           {dataTestimonial && (
