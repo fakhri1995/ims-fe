@@ -388,25 +388,33 @@ function LandingPage({ dataBlog }) {
             </h2>
           </div>
           <marquee className={"marquee-inner"}>
-            <div className={"flex flex-row mt-6"}>
+            <div className={"flex flex-row mt-6 grayscale"}>
               <img
-                className={"mx-[26.5px] h-[50px] w-auto"}
+                className={"mx-[26.5px] h-[50px] w-auto opacity-80"}
                 src="/image/landingpage/kb-bukopin-logo.png"
               />
               <img
-                className={"mx-[26.5px] h-[50px] w-auto"}
+                className={
+                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                }
                 src="/image/landingpage/bulog-logo-cs.png"
               />
               <img
-                className={"mx-[26.5px] h-[50px] w-auto"}
+                className={
+                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                }
                 src="/image/landingpage/setneg-logo.png"
               />
               <img
-                className={"mx-[26.5px] h-[50px] w-auto"}
+                className={
+                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                }
                 src="/image/landingpage/kb-bukopin-syariah-logo.png"
               />
               <img
-                className={"mx-[26.5px] h-[50px] w-auto"}
+                className={
+                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                }
                 src="/image/landingpage/shipper-logo.png"
               />
             </div>

@@ -433,9 +433,17 @@ function Hardware({}) {
   };
 
   const handleSuggestionHardware = (skill) => {
-    let arr_product = productSelected;
-    arr_product.push(skill);
-    setProductSelected([...arr_product]);
+    let double = 0;
+    for (let a = 0; a < productSelected.length; a++) {
+      if (productSelected[a].toLowerCase() == skill.toLowerCase()) {
+        double = 1;
+      }
+    }
+    if (double == 0) {
+      let arr_product = productSelected;
+      arr_product.push(skill);
+      setProductSelected([...arr_product]);
+    }
     // form.setFieldValue(form, "product", "");
   };
 
@@ -767,9 +775,17 @@ function Hardware({}) {
     setDataProduct(newArr);
   };
   const handleInputProduct = (value) => {
-    let arr_product = productSelected.length > 0 ? productSelected : [];
-    arr_product.push(value);
-    setProductSelected([...arr_product]);
+    let double = 0;
+    for (let a = 0; a < productSelected.length; a++) {
+      if (productSelected[a].toLowerCase() == value.toLowerCase()) {
+        double = 1;
+      }
+    }
+    if (double == 0) {
+      let arr_product = productSelected.length > 0 ? productSelected : [];
+      arr_product.push(value);
+      setProductSelected([...arr_product]);
+    }
     // form.resetFields([product]);
   };
 

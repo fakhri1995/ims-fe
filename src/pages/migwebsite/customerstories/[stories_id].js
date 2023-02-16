@@ -645,7 +645,15 @@ function CustomerStoriesDetail({}) {
                             " text-blackmig font-gilroyregular text-xs mt-1.5 h-[60px]"
                           }
                         >
-                          {stripTags(dataarticle.description)}
+                          {locale == "en"
+                            ? stripTags(dataarticle.description).substring(
+                                0,
+                                100
+                              )
+                            : stripTags(dataarticle.description_id).substring(
+                                0,
+                                100
+                              )}
                         </p>
                         <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
                           {dataarticle.tags}
@@ -708,8 +716,11 @@ function CustomerStoriesDetail({}) {
                       }
                     >
                       {locale == "en"
-                        ? stripTags(dataarticle.description)
-                        : stripTags(dataarticle.description_id)}
+                        ? stripTags(dataarticle.description).substring(0, 100)
+                        : stripTags(dataarticle.description_id).substring(
+                            0,
+                            100
+                          )}
                     </p>
                     <span class="text-xs mt-1 font-gilroyregular text-primarygreen bg-greenTrans20 px-2 py-1 rounded-[20px]">
                       {locale == "en" ? dataarticle.tags : dataarticle.tags_id}

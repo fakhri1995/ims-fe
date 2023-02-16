@@ -268,6 +268,58 @@ export default {
   contactusleftsectiontitle: `Bringing you closer to the ultimate technology solutions`,
   contactusleftsectiondescription: `Let's talk about your business needs, we have solutions ready for you`,
   contactussosialmedialabel: `Connect with us`,
+  hardwaredescriptionnavbar:
+    "Optimize your cost by leasing and maintenances IT hardwares",
+  softwaredescriptionnavbar:
+    "Simplify and automate the process through digitalization",
+  talentdescriptionnavbar:
+    "Reduce complexity in talent sourcing and management",
+  howitworktalenttitle: "How to hire top tech talent through ",
+  howitworktalentpoint1: "We gather your specific requirements",
+  howitworktalentpoint2: "We curate candidates to match your needs",
+  howitworktalentpoint3: "We secure you the right MIGhty team",
+  talentpopuptypicalskills: "Typical Skills",
+  talentpopuptypicaldeliverables: "Typical Deliverables",
+  interestwithourtalent: "Interested with our talents?",
+  engineeringpopuppoint1: "Bachelor's degree in Computer Science",
+  engineeringpopuppoint2: `Knowledge of primary coding languages including C++, HTML5, and JavaScript, PHP Java, Spring, Laravel,Tibco, etc.,`,
+  engineeringpopuppoint3: "Basic programming experience",
+  engineeringpopuppoint4: "Knowledge of databases and operating systems",
+  engineeringpopuppoint5:
+    "Ability to learn new software and technologies quickly",
+  engineeringpopuppoint6: "Detail-oriented.",
+  engineeringpopupskill1:
+    "Integration of user-facing elements developed by front-end developers",
+  engineeringpopupskill2:
+    "Provide support in building efficient, testable, and reusable software modules",
+  engineeringpopupskill3:
+    " Provide assistance in solving performance problems and architectural challenges",
+  engineeringpopupskill4: "Integration of data storage solutions",
+  datapopuppoint1: "A high level of mathematical ability",
+  datapopuppoint2: "Programming languages, such as SQL, Oracle and Python",
+  datapopuppoint3: "The ability to analyze, model and interpret data",
+  datapopuppoint4: "Problem-solving skills",
+  datapopuppoint5: "A systematic and logical approach",
+  datapopuppoint6: "Written and verbal communication skills",
+  datapopupskill1: "Examines information using data analysis tools",
+  datapopupskill2:
+    " Generate meaningful results that pulled from the raw data and help make decisions by identifying various facts and trends",
+  datapopupskill3:
+    "Typical duties includes removing corrupted data, performing initial analysis to assess the quality of the data, preparing reports based on analysis and presenting to management",
+  designpopuppoint1:
+    "Proven experience with rapid prototyping tools and techniques, such as story mapping, design sprints, and product methodology",
+  designpopuppoint2:
+    "Excellent analytical skills and strong intuitions of user behaviors",
+  designpopuppoint3: "Solid oral and written communications skills",
+  designpopuppoint4: "Strong business requirement analysis",
+  designpopupskill1: "Conceptualizing visuals based on client’s requirements",
+  designpopupskill2:
+    " Ensure final graphics and layouts are visually appealing and on-brand",
+  designpopupskill3:
+    "Work with copywriters and creative director to produce final design",
+  designpopupskill4:
+    "Communicate design ideas and research findings to a range of audiences and/or stakeholders",
+  talenthirenow: "Hire Now",
   button: `Got it!`,
   about: "About",
   news: "News",
