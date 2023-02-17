@@ -50,6 +50,7 @@ function BlogDetail({}) {
   const { TextArea } = Input;
   const [minutesRead, setMinutesRead] = useState(null);
   const [detailBlog, setDetailBlog] = useState(null);
+  const [dataHighlight, setDataHighlight] = useState([]);
   const [dataContactUs, setDataContactUs] = useState({
     company_name: null,
     company_email: null,
@@ -91,12 +92,33 @@ function BlogDetail({}) {
         .then((res2) => {
           console.log("res article ", res2);
           if (res2.success) {
-            setDetailBlog(res2.data[0]);
-            let total =
-              wordsCount(stripTags(res2.data[0].description)) +
-              wordsCount(stripTags(res2.data[0].content));
-            let minute = timeRead(total);
-            setMinutesRead(minute);
+            if (locale == "en") {
+              setDetailBlog(res2.data[0]);
+              let total =
+                wordsCount(stripTags(res2.data[0].description)) +
+                wordsCount(stripTags(res2.data[0].content));
+              let minute = timeRead(total);
+              setMinutesRead(minute);
+              let content = res2.data[0].content;
+              console.log("content ", content);
+              let h2 = content.match(/<h2>(.*?)<\/h2>/)[1];
+              console.log("H2 ", h2);
+            } else {
+              if (
+                res2.data[0].title_id != "" &&
+                res2.data[i].description_id != "" &&
+                res2.data[i].page_path_id != "" &&
+                res2.data[i].content_id != "" &&
+                res2.data[i].tags_id != ""
+              ) {
+                setDetailBlog(res2.data[0]);
+                let total =
+                  wordsCount(stripTags(res2.data[0].description_id)) +
+                  wordsCount(stripTags(res2.data[0].content_id));
+                let minute = timeRead(total);
+                setMinutesRead(minute);
+              }
+            }
           } else {
           }
         })
@@ -104,7 +126,7 @@ function BlogDetail({}) {
         .finally(() => {});
       getOtherArticle();
     }
-  }, [router.isReady]);
+  }, [router]);
 
   const loadContent = (content) => {
     return (
@@ -199,7 +221,7 @@ function BlogDetail({}) {
               on{" "}
               <span className={"font-bold"}>
                 {detailBlog &&
-                  moment(detailBlog.createdAt).format("DD MMMM YYYY")}
+                  moment(detailBlog.created_at).format("DD MMMM YYYY")}
               </span>
             </p>
             <p className={"text-sm text-darkgrey font-gilroyregular"}>
@@ -354,7 +376,7 @@ function BlogDetail({}) {
             </span>
             on{" "}
             <span className={"font-gilroysemibold"}>
-              {moment(detailBlog?.createdAt).format("DD MMMM YYYY")}
+              {moment(detailBlog?.created_at).format("DD MMMM YYYY")}
             </span>
           </p>
           {detailBlog &&
@@ -600,7 +622,7 @@ function BlogDetail({}) {
                       </span>
                       on{" "}
                       <span className={"font-bold"}>
-                        {moment(data1.createdAt).format("DD MMMM YYYY")}
+                        {moment(data1.created_at).format("DD MMMM YYYY")}
                       </span>
                     </p>
                     <p className={"font-bold text-blackmig text-base mt-3"}>
@@ -663,7 +685,7 @@ function BlogDetail({}) {
                         "text-[10px] text-darkgrey font-gilroysemibold"
                       }
                     >
-                      {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
+                      {moment(dataarticle.created_at).format("DD MMMM YYYY")}
                     </p>
                     <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
                       {locale == "en"

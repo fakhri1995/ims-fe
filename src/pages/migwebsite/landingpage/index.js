@@ -1167,7 +1167,9 @@ function LandingPage({ dataBlog }) {
                                 }}
                               />
                             )}
-                            <Linkk href={`/customerstories/${data1.page_path}`}>
+                            <Linkk
+                              href={`/migwebsite/customerstories/${data1.page_path}`}
+                            >
                               <button
                                 className={
                                   "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
