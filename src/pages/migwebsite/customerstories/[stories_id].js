@@ -96,6 +96,7 @@ function CustomerStoriesDetail({}) {
         console.log("get data testimonial ", res2);
         if (res2.success) {
           //   setDataTestimonial(res2.data);
+          console.log("locale apa ", locale);
           if (locale == "en") {
             setDetailBlog(res2.data[0]);
             let total =
@@ -127,7 +128,7 @@ function CustomerStoriesDetail({}) {
         // setLoadingEmployees(false);
       });
     getOther();
-  }, [router.isReady]);
+  }, [router]);
 
   const getOther = () => {
     let page = router.query.stories_id;
@@ -632,7 +633,7 @@ function CustomerStoriesDetail({}) {
                           </span>
                           on{" "}
                           <span className={"font-bold"}>
-                            {moment(dataarticle.createdAt).format(
+                            {moment(dataarticle.created_at).format(
                               "DD MMMM YYYY"
                             )}
                           </span>
@@ -703,7 +704,7 @@ function CustomerStoriesDetail({}) {
                         "text-[10px] text-darkgrey font-gilroysemibold"
                       }
                     >
-                      {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
+                      {moment(dataarticle.created_at).format("DD MMMM YYYY")}
                     </p>
                     <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
                       {locale == "en"

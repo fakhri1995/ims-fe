@@ -550,6 +550,12 @@ function Hardware({}) {
       maxBudget == null ||
       maxBudget == 0
     ) {
+      console.log("masuk if ");
+      console.log("productSelected.length ", productSelected.length);
+      console.log("urgently ", urgently);
+      console.log("manyTalent ", manyTalent);
+      console.log("timeUsed ", timeUsed);
+      console.log("maxBudget ", maxBudget);
       if (productSelected.length == 0) {
         setProductErrorStatus(true);
       }
@@ -612,6 +618,7 @@ function Hardware({}) {
     setMaxBudget(dataHardwareSummary[index].maxBudget);
     setUrgently(dataHardwareSummary[index].urgently);
     setManyTalent(dataHardwareSummary[index].manyTalent);
+    setTimeUsed(dataHardwareSummary[index].timeUsed);
     handleSetForm(index);
     handleKindOfHardware(dataHardwareSummary[index].kindOfHardware);
   };
@@ -1234,7 +1241,7 @@ function Hardware({}) {
                 >
                   Hardware Information
                 </p>
-                <p style={{ lineHeight: "150%" }} className={"mt-9 text-xl"}>
+                <p style={{ lineHeight: "150%" }} className={"mt-9 text-base"}>
                   What kind of hardware are you looking for?
                 </p>
                 <Form

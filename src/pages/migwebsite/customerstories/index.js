@@ -44,7 +44,7 @@ function CustomerStories({ dataBlog }) {
 
   useEffect(() => {
     setFullUrl(window.location.href);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialLandingPage`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCustomerStoriesPage`, {
       method: `GET`,
     })
       .then((res) => res.json())
@@ -74,7 +74,7 @@ function CustomerStories({ dataBlog }) {
       .finally(() => {
         // setLoadingEmployees(false);
       });
-  }, []);
+  }, [router]);
 
   const copyToClipboard = (e) => {
     navigator.clipboard.writeText(window.location.toString());
@@ -375,7 +375,7 @@ function CustomerStories({ dataBlog }) {
             ? articleList.map((dataarticle) => (
                 <Linkk
                   className={"cursor-pointer"}
-                  href={`/customerstories/${dataarticle.page_path}`}
+                  href={`/migwebsite/customerstories/${dataarticle.page_path}`}
                 >
                   <div className={"bg-white w-[292px] mt-4 p-4"}>
                     {dataarticle.attachment_article ? (
@@ -402,11 +402,15 @@ function CustomerStories({ dataBlog }) {
                         </span>
                         on{" "}
                         <span className={"font-gilroysemibold"}>
-                          {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
+                          {moment(dataarticle.created_at).format(
+                            "DD MMMM YYYY"
+                          )}
                         </span>
                       </p>
                       <p className={"font-bold text-blackmig text-base mt-3"}>
-                        {dataarticle.title}
+                        {locale == "en"
+                          ? dataarticle.title
+                          : dataarticle.title_id}
                       </p>
                       {/* <p
                         className={
@@ -425,12 +429,17 @@ function CustomerStories({ dataBlog }) {
                         }}
                         className="mt-1.5"
                         dangerouslySetInnerHTML={{
-                          __html: dataarticle.description.substring(0, 100),
+                          __html:
+                            locale == "en"
+                              ? dataarticle.description.substring(0, 100)
+                              : dataarticle.description_id.substring(0, 100),
                         }}
                       />
                       <div className={"mt-1.5"}>
                         <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                          {dataarticle.tags}
+                          {locale == "en"
+                            ? dataarticle.tags
+                            : dataarticle.tags_id}
                         </span>
                       </div>
                     </div>

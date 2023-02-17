@@ -73,7 +73,7 @@ function Blog({ dataBlog }) {
       .finally(() => {
         // setLoadingEmployees(false);
       });
-  }, []);
+  }, [router]);
 
   const copyToClipboard = (e) => {
     navigator.clipboard.writeText(window.location.toString());
@@ -321,16 +321,19 @@ function Blog({ dataBlog }) {
         {/* ------------ */}
       </section>
 
-      <section
-        className={"allarticles py-4 md:py-[69px] px-[17px] md:px-[112px]"}
-      >
-        <div className={"flex flex-row justify-between mb-[5px]"}>
-          <p
-            className={"text-base md:text-xl font-gilroybold text-primarygreen"}
-          >
-            {locale == "en" ? "All Articles" : "Semua Artikel"}
-          </p>
-          {/* <div className={"flex flex-row pr-4"}>
+      {articleList && articleList.length > 0 && (
+        <section
+          className={"allarticles py-4 md:py-[69px] px-[17px] md:px-[112px]"}
+        >
+          <div className={"flex flex-row justify-between mb-[5px]"}>
+            <p
+              className={
+                "text-base md:text-xl font-gilroybold text-primarygreen"
+              }
+            >
+              {locale == "en" ? "All Articles" : "Semua Artikel"}
+            </p>
+            {/* <div className={"flex flex-row pr-4"}>
             <p
               className={
                 "text-xs md:text-sm font-gilroyregular text-blackmig mr-4 self-center"
@@ -367,73 +370,77 @@ function Blog({ dataBlog }) {
               ]}
             />
           </div> */}
-        </div>
-        <div className={"hidden md:grid md:grid-cols-4 gap-4"}>
-          {articleList
-            ? articleList.map((dataarticle) => (
-                <Linkk href={`${fullUrl}/${dataarticle.page_path}`}>
-                  <div className={"bg-white w-[292px] mt-4 p-4 cursor-pointer"}>
-                    {dataarticle.attachment_article ? (
-                      <img
-                        className={"w-[260px] h-[184px] rounded-lg"}
-                        src={generateStaticAssetUrl(
-                          dataarticle.attachment_article.link
-                        )}
-                        alt=""
-                      />
-                    ) : (
-                      <img
-                        className={"w-[260px] h-[184px] rounded-lg"}
-                        src="/image/blog.png"
-                      />
-                    )}
-                    <div className={"mt-3"}>
-                      <p className={"text-xs text-darkgrey"}>
-                        by{" "}
-                        <span className={"font-gilroysemibold"}>
-                          {dataarticle.author
-                            ? dataarticle.author + " "
-                            : "Admin "}
-                        </span>
-                        on{" "}
-                        <span className={"font-gilroysemibold"}>
-                          {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
-                        </span>
-                      </p>
-                      <p className={"font-bold text-blackmig text-base mt-3"}>
-                        {locale == "en"
-                          ? dataarticle.title
-                          : dataarticle.title_id}
-                      </p>
-                      <div
-                        style={{
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          display: "-webkit-flex",
-                          lineClamp: "3",
-                        }}
-                        className="mt-1.5"
-                        dangerouslySetInnerHTML={{
-                          __html:
-                            locale == "en"
-                              ? dataarticle.description.substring(0, 100)
-                              : dataarticle.description_id.substring(0, 100),
-                        }}
-                      />
-                      <div className={"mt-1.5"}>
-                        <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+          </div>
+          <div className={"hidden md:grid md:grid-cols-4 gap-4"}>
+            {articleList
+              ? articleList.map((dataarticle) => (
+                  <Linkk href={`/migwebsite/blog/${dataarticle.page_path}`}>
+                    <div
+                      className={"bg-white w-[292px] mt-4 p-4 cursor-pointer"}
+                    >
+                      {dataarticle.attachment_article ? (
+                        <img
+                          className={"w-[260px] h-[184px] rounded-lg"}
+                          src={generateStaticAssetUrl(
+                            dataarticle.attachment_article.link
+                          )}
+                          alt=""
+                        />
+                      ) : (
+                        <img
+                          className={"w-[260px] h-[184px] rounded-lg"}
+                          src="/image/blog.png"
+                        />
+                      )}
+                      <div className={"mt-3"}>
+                        <p className={"text-xs text-darkgrey"}>
+                          by{" "}
+                          <span className={"font-gilroysemibold"}>
+                            {dataarticle.author
+                              ? dataarticle.author + " "
+                              : "Admin "}
+                          </span>
+                          on{" "}
+                          <span className={"font-gilroysemibold"}>
+                            {moment(dataarticle.created_at).format(
+                              "DD MMMM YYYY"
+                            )}
+                          </span>
+                        </p>
+                        <p className={"font-bold text-blackmig text-base mt-3"}>
                           {locale == "en"
-                            ? dataarticle.tags
-                            : dataarticle.tags_id}
-                        </span>
+                            ? dataarticle.title
+                            : dataarticle.title_id}
+                        </p>
+                        <div
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "-webkit-flex",
+                            lineClamp: "3",
+                          }}
+                          className="mt-1.5"
+                          dangerouslySetInnerHTML={{
+                            __html:
+                              locale == "en"
+                                ? dataarticle.description.substring(0, 100)
+                                : dataarticle.description_id.substring(0, 100),
+                          }}
+                        />
+                        <div className={"mt-1.5"}>
+                          <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                            {locale == "en"
+                              ? dataarticle.tags
+                              : dataarticle.tags_id}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Linkk>
-              ))
-            : ""}
-        </div>
-        {/* {articleList && (
+                  </Linkk>
+                ))
+              : ""}
+          </div>
+          {/* {articleList && (
           <div>
             <Pagination
               items={100} // 100
@@ -444,74 +451,81 @@ function Blog({ dataBlog }) {
           </div>
         )} */}
 
-        <div className={"md:hidden"}>
-          {articleList ? (
-            articleList.map((dataarticle) => (
-              <Linkk
-                href={
-                  locale == "en"
-                    ? `${fullUrl}/${dataarticle.page_path}`
-                    : `${fullUrl}/${dataarticle.page_path_id}`
-                }
-              >
-                <div
-                  className={"bg-white w-full rounded-lg mt-3 p-4"}
-                  style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+          <div className={"md:hidden"}>
+            {articleList ? (
+              articleList.map((dataarticle) => (
+                <Linkk
+                  href={
+                    locale == "en"
+                      ? `${fullUrl}/${dataarticle.page_path}`
+                      : `${fullUrl}/${dataarticle.page_path_id}`
+                  }
                 >
-                  {dataarticle.attachment_article ? (
-                    <img
-                      className={
-                        "w-full h-[185px] rounded-lg flex justify-center"
-                      }
-                      src={generateStaticAssetUrl(
-                        dataarticle.attachment_article.link
-                      )}
-                    />
-                  ) : (
-                    <img
-                      className={
-                        "w-full h-[185px] rounded-lg flex justify-center"
-                      }
-                      src="/image/blog.png"
-                    />
-                  )}
-                  <div className={"mt-2"}>
-                    <p
-                      className={"text-[10px] text-darkgrey font-gilroyregular"}
-                    >
-                      by{" "}
-                      <span className={"font-gilroysemibold"}>
-                        {dataarticle.author ? dataarticle.author : "Admin"}
-                      </span>
-                      on{" "}
-                      <span className={"font-gilroysemibold"}>
-                        {moment(dataarticle.createdAt).format("DD MMMM YYYY")}
-                      </span>
-                    </p>
-                    <p className={"font-gilroybold text-blackmig text-sm mt-2"}>
-                      {dataarticle.title}
-                    </p>
-                    <p
-                      className={
-                        " text-blackmig font-gilroyregular text-xs mt-1.5"
-                      }
-                    >
-                      {stripTags(dataarticle.description)}
-                    </p>
-                    <div className={"mt-1.5"}>
-                      <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
-                        {dataarticle.tags}
-                      </span>
+                  <div
+                    className={"bg-white w-full rounded-lg mt-3 p-4"}
+                    style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+                  >
+                    {dataarticle.attachment_article ? (
+                      <img
+                        className={
+                          "w-full h-[185px] rounded-lg flex justify-center"
+                        }
+                        src={generateStaticAssetUrl(
+                          dataarticle.attachment_article.link
+                        )}
+                      />
+                    ) : (
+                      <img
+                        className={
+                          "w-full h-[185px] rounded-lg flex justify-center"
+                        }
+                        src="/image/blog.png"
+                      />
+                    )}
+                    <div className={"mt-2"}>
+                      <p
+                        className={
+                          "text-[10px] text-darkgrey font-gilroyregular"
+                        }
+                      >
+                        by{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {dataarticle.author ? dataarticle.author : "Admin"}
+                        </span>
+                        on{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {moment(dataarticle.created_at).format(
+                            "DD MMMM YYYY"
+                          )}
+                        </span>
+                      </p>
+                      <p
+                        className={"font-gilroybold text-blackmig text-sm mt-2"}
+                      >
+                        {dataarticle.title}
+                      </p>
+                      <p
+                        className={
+                          " text-blackmig font-gilroyregular text-xs mt-1.5"
+                        }
+                      >
+                        {stripTags(dataarticle.description)}
+                      </p>
+                      <div className={"mt-1.5"}>
+                        <span class="text-xs font-gilroyregular text-primarygreen bg-greenTrans20 mr-2 px-2 py-1 rounded-[20px]">
+                          {dataarticle.tags}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Linkk>
-            ))
-          ) : (
-            <div></div>
-          )}
-        </div>
-      </section>
+                </Linkk>
+              ))
+            ) : (
+              <div></div>
+            )}
+          </div>
+        </section>
+      )}
       {/* testimonial */}
       {/* client */}
       {/*section join mig*/}

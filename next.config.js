@@ -29,12 +29,12 @@ const nextConfig = {
     },
     { source: "/blog", destination: "/migwebsite/blog" },
     {
-      source: "/blog/:blog_id",
+      source: "/migwebsite/blog/:blog_id",
       destination: "/migwebsite/blog/[blog_id]",
     },
     { source: "/customerstories", destination: "/migwebsite/customerstories" },
     {
-      source: "/customerstories/:stories_id",
+      source: "/migwebsite/customerstories/:stories_id",
       destination: "/migwebsite/customerstories/[stories_id]",
     },
     { source: "/sitemap", destination: "/migwebsite/sitemap" },
