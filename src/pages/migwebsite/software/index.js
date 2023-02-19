@@ -633,7 +633,9 @@ function Software({}) {
                               className="text-blackmig text-base"
                               value={name}
                             >
-                              {name}
+                              <p className={"text-blackmig text-base"}>
+                                {name}
+                              </p>
                             </Radio>
                           ))}
                         </Space>
@@ -641,7 +643,7 @@ function Software({}) {
                     </Form.Item>
                   </div>
                   <div className={"mt-9"}>
-                    <p>Budget range</p>
+                    <p className={"text-base"}>Budget range</p>
                     <div className={"mt-1 flex flex-row"}>
                       <Form.Item
                         name={"Budget Minimal"}
@@ -674,7 +676,11 @@ function Software({}) {
                           placeholder="Rp00.000"
                         />
                       </Form.Item>
-                      <div className={"mx-[19.3px] self-center "}>
+                      <div
+                        className={
+                          "mx-[19.3px] grid justify-center self-center mt-3"
+                        }
+                      >
                         <img
                           className={"w-5 h-5"}
                           src={"/image/software/arrow_right_alt.png"}
@@ -895,10 +901,12 @@ function Software({}) {
                     <div
                       className={"text-sm text-blackmig font-gilroysemibold"}
                     >
-                      <p className={""}>
+                      <p className={"text-blackmig text-base"}>
                         {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
                       </p>
-                      <p>{labelMeetingTime}</p>
+                      <p className={"text-blackmig text-base"}>
+                        {labelMeetingTime}
+                      </p>
                     </div>
                   )}
                 </div>

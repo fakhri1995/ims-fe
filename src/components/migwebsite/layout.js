@@ -134,7 +134,7 @@ function layout({ children }) {
 
   const menuResources = (
     <div
-      className={"bg-white px-2 py-4 top-6 bottom-6 relative flex flex-col"}
+      className={"bg-white px-2 py-4 flex flex-col"}
       // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
     >
       {countStories > 0 && (
@@ -143,19 +143,9 @@ function layout({ children }) {
             className={"bg-transparent border-0 border-white "}
             // onClick={() => changeLanguage("en")}
           >
-            <div className={"flex flex-row"}>
-              <img
-                className={"self-center"}
-                width={37}
-                height={37}
-                src={"/image/english.png"}
-              />
-              <div className={"ml-4"}>
-                <p className={"text-lg gilroy-medium self-center"}>
-                  Customer Stories
-                </p>
-              </div>
-            </div>
+            <p className={"text-lg gilroy-medium self-center"}>
+              {locale == "en" ? "Customer Stories" : "Klien Kami"}
+            </p>
           </Button>
         </Link>
       )}
@@ -167,17 +157,7 @@ function layout({ children }) {
             className={"bg-transparent border-0 border-white  my-4 pb-4"}
             // onClick={() => changeLanguage("id")}
           >
-            <div className={"flex flex-row"}>
-              <img
-                className={"relative"}
-                width={37}
-                height={37}
-                src={"/image/indonesia.png"}
-              />
-              <div className={"ml-4"}>
-                <p className={"text-lg gilroy-medium self-center"}>Blog</p>
-              </div>
-            </div>
+            <p className={"text-lg gilroy-medium self-center"}>Blog</p>
           </Button>
         </Link>
       )}
@@ -185,7 +165,7 @@ function layout({ children }) {
   );
   const menuLanguanges = (
     <div
-      className={"bg-white px-2 py-4 top-6 bottom-6 relative flex flex-col"}
+      className={"bg-transparent px-2 py-4 flex flex-col"}
       // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
     >
       <Button
@@ -194,32 +174,48 @@ function layout({ children }) {
       >
         <div className={"flex flex-row"}>
           <img
-            className={"self-center"}
-            width={37}
-            height={37}
+            className={"self-center w-[40px] h-[20px]"}
             src={"/image/english.png"}
           />
           <div className={"ml-4"}>
-            <p className={"text-lg gilroy-medium self-center"}>English</p>
+            <p className={"text-lg gilroy-medium items-center self-center"}>
+              English
+            </p>
           </div>
         </div>
       </Button>
       <Button
-        className={"bg-transparent border-0 border-white  my-4 pb-4"}
+        className={"bg-transparent border-0 border-white "}
         onClick={() => changeLanguage("id")}
       >
         <div className={"flex flex-row"}>
           <img
-            className={"relative"}
-            width={37}
-            height={37}
+            className={"self-center w-[40px] h-[20px]"}
             src={"/image/indonesia.png"}
           />
           <div className={"ml-4"}>
-            <p className={"text-lg gilroy-medium self-center"}>Indonesia</p>
+            <p className={"text-lg gilroy-medium items-center self-center"}>
+              Indonesia
+            </p>
           </div>
         </div>
       </Button>
+      {/* <Button
+        className={"bg-transparent border-0 border-white"}
+        onClick={() => changeLanguage("id")}
+      >
+        <div className={"flex flex-row"}>
+          <img
+            className={"self-center"}
+            width={40}
+            height={40}
+            src={"/image/indonesia.png"}
+          />
+          <div className={"ml-4"}>
+            <p className={"text-lg gilroy-medium items-center self-center"}>Indonesia</p>
+          </div>
+        </div>
+      </Button> */}
     </div>
   );
   const [kelas, setKelas] = useState("notShadow");
@@ -450,11 +446,7 @@ function layout({ children }) {
                 </Button>
               </Dropdown>
             ) : (
-              <Link href="">
-                <a className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500">
-                  Resource
-                </a>
-              </Link>
+              <div></div>
             )}
             <Link href="/contactus">
               <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">

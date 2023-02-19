@@ -121,7 +121,11 @@ function AboutUs({}) {
           </p>
         </div>
         {/* hardware, software, talent */}
-        <div className={"mt-[118px] w-[1122px] flex flex-row justify-between"}>
+        <div
+          className={
+            "mt-[118px] w-[1122px] flex flex-row justify-between mx-auto"
+          }
+        >
           <div className={"flex flex-col items-center"}>
             <div
               className={
@@ -156,9 +160,7 @@ function AboutUs({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    locale == "en"
-                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
-                      : "text-center text-blackmig text-xl font-gilroyregular pb-[30.5px] mt-5"
+                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
                   }
                 >
                   {t.aboutushardwaredescription}
@@ -221,9 +223,7 @@ function AboutUs({}) {
                 </p> */}
                 <p
                   className={
-                    locale == "en"
-                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[42.5px] mt-5"
-                      : "text-center text-blackmig text-xl font-gilroyregular pb-[65.5px] mt-5"
+                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
                   }
                 >
                   {t.aboutussoftwaredescription}
@@ -286,9 +286,7 @@ function AboutUs({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    locale == "en"
-                      ? "text-center text-blackmig text-xl font-gilroyregular pb-[60.5px] mt-5"
-                      : "text-center text-blackmig text-xl font-gilroyregular pb-[60.5px] mt-5"
+                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
                   }
                 >
                   {t.aboutustalentdescription}

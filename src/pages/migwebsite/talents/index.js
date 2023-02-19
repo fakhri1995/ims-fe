@@ -860,7 +860,9 @@ function Talents({}) {
                               className="text-blackmig text-base"
                               value={name}
                             >
-                              {name}
+                              <p className={"text-blackmig text-base"}>
+                                {name}
+                              </p>
                             </Radio>
                           ))}
                         </Space>
@@ -1442,7 +1444,7 @@ function Talents({}) {
                           <span className={"font-gilroysemibold text-base"}>
                             {kindOfTalent}
                           </span>{" "}
-                          you want to hire??
+                          you want to hire?
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1589,9 +1591,8 @@ function Talents({}) {
                         // value={manyTalent}
                         style={{
                           // border: "1px solid #B8B8B8",
-                          fontSize: "16px",
-                          height: "37px",
                           width: "170px",
+                          fontSize: "16px",
                         }}
                         name={"max_budget"}
                         formatter={(value) =>

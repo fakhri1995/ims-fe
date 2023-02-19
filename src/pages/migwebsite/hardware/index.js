@@ -1638,7 +1638,7 @@ function Hardware({}) {
                       {productSelected.map((data, index) => (
                         <div
                           className={
-                            "bg-transp45 rounded-[20px] py-1 pl-2 pr-1.5 flex flex-row mr-3 mt-2"
+                            "bg-transp45 rounded-[20px] py-2 pl-2 pr-2 flex flex-row mr-3 mt-2"
                           }
                         >
                           <p
