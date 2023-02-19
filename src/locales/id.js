@@ -1,9 +1,9 @@
 export default {
   language: "Bahasa",
   solutions: "Solusi",
-  aboutus: "Tentang Kita",
+  aboutus: "Tentang Kami",
   career: "Karir di MIG",
-  contactus: "Kontak Kita",
+  contactus: "Kontak Kami",
   landingpagemetatitle:
     "Sewa Laptop, Buat Software, dan IT Outsourcing bersama MIG.",
   landingpagemetadescription:
