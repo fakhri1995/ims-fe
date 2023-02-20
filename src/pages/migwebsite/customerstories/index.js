@@ -105,23 +105,26 @@ function CustomerStories({ dataBlog }) {
             <div className={"w-3/4 flex flex-col justify-between"}>
               <div>
                 <p className={"text-[32px] font-gilroysemibold text-blackmig"}>
-                  Welcome to MIG Blog!
+                  {t.customerstoriesherotitle}
                 </p>
                 <p
                   className={" text-base text-blackmig font-gilroyregular mt-1"}
                 >
-                  MIG catalyzes your core business with{" "}
+                  {locale == "en"
+                    ? "Explore the impact of our"
+                    : "Pelajari cara solusi"}{" "}
                   <span className={"font-gilroysemibold"}>
-                    IT hardware solutions
+                    {locale == "en" ? "Hardware" : "solusi hardware "}
                   </span>
-                  ,
+                  ,<span className={"font-gilroysemibold"}>Software</span>,{" "}
+                  {locale == "en" ? "and " : "dan "}
                   <span className={"font-gilroysemibold"}>
-                    software development
+                    {locale == "en" ? "Talent solutions " : "Talents "}
                   </span>
-                  , and{" "}
-                  <span className={"font-gilroysemibold"}>tech talents</span>.
-                  We serve you the best resource with efficient cost, but high
-                  maintenance.
+                  .
+                  {locale == "en"
+                    ? "through real case studies"
+                    : "kami bantu optimasi bisnis dari berbagai industri"}
                 </p>
               </div>
               <div className={""}>
@@ -208,7 +211,7 @@ function CustomerStories({ dataBlog }) {
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
-                Welcome to MIG Blog!
+                {t.customerstoriesherotitle}
               </p>
             </div>
           </div>
@@ -228,12 +231,21 @@ function CustomerStories({ dataBlog }) {
               " text-base text-center text-blackmig font-gilroyregular mt-16"
             }
           >
-            MIG catalyzes your core business with{" "}
-            <span className={"font-gilroysemibold"}>IT hardware solutions</span>
-            ,<span className={"font-gilroysemibold"}>software development</span>
-            , and <span className={"font-gilroysemibold"}>tech talents</span>.
-            We serve you the best resource with efficient cost, but high
-            maintenance.
+            {locale == "en"
+              ? "Explore the impact of our"
+              : "Pelajari cara solusi"}{" "}
+            <span className={"font-gilroysemibold"}>
+              {locale == "en" ? "Hardware" : "solusi hardware "}
+            </span>
+            ,<span className={"font-gilroysemibold"}>Software</span>,{" "}
+            {locale == "en" ? "and " : "dan "}
+            <span className={"font-gilroysemibold"}>
+              {locale == "en" ? "Talent solutions " : "Talents "}
+            </span>
+            .
+            {locale == "en"
+              ? "through real case studies"
+              : "kami bantu optimasi bisnis dari berbagai industri"}
           </p>
           <div className={"flex-col center"}>
             <div className={"grid justify-items-center text-center"}>

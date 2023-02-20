@@ -588,15 +588,17 @@ function Hardware({}) {
             attachment: attachment,
           });
         } else {
+          console.log("index ke ", i);
+          console.log("dataHardware[i] ", dataHardwareSummary[i]);
           array_hardwares.push({
-            kindOfHardware: dataHardware[i].kindOfHardware,
-            product: dataHardware[i].product,
-            manyTalent: dataHardware[i].manyTalent,
-            urgently: dataHardware[i].urgently,
-            timeUsed: dataHardware[i].timeUsed,
-            maxBudget: dataHardware[i].maxBudget,
-            details: dataHardware[i].details,
-            attachment: dataHardware[i].attachment,
+            kindOfHardware: dataHardwareSummary[i].kindOfHardware,
+            product: dataHardwareSummary[i].product,
+            manyTalent: dataHardwareSummary[i].manyTalent,
+            urgently: dataHardwareSummary[i].urgently,
+            timeUsed: dataHardwareSummary[i].timeUsed,
+            maxBudget: dataHardwareSummary[i].maxBudget,
+            details: dataHardwareSummary[i].details,
+            attachment: dataHardwareSummary[i].attachment,
           });
         }
       }
@@ -1673,7 +1675,7 @@ function Hardware({}) {
                             <p
                               onClick={() => handleSuggestionHardware(data)}
                               className={
-                                "text-[18px] text-darkgrey font-gilroyregular"
+                                "text-[16px] text-darkgrey font-gilroyregular"
                               }
                             >
                               {data}
@@ -3189,16 +3191,7 @@ function Hardware({}) {
                   "text-xl md:text-3xl text-center  font-gilroysemibold mb-[42px]"
                 }
               >
-                What they say{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  about us
-                </span>{" "}
-                ?
+                {t.customerstorieslandingpage}
               </p>
               <div className={"flex flex-row"}>
                 {dataTestimonial ? (
@@ -3428,16 +3421,7 @@ function Hardware({}) {
                 "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
               }
             >
-              What they say{" "}
-              <span
-                style={{
-                  borderBottom: "solid 3px #188E4D",
-                  paddingBottom: "2.5px",
-                }}
-              >
-                about us
-              </span>{" "}
-              ?
+              {t.customerstorieslandingpage}
             </p>
             <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
               <Slider {...sliderSettingsPhone}>

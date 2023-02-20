@@ -1,4 +1,5 @@
 import { Button, Form, Input } from "antd";
+import { useRouter } from "next/router";
 import { FC, MouseEventHandler, useCallback } from "react";
 
 import {
@@ -8,6 +9,8 @@ import {
 
 import { ExperienceId, RoleTypeId } from "apis/career_v2/career_v2.types";
 
+import en from "../../../../locales/en";
+import id from "../../../../locales/id";
 import { FilterDropdown } from "../FilterDropdown";
 import styles from "./CareersAtMig.module.scss";
 
@@ -33,7 +36,9 @@ export const SearchAndFilter: FC = () => {
    * Dependencies
    */
   const [form] = Form.useForm();
-
+  const router = useRouter();
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
   /**
    * Callbacks
    */
@@ -77,21 +82,21 @@ export const SearchAndFilter: FC = () => {
       <Form.Item noStyle name="keyword">
         <Input
           style={{ height: "37px", border: "1px solid #B8B8B8", fontSize: 18 }}
-          placeholder="Search jobs..."
+          placeholder={t.searchjobs}
         />
       </Form.Item>
 
       {/* Filter: Employment type */}
       <div className="flex flex-col space-y-4 md:flex-row md:space-x-6 md:space-y-0">
         <FilterDropdown
-          label="Employment type"
+          label={t.employ_type}
           data={hardcodedEmploymentTypeData}
           onOptionChecked={onFilterEmploymentTypeChanged}
         />
 
         {/* Filter: Experience range */}
         <FilterDropdown
-          label="Experience range"
+          label={t.experiencerange}
           data={hardcodedExperienceRangeData}
           onOptionChecked={onFilterExperienceRangeChanged}
         />
@@ -104,7 +109,7 @@ export const SearchAndFilter: FC = () => {
         }
         onClick={onSearchButtonClicked}
       >
-        Search
+        {locale == "en" ? "Search" : "Cari"}
       </Button>
       <Button
         className={
@@ -112,7 +117,7 @@ export const SearchAndFilter: FC = () => {
         }
         onClick={onSearchButtonClicked}
       >
-        Search
+        {locale == "en" ? "Search" : "Cari"}
       </Button>
     </Form>
   );

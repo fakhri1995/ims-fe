@@ -59,7 +59,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 }
                 style={{}}
               >
-                Our Values
+                {locale == "en" ? "Our Values" : "Pilar Kami"}
               </button>
             </Link>
             <Link
@@ -77,7 +77,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 }
                 style={{}}
               >
-                Benefits
+                {locale == "en" ? "Benefits" : " Fasilitas"}
               </button>
             </Link>
             <Link
@@ -95,7 +95,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 }
                 style={{}}
               >
-                Careers
+                {locale == "en" ? "Careers" : "  Lowongan Kerja"}
               </button>
             </Link>
           </div>

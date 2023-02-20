@@ -161,7 +161,7 @@ export const JobListTable: FC = () => {
             className={styles.ctaButton}
             onClick={onLoadMoreClicked}
           >
-            Load More
+            {locale == "en" ? "Load More" : "Lihat lebih banyak"}
           </Button>
         </div>
       )}

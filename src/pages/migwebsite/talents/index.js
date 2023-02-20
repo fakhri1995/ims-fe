@@ -1373,13 +1373,13 @@ function Talents({}) {
                       <p className={"text-base text-blackmig"}>
                         Popular roles or skills for{" "}
                         {kindOfTalent == "Engineering"
-                          ? "Software Engineer"
+                          ? "Engineering"
                           : kindOfTalent == "Data"
-                          ? "Data Engineer"
+                          ? "Data"
                           : kindOfTalent == "Design"
-                          ? "Designer UI/UX"
+                          ? "Design"
                           : kindOfTalent == "Product"
-                          ? "Product Manager"
+                          ? "Design"
                           : "Others"}
                       </p>
                     </div>
@@ -3645,16 +3645,7 @@ function Talents({}) {
                   "text-xl md:text-[32px] text-center  font-gilroysemibold mb-[42px]"
                 }
               >
-                What they say{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  about us
-                </span>{" "}
-                ?
+                {t.customerstorieslandingpage}
               </p>
               <div className={"flex flex-row"}>
                 {dataTestimonial ? (
@@ -3885,16 +3876,7 @@ function Talents({}) {
                   "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
                 }
               >
-                What they say{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  about us
-                </span>{" "}
-                ?
+                {t.customerstorieslandingpage}
               </p>
               <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
                 <Slider {...sliderSettingsPhone}>

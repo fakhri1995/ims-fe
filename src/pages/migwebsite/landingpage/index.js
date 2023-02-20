@@ -896,16 +896,7 @@ function LandingPage({ dataBlog }) {
               "text-xl md:text-[36px] text-center font-gilroysemibold mb-[42px]"
             }
           >
-            What they say{" "}
-            <span
-              style={{
-                borderBottom: "solid 3px #188E4D",
-                paddingBottom: "2.5px",
-              }}
-            >
-              about us
-            </span>{" "}
-            ?
+            {t.customerstorieslandingpage}
           </h2>
           <div
             className={"center md:content-around block md:hidden"}

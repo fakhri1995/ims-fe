@@ -105,6 +105,7 @@ function CustomerStoriesDetail({}) {
             let minute = timeRead(total);
             setMinutesRead(minute);
           } else {
+            console.log("masuk id ");
             if (
               res2.data[0].title_id != "" &&
               res2.data[i].description_id != "" &&
@@ -112,13 +113,17 @@ function CustomerStoriesDetail({}) {
               res2.data[i].content_id != "" &&
               res2.data[i].tags_id != ""
             ) {
+              console.log("masuk id if ");
               setDetailBlog(res2.data[0]);
               let total =
                 wordsCount(stripTags(res2.data[0].description_id)) +
                 wordsCount(stripTags(res2.data[0].content_id));
               let minute = timeRead(total);
               setMinutesRead(minute);
+            } else {
+              console.log("masuk id else");
             }
+            console.log("masuk apa bro ");
           }
         } else {
         }

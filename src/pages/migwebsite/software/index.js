@@ -1287,9 +1287,7 @@ function Software({}) {
                               "font-gilroyregular text-blackmig text-xl"
                             }
                           >
-                            A web-based educational platform that built to
-                            digitalize learning programs; plan, implement and
-                            assess learning programs at AQL Islamic Center.
+                            {t.lmsdescription}
                           </p>
                         </div>
                       </div>
@@ -1325,9 +1323,7 @@ function Software({}) {
                               "font-gilroyregular text-blackmig text-xl"
                             }
                           >
-                            A web-based hardware managed service to enhance the
-                            efficiency of distributions between seller and
-                            consumer.
+                            {t.warunglebarandescription}
                           </p>
                         </div>
                       </div>
@@ -1747,16 +1743,7 @@ function Software({}) {
                   "text-xl md:text-[32px] text-center font-gilroysemibold mb-[42px]"
                 }
               >
-                What they say{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  about us
-                </span>{" "}
-                ?
+                {t.customerstorieslandingpage}
               </p>
               <div className={"flex flex-row"}>
                 {dataTestimonial ? (
@@ -1987,16 +1974,7 @@ function Software({}) {
                   "text-xl md:text-[32px] text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
                 }
               >
-                What they say{" "}
-                <span
-                  style={{
-                    borderBottom: "solid 3px #188E4D",
-                    paddingBottom: "2.5px",
-                  }}
-                >
-                  about us
-                </span>{" "}
-                ?
+                {t.customerstorieslandingpage}
               </p>
               <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
                 <Slider {...sliderSettingsPhone}>
