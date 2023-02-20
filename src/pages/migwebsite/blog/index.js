@@ -104,23 +104,12 @@ function Blog({ dataBlog }) {
             <div className={"w-3/4 flex flex-col justify-between"}>
               <div>
                 <p className={"text-[32px] font-gilroysemibold text-blackmig"}>
-                  Welcome to MIG Blog!
+                  {t.blogherotitle}
                 </p>
                 <p
                   className={" text-base text-blackmig font-gilroyregular mt-1"}
                 >
-                  MIG catalyzes your core business with{" "}
-                  <span className={"font-gilroysemibold"}>
-                    IT hardware solutions
-                  </span>
-                  ,
-                  <span className={"font-gilroysemibold"}>
-                    software development
-                  </span>
-                  , and{" "}
-                  <span className={"font-gilroysemibold"}>tech talents</span>.
-                  We serve you the best resource with efficient cost, but high
-                  maintenance.
+                  {t.blogherodescription}
                 </p>
               </div>
               <div className={""}>
@@ -208,7 +197,7 @@ function Blog({ dataBlog }) {
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
-                Welcome to MIG Blog!
+                {t.blogherotitle}
               </p>
             </div>
           </div>
@@ -228,12 +217,7 @@ function Blog({ dataBlog }) {
               " text-base text-center text-blackmig font-gilroyregular mt-16"
             }
           >
-            MIG catalyzes your core business with{" "}
-            <span className={"font-gilroysemibold"}>IT hardware solutions</span>
-            ,<span className={"font-gilroysemibold"}>software development</span>
-            , and <span className={"font-gilroysemibold"}>tech talents</span>.
-            We serve you the best resource with efficient cost, but high
-            maintenance.
+            {t.blogherodescription}
           </p>
           <div className={"flex-col center"}>
             <div className={"grid justify-items-center text-center"}>

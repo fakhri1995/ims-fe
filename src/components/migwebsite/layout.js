@@ -420,6 +420,13 @@ function layout({ children }) {
                 {t.career}
               </a>
             </Link>
+            {countArticle == 0 && countStories == 0 && (
+              <Link href="/contactus">
+                <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+                  {t.contactus}
+                </a>
+              </Link>
+            )}
             {countArticle > 0 || countStories > 0 ? (
               <Dropdown overlay={menuResources} placement="bottomCenter">
                 <Button
@@ -448,11 +455,14 @@ function layout({ children }) {
             ) : (
               <div></div>
             )}
-            <Link href="/contactus">
-              <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
-                {t.contactus}
-              </a>
-            </Link>
+            {countArticle > 0 ||
+              (countStories > 0 && (
+                <Link href="/contactus">
+                  <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+                    {t.contactus}
+                  </a>
+                </Link>
+              ))}
           </div>
         </Header>
 
