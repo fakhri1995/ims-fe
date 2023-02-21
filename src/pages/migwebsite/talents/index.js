@@ -1379,7 +1379,7 @@ function Talents({}) {
                           : kindOfTalent == "Design"
                           ? "Design"
                           : kindOfTalent == "Product"
-                          ? "Design"
+                          ? "Product"
                           : "Others"}
                       </p>
                     </div>

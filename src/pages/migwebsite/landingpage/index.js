@@ -387,38 +387,68 @@ function LandingPage({ dataBlog }) {
               {t.landingpagetitlelogo}
             </h2>
           </div>
-          <marquee className={"marquee-inner"}>
-            <div className={"flex flex-row mt-6 grayscale"}>
-              <img
-                className={"mx-[26.5px] h-[50px] w-auto opacity-80"}
-                src="/image/landingpage/kb-bukopin-logo.png"
-              />
-              <img
-                className={
-                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                }
-                src="/image/landingpage/bulog-logo-cs.png"
-              />
-              <img
-                className={
-                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                }
-                src="/image/landingpage/setneg-logo.png"
-              />
-              <img
-                className={
-                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                }
-                src="/image/landingpage/kb-bukopin-syariah-logo.png"
-              />
-              <img
-                className={
-                  "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                }
-                src="/image/landingpage/shipper-logo.png"
-              />
+          <div class="slider">
+            <div class="slide-track">
+              <div className={"flex flex-row mt-6 grayscale"}>
+                <img
+                  className={"mx-[26.5px] h-[50px] w-auto opacity-80"}
+                  src="/image/landingpage/kb-bukopin-logo-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/bulog-logo-cs-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/setneg-logo-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/shipper-logo-gray.png"
+                />
+                <img
+                  className={"mx-[26.5px] h-[50px] w-auto opacity-80"}
+                  src="/image/landingpage/kb-bukopin-logo-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/bulog-logo-cs-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/setneg-logo-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                />
+                <img
+                  className={
+                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
+                  }
+                  src="/image/landingpage/shipper-logo-gray.png"
+                />
+              </div>
             </div>
-          </marquee>
+          </div>
 
           <div className={"mt-6 text-center"}>
             <h2
