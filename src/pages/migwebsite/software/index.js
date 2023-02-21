@@ -60,10 +60,12 @@ function Software({}) {
     //     }
     //   });
     setFormActive(value);
+    window.scrollTo(0, 0);
   };
 
   const handleForm = () => {
     setFormActive("first");
+    window.scrollTo(0, 0);
   };
   const normFile = (e) => {
     console.log("Upload event:", e);
@@ -186,6 +188,7 @@ function Software({}) {
       setShowform(true);
       setFormActive("second");
       localStorage.removeItem("dataForm");
+      window.scrollTo(0, 0);
     }
     getDataTestimonial();
   }, []);

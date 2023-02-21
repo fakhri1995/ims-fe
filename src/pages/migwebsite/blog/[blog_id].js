@@ -75,6 +75,7 @@ function BlogDetail({}) {
   };
 
   const [fullUrl, setFullUrl] = useState("http://www.google.com");
+  const [halamanId, setHalamanId] = useState(false);
 
   useEffect(() => {
     setFullUrl(window.location.href);
@@ -111,10 +112,20 @@ function BlogDetail({}) {
                 res2.data[i].content_id != "" &&
                 res2.data[i].tags_id != ""
               ) {
+                setHalamanId(true);
                 setDetailBlog(res2.data[0]);
                 let total =
                   wordsCount(stripTags(res2.data[0].description_id)) +
                   wordsCount(stripTags(res2.data[0].content_id));
+                let minute = timeRead(total);
+                setMinutesRead(minute);
+              } else {
+                setHalamanId(false);
+                alert("Halaman ID tidak tersedia untuk testimoni ini");
+                setDetailBlog(res2.data[0]);
+                let total =
+                  wordsCount(stripTags(res2.data[0].description)) +
+                  wordsCount(stripTags(res2.data[0].content));
                 let minute = timeRead(total);
                 setMinutesRead(minute);
               }
@@ -206,7 +217,13 @@ function BlogDetail({}) {
               "text-2xl md:text-[32px] text-blackmig font-gilroysemibold"
             }
           >
-            {locale == "en" ? detailBlog?.title : detailBlog?.title_id}
+            {locale == "en" && detailBlog
+              ? detailBlog.title
+              : locale == "id" && detailBlog && halamanId
+              ? detailBlog.title_id
+              : locale == "id" && detailBlog && halamanId == false
+              ? detailBlog.title
+              : ""}
           </p>
           <div className={"flex flex-row justify-between my-[17px]"}>
             <p className={"text-xs text-darkgrey"}>
@@ -337,16 +354,20 @@ function BlogDetail({}) {
           <div className={"w-3/5 ml-12"}>
             {locale == "en" && detailBlog ? (
               loadContent(detailBlog.description)
-            ) : locale == "id" && detailBlog ? (
+            ) : locale == "id" && detailBlog && halamanId ? (
               loadContent(detailBlog.description_id)
+            ) : locale == "id" && detailBlog && halamanId == false ? (
+              loadContent(detailBlog.description)
             ) : (
               <div></div>
             )}
             <div className={" pt-4"}>
               {locale == "en" && detailBlog ? (
                 loadContent(detailBlog.content)
-              ) : locale == "id" && detailBlog ? (
+              ) : locale == "id" && detailBlog && halamanId ? (
                 loadContent(detailBlog.content_id)
+              ) : locale == "id" && detailBlog && halamanId == false ? (
+                loadContent(detailBlog.content)
               ) : (
                 <div></div>
               )}
@@ -363,7 +384,13 @@ function BlogDetail({}) {
           <p
             className={"text-2xl md:text-3xl text-blackmig font-gilroysemibold"}
           >
-            {detailBlog?.title}
+            {locale == "en" && detailBlog
+              ? detailBlog.title
+              : locale == "id" && detailBlog && halamanId
+              ? detailBlog.title_id
+              : locale == "id" && detailBlog && halamanId == false
+              ? detailBlog.title
+              : ""}
           </p>
           <p className={"text-xs text-blackmig font-gilroyregular mt-3 mb-4"}>
             by{" "}

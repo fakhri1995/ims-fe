@@ -138,6 +138,7 @@ function Hardware({}) {
     //     }
     //   });
     setFormActive("second");
+    window.scrollTo(0, 0);
   };
 
   const handleForm = (value) => {
@@ -149,9 +150,11 @@ function Hardware({}) {
         });
       } else {
         setFormActive(value);
+        window.scrollTo(0, 0);
       }
     } else {
       setFormActive(value);
+      window.scrollTo(0, 0);
     }
   };
   const [dataHardware, setDataHardware] = useState({
@@ -250,6 +253,7 @@ function Hardware({}) {
       });
       setShowform(true);
       setFormActive("second");
+      window.scrollTo(0, 0);
       localStorage.removeItem("dataForm");
     }
   }, []);
@@ -657,6 +661,7 @@ function Hardware({}) {
   const handleSubmitConfirm = () => {
     setFormActive("four");
     setModalSubmit(false);
+    window.scrollTo(0, 0);
   };
   const handleCancelSubmit = () => {
     setModalSubmit(false);
