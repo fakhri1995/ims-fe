@@ -2437,10 +2437,10 @@ function Hardware({}) {
               )}
               <div className={"hidden md:block"}>
                 {dataBanking && (
-                  <div className={"flex flex-row mt-[42px] justify-center"}>
+                  <div className={"flex flex-row mt-[42px] justify-between"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[300px] bg-lightblue rounded-lg p-3"
+                        "w-[15%] flex flex-col justify-between text-center bg-lightblue rounded-lg p-3"
                       }
                     >
                       <p
@@ -2485,37 +2485,35 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    {dataBanking && (
-                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                        {dataBanking.map((data, index) => (
-                          <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
-                            onClick={handleShowForm}
+                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                      {dataBanking.map((data, index) => (
+                        <button
+                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          onClick={handleShowForm}
+                        >
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px]"}
+                            alt=""
+                          />
+                          <p
+                            style={{ lineHeight: "120%" }}
+                            className={"mt-3 font-gilroybold text-xl"}
                           >
-                            <img
-                              src={generateStaticAssetUrl(
-                                data.attachment_product.link
-                              )}
-                              className={"w-[128px] h-[90px]"}
-                              alt=""
-                            />
-                            <p
-                              style={{ lineHeight: "120%" }}
-                              className={"mt-3 font-gilroybold text-xl"}
-                            >
-                              {data.name_product}
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                            {data.name_product}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
                 {dataWorkstation && (
-                  <div className={"flex flex-row mt-8 justify-center"}>
+                  <div className={"flex flex-row mt-8"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[300px] bg-lightgreen rounded-lg p-3"
+                        "w-[15%] flex flex-col justify-between text-center bg-lightgreen rounded-lg p-3"
                       }
                     >
                       <p
@@ -2560,49 +2558,48 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    {dataWorkstation && (
-                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                        {dataWorkstation.map((data, index) => (
-                          <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
-                            onClick={handleShowForm}
+                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                      {dataWorkstation.map((data, index) => (
+                        <button
+                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          onClick={handleShowForm}
+                        >
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p
+                            style={{ lineHeight: "120%" }}
+                            className={"mt-3 font-gilroybold text-xl"}
                           >
-                            <img
-                              src={generateStaticAssetUrl(
-                                data.attachment_product.link
-                              )}
-                              className={"w-[128px] h-[90px] self-center"}
-                              alt=""
-                            />
-                            <p
-                              style={{ lineHeight: "120%" }}
-                              className={"mt-3 font-gilroybold text-xl"}
-                            >
-                              {data.name_product}
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                            {data.name_product}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
+
                 {dataServer && (
-                  <div className={"flex flex-row mt-8 justify-center"}>
+                  <div className={"flex flex-row mt-8"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[300px] bg-lightgrey rounded-lg p-3"
+                        "w-[15%] flex flex-col justify-between text-center bg-lightgrey rounded-lg p-3"
                       }
                     >
                       <p
                         style={{ lineHeight: "150%" }}
                         className={
-                          "text-[22px] font-gilroybold text-accentpurple"
+                          "text-[22px] font-gilroybold text-primarygreen"
                         }
                       >
                         Server & Hosting
                       </p>
                       <p
-                        style={{ lineHeight: "150%" }}
+                        style={{ lineHeight: "120%" }}
                         className={
                           "text-base font-gilroysemibold italic text-blackmig"
                         }
@@ -2621,58 +2618,55 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-xl text-accentpurple font-gilroysemibold"
+                                "text-xl text-primarygreen font-gilroysemibold"
                               }
                             >
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
-                              src="/image/hardware/arrow_forward_ios_purple.png"
-                              className={"w-[20px] h-[20px] self-center"}
+                              src="/image/hardware/arrow_forward_ios_green.png"
+                              className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
                           </div>
                         </button>
                       </div>
                     </div>
-                    {dataServer && (
-                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                        {dataServer.map((data, index) => (
-                          <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
-                            onClick={handleShowForm}
+                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                      {dataServer.map((data, index) => (
+                        <button
+                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          onClick={handleShowForm}
+                        >
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p
+                            style={{ lineHeight: "120%" }}
+                            className={"mt-3 font-gilroybold text-xl"}
                           >
-                            <img
-                              src={generateStaticAssetUrl(
-                                data.attachment_product.link
-                              )}
-                              className={"w-[128px] h-[90px] self-center"}
-                              alt=""
-                            />
-                            <p
-                              style={{ lineHeight: "120%" }}
-                              className={"mt-3 font-gilroybold text-xl"}
-                            >
-                              {data.name_product}
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                            {data.name_product}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
-
                 {dataUps && (
-                  <div className={"flex flex-row mt-8 justify-center"}>
+                  <div className={"flex flex-row mt-8"}>
                     <div
                       className={
-                        "flex flex-col justify-between text-center w-[300px] bg-lightpink rounded-lg p-3"
+                        "w-[15%] flex flex-col justify-between text-center bg-lightpink rounded-lg p-3"
                       }
                     >
                       <p
                         style={{ lineHeight: "150%" }}
                         className={
-                          "text-[22px] font-gilroybold text-accentblue"
+                          "text-[22px] font-gilroybold text-primarygreen"
                         }
                       >
                         UPS
@@ -2683,7 +2677,7 @@ function Hardware({}) {
                           "text-base font-gilroysemibold italic text-blackmig"
                         }
                       >
-                        {t.hardwareupssubtitle}
+                        {t.hardwareserversubtitle}
                       </p>
                       <div className={"self-center"}>
                         <button
@@ -2697,44 +2691,42 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-xl text-accentpink font-gilroysemibold"
+                                "text-xl text-primarygreen font-gilroysemibold"
                               }
                             >
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
-                              src="/image/hardware/arrow_forward_ios_pink.png"
-                              className={"w-[20px] h-[20px] self-center"}
+                              src="/image/hardware/arrow_forward_ios_green.png"
+                              className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
                           </div>
                         </button>
                       </div>
                     </div>
-                    {dataUps && (
-                      <div className={"grid grid-cols-6 gap-[11px] ml-[11px]"}>
-                        {dataUps.map((data, index) => (
-                          <button
-                            className="bg-white p-3 border border-divider rounded-lg w-full text-center mx-auto flex flex-col justify-center items-center"
-                            onClick={handleShowForm}
+                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                      {dataUps.map((data, index) => (
+                        <button
+                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          onClick={handleShowForm}
+                        >
+                          <img
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                            className={"w-[128px] h-[90px] self-center"}
+                            alt=""
+                          />
+                          <p
+                            style={{ lineHeight: "120%" }}
+                            className={"mt-3 font-gilroybold text-xl"}
                           >
-                            <img
-                              src={generateStaticAssetUrl(
-                                data.attachment_product.link
-                              )}
-                              className={"w-[128px] h-[90px] self-center"}
-                              alt=""
-                            />
-                            <p
-                              style={{ lineHeight: "120%" }}
-                              className={"mt-3 font-gilroybold text-xl"}
-                            >
-                              {data.name_product}
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                    )}
+                            {data.name_product}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 )}
               </div>
