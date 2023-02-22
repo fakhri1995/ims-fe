@@ -187,8 +187,8 @@ function Talents({}) {
     if (localStorage.getItem("dataForm")) {
       let dataForm = JSON.parse(localStorage.getItem("dataForm"));
       console.log("dataform ", dataForm);
-      setDataTalents({
-        ...dataTalents,
+      setDataPeople({
+        ...dataPeople,
         company_email: dataForm.company_email,
         company_name: dataForm.company_name,
         contact_name: dataForm.name,
@@ -463,6 +463,7 @@ function Talents({}) {
       });
     } else {
       let array_talents = dataTalents;
+      console.log("datatalents ", dataTalents);
       array_talents.push({
         kindOfTalent: kindOfTalent,
         product: productSelected,
@@ -1642,7 +1643,7 @@ function Talents({}) {
                     <button
                       onClick={handleAddAnotherProduct}
                       className={
-                        "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                        "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
                       <p

@@ -295,7 +295,7 @@ function layout({ children }) {
 
   return (
     <>
-      <Head title="Home" />
+      {/* <Head title="Home" /> */}
       <Styles />
       <Layout className={"h-auto"}>
         <Header
@@ -455,14 +455,15 @@ function layout({ children }) {
             ) : (
               <div></div>
             )}
-            {countArticle > 0 ||
-              (countStories > 0 && (
-                <Link href="/contactus">
-                  <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
-                    {t.contactus}
-                  </a>
-                </Link>
-              ))}
+            {countArticle > 0 || countStories > 0 ? (
+              <Link href="/contactus">
+                <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+                  {t.contactus}
+                </a>
+              </Link>
+            ) : (
+              <div></div>
+            )}
           </div>
         </Header>
 
