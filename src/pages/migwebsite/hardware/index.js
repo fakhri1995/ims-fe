@@ -885,12 +885,12 @@ function Hardware({}) {
           <section
             className={
               formActive == "first"
-                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row md:justify-between"
-                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row"
+                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden md:flex md:flex-row md:justify-between"
+                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden md:flex md:flex-row"
             }
           >
             {formActive == "first" ? (
-              <div className="w-[52%]">
+              <div className="w-[100%] md:w-[52%]">
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
@@ -2141,7 +2141,1276 @@ function Hardware({}) {
                 </div>
               )
             ) : (
-              <div className={"w-[50%] flex justify-end"}>
+              <div className={"w-[50%] md:flex md:justify-end"}>
+                <img
+                  className={"w-[607px] h-[354px]"}
+                  src="/image/landingpage/Talents-2.png"
+                />
+              </div>
+            )}
+          </section>
+          {/* section form mobile */}
+          <section
+            className={
+              formActive == "first" ? "px-4 md:hidden" : "px-4 md:hidden"
+            }
+          >
+            {formActive == "first" ? (
+              <div className="">
+                <p
+                  style={{ lineHeight: "24px" }}
+                  className={"text-xl text-primarygreen font-gilroysemibold"}
+                >
+                  Thank you for your interest in providing your IT needs through
+                  Mitramas Infosys Global
+                </p>
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt-4 text-sm text-blackmig font-gilroyregular"}
+                >
+                  Before we reach you out, we’d like to ask a few questions to
+                  better understand your business & IT needs.
+                </p>
+                <div className="mt-6">
+                  <Form
+                    id="formcontact"
+                    hidden={!feedback}
+                    layout={"vertical"}
+                    onFinish={handleSubmit}
+                    form={form}
+                  >
+                    <div className={""}>
+                      <Form.Item
+                        name={"Company Name"}
+                        className={"text-base"}
+                        label={<p style={{ fontSize: "14px" }}>Company Name</p>}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            height: "37px",
+                            fontSize: "14px",
+                          }}
+                          name={"Company Name"}
+                          onChange={(e) => {
+                            setDataHardware({
+                              ...dataHardware,
+                              company_name: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter company name here"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={"Email"}
+                        initialValue={dataHardware.company_email}
+                        className={" text-base -mt-2"}
+                        label=<p style={{ fontSize: "14px" }}>Email</p>
+                        rules={[{ required: true, type: "email" }]}
+                      >
+                        <Input
+                          // disabled={true}
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            fontSize: "14px",
+                          }}
+                          name={"Email"}
+                          onChange={(e) => {
+                            setDataHardware({
+                              ...dataHardware,
+                              company_email: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter your email here"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={""}>
+                      <Form.Item
+                        name={"Contact Name"}
+                        className={" text-base -mt-2"}
+                        label={<p style={{ fontSize: "14px" }}>Contact Name</p>}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            height: "37px",
+                            fontSize: "14px",
+                          }}
+                          name={"Contact Name"}
+                          onChange={(e) => {
+                            setDataHardware({
+                              ...dataHardware,
+                              name: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter your name here"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={"Phone Number"}
+                        className={" text-xs -mt-2"}
+                        label={<p style={{ fontSize: "14px" }}>Phone Number</p>}
+                        rules={[
+                          {
+                            required: true,
+                            pattern: new RegExp("^[0-9]*$"),
+                            message: "Please input valid phone number",
+                          },
+                        ]}
+                      >
+                        <Input
+                          // style={{ border: "1px solid #B8B8B8",height:"37px" }}
+                          addonBefore="+62"
+                          name={"Phone Number"}
+                          onChange={(e) => {
+                            setDataHardware({
+                              ...dataHardware,
+                              phone_number: parseInt(e.target.value),
+                            });
+                          }}
+                          style={{ fontSize: "14px" }}
+                          placeholder="Enter your phone number here"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={"border border-dividermig w-[90%]"}></div>
+                    <Form.Item>
+                      <div className={"w-full flex justify-center mt-2"}>
+                        <button
+                          type={"submit"}
+                          className={
+                            "rounded text-white border-2 bg-primarygreen border-primarygreen py-2 pl-4 pr-[12.18px] mt-9"
+                          }
+                        >
+                          <div className={"flex flex-row justify-between"}>
+                            <p className={"text-base font-gilroysemibold"}>
+                              Get Started
+                            </p>
+                            <img
+                              className={"self-center ml-[13.52px]"}
+                              style={{ width: "20px", height: "20px" }}
+                              src="/image/landingpage/arrow_forward_ios2.png"
+                            />
+                          </div>
+                        </button>
+                      </div>
+                    </Form.Item>
+                  </Form>
+                </div>
+              </div>
+            ) : formActive == "second" ? (
+              <div className="w-full">
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-base text-blackmig font-gilroysemibold"}
+                >
+                  General Information
+                </p>
+                <p
+                  style={{ lineHeight: "120%", fontSize: "14px" }}
+                  className={"pt-9"}
+                >
+                  What is your purpose in providing IT needs through Mitramas
+                  Infosys Global?
+                </p>
+                <div className={"mt-4"}>
+                  <Radio.Group
+                    onChange={onChangeValuePurpose}
+                    value={valuePurpose}
+                    buttonStyle={"solid"}
+                  >
+                    <Space direction="vertical">
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={"I want to buy the product"}
+                      >
+                        I want to buy the product
+                      </Radio>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={
+                          "I want to lease the product and having hardware managed"
+                        }
+                      >
+                        I want to lease the product and having hardware managed
+                        services
+                      </Radio>
+                      <Radio
+                        className="text-blackmig text-sm"
+                        value={
+                          "None of the above, I just want to know about the service"
+                        }
+                      >
+                        None of the above, I just want to know about the service
+                      </Radio>
+                    </Space>
+                  </Radio.Group>
+                </div>
+                <div className={"border border-dividermig w-full mt-9"} />
+                <div className={"mt-9 flex flex-row justify-between"}>
+                  <button
+                    className={"bg-white py-2 px-4"}
+                    onClick={() => handleForm("first")}
+                  >
+                    <p
+                      className={
+                        "text-base text-primarygreen font-gilroysemibold"
+                      }
+                    >
+                      Back
+                    </p>
+                  </button>
+                  <button
+                    onClick={() => handleForm("third")}
+                    className={
+                      "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
+                    }
+                  >
+                    <p className={"text-base text-white"}>Next</p>
+                    <img
+                      className={"self-center ml-[13.52px]"}
+                      style={{ width: "20px", height: "20px" }}
+                      src="/image/landingpage/arrow_forward_ios2.png"
+                    />
+                  </button>
+                </div>
+              </div>
+            ) : formActive == "third" ? (
+              // hardware information form
+
+              <div className="w-[52%]">
+                <Modal
+                  open={modalDelete}
+                  onCancel={handleCancelDelete}
+                  width={392}
+                  closeIcon={
+                    <img
+                      className={"w-[24px] mt-8 h-[24px]"}
+                      src="/image/people/close.png"
+                    />
+                  }
+                  footer={null}
+                >
+                  <div className={"text-center mx-auto"}>
+                    <div className={"mt-9 grid justify-items-center"}>
+                      <img
+                        src="image/icon-warning.png"
+                        className={"w-[72px] h-[72px]"}
+                      />
+                    </div>
+                    <div className={"mt-8"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-blackmig text-[32px]"
+                        }
+                      >
+                        Delete
+                      </p>
+                      <p
+                        className={
+                          "mt-4 text-base text-blackmig font-gilroyregular"
+                        }
+                      >
+                        Are you sure you want to remove{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {deleteHardwareValue}
+                        </span>{" "}
+                        ?
+                      </p>
+                    </div>
+                    <button
+                      className={
+                        "mt-8 py-2 px-[112.5px] bg-primarygreen rounded"
+                      }
+                      onClick={handleDeleteConfirm}
+                    >
+                      <p className={"text-base text-white font-gilroysemibold"}>
+                        Delete Item
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "mt-4 py-2 bg-white border border-primarygreen rounded px-[129px]"
+                      }
+                      onClick={handleCancelDelete}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        Cancel
+                      </p>
+                    </button>
+                  </div>
+                </Modal>
+                <Modal
+                  open={modalSubmit}
+                  onCancel={handleCancelSubmit}
+                  width={392}
+                  closeIcon={
+                    <img
+                      className={"w-[24px] mt-8 h-[24px]"}
+                      src="/image/people/close.png"
+                    />
+                  }
+                  footer={null}
+                >
+                  <div className={"text-center mx-auto"}>
+                    <div className={"mt-9 grid justify-items-center"}>
+                      <img
+                        src="image/icon-warning.png"
+                        className={"w-[72px] h-[72px]"}
+                      />
+                    </div>
+                    <div className={"mt-8"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-blackmig text-[32px]"
+                        }
+                      >
+                        Submit Request
+                      </p>
+                      <div className={"mt-2 border border-dividermig px-8"} />
+                      <p
+                        className={
+                          "mt-4 text-base text-blackmig font-gilroyregular"
+                        }
+                      >
+                        Are you sure you want to submit your request with only{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {dataHardwareSummary.length}
+                        </span>{" "}
+                        item ?
+                      </p>
+                    </div>
+                    <button
+                      className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
+                      onClick={handleSubmitConfirm}
+                    >
+                      <p className={"text-base text-white font-gilroysemibold"}>
+                        Yes, continue with {dataHardwareSummary.length} item
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "mt-4 py-2 bg-white border border-primarygreen rounded px-[27.5px]"
+                      }
+                      onClick={handleCancelSubmit}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        No, I want to complete my request{" "}
+                      </p>
+                    </button>
+                  </div>
+                </Modal>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
+                  Hardware Information
+                </p>
+                <p style={{ lineHeight: "150%" }} className={"mt-9 text-base"}>
+                  What kind of hardware are you looking for?
+                </p>
+                <Form
+                  id="formhardware"
+                  // hidden={!feedback}
+                  layout={"vertical"}
+                  onFinish={() => handleAddAnotherProduct()}
+                  form={form}
+                >
+                  {/* <p className={"text-primarygreen text-base"}>
+                    You can choose more than one
+                  </p> */}
+                  {/* choose product */}
+                  <div className={"flex flex-row mt-4"}>
+                    <a
+                      className={"bg-white"}
+                      onClick={() => handleKindOfHardware("Bank Machinery")}
+                    >
+                      <div
+                        className={
+                          kindOfHardware == "Bank Machinery"
+                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
+                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        }
+                      >
+                        {kindOfHardware == "Bank Machinery" ? (
+                          <div className={"flex justify-end mt-1 mr-2"}>
+                            <img
+                              src={"image/hardware/check-list.png"}
+                              className={"w-[19px] h-[19px]"}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className={
+                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
+                            }
+                          ></div>
+                        )}
+                        <div className={"flex justify-center"}>
+                          <img
+                            src={
+                              kindOfHardware == "Bank Machinery"
+                                ? "image/hardware/banking_selected.png"
+                                : "image/hardware/banking.png"
+                            }
+                            className={"w-[102px] h-[85px]"}
+                          />
+                        </div>
+                        <div
+                          className={
+                            "mt-1 mb-1 text-center text-base text-blackmig "
+                          }
+                        >
+                          <p
+                            className={
+                              kindOfHardware == "Bank Machinery"
+                                ? "font-gilroysemibold"
+                                : "font-gilroyregular"
+                            }
+                          >
+                            Bank Machinery
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      className={"bg-white"}
+                      onClick={() => handleKindOfHardware("Workstation")}
+                    >
+                      <div
+                        className={
+                          kindOfHardware == "Workstation"
+                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
+                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        }
+                      >
+                        {kindOfHardware == "Workstation" ? (
+                          <div className={"flex justify-end mt-1 mr-2"}>
+                            <img
+                              src={"image/hardware/check-list.png"}
+                              className={"w-[19px] h-[19px]"}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className={
+                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
+                            }
+                          ></div>
+                        )}
+                        <div className={"flex justify-center"}>
+                          <img
+                            src={
+                              kindOfHardware == "Workstation"
+                                ? "image/hardware/workstation_selected.png"
+                                : "image/hardware/station.png"
+                            }
+                            className={"w-[98px] h-[91px]"}
+                          />
+                        </div>
+                        <div
+                          className={
+                            "mt-1 mb-1 text-center text-base text-blackmig "
+                          }
+                        >
+                          <p
+                            className={
+                              kindOfHardware == "Workstation"
+                                ? "font-gilroysemibold"
+                                : "font-gilroyregular"
+                            }
+                          >
+                            Workstation
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      className={"bg-white"}
+                      onClick={() => handleKindOfHardware("Server")}
+                    >
+                      <div
+                        className={
+                          kindOfHardware == "Server"
+                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
+                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        }
+                      >
+                        {kindOfHardware == "Server" ? (
+                          <div className={"flex justify-end mt-1 mr-2"}>
+                            <img
+                              src={"image/hardware/check-list.png"}
+                              className={"w-[19px] h-[19px]"}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className={
+                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
+                            }
+                          ></div>
+                        )}
+                        <div className={"flex justify-center"}>
+                          <img
+                            src={
+                              kindOfHardware == "Server"
+                                ? "image/hardware/server_selected.png"
+                                : "image/hardware/server.png"
+                            }
+                            className={"w-[90px] h-[86px]"}
+                          />
+                        </div>
+                        <div
+                          className={
+                            "mt-1 mb-1 text-center text-base text-blackmig "
+                          }
+                        >
+                          <p
+                            className={
+                              kindOfHardware == "Server"
+                                ? "font-gilroysemibold"
+                                : "font-gilroyregular"
+                            }
+                          >
+                            Server & Hosting
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      className={"bg-white"}
+                      onClick={() => handleKindOfHardware("UPS")}
+                    >
+                      <div
+                        className={
+                          kindOfHardware == "UPS"
+                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
+                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        }
+                      >
+                        {kindOfHardware == "UPS" ? (
+                          <div className={"flex justify-end mt-1 mr-2"}>
+                            <img
+                              src={"image/hardware/check-list.png"}
+                              className={"w-[19px] h-[19px]"}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className={
+                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
+                            }
+                          ></div>
+                        )}
+                        <div className={"flex justify-center"}>
+                          <img
+                            src={
+                              kindOfHardware == "UPS"
+                                ? "image/hardware/ups_selected.png"
+                                : "image/hardware/UPS.png"
+                            }
+                            className={"w-[108px] h-[84px]"}
+                          />
+                        </div>
+                        <div
+                          className={
+                            "mt-1 mb-1 text-center text-base text-blackmig "
+                          }
+                        >
+                          <p
+                            className={
+                              kindOfHardware == "UPS"
+                                ? "font-gilroysemibold"
+                                : "font-gilroyregular"
+                            }
+                          >
+                            UPS
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                    <a
+                      className={"bg-white"}
+                      onClick={() => handleKindOfHardware("Others")}
+                    >
+                      <div
+                        className={
+                          kindOfHardware == "Others"
+                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
+                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
+                        }
+                      >
+                        {kindOfHardware == "Others" ? (
+                          <div className={"flex justify-end mt-1 mr-2"}>
+                            <img
+                              src={"image/hardware/check-list.png"}
+                              className={"w-[19px] h-[19px]"}
+                            />
+                          </div>
+                        ) : (
+                          <div
+                            className={
+                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
+                            }
+                          ></div>
+                        )}
+                        <div className={"flex justify-center"}>
+                          <img
+                            src={
+                              kindOfHardware == "Others"
+                                ? "image/hardware/others_selected.png"
+                                : "image/hardware/others_notselected.png"
+                            }
+                            className={"w-[100px] h-[84px]"}
+                          />
+                        </div>
+                        <div
+                          className={
+                            "mt-1 mb-1 text-center text-base text-blackmig "
+                          }
+                        >
+                          <p
+                            className={
+                              kindOfHardware == "Others"
+                                ? "font-gilroysemibold"
+                                : "font-gilroyregular"
+                            }
+                          >
+                            Others
+                          </p>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <div
+                    className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
+                  >
+                    <p
+                      className={"text-blackmig text-base font-gilroysemibold"}
+                    >
+                      1. Hardware Specification
+                    </p>
+                  </div>
+                  <div className={"mt-8 w-1/2"}>
+                    <Form.Item
+                      name="time_need_product"
+                      className={" text-base"}
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          *How soon do you need the product?
+                        </p>
+                      }
+                      rules={[
+                        {
+                          required: true,
+                          message: "This input is must be filled",
+                        },
+                      ]}
+                    >
+                      <Select
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="time_need_product"
+                        onChange={(value) => {
+                          setUrgently(value);
+                        }}
+                        allowClear
+                      >
+                        <Option value="Within this week">
+                          Within this week
+                        </Option>
+                        <Option value="Within this month">
+                          Within this month
+                        </Option>
+                        <Option value="Next Month">Next Month</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8 w-1/2"}>
+                    <Form.Item
+                      name="time_used"
+                      className={" text-base"}
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          How long do you need the product?
+                        </p>
+                      }
+                      rules={[
+                        {
+                          required: true,
+                          message: "This input is must be filled",
+                        },
+                      ]}
+                    >
+                      <Select
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="time_used"
+                        onChange={(value) => {
+                          setTimeUsed(value);
+                        }}
+                        allowClear
+                      >
+                        <Option value="6">{"< 6 Month Duration"}</Option>
+                        <Option value="6 - 12">
+                          {"6 - 12 Month Duration"}
+                        </Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8"}>
+                    <Form.Item
+                      name={"product"}
+                      className={" text-base"}
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          *What product in{" "}
+                          <span className={"font-gilroysemibold"}>
+                            {kindOfHardware}
+                          </span>{" "}
+                          do you need?
+                        </p>
+                      }
+                      // rules={[{ required: true }]}
+                    >
+                      <Input
+                        value={product}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          height: "37px",
+                          fontSize: "16px",
+                        }}
+                        name={"product"}
+                        onChange={(e) => {
+                          setProduct(e.target.value);
+                        }}
+                        onPressEnter={(e) => {
+                          handleInputProduct(e.target.value);
+                        }}
+                        placeholder="Enter product"
+                      />
+                    </Form.Item>
+                  </div>
+                  {console.log("product selected  render", productSelected)}
+                  {productSelected.length > 0 && (
+                    <div className={"flex flex-wrap w-full mt-3"}>
+                      {productSelected.map((data, index) => (
+                        <div
+                          className={
+                            "bg-transp45 rounded-[20px] py-2 pl-2 pr-2 flex flex-row mr-3 mt-2"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-base text-blackmig font-gilroyregular"
+                            }
+                          >
+                            {data}
+                          </p>
+                          <img
+                            onClick={() => deleteProduct(index)}
+                            className={"w-5 h-5"}
+                            src="/image/hardware/cancel.png"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <div className={"mt-3"}>
+                    <p className={"text-base text-blackmig"}>
+                      Popular products in {kindOfHardware ? kindOfHardware : ""}
+                    </p>
+                    {hardwareSuggestion.length > 0 && (
+                      <div className={"flex flex-row mt-3"}>
+                        {hardwareSuggestion.map((data, index) => (
+                          <button
+                            // onClick={() => handleSuggestionHardware(data)}
+                            className={
+                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                            }
+                          >
+                            <p
+                              onClick={() => handleSuggestionHardware(data)}
+                              className={
+                                "text-[16px] text-darkgrey font-gilroyregular"
+                              }
+                            >
+                              {data}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div
+                    className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
+                  >
+                    <p
+                      className={"text-blackmig text-base font-gilroysemibold"}
+                    >
+                      2. Additional Information
+                    </p>
+                  </div>
+                  <div className={"mt-8"}>
+                    <Form.Item
+                      label={
+                        <p className={"text-base"}>
+                          {" "}
+                          How many product in{" "}
+                          <span className={"font-gilroysemibold text-blackmig"}>
+                            {kindOfHardware ? kindOfHardware : ""}{" "}
+                          </span>
+                          you need? (pieces)
+                        </p>
+                      }
+                      name={"manyproduct"}
+                      rules={[
+                        { message: "You must fill this field", required: true },
+                      ]}
+                    >
+                      {/* <Form.Item name="input-number" noStyle> */}
+
+                      <InputNumber
+                        // value={manyTalent}
+                        min={1}
+                        name={"manyproduct"}
+                        // max={10}
+                        style={{
+                          // border: "1px solid #B8B8B8",
+                          // height: "37px",
+                          width: "170px",
+                          fontSize: "16px",
+                        }}
+                        onChange={onChangeManyProduct}
+                      />
+
+                      {/* </Form.Item> */}
+                      {/* <span className="ant-form-text" style={{ marginLeft: 8 }}>
+                        pieces
+                      </span> */}
+                    </Form.Item>
+                    <Form.Item
+                      name={"max_budget"}
+                      label={
+                        <p className={"text-base"}>
+                          What is your maximum budget for your new product?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      {/* <Form.Item name="input-number" noStyle> */}
+                      <InputNumber
+                        value={maxBudget}
+                        name="max_budget"
+                        formatter={(value) =>
+                          `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => value.replace(/\Rp\s?|(,*)/g, "")}
+                        min={1}
+                        // max={10}
+                        style={{
+                          // border: "1px solid #B8B8B8",
+                          // height: "37px",
+                          width: "170px",
+                          fontSize: "16px",
+                        }}
+                        onChange={(value) => {
+                          setMaxBudget(value);
+                        }}
+                      />
+                      {/* </Form.Item> */}
+                      {/* <span className="ant-form-text" style={{ marginLeft: 8 }}>
+                        / piece / month
+                      </span> */}
+                    </Form.Item>
+                    <Form.Item
+                      name={"Details"}
+                      className={" text-base"}
+                      label={
+                        <p style={{ fontSize: "16px" }}>Details (Optional)</p>
+                      }
+                      // rules={[{ required: true }]}
+                    >
+                      <TextArea
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "16px",
+                        }}
+                        name={"Details"}
+                        onChange={(value) => {
+                          setDetails(value.target.value);
+                        }}
+                        rows={4}
+                        placeholder="Tell us more about your talent details"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      label={<p style={{ fontSize: "16px" }}>Attachment</p>}
+                    >
+                      <Form.Item
+                        name="dragger"
+                        valuePropName="fileList"
+                        getValueFromEvent={normFile}
+                        noStyle
+                      >
+                        <Upload.Dragger
+                          st
+                          className={"border-1 border-dashed border-accentblue"}
+                          name="files"
+                          maxCount={1}
+                          onChange={onChangeFile}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          // action="/upload.do"
+                          style={{ width: "298px", height: "180px" }}
+                        >
+                          <img
+                            className="anticon anticon-inbox mt-3"
+                            style={{ width: "48px", height: "32px" }}
+                            src="/image/landingpage/upload.png"
+                          />
+                          <p className="text-xs font-gilroyregular px-9 mt-9">
+                            Drag and drop your sourcing documents here
+                          </p>
+                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular text-bluemig mt-2">
+                            browse
+                          </p>
+                        </Upload.Dragger>
+                      </Form.Item>
+                    </Form.Item>
+                  </div>
+                  <div className={"border border-dividermig w-full mt-9"} />
+                  <div className={"mt-9 flex flex-row justify-between"}>
+                    <button
+                      className={"bg-white py-2 px-4"}
+                      onClick={() => handleForm("second")}
+                    >
+                      <p className={"text-[18px] text-primarygreen"}>Back</p>
+                    </button>
+                    {statusEdit ? (
+                      <button
+                        // onClick={form.submit}
+                        // type="submit"
+                        onClick={() => handleUpdateProduct()}
+                        className={
+                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                        }
+                      >
+                        <p
+                          className={
+                            "text-[18px] text-primarygreen font-gilroysemibold"
+                          }
+                        >
+                          I want to Update product
+                        </p>
+                        <img
+                          className={"self-center"}
+                          style={{ width: "20px", height: "20px" }}
+                          src="/image/plus.png"
+                        />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={form.submit}
+                        // type="submit"
+                        // onClick={handleAddAnotherProduct}
+                        className={
+                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                        }
+                      >
+                        <p
+                          className={
+                            "text-[18px] text-primarygreen font-gilroysemibold"
+                          }
+                        >
+                          I want to add another product
+                        </p>
+                        <img
+                          className={"self-center"}
+                          style={{ width: "20px", height: "20px" }}
+                          src="/image/plus.png"
+                        />
+                      </button>
+                    )}
+                  </div>
+                </Form>
+              </div>
+            ) : (
+              <div className="w-[52%]">
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                >
+                  Choose Meeting Date
+                </p>
+                <div
+                  className={
+                    "mt-9 bg-bgjoinmig  w-[788px]  px-3 py-2 rounded-lg flex flex-row"
+                  }
+                >
+                  <img src={"image/software/information-circle.png"} />
+                  <p className={"ml-3 text-base text-blackmig self-center"}>
+                    Please choose a meeting date & time with Mitramas Infosys
+                    Global
+                  </p>
+                </div>
+                <div className={"flex flex-row mt-4"}>
+                  <div className={"w-[392px]"}>
+                    <div className="site-calendar-demo-card">
+                      <Calendar
+                        onChange={onPanelChange}
+                        value={valueDate}
+                        tileDisabled={tileDisabled}
+                      />
+                    </div>
+                  </div>
+                  <div className={"ml-8"}>
+                    <p
+                      className={"text-base text-blackmig font-gilroysemibold"}
+                    >
+                      Choose Time
+                    </p>
+                    <p
+                      className={
+                        "text-base text-blackmig font-gilroyregular mt-1"
+                      }
+                    >
+                      Meeting duration: 30 minutes
+                    </p>
+                    <div className={"mt-4 flex flex-row"}>
+                      <div
+                        className={
+                          "text-base text-blackmig font-gilroysemibold w-[174px]"
+                        }
+                      >
+                        {dataMeetingTime.map((data) => (
+                          <button
+                            onClick={() =>
+                              onChangeValueMeetingTime(
+                                data.value,
+                                data.label_meeting
+                              )
+                            }
+                            className={
+                              valueMeetingTime == data.value
+                                ? "w-[174px] rounded bg-greenTrans20 border border-primarygreen py-2 px-[72px] mt-5"
+                                : "mt-5 w-[174px] rounded bg-divider py-2 px-[72px]"
+                            }
+                          >
+                            <p
+                              className={
+                                valueMeetingTime == data.value &&
+                                "text-primarygreen"
+                              }
+                            >
+                              {data.value}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                      <div
+                        className={
+                          "text-base text-blackmig font-gilroysemibold ml-4 w-[174px]"
+                        }
+                      >
+                        {dataMeetingTime2.map((data) => (
+                          <button
+                            onClick={() =>
+                              onChangeValueMeetingTime(
+                                data.value,
+                                data.label_meeting
+                              )
+                            }
+                            className={
+                              valueMeetingTime == data.value
+                                ? "w-[174px] rounded bg-greenTrans20 border border-primarygreen py-2 px-[72px] mt-5"
+                                : "mt-5 w-[174px] rounded bg-divider py-2 px-[72px]"
+                            }
+                          >
+                            <p
+                              className={
+                                valueMeetingTime == data.value &&
+                                "text-primarygreen"
+                              }
+                            >
+                              {data.value}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className={"mt-[35px]"}>
+                  <p className={"text-base text-blackmig font-gilroyregular"}>
+                    *Meeting Time
+                  </p>
+
+                  {valueDateTemp == null ? (
+                    <p className={"mt-1 text-redmig text-xs"}>
+                      Please choose your date first on the calendar
+                    </p>
+                  ) : (
+                    <div
+                      className={"text-base text-blackmig font-gilroysemibold"}
+                    >
+                      <p className={""}>
+                        {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                      </p>
+                      <p>{labelMeetingTime}</p>
+                    </div>
+                  )}
+                </div>
+                <div className={"mt-4"}>
+                  <ReCAPTCHA
+                    ref={captchaRef}
+                    // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
+                    sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
+                  />
+                </div>
+                <div className={"mt-9 flex flex-row justify-between"}>
+                  <button
+                    className={"bg-white py-2 px-4"}
+                    onClick={() => handleForm("third")}
+                  >
+                    <p className={"text-[18px] text-primarygreen"}>Back</p>
+                  </button>
+                  <button
+                    type={"submit"}
+                    onClick={submitFormSoftware}
+                    className={
+                      "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                    }
+                  >
+                    <p className={"text-[18px] text-white"}>Submit</p>
+                    <img
+                      className={"self-center"}
+                      style={{ width: "20px", height: "20px" }}
+                      src="/image/landingpage/arrow_forward_ios2.png"
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
+            {formActive == "third" ? (
+              dataHardwareSummary.length > 0 && (
+                <div
+                  className={
+                    "w-[400px] h-[100%] py-4 pl-4 pr-[17px] ml-5 top-20 sticky "
+                  }
+                  style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
+                >
+                  <p className={"font-gilroybold text-primarygreen text-base"}>
+                    Hardware Request Summary
+                  </p>
+                  <div className={"mt-3 border border-dividermig"} />
+                  {dataHardwareSummary.map((data, index) => (
+                    <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                      <div className={"flex flex-row"}>
+                        <button
+                          className={"bg-transparent w-[90%] text-left"}
+                          onClick={() => handleEdit(index)}
+                        >
+                          <div className={""}>
+                            <p
+                              className={
+                                "text-blackmig font-gilroysemibold text-sm "
+                              }
+                            >
+                              {data.kindOfHardware}
+                            </p>
+                            <p
+                              className={
+                                "text-blackmig font-gilroyregular text-sm"
+                              }
+                            >
+                              {data.timeUsed +
+                                " month duration, " +
+                                data.urgently +
+                                " , " +
+                                data.manyTalent +
+                                " products"}
+                            </p>
+                            <div className={"flex"}>
+                              <p
+                                className={
+                                  "text-blackmig text-xs font-gilroysemibold"
+                                }
+                              >
+                                Hardware:{" "}
+                                {data.product.map((data, index) => (
+                                  <span
+                                    className={
+                                      "text-xs text-blackmig font-gilroyregular"
+                                    }
+                                  >
+                                    {data}
+                                    {" ,"}
+                                  </span>
+                                ))}
+                              </p>
+                            </div>
+                          </div>
+                        </button>
+                        <div className={"w-[10%] flex justify-end self-center"}>
+                          <button
+                            className={"bg-transparent"}
+                            onClick={() =>
+                              handleDeleteHardware(data.kindOfHardware, index)
+                            }
+                          >
+                            <img src="image/trash.png" className={"w-6 h-6"} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    onClick={handleSubmitHardware}
+                    className={
+                      "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
+                    }
+                  >
+                    <div className={"flex flex-row justify-between"}>
+                      <p className={"text-white text-base font-gilroysemibold"}>
+                        Submit Request
+                      </p>
+                      <div
+                        className={
+                          "w-[22px] h-[22px] bg-white rounded-[100px] items-center self-center"
+                        }
+                      >
+                        <p
+                          className={
+                            "text-primarygreen text-base font-gilroysemibold"
+                          }
+                        >
+                          {dataHardwareSummary.length}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )
+            ) : (
+              <div className={"w-[50%] md:flex md:justify-end"}>
                 <img
                   className={"w-[607px] h-[354px]"}
                   src="/image/landingpage/Talents-2.png"

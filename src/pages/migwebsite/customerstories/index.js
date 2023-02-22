@@ -114,17 +114,17 @@ function CustomerStories({ dataBlog }) {
                     ? "Explore the impact of our"
                     : "Pelajari cara"}{" "}
                   <span className={"font-gilroysemibold"}>
-                    {locale == "en" ? "Hardware" : "solusi hardware "}
+                    {locale == "en" ? "Hardware" : "solusi Hardware"}
                   </span>
                   , <span className={"font-gilroysemibold"}>Software</span>,{" "}
                   {locale == "en" ? "and " : "dan "}
                   <span className={"font-gilroysemibold"}>
-                    {locale == "en" ? "Talent solutions " : "Talents "}
+                    {locale == "en" ? "Talent solutions" : "Talents"}
                   </span>
                   .
                   {locale == "en"
-                    ? "through real case studies"
-                    : "kami bantu optimasi bisnis dari berbagai industri"}
+                    ? " through real case studies"
+                    : " kami bantu optimasi bisnis dari berbagai industri"}
                 </p>
               </div>
               <div className={""}>
