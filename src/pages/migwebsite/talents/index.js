@@ -657,8 +657,8 @@ function Talents({}) {
           <section
             className={
               formActive == "first"
-                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row md:justify-between"
-                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row"
+                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row lg:justify-between"
+                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row"
             }
           >
             {formActive == "first" ? (
@@ -1951,6 +1951,1060 @@ function Talents({}) {
               </div>
             )}
           </section>
+          {/* section form mobile */}
+          <section
+            className={
+              formActive == "first"
+                ? "px-4 py-9 lg:hidden"
+                : "px-4 py-9 lg:hidden"
+            }
+          >
+            {formActive == "first" ? (
+              <div className="w-full">
+                <p className={"text-xl text-primarygreen font-gilroysemibold"}>
+                  Thank you for your interest in providing your IT needs through
+                  Mitramas Infosys Global
+                </p>
+                <p className={"mt-4 text-sm text-blackmig"}>
+                  Before we reach you out, we’d like to ask a few questions to
+                  better understand your business & IT needs.
+                </p>
+                <div className="mt-6">
+                  <Form
+                    id="formcontact"
+                    hidden={!feedback}
+                    layout={"vertical"}
+                    onFinish={() => handleSubmit("second")}
+                    form={form}
+                  >
+                    <div className={"w-full"}>
+                      <Form.Item
+                        name={"Company Name"}
+                        className={"font-gilroyregular text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Company Name</p>}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            height: "37px",
+                          }}
+                          name={"Company Name"}
+                          onChange={(e) => {
+                            setDataPeople({
+                              ...dataPeople,
+                              company_name: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter company name here"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        initialValue={dataPeople.company_email}
+                        name={"Email"}
+                        className={"font-gilroyregular text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Email</p>}
+                        rules={[{ required: true, type: "email" }]}
+                      >
+                        <Input
+                          value={"oke"}
+                          style={{ border: "1px solid #B8B8B8" }}
+                          name={"Email"}
+                          onChange={(e) => {
+                            setDataPeople({
+                              ...dataPeople,
+                              company_email: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter your email here"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={"w-full"}>
+                      <Form.Item
+                        name={"Contact Name"}
+                        className={"font-gilroyregular text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Contact Name</p>}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            height: "37px",
+                          }}
+                          name={"Contact Name"}
+                          onChange={(e) => {
+                            setDataPeople({
+                              ...dataPeople,
+                              name: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter your name here"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={"Phone Number"}
+                        className={"font-gilroyregular text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Phone Number</p>}
+                        rules={[
+                          {
+                            required: true,
+                            pattern: new RegExp("^[0-9]*$"),
+                            message: "Please input valid phone number",
+                          },
+                        ]}
+                      >
+                        <Input
+                          // style={{ border: "1px solid #B8B8B8",height:"37px" }}
+                          addonBefore="+62"
+                          name={"Phone Number"}
+                          onChange={(e) => {
+                            setDataPeople({
+                              ...dataPeople,
+                              phone_number: parseInt(e.target.value),
+                            });
+                          }}
+                          placeholder="Enter your phone number here"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={"border border-dividermig w-full"}></div>
+                    <Form.Item>
+                      <div className={"w-full flex justify-start mt-2"}>
+                        <button
+                          type={"submit"}
+                          className={
+                            "rounded text-white border-2 bg-primarygreen border-primarygreen py-2 pl-4 pr-[12.18px] mt-9"
+                          }
+                        >
+                          <div className={"flex flex-row justify-between"}>
+                            <p className={"text-base font-gilroysemibold"}>
+                              Get Started
+                            </p>
+                            <img
+                              className={"self-center ml-[13.52px]"}
+                              style={{ width: "20px", height: "20px" }}
+                              src="/image/landingpage/arrow_forward_ios2.png"
+                            />
+                          </div>
+                        </button>
+                      </div>
+                    </Form.Item>
+                  </Form>
+                </div>
+              </div>
+            ) : formActive == "second" ? (
+              <div className="w-full">
+                <Form
+                  id="formsoftware"
+                  layout={"vertical"}
+                  onFinish={() => handleSubmit("third")}
+                  form={form}
+                >
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={"text-base text-blackmig font-gilroysemibold"}
+                  >
+                    General Information
+                  </p>
+                  {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
+                  <div className={"mt-9"}>
+                    <Form.Item
+                      name={"type project"}
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p style={{ fontSize: "14px" }}>
+                          How many people are employed at your company?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Radio.Group
+                        onChange={onChangeValuePurpose}
+                        value={valuePurpose}
+                        buttonStyle={"solid"}
+                      >
+                        <Space direction="vertical">
+                          {dataTypeProject.map((name) => (
+                            <Radio
+                              className="text-blackmig text-sm"
+                              value={name}
+                            >
+                              {name}
+                            </Radio>
+                          ))}
+                        </Space>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-9"}>
+                    <Form.Item
+                      name={"kind project"}
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p style={{ fontSize: "14px" }}>
+                          What kind of project are you hiring for?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Radio.Group
+                        onChange={onChangeValueKindProject}
+                        value={valueKindProject}
+                        buttonStyle={"solid"}
+                      >
+                        <Space direction="vertical">
+                          {dataKindProject.map((name) => (
+                            <Radio
+                              className="text-blackmig text-sm"
+                              value={name}
+                            >
+                              <p className={"text-blackmig text-sm"}>{name}</p>
+                            </Radio>
+                          ))}
+                        </Space>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>
+                  <div className={"border border-dividermig w-full mt-9"} />
+                  <div className={"mt-9 flex flex-row justify-between"}>
+                    <button
+                      className={"bg-white py-2 px-4"}
+                      onClick={() => handleForm("first")}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        Back
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px]  flex flex-row justify-between"
+                      }
+                    >
+                      <p className={"text-base text-white"}>Next</p>
+                      <img
+                        className={"self-center ml-[13.52px]"}
+                        style={{ width: "20px", height: "20px" }}
+                        src="/image/landingpage/arrow_forward_ios2.png"
+                      />
+                    </button>
+                  </div>
+                </Form>
+              </div>
+            ) : formActive == "third" ? (
+              <div className="w-full">
+                <Modal
+                  open={modalDelete}
+                  onCancel={handleCancelDelete}
+                  width={392}
+                  closeIcon={
+                    <img
+                      className={"w-[24px] mt-8 h-[24px]"}
+                      src="/image/people/close.png"
+                    />
+                  }
+                  footer={null}
+                >
+                  <div className={"text-center mx-auto"}>
+                    <div className={"mt-9 grid justify-items-center"}>
+                      <img
+                        src="image/icon-warning.png"
+                        className={"w-[72px] h-[72px]"}
+                      />
+                    </div>
+                    <div className={"mt-8"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-blackmig text-[32px]"
+                        }
+                      >
+                        Delete
+                      </p>
+                      <p
+                        className={
+                          "mt-4 text-[18px] text-blackmig font-gilroyregular"
+                        }
+                      >
+                        Are you sure you want to remove talent{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {deleteTalentValue}
+                        </span>{" "}
+                        ?
+                      </p>
+                    </div>
+                    <button
+                      className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
+                      onClick={handleDeleteConfirm}
+                    >
+                      <p
+                        className={"text-[18px] text-white font-gilroysemibold"}
+                      >
+                        Yes, delete talent request
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "mt-4 py-2 bg-white border border-primarygreen rounded px-[129px]"
+                      }
+                      onClick={handleCancelDelete}
+                    >
+                      <p
+                        className={
+                          "text-[18px] text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        Cancel
+                      </p>
+                    </button>
+                  </div>
+                </Modal>
+                <Modal
+                  open={modalSubmit}
+                  onCancel={handleCancelSubmit}
+                  width={392}
+                  closeIcon={
+                    <img
+                      className={"w-[24px] mt-8 h-[24px]"}
+                      src="/image/people/close.png"
+                    />
+                  }
+                  footer={null}
+                >
+                  <div className={"text-center mx-auto"}>
+                    <div className={"mt-9 grid justify-items-center"}>
+                      <img
+                        src="image/icon-warning.png"
+                        className={"w-[72px] h-[72px]"}
+                      />
+                    </div>
+                    <div className={"mt-8"}>
+                      <p
+                        className={
+                          "font-gilroysemibold text-blackmig text-[32px]"
+                        }
+                      >
+                        Submit Request
+                      </p>
+                      <div className={"mt-2 border border-dividermig px-8"} />
+                      <p
+                        className={
+                          "mt-4 text-[18px] text-blackmig font-gilroyregular"
+                        }
+                      >
+                        Are you sure you want to submit your request with only{" "}
+                        <span className={"font-gilroysemibold"}>
+                          {dataTalents.length}
+                        </span>{" "}
+                        talent ?
+                      </p>
+                    </div>
+                    <button
+                      className={"mt-8 py-2 px-[60px] bg-primarygreen rounded"}
+                      onClick={handleSubmitConfirm}
+                    >
+                      <p
+                        className={"text-[18px] text-white font-gilroysemibold"}
+                      >
+                        Yes, continue with {dataTalents.length} talent
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "mt-4 py-2 bg-white border border-primarygreen rounded px-[27.5px]"
+                      }
+                      onClick={handleCancelSubmit}
+                    >
+                      <p
+                        className={
+                          "text-[18px] text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        No, I want to complete my request{" "}
+                      </p>
+                    </button>
+                  </div>
+                </Modal>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-base text-blackmig font-gilroysemibold"}
+                >
+                  Talent Information
+                </p>
+                <Form
+                  id="formtalentdetail"
+                  hidden={!feedback}
+                  layout={"vertical"}
+                  // onFinish={handleSubmitThird}
+                  form={form}
+                >
+                  {/* choose product */}
+                  <div className={"mt-8 w-full"}>
+                    <Form.Item
+                      name="kind_of_talent"
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p style={{ fontSize: "14px" }}>
+                          What kind of talent are you looking for?
+                        </p>
+                      }
+                    >
+                      <Select
+                        style={{ border: "1px solid #B8B8B8" }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="kind_of_talent"
+                        onChange={(value) => {
+                          handleKindOfTalent(value);
+                        }}
+                        allowClear
+                      >
+                        <Option value="Engineering">Engineering</Option>
+                        <Option value="Data">Data</Option>
+                        <Option value="Product">Product</Option>
+                        <Option value="Design">Design</Option>
+                        <Option value="Others">Others</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div
+                    className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
+                  >
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
+                      1. Job Specification
+                    </p>
+                  </div>
+                  <div className={"mt-8"}>
+                    <Form.Item
+                      // name={"product"}
+
+                      className={"font-gilroyregular text-xl"}
+                      label={
+                        <p style={{ fontSize: "16px" }}>
+                          What roles/skills would you like to see in your new
+                          hire?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Input
+                        value={product}
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          height: "37px",
+                          fontSize: "16px",
+                        }}
+                        name={"product"}
+                        onChange={(e) => {
+                          setProduct(e.target.value);
+                        }}
+                        onPressEnter={handleInputProduct}
+                        placeholder="Enter specific roles or skills"
+                      />
+                    </Form.Item>
+                  </div>
+                  {productSelected.length > 0 && (
+                    <div className={"flex flex-wrap"}>
+                      {productSelected.map((data, index) => (
+                        <div
+                          className={
+                            "bg-transp45 rounded-[20px]  mt-3 py-1 pl-2 pr-1.5 flex flex-row mr-3"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-sm text-blackmig font-gilroyregular"
+                            }
+                          >
+                            {data}
+                          </p>
+                          <button
+                            className={"bg-transparent ml-2"}
+                            onClick={() => deleteProduct(index)}
+                          >
+                            <img
+                              className={"w-5 h-5"}
+                              src="/image/hardware/cancel.png"
+                            />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {kindOfTalent != null && (
+                    <div className={"mt-4"}>
+                      <p className={"text-sm text-blackmig"}>
+                        Popular roles or skills for{" "}
+                        {kindOfTalent == "Engineering"
+                          ? "Engineering"
+                          : kindOfTalent == "Data"
+                          ? "Data"
+                          : kindOfTalent == "Design"
+                          ? "Design"
+                          : kindOfTalent == "Product"
+                          ? "Product"
+                          : "Others"}
+                      </p>
+                    </div>
+                  )}
+                  {skillSuggestion.length > 0 && (
+                    <div className={"flex flex-row mt-3"}>
+                      {skillSuggestion.map((data, index) => (
+                        <button
+                          onClick={() => handleSuggestionSkill(data)}
+                          className={
+                            " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-sm text-darkgrey font-gilroyregular"
+                            }
+                          >
+                            {data}
+                          </p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {console.log("formactive ", formActive)}
+
+                  <div className={"mt-8 w-full"}>
+                    <Form.Item
+                      name="level_employee"
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p style={{ fontSize: "14px" }}>
+                          What level of employee you would like to see in your
+                          new hire?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{ border: "1px solid #B8B8B8" }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="level_employee"
+                        onChange={(value) => {
+                          setLevelEmployee(value);
+                        }}
+                        allowClear
+                      >
+                        <Option value="junior">Junior</Option>
+                        <Option value="mid">Middle</Option>
+                        <Option value="senior">Senior</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8"}>
+                    <Form.Item
+                      // name={"product"}
+                      name={"many_talent"}
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p className={"text-blackmig"}>
+                          How many talent in{" "}
+                          <span className={"font-gilroysemibold text-sm"}>
+                            {kindOfTalent}
+                          </span>{" "}
+                          you want to hire?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <InputNumber
+                        // value={manyTalent}
+                        style={{
+                          // border: "1px solid #B8B8B8",
+
+                          width: "170px",
+                        }}
+                        name={"many_talent"}
+                        onChange={(e) => {
+                          setManyTalent(e);
+                        }}
+                        // onPressEnter={handleInputProduct}
+                        placeholder="How many?"
+                      />
+                    </Form.Item>
+                  </div>
+                  <div
+                    className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
+                  >
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
+                      2. Additional Information
+                    </p>
+                  </div>
+                  <div className={"mt-8 w-full"}>
+                    <Form.Item
+                      name="urgently_need"
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p
+                          style={{ fontSize: "14px" }}
+                          className={"text-sm font-gilroyregular"}
+                        >
+                          How soon do you need the talent?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "14px",
+                        }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="urgently_need"
+                        onChange={(value) => {
+                          setUrgently(value);
+                        }}
+                        allowClear
+                        placeholder={"When will you start using the product?"}
+                      >
+                        <Option value="Within this week">
+                          Within this week
+                        </Option>
+                        <Option value="Within this month">
+                          Within this month
+                        </Option>
+                        <Option value="Next Month">Next Month</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8 w-full"}>
+                    <Form.Item
+                      name="time_used"
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p
+                          style={{ fontSize: "14px" }}
+                          className={"text-sm font-gilroyregular"}
+                        >
+                          How long do you need the the talent?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "14px",
+                        }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="time_used"
+                        onChange={(value) => {
+                          setTimeUsed(value);
+                        }}
+                        allowClear
+                        placeholder={"How long will the product used?"}
+                      >
+                        <Option value="6">{"< 6 Month Duration"}</Option>
+                        <Option value="6 - 12">
+                          {"6 - 12 Month Duration"}
+                        </Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8 w-full"}>
+                    <Form.Item
+                      name="open_remote"
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p style={{ fontSize: "14px" }}>
+                          Are you open in hiring our remote talent? (work from
+                          home)
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Select
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "14px",
+                        }}
+                        // dropdownStyle={{ backgroundColor: "green" }}
+                        name="open_remote"
+                        onChange={(value) => {
+                          setOpenRemote(value);
+                        }}
+                        allowClear
+                        placeholder={"Choose decision"}
+                      >
+                        <Option value="Yes">Yes</Option>
+                        <Option value="No">No</Option>
+                      </Select>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-8"}>
+                    <Form.Item
+                      // name={"product"}
+                      name={"max_budget"}
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p className={"text-blackmig text-sm"}>
+                          What is your maximum budget for your new hire?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <InputNumber
+                        // value={manyTalent}
+                        style={{
+                          // border: "1px solid #B8B8B8",
+                          width: "170px",
+                          fontSize: "14px",
+                        }}
+                        name={"max_budget"}
+                        formatter={(value) =>
+                          `Rp ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        }
+                        parser={(value) => value.replace(/\Rp\s?|(,*)/g, "")}
+                        onChange={(e) => {
+                          setMaxBudget(e);
+                        }}
+                        // onPressEnter={handleInputProduct}
+                        placeholder="How many?"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name={"Details"}
+                      className={"font-gilroyregular text-sm"}
+                      label={
+                        <p className={"text-blackmig text-sm"}>
+                          Details (Optional)
+                        </p>
+                      }
+
+                      // rules={[{ required: true }]}
+                    >
+                      <TextArea
+                        style={{
+                          border: "1px solid #B8B8B8",
+                          fontSize: "14px",
+                        }}
+                        name={"Details"}
+                        onChange={(value) => {
+                          setDetails(value.target.value);
+                        }}
+                        rows={4}
+                        placeholder="Tell us more about your talent details"
+                      />
+                    </Form.Item>
+                  </div>
+                  <div className={"border border-dividermig w-full mt-9"} />
+                  <div className={"mt-9 flex flex-row justify-between"}>
+                    <button
+                      className={"bg-white py-2 px-4"}
+                      onClick={() => handleForm("second")}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        Back
+                      </p>
+                    </button>
+                    <button
+                      onClick={handleAddAnotherProduct}
+                      className={
+                        "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                      }
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        {statusEdit ? "Update Request" : "Add Request"}
+                      </p>
+                      <img
+                        className={"self-center ml-[13.31px]"}
+                        style={{ width: "20px", height: "20px" }}
+                        src="/image/plus.png"
+                      />
+                    </button>
+                  </div>
+                </Form>
+              </div>
+            ) : (
+              <div className="w-full">
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-base text-blackmig font-gilroysemibold"}
+                >
+                  Choose Meeting Date
+                </p>
+                <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
+                  <p className={"ml-3 text-base text-blackmig self-center"}>
+                    Please choose a meeting date & time with Mitramas Infosys
+                    Global
+                  </p>
+                </div>
+                <div className={"mt-4"}>
+                  <div className={"w-full"}>
+                    <div className="site-calendar-demo-card">
+                      <Calendar
+                        minDate={dateNow}
+                        onChange={onPanelChange}
+                        value={valueDate}
+                      />
+                    </div>
+                  </div>
+                  <div className={"w-full mt-4"}>
+                    <p className={"text-xs text-blackmig font-gilroysemibold"}>
+                      Choose Time
+                    </p>
+                    <p
+                      className={
+                        "text-xs text-blackmig font-gilroyregular mt-1"
+                      }
+                    >
+                      Meeting duration: 30 minutes
+                    </p>
+                    {valueDateTemp == null ? (
+                      <p className={"mt-1 text-redmig text-xs"}>
+                        Please choose your date first on the calendar
+                      </p>
+                    ) : (
+                      <div
+                        className={"text-sm text-blackmig font-gilroysemibold"}
+                      >
+                        <p className={"text-blackmig text-sm"}>
+                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        </p>
+                        <p className={"text-blackmig text-sm"}>
+                          {labelMeetingTime}
+                        </p>
+                      </div>
+                    )}
+                    {valueDateTemp != null && (
+                      <div className={"mt-4 flex flex-col"}>
+                        <div
+                          className={
+                            "text-base text-blackmig font-gilroysemibold flex flex-row"
+                          }
+                        >
+                          {dataMeetingTime.map((data) => (
+                            <button
+                              onClick={() =>
+                                onChangeValueMeetingTime(
+                                  data.value,
+                                  data.label_meeting
+                                )
+                              }
+                              className={
+                                valueMeetingTime == data.value
+                                  ? "rounded bg-greenTrans20 border border-primarygreen py-2 px-[21px] mt-5 mr-3"
+                                  : "mt-5 rounded bg-divider py-2 px-[21px] mr-3"
+                              }
+                            >
+                              <p
+                                className={
+                                  valueMeetingTime == data.value &&
+                                  "text-primarygreen"
+                                }
+                              >
+                                {data.value}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                        <div
+                          className={
+                            "text-base text-blackmig font-gilroysemibold flex flex-row"
+                          }
+                        >
+                          {dataMeetingTime2.map((data) => (
+                            <button
+                              onClick={() =>
+                                onChangeValueMeetingTime(
+                                  data.value,
+                                  data.label_meeting
+                                )
+                              }
+                              className={
+                                valueMeetingTime == data.value
+                                  ? "mr-[12px] rounded bg-greenTrans20 border border-primarygreen py-2 px-[21px] mt-5"
+                                  : "mt-5 mr-[12px]  rounded bg-divider py-2 px-[21px]"
+                              }
+                            >
+                              <p
+                                className={
+                                  valueMeetingTime == data.value &&
+                                  "text-primarygreen"
+                                }
+                              >
+                                {data.value}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className={"mt-4"}>
+                  <ReCAPTCHA
+                    ref={captchaRef}
+                    // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
+                    sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
+                  />
+                </div>
+                <div className={"mt-9 flex flex-row justify-between"}>
+                  <button
+                    className={"bg-white py-2 px-4"}
+                    onClick={() => handleForm("third")}
+                  >
+                    <p
+                      className={
+                        "text-base text-primarygreen font-gilroysemibold"
+                      }
+                    >
+                      Back
+                    </p>
+                  </button>
+                  <button
+                    type={"submit"}
+                    onClick={submitFormSoftware}
+                    className={
+                      "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
+                    }
+                  >
+                    <p className={"text-base text-white"}>Next</p>
+                    <img
+                      className={"self-center ml-[13.52px]"}
+                      style={{ width: "20px", height: "20px" }}
+                      src="/image/landingpage/arrow_forward_ios2.png"
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
+            {formActive == "third" ? (
+              <div>
+                {dataTalents.length > 0 && (
+                  <div
+                    className={"py-4 pl-4 pr-[17px] mt-4"}
+                    style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
+                  >
+                    <p
+                      className={"font-gilroybold text-primarygreen text-base"}
+                    >
+                      Talent Request Summary
+                    </p>
+                    <div className={"mt-3 border border-dividermig"} />
+                    {dataTalents.map((data, index) => (
+                      <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                        <div className={"flex flex-row"}>
+                          <button
+                            className={"bg-transparent text-left"}
+                            onClick={() => handleEdit(index)}
+                          >
+                            <div className={"w-[90%]"}>
+                              <p
+                                className={
+                                  "text-blackmig font-gilroysemibold text-sm "
+                                }
+                              >
+                                {data.kindOfTalent}
+                              </p>
+                              <p
+                                className={
+                                  "text-blackmig font-gilroyregular text-sm"
+                                }
+                              >
+                                {data.levelEmployee +
+                                  " - level, " +
+                                  data.manyTalent +
+                                  " talent, " +
+                                  data.urgently +
+                                  ", " +
+                                  data.timeUsed +
+                                  " duration"}
+                              </p>
+                              <div className={"flex"}>
+                                <p
+                                  className={
+                                    "text-blackmig text-xs font-gilroysemibold"
+                                  }
+                                >
+                                  Roles/skills:
+                                </p>
+                                <div className="flex flex-row ml-2">
+                                  {data.product.map(
+                                    (data_product, index_product) => (
+                                      <p className={"text-xs text-blackmig"}>
+                                        {data_product}{" "}
+                                        {index_product ==
+                                        data.product.length - 1
+                                          ? " "
+                                          : ", "}
+                                      </p>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </button>
+                          <div
+                            className={"w-[10%] flex justify-end self-center"}
+                          >
+                            <button
+                              className={"bg-transparent"}
+                              onClick={() =>
+                                handleDeleteTalents(data.kindOfTalent, index)
+                              }
+                            >
+                              <img
+                                src="image/trash.png"
+                                className={"w-6 h-6"}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    <button
+                      onClick={handleSubmitTalents}
+                      className={
+                        "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] rounded"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p
+                          className={
+                            "text-white text-[18px] font-gilroysemibold"
+                          }
+                        >
+                          Submit Request
+                        </p>
+                        <div
+                          className={
+                            "w-[30px] h-[30px] ml-4 bg-white rounded-[100px] items-center self-center"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-primarygreen text-[18px] font-gilroysemibold"
+                            }
+                          >
+                            {dataTalents.length}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div></div>
+            )}
+          </section>
+          {/* end section form mobile */}
         </div>
       ) : showForm && showThankForm == true ? (
         <div className="grid justify-items-center">
@@ -2088,42 +3142,44 @@ function Talents({}) {
             </div>
             {/*section 1 talents mobile */}
             <div className={"block md:hidden py-9 px-4"}>
-              <div className={"px-3"}>
+              <div className={""}>
                 <p
                   className={
                     "text-blackmig text-xl text-center font-gilroysemibold"
                   }
                 >
-                  Enabling you to assemble the best team
+                  {t.talentherotitle}
                 </p>
                 <img
                   src="/image/landingpage/Talents-2.png"
-                  className={"w-[292px] h-[174px] mt-6"}
+                  className={"w-[292px] h-[174px] mt-6 mx-auto"}
                 ></img>
                 <p
                   className={
                     "py-6 text-center text-base font-gilroyregular text-blackmig"
                   }
                 >
-                  Rapid pace of change, uncertainty on scalability, and heavy
-                  capital requirements might break your focus from executing
-                  your core business.
+                  {t.talentherodescription}
                 </p>
               </div>
               <div>
                 <p className={"font-gilroysemibold text-primarygreen text-sm"}>
-                  Reach us to get more information
+                  {t.talentheroreachus}
                 </p>
                 <div className={"flex flex-row items-center mt-1"}>
                   <Input
                     name={"email"}
                     className={"w-[241px] h-[37px]"}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      setDataPeople({
+                        ...dataPeople,
+                        company_email: e.target.value,
+                      });
                     }}
-                    placeholder="Enter your email here."
+                    placeholder={t.talentheroemailplaceholder}
                   />
                   <button
+                    onClick={handleHireNow}
                     className={
                       "py-2 px-[29.5px] rounded ml-2 w-[79px] h-[36px]  border-2 bg-primarygreen border-primarygreen"
                     }
@@ -2181,7 +3237,7 @@ function Talents({}) {
           >
             <h2
               className={
-                "text-3xl md:text-[36px] text-blackmig text-center font-gilroysemibold"
+                "text-xl lg:text-[36px] text-blackmig text-center font-gilroysemibold"
               }
               style={{ lineHeight: "120%" }}
             >
@@ -2189,7 +3245,7 @@ function Talents({}) {
             </h2>
             <p
               style={{ lineHeight: "150%" }}
-              className={"text-base md:text-xl text-blackmig text-center"}
+              className={"text-base md:text-xl text-blackmig text-center mt-4"}
             >
               Limited profiles coming in with widely different qualities.
               Turnover rate is high and you need to do it all over again.
@@ -2205,7 +3261,11 @@ function Talents({}) {
             <div
               className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
             >
-              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+              <div
+                className={
+                  "flex flex-row mx-[25px] items-center w-full lg:w-[500px]"
+                }
+              >
                 <img
                   src="/image/landingpage/career-icon1.png"
                   className="w-[42px] h-[42px]"
@@ -2221,7 +3281,11 @@ function Talents({}) {
                   </p>
                 </div>
               </div>
-              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+              <div
+                className={
+                  "flex flex-row mt-7 lg:mt-0 mx-[25px] items-center w-full lg:w-[500px]"
+                }
+              >
                 <img
                   src="/image/landingpage/career-icon2.png"
                   className="w-[42px] h-[42px]"
@@ -2241,7 +3305,11 @@ function Talents({}) {
             <div
               className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
             >
-              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+              <div
+                className={
+                  "flex flex-row mx-[25px] items-center w-full lg:w-[500px]"
+                }
+              >
                 <img
                   src="/image/landingpage/career-icon4.png"
                   className="w-[42px] h-[42px]"
@@ -2257,7 +3325,11 @@ function Talents({}) {
                   </p>
                 </div>
               </div>
-              <div className={"flex flex-row mx-[25px] items-center w-[500px]"}>
+              <div
+                className={
+                  "flex flex-row mt-7 items-center lg:mt-0 mx-[25px] w-full lg:w-[500px]"
+                }
+              >
                 <img
                   src="/image/landingpage/career-icon3.png"
                   className="w-[42px] h-[42px]"
