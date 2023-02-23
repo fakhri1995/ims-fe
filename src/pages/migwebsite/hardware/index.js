@@ -754,6 +754,7 @@ function Hardware({}) {
       )
     );
     if (dataHardware.company_email == null) {
+      console.log("set show form email first");
       setShowEmailError(true);
       setEmailError("you must filled email first");
     } else if (
@@ -763,10 +764,11 @@ function Hardware({}) {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         )
     ) {
+      console.log("set show form email third");
       setShowEmailError(false);
       setShowform(true);
     } else {
-      setShowEmailError(true);
+      console.log("set show form email second");
       setEmailError("your email is invalid");
     }
   };
@@ -2381,7 +2383,7 @@ function Hardware({}) {
             ) : formActive == "third" ? (
               // hardware information form
 
-              <div className="w-[52%]">
+              <div className="w-full  ">
                 <Modal
                   open={modalDelete}
                   onCancel={handleCancelDelete}
@@ -2513,13 +2515,13 @@ function Hardware({}) {
                 </Modal>
                 <p
                   style={{ lineHeight: "120%" }}
-                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                  className={"text-base text-blackmig font-gilroysemibold py-9"}
                 >
                   Hardware Information
                 </p>
-                <p style={{ lineHeight: "150%" }} className={"mt-9 text-base"}>
+                {/* <p style={{ lineHeight: "150%" }} className={"mt-9 text-base"}>
                   What kind of hardware are you looking for?
-                </p>
+                </p> */}
                 <Form
                   id="formhardware"
                   // hidden={!feedback}
@@ -2531,268 +2533,41 @@ function Hardware({}) {
                     You can choose more than one
                   </p> */}
                   {/* choose product */}
-                  <div className={"flex flex-row mt-4"}>
-                    <a
-                      className={"bg-white"}
-                      onClick={() => handleKindOfHardware("Bank Machinery")}
+                  <Form.Item
+                    name="kind_of_hardware"
+                    className={" text-sm"}
+                    label={
+                      <p style={{ fontSize: "14px" }}>
+                        What kind of hardware are you looking for?
+                      </p>
+                    }
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "This input is must be filled",
+                    //   },
+                    // ]}
+                  >
+                    <Select
+                      style={{
+                        border: "1px solid #B8B8B8",
+                        fontSize: "14px",
+                      }}
+                      // dropdownStyle={{ backgroundColor: "green" }}
+                      name="kind_of_hardware"
+                      onChange={(value) => {
+                        handleKindOfHardware(value);
+                      }}
+                      allowClear
                     >
-                      <div
-                        className={
-                          kindOfHardware == "Bank Machinery"
-                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
-                        }
-                      >
-                        {kindOfHardware == "Bank Machinery" ? (
-                          <div className={"flex justify-end mt-1 mr-2"}>
-                            <img
-                              src={"image/hardware/check-list.png"}
-                              className={"w-[19px] h-[19px]"}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className={
-                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
-                            }
-                          ></div>
-                        )}
-                        <div className={"flex justify-center"}>
-                          <img
-                            src={
-                              kindOfHardware == "Bank Machinery"
-                                ? "image/hardware/banking_selected.png"
-                                : "image/hardware/banking.png"
-                            }
-                            className={"w-[102px] h-[85px]"}
-                          />
-                        </div>
-                        <div
-                          className={
-                            "mt-1 mb-1 text-center text-base text-blackmig "
-                          }
-                        >
-                          <p
-                            className={
-                              kindOfHardware == "Bank Machinery"
-                                ? "font-gilroysemibold"
-                                : "font-gilroyregular"
-                            }
-                          >
-                            Bank Machinery
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      className={"bg-white"}
-                      onClick={() => handleKindOfHardware("Workstation")}
-                    >
-                      <div
-                        className={
-                          kindOfHardware == "Workstation"
-                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
-                        }
-                      >
-                        {kindOfHardware == "Workstation" ? (
-                          <div className={"flex justify-end mt-1 mr-2"}>
-                            <img
-                              src={"image/hardware/check-list.png"}
-                              className={"w-[19px] h-[19px]"}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className={
-                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
-                            }
-                          ></div>
-                        )}
-                        <div className={"flex justify-center"}>
-                          <img
-                            src={
-                              kindOfHardware == "Workstation"
-                                ? "image/hardware/workstation_selected.png"
-                                : "image/hardware/station.png"
-                            }
-                            className={"w-[98px] h-[91px]"}
-                          />
-                        </div>
-                        <div
-                          className={
-                            "mt-1 mb-1 text-center text-base text-blackmig "
-                          }
-                        >
-                          <p
-                            className={
-                              kindOfHardware == "Workstation"
-                                ? "font-gilroysemibold"
-                                : "font-gilroyregular"
-                            }
-                          >
-                            Workstation
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      className={"bg-white"}
-                      onClick={() => handleKindOfHardware("Server")}
-                    >
-                      <div
-                        className={
-                          kindOfHardware == "Server"
-                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
-                        }
-                      >
-                        {kindOfHardware == "Server" ? (
-                          <div className={"flex justify-end mt-1 mr-2"}>
-                            <img
-                              src={"image/hardware/check-list.png"}
-                              className={"w-[19px] h-[19px]"}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className={
-                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
-                            }
-                          ></div>
-                        )}
-                        <div className={"flex justify-center"}>
-                          <img
-                            src={
-                              kindOfHardware == "Server"
-                                ? "image/hardware/server_selected.png"
-                                : "image/hardware/server.png"
-                            }
-                            className={"w-[90px] h-[86px]"}
-                          />
-                        </div>
-                        <div
-                          className={
-                            "mt-1 mb-1 text-center text-base text-blackmig "
-                          }
-                        >
-                          <p
-                            className={
-                              kindOfHardware == "Server"
-                                ? "font-gilroysemibold"
-                                : "font-gilroyregular"
-                            }
-                          >
-                            Server & Hosting
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      className={"bg-white"}
-                      onClick={() => handleKindOfHardware("UPS")}
-                    >
-                      <div
-                        className={
-                          kindOfHardware == "UPS"
-                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
-                        }
-                      >
-                        {kindOfHardware == "UPS" ? (
-                          <div className={"flex justify-end mt-1 mr-2"}>
-                            <img
-                              src={"image/hardware/check-list.png"}
-                              className={"w-[19px] h-[19px]"}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className={
-                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
-                            }
-                          ></div>
-                        )}
-                        <div className={"flex justify-center"}>
-                          <img
-                            src={
-                              kindOfHardware == "UPS"
-                                ? "image/hardware/ups_selected.png"
-                                : "image/hardware/UPS.png"
-                            }
-                            className={"w-[108px] h-[84px]"}
-                          />
-                        </div>
-                        <div
-                          className={
-                            "mt-1 mb-1 text-center text-base text-blackmig "
-                          }
-                        >
-                          <p
-                            className={
-                              kindOfHardware == "UPS"
-                                ? "font-gilroysemibold"
-                                : "font-gilroyregular"
-                            }
-                          >
-                            UPS
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                    <a
-                      className={"bg-white"}
-                      onClick={() => handleKindOfHardware("Others")}
-                    >
-                      <div
-                        className={
-                          kindOfHardware == "Others"
-                            ? "rounded-[15.258px] border-[1.5px] border-primarygreen w-[122px] mr-5 px-auto"
-                            : "rounded-[15.258px] border-[1.5px] border-borderProduct w-[122px] mr-5 px-auto"
-                        }
-                      >
-                        {kindOfHardware == "Others" ? (
-                          <div className={"flex justify-end mt-1 mr-2"}>
-                            <img
-                              src={"image/hardware/check-list.png"}
-                              className={"w-[19px] h-[19px]"}
-                            />
-                          </div>
-                        ) : (
-                          <div
-                            className={
-                              "flex justify-end mt-1 mr-2 w-[19px] h-[19px]"
-                            }
-                          ></div>
-                        )}
-                        <div className={"flex justify-center"}>
-                          <img
-                            src={
-                              kindOfHardware == "Others"
-                                ? "image/hardware/others_selected.png"
-                                : "image/hardware/others_notselected.png"
-                            }
-                            className={"w-[100px] h-[84px]"}
-                          />
-                        </div>
-                        <div
-                          className={
-                            "mt-1 mb-1 text-center text-base text-blackmig "
-                          }
-                        >
-                          <p
-                            className={
-                              kindOfHardware == "Others"
-                                ? "font-gilroysemibold"
-                                : "font-gilroyregular"
-                            }
-                          >
-                            Others
-                          </p>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
+                      <Option value="Bank Machinery">Bank Machinery</Option>
+                      <Option value="Workstation">Workstation</Option>
+                      <Option value="Server">Server & Hosting</Option>
+                      <Option value="UPS">UPS</Option>
+                      <Option value="Others">Others</Option>
+                    </Select>
+                  </Form.Item>
+
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
@@ -2802,12 +2577,12 @@ function Hardware({}) {
                       1. Hardware Specification
                     </p>
                   </div>
-                  <div className={"mt-8 w-1/2"}>
+                  <div className={"mt-8"}>
                     <Form.Item
                       name="time_need_product"
-                      className={" text-base"}
+                      className={" text-sm"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
+                        <p style={{ fontSize: "14px" }}>
                           *How soon do you need the product?
                         </p>
                       }
@@ -2821,7 +2596,7 @@ function Hardware({}) {
                       <Select
                         style={{
                           border: "1px solid #B8B8B8",
-                          fontSize: "16px",
+                          fontSize: "14px",
                         }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="time_need_product"
@@ -2840,12 +2615,12 @@ function Hardware({}) {
                       </Select>
                     </Form.Item>
                   </div>
-                  <div className={"mt-8 w-1/2"}>
+                  <div className={"mt-8"}>
                     <Form.Item
                       name="time_used"
-                      className={" text-base"}
+                      className={" text-sm"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
+                        <p style={{ fontSize: "14px" }}>
                           How long do you need the product?
                         </p>
                       }
@@ -2859,7 +2634,7 @@ function Hardware({}) {
                       <Select
                         style={{
                           border: "1px solid #B8B8B8",
-                          fontSize: "16px",
+                          fontSize: "14px",
                         }}
                         // dropdownStyle={{ backgroundColor: "green" }}
                         name="time_used"
@@ -2880,7 +2655,7 @@ function Hardware({}) {
                       name={"product"}
                       className={" text-base"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
+                        <p style={{ fontSize: "14px" }}>
                           *What product in{" "}
                           <span className={"font-gilroysemibold"}>
                             {kindOfHardware}
@@ -2895,7 +2670,7 @@ function Hardware({}) {
                         style={{
                           border: "1px solid #B8B8B8",
                           height: "37px",
-                          fontSize: "16px",
+                          fontSize: "14px",
                         }}
                         name={"product"}
                         onChange={(e) => {
@@ -2919,7 +2694,7 @@ function Hardware({}) {
                         >
                           <p
                             className={
-                              "text-base text-blackmig font-gilroyregular"
+                              "text-sm text-blackmig font-gilroyregular"
                             }
                           >
                             {data}
@@ -2934,7 +2709,7 @@ function Hardware({}) {
                     </div>
                   )}
                   <div className={"mt-3"}>
-                    <p className={"text-base text-blackmig"}>
+                    <p className={"text-sm text-blackmig"}>
                       Popular products in {kindOfHardware ? kindOfHardware : ""}
                     </p>
                     {hardwareSuggestion.length > 0 && (
@@ -2949,7 +2724,7 @@ function Hardware({}) {
                             <p
                               onClick={() => handleSuggestionHardware(data)}
                               className={
-                                "text-[16px] text-darkgrey font-gilroyregular"
+                                "text-sm text-darkgrey font-gilroyregular"
                               }
                             >
                               {data}
@@ -2962,16 +2737,14 @@ function Hardware({}) {
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
-                    <p
-                      className={"text-blackmig text-base font-gilroysemibold"}
-                    >
+                    <p className={"text-blackmig text-sm font-gilroysemibold"}>
                       2. Additional Information
                     </p>
                   </div>
                   <div className={"mt-8"}>
                     <Form.Item
                       label={
-                        <p className={"text-base"}>
+                        <p className={"text-sm"}>
                           {" "}
                           How many product in{" "}
                           <span className={"font-gilroysemibold text-blackmig"}>
@@ -3009,7 +2782,7 @@ function Hardware({}) {
                     <Form.Item
                       name={"max_budget"}
                       label={
-                        <p className={"text-base"}>
+                        <p className={"text-sm"}>
                           What is your maximum budget for your new product?
                         </p>
                       }
@@ -3029,7 +2802,7 @@ function Hardware({}) {
                           // border: "1px solid #B8B8B8",
                           // height: "37px",
                           width: "170px",
-                          fontSize: "16px",
+                          fontSize: "14px",
                         }}
                         onChange={(value) => {
                           setMaxBudget(value);
@@ -3102,7 +2875,13 @@ function Hardware({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("second")}
                     >
-                      <p className={"text-[18px] text-primarygreen"}>Back</p>
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        Back
+                      </p>
                     </button>
                     {statusEdit ? (
                       <button
@@ -3110,18 +2889,18 @@ function Hardware({}) {
                         // type="submit"
                         onClick={() => handleUpdateProduct()}
                         className={
-                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-[16px] flex flex-row justify-between"
                         }
                       >
                         <p
                           className={
-                            "text-[18px] text-primarygreen font-gilroysemibold"
+                            "text-sm text-primarygreen font-gilroysemibold"
                           }
                         >
-                          I want to Update product
+                          I want to Update request
                         </p>
                         <img
-                          className={"self-center"}
+                          className={"self-center ml-[12.17px]"}
                           style={{ width: "20px", height: "20px" }}
                           src="/image/plus.png"
                         />
@@ -3132,18 +2911,18 @@ function Hardware({}) {
                         // type="submit"
                         // onClick={handleAddAnotherProduct}
                         className={
-                          "text-white bg-white border-2 border-primarygreen w-[289px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                          "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-[16px] flex flex-row justify-between"
                         }
                       >
                         <p
                           className={
-                            "text-[18px] text-primarygreen font-gilroysemibold"
+                            "text-sm text-primarygreen font-gilroysemibold"
                           }
                         >
-                          I want to add another product
+                          Add Request
                         </p>
                         <img
-                          className={"self-center"}
+                          className={"self-center ml-[12.17px]"}
                           style={{ width: "20px", height: "20px" }}
                           src="/image/plus.png"
                         />
@@ -3153,26 +2932,28 @@ function Hardware({}) {
                 </Form>
               </div>
             ) : (
-              <div className="w-[52%]">
+              <div className="w-full">
                 <p
                   style={{ lineHeight: "120%" }}
-                  className={"text-[30px] text-blackmig font-gilroysemibold"}
+                  className={"text-base text-blackmig font-gilroysemibold"}
                 >
                   Choose Meeting Date
                 </p>
-                <div
-                  className={
-                    "mt-9 bg-bgjoinmig  w-[788px]  px-3 py-2 rounded-lg flex flex-row"
-                  }
-                >
-                  <img src={"image/software/information-circle.png"} />
-                  <p className={"ml-3 text-base text-blackmig self-center"}>
+                <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
+                  <p className={"ml-3 text-xs text-blackmig self-center"}>
                     Please choose a meeting date & time with Mitramas Infosys
                     Global
                   </p>
                 </div>
-                <div className={"flex flex-row mt-4"}>
-                  <div className={"w-[392px]"}>
+                <div className={"mt-9"}>
+                  <div className={"w-full"}>
+                    <p
+                      className={
+                        "text-sm text-blackmig font-gilroyregular mb-1"
+                      }
+                    >
+                      *Meeting Date
+                    </p>
                     <div className="site-calendar-demo-card">
                       <Calendar
                         onChange={onPanelChange}
@@ -3181,102 +2962,100 @@ function Hardware({}) {
                       />
                     </div>
                   </div>
-                  <div className={"ml-8"}>
+                  <div className={"w-full mt-4"}>
                     <p
-                      className={"text-base text-blackmig font-gilroysemibold"}
+                      style={{ lineHeight: "18px" }}
+                      className={"text-xs text-blackmig font-gilroysemibold"}
                     >
                       Choose Time
                     </p>
                     <p
+                      style={{ lineHeight: "18px" }}
                       className={
-                        "text-base text-blackmig font-gilroyregular mt-1"
+                        "text-xs text-blackmig font-gilroyregular mt-1"
                       }
                     >
                       Meeting duration: 30 minutes
                     </p>
-                    <div className={"mt-4 flex flex-row"}>
-                      <div
-                        className={
-                          "text-base text-blackmig font-gilroysemibold w-[174px]"
-                        }
-                      >
-                        {dataMeetingTime.map((data) => (
-                          <button
-                            onClick={() =>
-                              onChangeValueMeetingTime(
-                                data.value,
-                                data.label_meeting
-                              )
-                            }
-                            className={
-                              valueMeetingTime == data.value
-                                ? "w-[174px] rounded bg-greenTrans20 border border-primarygreen py-2 px-[72px] mt-5"
-                                : "mt-5 w-[174px] rounded bg-divider py-2 px-[72px]"
-                            }
-                          >
-                            <p
-                              className={
-                                valueMeetingTime == data.value &&
-                                "text-primarygreen"
-                              }
-                            >
-                              {data.value}
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                      <div
-                        className={
-                          "text-base text-blackmig font-gilroysemibold ml-4 w-[174px]"
-                        }
-                      >
-                        {dataMeetingTime2.map((data) => (
-                          <button
-                            onClick={() =>
-                              onChangeValueMeetingTime(
-                                data.value,
-                                data.label_meeting
-                              )
-                            }
-                            className={
-                              valueMeetingTime == data.value
-                                ? "w-[174px] rounded bg-greenTrans20 border border-primarygreen py-2 px-[72px] mt-5"
-                                : "mt-5 w-[174px] rounded bg-divider py-2 px-[72px]"
-                            }
-                          >
-                            <p
-                              className={
-                                valueMeetingTime == data.value &&
-                                "text-primarygreen"
-                              }
-                            >
-                              {data.value}
-                            </p>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className={"mt-[35px]"}>
-                  <p className={"text-base text-blackmig font-gilroyregular"}>
-                    *Meeting Time
-                  </p>
-
-                  {valueDateTemp == null ? (
-                    <p className={"mt-1 text-redmig text-xs"}>
-                      Please choose your date first on the calendar
-                    </p>
-                  ) : (
-                    <div
-                      className={"text-base text-blackmig font-gilroysemibold"}
-                    >
-                      <p className={""}>
-                        {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                    {valueDateTemp == null ? (
+                      <p className={"mt-1 text-redmig text-xs"}>
+                        * Please choose your date first on the calendar
                       </p>
-                      <p>{labelMeetingTime}</p>
-                    </div>
-                  )}
+                    ) : (
+                      <div
+                        className={"text-sm text-blackmig font-gilroysemibold"}
+                      >
+                        <p className={""}>
+                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        </p>
+                        <p>{labelMeetingTime}</p>
+                      </div>
+                    )}
+                    {valueDateTemp != null && (
+                      <div className={"mt-4 flex flex-col"}>
+                        <div
+                          className={
+                            "text-xs text-blackmig font-gilroysemibold flex flex-row"
+                          }
+                        >
+                          {dataMeetingTime.map((data) => (
+                            <button
+                              onClick={() =>
+                                onChangeValueMeetingTime(
+                                  data.value,
+                                  data.label_meeting
+                                )
+                              }
+                              className={
+                                valueMeetingTime == data.value
+                                  ? " rounded bg-greenTrans20 border border-primarygreen py-2 px-[21px] mt-5 mr-[13.33px]"
+                                  : "mt-5 rounded bg-divider py-2 px-[21px] mr-[13.33px]"
+                              }
+                            >
+                              <p
+                                className={
+                                  valueMeetingTime == data.value &&
+                                  "text-primarygreen"
+                                }
+                              >
+                                {data.value}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                        <div
+                          className={
+                            "text-xs text-blackmig font-gilroysemibold"
+                          }
+                        >
+                          {dataMeetingTime2.map((data) => (
+                            <button
+                              onClick={() =>
+                                onChangeValueMeetingTime(
+                                  data.value,
+                                  data.label_meeting
+                                )
+                              }
+                              className={
+                                valueMeetingTime == data.value
+                                  ? "rounded bg-greenTrans20 border border-primarygreen py-2 px-[21px] mt-5 mr-[13.33px]"
+                                  : "mt-5 rounded bg-divider py-2 px-[21px] mr-[13.33px]"
+                              }
+                            >
+                              <p
+                                className={
+                                  valueMeetingTime == data.value &&
+                                  "text-primarygreen"
+                                }
+                              >
+                                {data.value}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className={"mt-4"}>
                   <ReCAPTCHA
@@ -3290,18 +3069,24 @@ function Hardware({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("third")}
                   >
-                    <p className={"text-[18px] text-primarygreen"}>Back</p>
+                    <p
+                      className={
+                        "text-base text-primarygreen font-gilroysemibold"
+                      }
+                    >
+                      Back
+                    </p>
                   </button>
                   <button
                     type={"submit"}
                     onClick={submitFormSoftware}
                     className={
-                      "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                      "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-[18px] text-white"}>Submit</p>
+                    <p className={"text-base text-white"}>Next</p>
                     <img
-                      className={"self-center"}
+                      className={"self-center ml-[13.52px]"}
                       style={{ width: "20px", height: "20px" }}
                       src="/image/landingpage/arrow_forward_ios2.png"
                     />
@@ -3312,13 +3097,11 @@ function Hardware({}) {
             {formActive == "third" ? (
               dataHardwareSummary.length > 0 && (
                 <div
-                  className={
-                    "w-[400px] h-[100%] py-4 pl-4 pr-[17px] ml-5 top-20 sticky "
-                  }
+                  className={" h-[100%] py-4 pl-4 pr-[17px] sticky mt-4 "}
                   style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                 >
                   <p className={"font-gilroybold text-primarygreen text-base"}>
-                    Hardware Request Summary
+                    Hardware Request Summary test
                   </p>
                   <div className={"mt-3 border border-dividermig"} />
                   {dataHardwareSummary.map((data, index) => (
@@ -3411,10 +3194,10 @@ function Hardware({}) {
               )
             ) : (
               <div className={"w-[50%] md:flex md:justify-end"}>
-                <img
+                {/* <img
                   className={"w-[607px] h-[354px]"}
                   src="/image/landingpage/Talents-2.png"
-                />
+                /> */}
               </div>
             )}
           </section>
@@ -3608,11 +3391,15 @@ function Hardware({}) {
                     name={"email"}
                     className={"w-[241px] h-[37px]"}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      setDataHardware({
+                        ...dataHardware,
+                        company_email: e.target.value,
+                      });
                     }}
                     placeholder={t.hardwareenteremail}
                   />
                   <button
+                    onClick={handleLetsTalk}
                     className={
                       "py-2 px-[29.5px] rounded ml-2 w-[79px] h-[36px]  border-2 bg-primarygreen border-primarygreen"
                     }

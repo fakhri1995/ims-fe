@@ -424,8 +424,8 @@ function Software({}) {
           <section
             className={
               formActive == "first"
-                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row md:justify-between"
-                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row"
+                ? "hidden xl:pl-[112px] 2xl:pl-[224px] py-[76px] md:flex md:flex-row md:justify-between"
+                : "hidden xl:pl-[112px] 2xl:pl-[224px] py-[76px] md:flex md:flex-row"
             }
           >
             {formActive == "first" ? (
@@ -952,6 +952,543 @@ function Software({}) {
               />
             </div>
           </section>
+          {/* section form mobile */}
+          <section
+            className={
+              formActive == "first"
+                ? "px-4 py-9 lg:hidden"
+                : "px-4 py-9 lg:hidden"
+            }
+          >
+            {formActive == "first" ? (
+              <div className="w-full">
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-xl text-primarygreen font-gilroysemibold"}
+                >
+                  Thank you for your interest in providing your IT needs through
+                  Mitramas Infosys Global
+                </p>
+                <img
+                  className={"w-[192px] h-[112px] mt-4 mx-auto"}
+                  src="/image/landingpage/Talents-2.png"
+                />
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={"mt-4 text-sm text-blackmig"}
+                >
+                  Before we reach you out, we’d like to ask a few questions to
+                  better understand your business & IT needs.
+                </p>
+                <div className="mt-6">
+                  <Form
+                    id="formcontact"
+                    hidden={!feedback}
+                    layout={"vertical"}
+                    onFinish={() => handleSubmit("second")}
+                    form={form}
+                  >
+                    <div className={"w-full"}>
+                      <Form.Item
+                        name={"Company Name"}
+                        className={"text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Company Name</p>}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            height: "37px",
+                            fontSize: "14px",
+                          }}
+                          name={"Company Name"}
+                          onChange={(e) => {
+                            setDataSoftware({
+                              ...dataSoftware,
+                              company_name: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter company name here"
+                        />
+                      </Form.Item>
+
+                      <Form.Item
+                        name={"Contact Name"}
+                        className={"text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Contact Name</p>}
+                        rules={[{ required: true }]}
+                      >
+                        <Input
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            height: "37px",
+                            fontSize: "14px",
+                          }}
+                          name={"Contact Name"}
+                          onChange={(e) => {
+                            setDataSoftware({
+                              ...dataSoftware,
+                              contact_name: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter your name here"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={"w-full"}>
+                      <Form.Item
+                        initialValue={dataSoftware.company_email}
+                        name={"Email"}
+                        className={"text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Email</p>}
+                        rules={[{ required: true, type: "email" }]}
+                      >
+                        <Input
+                          value={"oke"}
+                          style={{
+                            border: "1px solid #B8B8B8",
+                            fontSize: "14px",
+                          }}
+                          name={"Email"}
+                          onChange={(e) => {
+                            setDataSoftware({
+                              ...dataSoftware,
+                              company_email: e.target.value,
+                            });
+                          }}
+                          placeholder="Enter your email here"
+                        />
+                      </Form.Item>
+                      <Form.Item
+                        name={"Phone Number"}
+                        className={"text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>Phone Number</p>}
+                        rules={[
+                          {
+                            required: true,
+                            pattern: new RegExp("^[0-9]*$"),
+                            message: "Please input valid phone number",
+                          },
+                        ]}
+                      >
+                        <Input
+                          // style={{ border: "1px solid #B8B8B8",height:"37px" }}
+                          addonBefore="+62"
+                          name={"Phone Number"}
+                          onChange={(e) => {
+                            setDataSoftware({
+                              ...dataSoftware,
+                              phone_number: parseInt(e.target.value),
+                            });
+                          }}
+                          style={{ fontSize: "14px" }}
+                          placeholder="Enter your phone number here"
+                        />
+                      </Form.Item>
+                    </div>
+                    <div className={"border border-dividermig w-full"}></div>
+                    <Form.Item>
+                      <div className={"w-full flex justify-start mt-2"}>
+                        <button
+                          type={"submit"}
+                          className={
+                            "rounded text-white border-2 bg-primarygreen border-primarygreen py-2 pl-4 pr-[12.18px] mt-9"
+                          }
+                        >
+                          <div className={"flex flex-row justify-between"}>
+                            <p className={"text-base font-gilroysemibold"}>
+                              Get Started
+                            </p>
+                            <img
+                              className={"self-center ml-[13.52px]"}
+                              style={{ width: "20px", height: "20px" }}
+                              src="/image/landingpage/arrow_forward_ios2.png"
+                            />
+                          </div>
+                        </button>
+                      </div>
+                    </Form.Item>
+                  </Form>
+                </div>
+              </div>
+            ) : formActive == "second" ? (
+              <div className="w-full">
+                <Form
+                  id="formsoftware"
+                  layout={"vertical"}
+                  onFinish={() => handleSubmit("third")}
+                  form={form}
+                >
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-base text-blackmig font-gilroysemibold mb-9"
+                    }
+                  >
+                    Project Information
+                  </p>
+                  <Form.Item
+                    name={"Kind of Project"}
+                    className={"text-blackmig text-sm"}
+                    label={
+                      <p style={{ fontSize: "16px" }}>
+                        What kind of project do you want to build?
+                      </p>
+                    }
+                    rules={[{ required: true }]}
+                  >
+                    <TextArea
+                      rows={4}
+                      style={{ border: "1px solid #B8B8B8", fontSize: "14px" }}
+                      name={"Kind of Project"}
+                      onChange={(e) => {
+                        setDataSoftware({
+                          ...dataSoftware,
+                          kind_project: e.target.value,
+                        });
+                      }}
+                      placeholder="Tell us about your project"
+                    />
+                  </Form.Item>
+                  {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
+                  <div className={"mt-9"}>
+                    <Form.Item
+                      name={"Type of Project"}
+                      className={"text-blackmig text-sm"}
+                      label={
+                        <p style={{ fontSize: "14px" }}>
+                          What type of project are you hiring us for?
+                        </p>
+                      }
+                      rules={[{ required: true }]}
+                    >
+                      <Radio.Group
+                        onChange={onChangeValuePurpose}
+                        value={dataSoftware.type_project}
+                        buttonStyle={"solid"}
+                      >
+                        <Space direction="vertical">
+                          {dataTypeProject.map((name) => (
+                            <Radio
+                              className="text-blackmig text-sm"
+                              value={name}
+                            >
+                              <p className={"text-blackmig text-sm"}>{name}</p>
+                            </Radio>
+                          ))}
+                        </Space>
+                      </Radio.Group>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-9"}>
+                    <p className={"text-sm"}>Budget range</p>
+                    <div className={"mt-1 flex flex-row"}>
+                      <Form.Item
+                        name={"Budget Minimal"}
+                        className={"text-blackmig text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>From</p>}
+                        rules={[
+                          {
+                            required: true,
+                            pattern: new RegExp("^[0-9]*$"),
+                            message: "Please input valid budget minimal",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          style={{
+                            // border: "1px solid #B8B8B8",
+                            width: "132px",
+                            // height: "37px",
+                            fontSize: "14px",
+                          }}
+                          name={"from"}
+                          formatter={(value) => formatNumber(value)}
+                          parser={(value) => parserNumber(value)}
+                          onChange={(e) => {
+                            setDataSoftware({
+                              ...dataSoftware,
+                              budget_from: e,
+                            });
+                          }}
+                          placeholder="Rp00.000"
+                        />
+                      </Form.Item>
+                      <div
+                        className={
+                          "mx-[19.3px] grid justify-center self-center mt-3"
+                        }
+                      >
+                        <img
+                          className={"w-5 h-5"}
+                          src={"/image/software/arrow_right_alt.png"}
+                        />
+                      </div>
+                      <Form.Item
+                        name={"Budget Maximal"}
+                        className={"text-blackmig text-sm"}
+                        label={<p style={{ fontSize: "14px" }}>To</p>}
+                        rules={[
+                          {
+                            required: true,
+                            pattern: new RegExp("^[0-9]*$"),
+                            message: "Please input valid budget max",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          style={{
+                            // border: "1px solid #B8B8B8",
+                            width: "132px",
+                            // height: "37px",
+                            fontSize: "14px",
+                          }}
+                          name={"Budget Maximal"}
+                          formatter={(value) => formatNumber(value)}
+                          parser={(value) => parserNumber(value)}
+                          onChange={(e) => {
+                            setDataSoftware({
+                              ...dataSoftware,
+                              budget_to: e,
+                            });
+                          }}
+                          placeholder="Rp00.000"
+                        />
+                      </Form.Item>
+                    </div>
+                  </div>
+                  <div className={"mt-9"}>
+                    <Form.Item
+                      label={<p style={{ fontSize: "14px" }}>Attachment</p>}
+                    >
+                      <Form.Item
+                        name="dragger"
+                        valuePropName="fileList"
+                        getValueFromEvent={normFile}
+                        noStyle
+                      >
+                        <Upload.Dragger
+                          className={"border-1 border-dashed border-accentblue"}
+                          name="files"
+                          maxCount={1}
+                          onChange={onChangeFile}
+                          accept=".pdf,.jpg,.jpeg,.png"
+                          // action="/upload.do"
+                          style={{ width: "298px", height: "180px" }}
+                        >
+                          <img
+                            className="anticon anticon-inbox mt-3"
+                            style={{ width: "48px", height: "32px" }}
+                            src="/image/landingpage/upload.png"
+                          />
+                          <p className="text-xs font-gilroyregular px-9 mt-9">
+                            Drag and drop your sourcing documents here
+                          </p>
+                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular text-bluemig mt-2">
+                            browse
+                          </p>
+                        </Upload.Dragger>
+                      </Form.Item>
+                    </Form.Item>
+                  </div>
+                  <div className={"mt-1"}>
+                    <p className={"text-darkgrey text-xs font-gilroyregular"}>
+                      Product images or files lead to more accurate quotes.
+                    </p>
+                  </div>
+                  <div className={"border border-dividermig w-full mt-9"} />
+                  <div className={"mt-9 flex flex-row justify-between"}>
+                    <button
+                      className={"bg-white py-2 px-4"}
+                      onClick={handleForm}
+                    >
+                      <p
+                        className={
+                          "text-base text-primarygreen fontgilroysemibold"
+                        }
+                      >
+                        Back
+                      </p>
+                    </button>
+                    <button
+                      className={
+                        "text-white bg-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                      }
+                    >
+                      <p className={"text-base text-white"}>Next</p>
+                      <img
+                        className={"self-center"}
+                        style={{ width: "20px", height: "20px" }}
+                        src="/image/landingpage/arrow_forward_ios2.png"
+                      />
+                    </button>
+                  </div>
+                </Form>
+              </div>
+            ) : (
+              <div className="w-full">
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={"text-base text-blackmig font-gilroysemibold"}
+                >
+                  Choose Meeting Date
+                </p>
+                <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
+                  <p className={"ml-3 text-base text-blackmig self-center"}>
+                    Please choose a meeting date & time with Mitramas Infosys
+                    Global
+                  </p>
+                </div>
+                <div className={"mt-4"}>
+                  <div className={"w-full"}>
+                    <div className="site-calendar-demo-card">
+                      <Calendar
+                        minDate={dateNow}
+                        onChange={onPanelChange}
+                        value={valueDate}
+                      />
+                    </div>
+                  </div>
+                  <div className={"w-full mt-4"}>
+                    <p className={"text-xs text-blackmig font-gilroysemibold"}>
+                      Choose Time
+                    </p>
+                    <p
+                      className={
+                        "text-xs text-blackmig font-gilroyregular mt-1"
+                      }
+                    >
+                      Meeting duration: 30 minutes
+                    </p>
+                    {valueDateTemp == null ? (
+                      <p className={"mt-1 text-redmig text-xs"}>
+                        Please choose your date first on the calendar
+                      </p>
+                    ) : (
+                      <div
+                        className={"text-sm text-blackmig font-gilroysemibold"}
+                      >
+                        <p className={"text-blackmig text-sm"}>
+                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        </p>
+                        <p className={"text-blackmig text-sm"}>
+                          {labelMeetingTime}
+                        </p>
+                      </div>
+                    )}
+                    {valueDateTemp != null && (
+                      <div className={"mt-4 flex flex-col"}>
+                        <div
+                          className={
+                            "text-base text-blackmig font-gilroysemibold flex flex-row"
+                          }
+                        >
+                          {dataMeetingTime.map((data) => (
+                            <button
+                              onClick={() =>
+                                onChangeValueMeetingTime(
+                                  data.value,
+                                  data.label_meeting
+                                )
+                              }
+                              className={
+                                valueMeetingTime == data.value
+                                  ? "rounded bg-greenTrans20 border border-primarygreen py-2 px-[21px] mt-5 mr-3"
+                                  : "mt-5 rounded bg-divider py-2 px-[21px] mr-3"
+                              }
+                            >
+                              <p
+                                className={
+                                  valueMeetingTime == data.value &&
+                                  "text-primarygreen"
+                                }
+                              >
+                                {data.value}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                        <div
+                          className={
+                            "text-base text-blackmig font-gilroysemibold flex flex-row"
+                          }
+                        >
+                          {dataMeetingTime2.map((data) => (
+                            <button
+                              onClick={() =>
+                                onChangeValueMeetingTime(
+                                  data.value,
+                                  data.label_meeting
+                                )
+                              }
+                              className={
+                                valueMeetingTime == data.value
+                                  ? "mr-[12px] rounded bg-greenTrans20 border border-primarygreen py-2 px-[21px] mt-5"
+                                  : "mt-5 mr-[12px]  rounded bg-divider py-2 px-[21px]"
+                              }
+                            >
+                              <p
+                                className={
+                                  valueMeetingTime == data.value &&
+                                  "text-primarygreen"
+                                }
+                              >
+                                {data.value}
+                              </p>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className={"mt-4"}>
+                  <ReCAPTCHA
+                    ref={captchaRef}
+                    // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
+                    sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
+                  />
+                </div>
+                <div className={"mt-9 flex flex-row justify-between"}>
+                  <button className={"bg-white py-2 px-4"} onClick={handleForm}>
+                    <p
+                      className={
+                        "text-base text-primarygreen font-gilroysemibold"
+                      }
+                    >
+                      Back
+                    </p>
+                  </button>
+                  <button
+                    type={"submit"}
+                    onClick={submitFormSoftware}
+                    className={
+                      "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
+                    }
+                  >
+                    <p className={"text-base text-white"}>Next</p>
+                    <img
+                      className={"self-center ml-[13.52px]"}
+                      style={{ width: "20px", height: "20px" }}
+                      src="/image/landingpage/arrow_forward_ios2.png"
+                    />
+                  </button>
+                </div>
+              </div>
+            )}
+            {/* <div
+              className={
+                formActive == "first" ? "w-[46%] self-center" : "w-[46%] ml-5"
+              }
+            >
+              <img
+                className={"w-full h-auto"}
+                src="/image/landingpage/Talents-2.png"
+              />
+            </div> */}
+          </section>
+          {/* end section form mobile */}
         </div>
       ) : showForm && showThankForm == true ? (
         <div className="grid justify-items-center">
@@ -1111,11 +1648,15 @@ function Software({}) {
                     name={"email"}
                     className={"w-[241px] h-[37px]"}
                     onChange={(e) => {
-                      setEmail(e.target.value);
+                      setDataSoftware({
+                        ...dataSoftware,
+                        company_email: e.target.value,
+                      });
                     }}
                     placeholder={t.hardwareenteremail}
                   />
                   <button
+                    onClick={handleLetsTalk}
                     className={
                       "py-2 px-[29.5px] rounded ml-2 w-[79px] h-[36px]  border-2 bg-primarygreen border-primarygreen"
                     }
@@ -1467,13 +2008,13 @@ function Software({}) {
               </Slider>
             </div>
           </section>
-          <section className={"px-8 md:px-[113.5px] py-4 md:py-16"}>
+          <section className={"px-8 md:px-[113.5px] py-9 md:py-16"}>
             <div className={"container mx-auto text-center"}>
               <div className={"pb-12"}>
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
-                    "text-xl text-blackmig font-gilroyregular text-center w-[646px] mx-auto px-2"
+                    "text-xl text-blackmig font-gilroyregular text-center w-full lg:w-[646px] mx-auto px-2"
                   }
                 >
                   {t.softwarepastworksectionlast}
@@ -1487,7 +2028,7 @@ function Software({}) {
                       "text-sm md:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base lg:text-xl font-gilroysemibold"}>
                       {locale == "en" ? "Contact our team" : "Kontak tim kami"}
                     </p>
                   </button>
@@ -1498,7 +2039,7 @@ function Software({}) {
           {/* section 3 software why you should */}
           <section
             className={
-              "section3softwarebrowser bg-transp60 py-4 md:py-12 md:px-[113.5px]"
+              "section3softwarebrowser bg-transp60 py-9 lg:py-12 px-4 lg:px-[113.5px]"
             }
           >
             <div className={"flex md:flex-row"}>
@@ -1512,7 +2053,7 @@ function Software({}) {
               <div className="flex flex-col md:w-3/5 md:ml-[40px]">
                 <h2
                   style={{ lineHeight: "120%" }}
-                  className="mb-2 text-[28px] text-left font-gilroysemibold text-blackmig"
+                  className="mb-2 text-xl lg:text-[28px] text-center lg:text-left font-gilroysemibold text-blackmig"
                 >
                   {t.softwarewhyussectiontitle1}{" "}
                   <span
@@ -1598,7 +2139,7 @@ function Software({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 md:py-16 px-4 md:px-[113.5]"
+              "section4howitworkbrowser hidden lg:block bg-white py-4 md:py-16 px-4 md:px-[113.5]"
             }
           >
             <div className={"container text-center mx-auto"}>

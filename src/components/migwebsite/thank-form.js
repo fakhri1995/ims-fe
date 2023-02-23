@@ -9,19 +9,27 @@ function ThankForm({ type_form }) {
   return (
     <div className={"mx-auto py-12"}>
       <div className={"w-[391px] text-center"}>
-        <p className={"text-blackmig text-[32px] font-gilroysemibold"}>
+        <p
+          className={
+            "text-blackmig text-2xl lg:text-[32px] font-gilroysemibold"
+          }
+        >
           Thank you for submitting!
         </p>
-        <p className={"text-base text-blackmig gilroy-regular mt-3"}>
+        <p className={"text-sm lg:text-base text-blackmig gilroy-regular mt-3"}>
           We’ll get back to you as soon as possible
         </p>
         <div className={"flex justify-center"}>
           <img
-            className={"w-[346px] h-[206px] mt-6"}
+            className={"w-[250px] lg:w-[346px] h-[149px] lg:h-[206px] mt-6"}
             src="/image/landingpage/Talents-2.png"
           />
         </div>
-        <p className={"text-base text-blackmig gilroy-regular mt-6"}>
+        <p
+          className={
+            "text-sm lg:text-base text-blackmig gilroy-regular mt-9 lg:mt-6"
+          }
+        >
           In the meantime, check our two other services:
         </p>
         {type_form == "Hardware" ? (
@@ -37,7 +45,7 @@ function ThankForm({ type_form }) {
                 </p>
                 <img
                   src="image/landingpage/arrow_forward_ios2.png"
-                  className={"w-5 h-5"}
+                  className={"w-5 h-5 self-center"}
                 />
               </button>
             </Link>
@@ -52,7 +60,7 @@ function ThankForm({ type_form }) {
                 </p>
                 <img
                   src="image/landingpage/arrow_forward_ios2.png"
-                  className={"w-5 h-5"}
+                  className={"w-5 h-5 self-center"}
                 />
               </button>
             </Link>
@@ -70,7 +78,7 @@ function ThankForm({ type_form }) {
                 </p>
                 <img
                   src="image/landingpage/arrow_forward_ios2.png"
-                  className={"w-5 h-5"}
+                  className={"w-5 h-5 self-center"}
                 />
               </button>
             </Link>
@@ -85,7 +93,7 @@ function ThankForm({ type_form }) {
                 </p>
                 <img
                   src="image/landingpage/arrow_forward_ios2.png"
-                  className={"w-5 h-5"}
+                  className={"w-5 h-5 self-center"}
                 />
               </button>
             </Link>
@@ -103,7 +111,7 @@ function ThankForm({ type_form }) {
                 </p>
                 <img
                   src="image/landingpage/arrow_forward_ios2.png"
-                  className={"w-5 h-5"}
+                  className={"w-5 h-5 self-center"}
                 />
               </button>
             </Link>
@@ -118,7 +126,7 @@ function ThankForm({ type_form }) {
                 </p>
                 <img
                   src="image/landingpage/arrow_forward_ios2.png"
-                  className={"w-5 h-5"}
+                  className={"w-5 h-5 self-center"}
                 />
               </button>
             </Link>
