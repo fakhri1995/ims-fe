@@ -13,6 +13,8 @@ import {
   Select,
   Space,
 } from "antd";
+import { getElementsByTagName } from "domutils";
+import { DomUtils } from "htmlparser2";
 import moment from "moment";
 import Head from "next/head";
 import Linkk from "next/link";
@@ -51,6 +53,7 @@ function BlogDetail({}) {
   const [minutesRead, setMinutesRead] = useState(null);
   const [detailBlog, setDetailBlog] = useState(null);
   const [dataHighlight, setDataHighlight] = useState([]);
+  const [tableContent, setTableContent] = useState([]);
   const [dataContactUs, setDataContactUs] = useState({
     company_name: null,
     company_email: null,
@@ -100,10 +103,19 @@ function BlogDetail({}) {
                 wordsCount(stripTags(res2.data[0].content));
               let minute = timeRead(total);
               setMinutesRead(minute);
-              let content = res2.data[0].content;
-              console.log("content ", content);
-              let h2 = content.match(/<h2>(.*?)<\/h2>/)[1];
-              console.log("H2 ", h2);
+              let parser = new DOMParser();
+              const content = parser.parseFromString(
+                res2.data[0].content,
+                "text/html"
+              );
+              const content_data = content.querySelectorAll("h2,h3");
+              let datacontenttemp = [];
+              if (content_data.length > 0) {
+                for (let a = 0; a < content_data.length; a++) {
+                  datacontenttemp.push(content_data[a].outerText);
+                }
+              }
+              setTableContent(datacontenttemp);
             } else {
               if (
                 res2.data[0].title_id != "" &&
@@ -329,24 +341,15 @@ function BlogDetail({}) {
               <div className={"border border-dividermig mt-2"}></div>
               <div className={"mt-1"}>
                 <ul class="">
-                  <li class={"text-primarygreen text-sm font-gilroysemibold"}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing eli.
-                  </li>
-                  <li
-                    class={
-                      "text-blackmig text-sm font-regular font-gilroyregular"
-                    }
-                  >
-                    Sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua
-                  </li>
-                  <li
-                    class={
-                      "text-blackmig text-sm font-regular font-gilroyregular"
-                    }
-                  >
-                    Ut enim ad minim veniam, quis nostrud exercitation.
-                  </li>
+                  {tableContent.map((data, index) => (
+                    <li
+                      class={
+                        "text-blackmig text-sm font-regular font-gilroyregular"
+                      }
+                    >
+                      {data}
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
