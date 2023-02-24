@@ -387,68 +387,96 @@ function LandingPage({ dataBlog }) {
               {t.landingpagetitlelogo}
             </h2>
           </div>
-          <div class="slider">
-            <div class="slide-track">
-              <div className={"flex flex-row mt-6 grayscale"}>
-                <img
-                  className={"mx-[26.5px] h-[50px] w-auto opacity-80"}
-                  src="/image/landingpage/kb-bukopin-logo-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/bulog-logo-cs-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/setneg-logo-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/shipper-logo-gray.png"
-                />
-                <img
-                  className={"mx-[26.5px] h-[50px] w-auto opacity-80"}
-                  src="/image/landingpage/kb-bukopin-logo-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/bulog-logo-cs-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/setneg-logo-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
-                />
-                <img
-                  className={
-                    "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80"
-                  }
-                  src="/image/landingpage/shipper-logo-gray.png"
-                />
+          <section className={"logoMarqueeSection"}>
+            <div className={"container"} id="logoMarqueeSection">
+              <div className="default-content-container flex items-center">
+                <div className="default-content-container-inner marquee-wrapper relative overflow-hidden inline-block">
+                  <div className="marquee" style={{ animationDuration: "57s" }}>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/bulog-logo-cs-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/setneg-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/shipper-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/bulog-logo-cs-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/setneg-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                      />
+                    </a>
+                    <a target="_blank">
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/shipper-logo-gray.png"
+                      />
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </section>
 
           <div className={"mt-6 text-center"}>
             <h2

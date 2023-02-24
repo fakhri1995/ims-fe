@@ -389,7 +389,7 @@ function CustomerStories({ dataBlog }) {
                   className={"cursor-pointer"}
                   href={`/migwebsite/customerstories/${dataarticle.page_path}`}
                 >
-                  <div className={"bg-white w-[292px] mt-4 p-4"}>
+                  <div className={"bg-white w-[292px] mt-4 p-4 cursor-pointer"}>
                     {dataarticle.attachment_article ? (
                       <img
                         className={"w-[260px] h-[184px] rounded-lg"}

@@ -55,6 +55,7 @@ function CustomerStoriesDetail({}) {
   const [detailBlog, setDetailBlog] = useState(null);
   const [dataOthers, setDataOthers] = useState([]);
   const [minutesRead, setMinutesRead] = useState(null);
+  const [tableContent, setTableContent] = useState([]);
   const { TextArea } = Input;
   const router = useRouter();
   const { locale } = router;
@@ -105,6 +106,19 @@ function CustomerStoriesDetail({}) {
               wordsCount(stripTags(res2.data[0].content));
             let minute = timeRead(total);
             setMinutesRead(minute);
+            let parser = new DOMParser();
+            const content = parser.parseFromString(
+              res2.data[0].content,
+              "text/html"
+            );
+            const content_data = content.querySelectorAll("h2,h3");
+            let datacontenttemp = [];
+            if (content_data.length > 0) {
+              for (let a = 0; a < content_data.length; a++) {
+                datacontenttemp.push(content_data[a].outerText);
+              }
+            }
+            setTableContent(datacontenttemp);
           } else {
             console.log("masuk id ");
             if (
@@ -333,39 +347,32 @@ function CustomerStoriesDetail({}) {
         </div>
         {/* section web article */}
         <div className={"flex flex-row mt-16"}>
-          <div className={"w-1/5"}>
-            <div
-              className={"bg-white p-4 rounded"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <p className={"text-blackmig text-base font-gilroysemibold"}>
-                TABLE OF CONTENT
-              </p>
-              <div className={"border border-dividermig mt-2"}></div>
-              <div className={"mt-1"}>
-                <ul class="">
-                  <li class={"text-primarygreen text-sm font-gilroysemibold"}>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing eli.
-                  </li>
-                  <li
-                    class={
-                      "text-blackmig text-sm font-regular font-gilroyregular"
-                    }
-                  >
-                    Sed do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua
-                  </li>
-                  <li
-                    class={
-                      "text-blackmig text-sm font-regular font-gilroyregular"
-                    }
-                  >
-                    Ut enim ad minim veniam, quis nostrud exercitation.
-                  </li>
-                </ul>
+          {tableContent.length > 0 && (
+            <div className={"w-1/5"}>
+              <div
+                className={"bg-white p-4 rounded"}
+                style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+              >
+                <p className={"text-blackmig text-base font-gilroysemibold"}>
+                  TABLE OF CONTENT
+                </p>
+                <div className={"border border-dividermig mt-2"}></div>
+                <div className={"mt-1"}>
+                  <ul class="">
+                    {tableContent.map((data, index) => (
+                      <li
+                        class={
+                          "text-blackmig text-sm font-regular font-gilroyregular"
+                        }
+                      >
+                        {data}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
+          )}
           <div className={"w-3/5 ml-12"}>
             {locale == "en" && detailBlog ? (
               loadContent(detailBlog.description)
