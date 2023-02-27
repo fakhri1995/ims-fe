@@ -56,6 +56,7 @@ function CustomerStoriesDetail({}) {
   const [dataOthers, setDataOthers] = useState([]);
   const [minutesRead, setMinutesRead] = useState(null);
   const [tableContent, setTableContent] = useState([]);
+  const [tableContentH3, setTableContentH3] = useState([]);
   const { TextArea } = Input;
   const router = useRouter();
   const { locale } = router;
@@ -111,7 +112,7 @@ function CustomerStoriesDetail({}) {
               res2.data[0].content,
               "text/html"
             );
-            const content_data = content.querySelectorAll("h2,h3");
+            const content_data = content.querySelectorAll("h2");
             let datacontenttemp = [];
             if (content_data.length > 0) {
               for (let a = 0; a < content_data.length; a++) {
@@ -119,6 +120,14 @@ function CustomerStoriesDetail({}) {
               }
             }
             setTableContent(datacontenttemp);
+            const content_data_h3 = content.querySelectorAll("h3");
+            let datacontenttemph3 = [];
+            if (content_data_h3.length > 0) {
+              for (let a = 0; a < content_data_h3.length; a++) {
+                datacontenttemph3.push(content_data_h3[a].outerText);
+              }
+            }
+            setTableContentH3(datacontenttemph3);
           } else {
             console.log("masuk id ");
             if (
@@ -232,6 +241,7 @@ function CustomerStoriesDetail({}) {
         <title>Customer Stories Detail</title>
       </Head>
       {console.log("query router ", router)}
+
       <section
         className={
           dataOthers.length > 0
@@ -347,7 +357,7 @@ function CustomerStoriesDetail({}) {
         </div>
         {/* section web article */}
         <div className={"flex flex-row mt-16"}>
-          {tableContent.length > 0 && (
+          {tableContent.length > 0 || tableContentH3.length > 0 ? (
             <div className={"w-1/5"}>
               <div
                 className={"bg-white p-4 rounded"}
@@ -369,9 +379,24 @@ function CustomerStoriesDetail({}) {
                       </li>
                     ))}
                   </ul>
+                  {tableContentH3.length > 0 && (
+                    <ul className={"ml-12"}>
+                      {tableContentH3.map((data, index) => (
+                        <li
+                          class={
+                            "text-blackmig text-sm font-regular font-gilroyregular"
+                          }
+                        >
+                          {data}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
               </div>
             </div>
+          ) : (
+            <div></div>
           )}
           <div className={"w-3/5 ml-12"}>
             {locale == "en" && detailBlog ? (
@@ -645,7 +670,9 @@ function CustomerStoriesDetail({}) {
           <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
             {dataOthers
               ? dataOthers.map((dataarticle) => (
-                  <Linkk href={`/customerstories/${dataarticle.page_path}`}>
+                  <Linkk
+                    href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+                  >
                     <div
                       className={
                         "mx-2 bg-white w-full rounded-lg p-4 cursor-pointer"
@@ -718,7 +745,9 @@ function CustomerStoriesDetail({}) {
           </p>
           <Slider {...sliderSettingsPhone}>
             {dataOthers.map((dataarticle) => (
-              <Linkk href={`/customerstories/${dataarticle.page_path}`}>
+              <Linkk
+                href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+              >
                 <div
                   className={"flex flex-row bg-white mt-3 p-4 rounded-lg"}
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}

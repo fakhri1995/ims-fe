@@ -391,87 +391,88 @@ function LandingPage({ dataBlog }) {
             <div className={"container"} id="logoMarqueeSection">
               <div className="default-content-container flex items-center">
                 <div className="default-content-container-inner marquee-wrapper relative overflow-hidden inline-block">
-                  <div className="marquee" style={{ animationDuration: "57s" }}>
-                    <a target="_blank">
+                  <div className="marquee" style={{ animationDuration: "10s" }}>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
-                    </a>
-                    <a target="_blank">
+                    </div>
+                    <div>
                       <img
                         className={
                           "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
-                    </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1166,7 +1167,7 @@ function LandingPage({ dataBlog }) {
                                 <h2
                                   style={{ lineHeight: "120%" }}
                                   className={
-                                    "text-blackmig text-[36px] font-gilroysemibold"
+                                    "text-blackmig text-[22px] font-gilroysemibold"
                                   }
                                 >
                                   {locale == "en"
@@ -1186,14 +1187,14 @@ function LandingPage({ dataBlog }) {
                               <div>
                                 {data1.company_logo ? (
                                   <img
-                                    className={"w-[58.5px] h-[42.5px]"}
+                                    className={"max-w-[100px] h-auto"}
                                     src={generateStaticAssetUrl(
                                       data1.company_logo.link
                                     )}
                                   />
                                 ) : (
                                   <img
-                                    className={"w-[58.5px] h-[42.5px]"}
+                                    className={"max-w-[100px] h-auto"}
                                     src={
                                       "/image/landingpage/testimonial-client.png"
                                     }

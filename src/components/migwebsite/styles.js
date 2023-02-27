@@ -278,6 +278,24 @@ const Styles = (props) => (
       // padding: 2rem 10rem;
       padding: 24px 20px;
     }
+    h1{
+      font-size: 22px;
+      font-weight: bold;
+  }
+  h2 {
+      font-size: 20px;
+      font-weight: bold;
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: bold;
+}
+p {
+  font-size:16px;
+}
+a:link {
+  text-decoration: underline;
+}
     // @media (min-width: 1280px){
     //   .footer-custom{
     //     padding: 2rem 35rem;

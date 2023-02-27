@@ -130,7 +130,7 @@ function CustomerStories({ dataBlog }) {
               <div className={""}>
                 <Link
                   activeClass="active"
-                  to="section2blog"
+                  to="allarticles"
                   spy={true}
                   smooth={true}
                   offset={-70}

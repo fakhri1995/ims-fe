@@ -54,6 +54,7 @@ function BlogDetail({}) {
   const [detailBlog, setDetailBlog] = useState(null);
   const [dataHighlight, setDataHighlight] = useState([]);
   const [tableContent, setTableContent] = useState([]);
+  const [tableContentH3, setTableContentH3] = useState([]);
   const [dataContactUs, setDataContactUs] = useState({
     company_name: null,
     company_email: null,
@@ -108,7 +109,7 @@ function BlogDetail({}) {
                 res2.data[0].content,
                 "text/html"
               );
-              const content_data = content.querySelectorAll("h2,h3");
+              const content_data = content.querySelectorAll("h2");
               let datacontenttemp = [];
               if (content_data.length > 0) {
                 for (let a = 0; a < content_data.length; a++) {
@@ -116,6 +117,14 @@ function BlogDetail({}) {
                 }
               }
               setTableContent(datacontenttemp);
+              const content_data_h3 = content.querySelectorAll("h3");
+              let datacontenttemph3 = [];
+              if (content_data_h3.length > 0) {
+                for (let a = 0; a < content_data_h3.length; a++) {
+                  datacontenttemph3.push(content_data_h3[a].outerText);
+                }
+              }
+              setTableContentH3(datacontenttemph3);
             } else {
               if (
                 res2.data[0].title_id != "" &&
@@ -330,30 +339,47 @@ function BlogDetail({}) {
         </div>
         {/* section web article */}
         <div className={"flex flex-row mt-16"}>
-          <div className={"w-1/5"}>
-            <div
-              className={"bg-white p-4 rounded"}
-              style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-            >
-              <p className={"text-blackmig text-base font-gilroysemibold"}>
-                TABLE OF CONTENT
-              </p>
-              <div className={"border border-dividermig mt-2"}></div>
-              <div className={"mt-1"}>
-                <ul class="">
-                  {tableContent.map((data, index) => (
-                    <li
-                      class={
-                        "text-blackmig text-sm font-regular font-gilroyregular"
-                      }
-                    >
-                      {data}
-                    </li>
-                  ))}
-                </ul>
+          {tableContent.length > 0 || tableContentH3.length > 0 ? (
+            <div className={"w-1/5"}>
+              <div
+                className={"bg-white p-4 rounded"}
+                style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+              >
+                <p className={"text-blackmig text-base font-gilroysemibold"}>
+                  TABLE OF CONTENT
+                </p>
+                <div className={"border border-dividermig mt-2"}></div>
+                <div className={"mt-1"}>
+                  <ul class="">
+                    {tableContent.map((data, index) => (
+                      <li
+                        class={
+                          "text-blackmig text-sm font-regular font-gilroyregular"
+                        }
+                      >
+                        {data}
+                      </li>
+                    ))}
+                  </ul>
+                  {tableContentH3.length > 0 && (
+                    <ul className={"ml-12"}>
+                      {tableContentH3.map((data, index) => (
+                        <li
+                          class={
+                            "text-blackmig text-sm font-regular font-gilroyregular"
+                          }
+                        >
+                          {data}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          ) : (
+            <div></div>
+          )}
           <div className={"w-3/5 ml-12"}>
             {locale == "en" && detailBlog ? (
               loadContent(detailBlog.description)
