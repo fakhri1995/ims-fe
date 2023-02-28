@@ -115,7 +115,7 @@ function Blog({ dataBlog }) {
               <div className={""}>
                 <Link
                   activeClass="active"
-                  to="section2blog"
+                  to="allarticles"
                   spy={true}
                   smooth={true}
                   offset={-70}
@@ -223,7 +223,7 @@ function Blog({ dataBlog }) {
             <div className={"grid justify-items-center text-center"}>
               <Link
                 activeClass="active"
-                to="section2blog"
+                to="allarticles"
                 spy={true}
                 smooth={true}
                 offset={-70}

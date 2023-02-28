@@ -632,15 +632,15 @@ div.marquee > a > img {
   animation-iteration-count: infinite;
 }
 
-.marquee a {
+.marquee div {
   display: inline-block;
   white-space: nowrap;
   padding-right: 5.4rem;
 }
 
-.marquee-wrapper:hover .marquee {
-  animation-play-state: paused !important;
-}
+// .marquee-wrapper:hover .marquee {
+//   animation-play-state: paused !important;
+// }
 
 @keyframes marquee {
   0% {
