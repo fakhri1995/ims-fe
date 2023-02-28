@@ -270,6 +270,7 @@ function Software({}) {
   const slider = useRef(null);
   const slider2 = useRef(null);
   const captchaRef = useRef(null);
+  const captchaRefMobile = useRef(null);
   const sliderSettings2 = {
     dots: true,
     infinite: true,
@@ -305,8 +306,14 @@ function Software({}) {
     }
   };
 
-  const submitFormSoftware = () => {
-    if (captchaRef.current.getValue() != "") {
+  const submitFormSoftware = (device) => {
+    let recaptchaValue = null;
+    if (device == "web") {
+      recaptchaValue = captchaRef.current.getValue();
+    } else {
+      recaptchaValue = captchaRefMobile.current.getValue();
+    }
+    if (recaptchaValue != "") {
       let dataSoftwarePost = {
         company_name: dataSoftware.company_name,
         contact_name: dataSoftware.contact_name,
@@ -926,7 +933,7 @@ function Software({}) {
                   </button>
                   <button
                     type={"submit"}
-                    onClick={submitFormSoftware}
+                    onClick={() => submitFormSoftware("web")}
                     className={
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
@@ -1445,7 +1452,7 @@ function Software({}) {
                 </div>
                 <div className={"mt-4"}>
                   <ReCAPTCHA
-                    ref={captchaRef}
+                    ref={captchaRefMobile}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
@@ -1462,7 +1469,7 @@ function Software({}) {
                   </button>
                   <button
                     type={"submit"}
-                    onClick={submitFormSoftware}
+                    onClick={() => submitFormSoftware("mobile")}
                     className={
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
@@ -2406,7 +2413,7 @@ function Software({}) {
                                     <h2
                                       style={{ lineHeight: "120%" }}
                                       className={
-                                        "text-blackmig text-[36px] font-gilroysemibold"
+                                        "text-blackmig text-[22px] font-gilroysemibold"
                                       }
                                     >
                                       {locale == "en"
@@ -2427,14 +2434,14 @@ function Software({}) {
                                   <div>
                                     {data1.company_logo ? (
                                       <img
-                                        className={"w-[58.5px] h-[42.5px]"}
+                                        className={"max-w-[100px] h-auto"}
                                         src={generateStaticAssetUrl(
                                           data1.company_logo.link
                                         )}
                                       />
                                     ) : (
                                       <img
-                                        className={"w-[58.5px] h-[42.5px]"}
+                                        className={"max-w-[100px] h-auto"}
                                         src={
                                           "/image/landingpage/testimonial-client.png"
                                         }

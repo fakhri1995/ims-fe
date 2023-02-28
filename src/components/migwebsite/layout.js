@@ -411,18 +411,27 @@ function layout({ children }) {
               </Button>
             </Dropdown>
             <Link href="/aboutus">
-              <a className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500">
+              <a
+                style={{ textDecoration: "none" }}
+                className="text-base font-gilroyregular text-blackmig menu-underlined mx-4 hover:text-green-500 no-underline"
+              >
                 {t.aboutus}
               </a>
             </Link>
             <Link href="/joinourteam">
-              <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+              <a
+                style={{ textDecoration: "none" }}
+                className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
+              >
                 {t.career}
               </a>
             </Link>
             {countArticle == 0 && countStories == 0 && (
               <Link href="/contactus">
-                <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+                <a
+                  style={{ textDecoration: "none" }}
+                  className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
+                >
                   {t.contactus}
                 </a>
               </Link>
@@ -457,7 +466,10 @@ function layout({ children }) {
             )}
             {countArticle > 0 || countStories > 0 ? (
               <Link href="/contactus">
-                <a className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500">
+                <a
+                  style={{ textDecoration: "none" }}
+                  className="text-base font-gilroyregular text-blackmig  menu-underlined mx-4 hover:text-green-500"
+                >
                   {t.contactus}
                 </a>
               </Link>

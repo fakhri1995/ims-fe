@@ -504,7 +504,7 @@ function LandingPage({ dataBlog }) {
           <div className={"flex justify-center"}>
             <img
               className={"w-[328px] h-[172px]"}
-              src="/image/landingpage/image-section1.png"
+              src="/image/landingpage/mitramas-infosys-global-landing-page-hero.png"
             />
           </div>
           <p
@@ -836,7 +836,7 @@ function LandingPage({ dataBlog }) {
                 style={{ width: "200px", height: "115.32px" }}
               />
             </div>
-            <p className="text-base text-primary text-left mt-4 font-gilroybold">
+            <p className="text-base text-accentblue text-left mt-4 font-gilroybold">
               Hardware
             </p>
             <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
@@ -853,7 +853,7 @@ function LandingPage({ dataBlog }) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"font-gilroysemibold text-xl"}>Get Yours</p>
+                    <p className={"font-gilroysemibold text-base"}>Get Yours</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "8.95px", height: "15.64px" }}
@@ -891,7 +891,7 @@ function LandingPage({ dataBlog }) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"font-gilroysemibold text-xl"}>Build Now</p>
+                    <p className={"font-gilroysemibold text-base"}>Build Now</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "8.95px", height: "15.64px" }}
@@ -929,7 +929,7 @@ function LandingPage({ dataBlog }) {
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
-                    <p className={"font-gilroysemibold text-xl"}>Hire Now</p>
+                    <p className={"font-gilroysemibold text-base"}>Hire Now</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "8.95px", height: "15.64px" }}
@@ -1285,16 +1285,7 @@ function LandingPage({ dataBlog }) {
               "text-xl  text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
             }
           >
-            What they say{" "}
-            <span
-              style={{
-                borderBottom: "solid 3px #188E4D",
-                paddingBottom: "2.5px",
-              }}
-            >
-              about us
-            </span>{" "}
-            ?
+            {t.customerstorieslandingpage}
           </p>
           <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
             <Slider {...sliderSettingsPhone}>
@@ -1306,16 +1297,14 @@ function LandingPage({ dataBlog }) {
                     </p>
                     {data1.company_logo ? (
                       <img
-                        className="rounded-full"
+                        className="rounded-full max-w-[100px] h-auto"
                         src={generateStaticAssetUrl(data1.company_logo.link)}
-                        style={{ height: "24px", width: "28.24px" }}
                         alt=""
                       />
                     ) : (
                       <img
-                        className="rounded-full"
+                        className="rounded-full max-w-[100px] h-auto"
                         src="/image/landingpage/testimonial-client.png"
-                        style={{ height: "24px", width: "28.24px" }}
                         alt=""
                       />
                     )}
@@ -1325,34 +1314,40 @@ function LandingPage({ dataBlog }) {
                   >
                     {data1.company_name}
                   </p>
-                  <p
-                    className={"mt-2 text-blackmig text-xs font-gilroyregular"}
-                  >
-                    {locale == "en" ? data1.description : data1.description_id}
-                  </p>
                   <div
-                    className={"mt-2 bg-white p-3"}
-                    style={{
-                      boxShadow: "0px 16px 40px rgba(112, 144, 176, 0.2)",
+                    className="mt-2"
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        locale == "en"
+                          ? data1.description
+                          : data1.description_id,
                     }}
-                  >
-                    <p className={"text-xs text-blackmig"}>“{data1.quote}”</p>
-                    <div className={"mt-3 border border-dividermig w-1/2"} />
-                    <p
-                      className={
-                        "mt-1 text-[10px] font-gilroysemibold text-blackmig"
-                      }
+                  />
+                  {data1.quote && (
+                    <div
+                      className={"mt-2 bg-white p-3"}
+                      style={{
+                        boxShadow: "0px 16px 40px rgba(112, 144, 176, 0.2)",
+                      }}
                     >
-                      {data1.author}
-                    </p>
-                    <p
-                      className={
-                        "mt-1 text-[10px] font-gilroyregular text-blackmig"
-                      }
-                    >
-                      {locale == "en" ? data1.job_title : data1.job_title_id}
-                    </p>
-                  </div>
+                      <p className={"text-xs text-blackmig"}>“{data1.quote}”</p>
+                      <div className={"mt-3 border border-dividermig w-1/2"} />
+                      <p
+                        className={
+                          "mt-1 text-[10px] font-gilroysemibold text-blackmig"
+                        }
+                      >
+                        {data1.author}
+                      </p>
+                      <p
+                        className={
+                          "mt-1 text-[10px] font-gilroyregular text-blackmig"
+                        }
+                      >
+                        {locale == "en" ? data1.job_title : data1.job_title_id}
+                      </p>
+                    </div>
+                  )}
                   <div className={"mt-3 flex justify-end"}>
                     <button
                       className={
@@ -1692,41 +1687,41 @@ function LandingPage({ dataBlog }) {
         <div className={"py-3 px-2"}>
           <p className={"text-base text-blackmig"}>{t.joinmigsubtitle}</p>
         </div>
-        <div className="flex flex-row py-3 px-2">
+        <div className="flex flex-row py-3">
           <div className="w-11">
             <img
               src="/image/landingpage/career-icon1.png"
-              style={{ width: "36px", height: "36px" }}
+              className={"w-9 h-9"}
             />
           </div>
           <div>
-            <p className="text-left px-5 text-sm text-black">
+            <p className="text-left ml-[14px] text-sm text-black">
               {t.joinmigpoint1}
             </p>
           </div>
         </div>
-        <div className="flex flex-row py-3 px-2">
-          <div className="w-11">
+        <div className="flex flex-row py-3">
+          <div className="w-[54px]">
             <img
               src="/image/landingpage/career-icon2.png"
-              style={{ width: "36px", height: "36px" }}
+              className={"w-9 h-9"}
             />
           </div>
           <div>
-            <p className="text-left px-5 text-sm text-black">
+            <p className="text-left ml-[14px] text-sm text-black">
               {t.joinmigpoint2}
             </p>
           </div>
         </div>
-        <div className="flex flex-row py-3 px-2">
-          <div className="w-11">
+        <div className="flex flex-row py-3">
+          <div className="w-[54px]">
             <img
               src="/image/landingpage/career-icon3.png"
               style={{ width: "36px", height: "36px" }}
             />
           </div>
           <div>
-            <p className="text-left px-5 text-sm text-black">
+            <p className="text-left ml-[14px] text-sm text-black">
               {t.joinmigpoint3}
             </p>
           </div>
@@ -1845,7 +1840,7 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctacontactuslandingpage}
                     </p>
                   </button>
@@ -1858,7 +1853,7 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctalearnmorelandingpage}
                     </p>
                   </button>

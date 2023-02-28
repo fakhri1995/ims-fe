@@ -110,6 +110,7 @@ function Talents({}) {
   const [valueDateTemp, onChangeDateTemp] = useState(null);
   const [kindOfTalent, setKindOfTalent] = useState(null);
   const captchaRef = useRef(null);
+  const captchaRefMobile = useRef(null);
   const [product, setProduct] = useState(null);
   const [productSelected, setProductSelected] = useState([]);
   const [levelEmployee, setLevelEmployee] = useState(null);
@@ -380,8 +381,14 @@ function Talents({}) {
     // form.setFieldValue(form, "product", "");
   };
 
-  const submitFormSoftware = () => {
-    if (captchaRef.current.getValue() != "") {
+  const submitFormSoftware = (device) => {
+    let recaptchaValue = null;
+    if (device == "web") {
+      recaptchaValue = captchaRef.current.getValue();
+    } else {
+      recaptchaValue = captchaRefMobile.current.getValue();
+    }
+    if (recaptchaValue != "") {
       let dataTalentPost = {
         company_name: dataPeople.company_name,
         contact_name: dataPeople.name,
@@ -1807,7 +1814,7 @@ function Talents({}) {
                   </button>
                   <button
                     type={"submit"}
-                    onClick={submitFormSoftware}
+                    onClick={() => submitFormSoftware("web")}
                     className={
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
@@ -2849,7 +2856,7 @@ function Talents({}) {
                 </div>
                 <div className={"mt-4"}>
                   <ReCAPTCHA
-                    ref={captchaRef}
+                    ref={captchaRefMobile}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
@@ -2869,7 +2876,7 @@ function Talents({}) {
                   </button>
                   <button
                     type={"submit"}
-                    onClick={submitFormSoftware}
+                    onClick={() => submitFormSoftware("mobile")}
                     className={
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
@@ -4837,7 +4844,7 @@ function Talents({}) {
                                     <h2
                                       style={{ lineHeight: "120%" }}
                                       className={
-                                        "text-blackmig text-[36px] font-gilroysemibold"
+                                        "text-blackmig text-[22px] font-gilroysemibold"
                                       }
                                     >
                                       {locale == "en"
@@ -4858,14 +4865,14 @@ function Talents({}) {
                                   <div>
                                     {data1.company_logo ? (
                                       <img
-                                        className={"w-[58.5px] h-[42.5px]"}
+                                        className={"max-w-[100px] h-auto"}
                                         src={generateStaticAssetUrl(
                                           data1.company_logo.link
                                         )}
                                       />
                                     ) : (
                                       <img
-                                        className={"w-[58.5px] h-[42.5px]"}
+                                        className={"max-w-[100px] h-auto"}
                                         src={
                                           "/image/landingpage/testimonial-client.png"
                                         }
