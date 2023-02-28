@@ -595,7 +595,7 @@ function AboutUs({}) {
               "font-gilroysemibold text-2xl text-blackmig md:text-[32px] pb-2"
             }
           >
-            MIG Location
+            {t.aboutuslocation}
           </h2>
           <p
             style={{ lineHeight: "120%" }}
@@ -603,14 +603,14 @@ function AboutUs({}) {
               "font-gilroysemibold pb-2 text-xl md:text-2xl text-blackmig"
             }
           >
-            Headquarter
+            {t.aboutusheadquarter}
           </p>
           <p style={{ lineHeight: "120%" }} className={"text-xl "}>
             <span className="font-gilroysemibold text-darkgrey">
-              Location:{" "}
+              {locale == "en" ? "Location" : "Lokasi"} :{" "}
             </span>
             <span className={"text-blackmig font-gilroyregular"}>
-              Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820
+              {t.aboutusaddress}
             </span>
           </p>
 
@@ -619,7 +619,7 @@ function AboutUs({}) {
               style={{ lineHeight: "150%" }}
               className={"font-gilroysemibold text-xl text-darkgrey"}
             >
-              Phone:&nbsp;
+              {locale == "en" ? "Phone" : "Telepon"}:&nbsp;
             </p>
             <a href="tel:+62218314522">
               <p

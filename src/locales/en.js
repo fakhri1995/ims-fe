@@ -336,6 +336,19 @@ export default {
   experiencerange: "Experience range",
   customerstoriesherotitle: "Some of Our Past Work",
   blogherotitle: "Discover The Latest Insights from MIG's Blog",
+  aboutuslocation: "MIG Location",
+  aboutusheadquarter: "Headquarter",
+  aboutusaddress: "Tebet Raya No. 42, South Jakarta, DKI Jakarta, 12820",
+  explorearticle: "Explore Articles",
+  customerstorieshearwhat:
+    "Find out how our customers feel about our solutions",
+  customerstorieshearwhatpoint1:
+    "Our hardware solution offers nationwide maintenance with predictable pricing.",
+  customerstorieshearwhatpoint2:
+    "Automate and streamline operations with our software development solutions.",
+  customerstorieshearwhatpoint3:
+    "Expand your team's capabilities with our top-quality tech talent in diverse roles.",
+  customerstorieshearwhatcta: "Read our stories",
   blogherodescription:
     "Stay ahead of the technology and business game with our latest insights and expert solutions",
   p1: `Tim Berners-Lee, a British scientist, invented the World Wide Web (WWW) in 1989, while working at CERN. The web was originally conceived and developed to meet the demand for automated information-sharing between scientists in universities and institutes around the world.`,

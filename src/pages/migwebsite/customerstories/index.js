@@ -142,7 +142,7 @@ function CustomerStories({ dataBlog }) {
                     }
                   >
                     <div className={"flex flex-row justify-between px-4 "}>
-                      <p className={"text-base"}>Explore Articles</p>
+                      <p className={"text-base"}>{t.explorearticle}</p>
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
@@ -264,7 +264,7 @@ function CustomerStories({ dataBlog }) {
                 >
                   <div className={"flex flex-row justify-between"}>
                     <p className={"text-xl font-gilroysemibold"}>
-                      Explore Articles
+                      {t.explorearticle}
                     </p>
                     <img
                       className={"self-center"}
@@ -555,7 +555,7 @@ function CustomerStories({ dataBlog }) {
             <div className={"w-3/5 justify-self-start"}>
               <div className="flex flex-col items-start px-10">
                 <h4 className="mb-2 text-2xl font-gilroysemibold text-blackmig">
-                  Hear what our customers said about us!
+                  {t.customerstorieshearwhat}
                 </h4>
                 <div className="flex flex-row items-center mt-5">
                   <div className="w-11">
@@ -566,8 +566,7 @@ function CustomerStories({ dataBlog }) {
                   </div>
                   <div>
                     <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
-                      We love to empower our team members to solve problems that
-                      matter
+                      {t.customerstorieshearwhatpoint1}
                     </p>
                   </div>
                 </div>
@@ -580,8 +579,7 @@ function CustomerStories({ dataBlog }) {
                   </div>
                   <div>
                     <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
-                      We offer diverse industry exposures and hands-on
-                      experience
+                      {t.customerstorieshearwhatpoint2}
                     </p>
                   </div>
                 </div>
@@ -594,16 +592,22 @@ function CustomerStories({ dataBlog }) {
                   </div>
                   <div>
                     <p className="text-left px-5 text-base text-blackmig font-gilroyregular">
-                      We support personal growth through constant experiment and
-                      learning
+                      {t.customerstorieshearwhatpoint3}
                     </p>
                   </div>
                 </div>
                 <div className="mt-3">
-                  <a href="/contactus">
-                    <div className="flex border-2 border-primarygreen w-[264px] rounded px-4 py-2 justify-between">
-                      <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
-                        Read Our Customer Stories
+                  <Link
+                    activeClass="active"
+                    to="allarticles"
+                    spy={true}
+                    smooth={true}
+                    offset={-70}
+                    duration={500}
+                  >
+                    <div className="flex border-2 border-primarygreen rounded pl-4 py-2 pr-[12.18px] justify-between">
+                      <p className="text-base mr-[13.52px] text-primarygreen font-gilroysemibold">
+                        {t.customerstorieshearwhatcta}
                       </p>
                       <img
                         className={"py-1"}
@@ -611,7 +615,7 @@ function CustomerStories({ dataBlog }) {
                         src="/image/landingpage/arrow-forward-ios.png"
                       />
                     </div>
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -625,16 +629,7 @@ function CustomerStories({ dataBlog }) {
             "text-xl text-blackmig text-center font-gilroysemibold py-8 md:py-0 px-4 w-[328px]"
           }
         >
-          Hear what{" "}
-          <span
-            style={{
-              borderBottom: "solid 3px #188E4D",
-              paddingBottom: "2.5px",
-            }}
-          >
-            our customers
-          </span>{" "}
-          said about us!
+          {t.customerstorieshearwhat}
         </p>
         <div className={"grid justify-items-center text-center"}>
           <img
@@ -652,7 +647,7 @@ function CustomerStories({ dataBlog }) {
           </div>
           <div>
             <p className="text-left px-5 text-sm text-black">
-              We love to empower our team members to solve problems that matter
+              {t.customerstorieshearwhatpoint1}
             </p>
           </div>
         </div>
@@ -665,7 +660,7 @@ function CustomerStories({ dataBlog }) {
           </div>
           <div>
             <p className="text-left px-5 text-sm text-black">
-              We offer diverse industry exposures and hands-on experience
+              {t.customerstorieshearwhatpoint2}
             </p>
           </div>
         </div>
@@ -678,16 +673,22 @@ function CustomerStories({ dataBlog }) {
           </div>
           <div>
             <p className="text-left px-5 text-sm text-black">
-              We support personal growth through constant experiment and
-              learning
+              {t.customerstorieshearwhatpoint3}
             </p>
           </div>
         </div>
         <div className="self-end mt-5">
-          <a href="#">
-            <div className="flex mt-5 rounded mx-auto w-[264px] border-2 border-primarygreen pl-4 pr-[12.18px] py-2">
+          <Link
+            activeClass="active"
+            to="allarticles"
+            spy={true}
+            smooth={true}
+            offset={-70}
+            duration={500}
+          >
+            <div className="flex mt-5 rounded mx-auto border-2 border-primarygreen pl-4 pr-[12.18px] py-2">
               <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
-                Read Our Customer Series
+                {t.customerstorieshearwhatcta}
               </p>
               <img
                 className={"py-1"}
@@ -695,52 +696,72 @@ function CustomerStories({ dataBlog }) {
                 src="/image/landingpage/arrow-forward-ios.png"
               />
             </div>
-          </a>
+          </Link>
         </div>
       </section>
       <section
         className={
-          "youronestop hidden md:flex md:flex-row md:justify-between bg-bgfooter pt-8"
+          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
         }
       >
-        <div className={"justify-start self-end bg-red"}>
+        <div className={"justify-start self-end"}>
           <img
             style={{ width: "332px", height: "142px" }}
             src="/image/landingpage/footer-left.png"
           />
         </div>
         <div className={"container w-1/2 mx-auto"}>
-          <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[144px] py-4 px-8">
-            <p className={"text-2xl font-gilroysemibold text-blackmig"}>
-              Want help on providing your IT needs?
-            </p>
-            <p className={"py-5 text-base font-gilroyregular text-blackmig"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
-            </p>
-            <Linkk href="/contactus">
-              <button
-                className={
-                  "text-sm w-[145px] -mt-10 text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p
+          <div
+            className={
+              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+            }
+          >
+            <h2
+              style={{ lineHeight: "120%" }}
+              className={"text-[28px] font-gilroysemibold text-black"}
+            >
+              {t.contactussectiontitle}
+            </h2>
+            <div
+              className={
+                "mt-3.5 text-xl font-gilroyregular text-center text-black"
+              }
+            >
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle1}
+              </p>
+              <p style={{ lineHeight: "120%" }}>
+                {t.contactussectionsubtitle2}
+              </p>
+            </div>
+            <div className="mt-3.5 flex flex-row justify-center">
+              <div className={"mr-3.5"}>
+                <Linkk href="/contactus">
+                  <button
                     className={
-                      "text-base font-gilroysemibold font-gilroysemibold mr-2"
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    Learn more
-                  </p>
-                  <img
-                    className={"self-center"}
-                    style={{ height: "15px", width: "8px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Linkk>
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-xl font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"justify-end  self-end"}>
@@ -751,43 +772,54 @@ function CustomerStories({ dataBlog }) {
         </div>
       </section>
       <section
-        className={
-          "contactusphone mt-8 md:relative block md:hidden md:flex bg-bgfooter pt-8"
-        }
+        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-30 py-4 px-8">
+          <div
+            className={
+              "bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8"
+            }
+          >
             <p className={"text-xl font-gilroysemibold"}>
-              Fulfill your IT needs easily!
+              {t.contactussectiontitle}
             </p>
-            <p className={"py-5 text-sm font-gilroyregular"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+            <p className={" text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle1}
             </p>
-            <Linkk href="/hardware">
-              <button
-                className={
-                  "text-base text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p
-                    className={"px-1 text-base text-white font-gilroysemibold "}
+            <p className={"text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle2}
+            </p>
+            <div className="mt-4 flex flex-row justify-center">
+              <div className={"mr-1.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
                   >
-                    Contact Us
-                  </p>
-                  <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Linkk>
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
-        <div className={"flex justify-between self-end mt-[7.81px]"}>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
           <img
             style={{ width: "160px", height: "69px" }}
             src="/image/landingpage/footer-left.png"

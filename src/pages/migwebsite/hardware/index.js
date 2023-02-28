@@ -269,6 +269,7 @@ function Hardware({}) {
   const [showThankForm, setShowThankForm] = useState(false);
   const [showUploadFile, setShowUploadFile] = useState(true);
   const captchaRef = useRef(null);
+  const captchaRefMobile = useRef(null);
   const dataMeetingTime = [
     {
       id: 1,
@@ -333,8 +334,14 @@ function Hardware({}) {
   const handleShowForm = () => {
     setShowform(true);
   };
-  const submitFormSoftware = () => {
-    if (captchaRef.current.getValue() != "") {
+  const submitFormSoftware = (device) => {
+    let recaptchaValue = null;
+    if (device == "web") {
+      recaptchaValue = captchaRef.current.getValue();
+    } else {
+      recaptchaValue = captchaRefMobile.current.getValue();
+    }
+    if (recaptchaValue != "") {
       let devicesObjectList = dataHardwareSummary.map((device, idx) => {
         let obj = {};
         obj[`hardware_list[${idx}][kind_of_product]`] = device.kindOfHardware;
@@ -418,17 +425,38 @@ function Hardware({}) {
     setKindOfHardware(value);
     let arr = [];
     if (value == "Bank Machinery") {
-      arr.push("ATM");
-      arr.push("Money Counter");
+      arr.push("GRG Automated Teller Machine");
+      arr.push("GRG Cash Recycle Machine");
+      arr.push("Hyosung Automated Teller Machine");
+      arr.push("Hyosung Cash Recycle Machine");
+      arr.push("GRG Video Teller Machine");
+      arr.push("Smart Teller Machine");
+      arr.push("Smart Embosser Machine");
+      arr.push("Branch Bulk Cash Recycler");
+      arr.push("Bulk Cash Recycler");
+      arr.push("Teller Cash Recycler");
+      arr.push("GRG Branch Cash Recycler");
+      arr.push("Hyosung Branch Cash Recycler");
+      arr.push("Hyosung Video Teller Machine");
+      arr.push("Cash Sorting Machine (Small)");
+      arr.push("Cash Sorting Machine (Medium)");
+      arr.push("Cash Sorting Machine (Large)");
+      arr.push("High Speed Cash Deposit Machine");
+      arr.push("Intelligent Cash Deposit Machine");
+      arr.push("Night Safe");
+      arr.push("Compact Cash Recycler");
+      arr.push("Entry Level Cash Dispenser");
     } else if (value == "Workstation") {
-      arr.push("Laptop");
-      arr.push("PC / Dekstop");
+      arr.push("Laptop (Windows)");
+      arr.push("Macbook");
+      arr.push("Personal Computer");
+      arr.push("iMac");
+      arr.push("Mini PC");
     } else if (value == "Server") {
-      arr.push("Server Ultraboost");
-      arr.push("Server Boost");
+      arr.push("Server");
+      arr.push("Hosting");
     } else if (value == "UPS") {
-      arr.push("UPS 1.2Ghz");
-      arr.push("UPS 3.0Ghz");
+      arr.push("UPS");
     } else {
       arr.push("Smartphone");
       arr.push("Tablet");
@@ -1671,12 +1699,12 @@ function Hardware({}) {
                       Popular products in {kindOfHardware ? kindOfHardware : ""}
                     </p>
                     {hardwareSuggestion.length > 0 && (
-                      <div className={"flex flex-row mt-3"}>
+                      <div className={"flex flex-row flex-wrap mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
                           <button
                             // onClick={() => handleSuggestionHardware(data)}
                             className={
-                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 mt-3"
                             }
                           >
                             <p
@@ -2027,7 +2055,7 @@ function Hardware({}) {
                   </button>
                   <button
                     type={"submit"}
-                    onClick={submitFormSoftware}
+                    onClick={() => submitFormSoftware("web")}
                     className={
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
@@ -3059,7 +3087,7 @@ function Hardware({}) {
                 </div>
                 <div className={"mt-4"}>
                   <ReCAPTCHA
-                    ref={captchaRef}
+                    ref={captchaRefMobile}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
@@ -3079,7 +3107,7 @@ function Hardware({}) {
                   </button>
                   <button
                     type={"submit"}
-                    onClick={submitFormSoftware}
+                    onClick={() => submitFormSoftware("mobile")}
                     className={
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
@@ -4363,7 +4391,7 @@ function Hardware({}) {
                                     <h2
                                       style={{ lineHeight: "120%" }}
                                       className={
-                                        "text-blackmig text-[36px] font-gilroysemibold"
+                                        "text-blackmig text-[22px] font-gilroysemibold"
                                       }
                                     >
                                       {locale == "en"
@@ -4384,14 +4412,14 @@ function Hardware({}) {
                                   <div>
                                     {data1.company_logo ? (
                                       <img
-                                        className={"w-[58.5px] h-[42.5px]"}
+                                        className={"max-w-[100px] h-auto"}
                                         src={generateStaticAssetUrl(
                                           data1.company_logo.link
                                         )}
                                       />
                                     ) : (
                                       <img
-                                        className={"w-[58.5px] h-[42.5px]"}
+                                        className={"max-w-[100px] h-auto"}
                                         src={
                                           "/image/landingpage/testimonial-client.png"
                                         }
