@@ -129,6 +129,9 @@ function Talents({}) {
   const [showEmailError, setShowEmailError] = useState(false);
   const [emailError, setEmailError] = useState(null);
   const [dataTestimonial, setDataTestimonial] = useState(null);
+  const [captchaStatus, setCaptchaStatus] = useState(false);
+  const [meetingDateStatus, setMeetingDateStatus] = useState(false);
+  const [meetingTimeStatus, setMeetingTimeStatus] = useState(false);
   const dataMeetingTime = [
     {
       id: 1,
@@ -347,6 +350,7 @@ function Talents({}) {
 
   const onPanelChange = (value) => {
     console.log("helo calendar ", value);
+    setMeetingDateStatus(false);
     onChangeDateTemp(value);
     onChangeDate(value);
   };
@@ -354,6 +358,7 @@ function Talents({}) {
     if (value == valueMeetingTime) {
       setValueMeetingTime(null);
     } else {
+      setMeetingTimeStatus(false);
       setValueMeetingTime(value);
       setLabelMeetingTime(label);
     }
@@ -380,7 +385,10 @@ function Talents({}) {
     setProductSelected([...arr_product]);
     // form.setFieldValue(form, "product", "");
   };
-
+  const changeCaptcha = (value) => {
+    console.log("valuenya ", value);
+    setCaptchaStatus(false);
+  };
   const submitFormSoftware = (device) => {
     let recaptchaValue = null;
     if (device == "web") {
@@ -388,7 +396,14 @@ function Talents({}) {
     } else {
       recaptchaValue = captchaRefMobile.current.getValue();
     }
-    if (recaptchaValue != "") {
+    if (
+      recaptchaValue != "" &&
+      valueDateTemp != null &&
+      valueMeetingTime != null
+    ) {
+      setCaptchaStatus(false);
+      setMeetingTimeStatus(false);
+      setMeetingDateStatus(false);
       let dataTalentPost = {
         company_name: dataPeople.company_name,
         contact_name: dataPeople.name,
@@ -426,6 +441,16 @@ function Talents({}) {
             });
           }
         });
+    } else {
+      if (recaptchaValue == "") {
+        setCaptchaStatus(true);
+      }
+      if (valueDateTemp == null) {
+        setMeetingDateStatus(true);
+      }
+      if (valueMeetingTime == null) {
+        setMeetingTimeStatus(true);
+      }
     }
   };
 
@@ -510,17 +535,33 @@ function Talents({}) {
     setKindOfTalent(value);
     let arr = [];
     if (value == "Engineering") {
-      arr.push("Web Development");
-      arr.push("Mobile Development");
+      arr.push("Web Developer");
+      arr.push("Mobile App Developer");
+      arr.push("Quality Assurance Engineer");
+      arr.push("Android Developer");
+      arr.push("iOS Developer");
+      arr.push("C++");
+      arr.push("HTML5");
+      arr.push("JavaScript");
+      arr.push("PHP");
+      arr.push("Spring");
+      arr.push("Laravel");
+      arr.push("Tibco");
     } else if (value == "Data") {
+      arr.push("Data Scientist");
+      arr.push("Data Analyst");
+      arr.push("Business Intelligence Analyst");
+      arr.push("SQL");
+      arr.push("Oracle");
       arr.push("Phyton");
-      arr.push("MySQL");
     } else if (value == "Design") {
-      arr.push("Figma");
-      arr.push("Adobe XD");
+      arr.push("Graphic Designer");
+      arr.push("Product Designer");
+      arr.push("UI/UX Designer");
     } else if (value == "Product") {
-      arr.push("Github");
-      arr.push("Manage Project");
+      arr.push("Product Manager");
+      arr.push("Product Analyst");
+      arr.push("Project Manager");
     } else {
       arr.push("Robotica");
       arr.push("Line Tracer");
@@ -1393,12 +1434,12 @@ function Talents({}) {
                     </div>
                   )}
                   {skillSuggestion.length > 0 && (
-                    <div className={"flex flex-row mt-3"}>
+                    <div className={"flex flex-row flex-wrap mt-3"}>
                       {skillSuggestion.map((data, index) => (
                         <button
                           onClick={() => handleSuggestionSkill(data)}
                           className={
-                            " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                            " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 mt-3"
                           }
                         >
                           <p
@@ -1680,17 +1721,21 @@ function Talents({}) {
                 >
                   Choose Meeting Date
                 </p>
-                <div
-                  className={
-                    "mt-9 bg-bgjoinmig  w-[788px]  px-3 py-2 rounded-lg flex flex-row"
-                  }
-                >
-                  <img src={"image/software/information-circle.png"} />
-                  <p className={"ml-3 text-base text-blackmig self-center"}>
-                    Please choose a meeting date & time with Mitramas Infosys
-                    Global
-                  </p>
-                </div>
+                {meetingDateStatus == true || meetingTimeStatus == true ? (
+                  <div
+                    className={
+                      "mt-9 bg-bgjoinmig  w-[788px]  px-3 py-2 rounded-lg flex flex-row"
+                    }
+                  >
+                    <img src={"image/software/information-circle.png"} />
+                    <p className={"ml-3 text-base text-blackmig self-center"}>
+                      Please choose a meeting date & time with Mitramas Infosys
+                      Global
+                    </p>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
                 <div className={"flex flex-row mt-4"}>
                   <div className={"w-[392px]"}>
                     <div className="site-calendar-demo-card">
@@ -1801,10 +1846,16 @@ function Talents({}) {
                 <div className={"mt-4"}>
                   <ReCAPTCHA
                     ref={captchaRef}
+                    onChange={changeCaptcha}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
                 </div>
+                {captchaStatus && (
+                  <div className="ant-form-item-explain-error">
+                    <p>You must fill captcha</p>
+                  </div>
+                )}
                 <div className={"mt-9 flex flex-row justify-between"}>
                   <button
                     className={"bg-white py-2 px-4"}
@@ -2745,12 +2796,16 @@ function Talents({}) {
                 >
                   Choose Meeting Date
                 </p>
-                <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
-                  <p className={"ml-3 text-base text-blackmig self-center"}>
-                    Please choose a meeting date & time with Mitramas Infosys
-                    Global
-                  </p>
-                </div>
+                {meetingDateStatus == true || meetingTimeStatus == true ? (
+                  <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
+                    <p className={"ml-3 text-base text-blackmig self-center"}>
+                      Please choose a meeting date & time with Mitramas Infosys
+                      Global
+                    </p>
+                  </div>
+                ) : (
+                  <div></div>
+                )}
                 <div className={"mt-4"}>
                   <div className={"w-full"}>
                     <div className="site-calendar-demo-card">
@@ -2857,10 +2912,16 @@ function Talents({}) {
                 <div className={"mt-4"}>
                   <ReCAPTCHA
                     ref={captchaRefMobile}
+                    onChange={changeCaptcha}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
                 </div>
+                {captchaStatus && (
+                  <div className="ant-form-item-explain-error">
+                    <p>You must fill captcha</p>
+                  </div>
+                )}
                 <div className={"mt-9 flex flex-row justify-between"}>
                   <button
                     className={"bg-white py-2 px-4"}

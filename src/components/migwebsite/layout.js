@@ -289,7 +289,69 @@ function layout({ children }) {
   };
   const changeLanguage = (e) => {
     const locale = e;
-    router.push(router.pathname, router.asPath, { locale });
+    console.log("change language");
+    console.log("router pathname ", router.pathname);
+    console.log("router.asPath ", router.asPath);
+    console.log("router locale ", router.locale);
+    let datatemp = router.asPath;
+    let datasplit = datatemp.split("/");
+    for (let a = 0; a < datasplit.length; a++) {
+      console.log("data ke ", datasplit[a]);
+    }
+    if (datasplit[2] == "customerstories" && datasplit[3] != "") {
+      getDataCustomerStoriesDetail(datasplit[3], router.locale);
+    } else if (datasplit[2] == "blog" && datasplit[3] != "") {
+      getDataCustomerStoriesDetail(datasplit[3], router.locale);
+    } else {
+      router.push(router.pathname, router.asPath, { locale });
+    }
+  };
+
+  const getDataCustomerStoriesDetail = (page, locale) => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialDetail?pagepath=${page}`,
+      {
+        method: `GET`,
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("get data testimonial ", res2);
+        if (res2.success) {
+          //   setDataTestimonial(res2.data);
+          console.log("locale apa ", locale);
+          if (locale == "en") {
+            if (
+              res2.data[0].title_id != "" &&
+              res2.data[0].description_id != "" &&
+              res2.data[0].page_path_id != "" &&
+              res2.data[0].content_id != "" &&
+              res2.data[0].tags_id != ""
+            ) {
+              router.push(router.pathname, router.asPath, { locale });
+            } else {
+              alert("Halaman ID tidak tersedia untuk testimoni ini");
+            }
+          } else {
+            if (
+              res2.data[0].title != "" &&
+              res2.data[0].description != "" &&
+              res2.data[0].page_path != "" &&
+              res2.data[0].content != "" &&
+              res2.data[0].tags != ""
+            ) {
+              router.push(router.pathname, router.asPath, { locale });
+            } else {
+              alert("Page EN Not Found for this testimonial");
+            }
+          }
+        } else {
+        }
+      })
+      .catch((err) => {})
+      .finally(() => {
+        // setLoadingEmployees(false);
+      });
   };
   const { SubMenu } = Menu;
 
@@ -830,6 +892,7 @@ function layout({ children }) {
                       src="/image/footer/instagram.png"
                     />
                     <a
+                      style={{ textDecoration: "none" }}
                       className={
                         "font-gilroyregular text-[14px] cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
@@ -846,6 +909,7 @@ function layout({ children }) {
                       src="/image/footer/linkedin.png"
                     />
                     <a
+                      style={{ textDecoration: "none" }}
                       className={
                         "font-gilroyregular text-[14px] cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }

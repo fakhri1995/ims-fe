@@ -349,6 +349,7 @@ export default {
   customerstorieshearwhatpoint3:
     "Expand your team's capabilities with our top-quality tech talent in diverse roles.",
   customerstorieshearwhatcta: "Read our stories",
+  minute_read: " MINUTE READ",
   blogherodescription:
     "Stay ahead of the technology and business game with our latest insights and expert solutions",
   p1: `Tim Berners-Lee, a British scientist, invented the World Wide Web (WWW) in 1989, while working at CERN. The web was originally conceived and developed to meet the demand for automated information-sharing between scientists in universities and institutes around the world.`,

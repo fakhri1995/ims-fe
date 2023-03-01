@@ -268,6 +268,9 @@ function Hardware({}) {
   const [statusEdit, setStatusEdit] = useState(false);
   const [showThankForm, setShowThankForm] = useState(false);
   const [showUploadFile, setShowUploadFile] = useState(true);
+  const [captchaStatus, setCaptchaStatus] = useState(false);
+  const [meetingDateStatus, setMeetingDateStatus] = useState(false);
+  const [meetingTimeStatus, setMeetingTimeStatus] = useState(false);
   const captchaRef = useRef(null);
   const captchaRefMobile = useRef(null);
   const dataMeetingTime = [
@@ -334,6 +337,10 @@ function Hardware({}) {
   const handleShowForm = () => {
     setShowform(true);
   };
+  const changeCaptcha = (value) => {
+    console.log("valuenya ", value);
+    setCaptchaStatus(false);
+  };
   const submitFormSoftware = (device) => {
     let recaptchaValue = null;
     if (device == "web") {
@@ -341,7 +348,14 @@ function Hardware({}) {
     } else {
       recaptchaValue = captchaRefMobile.current.getValue();
     }
-    if (recaptchaValue != "") {
+    if (
+      recaptchaValue != "" &&
+      valueDateTemp != null &&
+      valueMeetingTime != null
+    ) {
+      setCaptchaStatus(false);
+      setMeetingTimeStatus(false);
+      setMeetingDateStatus(false);
       let devicesObjectList = dataHardwareSummary.map((device, idx) => {
         let obj = {};
         obj[`hardware_list[${idx}][kind_of_product]`] = device.kindOfHardware;
@@ -403,9 +417,20 @@ function Hardware({}) {
             });
           }
         });
+    } else {
+      if (recaptchaValue == "") {
+        setCaptchaStatus(true);
+      }
+      if (valueDateTemp == null) {
+        setMeetingDateStatus(true);
+      }
+      if (valueMeetingTime == null) {
+        setMeetingTimeStatus(true);
+      }
     }
   };
   const onPanelChange = (value) => {
+    setMeetingDateStatus(false);
     onChangeDateTemp(value);
     onChangeDate(value);
   };
@@ -413,6 +438,7 @@ function Hardware({}) {
     if (value == valueMeetingTime) {
       setValueMeetingTime(null);
     } else {
+      setMeetingTimeStatus(false);
       setValueMeetingTime(value);
       setLabelMeetingTime(label);
     }
@@ -2042,10 +2068,16 @@ function Hardware({}) {
                 <div className={"mt-4"}>
                   <ReCAPTCHA
                     ref={captchaRef}
+                    onChange={changeCaptcha}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
                 </div>
+                {captchaStatus && (
+                  <div className="ant-form-item-explain-error">
+                    <p>You must fill captcha</p>
+                  </div>
+                )}
                 <div className={"mt-9 flex flex-row justify-between"}>
                   <button
                     className={"bg-white py-2 px-4"}
@@ -3088,10 +3120,16 @@ function Hardware({}) {
                 <div className={"mt-4"}>
                   <ReCAPTCHA
                     ref={captchaRefMobile}
+                    onChange={changeCaptcha}
                     // sitekey={"6LdBDkkjAAAAAH9NtxIC8IhWeDbdbSfuKJUaR074"}
                     sitekey={`${process.env.NEXT_PUBLIC_G_RECAPTCHA_CID}`}
                   />
                 </div>
+                {captchaStatus && (
+                  <div className="ant-form-item-explain-error">
+                    <p>You must fill captcha</p>
+                  </div>
+                )}
                 <div className={"mt-9 flex flex-row justify-between"}>
                   <button
                     className={"bg-white py-2 px-4"}
