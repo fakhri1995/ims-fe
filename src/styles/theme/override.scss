@@ -651,3 +651,7 @@ div.marquee > a > img {
     transform: translate3d(-100%, 0, 0);
   }
 }
+
+.ant-upload-list-item-name:hover {
+  pointer-events: none;
+}

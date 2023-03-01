@@ -130,16 +130,18 @@ function CustomerStoriesDetail({}) {
             setTableContentH3(datacontenttemph3);
           } else {
             console.log("masuk id ");
+            console.log("data id ", res2.data[0]);
             if (
               res2.data[0].title_id != "" &&
-              res2.data[i].description_id != "" &&
-              res2.data[i].page_path_id != "" &&
-              res2.data[i].content_id != "" &&
-              res2.data[i].tags_id != ""
+              res2.data[0].description_id != "" &&
+              res2.data[0].page_path_id != "" &&
+              res2.data[0].content_id != "" &&
+              res2.data[0].tags_id != ""
             ) {
               console.log("masuk id if ");
               setHalamanId(true);
               setDetailBlog(res2.data[0]);
+
               let total =
                 wordsCount(stripTags(res2.data[0].description_id)) +
                 wordsCount(stripTags(res2.data[0].content_id));
@@ -281,7 +283,7 @@ function CustomerStoriesDetail({}) {
               </span>
             </p>
             <p className={"text-sm text-darkgrey font-gilroyregular"}>
-              {minutesRead && minutesRead + " MINUTE READ"}
+              {minutesRead && minutesRead + t.minute_read}
             </p>
           </div>
         </div>
@@ -516,7 +518,7 @@ function CustomerStoriesDetail({}) {
           </div>
           <div className={"self-center"}>
             <p className={"text-xs text-darkgrey font-gilroyregular"}>
-              {minutesRead} MINUTE READ
+              {minutesRead} {t.minute_read}
             </p>
           </div>
         </div>

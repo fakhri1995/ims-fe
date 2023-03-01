@@ -138,7 +138,10 @@ function LandingPage({ dataBlog }) {
             for (let i = 0; i < res2.data.length; i++) {
               if (
                 res2.data[i].title_id != "" &&
-                res2.data[i].description_id != ""
+                res2.data[i].description_id != "" &&
+                res2.data[i].page_path_id != "" &&
+                res2.data[i].content_id != "" &&
+                res2.data[i].tags_id != ""
               ) {
                 dataTemp.push(res2.data[i]);
                 console.log("masuk push");
@@ -1217,31 +1220,59 @@ function LandingPage({ dataBlog }) {
                                 }}
                               />
                             )}
-                            <Linkk
-                              href={`/migwebsite/customerstories/${data1.page_path}`}
-                            >
-                              <button
-                                className={
-                                  "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
-                                }
+                            {locale == "en" ? (
+                              <Linkk
+                                href={`/migwebsite/customerstories/${data1.page_path}`}
                               >
-                                <div
-                                  className={"flex flex-row justify-between"}
+                                <button
+                                  className={
+                                    "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                  }
                                 >
-                                  <p
-                                    className={
-                                      "pr-[13.52px] text-base font-gilroysemibold"
-                                    }
+                                  <div
+                                    className={"flex flex-row justify-between"}
                                   >
-                                    Read Story
-                                  </p>
-                                  <img
-                                    className={"w-5 h-5"}
-                                    src="/image/landingpage/arrow_forward_ios2.png"
-                                  />
-                                </div>
-                              </button>
-                            </Linkk>
+                                    <p
+                                      className={
+                                        "pr-[13.52px] text-base font-gilroysemibold"
+                                      }
+                                    >
+                                      Read Story
+                                    </p>
+                                    <img
+                                      className={"w-5 h-5"}
+                                      src="/image/landingpage/arrow_forward_ios2.png"
+                                    />
+                                  </div>
+                                </button>
+                              </Linkk>
+                            ) : (
+                              <Linkk
+                                href={`/id/migwebsite/customerstories/${data1.page_path}`}
+                              >
+                                <button
+                                  className={
+                                    "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                  }
+                                >
+                                  <div
+                                    className={"flex flex-row justify-between"}
+                                  >
+                                    <p
+                                      className={
+                                        "pr-[13.52px] text-base font-gilroysemibold"
+                                      }
+                                    >
+                                      Baca Testimoni
+                                    </p>
+                                    <img
+                                      className={"w-5 h-5"}
+                                      src="/image/landingpage/arrow_forward_ios2.png"
+                                    />
+                                  </div>
+                                </button>
+                              </Linkk>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1653,7 +1684,7 @@ function LandingPage({ dataBlog }) {
                 </div>
               </div>
               <div className="mt-3">
-                <a href="/joinourteam">
+                <a style={{ textDecoration: "none" }} href="/joinourteam">
                   <div className="flex mt-5 justify-end mr-5">
                     <p className="text-xl mr-2 text-primarygreen font-gilroysemibold">
                       {t.joinmigcta}
@@ -1727,7 +1758,7 @@ function LandingPage({ dataBlog }) {
           </div>
         </div>
         <div className="self-end mt-5">
-          <a href="#">
+          <a style={{ textDecoration: "none" }} href="#">
             <div className="flex mt-5 justify-end mr-5">
               <p className="text-base mr-[13.52px] text-primarygreen font-gilroysemibold">
                 {t.joinmigcta}

@@ -67,7 +67,7 @@ function LeftContactUs({ children }) {
           style={{ lineHeight: "150%" }}
           className={"text-sm md:text-[18px] text-blackmig font-gilroyregular"}
         >
-          Tebet raya no. 72{" "}
+          Tebet raya no. 42{" "}
           {locale == "en" ? "South Jakarta" : "Jakarta Selatan"}, DKI
           Jakarta,12820
         </p>
