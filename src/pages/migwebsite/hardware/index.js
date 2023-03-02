@@ -695,6 +695,7 @@ function Hardware({}) {
 
   const handleClearForm = () => {
     form.setFieldsValue({ time_need_product: null });
+    // form.resetFields();
     form.setFieldsValue({ time_used: null });
     form.setFieldsValue({ product: null });
     form.setFieldsValue({ max_budget: null });
@@ -1915,7 +1916,7 @@ function Hardware({}) {
                       </button>
                     ) : (
                       <button
-                        onClick={form.submit}
+                        onClick={() => form.submit}
                         // type="submit"
                         // onClick={handleAddAnotherProduct}
                         className={
@@ -2967,7 +2968,7 @@ function Hardware({}) {
                       </button>
                     ) : (
                       <button
-                        onClick={form.submit}
+                        onClick={() => form.submit}
                         // type="submit"
                         // onClick={handleAddAnotherProduct}
                         className={
