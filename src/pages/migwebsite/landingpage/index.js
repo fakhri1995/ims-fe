@@ -504,9 +504,9 @@ function LandingPage({ dataBlog }) {
               </p>
             </div>
           </div>
-          <div className={"flex justify-center"}>
+          <div className={"flex justify-center px-3"}>
             <img
-              className={"w-[328px] h-[172px]"}
+              className={"w-full h-auto"}
               src="/image/landingpage/mitramas-infosys-global-landing-page-hero.png"
             />
           </div>
