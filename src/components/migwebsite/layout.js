@@ -299,15 +299,16 @@ function layout({ children }) {
       console.log("data ke ", datasplit[a]);
     }
     if (datasplit[2] == "customerstories" && datasplit[3] != "") {
-      getDataCustomerStoriesDetail(datasplit[3], router.locale);
+      console.log("masuk customerstories ");
+      getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
     } else if (datasplit[2] == "blog" && datasplit[3] != "") {
-      getDataCustomerStoriesDetail(datasplit[3], router.locale);
+      getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
     } else {
       router.push(router.pathname, router.asPath, { locale });
     }
   };
 
-  const getDataCustomerStoriesDetail = (page, locale) => {
+  const getDataCustomerStoriesDetail = (page, locale, locale_temp) => {
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialDetail?pagepath=${page}`,
       {
@@ -321,6 +322,7 @@ function layout({ children }) {
           //   setDataTestimonial(res2.data);
           console.log("locale apa ", locale);
           if (locale == "en") {
+            console.log("masuk if en ");
             if (
               res2.data[0].title_id != "" &&
               res2.data[0].description_id != "" &&
@@ -328,11 +330,14 @@ function layout({ children }) {
               res2.data[0].content_id != "" &&
               res2.data[0].tags_id != ""
             ) {
-              router.push(router.pathname, router.asPath, { locale });
+              console.log("harusnya pindah halaman ", router);
+              // router.push(`/id/`+router.asPath);
+              router.push(router.pathname, router.asPath, { locale: "id" });
             } else {
               alert("Halaman ID tidak tersedia untuk testimoni ini");
             }
           } else {
+            console.log("masuk if id ");
             if (
               res2.data[0].title != "" &&
               res2.data[0].description != "" &&
@@ -340,7 +345,8 @@ function layout({ children }) {
               res2.data[0].content != "" &&
               res2.data[0].tags != ""
             ) {
-              router.push(router.pathname, router.asPath, { locale });
+              console.log("harusnya pindah halaman baru ", router);
+              router.push(router.pathname, router.asPath, { locale: "en" });
             } else {
               alert("Page EN Not Found for this testimonial");
             }
