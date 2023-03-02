@@ -130,15 +130,20 @@ const EmployeeContractForm = ({
     const selectedMultiplierIds = selectedMultipliers.map(
       (multiplier) => multiplier.id
     );
-    const selectedMultiplierValues = dataContract?.salaries
-      ?.filter((benefit) =>
-        selectedMultiplierIds.includes(benefit.employee_salary_column_id)
-      )
-      ?.map((multiplier) => multiplier.value);
+
+    const selectedMultiplierValues =
+      dataContract?.salaries?.length > 0
+        ? dataContract?.salaries
+            ?.filter((benefit) =>
+              selectedMultiplierIds.includes(benefit?.employee_salary_column_id)
+            )
+            ?.map((multiplier) => multiplier.value)
+        : [];
 
     // Sum with gaji pokok, then calculate final result
     const totalMultiplier =
       (dataContract?.gaji_pokok ?? 0) + sumValues(selectedMultiplierValues);
+
     let result = Math.round(totalMultiplier * (percent / 100) * 100) / 100;
 
     return result || 0;
@@ -422,6 +427,7 @@ const EmployeeContractForm = ({
     }
   }, []);
 
+  // console.log({ dataContract });
   return (
     <Form
       layout="vertical"
@@ -728,7 +734,7 @@ const EmployeeContractForm = ({
         <p className="mig-heading--5">BENEFIT PENERIMAAN</p>
         <Form.Item
           label="Gaji Pokok"
-          name={"main_salary"}
+          name={"gaji_pokok"}
           rules={[
             {
               required: true,
@@ -751,6 +757,13 @@ const EmployeeContractForm = ({
                   ...prev,
                   gaji_pokok: floatValue || 0,
                 }));
+
+                if (debouncedApiCall) {
+                  debouncedApiCall({
+                    ...dataContract,
+                    gaji_pokok: floatValue || 0,
+                  });
+                }
               }}
               renderText={(value) => <p>{value}</p>}
             />
@@ -783,7 +796,7 @@ const EmployeeContractForm = ({
                 idx={idx}
                 dataColumn={variable}
                 payslipId={dataContract?.id}
-                disabled={true} //TODO: delete if API is done
+                // disabled={true} //TODO: delete if API is done
               />
               {/* {!variable.required && (
                     <Button
@@ -817,7 +830,6 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs ks`}
               fieldName={"bpjs_ks"}
-              benefitType={"bpjs"}
               setDataForm={setDataContract}
               value={countBenefitValue(5)}
               disabled
@@ -838,7 +850,6 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jht`}
               fieldName={"bpjs_tk_jht"}
-              benefitType={"bpjs"}
               setDataForm={setDataContract}
               value={countBenefitValue(5.7)}
               disabled
@@ -859,7 +870,6 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jkk`}
               fieldName={"bpjs_tk_jkk"}
-              benefitType={"bpjs"}
               setDataForm={setDataContract}
               value={countBenefitValue(0.24)}
               disabled
@@ -880,7 +890,6 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jkm`}
               fieldName={"bpjs_tk_jkm"}
-              benefitType={"bpjs"}
               setDataForm={setDataContract}
               value={countBenefitValue(0.3)}
               disabled
@@ -901,7 +910,6 @@ const EmployeeContractForm = ({
             <CustomCurrencyInput
               fieldLabel={`bpjs tk jp`}
               fieldName={"bpjs_tk_jp"}
-              benefitType={"bpjs"}
               setDataForm={setDataContract}
               value={countBenefitValue(3)}
               disabled
@@ -909,9 +917,9 @@ const EmployeeContractForm = ({
           </div>
         </Form.Item>
 
-        {/* <Form.Item
+        <Form.Item
           label="PPh 21"
-          name={"pph"}
+          name={"pph21"}
           rules={[
             {
               required: true,
@@ -920,15 +928,25 @@ const EmployeeContractForm = ({
           ]}
         >
           <>
-            <CustomCurrencyInput
-              fieldLabel={`PPh 21`}
-              fieldName={"pph"}
-              setDataForm={setDataContract}
-              disabled
-              // value={dataPayslip?.benefit?.pph}
+            <CurrencyFormat
+              customInput={Input}
+              placeholder={"Masukkan PPh 21"}
+              value={Number(dataContract?.pph21 || 0)}
+              thousandSeparator={"."}
+              decimalSeparator={","}
+              prefix={"Rp"}
+              allowNegative={false}
+              onValueChange={(values) => {
+                const { formattedValue, value, floatValue } = values;
+                setDataContract((prev) => ({
+                  ...prev,
+                  pph21: floatValue || 0,
+                }));
+              }}
+              renderText={(value) => <p>{value}</p>}
             />
           </>
-        </Form.Item> */}
+        </Form.Item>
         {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
         {reductionVarFields.map((variable, idx) => {
           let reductionFieldId = receiveVarFields.length + idx;
@@ -958,7 +976,7 @@ const EmployeeContractForm = ({
                   idx={reductionFieldId}
                   dataColumn={variable}
                   payslipId={dataContract?.id}
-                  disabled={true} //TODO: delete if API is done
+                  // disabled={true} //TODO: delete if API is done
                 />
               </div>
             </Form.Item>

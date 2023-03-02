@@ -912,6 +912,7 @@ const ModalManageSalaryVar = ({
     percent: 0,
     type: 0,
     required: false,
+    is_amount_for_bpjs: false,
   });
   const [inputField, setInputField] = useState("");
   const [varType, setVarType] = useState(0);
@@ -1254,9 +1255,9 @@ const ModalManageSalaryVar = ({
             <Checkbox defaultChecked={true} disabled={true}>
               BPJS TK-JP (3% Perusahaan)
             </Checkbox>
-            {/* <Checkbox defaultChecked={true} disabled={true}>
+            <Checkbox defaultChecked={true} disabled={true}>
               PPh 21
-            </Checkbox> */}
+            </Checkbox>
 
             {reductionVarOptions?.map((option, idx) => (
               <div
@@ -1370,6 +1371,7 @@ const ModalAddSalaryVar = ({
     percent: 0,
     type: 0,
     required: false,
+    is_amount_for_bpjs: false,
   });
   const [receiveVarOptions, setReceiveVarOptions] = useState([]);
   const [reductionVarOptions, setReductionVarOptions] = useState([]);
@@ -1723,9 +1725,9 @@ const ModalAddSalaryVar = ({
             <Checkbox defaultChecked={true} disabled={true}>
               BPJS TK-JP (3% Perusahaan)
             </Checkbox>
-            {/* <Checkbox defaultChecked={true} disabled={true}>
+            <Checkbox defaultChecked={true} disabled={true}>
               PPh 21
-            </Checkbox> */}
+            </Checkbox>
             {reductionVarOptions?.map((option, idx) => (
               <div key={idx}>
                 <div className="flex flex-row justify-between items-center">

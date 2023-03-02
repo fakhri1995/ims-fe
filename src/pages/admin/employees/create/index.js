@@ -148,6 +148,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     resign_at: "",
     benefit: {},
     gaji_pokok: 0,
+    pph21: 0,
     salaries: [],
   });
 
@@ -229,7 +230,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   is_employee_active: 1,
                 });
               } else {
-                setDataContract(res2.data);
+                setDataContract({ ...res2.data, employee_id: employeeId });
               }
             } else {
               notification.error({
@@ -376,11 +377,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       permissionWarningNotification("Menyimpan", "Draft Karyawan");
       return;
     }
-
     if (employeeProfileData) {
       const payloadFormData = objectToFormData({
         ...employeeProfileData,
         is_posted: isPosted,
+        user_id: dataProfile?.data?.id,
       });
 
       setLoadingUpdate(true);

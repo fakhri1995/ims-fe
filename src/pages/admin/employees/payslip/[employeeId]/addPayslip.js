@@ -9,7 +9,6 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
-import "moment/locale/id";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -47,8 +46,6 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import httpcookie from "cookie";
-
-moment.locale("id");
 
 const EmployeePayslipAddIndex = ({
   initProps,
@@ -114,8 +111,12 @@ const EmployeePayslipAddIndex = ({
     total_hari_kerja: 0,
     tanggal_dibayarkan: "",
     gaji_pokok: 0,
-    // pph: 0,
-    bpjs: {},
+    pph21: 0,
+    bpjs_ks: 0,
+    bpjs_tk_jht: 0,
+    bpjs_tk_jkk: 0,
+    bpjs_tk_jkm: 0,
+    bpjs_tk_jp: 0,
     total_gross_penerimaan: 0,
     total_gross_pengurangan: 0,
     take_home_pay: 0,
@@ -163,6 +164,7 @@ const EmployeePayslipAddIndex = ({
     const selectedMultiplierIds = selectedMultipliers.map(
       (multiplier) => multiplier.id
     );
+
     const selectedMultiplierValues = dataPayslip.salaries
       ?.filter((benefit) =>
         selectedMultiplierIds.includes(benefit.employee_salary_column_id)
@@ -300,7 +302,7 @@ const EmployeePayslipAddIndex = ({
         dataPayslip.total_gross_pengurangan &&
         dataPayslip.take_home_pay &&
         dataPayslip.gaji_pokok &&
-        // dataPayslip.pph &&
+        dataPayslip.pph21 &&
         isAllRequiredBenefitFilled
     );
 
@@ -330,8 +332,12 @@ const EmployeePayslipAddIndex = ({
       (dataPayslip?.gaji_pokok ?? 0) + sumValues(receiveBenefitValues);
 
     let newTotalGrossPengurangan =
-      // (dataPayslip?.pph ?? 0) +
-      sumValues(Object.values(dataPayslip?.bpjs ?? {})) +
+      Number(dataPayslip?.pph21 ?? 0) +
+      Number(dataPayslip?.bpjs_ks ?? 0) +
+      Number(dataPayslip?.bpjs_tk_jht ?? 0) +
+      Number(dataPayslip?.bpjs_tk_jkk ?? 0) +
+      Number(dataPayslip?.bpjs_tk_jkm ?? 0) +
+      Number(dataPayslip?.bpjs_tk_jp ?? 0) +
       sumValues(reductionBenefitValues);
 
     setDataPayslip((prev) => ({
@@ -340,8 +346,26 @@ const EmployeePayslipAddIndex = ({
       total_gross_pengurangan: newTotalGrossPengurangan,
       take_home_pay: newTotalGrossPenerimaan - newTotalGrossPengurangan,
     }));
-    // }
-  }, [dataPayslip?.salaries, dataPayslip?.gaji_pokok, dataPayslip?.bpjs]);
+  }, [dataPayslip?.salaries, dataPayslip?.gaji_pokok, dataPayslip?.pph21]);
+
+  // 3.5. Remove variable in salaries if unchecked in modal "Tambah Variabel Gaji"
+  // useEffect(() => {
+  //   const receiveVarFieldIds = receiveVarFields.map(
+  //     (variable) => variable.column.id
+  //   );
+  //   const reductionVarFieldIds = reductionVarFields.map(
+  //     (variable) => variable.column.id
+  //   );
+  //   const benefitVarFieldIds = receiveVarFieldIds.concat(reductionVarFieldIds);
+
+  //   const updatedSalaryVars = dataPayslip?.salaries?.filter((variable) =>
+  //     benefitVarFieldIds.includes(variable.column.id)
+  //   );
+  //   setDataPayslip({
+  //     ...dataPayslip,
+  //     salaries: updatedSalaryVars,
+  //   });
+  // }, [receiveVarFields, reductionVarFields]);
 
   // 4. Handler
   // 4.1. Handle input change
@@ -629,7 +653,6 @@ const EmployeePayslipAddIndex = ({
             >
               Ubah gaji pokok
             </Checkbox>
-
             {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
             <Spin spinning={praloading}>
               {receiveVarFields.map((variable, idx) => (
@@ -692,7 +715,6 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs ks`}
                   fieldName={"bpjs_ks"}
-                  benefitType={"bpjs"}
                   setDataForm={setDataPayslip}
                   value={countBenefitValue(5)}
                   disabled
@@ -713,7 +735,6 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jht`}
                   fieldName={"bpjs_tk_jht"}
-                  benefitType={"bpjs"}
                   setDataForm={setDataPayslip}
                   disabled
                   value={countBenefitValue(5.7)}
@@ -734,7 +755,6 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jkk`}
                   fieldName={"bpjs_tk_jkk"}
-                  benefitType={"bpjs"}
                   setDataForm={setDataPayslip}
                   disabled
                   value={countBenefitValue(0.24)}
@@ -755,7 +775,6 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jkm`}
                   fieldName={"bpjs_tk_jkm"}
-                  benefitType={"bpjs"}
                   setDataForm={setDataPayslip}
                   disabled
                   value={countBenefitValue(0.3)}
@@ -776,27 +795,27 @@ const EmployeePayslipAddIndex = ({
                 <CustomCurrencyInput
                   fieldLabel={`bpjs tk jp`}
                   fieldName={"bpjs_tk_jp"}
-                  benefitType={"bpjs"}
                   setDataForm={setDataPayslip}
                   disabled
                   value={countBenefitValue(3)}
                 />
               </div>
             </Form.Item>
-            {/* <Form.Item
+            <Form.Item
               label="PPh 21"
-              name={"pph"}
+              name={"pph21"}
               rules={[
                 {
                   required: true,
                   message: "PPh 21 wajib diisi",
                 },
-              ]}>
+              ]}
+            >
               <>
                 <CurrencyFormat
                   customInput={Input}
                   placeholder={"Masukkan PPh 21"}
-                  value={dataPayslip?.pph || 0}
+                  value={Number(dataPayslip?.pph21 || 0)}
                   thousandSeparator={"."}
                   decimalSeparator={","}
                   prefix={"Rp"}
@@ -805,13 +824,13 @@ const EmployeePayslipAddIndex = ({
                     const { formattedValue, value, floatValue } = values;
                     setDataPayslip((prev) => ({
                       ...prev,
-                      pph: floatValue || 0,
+                      pph21: floatValue || 0,
                     }));
                   }}
                   renderText={(value) => <p>{value}</p>}
                 />
               </>
-            </Form.Item> */}
+            </Form.Item>
             {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
             {reductionVarFields.map((variable, idx) => {
               let reductionFieldId = receiveVarFields.length + idx;
