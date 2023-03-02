@@ -451,6 +451,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
   };
 
   const onChangeTextContent = (text) => {
+    console.log("isi konten ", text);
     setArtikelBlog({
       ...artikelBlog,
       content: text,
@@ -700,6 +701,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       ]}
                     >
                       <RichText
+                        initProps={initProps}
                         value={artikelBlog.description}
                         placeholder={"Description"}
                         onChange={onChangeTextDescription}
@@ -790,6 +792,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                       ]}
                     >
                       <RichText
+                        initProps={initProps}
                         value={artikelBlog.content}
                         placeholder={"isi Content"}
                         onChange={onChangeTextContent}
@@ -966,6 +969,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                           // ]}
                         >
                           <RichText
+                            initProps={initProps}
                             value={artikelBlog.quote}
                             placeholder={"isi Quote"}
                             onChange={onChangeTextContentQuote}
@@ -1144,6 +1148,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     </Form.Item>
                     <Form.Item label="Description ID" name="description_id">
                       <RichText
+                        initProps={initProps}
                         value={artikelBlog.description_id}
                         placeholder={"isi Artikel Text"}
                         onChange={onChangeTextDescriptionId}
@@ -1159,6 +1164,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                     </Form.Item>
                     <Form.Item label="Content ID" name="content_id">
                       <RichText
+                        initProps={initProps}
                         value={artikelBlog.content_id}
                         placeholder={"isi Content"}
                         onChange={onChangeTextContentId}
@@ -1329,6 +1335,7 @@ function BlogCreate({ initProps, dataProfile, sidemenu, dataCompanyList }) {
                           // ]}
                         >
                           <RichText
+                            initProps={initProps}
                             value={artikelBlog.quoteId}
                             placeholder={"isi Quote"}
                             onChange={onChangeTextContentQuoteId}
