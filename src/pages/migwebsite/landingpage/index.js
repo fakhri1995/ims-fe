@@ -122,6 +122,11 @@ function LandingPage({ dataBlog }) {
     rt.push("/freeconsultation");
   };
 
+  const readTestimoni = (page_path) => {
+    console.log("baca testimoni ", page_path);
+    rt.push("/id/migwebsite/customerstories/" + page_path);
+  };
+
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialLandingPage`, {
       method: `GET`,
@@ -353,7 +358,7 @@ function LandingPage({ dataBlog }) {
                       "flex flex-row justify-center text-xl text-primarygreen rounded border-2 border-primarygreen pl-4 pr-3 py-2 mt-4 bg-white"
                     }
                   >
-                    <p className={"mr-2 font-gilroysemibold"}>
+                    <p className={"mr-2 text-xl font-gilroysemibold"}>
                       {t.landingpageoursolution}
                     </p>
                     <img
@@ -369,7 +374,7 @@ function LandingPage({ dataBlog }) {
                     "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 gilroy-medium bg-white"
                   }
                 >
-                  <p className={""}>{t.landingpagefreeconsultation}</p>
+                  <p className={"text-xl"}>{t.landingpagefreeconsultation}</p>
                 </button>
               </div>
             </div>
@@ -558,7 +563,7 @@ function LandingPage({ dataBlog }) {
                     "flex text-base text-white border-2 rounded bg-primarygreen rounded border-primarygreen px-4 py-2 mt-9"
                   }
                 >
-                  <p className={"font-gilroysemibold"}>
+                  <p className={"text-base font-gilroysemibold"}>
                     {t.landingpagefreeconsultation}
                   </p>
                 </button>
@@ -580,7 +585,7 @@ function LandingPage({ dataBlog }) {
                     "flex text-base text-primarygreen px-3 py-2 md:px-4 md:py-3 mt-8 bg-white font-gilroysemibold justify-center items-center"
                   }
                 >
-                  <p className={""}>Explore Solutions</p>
+                  <p className={"text-base"}>Explore Solutions</p>
                   <img
                     className={"w-4 h-4 ml-3"}
                     src="/image/landingpage/arrow-down-green.png"
@@ -687,7 +692,9 @@ function LandingPage({ dataBlog }) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"mr-[13.52px]"}>{t.hardwarebuttontitle}</p>
+                      <p className={"mr-[13.52px] text-xl"}>
+                        {t.hardwarebuttontitle}
+                      </p>
                       <img
                         className={"self-center"}
                         style={{ width: "8px", height: "15px" }}
@@ -745,7 +752,9 @@ function LandingPage({ dataBlog }) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"mr-[13.52px]"}>{t.softwarebuttontitle}</p>
+                      <p className={"mr-[13.52px] text-xl"}>
+                        {t.softwarebuttontitle}
+                      </p>
                       <img
                         className={"self-center"}
                         style={{ height: "15px", width: "8px" }}
@@ -789,7 +798,9 @@ function LandingPage({ dataBlog }) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"mr-[13.52px]"}>{t.talentbuttontitle}</p>
+                      <p className={"mr-[13.52px] text-xl"}>
+                        {t.talentbuttontitle}
+                      </p>
                       <img
                         className={"self-center"}
                         style={{ height: "15px", width: "8px" }}
@@ -1247,31 +1258,30 @@ function LandingPage({ dataBlog }) {
                                 </button>
                               </Linkk>
                             ) : (
-                              <Linkk
-                                href={`/id/migwebsite/customerstories/${data1.page_path}`}
+                              <button
+                                onClick={() =>
+                                  readTestimoni(data1.page_path_id)
+                                }
+                                className={
+                                  "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                }
                               >
-                                <button
-                                  className={
-                                    "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
-                                  }
+                                <div
+                                  className={"flex flex-row justify-between"}
                                 >
-                                  <div
-                                    className={"flex flex-row justify-between"}
+                                  <p
+                                    className={
+                                      "pr-[13.52px] text-base font-gilroysemibold"
+                                    }
                                   >
-                                    <p
-                                      className={
-                                        "pr-[13.52px] text-base font-gilroysemibold"
-                                      }
-                                    >
-                                      Baca Testimoni
-                                    </p>
-                                    <img
-                                      className={"w-5 h-5"}
-                                      src="/image/landingpage/arrow_forward_ios2.png"
-                                    />
-                                  </div>
-                                </button>
-                              </Linkk>
+                                    Baca Testimoni
+                                  </p>
+                                  <img
+                                    className={"w-5 h-5"}
+                                    src="/image/landingpage/arrow_forward_ios2.png"
+                                  />
+                                </div>
+                              </button>
                             )}
                           </div>
                         </div>
@@ -1801,10 +1811,10 @@ function LandingPage({ dataBlog }) {
                 "mt-3.5 text-xl font-gilroyregular text-center text-black"
               }
             >
-              <p style={{ lineHeight: "120%" }}>
+              <p style={{ lineHeight: "120%", fontSize: "20px" }}>
                 {t.contactussectionsubtitle1}
               </p>
-              <p style={{ lineHeight: "120%" }}>
+              <p style={{ lineHeight: "120%", fontSize: "20px" }}>
                 {t.contactussectionsubtitle2}
               </p>
             </div>

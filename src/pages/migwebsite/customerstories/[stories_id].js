@@ -147,6 +147,27 @@ function CustomerStoriesDetail({}) {
                 wordsCount(stripTags(res2.data[0].content_id));
               let minute = timeRead(total);
               setMinutesRead(minute);
+              let parser = new DOMParser();
+              const content = parser.parseFromString(
+                res2.data[0].content_id,
+                "text/html"
+              );
+              const content_data = content.querySelectorAll("h2");
+              let datacontenttemp = [];
+              if (content_data.length > 0) {
+                for (let a = 0; a < content_data.length; a++) {
+                  datacontenttemp.push(content_data[a].outerText);
+                }
+              }
+              setTableContent(datacontenttemp);
+              const content_data_h3 = content.querySelectorAll("h3");
+              let datacontenttemph3 = [];
+              if (content_data_h3.length > 0) {
+                for (let a = 0; a < content_data_h3.length; a++) {
+                  datacontenttemph3.push(content_data_h3[a].outerText);
+                }
+              }
+              setTableContentH3(datacontenttemph3);
             } else {
               console.log("masuk id else");
               setHalamanId(false);
@@ -183,6 +204,7 @@ function CustomerStoriesDetail({}) {
         console.log("get data testimonial 2 ", res2);
         if (res2.success) {
           //   setDataTestimonial(res2.data);
+          console.log("locale apa ", locale);
           if (locale == "en") {
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
@@ -194,6 +216,8 @@ function CustomerStoriesDetail({}) {
           } else {
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
+              console.log("page path id ", res2.data[i].page_path_id);
+              console.log("pagenya ", page);
               if (
                 res2.data[i].title_id != "" &&
                 res2.data[i].description_id != "" &&
@@ -267,7 +291,7 @@ function CustomerStoriesDetail({}) {
           </p>
           <div className={"flex flex-row justify-between my-[17px]"}>
             <p className={"text-xs text-darkgrey"}>
-              by{" "}
+              {locale == "en" ? "by " : "oleh "}
               <span className={"font-bold"}>
                 {detailBlog
                   ? detailBlog.author
@@ -275,10 +299,12 @@ function CustomerStoriesDetail({}) {
                     : "Admin"
                   : ""}{" "}
               </span>
-              on{" "}
+              {locale == "en" ? "on " : "pada "}
               <span className={"font-bold"}>
                 {detailBlog
-                  ? moment(detailBlog.created_at).format("DD MMMM YYYY")
+                  ? moment(detailBlog.created_at)
+                      .locale("id")
+                      .format("DD MMMM YYYY")
                   : "-"}
               </span>
             </p>
@@ -309,7 +335,7 @@ function CustomerStoriesDetail({}) {
                 "text-sm text-darkgrey md:text-base font-gilroysemibold"
               }
             >
-              Share
+              {locale == "en" ? "Share" : "Bagikan"}
             </p>
             <EmailShareButton
               url={fullUrl} //eg. https://www.example.com
@@ -366,7 +392,7 @@ function CustomerStoriesDetail({}) {
                 style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
               >
                 <p className={"text-blackmig text-base font-gilroysemibold"}>
-                  TABLE OF CONTENT
+                  {locale == "en" ? "TABLE OF CONTENT" : "Tabel Konten"}
                 </p>
                 <div className={"border border-dividermig mt-2"}></div>
                 <div className={"mt-1"}>
@@ -442,7 +468,7 @@ function CustomerStoriesDetail({}) {
               : ""}
           </p>
           <p className={"text-xs text-blackmig font-gilroyregular mt-3 mb-4"}>
-            by{" "}
+            {locale == "en" ? "by " : "oleh "}
             <span className={"font-gilroysemibold"}>
               {detailBlog
                 ? detailBlog.author
@@ -450,10 +476,12 @@ function CustomerStoriesDetail({}) {
                   : "Admin"
                 : ""}{" "}
             </span>
-            on{" "}
+            {locale == "en" ? "on " : "pada "}
             <span className={"font-gilroysemibold"}>
               {detailBlog
-                ? moment(detailBlog.created_at).format("DD MMMM YYYY")
+                ? moment(detailBlog.created_at)
+                    .locale("id")
+                    .format("DD MMMM YYYY")
                 : "-"}
             </span>
           </p>
@@ -470,7 +498,7 @@ function CustomerStoriesDetail({}) {
                 "text-xs text-darkgrey md:text-base font-gilroysemibold self-center"
               }
             >
-              Share
+              {locale == "en" ? "Share" : "Bagikan"}
             </p>
             <EmailShareButton
               url={fullUrl} //eg. https://www.example.com
@@ -529,7 +557,7 @@ function CustomerStoriesDetail({}) {
           style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
         >
           <p className={"text-blackmig text-base font-gilroysemibold"}>
-            TABLE OF CONTENT
+            {locale == "en" ? "TABLE OF CONTENT" : "Tabel Konten"}
           </p>
           <div className={"mt-2 border border-dividermig"}></div>
           <div className={"mt-2"}>
@@ -657,7 +685,7 @@ function CustomerStoriesDetail({}) {
         >
           <div className={"flex flex-row justify-between"}>
             <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
-              Read Other Stories
+              {locale == "en" ? "Read Other Stories" : "Baca Cerita Lainnya"}
             </p>
             <Linkk href={`/customerstories`}>
               <p
@@ -665,7 +693,7 @@ function CustomerStoriesDetail({}) {
                   "text-base pr-10 md:text-base gilroy-bold text-darkgreen"
                 }
               >
-                See More
+                {locale == "en" ? "See More" : "Lihat Semua"}
               </p>
             </Linkk>
           </div>
@@ -696,19 +724,21 @@ function CustomerStoriesDetail({}) {
                       )}
                       <div className={"mt-3"}>
                         <p className={"text-xs text-darkgrey"}>
-                          by{" "}
+                          {locale == "en" ? "by " : "oleh "}
                           <span className={"font-bold"}>
                             {dataarticle.author ? dataarticle.author : "Admin "}{" "}
                           </span>
-                          on{" "}
+                          {locale == "en" ? "on " : "pada "}
                           <span className={"font-bold"}>
-                            {moment(dataarticle.created_at).format(
-                              "DD MMMM YYYY"
-                            )}
+                            {moment(dataarticle.created_at)
+                              .locale("id")
+                              .format("DD MMMM YYYY")}
                           </span>
                         </p>
                         <p className={"font-bold text-blackmig text-base mt-3"}>
-                          {dataarticle.title}
+                          {locale == "en"
+                            ? dataarticle.title
+                            : dataarticle.title_id}
                         </p>
                         <p
                           className={
@@ -743,7 +773,7 @@ function CustomerStoriesDetail({}) {
               "text-base md:text-xl font-gilroybold text-primarygreen px-4"
             }
           >
-            Read Other Stories
+            {locale == "en" ? "Read Other Stories" : "Baca Cerita Lainnya"}
           </p>
           <Slider {...sliderSettingsPhone}>
             {dataOthers.map((dataarticle) => (
@@ -775,7 +805,9 @@ function CustomerStoriesDetail({}) {
                         "text-[10px] text-darkgrey font-gilroysemibold"
                       }
                     >
-                      {moment(dataarticle.created_at).format("DD MMMM YYYY")}
+                      {moment(dataarticle.created_at)
+                        .locale("id")
+                        .format("DD MMMM YYYY")}
                     </p>
                     <p className={"font-gilroybold text-blackmig text-sm mt-1"}>
                       {locale == "en"
