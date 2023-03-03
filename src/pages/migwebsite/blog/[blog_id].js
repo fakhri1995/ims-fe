@@ -140,6 +140,27 @@ function BlogDetail({}) {
                   wordsCount(stripTags(res2.data[0].content_id));
                 let minute = timeRead(total);
                 setMinutesRead(minute);
+                let parser = new DOMParser();
+                const content = parser.parseFromString(
+                  res2.data[0].content_id,
+                  "text/html"
+                );
+                const content_data = content.querySelectorAll("h2");
+                let datacontenttemp = [];
+                if (content_data.length > 0) {
+                  for (let a = 0; a < content_data.length; a++) {
+                    datacontenttemp.push(content_data[a].outerText);
+                  }
+                }
+                setTableContent(datacontenttemp);
+                const content_data_h3 = content.querySelectorAll("h3");
+                let datacontenttemph3 = [];
+                if (content_data_h3.length > 0) {
+                  for (let a = 0; a < content_data_h3.length; a++) {
+                    datacontenttemph3.push(content_data_h3[a].outerText);
+                  }
+                }
+                setTableContentH3(datacontenttemph3);
               } else {
                 setHalamanId(false);
                 alert("Halaman ID tidak tersedia untuk testimoni ini");
@@ -248,7 +269,7 @@ function BlogDetail({}) {
           </p>
           <div className={"flex flex-row justify-between my-[17px]"}>
             <p className={"text-xs text-darkgrey"}>
-              by{" "}
+              {locale == "en" ? "by " : "oleh "}
               <span className={"font-bold"}>
                 {detailBlog
                   ? detailBlog.author
@@ -256,7 +277,7 @@ function BlogDetail({}) {
                     : "Admin"
                   : "Admin"}{" "}
               </span>
-              on{" "}
+              {locale == "en" ? "on " : "pada "}
               <span className={"font-bold"}>
                 {detailBlog &&
                   moment(detailBlog.created_at).format("DD MMMM YYYY")}
@@ -346,7 +367,7 @@ function BlogDetail({}) {
                 style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
               >
                 <p className={"text-blackmig text-base font-gilroysemibold"}>
-                  TABLE OF CONTENT
+                  {locale == "en" ? "TABLE OF CONTENT" : "Tabel Konten"}
                 </p>
                 <div className={"border border-dividermig mt-2"}></div>
                 <div className={"mt-1"}>
@@ -422,7 +443,7 @@ function BlogDetail({}) {
               : ""}
           </p>
           <p className={"text-xs text-blackmig font-gilroyregular mt-3 mb-4"}>
-            by{" "}
+            {locale == "en" ? "by " : "oleh "}
             <span className={"font-gilroysemibold"}>
               {detailBlog
                 ? detailBlog.author
@@ -430,7 +451,7 @@ function BlogDetail({}) {
                   : "Admin"
                 : "Admin"}{" "}
             </span>
-            on{" "}
+            {locale == "en" ? "on " : "pada "}
             <span className={"font-gilroysemibold"}>
               {moment(detailBlog?.created_at).format("DD MMMM YYYY")}
             </span>
@@ -517,7 +538,7 @@ function BlogDetail({}) {
           style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
         >
           <p className={"text-blackmig text-base font-gilroysemibold"}>
-            TABLE OF CONTENT
+            {locale == "en" ? "TABLE OF CONTENT" : "Tabel Konten"}
           </p>
           <div className={"mt-2 border border-dividermig"}></div>
           <div className={"mt-2"}>
@@ -641,7 +662,7 @@ function BlogDetail({}) {
         >
           <div className={"flex flex-row justify-between"}>
             <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
-              Read Other Articles
+              {locale == "en" ? "Read Other Articles" : "Baca Artikel Lain"}
             </p>
             <Linkk href={`/blog`}>
               <p
@@ -649,7 +670,7 @@ function BlogDetail({}) {
                   "text-base pr-10 md:text-base gilroy-bold text-darkgreen"
                 }
               >
-                See More
+                {locale == "en" ? "See More" : "Lihat semua"}
               </p>
             </Linkk>
           </div>
@@ -672,11 +693,11 @@ function BlogDetail({}) {
                   )}
                   <div className={"mt-3"}>
                     <p className={"text-xs text-darkgrey"}>
-                      by{" "}
+                      {locale == "en" ? "by " : "oleh "}
                       <span className={"font-bold"}>
                         {data1.author ? data1.author : "Admin"}{" "}
                       </span>
-                      on{" "}
+                      {locale == "en" ? "on " : "pada "}
                       <span className={"font-bold"}>
                         {moment(data1.created_at).format("DD MMMM YYYY")}
                       </span>
@@ -711,7 +732,7 @@ function BlogDetail({}) {
               "text-base md:text-xl font-gilroybold text-primarygreen px-4"
             }
           >
-            Read Other Articles
+            {locale == "en" ? "Read Other Articles" : "Baca Artikel Lain"}
           </p>
           <Slider {...sliderSettingsPhone}>
             {articleList.map((dataarticle) => (
