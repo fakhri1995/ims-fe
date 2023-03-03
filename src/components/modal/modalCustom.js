@@ -1360,6 +1360,7 @@ const ModalAddSalaryVar = ({
   isAllowedToDeleteSalaryColumn,
   payslipId,
   dataPayslip,
+  setDataPayslip,
 }) => {
   // 1. Use State
   const [praLoading, setPraLoading] = useState(false);
@@ -1447,7 +1448,7 @@ const ModalAddSalaryVar = ({
       setReceiveVarFields(dataVarReceive);
       setReductionVarFields(dataVarReduction);
     }
-  }, [dataPayslip]);
+  }, [payslipId, dataPayslip?.salaries]);
 
   // 3. Event
   const handleAddVariable = () => {
@@ -1600,6 +1601,15 @@ const ModalAddSalaryVar = ({
                         );
                         setReceiveVarFields(newReceiveVarFields);
 
+                        // Remove attribute in dataPaylip's salaries
+                        const updatedSalaryVars = dataPayslip?.salaries?.filter(
+                          (variable) => variable.column.id !== option.id
+                        );
+                        setDataPayslip({
+                          ...dataPayslip,
+                          salaries: updatedSalaryVars,
+                        });
+
                         // use for removing BPJS tag if uncheck
                         const newSelectedTags = selectedTags.filter(
                           (tag) => tag.id !== option.id
@@ -1745,6 +1755,16 @@ const ModalAddSalaryVar = ({
                               (variable) => variable.id !== option.id
                             );
                           setReductionVarFields(newReductionVarFields);
+                          // Remove attribute in dataPaylip's salaries
+                          const updatedSalaryVars =
+                            dataPayslip?.salaries?.filter(
+                              (variable) => variable.column.id !== option.id
+                            );
+
+                          setDataPayslip({
+                            ...dataPayslip,
+                            salaries: updatedSalaryVars,
+                          });
                         }
                       }}
                     >

@@ -346,26 +346,7 @@ const EmployeePayslipAddIndex = ({
       total_gross_pengurangan: newTotalGrossPengurangan,
       take_home_pay: newTotalGrossPenerimaan - newTotalGrossPengurangan,
     }));
-  }, [dataPayslip?.salaries, dataPayslip?.gaji_pokok, dataPayslip?.pph21]);
-
-  // 3.5. Remove variable in salaries if unchecked in modal "Tambah Variabel Gaji"
-  // useEffect(() => {
-  //   const receiveVarFieldIds = receiveVarFields.map(
-  //     (variable) => variable.column.id
-  //   );
-  //   const reductionVarFieldIds = reductionVarFields.map(
-  //     (variable) => variable.column.id
-  //   );
-  //   const benefitVarFieldIds = receiveVarFieldIds.concat(reductionVarFieldIds);
-
-  //   const updatedSalaryVars = dataPayslip?.salaries?.filter((variable) =>
-  //     benefitVarFieldIds.includes(variable.column.id)
-  //   );
-  //   setDataPayslip({
-  //     ...dataPayslip,
-  //     salaries: updatedSalaryVars,
-  //   });
-  // }, [receiveVarFields, reductionVarFields]);
+  }, [...dataPayslip?.salaries, dataPayslip?.gaji_pokok, dataPayslip?.pph21]);
 
   // 4. Handler
   // 4.1. Handle input change
@@ -978,6 +959,7 @@ const EmployeePayslipAddIndex = ({
           setSelectedTags={setSelectedMultipliers}
           payslipId={payslipId}
           dataPayslip={dataPayslip}
+          setDataPayslip={setDataPayslip}
           // disabled
         />
       </AccessControl>
