@@ -695,6 +695,7 @@ function Hardware({}) {
 
   const handleClearForm = () => {
     form.setFieldsValue({ time_need_product: null });
+    // form.resetFields();
     form.setFieldsValue({ time_used: null });
     form.setFieldsValue({ product: null });
     form.setFieldsValue({ max_budget: null });
@@ -1858,7 +1859,7 @@ function Hardware({}) {
                         noStyle
                       >
                         <Upload.Dragger
-                          st
+                          status={"success"}
                           className={"border-1 border-dashed border-accentblue"}
                           name="files"
                           maxCount={1}
@@ -1915,7 +1916,7 @@ function Hardware({}) {
                       </button>
                     ) : (
                       <button
-                        onClick={form.submit}
+                        onClick={() => form.submit}
                         // type="submit"
                         // onClick={handleAddAnotherProduct}
                         className={
@@ -2904,7 +2905,7 @@ function Hardware({}) {
                         noStyle
                       >
                         <Upload.Dragger
-                          st
+                          status={"success"}
                           className={"border-1 border-dashed border-accentblue"}
                           name="files"
                           maxCount={1}
@@ -2967,7 +2968,7 @@ function Hardware({}) {
                       </button>
                     ) : (
                       <button
-                        onClick={form.submit}
+                        onClick={() => form.submit}
                         // type="submit"
                         // onClick={handleAddAnotherProduct}
                         className={
@@ -4362,63 +4363,65 @@ function Hardware({}) {
                                       alt=""
                                     />
                                   )}
-                                  <div
-                                    className={
-                                      "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
-                                    }
-                                    style={{
-                                      boxShadow:
-                                        "0px 16px 40px rgba(113, 176, 112, 0.2)",
-                                    }}
-                                  >
-                                    {locale == "en" ? (
-                                      <div
-                                        className=""
-                                        dangerouslySetInnerHTML={{
-                                          __html: data1.quote,
-                                        }}
-                                      />
-                                    ) : locale == "id" &&
-                                      data1.quote_id != null ? (
-                                      <div
-                                        className=""
-                                        dangerouslySetInnerHTML={{
-                                          __html: data1.quote_id,
-                                        }}
-                                      />
-                                    ) : (
-                                      <div
-                                        className=""
-                                        dangerouslySetInnerHTML={{
-                                          __html: data1.quote,
-                                        }}
-                                      />
-                                    )}
+                                  {data1.quote && (
                                     <div
                                       className={
-                                        "mt-3 border border-dividermig w-[144px]"
+                                        "bg-white p-4 absolute -bottom-4 -right-[50px] w-[293px] mt-[115px] rounded-lg"
                                       }
-                                    />
-                                    <p
-                                      className={
-                                        "mt-1 text-[10px] text-blackmig font-gilroysemibold"
-                                      }
+                                      style={{
+                                        boxShadow:
+                                          "0px 16px 40px rgba(113, 176, 112, 0.2)",
+                                      }}
                                     >
-                                      {data1.author}
-                                    </p>
-                                    <p
-                                      className={
-                                        "mt-1 text-[10px] text-blackmig  font-gilroyregular"
-                                      }
-                                    >
-                                      {locale == "en"
-                                        ? data1.job_title
-                                        : locale == "id" &&
-                                          data1.job_title_id != null
-                                        ? data1.job_title_id
-                                        : data1.job_title}
-                                    </p>
-                                  </div>
+                                      {locale == "en" ? (
+                                        <div
+                                          className=""
+                                          dangerouslySetInnerHTML={{
+                                            __html: data1.quote,
+                                          }}
+                                        />
+                                      ) : locale == "id" &&
+                                        data1.quote_id != null ? (
+                                        <div
+                                          className=""
+                                          dangerouslySetInnerHTML={{
+                                            __html: data1.quote_id,
+                                          }}
+                                        />
+                                      ) : (
+                                        <div
+                                          className=""
+                                          dangerouslySetInnerHTML={{
+                                            __html: data1.quote,
+                                          }}
+                                        />
+                                      )}
+                                      <div
+                                        className={
+                                          "mt-3 border border-dividermig w-[144px]"
+                                        }
+                                      />
+                                      <p
+                                        className={
+                                          "mt-1 text-[10px] text-blackmig font-gilroysemibold"
+                                        }
+                                      >
+                                        {data1.author}
+                                      </p>
+                                      <p
+                                        className={
+                                          "mt-1 text-[10px] text-blackmig  font-gilroyregular"
+                                        }
+                                      >
+                                        {locale == "en"
+                                          ? data1.job_title
+                                          : locale == "id" &&
+                                            data1.job_title_id != null
+                                          ? data1.job_title_id
+                                          : data1.job_title}
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                               <div className={"w-[45%]"}>
@@ -4489,7 +4492,9 @@ function Hardware({}) {
                                           "pr-[13.52px] text-base font-gilroysemibold"
                                         }
                                       >
-                                        Read Story
+                                        {locale == "en"
+                                          ? "Read Story"
+                                          : "Baca Cerita"}
                                       </p>
                                       <img
                                         className={"w-5 h-5"}
