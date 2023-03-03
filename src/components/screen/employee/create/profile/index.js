@@ -142,6 +142,8 @@ const EmployeeProfileForm = ({
     }
   }, []);
 
+  // console.log({ dataEmployee });
+
   return (
     <Form
       layout="vertical"
@@ -574,23 +576,49 @@ const EmployeeProfileForm = ({
           />
         </div>
       </Form.Item>
-      <Form.Item
-        label="Nomor Rekening Bank Lainnya"
-        name={"acc_number_another"}
-        rules={[
-          {
-            pattern: /[0-9]+/,
-            message: "Nomor rekening hanya boleh diisi dengan angka",
-          },
-        ]}
-      >
-        <div className="flex flex-row space-x-3">
-          <Input
-            value={dataEmployee.acc_number_another}
+      <Form.Item label="Nomor Rekening Bank Lainnya">
+        <div className="flex flex-row space-x-2">
+          <Form.Item
+            name={"acc_name_another"}
+            rules={[
+              {
+                required: true,
+                message: "Nama bank wajib diisi",
+              },
+            ]}
+            className="w-1/3"
+          >
+            <Select
+              value={dataEmployee.acc_name_another}
+              name={"acc_name_another"}
+              placeholder="Pilih nama bank"
+              onChange={(value) => onChangeSelect(value, "acc_name_another")}
+              options={[
+                { value: "Mandiri", label: "Mandiri" },
+                { value: "BRI", label: "BRI" },
+                { value: "BNI", label: "BNI" },
+                { value: "BTN", label: "BTN" },
+                { value: "BCA", label: "BCA" },
+              ]}
+            />
+          </Form.Item>
+          <Form.Item
             name={"acc_number_another"}
-            placeholder="Masukkan nomor rekening bank lainnya"
-            onChange={onChangeInput}
-          />
+            rules={[
+              {
+                pattern: /[0-9]+/,
+                message: "Nomor rekening hanya boleh diisi dengan angka",
+              },
+            ]}
+            className="w-2/3"
+          >
+            <Input
+              value={dataEmployee.acc_number_another}
+              name={"acc_number_another"}
+              placeholder="Masukkan nomor rekening bank lainnya"
+              onChange={onChangeInput}
+            />
+          </Form.Item>
         </div>
       </Form.Item>
     </Form>

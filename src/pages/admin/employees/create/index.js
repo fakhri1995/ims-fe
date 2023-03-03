@@ -126,6 +126,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     bpjs_ketenagakerjaan: "",
     acc_number_bukopin: "",
     acc_number_another: "",
+    acc_name_another: "",
     is_posted: 0,
     contracts: [],
     inventories: [],
