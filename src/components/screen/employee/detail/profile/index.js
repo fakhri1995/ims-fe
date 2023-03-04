@@ -107,7 +107,10 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
           <p className="mig-caption--medium text-mono80">
             Nomor Rekening Bank Lainnya
           </p>
-          <p>{dataEmployee?.acc_number_another || "-"}</p>
+          <p>
+            {dataEmployee?.acc_name_another} -{" "}
+            {dataEmployee?.acc_number_another}
+          </p>
         </div>
         <div className="space-y-1">
           <p className="mig-caption--medium text-mono80">Tanggal Lahir</p>

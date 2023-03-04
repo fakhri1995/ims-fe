@@ -177,7 +177,7 @@ const EmployeeInventoryDetail = ({
       {dataEmployee?.inventories?.length > 0 ? (
         <Collapse
           bordered={false}
-          defaultActiveKey={0}
+          defaultActiveKey={dataEmployee?.inventories?.[0]?.id}
           expandIconPosition={"right"}
           expandIcon={({ isActive }) => (
             <UpOutlined rotate={isActive ? 180 : 0} />
@@ -188,7 +188,7 @@ const EmployeeInventoryDetail = ({
         >
           {dataEmployee?.inventories?.map((inventory, idx) => (
             <Collapse.Panel
-              key={idx}
+              key={inventory?.id}
               header={
                 <div className="flex flex-row space-x-3 items-center">
                   <p className="text-md font-bold">
