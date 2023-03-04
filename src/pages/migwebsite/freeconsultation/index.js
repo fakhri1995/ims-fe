@@ -19,10 +19,14 @@ import { useRouter } from "next/router";
 import { React, useEffect, useState } from "react";
 
 import Layout from "../../../components/migwebsite/layout.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 
 function FreeConsultation({}) {
   const [form] = Form.useForm();
   const rt = useRouter();
+  const { locale } = rt;
+  const t = locale === "en" ? en : id;
   const { Option } = Select;
   const [dataHardware, setDataHardware] = useState({
     company_name: null,
@@ -65,15 +69,13 @@ function FreeConsultation({}) {
             style={{ lineHeight: "120%" }}
             className={"text-[30px] text-primarygreen font-gilroysemibold"}
           >
-            Thank you for your interest in providing your IT needs through
-            Mitramas Infosys Global
+            {t.thankyouforyourinterest}
           </p>
           <p
             style={{ lineHeight: "150%" }}
             className={"mt-4 text-xl text-blackmig"}
           >
-            Before we reach you out, we’d like to ask a few questions to better
-            understand your business & IT needs.
+            {t.beforewereach}
           </p>
           <div className="mt-6">
             <Form
@@ -85,9 +87,9 @@ function FreeConsultation({}) {
             >
               <div className={"w-[495px]"}>
                 <Form.Item
-                  name={"Company Name"}
+                  name={t.companyname}
                   className={"gilroy-medium text-base"}
-                  label={<p style={{ fontSize: "16px" }}>Company Name</p>}
+                  label={<p style={{ fontSize: "16px" }}>{t.companyname}</p>}
                   rules={[{ required: true }]}
                 >
                   <Input
@@ -96,14 +98,14 @@ function FreeConsultation({}) {
                       height: "37px",
                       fontSize: "16px",
                     }}
-                    name={"Company Name"}
+                    name={t.companyname}
                     onChange={(e) => {
                       setDataHardware({
                         ...dataHardware,
                         company_name: e.target.value,
                       });
                     }}
-                    placeholder="Enter company name here"
+                    placeholder={t.companynameplaceholder}
                   />
                 </Form.Item>
                 <Form.Item
@@ -123,7 +125,7 @@ function FreeConsultation({}) {
                         company_email: e.target.value,
                       });
                     }}
-                    placeholder="Enter your email here"
+                    placeholder={t.talentheroemailplaceholder}
                   />
                 </Form.Item>
               </div>

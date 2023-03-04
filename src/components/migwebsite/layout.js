@@ -332,7 +332,9 @@ function layout({ children }) {
             ) {
               console.log("harusnya pindah halaman ", router);
               // router.push(`/id/`+router.asPath);
-              router.push(router.pathname, router.asPath, { locale: "id" });
+              let path =
+                "/migwebsite/customerstories/" + res2.data[0].page_path_id;
+              router.push(router.pathname, path, { locale: "id" });
             } else {
               alert("Halaman ID tidak tersedia untuk testimoni ini");
             }
@@ -346,7 +348,9 @@ function layout({ children }) {
               res2.data[0].tags != ""
             ) {
               console.log("harusnya pindah halaman baru ", router);
-              router.push(router.pathname, router.asPath, { locale: "en" });
+              let path =
+                "/migwebsite/customerstories/" + res2.data[0].page_path;
+              router.push(router.pathname, path, { locale: "en" });
             } else {
               alert("Page EN Not Found for this testimonial");
             }

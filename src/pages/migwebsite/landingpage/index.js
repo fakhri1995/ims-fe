@@ -124,7 +124,10 @@ function LandingPage({ dataBlog }) {
 
   const readTestimoni = (page_path) => {
     console.log("baca testimoni ", page_path);
-    rt.push("/id/migwebsite/customerstories/" + page_path);
+    let path = "/migwebsite/customerstories/" + page_path;
+    let pathname = "/migwebsite/customerstories/[stories_id]";
+    rt.push(pathname, path, { locale: "id" });
+    // rt.push("/id/migwebsite/customerstories/" + page_path);
   };
 
   useEffect(() => {
