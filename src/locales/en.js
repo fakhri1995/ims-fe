@@ -350,6 +350,11 @@ export default {
     "Expand your team's capabilities with our top-quality tech talent in diverse roles.",
   customerstorieshearwhatcta: "Read our stories",
   minute_read: " MINUTE READ",
+  thankyouforyourinterest:
+    "Thank you for your interest in providing your IT needs through Mitramas Infosys Global",
+  beforewereach: `Before we reach you out, we’d like to ask a few questions to better understand your business & IT needs.`,
+  companyname: `Company Name`,
+  companynameplaceholder: `Enter company name here`,
   blogherodescription:
     "Stay ahead of the technology and business game with our latest insights and expert solutions",
   p1: `Tim Berners-Lee, a British scientist, invented the World Wide Web (WWW) in 1989, while working at CERN. The web was originally conceived and developed to meet the demand for automated information-sharing between scientists in universities and institutes around the world.`,

@@ -712,12 +712,10 @@ function Talents({}) {
             {formActive == "first" ? (
               <div className="w-[52%]">
                 <p className={"text-2xl text-primarygreen font-gilroysemibold"}>
-                  Thank you for your interest in providing your IT needs through
-                  Mitramas Infosys Global
+                  {t.thankyouforyourinterest}
                 </p>
                 <p className={"mt-4 text-base text-blackmig"}>
-                  Before we reach you out, we’d like to ask a few questions to
-                  better understand your business & IT needs.
+                  {t.beforewereach}
                 </p>
                 <div className="mt-6">
                   <Form
@@ -729,9 +727,11 @@ function Talents({}) {
                   >
                     <div className={"w-[495px]"}>
                       <Form.Item
-                        name={"Company Name"}
+                        name={t.companyname}
                         className={"font-gilroyregular text-xl"}
-                        label={<p style={{ fontSize: "16px" }}>Company Name</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.companyname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -739,14 +739,14 @@ function Talents({}) {
                             border: "1px solid #B8B8B8",
                             height: "37px",
                           }}
-                          name={"Company Name"}
+                          name={t.companyname}
                           onChange={(e) => {
                             setDataPeople({
                               ...dataPeople,
                               company_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter company name here"
+                          placeholder={t.companynameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
@@ -766,7 +766,7 @@ function Talents({}) {
                               company_email: e.target.value,
                             });
                           }}
-                          placeholder="Enter your email here"
+                          placeholder={t.talentheroemailplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -1092,7 +1092,7 @@ function Talents({}) {
                 >
                   {/* choose product */}
                   <div className={"flex flex-row mt-4"}>
-                    <button
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfTalent("Engineering")}
                     >
@@ -1143,8 +1143,8 @@ function Talents({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfTalent("Data")}
                     >
@@ -1195,8 +1195,8 @@ function Talents({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfTalent("Product")}
                     >
@@ -1247,8 +1247,8 @@ function Talents({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfTalent("Design")}
                     >
@@ -1299,8 +1299,8 @@ function Talents({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
-                    <button
+                    </a>
+                    <a
                       className={"bg-white"}
                       onClick={() => handleKindOfTalent("Others")}
                     >
@@ -1351,7 +1351,7 @@ function Talents({}) {
                           </p>
                         </div>
                       </div>
-                    </button>
+                    </a>
                   </div>
                   <div
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
@@ -1436,7 +1436,7 @@ function Talents({}) {
                   {skillSuggestion.length > 0 && (
                     <div className={"flex flex-row flex-wrap mt-3"}>
                       {skillSuggestion.map((data, index) => (
-                        <button
+                        <a
                           onClick={() => handleSuggestionSkill(data)}
                           className={
                             " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 mt-3"
@@ -1449,7 +1449,7 @@ function Talents({}) {
                           >
                             {data}
                           </p>
-                        </button>
+                        </a>
                       ))}
                     </div>
                   )}
@@ -2020,12 +2020,10 @@ function Talents({}) {
             {formActive == "first" ? (
               <div className="w-full">
                 <p className={"text-xl text-primarygreen font-gilroysemibold"}>
-                  Thank you for your interest in providing your IT needs through
-                  Mitramas Infosys Global
+                  {t.thankyouforyourinterest}
                 </p>
                 <p className={"mt-4 text-sm text-blackmig"}>
-                  Before we reach you out, we’d like to ask a few questions to
-                  better understand your business & IT needs.
+                  {t.beforewereach}
                 </p>
                 <div className="mt-6">
                   <Form
@@ -2037,9 +2035,11 @@ function Talents({}) {
                   >
                     <div className={"w-full"}>
                       <Form.Item
-                        name={"Company Name"}
+                        name={t.companyname}
                         className={"font-gilroyregular text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>Company Name</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.companyname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -2047,14 +2047,14 @@ function Talents({}) {
                             border: "1px solid #B8B8B8",
                             height: "37px",
                           }}
-                          name={"Company Name"}
+                          name={t.companyname}
                           onChange={(e) => {
                             setDataPeople({
                               ...dataPeople,
                               company_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter company name here"
+                          placeholder={t.companynameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
@@ -2074,7 +2074,7 @@ function Talents({}) {
                               company_email: e.target.value,
                             });
                           }}
-                          placeholder="Enter your email here"
+                          placeholder={t.talentheroemailplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -2510,7 +2510,7 @@ function Talents({}) {
                   {skillSuggestion.length > 0 && (
                     <div className={"flex flex-row mt-3"}>
                       {skillSuggestion.map((data, index) => (
-                        <button
+                        <a
                           onClick={() => handleSuggestionSkill(data)}
                           className={
                             " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
@@ -2523,7 +2523,7 @@ function Talents({}) {
                           >
                             {data}
                           </p>
-                        </button>
+                        </a>
                       ))}
                     </div>
                   )}
