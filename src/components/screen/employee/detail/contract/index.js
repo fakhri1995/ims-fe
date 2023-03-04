@@ -179,7 +179,7 @@ const EmployeeContractDetail = ({
     <section>
       <Collapse
         bordered={false}
-        defaultActiveKey={0}
+        defaultActiveKey={dataEmployee?.contracts?.[0]?.id}
         expandIconPosition={"right"}
         expandIcon={({ isActive }) => (
           <UpOutlined rotate={isActive ? 180 : 0} />
@@ -190,7 +190,7 @@ const EmployeeContractDetail = ({
       >
         {dataEmployee?.contracts?.map((contract, idx) => (
           <Collapse.Panel
-            key={idx}
+            key={contract.id}
             header={
               <div className="flex flex-row space-x-3 items-center">
                 <p className="text-sm font-bold">
@@ -310,33 +310,93 @@ const EmployeeContractDetail = ({
               {/* TODO: change benefit data */}
               <div className="mb-3">
                 <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
-                <div className="space-y-1 col-span-2">
-                  <p className="mig-caption--medium text-mono80">Gaji Pokok</p>
-                  {benefitObject?.gaji_pokok ? (
-                    <CurrencyFormat
-                      displayType="text"
-                      value={benefitObject?.gaji_pokok}
-                      thousandSeparator={"."}
-                      decimalSeparator={","}
-                      prefix={"Rp"}
-                      suffix={",00"}
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </div>
-                <div className="space-y-1 col-span-2">
-                  <p className="mig-caption--medium text-mono80">
-                    Tunjangan Uang Makan
-                  </p>
-                  <p>{benefitObject?.meal_allowance || "-"}</p>
+                <div className="space-y-2">
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      Gaji Pokok
+                    </p>
+                    <p>
+                      Rp
+                      {Number(dataContract?.gaji_pokok).toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  {/* {dataContract?.benefit?.map((variable) => (
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      {variable?.name}
+                    </p>
+                    <p>{variable?.value || "-"}</p>
+                  </div>
+                ))} */}
                 </div>
               </div>
               <div className="mb-3">
                 <p className="mig-heading--5 mb-2">BENEFIT PENGURANGAN</p>
-                <div className="space-y-1 col-span-2">
-                  <p className="mig-caption--medium text-mono80">PPh 21</p>
-                  <p>{benefitObject?.income_tax || "-"}</p>
+                <div className="space-y-2">
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      BPJS KS (5% Perusahaan)
+                    </p>
+                    <p>
+                      Rp{Number(dataContract?.bpjs_ks).toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      BPKS TK-JHT (5,7% Perusahaan)
+                    </p>
+                    <p>
+                      Rp
+                      {Number(dataContract?.bpjs_tk_jht).toLocaleString(
+                        "id-ID"
+                      )}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      BPKS TK-JKK (0,24% Perusahaan)
+                    </p>
+                    <p>
+                      Rp
+                      {Number(dataContract?.bpjs_tk_jkk).toLocaleString(
+                        "id-ID"
+                      )}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      BPKS TK-JKM (0,3% Perusahaan)
+                    </p>
+                    <p>
+                      Rp
+                      {Number(dataContract?.bpjs_tk_jkm).toLocaleString(
+                        "id-ID"
+                      )}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      BPKS TK-JP (3% Perusahaan)
+                    </p>
+                    <p>
+                      Rp
+                      {Number(dataContract?.bpjs_tk_jp).toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">PPh 21</p>
+                    <p>
+                      Rp{Number(dataContract?.pph21).toLocaleString("id-ID")}
+                    </p>
+                  </div>
+                  {/* {dataContract?.benefit?.map((variable) => (
+                  <div className="space-y-1 col-span-2">
+                    <p className="mig-caption--medium text-mono80">
+                      {variable?.name}
+                    </p>
+                    <p>{variable?.value || "-"}</p>
+                  </div>
+                ))} */}
                 </div>
               </div>
             </div>

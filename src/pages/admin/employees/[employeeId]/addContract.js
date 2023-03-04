@@ -162,8 +162,7 @@ const EmployeeContractAddIndex = ({
         .then((response2) => {
           if (response2.success) {
             let contractList = response2.data;
-            let previousContractName =
-              contractList[contractList.length - 2]?.contract_name;
+            let previousContractName = contractList[0]?.contract_name;
             setPrevContractName(previousContractName);
           } else {
             notification.error({
