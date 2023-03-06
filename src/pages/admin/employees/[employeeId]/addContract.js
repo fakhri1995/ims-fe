@@ -191,7 +191,9 @@ const EmployeeContractAddIndex = ({
         dataContract.pkwt_reference &&
         dataContract.contract_start_at &&
         dataContract.contract_end_at &&
-        dataContract.placement
+        dataContract.placement &&
+        dataContract.gaji_pokok &&
+        dataContract.pph21
     );
 
     if (!requiredContractField) {
