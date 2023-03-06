@@ -954,15 +954,13 @@ function Hardware({}) {
                     "text-[30px] text-primarygreen font-gilroysemibold"
                   }
                 >
-                  Thank you for your interest in providing your IT needs through
-                  Mitramas Infosys Global
+                  {t.thankyouforyourinterest}
                 </p>
                 <p
                   style={{ lineHeight: "150%" }}
                   className={"mt-4 text-xl text-blackmig"}
                 >
-                  Before we reach you out, we’d like to ask a few questions to
-                  better understand your business & IT needs.
+                  {t.beforewereach}
                 </p>
                 <div className="mt-6">
                   <Form
@@ -974,9 +972,11 @@ function Hardware({}) {
                   >
                     <div className={"w-[495px]"}>
                       <Form.Item
-                        name={"Company Name"}
+                        name={t.companyname}
                         className={"text-base"}
-                        label={<p style={{ fontSize: "16px" }}>Company Name</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.companyname}</p>
+                        }
                         style={{ fontSize: "16px" }}
                         rules={[{ required: true }]}
                       >
@@ -986,14 +986,14 @@ function Hardware({}) {
                             height: "37px",
                             fontSize: "16px",
                           }}
-                          name={"Company Name"}
+                          name={t.companyname}
                           onChange={(e) => {
                             setDataHardware({
                               ...dataHardware,
                               company_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter company name here"
+                          placeholder={t.companynameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
@@ -1016,7 +1016,7 @@ function Hardware({}) {
                               company_email: e.target.value,
                             });
                           }}
-                          placeholder="Enter your email here"
+                          placeholder={t.talentheroemailplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -1728,21 +1728,20 @@ function Hardware({}) {
                     {hardwareSuggestion.length > 0 && (
                       <div className={"flex flex-row flex-wrap mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
-                          <button
-                            // onClick={() => handleSuggestionHardware(data)}
+                          <div
+                            onClick={() => handleSuggestionHardware(data)}
                             className={
                               " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 mt-3"
                             }
                           >
                             <p
-                              onClick={() => handleSuggestionHardware(data)}
                               className={
                                 "text-[16px] text-darkgrey font-gilroyregular"
                               }
                             >
                               {data}
                             </p>
-                          </button>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -2224,15 +2223,13 @@ function Hardware({}) {
                   style={{ lineHeight: "24px" }}
                   className={"text-xl text-primarygreen font-gilroysemibold"}
                 >
-                  Thank you for your interest in providing your IT needs through
-                  Mitramas Infosys Global
+                  {t.thankyouforyourinterest}
                 </p>
                 <p
                   style={{ lineHeight: "150%" }}
                   className={"mt-4 text-sm text-blackmig font-gilroyregular"}
                 >
-                  Before we reach you out, we’d like to ask a few questions to
-                  better understand your business & IT needs.
+                  {t.beforewereach}
                 </p>
                 <div className="mt-6">
                   <Form
@@ -2244,9 +2241,11 @@ function Hardware({}) {
                   >
                     <div className={""}>
                       <Form.Item
-                        name={"Company Name"}
+                        name={t.companyname}
                         className={"text-base"}
-                        label={<p style={{ fontSize: "14px" }}>Company Name</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.companyname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -2255,14 +2254,14 @@ function Hardware({}) {
                             height: "37px",
                             fontSize: "14px",
                           }}
-                          name={"Company Name"}
+                          name={t.companyname}
                           onChange={(e) => {
                             setDataHardware({
                               ...dataHardware,
                               company_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter company name here"
+                          placeholder={t.companynameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
@@ -2285,7 +2284,7 @@ function Hardware({}) {
                               company_email: e.target.value,
                             });
                           }}
-                          placeholder="Enter your email here"
+                          placeholder={t.talentheroemailplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -2776,21 +2775,20 @@ function Hardware({}) {
                     {hardwareSuggestion.length > 0 && (
                       <div className={"flex flex-row mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
-                          <button
-                            // onClick={() => handleSuggestionHardware(data)}
+                          <div
+                            onClick={() => handleSuggestionHardware(data)}
                             className={
                               " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
                             }
                           >
                             <p
-                              onClick={() => handleSuggestionHardware(data)}
                               className={
                                 "text-sm text-darkgrey font-gilroyregular"
                               }
                             >
                               {data}
                             </p>
-                          </button>
+                          </div>
                         ))}
                       </div>
                     )}

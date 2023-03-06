@@ -370,6 +370,11 @@ export default {
     "Tingkatkan kemampuan tim dengan tech talent terbaik dalam berbagai role berbeda.",
   customerstorieshearwhatcta: "Baca cerita kami",
   minute_read: " MENIT BACA",
+  thankyouforyourinterest:
+    "Terima kasih telah berminat pada solusi Mitramas Infosys Global untuk kebutuhan IT Anda",
+  beforewereach: `Sebelum tim kami menghubungi anda, berikan kami informasi mengenai bisnis dan kebutuhan anda.`,
+  companyname: `Nama Perusahaaan`,
+  companynameplaceholder: `Masukan nama perusahaan`,
   p1: `Tim Berners-Lee, a British scientist, invented the World Wide Web (WWW) in 1989, while working at CERN. The web was originally conceived and developed to meet the demand for automated information-sharing between scientists in universities and institutes around the world.`,
   p2: `The first website at CERN – and in the world – was dedicated to the World Wide Web project itself and was hosted on Berners-Lee's NeXT computer. In 2013, CERN launched a project to restore this first ever website: info.cern.ch.`,
   p3: `On 30 April 1993, CERN put the World Wide Web software in the public domain. Later, CERN made a release available with an open licence, a more sure way to maximise its dissemination. These actions allowed the web to flourish.`,

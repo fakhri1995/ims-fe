@@ -470,15 +470,13 @@ function Software({}) {
                     "text-[30px] text-primarygreen font-gilroysemibold"
                   }
                 >
-                  Thank you for your interest in providing your IT needs through
-                  Mitramas Infosys Global
+                  {t.thankyouforyourinterest}
                 </p>
                 <p
                   style={{ lineHeight: "150%" }}
                   className={"mt-4 text-xl text-blackmig"}
                 >
-                  Before we reach you out, we’d like to ask a few questions to
-                  better understand your business & IT needs.
+                  {t.beforewereach}
                 </p>
                 <div className="mt-6">
                   <Form
@@ -490,9 +488,11 @@ function Software({}) {
                   >
                     <div className={"w-[495px]"}>
                       <Form.Item
-                        name={"Company Name"}
+                        name={t.companyname}
                         className={"gilroy-medium text-base"}
-                        label={<p style={{ fontSize: "16px" }}>Company Name</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.companyname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -501,14 +501,14 @@ function Software({}) {
                             height: "37px",
                             fontSize: "16px",
                           }}
-                          name={"Company Name"}
+                          name={t.companyname}
                           onChange={(e) => {
                             setDataSoftware({
                               ...dataSoftware,
                               company_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter company name here"
+                          placeholder={t.companynameplaceholder}
                         />
                       </Form.Item>
 
@@ -555,7 +555,7 @@ function Software({}) {
                               company_email: e.target.value,
                             });
                           }}
-                          placeholder="Enter your email here"
+                          placeholder={t.talentheroemailplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
@@ -1011,8 +1011,7 @@ function Software({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-xl text-primarygreen font-gilroysemibold"}
                 >
-                  Thank you for your interest in providing your IT needs through
-                  Mitramas Infosys Global
+                  {t.thankyouforyourinterest}
                 </p>
                 <img
                   className={"w-[192px] h-[112px] mt-4 mx-auto"}
@@ -1022,8 +1021,7 @@ function Software({}) {
                   style={{ lineHeight: "150%" }}
                   className={"mt-4 text-sm text-blackmig"}
                 >
-                  Before we reach you out, we’d like to ask a few questions to
-                  better understand your business & IT needs.
+                  {t.beforewereach}
                 </p>
                 <div className="mt-6">
                   <Form
@@ -1035,9 +1033,11 @@ function Software({}) {
                   >
                     <div className={"w-full"}>
                       <Form.Item
-                        name={"Company Name"}
+                        name={t.companyname}
                         className={"text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>Company Name</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.companyname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -1046,14 +1046,14 @@ function Software({}) {
                             height: "37px",
                             fontSize: "14px",
                           }}
-                          name={"Company Name"}
+                          name={t.companyname}
                           onChange={(e) => {
                             setDataSoftware({
                               ...dataSoftware,
                               company_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter company name here"
+                          placeholder={t.companynameplaceholder}
                         />
                       </Form.Item>
 
@@ -1101,7 +1101,7 @@ function Software({}) {
                               company_email: e.target.value,
                             });
                           }}
-                          placeholder="Enter your email here"
+                          placeholder={t.talentheroemailplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
