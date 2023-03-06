@@ -105,6 +105,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [disablePublish, setDisablePublish] = useState(true);
   const [dataEmployee, setDataEmployee] = useState({
     id: null,
+    user_id: null,
     id_card_photo: null,
     name: "",
     nip: "",
@@ -133,8 +134,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   const [dataContract, setDataContract] = useState({
-    id: null,
-    employee_id: null,
+    id: dataEmployee?.contracts[0]?.id,
+    employee_id: employeeId,
     is_employee_active: 0,
     contract_name: "",
     contract_file: null,
@@ -225,13 +226,34 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           .then((res) => res.json())
           .then((res2) => {
             if (res2.success) {
+              const resData = res2.data;
+              const requiredData = {
+                id: dataEmployee?.contracts[0]?.id,
+                employee_id: employeeId,
+                is_employee_active: resData.is_employee_active,
+                contract_name: resData.contract_name,
+                contract_file: resData.contract_file,
+                contract_status_id: resData.contract_status_id,
+                role_id: resData.role_id,
+                pkwt_reference: resData.pkwt_reference,
+                annual_leave: resData.annual_leave,
+                contract_start_at: resData.contract_start_at,
+                contract_end_at: resData.contract_end_at,
+                placement: resData.placement,
+                new_office: resData.new_office,
+                resign_at: resData.resign_at,
+                benefit: resData.benefit,
+                gaji_pokok: resData.gaji_pokok ?? 0,
+                pph21: resData.pph21,
+                salaries: resData.salaries || null,
+              };
               if (prevpath === "add") {
                 setDataContract({
-                  ...res2.data,
+                  ...requiredData,
                   is_employee_active: 1,
                 });
               } else {
-                setDataContract({ ...res2.data, employee_id: employeeId });
+                setDataContract(requiredData);
               }
             } else {
               notification.error({
@@ -305,7 +327,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         dataContract.pkwt_reference &&
         dataContract.contract_start_at &&
         dataContract.contract_end_at &&
-        dataContract.placement
+        dataContract.placement &&
+        dataContract.gaji_pokok &&
+        dataContract.pph21
     );
 
     let requiredInventoryField = inventoryList.every((inventory) => {
@@ -382,7 +406,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       const payloadFormData = objectToFormData({
         ...employeeProfileData,
         is_posted: isPosted,
-        user_id: dataProfile?.data?.id,
+        user_id: employeeProfileData.user_id || null,
       });
 
       setLoadingUpdate(true);
