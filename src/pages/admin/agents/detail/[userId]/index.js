@@ -3,6 +3,7 @@ import { Button, Input, Modal, Switch, Table, Tabs, notification } from "antd";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useCallback } from "react";
 import Sticky from "wil-react-sticky";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -15,12 +16,14 @@ import {
   AGENT_PASSWORD_UPDATE,
   AGENT_STATUS,
   AGENT_UPDATE,
+  EMPLOYEE_ADD,
 } from "lib/features";
 import {
   generateStaticAssetUrl,
   permissionWarningNotification,
 } from "lib/helper";
 
+import ButtonSys from "../../../../../components/button";
 import Layout from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -161,6 +164,7 @@ function AgentDetail({
   const isAllowedToDeleteAgent = hasPermission(AGENT_DELETE);
   const isAllowedToUpdatePassword = hasPermission(AGENT_PASSWORD_UPDATE);
   const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
+  const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
 
   const rt = useRouter();
 
@@ -203,6 +207,7 @@ function AgentDetail({
   const [loadingubahnonaktif, setloadingubahnonaktif] = useState(false);
   //loading pra render
   const [praloading, setpraloading] = useState(true);
+  const [loadingAddEmployee, setLoadingAddEmployee] = useState(false);
 
   const handleActivationRequesters = (status) => {
     var keaktifan = false;
@@ -289,6 +294,54 @@ function AgentDetail({
       });
   };
 
+  const onAddEmployeeButtonClicked = useCallback(() => {
+    handleAddEmployee();
+  }, []);
+
+  const handleAddEmployee = () => {
+    if (!isAllowedToAddEmployee) {
+      permissionWarningNotification("Menambah", "Karyawan");
+      return;
+    }
+    setLoadingAddEmployee(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeeFromUser`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_id: Number(userid),
+      }),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTimeout(() => {
+            setLoadingAddEmployee(false);
+            rt.push(
+              `/admin/employees/create?id=${response2.data?.id}&prevpath=agent`
+            );
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan karyawan. ${response2.message}`,
+            duration: 3,
+          });
+          setTimeout(() => {
+            setLoadingAddEmployee(false);
+          }, 500);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan karyawan. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingAdd(false);
+      });
+  };
+
   //useEffect
   useEffect(() => {
     if (!isAllowedToGetAgentDetail) {
@@ -354,6 +407,13 @@ function AgentDetail({
                 <Link href={`/admin/agents`}>
                   <Button type="default">Kembali</Button>
                 </Link>
+                <ButtonSys
+                  type={"primary"}
+                  onClick={onAddEmployeeButtonClicked}
+                  disabled={!isAllowedToAddEmployee}
+                >
+                  Tambah Karyawan
+                </ButtonSys>
                 {
                   // [116, 133].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
                   <Button
