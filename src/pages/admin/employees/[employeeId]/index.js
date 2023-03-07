@@ -388,14 +388,14 @@ const EmployeeDetailIndex = ({
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.role_name || "-"}</p>
+                  <p>{dataEmployee?.contracts?.[0]?.role?.name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
                   <p>
-                    {dataEmployee?.contracts[0]?.contract_status_name || "-"}
+                    {dataEmployee?.contracts[0]?.contract_status?.name || "-"}
                   </p>
                 </div>
                 <div className="flex flex-col space-y-1">

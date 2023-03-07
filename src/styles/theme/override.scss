@@ -377,6 +377,11 @@ ol {
     }
   }
 }
+
+.ant-btn {
+  @apply rounded-md;
+}
+
 .ant-input {
   border-color: #b8b8b8;
   outline: 0;

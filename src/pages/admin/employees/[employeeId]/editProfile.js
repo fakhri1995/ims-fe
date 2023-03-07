@@ -60,7 +60,8 @@ const EmployeeProfileEditIndex = ({
   const [praloading, setpraloading] = useState(true);
   const [dataEmployee, setDataEmployee] = useState({
     // id_photo: "",
-    id: 0,
+    id: null,
+    user_id: null,
     name: "",
     nip: "",
     nik: "",
@@ -157,7 +158,10 @@ const EmployeeProfileEditIndex = ({
   // 3. Event
   // 3.1. Save employee profile
   const handleSaveEmployee = () => {
-    const payloadFormData = objectToFormData(dataEmployee);
+    const payloadFormData = objectToFormData({
+      ...dataEmployee,
+      user_id: dataEmployee.user_id || null,
+    });
 
     if (!isAllowedToUpdateEmployee) {
       permissionWarningNotification("Menyimpan", "Profil Karyawan");
