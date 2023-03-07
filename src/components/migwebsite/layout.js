@@ -577,7 +577,10 @@ function layout({ children }) {
                     src={"/image/navbar/hardware_black.png"}
                   ></img>
                   <Link href="/hardware">
-                    <a className="text-base font-gilroyregular text-blackmig  pl-3">
+                    <a
+                      style={{ textDecoration: "none" }}
+                      className="text-base font-gilroyregular text-blackmig  pl-3"
+                    >
                       Hardware
                     </a>
                   </Link>
@@ -590,7 +593,10 @@ function layout({ children }) {
                     src={"/image/navbar/software_black.png"}
                   ></img>
                   <Link href="/software">
-                    <a className="text-base font-gilroyregular text-blackmig  pl-3">
+                    <a
+                      style={{ textDecoration: "none" }}
+                      className="text-base font-gilroyregular text-blackmig  pl-3"
+                    >
                       Software
                     </a>
                   </Link>
@@ -603,27 +609,105 @@ function layout({ children }) {
                     src={"/image/navbar/talents_black.png"}
                   ></img>
                   <Link href="/talents">
-                    <a className="text-base font-gilroyregular text-blackmig  pl-3">
+                    <a
+                      style={{ textDecoration: "none" }}
+                      className="text-base font-gilroyregular text-blackmig  pl-3"
+                    >
                       Talents
                     </a>
                   </Link>
                 </Menu.Item>
               </SubMenu>
+              <SubMenu
+                key="sub 2"
+                title={locale == "en" ? "English" : "Indonesia"}
+                className="text-base font-gilroyregular text-blackmig "
+              >
+                <Menu.Item key="1">
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={40}
+                    src={"/image/english.png"}
+                  ></img>
+                  <a
+                    onClick={() => changeLanguage("en")}
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    English
+                  </a>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={40}
+                    src={"/image/indonesia.png"}
+                  ></img>
+                  <a
+                    onClick={() => changeLanguage("en")}
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    Indonesia
+                  </a>
+                </Menu.Item>
+              </SubMenu>
               <Menu.Item key="4">
                 <Link href="/aboutus">
-                  <a className="text-lg gilroy-medium">About Us</a>
+                  <a
+                    style={{ textDecoration: "none" }}
+                    className="text-lg gilroy-medium"
+                  >
+                    About Us
+                  </a>
                 </Link>
               </Menu.Item>
               <Menu.Item key="5">
                 <Link href="/joinourteam">
-                  <a className="text-lg gilroy-medium">Career in MIG</a>
+                  <a
+                    style={{ textDecoration: "none" }}
+                    className="text-lg gilroy-medium"
+                  >
+                    Career in MIG
+                  </a>
                 </Link>
               </Menu.Item>
-              <Menu.Item key="6">
-                <Link href="/blog">
-                  <a className="text-lg gilroy-medium">Blog</a>
-                </Link>
-              </Menu.Item>
+              {countArticle > 0 || countStories > 0 ? (
+                <SubMenu
+                  key="sub 6"
+                  title={"Resource"}
+                  className="text-base font-gilroyregular text-blackmig "
+                >
+                  {countStories > 0 && (
+                    <Menu.Item key="1">
+                      <Link href="/migwebsite/customerstories">
+                        <a
+                          style={{ textDecoration: "none" }}
+                          className="text-base font-gilroyregular text-blackmig  pl-3"
+                        >
+                          Customer Stories
+                        </a>
+                      </Link>
+                    </Menu.Item>
+                  )}
+                  {countArticle > 0 && (
+                    <Menu.Item key="2">
+                      <Link href="/migwebsite/blog">
+                        <a
+                          style={{ textDecoration: "none" }}
+                          className="text-base font-gilroyregular text-blackmig  pl-3"
+                        >
+                          Blog
+                        </a>
+                      </Link>
+                    </Menu.Item>
+                  )}
+                </SubMenu>
+              ) : (
+                <div></div>
+              )}
               {/* <Menu.Item key='6'
                             style={{
                                 position: 'absolute',
@@ -671,7 +755,12 @@ function layout({ children }) {
               }}
             >
               <Link href="/contactus">
-                <a className="text-lg gilroy-medium menu-navbar">Contact Us </a>
+                <a
+                  style={{ textDecoration: "none" }}
+                  className="text-lg gilroy-medium menu-navbar"
+                >
+                  Contact Us{" "}
+                </a>
               </Link>
               &nbsp;&nbsp;
               <ArrowRightOutlined
@@ -683,6 +772,7 @@ function layout({ children }) {
               />
               &nbsp;&nbsp;
               <a
+                style={{ textDecoration: "none" }}
                 className="menu-navbar"
                 href="https://www.linkedin.com/company/pt-mitramas-infosys-global"
               >
@@ -696,6 +786,7 @@ function layout({ children }) {
               </a>
               &nbsp;&nbsp;
               <a
+                style={{ textDecoration: "none" }}
                 className="menu-navbar"
                 href="https://instagram.com/mitramasglobal?utm_medium=copy_link"
               >
@@ -920,6 +1011,7 @@ function layout({ children }) {
                     />
                     <a
                       style={{ textDecoration: "none" }}
+                      style={{ textDecoration: "none" }}
                       className={
                         "font-gilroyregular text-[14px] cursor-pointer menu-underlined py-1 hover:text-green-500"
                       }
@@ -994,6 +1086,38 @@ function layout({ children }) {
                         Career&nbsp;in&nbsp;Mig
                       </p>
                     </Link>
+                    {countStories > 0 && (
+                      <Link href={{ pathname: "/migwebsite/customerstories" }}>
+                        {locale == "en" ? (
+                          <p
+                            className={
+                              "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                            }
+                          >
+                            Customer&nbsp;Stories
+                          </p>
+                        ) : (
+                          <p
+                            className={
+                              "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                            }
+                          >
+                            Klien&nbsp;Kami
+                          </p>
+                        )}
+                      </Link>
+                    )}
+                    {countArticle > 0 && (
+                      <Link href={{ pathname: "/migwebsite/blog" }}>
+                        <p
+                          className={
+                            "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
+                          }
+                        >
+                          {locale == "en" ? "Blog" : "Artikel"}
+                        </p>
+                      </Link>
+                    )}
                   </div>
                 </div>
                 <div className={"flex"}>
@@ -1016,7 +1140,7 @@ function layout({ children }) {
                     </Link>
                   </div>
                   <div className={"w-1/2 my-2 lg:my-0 lg:px-16"}>
-                    <p className={"gilroy-bold py-1 text-lg"}>Follow</p>
+                    <p className={"gilroy-bold py-1 text-xs"}>Follow</p>
                     <Link href="https://instagram.com/mitramasglobal?utm_medium=copy_link">
                       <div className={"flex"}>
                         <img
