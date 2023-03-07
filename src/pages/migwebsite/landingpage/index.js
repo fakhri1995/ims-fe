@@ -853,7 +853,7 @@ function LandingPage({ dataBlog }) {
                 style={{ width: "200px", height: "115.32px" }}
               />
             </div>
-            <p className="text-base text-accentblue text-left mt-4 font-gilroybold">
+            <p className="text-base text-primarygreen text-left mt-4 font-gilroybold">
               Hardware
             </p>
             <p className="text-sm text-blackmig text-left mt-1 font-gilroysemibold">
@@ -1204,14 +1204,18 @@ function LandingPage({ dataBlog }) {
                               <div>
                                 {data1.company_logo ? (
                                   <img
-                                    className={"max-w-[100px] h-auto"}
+                                    className={
+                                      "max-w-[100px] h-auto max-h-[67px]"
+                                    }
                                     src={generateStaticAssetUrl(
                                       data1.company_logo.link
                                     )}
                                   />
                                 ) : (
                                   <img
-                                    className={"max-w-[100px] h-auto"}
+                                    className={
+                                      "max-w-[100px] h-auto max-h-[67px]"
+                                    }
                                     src={
                                       "/image/landingpage/testimonial-client.png"
                                     }

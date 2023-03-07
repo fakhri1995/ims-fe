@@ -101,10 +101,49 @@ function Talents({}) {
   ];
   const [skillSuggestion, setSkillSuggestion] = useState([]);
   const dataKindProject = [
-    "New idea or project",
-    "Existing project that needs more resources",
-    "On going assistance or consultation",
-    "None of the above, I just want to know about the service",
+    {
+      id: 1,
+      name: "New idea or project",
+      label: "New idea or project",
+    },
+    {
+      id: 2,
+      name: "Existing project that needs more resources",
+      label: "Existing project that needs more resources",
+    },
+    {
+      id: 3,
+      name: "Ongoing assistance or consultation",
+      label: "Ongoing assistance or consultation",
+    },
+    {
+      id: 4,
+      name: "None of the above, I just want to know about the service",
+      label: "None of the above, I just want to know about the service",
+    },
+  ];
+  const dataKindProjectIndo = [
+    {
+      id: 1,
+      name: "New idea or project",
+      label: "Proyek atau ide baru",
+    },
+    {
+      id: 2,
+      name: "Existing project that needs more resources",
+      label: "Proyek yang sedang berjalan dan membutuhkan sumber daya tambahan",
+    },
+    {
+      id: 3,
+      name: "Ongoing assistance or consultation",
+      label: "Konsultasi atau asistensi",
+    },
+    {
+      id: 4,
+      name: "None of the above, I just want to know about the service",
+      label:
+        "Saya hanya ingin mengetahui lebih lanjut mengenai solusi Talents dari MIG",
+    },
   ];
   const [valueDate, onChangeDate] = useState(new Date());
   const [valueDateTemp, onChangeDateTemp] = useState(null);
@@ -774,7 +813,9 @@ function Talents({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={"font-gilroyregular text-xl"}
-                        label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.contactname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -789,13 +830,15 @@ function Talents({}) {
                               name: e.target.value,
                             });
                           }}
-                          placeholder="Enter your name here"
+                          placeholder={t.contactnameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
                         className={"font-gilroyregular text-xl"}
-                        label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.phonenumber}</p>
+                        }
                         rules={[
                           {
                             required: true,
@@ -814,7 +857,7 @@ function Talents({}) {
                               phone_number: parseInt(e.target.value),
                             });
                           }}
-                          placeholder="Enter your phone number here"
+                          placeholder={t.phonenumberplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -829,7 +872,7 @@ function Talents({}) {
                         >
                           <div className={"flex flex-row justify-between"}>
                             <p className={"text-base font-gilroysemibold"}>
-                              Get Started
+                              {t.getstarted}
                             </p>
                             <img
                               className={"self-center"}
@@ -855,7 +898,7 @@ function Talents({}) {
                     style={{ lineHeight: "120%" }}
                     className={"text-[30px] text-blackmig font-gilroysemibold"}
                   >
-                    General Information
+                    {t.generalinformation}
                   </p>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
                   <div className={"mt-9"}>
@@ -863,9 +906,7 @@ function Talents({}) {
                       name={"type project"}
                       className={"font-gilroyregular text-base"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
-                          How many people are employed at your company?
-                        </p>
+                        <p style={{ fontSize: "16px" }}>{t.howmanypeople}</p>
                       }
                       rules={[{ required: true }]}
                     >
@@ -893,7 +934,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-base"}
                       label={
                         <p style={{ fontSize: "16px" }}>
-                          What kind of project are you hiring for?
+                          {t.whatkindofprojecttalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -903,18 +944,33 @@ function Talents({}) {
                         value={valueKindProject}
                         buttonStyle={"solid"}
                       >
-                        <Space direction="vertical">
-                          {dataKindProject.map((name) => (
-                            <Radio
-                              className="text-blackmig text-base"
-                              value={name}
-                            >
-                              <p className={"text-blackmig text-base"}>
-                                {name}
-                              </p>
-                            </Radio>
-                          ))}
-                        </Space>
+                        {locale == "en" ? (
+                          <Space direction="vertical">
+                            {dataKindProject.map((data, index) => (
+                              <Radio
+                                className="text-blackmig text-base"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-base"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        ) : (
+                          <Space direction="vertical">
+                            {dataKindProjectIndo.map((data, index) => (
+                              <Radio
+                                className="text-blackmig text-base"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-base"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        )}
                       </Radio.Group>
                     </Form.Item>
                   </div>
@@ -924,14 +980,16 @@ function Talents({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("first")}
                     >
-                      <p className={"text-[18px] text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>
+                        {t.back}
+                      </p>
                     </button>
                     <button
                       className={
                         "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
-                      <p className={"text-[18px] text-white"}>Next</p>
+                      <p className={"text-[18px] text-white"}>{t.next}</p>
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
@@ -1033,7 +1091,7 @@ function Talents({}) {
                           "font-gilroysemibold text-blackmig text-[32px]"
                         }
                       >
-                        Submit Request
+                        {t.submitrequest}
                       </p>
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
@@ -1041,7 +1099,9 @@ function Talents({}) {
                           "mt-4 text-[18px] text-blackmig font-gilroyregular"
                         }
                       >
-                        Are you sure you want to submit your request with only{" "}
+                        {locale == "en"
+                          ? "Are you sure you want to submit your request with only "
+                          : "Apakah Anda yakin untuk mengirim permintaan hanya dengan "}
                         <span className={"font-gilroysemibold"}>
                           {dataTalents.length}
                         </span>{" "}
@@ -1055,7 +1115,10 @@ function Talents({}) {
                       <p
                         className={"text-[18px] text-white font-gilroysemibold"}
                       >
-                        Yes, continue with {dataTalents.length} talent
+                        {locale == "en"
+                          ? "Yes, continue with "
+                          : "Ya, lanjutkan dengan "}{" "}
+                        {dataTalents.length} talent
                       </p>
                     </button>
                     <button
@@ -1069,7 +1132,7 @@ function Talents({}) {
                           "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
-                        No, I want to complete my request{" "}
+                        {t.nowantcompleterequest}
                       </p>
                     </button>
                   </div>
@@ -1078,7 +1141,7 @@ function Talents({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
                 >
-                  Talent Information
+                  {t.talentinformation}
                 </p>
                 <p className={"mt-9 text-base"}>
                   What kind of talent are you looking for?
@@ -1347,7 +1410,7 @@ function Talents({}) {
                                 : "font-gilroyregular"
                             }
                           >
-                            Others
+                            {locale == "en" ? "Others" : "Lainnya"}
                           </p>
                         </div>
                       </div>
@@ -1357,7 +1420,7 @@ function Talents({}) {
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
                     <p className={"text-blackmig text-sm font-gilroysemibold"}>
-                      1. Job Specification
+                      {t.jobspesification}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -1366,10 +1429,7 @@ function Talents({}) {
 
                       className={"font-gilroyregular text-xl"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
-                          What roles/skills would you like to see in your new
-                          hire?
-                        </p>
+                        <p style={{ fontSize: "16px" }}>{t.whatroleskills}</p>
                       }
                       rules={[{ required: true }]}
                     >
@@ -1385,7 +1445,7 @@ function Talents({}) {
                           setProduct(e.target.value);
                         }}
                         onPressEnter={handleInputProduct}
-                        placeholder="Enter specific roles or skills"
+                        placeholder={t.enterspesificrole}
                       />
                     </Form.Item>
                   </div>
@@ -1420,7 +1480,9 @@ function Talents({}) {
                   {kindOfTalent != null && (
                     <div className={"mt-4"}>
                       <p className={"text-base text-blackmig"}>
-                        Popular roles or skills for{" "}
+                        {locale == "en"
+                          ? "Popular roles or skills for "
+                          : "Posisi atau skill yang populer di "}
                         {kindOfTalent == "Engineering"
                           ? "Engineering"
                           : kindOfTalent == "Data"
@@ -1429,7 +1491,7 @@ function Talents({}) {
                           ? "Design"
                           : kindOfTalent == "Product"
                           ? "Product"
-                          : "Others"}
+                          : t.others}
                       </p>
                     </div>
                   )}
@@ -1461,8 +1523,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-base"}
                       label={
                         <p style={{ fontSize: "16px" }}>
-                          What level of employee you would like to see in your
-                          new hire?
+                          {t.whatlevelofemployee}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1489,11 +1550,15 @@ function Talents({}) {
                       className={"font-gilroyregular text-base"}
                       label={
                         <p className={"text-blackmig"}>
-                          How many talent in{" "}
+                          {locale == "en"
+                            ? "How many talent in "
+                            : "Berapa banyak talent "}
                           <span className={"font-gilroysemibold text-base"}>
                             {kindOfTalent}
                           </span>{" "}
-                          you want to hire?
+                          {locale == "en"
+                            ? "you want to hire?"
+                            : "yang Anda butuhkan?"}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1510,7 +1575,7 @@ function Talents({}) {
                           setManyTalent(e);
                         }}
                         // onPressEnter={handleInputProduct}
-                        placeholder="How many?"
+                        placeholder={t.manytalentplaceholder}
                       />
                     </Form.Item>
                   </div>
@@ -1520,7 +1585,7 @@ function Talents({}) {
                     <p
                       className={"text-blackmig text-base font-gilroysemibold"}
                     >
-                      2. Additional Information
+                      {t.additionalinformation}
                     </p>
                   </div>
                   <div className={"mt-8 w-1/2"}>
@@ -1532,7 +1597,7 @@ function Talents({}) {
                           style={{ fontSize: "16px" }}
                           className={"text-base font-gilroyregular"}
                         >
-                          How soon do you need the talent?
+                          {t.howsoondoyouneedtalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1548,15 +1613,15 @@ function Talents({}) {
                           setUrgently(value);
                         }}
                         allowClear
-                        placeholder={"When will you start using the product?"}
+                        placeholder={t.specifystarttime}
                       >
                         <Option value="Within this week">
-                          Within this week
+                          {t.withinthisweek}
                         </Option>
                         <Option value="Within this month">
-                          Within this month
+                          {t.withinthismonth}
                         </Option>
-                        <Option value="Next Month">Next Month</Option>
+                        <Option value="Next Month">{t.nextmonth}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -1569,7 +1634,7 @@ function Talents({}) {
                           style={{ fontSize: "16px" }}
                           className={"text-base font-gilroyregular"}
                         >
-                          How long do you need the the talent?
+                          {t.howlongdoyouneedtalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1585,11 +1650,17 @@ function Talents({}) {
                           setTimeUsed(value);
                         }}
                         allowClear
-                        placeholder={"How long will the product used?"}
+                        placeholder={t.specifyduration}
                       >
-                        <Option value="6">{"< 6 Month Duration"}</Option>
+                        <Option value="6">
+                          {" "}
+                          {locale == "en" ? "< 6 months" : "< 6 bulan"}
+                        </Option>
                         <Option value="6 - 12">
-                          {"6 - 12 Month Duration"}
+                          6 - 12 {locale == "en" ? "months" : "bulan"}
+                        </Option>
+                        <Option value="12">
+                          {locale == "en" ? "> 12 months" : "> 12 bulan"}
                         </Option>
                       </Select>
                     </Form.Item>
@@ -1600,8 +1671,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-base"}
                       label={
                         <p style={{ fontSize: "16px" }}>
-                          Are you open in hiring our remote talent? (work from
-                          home)
+                          {t.areyouopeninhiring}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1617,10 +1687,14 @@ function Talents({}) {
                           setOpenRemote(value);
                         }}
                         allowClear
-                        placeholder={"Choose decision"}
+                        placeholder={t.choosedecision}
                       >
-                        <Option value="Yes">Yes</Option>
-                        <Option value="No">No</Option>
+                        <Option value="Yes">
+                          {locale == "en" ? "Yes" : "Ya"}
+                        </Option>
+                        <Option value="No">
+                          {locale == "en" ? "No" : "Tidak"}
+                        </Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -1631,7 +1705,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-base"}
                       label={
                         <p className={"text-blackmig text-base"}>
-                          What is your maximum budget for your new hire?
+                          {t.whatisyourmaximumbudgettalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1659,9 +1733,7 @@ function Talents({}) {
                       name={"Details"}
                       className={"font-gilroyregular text-base"}
                       label={
-                        <p className={"text-blackmig text-base"}>
-                          Details (Optional)
-                        </p>
+                        <p className={"text-blackmig text-base"}>{t.details}</p>
                       }
 
                       // rules={[{ required: true }]}
@@ -1676,7 +1748,7 @@ function Talents({}) {
                           setDetails(value.target.value);
                         }}
                         rows={4}
-                        placeholder="Tell us more about your talent details"
+                        placeholder={t.tellusmoretalent}
                       />
                     </Form.Item>
                   </div>
@@ -1686,7 +1758,9 @@ function Talents({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("second")}
                     >
-                      <p className={"text-[18px] text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>
+                        {t.back}
+                      </p>
                     </button>
                     <button
                       onClick={handleAddAnotherProduct}
@@ -1699,9 +1773,7 @@ function Talents({}) {
                           "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
-                        {statusEdit
-                          ? "I want to Update Talent"
-                          : "I want to request more talent"}
+                        {statusEdit ? t.iwanttoupdate : t.iwanttorequest}
                       </p>
                       <img
                         className={"self-center"}
@@ -1719,7 +1791,7 @@ function Talents({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
                 >
-                  Choose Meeting Date
+                  {t.choosemeetingdate}
                 </p>
                 {meetingDateStatus == true || meetingTimeStatus == true ? (
                   <div
@@ -1729,8 +1801,7 @@ function Talents({}) {
                   >
                     <img src={"image/software/information-circle.png"} />
                     <p className={"ml-3 text-base text-blackmig self-center"}>
-                      Please choose a meeting date & time with Mitramas Infosys
-                      Global
+                      {t.pleasechoosemeetingdate}
                     </p>
                   </div>
                 ) : (
@@ -1750,7 +1821,7 @@ function Talents({}) {
                     <p
                       className={"text-base text-blackmig font-gilroysemibold"}
                     >
-                      Choose Time
+                      {t.choosetime}
                     </p>
                     <p
                       className={
@@ -1825,12 +1896,12 @@ function Talents({}) {
                 </div>
                 <div className={"mt-[35px]"}>
                   <p className={"text-base text-blackmig font-gilroyregular"}>
-                    *Meeting Time
+                    {t.meetingtime}
                   </p>
 
                   {valueDateTemp == null ? (
                     <p className={"mt-1 text-redmig text-base"}>
-                      Please choose your date first on the calendar
+                      {t.pleasechooseyourdate}
                     </p>
                   ) : (
                     <div
@@ -1861,7 +1932,7 @@ function Talents({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("third")}
                   >
-                    <p className={"text-[18px] text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>{t.back}</p>
                   </button>
                   <button
                     type={"submit"}
@@ -1870,7 +1941,7 @@ function Talents({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-[18px] text-white"}>Submit</p>
+                    <p className={"text-[18px] text-white"}>{t.submit}</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -1890,7 +1961,7 @@ function Talents({}) {
                     <p
                       className={"font-gilroybold text-primarygreen text-base"}
                     >
-                      Talent Request Summary
+                      {t.talentrequestsummary}
                     </p>
                     <div className={"mt-3 border border-dividermig"} />
                     {dataTalents.map((data, index) => (
@@ -1928,7 +1999,7 @@ function Talents({}) {
                                     "text-blackmig text-xs font-gilroysemibold"
                                   }
                                 >
-                                  Roles/skills:
+                                  {t.roleorskills}
                                 </p>
                                 <div className="flex flex-row ml-2">
                                   {data.product.map(
@@ -1976,7 +2047,7 @@ function Talents({}) {
                             "text-white text-[18px] font-gilroysemibold"
                           }
                         >
-                          Submit Request
+                          {t.submitrequest}
                         </p>
                         <div
                           className={
@@ -2082,7 +2153,9 @@ function Talents({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={"font-gilroyregular text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>Contact Name</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.contactname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -2097,13 +2170,15 @@ function Talents({}) {
                               name: e.target.value,
                             });
                           }}
-                          placeholder="Enter your name here"
+                          placeholder={t.contactnameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
                         className={"font-gilroyregular text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>Phone Number</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.phonenumber}</p>
+                        }
                         rules={[
                           {
                             required: true,
@@ -2122,7 +2197,7 @@ function Talents({}) {
                               phone_number: parseInt(e.target.value),
                             });
                           }}
-                          placeholder="Enter your phone number here"
+                          placeholder={t.phonenumberplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -2137,7 +2212,7 @@ function Talents({}) {
                         >
                           <div className={"flex flex-row justify-between"}>
                             <p className={"text-base font-gilroysemibold"}>
-                              Get Started
+                              {t.getstarted}
                             </p>
                             <img
                               className={"self-center ml-[13.52px]"}
@@ -2171,9 +2246,7 @@ function Talents({}) {
                       name={"type project"}
                       className={"font-gilroyregular text-sm"}
                       label={
-                        <p style={{ fontSize: "14px" }}>
-                          How many people are employed at your company?
-                        </p>
+                        <p style={{ fontSize: "14px" }}>{t.howmanypeople}</p>
                       }
                       rules={[{ required: true }]}
                     >
@@ -2201,7 +2274,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-sm"}
                       label={
                         <p style={{ fontSize: "14px" }}>
-                          What kind of project are you hiring for?
+                          {t.whatkindofprojecttalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2211,16 +2284,33 @@ function Talents({}) {
                         value={valueKindProject}
                         buttonStyle={"solid"}
                       >
-                        <Space direction="vertical">
-                          {dataKindProject.map((name) => (
-                            <Radio
-                              className="text-blackmig text-sm"
-                              value={name}
-                            >
-                              <p className={"text-blackmig text-sm"}>{name}</p>
-                            </Radio>
-                          ))}
-                        </Space>
+                        {locale == "en" ? (
+                          <Space direction="vertical">
+                            {dataKindProject.map((data, index) => (
+                              <Radio
+                                className="text-blackmig text-sm"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-sm"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        ) : (
+                          <Space direction="vertical">
+                            {dataKindProjectIndo.map((data, index) => (
+                              <Radio
+                                className="text-blackmig text-sm"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-sm"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        )}
                       </Radio.Group>
                     </Form.Item>
                   </div>
@@ -2243,7 +2333,7 @@ function Talents({}) {
                         "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px]  flex flex-row justify-between"
                       }
                     >
-                      <p className={"text-base text-white"}>Next</p>
+                      <p className={"text-base text-white"}>{t.next}</p>
                       <img
                         className={"self-center ml-[13.52px]"}
                         style={{ width: "20px", height: "20px" }}
@@ -2345,7 +2435,7 @@ function Talents({}) {
                           "font-gilroysemibold text-blackmig text-[32px]"
                         }
                       >
-                        Submit Request
+                        {t.submitrequest}
                       </p>
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
@@ -2353,7 +2443,9 @@ function Talents({}) {
                           "mt-4 text-[18px] text-blackmig font-gilroyregular"
                         }
                       >
-                        Are you sure you want to submit your request with only{" "}
+                        {locale == "en"
+                          ? "Are you sure you want to submit your request with only "
+                          : "Apakah Anda yakin untuk mengirim permintaan hanya dengan "}
                         <span className={"font-gilroysemibold"}>
                           {dataTalents.length}
                         </span>{" "}
@@ -2367,7 +2459,10 @@ function Talents({}) {
                       <p
                         className={"text-[18px] text-white font-gilroysemibold"}
                       >
-                        Yes, continue with {dataTalents.length} talent
+                        {locale == "en"
+                          ? "Yes, continue with "
+                          : "Ya, lanjutkan dengan "}{" "}
+                        {dataTalents.length} talent
                       </p>
                     </button>
                     <button
@@ -2381,7 +2476,7 @@ function Talents({}) {
                           "text-[18px] text-primarygreen font-gilroysemibold"
                         }
                       >
-                        No, I want to complete my request{" "}
+                        {t.nowantcompleterequest}
                       </p>
                     </button>
                   </div>
@@ -2390,7 +2485,7 @@ function Talents({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold"}
                 >
-                  Talent Information
+                  {t.talentinformation}
                 </p>
                 <Form
                   id="formtalentdetail"
@@ -2423,7 +2518,7 @@ function Talents({}) {
                         <Option value="Data">Data</Option>
                         <Option value="Product">Product</Option>
                         <Option value="Design">Design</Option>
-                        <Option value="Others">Others</Option>
+                        <Option value="Others">{t.others}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -2431,7 +2526,7 @@ function Talents({}) {
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
                     <p className={"text-blackmig text-sm font-gilroysemibold"}>
-                      1. Job Specification
+                      {t.jobspesification}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -2440,10 +2535,7 @@ function Talents({}) {
 
                       className={"font-gilroyregular text-xl"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
-                          What roles/skills would you like to see in your new
-                          hire?
-                        </p>
+                        <p style={{ fontSize: "16px" }}>{t.whatroleskills}</p>
                       }
                       rules={[{ required: true }]}
                     >
@@ -2459,7 +2551,7 @@ function Talents({}) {
                           setProduct(e.target.value);
                         }}
                         onPressEnter={handleInputProduct}
-                        placeholder="Enter specific roles or skills"
+                        placeholder={t.enterspesificrole}
                       />
                     </Form.Item>
                   </div>
@@ -2494,7 +2586,9 @@ function Talents({}) {
                   {kindOfTalent != null && (
                     <div className={"mt-4"}>
                       <p className={"text-sm text-blackmig"}>
-                        Popular roles or skills for{" "}
+                        {locale == "en"
+                          ? "Popular roles or skills for "
+                          : "Posisi atau skill yang populer di "}
                         {kindOfTalent == "Engineering"
                           ? "Engineering"
                           : kindOfTalent == "Data"
@@ -2503,7 +2597,7 @@ function Talents({}) {
                           ? "Design"
                           : kindOfTalent == "Product"
                           ? "Product"
-                          : "Others"}
+                          : t.others}
                       </p>
                     </div>
                   )}
@@ -2535,8 +2629,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-sm"}
                       label={
                         <p style={{ fontSize: "14px" }}>
-                          What level of employee you would like to see in your
-                          new hire?
+                          {t.whatlevelofemployee}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2563,11 +2656,15 @@ function Talents({}) {
                       className={"font-gilroyregular text-sm"}
                       label={
                         <p className={"text-blackmig"}>
-                          How many talent in{" "}
+                          {locale == "en"
+                            ? "How many talent in "
+                            : "Berapa banyak talent "}
                           <span className={"font-gilroysemibold text-sm"}>
                             {kindOfTalent}
                           </span>{" "}
-                          you want to hire?
+                          {locale == "en"
+                            ? "you want to hire?"
+                            : "yang Anda butuhkan?"}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2584,7 +2681,7 @@ function Talents({}) {
                           setManyTalent(e);
                         }}
                         // onPressEnter={handleInputProduct}
-                        placeholder="How many?"
+                        placeholder={t.manytalentplaceholder}
                       />
                     </Form.Item>
                   </div>
@@ -2592,7 +2689,7 @@ function Talents({}) {
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
                     <p className={"text-blackmig text-sm font-gilroysemibold"}>
-                      2. Additional Information
+                      {t.additionalinformation}
                     </p>
                   </div>
                   <div className={"mt-8 w-full"}>
@@ -2604,7 +2701,7 @@ function Talents({}) {
                           style={{ fontSize: "14px" }}
                           className={"text-sm font-gilroyregular"}
                         >
-                          How soon do you need the talent?
+                          {t.howsoondoyouneedtalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2620,15 +2717,15 @@ function Talents({}) {
                           setUrgently(value);
                         }}
                         allowClear
-                        placeholder={"When will you start using the product?"}
+                        placeholder={t.specifystarttime}
                       >
                         <Option value="Within this week">
-                          Within this week
+                          {t.withinthisweek}
                         </Option>
                         <Option value="Within this month">
-                          Within this month
+                          {t.withinthismonth}
                         </Option>
-                        <Option value="Next Month">Next Month</Option>
+                        <Option value="Next Month">{t.nextmonth}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -2641,7 +2738,7 @@ function Talents({}) {
                           style={{ fontSize: "14px" }}
                           className={"text-sm font-gilroyregular"}
                         >
-                          How long do you need the the talent?
+                          {t.howlongdoyouneedtalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2657,11 +2754,16 @@ function Talents({}) {
                           setTimeUsed(value);
                         }}
                         allowClear
-                        placeholder={"How long will the product used?"}
+                        placeholder={t.specifyduration}
                       >
-                        <Option value="6">{"< 6 Month Duration"}</Option>
+                        <Option value="6">
+                          {locale == "en" ? "< 6 months" : "< 6 bulan"}
+                        </Option>
                         <Option value="6 - 12">
-                          {"6 - 12 Month Duration"}
+                          6 - 12 {locale == "en" ? "months" : "bulan"}
+                        </Option>
+                        <Option value="12">
+                          {locale == "en" ? "> 12 months" : "> 12 bulan"}
                         </Option>
                       </Select>
                     </Form.Item>
@@ -2672,8 +2774,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-sm"}
                       label={
                         <p style={{ fontSize: "14px" }}>
-                          Are you open in hiring our remote talent? (work from
-                          home)
+                          {t.areyouopeninhiring}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2689,10 +2790,14 @@ function Talents({}) {
                           setOpenRemote(value);
                         }}
                         allowClear
-                        placeholder={"Choose decision"}
+                        placeholder={t.choosedecision}
                       >
-                        <Option value="Yes">Yes</Option>
-                        <Option value="No">No</Option>
+                        <Option value="Yes">
+                          {locale == "en" ? "Yes" : "Ya"}
+                        </Option>
+                        <Option value="No">
+                          {locale == "en" ? "No" : "Tidak"}
+                        </Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -2703,7 +2808,7 @@ function Talents({}) {
                       className={"font-gilroyregular text-sm"}
                       label={
                         <p className={"text-blackmig text-sm"}>
-                          What is your maximum budget for your new hire?
+                          {t.whatisyourmaximumbudgettalent}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -2731,9 +2836,7 @@ function Talents({}) {
                       name={"Details"}
                       className={"font-gilroyregular text-sm"}
                       label={
-                        <p className={"text-blackmig text-sm"}>
-                          Details (Optional)
-                        </p>
+                        <p className={"text-blackmig text-sm"}>{t.details}</p>
                       }
 
                       // rules={[{ required: true }]}
@@ -2748,7 +2851,7 @@ function Talents({}) {
                           setDetails(value.target.value);
                         }}
                         rows={4}
-                        placeholder="Tell us more about your talent details"
+                        placeholder={t.tellusmoretalent}
                       />
                     </Form.Item>
                   </div>
@@ -2794,13 +2897,12 @@ function Talents({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold"}
                 >
-                  Choose Meeting Date
+                  {t.choosemeetingdate}
                 </p>
                 {meetingDateStatus == true || meetingTimeStatus == true ? (
                   <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
                     <p className={"ml-3 text-base text-blackmig self-center"}>
-                      Please choose a meeting date & time with Mitramas Infosys
-                      Global
+                      {t.pleasechoosemeetingdate}
                     </p>
                   </div>
                 ) : (
@@ -2818,7 +2920,7 @@ function Talents({}) {
                   </div>
                   <div className={"w-full mt-4"}>
                     <p className={"text-xs text-blackmig font-gilroysemibold"}>
-                      Choose Time
+                      {t.choosetime}
                     </p>
                     <p
                       className={
@@ -2829,7 +2931,7 @@ function Talents({}) {
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
-                        Please choose your date first on the calendar
+                        {t.pleasechooseyourdate}
                       </p>
                     ) : (
                       <div
@@ -2942,7 +3044,7 @@ function Talents({}) {
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Next</p>
+                    <p className={"text-base text-white"}>{t.next}</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "20px", height: "20px" }}
@@ -2962,7 +3064,7 @@ function Talents({}) {
                     <p
                       className={"font-gilroybold text-primarygreen text-base"}
                     >
-                      Talent Request Summary
+                      {t.talentrequestsummary}
                     </p>
                     <div className={"mt-3 border border-dividermig"} />
                     {dataTalents.map((data, index) => (
@@ -3000,7 +3102,7 @@ function Talents({}) {
                                     "text-blackmig text-xs font-gilroysemibold"
                                   }
                                 >
-                                  Roles/skills:
+                                  {t.roleorskills}
                                 </p>
                                 <div className="flex flex-row ml-2">
                                   {data.product.map(
@@ -3048,7 +3150,7 @@ function Talents({}) {
                             "text-white text-[18px] font-gilroysemibold"
                           }
                         >
-                          Submit Request
+                          {t.submitrequest}
                         </p>
                         <div
                           className={
