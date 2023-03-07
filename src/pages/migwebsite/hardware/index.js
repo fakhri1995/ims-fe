@@ -1024,7 +1024,9 @@ function Hardware({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={" text-base -mt-2"}
-                        label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.contactname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -1040,13 +1042,15 @@ function Hardware({}) {
                               name: e.target.value,
                             });
                           }}
-                          placeholder="Enter your name here"
+                          placeholder={t.contactnameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
                         className={" text-base -mt-2"}
-                        label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.phonenumber}</p>
+                        }
                         rules={[
                           {
                             required: true,
@@ -1066,7 +1070,7 @@ function Hardware({}) {
                             });
                           }}
                           style={{ fontSize: "16px" }}
-                          placeholder="Enter your phone number here"
+                          placeholder={t.phonenumberplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -1081,7 +1085,7 @@ function Hardware({}) {
                         >
                           <div className={"flex flex-row justify-between"}>
                             <p className={"text-[18px] font-gilroysemibold"}>
-                              Get Started
+                              {t.getstarted}
                             </p>
                             <img
                               className={"self-center"}
@@ -1101,14 +1105,13 @@ function Hardware({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
                 >
-                  General Information
+                  {t.generalinformation}
                 </p>
                 <p
                   style={{ lineHeight: "120%", fontSize: "16px" }}
                   className={"pt-9"}
                 >
-                  What is your purpose in providing IT needs through Mitramas
-                  Infosys Global?
+                  {t.whatisyourpurpose}
                 </p>
                 <div className={"mt-4"}>
                   <Radio.Group
@@ -1121,7 +1124,7 @@ function Hardware({}) {
                         className="text-blackmig text-base"
                         value={"I want to buy the product"}
                       >
-                        I want to buy the product
+                        {t.iwanttobuytheproduct}
                       </Radio>
                       <Radio
                         className="text-blackmig text-base"
@@ -1129,8 +1132,7 @@ function Hardware({}) {
                           "I want to lease the product and having hardware managed"
                         }
                       >
-                        I want to lease the product and having hardware managed
-                        services
+                        {t.iwanttoleasetheproduct}
                       </Radio>
                       <Radio
                         className="text-blackmig text-base"
@@ -1138,7 +1140,7 @@ function Hardware({}) {
                           "None of the above, I just want to know about the service"
                         }
                       >
-                        None of the above, I just want to know about the service
+                        {t.noneoftheabove}
                       </Radio>
                     </Space>
                   </Radio.Group>
@@ -1149,7 +1151,7 @@ function Hardware({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("first")}
                   >
-                    <p className={"text-[18px] text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>{t.back}</p>
                   </button>
                   <button
                     onClick={() => handleForm("third")}
@@ -1157,7 +1159,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-[18px] text-white"}>Next</p>
+                    <p className={"text-[18px] text-white"}>{t.next}</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -1260,7 +1262,7 @@ function Hardware({}) {
                           "font-gilroysemibold text-blackmig text-[32px]"
                         }
                       >
-                        Submit Request
+                        {t.submitrequest}
                       </p>
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
@@ -1268,11 +1270,13 @@ function Hardware({}) {
                           "mt-4 text-base text-blackmig font-gilroyregular"
                         }
                       >
-                        Are you sure you want to submit your request with only{" "}
+                        {locale == "en"
+                          ? "Are you sure you want to submit your request with only  "
+                          : "Apakah Anda yakin untuk mengirim permintaan hanya dengan "}
                         <span className={"font-gilroysemibold"}>
                           {dataHardwareSummary.length}
                         </span>{" "}
-                        item ?
+                        {locale == "en" ? "item " : "produk "} ?
                       </p>
                     </div>
                     <button
@@ -1294,7 +1298,7 @@ function Hardware({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        No, I want to complete my request{" "}
+                        {t.noiwanttocomplete}{" "}
                       </p>
                     </button>
                   </div>
@@ -1303,10 +1307,10 @@ function Hardware({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
                 >
-                  Hardware Information
+                  {t.hardwareinformation}
                 </p>
                 <p style={{ lineHeight: "150%" }} className={"mt-9 text-base"}>
-                  What kind of hardware are you looking for?
+                  {t.whatkindofhardware}
                 </p>
                 <Form
                   id="formhardware"
@@ -1575,7 +1579,7 @@ function Hardware({}) {
                                 : "font-gilroyregular"
                             }
                           >
-                            Others
+                            {t.others}
                           </p>
                         </div>
                       </div>
@@ -1587,7 +1591,7 @@ function Hardware({}) {
                     <p
                       className={"text-blackmig text-base font-gilroysemibold"}
                     >
-                      1. Hardware Specification
+                      {t.hardwarespecification}
                     </p>
                   </div>
                   <div className={"mt-8 w-1/2"}>
@@ -1596,7 +1600,7 @@ function Hardware({}) {
                       className={" text-base"}
                       label={
                         <p style={{ fontSize: "16px" }}>
-                          *How soon do you need the product?
+                          {t.howsoondoyouneedproject}
                         </p>
                       }
                       rules={[
@@ -1619,12 +1623,12 @@ function Hardware({}) {
                         allowClear
                       >
                         <Option value="Within this week">
-                          Within this week
+                          {t.withinthisweek}
                         </Option>
                         <Option value="Within this month">
-                          Within this month
+                          {t.withinthismonth}
                         </Option>
-                        <Option value="Next Month">Next Month</Option>
+                        <Option value="Next Month">{t.nextmonth}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -1656,10 +1660,9 @@ function Hardware({}) {
                         }}
                         allowClear
                       >
-                        <Option value="6">{"< 6 Month Duration"}</Option>
-                        <Option value="6 - 12">
-                          {"6 - 12 Month Duration"}
-                        </Option>
+                        <Option value="6">{t.lessthan6month}</Option>
+                        <Option value="6 - 12">{t.until12month}</Option>
+                        <Option value="6 - 12">{t.morethan6month}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -1669,11 +1672,13 @@ function Hardware({}) {
                       className={" text-base"}
                       label={
                         <p style={{ fontSize: "16px" }}>
-                          *What product in{" "}
+                          {locale == "en" ? "*What product in " : "Produk"}
                           <span className={"font-gilroysemibold"}>
                             {kindOfHardware}
                           </span>{" "}
-                          do you need?
+                          {locale == "en"
+                            ? " do you need?"
+                            : " apa yang anda butuhkan?"}
                         </p>
                       }
                       // rules={[{ required: true }]}
@@ -1722,9 +1727,16 @@ function Hardware({}) {
                     </div>
                   )}
                   <div className={"mt-3"}>
-                    <p className={"text-base text-blackmig"}>
-                      Popular products in {kindOfHardware ? kindOfHardware : ""}
-                    </p>
+                    {locale == "en" ? (
+                      <p className={"text-base text-blackmig"}>
+                        Popular products in{" "}
+                        {kindOfHardware ? kindOfHardware : ""}
+                      </p>
+                    ) : (
+                      <p className={"text-base text-blackmig"}>
+                        Produk {kindOfHardware ? kindOfHardware : ""} populer
+                      </p>
+                    )}
                     {hardwareSuggestion.length > 0 && (
                       <div className={"flex flex-row flex-wrap mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
@@ -1760,11 +1772,15 @@ function Hardware({}) {
                       label={
                         <p className={"text-base"}>
                           {" "}
-                          How many product in{" "}
+                          {locale == "en"
+                            ? " How many product in"
+                            : " Berapa banyak produk"}
                           <span className={"font-gilroysemibold text-blackmig"}>
                             {kindOfHardware ? kindOfHardware : ""}{" "}
                           </span>
-                          you need? (pieces)
+                          {locale == "en"
+                            ? "you need? (pieces)"
+                            : "yang anda butuhkan?"}
                         </p>
                       }
                       name={"manyproduct"}
@@ -1797,7 +1813,7 @@ function Hardware({}) {
                       name={"max_budget"}
                       label={
                         <p className={"text-base"}>
-                          What is your maximum budget for your new product?
+                          {t.whatisyourmaximumbudget}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1830,9 +1846,7 @@ function Hardware({}) {
                     <Form.Item
                       name={"Details"}
                       className={" text-base"}
-                      label={
-                        <p style={{ fontSize: "16px" }}>Details (Optional)</p>
-                      }
+                      label={<p style={{ fontSize: "16px" }}>{t.details}</p>}
                       // rules={[{ required: true }]}
                     >
                       <TextArea
@@ -1845,11 +1859,11 @@ function Hardware({}) {
                           setDetails(value.target.value);
                         }}
                         rows={4}
-                        placeholder="Tell us more about your talent details"
+                        placeholder={t.tellusemorehardware}
                       />
                     </Form.Item>
                     <Form.Item
-                      label={<p style={{ fontSize: "16px" }}>Attachment</p>}
+                      label={<p style={{ fontSize: "16px" }}>{t.attachment}</p>}
                     >
                       <Form.Item
                         name="dragger"
@@ -1873,11 +1887,13 @@ function Hardware({}) {
                             src="/image/landingpage/upload.png"
                           />
                           <p className="text-xs font-gilroyregular px-9 mt-9">
-                            Drag and drop your sourcing documents here
+                            {t.draganddrop}
                           </p>
-                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular mt-2">
+                            {t.or}
+                          </p>
                           <p className="text-xs font-gilroyregular text-bluemig mt-2">
-                            browse
+                            {t.browse}
                           </p>
                         </Upload.Dragger>
                       </Form.Item>
@@ -1889,7 +1905,9 @@ function Hardware({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("second")}
                     >
-                      <p className={"text-[18px] text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>
+                        {t.back}
+                      </p>
                     </button>
                     {statusEdit ? (
                       <button
@@ -1927,7 +1945,7 @@ function Hardware({}) {
                             "text-[18px] text-primarygreen font-gilroysemibold"
                           }
                         >
-                          I want to add another product
+                          {t.iwanttoaddanotherproduct}
                         </p>
                         <img
                           className={"self-center"}
@@ -1945,7 +1963,7 @@ function Hardware({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
                 >
-                  Choose Meeting Date
+                  {t.choosemeetingdate}
                 </p>
                 <div
                   className={
@@ -1954,8 +1972,7 @@ function Hardware({}) {
                 >
                   <img src={"image/software/information-circle.png"} />
                   <p className={"ml-3 text-base text-blackmig self-center"}>
-                    Please choose a meeting date & time with Mitramas Infosys
-                    Global
+                    {t.pleasechoosemeetingdate}
                   </p>
                 </div>
                 <div className={"flex flex-row mt-4"}>
@@ -1972,7 +1989,7 @@ function Hardware({}) {
                     <p
                       className={"text-base text-blackmig font-gilroysemibold"}
                     >
-                      Choose Time
+                      {t.choosetime}
                     </p>
                     <p
                       className={
@@ -2047,12 +2064,12 @@ function Hardware({}) {
                 </div>
                 <div className={"mt-[35px]"}>
                   <p className={"text-base text-blackmig font-gilroyregular"}>
-                    *Meeting Time
+                    {t.meetingtime}
                   </p>
 
                   {valueDateTemp == null ? (
                     <p className={"mt-1 text-redmig text-xs"}>
-                      Please choose your date first on the calendar
+                      {t.pleasechooseyourdate}
                     </p>
                   ) : (
                     <div
@@ -2083,7 +2100,7 @@ function Hardware({}) {
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("third")}
                   >
-                    <p className={"text-[18px] text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>{t.back}</p>
                   </button>
                   <button
                     type={"submit"}
@@ -2092,7 +2109,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-[18px] text-white"}>Submit</p>
+                    <p className={"text-[18px] text-white"}>{t.submit}</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -2111,7 +2128,7 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                 >
                   <p className={"font-gilroybold text-primarygreen text-base"}>
-                    Hardware Request Summary
+                    {t.hardwarerequestsummary}
                   </p>
                   <div className={"mt-3 border border-dividermig"} />
                   {dataHardwareSummary.map((data, index) => (
@@ -2183,7 +2200,7 @@ function Hardware({}) {
                   >
                     <div className={"flex flex-row justify-between"}>
                       <p className={"text-white text-base font-gilroysemibold"}>
-                        Submit Request
+                        {t.submitrequest}
                       </p>
                       <div
                         className={
@@ -2292,7 +2309,9 @@ function Hardware({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={" text-base -mt-2"}
-                        label={<p style={{ fontSize: "14px" }}>Contact Name</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.contactname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -2308,13 +2327,15 @@ function Hardware({}) {
                               name: e.target.value,
                             });
                           }}
-                          placeholder="Enter your name here"
+                          placeholder={t.contactnameplaceholder}
                         />
                       </Form.Item>
                       <Form.Item
                         name={"Phone Number"}
                         className={" text-xs -mt-2"}
-                        label={<p style={{ fontSize: "14px" }}>Phone Number</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.phonenumber}</p>
+                        }
                         rules={[
                           {
                             required: true,
@@ -2334,7 +2355,7 @@ function Hardware({}) {
                             });
                           }}
                           style={{ fontSize: "14px" }}
-                          placeholder="Enter your phone number here"
+                          placeholder={t.phonenumberplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -2349,7 +2370,7 @@ function Hardware({}) {
                         >
                           <div className={"flex flex-row justify-between"}>
                             <p className={"text-base font-gilroysemibold"}>
-                              Get Started
+                              {t.getstarted}
                             </p>
                             <img
                               className={"self-center ml-[13.52px]"}
@@ -2369,14 +2390,13 @@ function Hardware({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold"}
                 >
-                  General Information
+                  {t.generalinformation}
                 </p>
                 <p
                   style={{ lineHeight: "120%", fontSize: "14px" }}
                   className={"pt-9"}
                 >
-                  What is your purpose in providing IT needs through Mitramas
-                  Infosys Global?
+                  {t.whatisyourpurpose}
                 </p>
                 <div className={"mt-4"}>
                   <Radio.Group
@@ -2389,7 +2409,7 @@ function Hardware({}) {
                         className="text-blackmig text-sm"
                         value={"I want to buy the product"}
                       >
-                        I want to buy the product
+                        {t.iwanttobuytheproduct}
                       </Radio>
                       <Radio
                         className="text-blackmig text-sm"
@@ -2397,8 +2417,7 @@ function Hardware({}) {
                           "I want to lease the product and having hardware managed"
                         }
                       >
-                        I want to lease the product and having hardware managed
-                        services
+                        {t.iwanttoleasetheproduct}
                       </Radio>
                       <Radio
                         className="text-blackmig text-sm"
@@ -2406,7 +2425,7 @@ function Hardware({}) {
                           "None of the above, I just want to know about the service"
                         }
                       >
-                        None of the above, I just want to know about the service
+                        {t.noneoftheabove}
                       </Radio>
                     </Space>
                   </Radio.Group>
@@ -2534,7 +2553,7 @@ function Hardware({}) {
                           "font-gilroysemibold text-blackmig text-[32px]"
                         }
                       >
-                        Submit Request
+                        {t.submitrequest}
                       </p>
                       <div className={"mt-2 border border-dividermig px-8"} />
                       <p
@@ -2542,11 +2561,13 @@ function Hardware({}) {
                           "mt-4 text-base text-blackmig font-gilroyregular"
                         }
                       >
-                        Are you sure you want to submit your request with only{" "}
+                        {locale == "en"
+                          ? "Are you sure you want to submit your request with only  "
+                          : "Apakah Anda yakin untuk mengirim permintaan hanya dengan "}
                         <span className={"font-gilroysemibold"}>
                           {dataHardwareSummary.length}
                         </span>{" "}
-                        item ?
+                        {locale == "en" ? "item " : "produk "} ?
                       </p>
                     </div>
                     <button
@@ -2554,7 +2575,11 @@ function Hardware({}) {
                       onClick={handleSubmitConfirm}
                     >
                       <p className={"text-base text-white font-gilroysemibold"}>
-                        Yes, continue with {dataHardwareSummary.length} item
+                        {locale == "en"
+                          ? "Yes, continue with "
+                          : "Ya, lanjutkan dengan "}{" "}
+                        {dataHardwareSummary.length}{" "}
+                        {locale == "en" ? "item" : "produk"}
                       </p>
                     </button>
                     <button
@@ -2568,7 +2593,7 @@ function Hardware({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        No, I want to complete my request{" "}
+                        {t.noiwanttocomplete}{" "}
                       </p>
                     </button>
                   </div>
@@ -2577,7 +2602,7 @@ function Hardware({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold py-9"}
                 >
-                  Hardware Information
+                  {t.hardwareinformation}
                 </p>
                 {/* <p style={{ lineHeight: "150%" }} className={"mt-9 text-base"}>
                   What kind of hardware are you looking for?
@@ -2597,9 +2622,7 @@ function Hardware({}) {
                     name="kind_of_hardware"
                     className={" text-sm"}
                     label={
-                      <p style={{ fontSize: "14px" }}>
-                        What kind of hardware are you looking for?
-                      </p>
+                      <p style={{ fontSize: "14px" }}>{t.whatkindofhardware}</p>
                     }
                     // rules={[
                     //   {
@@ -2624,7 +2647,9 @@ function Hardware({}) {
                       <Option value="Workstation">Workstation</Option>
                       <Option value="Server">Server & Hosting</Option>
                       <Option value="UPS">UPS</Option>
-                      <Option value="Others">Others</Option>
+                      <Option value="Others">
+                        {locale == "en" ? "Others" : "Lainnya"}
+                      </Option>
                     </Select>
                   </Form.Item>
 
@@ -2634,7 +2659,7 @@ function Hardware({}) {
                     <p
                       className={"text-blackmig text-base font-gilroysemibold"}
                     >
-                      1. Hardware Specification
+                      {t.hardwarespecification}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -2643,7 +2668,7 @@ function Hardware({}) {
                       className={" text-sm"}
                       label={
                         <p style={{ fontSize: "14px" }}>
-                          *How soon do you need the product?
+                          {t.howsoondoyouneedproject}
                         </p>
                       }
                       rules={[
@@ -2666,12 +2691,12 @@ function Hardware({}) {
                         allowClear
                       >
                         <Option value="Within this week">
-                          Within this week
+                          {t.withinthisweek}
                         </Option>
                         <Option value="Within this month">
-                          Within this month
+                          {t.withinthismonth}
                         </Option>
-                        <Option value="Next Month">Next Month</Option>
+                        <Option value="Next Month">{t.nextmonth}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -2680,9 +2705,7 @@ function Hardware({}) {
                       name="time_used"
                       className={" text-sm"}
                       label={
-                        <p style={{ fontSize: "14px" }}>
-                          How long do you need the product?
-                        </p>
+                        <p style={{ fontSize: "14px" }}>{t.howlongdoyouneed}</p>
                       }
                       rules={[
                         {
@@ -2703,10 +2726,9 @@ function Hardware({}) {
                         }}
                         allowClear
                       >
-                        <Option value="6">{"< 6 Month Duration"}</Option>
-                        <Option value="6 - 12">
-                          {"6 - 12 Month Duration"}
-                        </Option>
+                        <Option value="6">{t.lessthan6month}</Option>
+                        <Option value="6 - 12">{t.until12month}</Option>
+                        <Option value="12">{t.morethan6month}</Option>
                       </Select>
                     </Form.Item>
                   </div>
@@ -2716,11 +2738,13 @@ function Hardware({}) {
                       className={" text-base"}
                       label={
                         <p style={{ fontSize: "14px" }}>
-                          *What product in{" "}
+                          {locale == "en" ? "*What product in " : " Produk"}
                           <span className={"font-gilroysemibold"}>
                             {kindOfHardware}
                           </span>{" "}
-                          do you need?
+                          {locale == "en"
+                            ? "do you need?"
+                            : "apa yang anda butuhkan?"}
                         </p>
                       }
                       // rules={[{ required: true }]}
@@ -2769,9 +2793,16 @@ function Hardware({}) {
                     </div>
                   )}
                   <div className={"mt-3"}>
-                    <p className={"text-sm text-blackmig"}>
-                      Popular products in {kindOfHardware ? kindOfHardware : ""}
-                    </p>
+                    {locale == "en" ? (
+                      <p className={"text-sm text-blackmig"}>
+                        Popular products in{" "}
+                        {kindOfHardware ? kindOfHardware : ""}
+                      </p>
+                    ) : (
+                      <p className={"text-sm text-blackmig"}>
+                        Produk {kindOfHardware ? kindOfHardware : ""} populer
+                      </p>
+                    )}
                     {hardwareSuggestion.length > 0 && (
                       <div className={"flex flex-row mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
@@ -2805,11 +2836,15 @@ function Hardware({}) {
                       label={
                         <p className={"text-sm"}>
                           {" "}
-                          How many product in{" "}
+                          {locale == "en"
+                            ? " How many product in"
+                            : " Berapa banyak produk"}
                           <span className={"font-gilroysemibold text-blackmig"}>
                             {kindOfHardware ? kindOfHardware : ""}{" "}
                           </span>
-                          you need? (pieces)
+                          {locale == "en"
+                            ? "you need? (pieces)"
+                            : "yang anda butuhkan?"}
                         </p>
                       }
                       name={"manyproduct"}
@@ -2841,9 +2876,7 @@ function Hardware({}) {
                     <Form.Item
                       name={"max_budget"}
                       label={
-                        <p className={"text-sm"}>
-                          What is your maximum budget for your new product?
-                        </p>
+                        <p className={"text-sm"}>{t.whatisyourmaximumbudget}</p>
                       }
                       rules={[{ required: true }]}
                     >
@@ -2890,11 +2923,11 @@ function Hardware({}) {
                           setDetails(value.target.value);
                         }}
                         rows={4}
-                        placeholder="Tell us more about your talent details"
+                        placeholder={t.tellusemorehardware}
                       />
                     </Form.Item>
                     <Form.Item
-                      label={<p style={{ fontSize: "16px" }}>Attachment</p>}
+                      label={<p style={{ fontSize: "16px" }}>{t.attachment}</p>}
                     >
                       <Form.Item
                         name="dragger"
@@ -2918,11 +2951,13 @@ function Hardware({}) {
                             src="/image/landingpage/upload.png"
                           />
                           <p className="text-xs font-gilroyregular px-9 mt-9">
-                            Drag and drop your sourcing documents here
+                            {t.draganddrop}
                           </p>
-                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular mt-2">
+                            {t.or}
+                          </p>
                           <p className="text-xs font-gilroyregular text-bluemig mt-2">
-                            browse
+                            {t.browse}
                           </p>
                         </Upload.Dragger>
                       </Form.Item>
@@ -2996,12 +3031,11 @@ function Hardware({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold"}
                 >
-                  Choose Meeting Date
+                  {t.choosemeetingdate}
                 </p>
                 <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
                   <p className={"ml-3 text-xs text-blackmig self-center"}>
-                    Please choose a meeting date & time with Mitramas Infosys
-                    Global
+                    {t.pleasechoosemeetingdate}
                   </p>
                 </div>
                 <div className={"mt-9"}>
@@ -3026,7 +3060,7 @@ function Hardware({}) {
                       style={{ lineHeight: "18px" }}
                       className={"text-xs text-blackmig font-gilroysemibold"}
                     >
-                      Choose Time
+                      {t.choosetime}
                     </p>
                     <p
                       style={{ lineHeight: "18px" }}
@@ -3038,7 +3072,7 @@ function Hardware({}) {
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
-                        * Please choose your date first on the calendar
+                        * {t.pleasechooseyourdate}
                       </p>
                     ) : (
                       <div
@@ -3166,7 +3200,7 @@ function Hardware({}) {
                   style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                 >
                   <p className={"font-gilroybold text-primarygreen text-base"}>
-                    Hardware Request Summary test
+                    {t.hardwarerequestsummary}
                   </p>
                   <div className={"mt-3 border border-dividermig"} />
                   {dataHardwareSummary.map((data, index) => (
@@ -3238,7 +3272,7 @@ function Hardware({}) {
                   >
                     <div className={"flex flex-row justify-between"}>
                       <p className={"text-white text-base font-gilroysemibold"}>
-                        Submit Request
+                        {t.submitrequest}
                       </p>
                       <div
                         className={

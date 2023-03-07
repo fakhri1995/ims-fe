@@ -238,12 +238,53 @@ function Software({}) {
     onChangeDateTemp(value);
     onChangeDate(value);
   };
+
   const dataTypeProject = [
-    "New idea or project",
-    "Existing project that needs more resources",
-    "Ongoing assistance or consultation",
-    "None of the above, I just want to know about the service",
+    {
+      id: 1,
+      name: "New idea or project",
+      label: "New idea or project",
+    },
+    {
+      id: 2,
+      name: "Existing project that needs more resources",
+      label: "Existing project that needs more resources",
+    },
+    {
+      id: 3,
+      name: "Ongoing assistance or consultation",
+      label: "Ongoing assistance or consultation",
+    },
+    {
+      id: 4,
+      name: "None of the above, I just want to know about the service",
+      label: "None of the above, I just want to know about the service",
+    },
   ];
+  const dataTypeProjectIndo = [
+    {
+      id: 1,
+      name: "New idea or project",
+      label: "Proyek atau ide baru",
+    },
+    {
+      id: 2,
+      name: "Existing project that needs more resources",
+      label: "Proyek yang sedang berjalan dan membutuhkan sumber daya tambahan",
+    },
+    {
+      id: 3,
+      name: "Ongoing assistance or consultation",
+      label: "Konsultasi atau asistensi",
+    },
+    {
+      id: 4,
+      name: "None of the above, I just want to know about the service",
+      label:
+        "Saya hanya ingin mengetahui lebih lanjut mengenai solusi Software dari MIG",
+    },
+  ];
+
   const [heightt, setHeightt] = useState("");
   const NextArrow = (props) => {
     const { className, style, onClick } = props;
@@ -515,7 +556,9 @@ function Software({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={"gilroy-medium text-base"}
-                        label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.contactname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -530,7 +573,7 @@ function Software({}) {
                               contact_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter your name here"
+                          placeholder={t.contactnameplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -561,7 +604,9 @@ function Software({}) {
                       <Form.Item
                         name={"Phone Number"}
                         className={"gilroy-medium text-base"}
-                        label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
+                        label={
+                          <p style={{ fontSize: "16px" }}>{t.phonenumber}</p>
+                        }
                         rules={[
                           {
                             required: true,
@@ -581,7 +626,7 @@ function Software({}) {
                             });
                           }}
                           style={{ fontSize: "16px" }}
-                          placeholder="Enter your phone number here"
+                          placeholder={t.phonenumberplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -596,7 +641,7 @@ function Software({}) {
                         >
                           <div className={"flex flex-row justify-between"}>
                             <p className={"text-[18px] font-gilroysemibold"}>
-                              Get Started
+                              {t.getstarted}
                             </p>
                             <img
                               className={"self-center"}
@@ -622,15 +667,13 @@ function Software({}) {
                     style={{ lineHeight: "120%" }}
                     className={"text-[30px] text-blackmig font-gilroysemibold"}
                   >
-                    Project Information
+                    {t.projectinformation}
                   </p>
                   <Form.Item
                     name={"Kind of Project"}
                     className={"text-blackmig text-base"}
                     label={
-                      <p style={{ fontSize: "16px" }}>
-                        What kind of project do you want to build?
-                      </p>
+                      <p style={{ fontSize: "16px" }}>{t.whatkindofproject}</p>
                     }
                     rules={[{ required: true }]}
                   >
@@ -644,7 +687,7 @@ function Software({}) {
                           kind_project: e.target.value,
                         });
                       }}
-                      placeholder="Tell us about your project"
+                      placeholder={t.tellusaboutyourproject}
                     />
                   </Form.Item>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
@@ -654,7 +697,7 @@ function Software({}) {
                       className={"text-blackmig text-base"}
                       label={
                         <p style={{ fontSize: "16px" }}>
-                          What type of project are you hiring us for?
+                          {t.whattypeofproject}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -664,23 +707,38 @@ function Software({}) {
                         value={dataSoftware.type_project}
                         buttonStyle={"solid"}
                       >
-                        <Space direction="vertical">
-                          {dataTypeProject.map((name) => (
-                            <Radio
-                              className="text-blackmig text-base"
-                              value={name}
-                            >
-                              <p className={"text-blackmig text-base"}>
-                                {name}
-                              </p>
-                            </Radio>
-                          ))}
-                        </Space>
+                        {locale == "en" ? (
+                          <Space direction="vertical">
+                            {dataTypeProject.map((data, key) => (
+                              <Radio
+                                className="text-blackmig text-base"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-base"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        ) : (
+                          <Space direction="vertical">
+                            {dataTypeProjectIndo.map((data, key) => (
+                              <Radio
+                                className="text-blackmig text-base"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-base"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        )}
                       </Radio.Group>
                     </Form.Item>
                   </div>
                   <div className={"mt-9"}>
-                    <p className={"text-base"}>Budget range</p>
+                    <p className={"text-base"}>{t.budgetrange}</p>
                     <div className={"mt-1 flex flex-row"}>
                       <Form.Item
                         name={"Budget Minimal"}
@@ -758,7 +816,7 @@ function Software({}) {
                   </div>
                   <div className={"mt-9"}>
                     <Form.Item
-                      label={<p style={{ fontSize: "16px" }}>Attachment</p>}
+                      label={<p style={{ fontSize: "16px" }}>{t.attachment}</p>}
                     >
                       <Form.Item
                         name="dragger"
@@ -782,11 +840,13 @@ function Software({}) {
                             src="/image/landingpage/upload.png"
                           />
                           <p className="text-xs font-gilroyregular px-9 mt-9">
-                            Drag and drop your sourcing documents here
+                            {t.draganddrop}
                           </p>
-                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular mt-2">
+                            {t.or}
+                          </p>
                           <p className="text-xs font-gilroyregular text-bluemig mt-2">
-                            browse
+                            {t.browse}
                           </p>
                         </Upload.Dragger>
                       </Form.Item>
@@ -794,7 +854,7 @@ function Software({}) {
                   </div>
                   <div className={"mt-1"}>
                     <p className={"text-darkgrey text-xs font-gilroyregular"}>
-                      Product images or files lead to more accurate quotes.
+                      {t.productimagesorfile}
                     </p>
                   </div>
                   <div className={"border border-dividermig w-full mt-9"} />
@@ -803,14 +863,16 @@ function Software({}) {
                       className={"bg-white py-2 px-4"}
                       onClick={handleForm}
                     >
-                      <p className={"text-[18px] text-primarygreen"}>Back</p>
+                      <p className={"text-[18px] text-primarygreen"}>
+                        {t.back}
+                      </p>
                     </button>
                     <button
                       className={
                         "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
-                      <p className={"text-[18px] text-white"}>Next</p>
+                      <p className={"text-[18px] text-white"}>{t.next}</p>
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
@@ -826,7 +888,7 @@ function Software({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
                 >
-                  Choose Meeting Date
+                  {t.choosemeetingdate}
                 </p>
                 {meetingDateStatus == true || meetingTimeStatus == true ? (
                   <div
@@ -836,8 +898,7 @@ function Software({}) {
                   >
                     <img src={"image/software/information-circle.png"} />
                     <p className={"ml-3 text-base text-blackmig self-center"}>
-                      Please choose a meeting date & time with Mitramas Infosys
-                      Global
+                      {t.pleasechoosemeetingdate}
                     </p>
                   </div>
                 ) : (
@@ -857,7 +918,7 @@ function Software({}) {
                     <p
                       className={"text-base text-blackmig font-gilroysemibold"}
                     >
-                      Choose Time
+                      {t.choosetime}
                     </p>
                     <p
                       className={
@@ -932,12 +993,12 @@ function Software({}) {
                 </div>
                 <div className={"mt-[35px]"}>
                   <p className={"text-base text-blackmig font-gilroyregular"}>
-                    *Meeting Time
+                    {t.meetingtime}
                   </p>
 
                   {valueDateTemp == null ? (
                     <p className={"mt-1 text-redmig text-xs"}>
-                      Please choose your date first on the calendar
+                      {t.pleasechooseyourdate}
                     </p>
                   ) : (
                     <div
@@ -967,7 +1028,7 @@ function Software({}) {
                 )}
                 <div className={"mt-9 flex flex-row justify-between"}>
                   <button className={"bg-white py-2 px-4"} onClick={handleForm}>
-                    <p className={"text-[18px] text-primarygreen"}>Back</p>
+                    <p className={"text-[18px] text-primarygreen"}>{t.back}</p>
                   </button>
                   <button
                     type={"submit"}
@@ -976,7 +1037,7 @@ function Software({}) {
                       "text-white bg-primarygreen w-[95px] rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-[18px] text-white"}>Submit</p>
+                    <p className={"text-[18px] text-white"}>{t.submit}</p>
                     <img
                       className={"self-center"}
                       style={{ width: "20px", height: "20px" }}
@@ -1060,7 +1121,9 @@ function Software({}) {
                       <Form.Item
                         name={"Contact Name"}
                         className={"text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>Contact Name</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.contactname}</p>
+                        }
                         rules={[{ required: true }]}
                       >
                         <Input
@@ -1076,7 +1139,7 @@ function Software({}) {
                               contact_name: e.target.value,
                             });
                           }}
-                          placeholder="Enter your name here"
+                          placeholder={t.contactnameplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -1107,7 +1170,9 @@ function Software({}) {
                       <Form.Item
                         name={"Phone Number"}
                         className={"text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>Phone Number</p>}
+                        label={
+                          <p style={{ fontSize: "14px" }}>{t.phonenumber}</p>
+                        }
                         rules={[
                           {
                             required: true,
@@ -1127,7 +1192,7 @@ function Software({}) {
                             });
                           }}
                           style={{ fontSize: "14px" }}
-                          placeholder="Enter your phone number here"
+                          placeholder={t.phonenumberplaceholder}
                         />
                       </Form.Item>
                     </div>
@@ -1142,7 +1207,7 @@ function Software({}) {
                         >
                           <div className={"flex flex-row justify-between"}>
                             <p className={"text-base font-gilroysemibold"}>
-                              Get Started
+                              {t.getstarted}
                             </p>
                             <img
                               className={"self-center ml-[13.52px]"}
@@ -1170,15 +1235,13 @@ function Software({}) {
                       "text-base text-blackmig font-gilroysemibold mb-9"
                     }
                   >
-                    Project Information
+                    {t.projectinformation}
                   </p>
                   <Form.Item
                     name={"Kind of Project"}
                     className={"text-blackmig text-sm"}
                     label={
-                      <p style={{ fontSize: "16px" }}>
-                        What kind of project do you want to build?
-                      </p>
+                      <p style={{ fontSize: "16px" }}>{t.whatkindofproject}</p>
                     }
                     rules={[{ required: true }]}
                   >
@@ -1192,7 +1255,7 @@ function Software({}) {
                           kind_project: e.target.value,
                         });
                       }}
-                      placeholder="Tell us about your project"
+                      placeholder={t.tellusaboutyourproject}
                     />
                   </Form.Item>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
@@ -1202,7 +1265,7 @@ function Software({}) {
                       className={"text-blackmig text-sm"}
                       label={
                         <p style={{ fontSize: "14px" }}>
-                          What type of project are you hiring us for?
+                          {t.whattypeofproject}
                         </p>
                       }
                       rules={[{ required: true }]}
@@ -1212,21 +1275,38 @@ function Software({}) {
                         value={dataSoftware.type_project}
                         buttonStyle={"solid"}
                       >
-                        <Space direction="vertical">
-                          {dataTypeProject.map((name) => (
-                            <Radio
-                              className="text-blackmig text-sm"
-                              value={name}
-                            >
-                              <p className={"text-blackmig text-sm"}>{name}</p>
-                            </Radio>
-                          ))}
-                        </Space>
+                        {locale == "en" ? (
+                          <Space direction="vertical">
+                            {dataTypeProject.map((data, index) => (
+                              <Radio
+                                className="text-blackmig text-sm"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-sm"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        ) : (
+                          <Space direction="vertical">
+                            {dataTypeProjectIndo.map((data, index) => (
+                              <Radio
+                                className="text-blackmig text-sm"
+                                value={data.name}
+                              >
+                                <p className={"text-blackmig text-sm"}>
+                                  {data.label}
+                                </p>
+                              </Radio>
+                            ))}
+                          </Space>
+                        )}
                       </Radio.Group>
                     </Form.Item>
                   </div>
                   <div className={"mt-9"}>
-                    <p className={"text-sm"}>Budget range</p>
+                    <p className={"text-sm"}>{t.budgetrange}</p>
                     <div className={"mt-1 flex flex-row"}>
                       <Form.Item
                         name={"Budget Minimal"}
@@ -1304,7 +1384,7 @@ function Software({}) {
                   </div>
                   <div className={"mt-9"}>
                     <Form.Item
-                      label={<p style={{ fontSize: "14px" }}>Attachment</p>}
+                      label={<p style={{ fontSize: "14px" }}>{t.attachment}</p>}
                     >
                       <Form.Item
                         name="dragger"
@@ -1328,11 +1408,13 @@ function Software({}) {
                             src="/image/landingpage/upload.png"
                           />
                           <p className="text-xs font-gilroyregular px-9 mt-9">
-                            Drag and drop your sourcing documents here
+                            {t.draganddrop}
                           </p>
-                          <p className="text-xs font-gilroyregular mt-2">Or</p>
+                          <p className="text-xs font-gilroyregular mt-2">
+                            {t.or}
+                          </p>
                           <p className="text-xs font-gilroyregular text-bluemig mt-2">
-                            browse
+                            {t.browse}
                           </p>
                         </Upload.Dragger>
                       </Form.Item>
@@ -1340,7 +1422,7 @@ function Software({}) {
                   </div>
                   <div className={"mt-1"}>
                     <p className={"text-darkgrey text-xs font-gilroyregular"}>
-                      Product images or files lead to more accurate quotes.
+                      {t.productimagesorfile}
                     </p>
                   </div>
                   <div className={"border border-dividermig w-full mt-9"} />
@@ -1362,7 +1444,7 @@ function Software({}) {
                         "text-white bg-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
                     >
-                      <p className={"text-base text-white"}>Next</p>
+                      <p className={"text-base text-white"}>{t.next}</p>
                       <img
                         className={"self-center"}
                         style={{ width: "20px", height: "20px" }}
@@ -1378,12 +1460,11 @@ function Software({}) {
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold"}
                 >
-                  Choose Meeting Date
+                  {t.choosemeetingdate}
                 </p>
                 <div className={"mt-9 bg-bgjoinmig px-3 py-2 rounded-lg"}>
                   <p className={"ml-3 text-base text-blackmig self-center"}>
-                    Please choose a meeting date & time with Mitramas Infosys
-                    Global
+                    {t.pleasechoosemeetingdate}
                   </p>
                 </div>
                 <div className={"mt-4"}>
@@ -1398,7 +1479,7 @@ function Software({}) {
                   </div>
                   <div className={"w-full mt-4"}>
                     <p className={"text-xs text-blackmig font-gilroysemibold"}>
-                      Choose Time
+                      {t.choosetime}
                     </p>
                     <p
                       className={
@@ -1409,7 +1490,7 @@ function Software({}) {
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
-                        Please choose your date first on the calendar
+                        {t.pleasechooseyourdate}
                       </p>
                     ) : (
                       <div
@@ -1519,7 +1600,7 @@ function Software({}) {
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Next</p>
+                    <p className={"text-base text-white"}>{t.next}</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "20px", height: "20px" }}
