@@ -5,17 +5,30 @@ import Link from "next/link";
 import Linkk from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
+import Slider from "react-slick";
 
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
 import Layout from "../../../components/migwebsite/layout.js";
 import en from "../../../locales/en";
 import id from "../../../locales/id";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
 function AboutUs({}) {
   const router = useRouter();
 
   const { locale } = router;
   const t = locale === "en" ? en : id;
+  const sliderSettingsPhone = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    arrows: false,
+  };
+
   return (
     <Layout>
       <Head>
@@ -123,7 +136,7 @@ function AboutUs({}) {
         {/* hardware, software, talent */}
         <div
           className={
-            "mt-[118px] w-[1122px] flex flex-row justify-between mx-auto"
+            "mt-[118px] hidden w-full lg:w-[1122px] lg:flex lg:flex-row lg:justify-between mx-auto"
           }
         >
           <div className={"flex flex-col items-center"}>
@@ -316,270 +329,198 @@ function AboutUs({}) {
             </div>
           </div>
         </div>
-        {/* <div className={"hidden md:flex md:flex-row mt-4"}>
-          <div
-            className={
-              "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] mr-5 border-dividermig rounded-lg hover:shadow-lg"
-            }
-          >
-            <div>
-              <img
-                src="/image/navbar/hardware.svg"
-                className={"w-[32px] h-[32px]"}
-              />
-              <p
-                className={
-                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
-                }
-              >
-                Hardware
-              </p>
-              <p className={"font-gilroyregular text-base mt-2"}>
-                {t.hardwaresubtitle}
-              </p>
-              <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/hardware" }}>
-                  <a
-                    className={
-                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
-                    }
-                  >
-                    <p
-                      className={
-                        "font-gilroysemibold text-base text-primarygreen"
-                      }
-                    >
-                      {t.hardwarebuttontitleaboutus}
-                    </p>
-                    <img
-                      src="/image/landingpage/arrow_right_alt.png"
-                      className={"w-5 h-5"}
-                    />
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div
-            className={
-              "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] mr-5 border-dividermig rounded-lg hover:shadow-lg"
-            }
-          >
-            <div>
-              <img
-                src="/image/navbar/software.svg"
-                className={"w-[32px] h-[32px]"}
-              />
-              <p
-                className={
-                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
-                }
-              >
-                Software
-              </p>
-              <p className={"font-gilroyregular text-base mt-2"}>
-                {t.softwaresubtitle}
-              </p>
-              <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/software" }}>
-                  <a
-                    className={
-                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
-                    }
-                  >
-                    <p
-                      className={
-                        "font-gilroysemibold text-base text-primarygreen"
-                      }
-                    >
-                      {t.softwarebuttontitle}
-                    </p>
-                    <img
-                      src="/image/landingpage/arrow_right_alt.png"
-                      className={"w-5 h-5"}
-                    />
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-          <div
-            className={
-              "flex-col flex bg-white mr-0 p-3 border-2 w-[392px] border-dividermig rounded-lg hover:shadow-lg"
-            }
-          >
-            <div>
-              <img
-                src="/image/navbar/talents.svg"
-                className={"w-[32px] h-[32px]"}
-              />
-              <p
-                className={
-                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
-                }
-              >
-                Talents
-              </p>
-              <p className={"font-gilroyregular text-base mt-2"}>
-                {t.talentsubtitleaboutus}
-              </p>
-              <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/talent" }}>
-                  <a
-                    className={
-                      "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
-                    }
-                  >
-                    <p
-                      className={
-                        "font-gilroysemibold text-base text-primarygreen"
-                      }
-                    >
-                      {t.talentbuttontitleaboutus}
-                    </p>
-                    <img
-                      src="/image/landingpage/arrow_right_alt.png"
-                      className={"w-5 h-5"}
-                    />
-                  </a>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div> */}
         <div className={"block md:hidden mt-3"}>
-          <div
-            className={
-              "flex-col flex bg-white mr-0 p-3 border-2 w-[100%] border-dividermig rounded-lg"
-            }
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
-            <div>
-              <img
-                src="/image/navbar/hardware.svg"
-                className={"w-[32px] h-[32px]"}
-              />
-              <p
+          <Slider {...sliderSettingsPhone}>
+            <div className={"flex flex-col items-center mt-20"}>
+              <div
                 className={
-                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
+                  "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
                 }
               >
-                Hardware
-              </p>
-              <p className={"font-gilroyregular text-sm text-blackmig mt-2"}>
-                {t.aboutushardwaredescription}
-              </p>
-              <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/hardware" }}>
-                  <a
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-talent.png"
+                    alt=""
                     className={
-                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
+                      "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                    }
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-center text-2xl text-accentblue font-gilroybold font-bold"
                     }
                   >
-                    <p
-                      className={
-                        "font-gilroysemibold text-base text-primarygreen"
-                      }
-                    >
-                      {locale == "en" ? "Get yours" : "Cek pilihan"}
-                    </p>
-                    <img
-                      src="/image/landingpage/arrow_right_alt.png"
-                      className={"w-5 h-5"}
-                    />
-                  </a>
-                </Link>
+                    Hardware
+                  </p>
+                  {/* <p
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
+                  }
+                >
+                  Lighten up your heavy capital in IT infrastructure
+                </p> */}
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                    }
+                  >
+                    {t.aboutushardwaredescription}
+                  </p>
+
+                  <div className={"text-center"}>
+                    <Linkk href="/hardware">
+                      <button
+                        className={
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p className={"px-1"}>
+                            {locale == "en" ? "Get Yours" : "Cek pilihan"}
+                          </p>
+                          <img
+                            className={"py-1 px-1"}
+                            style={{ width: "15px" }}
+                            src="/image/landingpage/arrow-forward.png"
+                          />
+                        </div>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            className={
-              "flex-col flex bg-white mr-0 p-3 mt-3 border-2 w-[100%] border-dividermig rounded-lg"
-            }
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
-            <div>
-              <img
-                src="/image/navbar/software.svg"
-                className={"w-[32px] h-[32px]"}
-              />
-              <p
+            <div className={"flex flex-col items-center mt-20"}>
+              <div
                 className={
-                  "text-left mt-[13px] font-gilroysemibold text-blackmig text-base"
+                  "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
                 }
               >
-                Software
-              </p>
-              <p className={"font-gilroyregular text-sm text-blackmig mt-2"}>
-                {t.aboutussoftwaredescription}
-              </p>
-              <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/software" }}>
-                  <a
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-software.png"
+                    alt=""
                     className={
-                      "flex flex-row justify-between items-center w-[133px] h-[40px] px-4 py-2"
+                      "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                    }
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-center text-2xl text-darkgreen font-gilroybold font-bold"
                     }
                   >
-                    <p
-                      className={
-                        "font-gilroysemibold text-base text-primarygreen"
-                      }
-                    >
-                      {locale == "en" ? "Build now" : "Mulai sekarang"}
-                    </p>
-                    <img
-                      src="/image/landingpage/arrow_right_alt.png"
-                      className={"w-5 h-5"}
-                    />
-                  </a>
-                </Link>
+                    Software
+                  </p>
+                  {/* <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold font-gilroysemibold mt-1 pb-[42.5px]"
+                  }
+                >
+                  Delivering custom-made software
+                </p> */}
+                  <p
+                    className={
+                      "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                    }
+                  >
+                    {t.aboutussoftwaredescription}
+                  </p>
+
+                  <div className={"text-center"}>
+                    <Linkk href="/software">
+                      <button
+                        className={
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p className={"px-1"}>
+                            {locale == "en" ? "Build Now" : "Mulai sekarang"}
+                          </p>
+                          <img
+                            className={"py-1 px-1"}
+                            style={{ width: "15px" }}
+                            src="/image/landingpage/arrow-forward.png"
+                          />
+                        </div>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-          <div
-            className={
-              "flex-col flex bg-white mr-0 p-3 mt-3 border-2 w-[100%] border-dividermig rounded-lg"
-            }
-            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-          >
-            <div>
-              <img
-                src="/image/navbar/talents.svg"
-                className={"w-[32px] h-[32px]"}
-              />
-              <p
+            <div className={"flex flex-col items-center mt-20"}>
+              <div
                 className={
-                  "text-left mt-[11px] font-gilroysemibold text-blackmig text-base"
+                  "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
                 }
               >
-                Talents
-              </p>
-              <p className={"font-gilroyregular text-blackmig text-sm mt-2"}>
-                {t.aboutustalentdescription}
-              </p>
-              <div className={"flex justify-end mt-4"}>
-                <Link href={{ pathname: "/talent" }}>
-                  <a
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-hardware.png"
+                    alt=""
                     className={
-                      "flex flex-row justify-between items-center w-[190px] h-[40px] px-4 py-2"
+                      "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                    }
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-center text-2xl text-accentpurple font-gilroybold font-bold"
                     }
                   >
-                    <p
-                      className={
-                        "font-gilroysemibold text-base text-primarygreen"
-                      }
-                    >
-                      {locale == "en" ? "Set up your team" : "Dirikan tim Anda"}
-                    </p>
-                    <img
-                      src="/image/landingpage/arrow_right_alt.png"
-                      className={"w-5 h-5"}
-                    />
-                  </a>
-                </Link>
+                    Talents
+                  </p>
+                  {/* <p
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold mt-1 pb-8"
+                  }
+                >
+                  Our people, your growth
+                </p> */}
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                    }
+                  >
+                    {t.aboutustalentdescription}
+                  </p>
+
+                  <div className={"text-center"}>
+                    <Linkk href="/talents">
+                      <button
+                        className={
+                          "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p className={"px-1"}>
+                            {locale == "en" ? "Hire Now" : "Dirikan tim Anda"}
+                          </p>
+                          <img
+                            className={"py-1 px-1"}
+                            style={{ width: "15px" }}
+                            src="/image/landingpage/arrow-forward.png"
+                          />
+                        </div>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </Slider>
         </div>
       </section>
 
@@ -657,7 +598,11 @@ function AboutUs({}) {
             className={"bg-white p-6 rounded-lg"}
             style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
           >
-            <div className={"flex flex-row justify-between text-[18px]"}>
+            <div
+              className={
+                "hidden lg:flex lg:flex-row lg:justify-between text-[18px]"
+              }
+            >
               <div>
                 <ul>
                   <li>
@@ -806,6 +751,153 @@ function AboutUs({}) {
                 </ul>
               </div>
             </div>
+            <div
+              className={"lg:hidden flex flex-row justify-between text-[18px]"}
+            >
+              <div>
+                <ul>
+                  <li>
+                    <p href="">Banda Aceh</p>
+                  </li>
+                  <li>
+                    <p href="">Medan</p>
+                  </li>
+                  <li>
+                    <p href="">Padang</p>
+                  </li>
+                  <li>
+                    <p href="">Jambi</p>
+                  </li>
+                  <li>
+                    <p href="">Pekanbaru</p>
+                  </li>
+                  <li>
+                    <p href="">Batam</p>
+                  </li>
+                  <li>
+                    <p href="">Tanjung pinang</p>
+                  </li>
+                  <li>
+                    <p href="">Jakarta</p>
+                  </li>
+                  <li>
+                    <p href="">Bekasi</p>
+                  </li>
+                  <li>
+                    <p href="">Depok</p>
+                  </li>
+                  <li>
+                    <p href="">Karawang</p>
+                  </li>
+                  <li>
+                    <p href="">Cilegon</p>
+                  </li>
+                  <li>
+                    <p href="">Sukabumi</p>
+                  </li>
+                  <li>
+                    <p href="">Bandar lampung</p>
+                  </li>
+                  <li>
+                    <p href="">Palembang</p>
+                  </li>
+                  <li>
+                    <p href="">Bandung</p>
+                  </li>
+                  <li>
+                    <p href="">Tasikmalaya</p>
+                  </li>
+                  <li>
+                    <p href="">Cirebon</p>
+                  </li>
+                  <li>
+                    <p href="">Semarang</p>
+                  </li>
+                  <li>
+                    <p href="">Purwokerto</p>
+                  </li>
+                  <li>
+                    <p href="">Tegal</p>
+                  </li>
+                  <li>
+                    <p href="">Yogyakarta</p>
+                  </li>
+                  <li>
+                    <p href="">Magelang</p>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <ul>
+                  <li>
+                    <p href="">Solo</p>
+                  </li>
+                  <li>
+                    <p href="">Surabaya</p>
+                  </li>
+                  <li>
+                    <p href="">Madiun</p>
+                  </li>
+                  <li>
+                    <p href="">Sidoarjo</p>
+                  </li>
+                  <li>
+                    <p href="">Malang</p>
+                  </li>
+                  <li>
+                    <p href="">Kediri</p>
+                  </li>
+                  <li>
+                    <p href="">Bogor</p>
+                  </li>
+                  <li>
+                    <p href="">Probolingo</p>
+                  </li>
+                  <li>
+                    <p href="">Banyuwangi</p>
+                  </li>
+                  <li>
+                    <p href="">Jember</p>
+                  </li>
+                  <li>
+                    <p href="">Bali</p>
+                  </li>
+                  <li>
+                    <p href="">Mataram</p>
+                  </li>
+                  <li>
+                    <p href="">Kupang</p>
+                  </li>
+                  <li>
+                    <p href="">Samarinda</p>
+                  </li>
+                  <li>
+                    <p href="">Banjarmasin</p>
+                  </li>
+                  <li>
+                    <p href="">Pontianak</p>
+                  </li>
+                  <li>
+                    <p href="">Balikpapan</p>
+                  </li>
+                  <li>
+                    <p href="">Makasar</p>
+                  </li>
+                  <li>
+                    <p href="">Sorong</p>
+                  </li>
+                  <li>
+                    <p href="">Palu</p>
+                  </li>
+                  <li>
+                    <p href="">Manado</p>
+                  </li>
+                  <li>
+                    <p href="">Pare-pare</p>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -882,36 +974,51 @@ function AboutUs({}) {
         </div>
       </section>
       <section
-        className={
-          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
-        }
+        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-20 py-4 px-8">
+          <div
+            className={
+              "bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8"
+            }
+          >
             <p className={"text-xl font-gilroysemibold"}>
-              Fulfill your IT needs easily!
+              {t.contactussectiontitle}
             </p>
-            <p className={"py-5 text-sm font-gilroyregular"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+            <p className={" text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle1}
             </p>
-            <Link href="/hardware">
-              <button
-                className={
-                  "text-base text-center rounded-lg text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
-                  <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Link>
+            <p className={"text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle2}
+            </p>
+            <div className="mt-4 flex flex-row justify-center">
+              <div className={"mr-1.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"flex justify-between self-end mt-[7.61px]"}>

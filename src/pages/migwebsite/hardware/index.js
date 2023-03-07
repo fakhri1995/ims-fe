@@ -3891,156 +3891,176 @@ function Hardware({}) {
                 )}
               </div>
               <div className={"block md:hidden"}>
-                <div className={"mt-7 px-2"}>
-                  <p
-                    className={
-                      "text-base text-left text-blackmig font-gilroysemibold"
-                    }
-                  >
-                    Banking Machinery
-                  </p>
-                  <Slider {...sliderSettingsPhone2}>
-                    <div
+                {dataBanking && (
+                  <div className={"mt-7 px-2"}>
+                    <p
                       className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                        "text-base text-left text-blackmig font-gilroysemibold"
                       }
                     >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                    <div
+                      Banking Machinery
+                    </p>
+                    <Slider {...sliderSettingsPhone2}>
+                      {dataBanking.map((data, index) => (
+                        <div
+                          className={
+                            "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                          }
+                        >
+                          <img
+                            className={"w-[110px] h-[77.79px]"}
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                          />
+                          <p
+                            className={"text-blackmig font-gilroybold text-xs"}
+                          >
+                            {data.name_product}
+                          </p>
+                        </div>
+                      ))}
+                    </Slider>
+                  </div>
+                )}
+                {dataWorkstation && (
+                  <div className={"mt-7 px-2"}>
+                    <p
                       className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                        "text-base text-left  text-blackmig font-gilroysemibold"
                       }
                     >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                    <div
+                      Workstation
+                    </p>
+                    <Slider {...sliderSettingsPhone2}>
+                      {dataWorkstation.map((data, index) => (
+                        <div
+                          className={
+                            "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                          }
+                        >
+                          <img
+                            className={"w-[110px] h-[77.79px]"}
+                            src={generateStaticAssetUrl(
+                              data.attachment_product.link
+                            )}
+                          />
+                          <p
+                            className={"text-blackmig font-gilroybold text-xs"}
+                          >
+                            {data.name_product}
+                          </p>
+                        </div>
+                      ))}
+                    </Slider>
+                  </div>
+                )}
+                {console.log("data server isinya ", dataServer)}
+                {dataServer && (
+                  <div className={"mt-7 px-2"}>
+                    <p
                       className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                        "text-base text-left  text-blackmig font-gilroysemibold"
                       }
                     >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                  </Slider>
-                </div>
-                <div className={"mt-7 px-2"}>
-                  <p
-                    className={
-                      "text-base text-left  text-blackmig font-gilroysemibold"
-                    }
-                  >
-                    Workstation
-                  </p>
-                  <Slider {...sliderSettingsPhone2}>
-                    <div
+                      Server & Hosting
+                    </p>
+
+                    {dataServer.length >= 2 ? (
+                      <Slider {...sliderSettingsPhone2}>
+                        {dataServer.map((data, index) => (
+                          <div
+                            className={
+                              "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                            }
+                          >
+                            <img
+                              className={"w-[110px] h-[77.79px]"}
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                            />
+                            <p
+                              className={
+                                "text-blackmig font-gilroybold text-xs"
+                              }
+                            >
+                              {data.name_product}
+                            </p>
+                          </div>
+                        ))}
+                      </Slider>
+                    ) : (
+                      <div
+                        className={
+                          "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                        }
+                      >
+                        <img
+                          className={"w-[110px] h-[77.79px]"}
+                          src={generateStaticAssetUrl(
+                            dataServer[0].attachment_product.link
+                          )}
+                        />
+                        <p className={"text-blackmig font-gilroybold text-xs"}>
+                          {dataServer[0].name_product}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {dataUps && (
+                  <div className={"mt-7 px-2"}>
+                    <p
                       className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                        "text-base text-left  text-blackmig font-gilroysemibold"
                       }
                     >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                    <div
-                      className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                      }
-                    >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                    <div
-                      className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                      }
-                    >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                  </Slider>
-                </div>
-                <div className={"mt-7 px-2"}>
-                  <p
-                    className={
-                      "text-base text-left  text-blackmig font-gilroysemibold"
-                    }
-                  >
-                    Server & Hosting
-                  </p>
-                  <Slider {...sliderSettingsPhone2}>
-                    <div
-                      className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                      }
-                    >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                    <div
-                      className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                      }
-                    >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                    <div
-                      className={
-                        "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                      }
-                    >
-                      <img
-                        className={"w-[110px] h-[77.79px]"}
-                        src="/image/hardware/laptop.png"
-                      />
-                      <p className={"text-blackmig font-gilroybold text-xs"}>
-                        Laptop
-                      </p>
-                    </div>
-                  </Slider>
-                </div>
+                      UPS
+                    </p>
+                    {dataUps.length >= 2 ? (
+                      <Slider {...sliderSettingsPhone2}>
+                        {dataUps.map((data, index) => (
+                          <div
+                            className={
+                              "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                            }
+                          >
+                            <img
+                              className={"w-[110px] h-[77.79px]"}
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                            />
+                            <p
+                              className={
+                                "text-blackmig font-gilroybold text-xs"
+                              }
+                            >
+                              {data.name_product}
+                            </p>
+                          </div>
+                        ))}
+                      </Slider>
+                    ) : (
+                      <div
+                        className={
+                          "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                        }
+                      >
+                        <img
+                          className={"w-[110px] h-[77.79px]"}
+                          src={generateStaticAssetUrl(
+                            dataUps[0].attachment_product.link
+                          )}
+                        />
+                        <p className={"text-blackmig font-gilroybold text-xs"}>
+                          {dataUps[0].name_product}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div
                 className={
@@ -4081,7 +4101,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "section3hardwarebrowser bg-transp60 py-4 md:py-12 md:px-[113.5px]"
+              "section3hardwarebrowser bg-transp60 py-4 md:py-12 px-4 md:px-[113.5px]"
             }
           >
             <div className={"flex md:flex-row"}>
@@ -4567,179 +4587,134 @@ function Hardware({}) {
             </section>
           )}
           {/* testimonial mobile */}
-          <section
-            className={
-              "sectiontestimonialmobile block md:hidden bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
-            }
-          >
-            <p
+          {dataTestimonial && (
+            <section
               className={
-                "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                "sectiontestimonialmobile block md:hidden bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
               }
             >
-              {t.customerstorieslandingpage}
-            </p>
-            <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
-              <Slider {...sliderSettingsPhone}>
-                <div
-                  className="py-4 px-8 bg-white rounded-lg"
-                  style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-                >
-                  <div className="">
-                    <p className="text-sm text italic  font-gilroysemibold">
-                      "
-                    </p>
-
-                    <p className="pb-4  text-sm mx-auto text-left">
-                      I had a{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        wonderful experience{" "}
-                      </span>
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        tempor incididunt{" "}
-                      </span>
-                      ut labore et dolore magna aliqua.
-                      <br className="hidden xl:block"></br> optimize your cost
-                      and productivity
-                    </p>
-                    <p className="text-sm text italic  font-gilroysemibold">
-                      "
-                    </p>
-                    <div className="flex flex-col">
-                      <div className="flex flex-row mt-2">
-                        <img
-                          className="rounded-full"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "40px", width: "60px" }}
-                          alt=""
-                        />
-                        <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold  text-black">
-                            Fachri Fauzan
+              <p
+                className={
+                  "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                }
+              >
+                {t.customerstorieslandingpage}
+              </p>
+              <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
+                <Slider {...sliderSettingsPhone}>
+                  {dataTestimonial.map((data1) => (
+                    <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"font-gilroybold text-sm text-blackmig"}>
+                          {locale == "en" ? data1.title : data1.title_id}
+                        </p>
+                        {data1.company_logo ? (
+                          <img
+                            className="rounded-full max-w-[100px] h-auto"
+                            src={generateStaticAssetUrl(
+                              data1.company_logo.link
+                            )}
+                            alt=""
+                          />
+                        ) : (
+                          <img
+                            className="rounded-full max-w-[100px] h-auto"
+                            src="/image/landingpage/testimonial-client.png"
+                            alt=""
+                          />
+                        )}
+                      </div>
+                      <p
+                        className={
+                          "mt-1 text-primarygreen text-xs font-gilroybold"
+                        }
+                      >
+                        {data1.company_name}
+                      </p>
+                      <div
+                        className="mt-2"
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            locale == "en"
+                              ? data1.description
+                              : data1.description_id,
+                        }}
+                      />
+                      {data1.quote && (
+                        <div
+                          className={"mt-2 bg-white p-3"}
+                          style={{
+                            boxShadow: "0px 16px 40px rgba(112, 144, 176, 0.2)",
+                          }}
+                        >
+                          <p className={"text-xs text-blackmig"}>
+                            “{data1.quote}”
                           </p>
-                          <p className="text-xs font-gilroysemibold  text-darkgrey">
-                            Talent Acquisition at Bukopin
+                          <div
+                            className={"mt-3 border border-dividermig w-1/2"}
+                          />
+                          <p
+                            className={
+                              "mt-1 text-[10px] font-gilroysemibold text-blackmig"
+                            }
+                          >
+                            {data1.author}
+                          </p>
+                          <p
+                            className={
+                              "mt-1 text-[10px] font-gilroyregular text-blackmig"
+                            }
+                          >
+                            {locale == "en"
+                              ? data1.job_title
+                              : data1.job_title_id}
                           </p>
                         </div>
+                      )}
+                      <div className={"mt-3 flex justify-end"}>
+                        <button
+                          className={
+                            "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-base text-white font-gilroysemibold"
+                            }
+                          >
+                            Read Story
+                          </p>
+                          <img
+                            className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                            src="/image/landingpage/arrow_forward_ios2.png"
+                            alt=""
+                          />
+                        </button>
                       </div>
                     </div>
+                  ))}
+                </Slider>
+              </div>
+              <div className={"block md:hidden mt-16 flex justify-center"}>
+                <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
+                  <div className={"flex flex-row justify-around"}>
+                    <p
+                      className={
+                        "text-base text-primarygreen  font-gilroysemibold"
+                      }
+                    >
+                      Read More
+                    </p>
+                    <img
+                      className={"self-center"}
+                      style={{ height: "15.64px", width: "8.95px" }}
+                      src="/image/landingpage/arrow-forward-ios.png"
+                    />
                   </div>
-                </div>
-                <div
-                  className="py-4 px-8 bg-white rounded-lg"
-                  style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-                >
-                  <div className="">
-                    <p className="text-sm text italic  font-gilroysemibold">
-                      "
-                    </p>
-
-                    <p className="pb-4  text-sm mx-auto text-left">
-                      I had a{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        wonderful experience{" "}
-                      </span>
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        tempor incididunt{" "}
-                      </span>
-                      ut labore et dolore magna aliqua.
-                      <br className="hidden xl:block"></br> optimize your cost
-                      and productivity
-                    </p>
-                    <p className="text-sm text italic  font-gilroysemibold">
-                      "
-                    </p>
-                    <div className="flex flex-col">
-                      <div className="flex flex-row mt-2">
-                        <img
-                          className="rounded-full"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "40px", width: "60px" }}
-                          alt=""
-                        />
-                        <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold  text-black">
-                            Fachri Fauzan
-                          </p>
-                          <p className="text-xs font-gilroysemibold  text-darkgrey">
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="py-4 px-8 bg-white rounded-lg"
-                  style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-                >
-                  <div className="">
-                    <p className="text-sm text italic  font-gilroysemibold">
-                      "
-                    </p>
-
-                    <p className="pb-4  text-sm mx-auto text-left">
-                      I had a{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        wonderful experience{" "}
-                      </span>
-                      working with Mitramas Infosys Global. Lorem ipsum dolor
-                      sit amet, consectetur adipiscing elit, sed do eiusmod{" "}
-                      <span className={"text-primarygreen font-gilroysemibold"}>
-                        tempor incididunt{" "}
-                      </span>
-                      ut labore et dolore magna aliqua.
-                      <br className="hidden xl:block"></br> optimize your cost
-                      and productivity
-                    </p>
-                    <p className="text-sm text italic  font-gilroysemibold">
-                      "
-                    </p>
-                    <div className="flex flex-col">
-                      <div className="flex flex-row mt-2">
-                        <img
-                          className="rounded-full"
-                          src="/image/landingpage/testimonial-user.png"
-                          style={{ height: "40px", width: "60px" }}
-                          alt=""
-                        />
-                        <div className="self-center ml-[6.8px]">
-                          <p className="text-xs font-gilroysemibold  text-black">
-                            Fachri Fauzan
-                          </p>
-                          <p className="text-xs font-gilroysemibold  text-darkgrey">
-                            Talent Acquisition at Bukopin
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Slider>
-            </div>
-            <div className={"block md:hidden mt-16 flex justify-center"}>
-              <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
-                <div className={"flex flex-row justify-around"}>
-                  <p
-                    className={
-                      "text-base text-primarygreen  font-gilroysemibold"
-                    }
-                  >
-                    Read More
-                  </p>
-                  <img
-                    className={"self-center"}
-                    style={{ height: "15.64px", width: "8.95px" }}
-                    src="/image/landingpage/arrow-forward-ios.png"
-                  />
-                </div>
-              </button>
-            </div>
-          </section>
+                </button>
+              </div>
+            </section>
+          )}
           {/* coverages */}
           <section
             className={
@@ -5127,38 +5102,55 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "contactusphone md:relative block md:hidden md:flex bg-bgfooter pt-8"
+              "contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"
             }
           >
             <div className={"container mx-auto"}>
-              <div className="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+              <div
+                className={
+                  "bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8"
+                }
+              >
                 <p className={"text-xl font-gilroysemibold"}>
-                  Fulfill your IT needs easily!
+                  {t.contactussectiontitle}
                 </p>
-                <p className={"py-5 text-sm font-gilroyregular"}>
-                  Need help in providing your needs? Whether they related to
-                  hardware, software, or even talent hiring? Contact us and hear
-                  what service can we offer to you and your company!
+                <p className={" text-sm font-gilroyregular"}>
+                  {t.contactussectionsubtitle1}
                 </p>
-                <Link href="/hardware">
-                  <button
-                    className={
-                      "text-base text-center -mt-10 text-white border-2 bg-green-600 border-green-600 px-4 py-2 md:px-4 mt-4 focus:outline-none  hover:text-white hover:bg-black bg-white"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"px-1"}>Contact Us</p>
-                      <img
-                        className={"py-1 px-1"}
-                        style={{ width: "15px" }}
-                        src="/image/landingpage/arrow-forward.png"
-                      />
-                    </div>
-                  </button>
-                </Link>
+                <p className={"text-sm font-gilroyregular"}>
+                  {t.contactussectionsubtitle2}
+                </p>
+                <div className="mt-4 flex flex-row justify-center">
+                  <div className={"mr-1.5"}>
+                    <Linkk href="/contactus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                        }
+                      >
+                        <p className={"text-base font-gilroysemibold"}>
+                          {t.ctacontactuslandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                  <div>
+                    <Linkk href="/aboutus">
+                      <button
+                        className={
+                          "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                        }
+                      >
+                        <p className={"text-base font-gilroysemibold"}>
+                          {t.ctalearnmorelandingpage}
+                        </p>
+                      </button>
+                    </Linkk>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className={"flex justify-between self-end"}>
+            <div className={"flex justify-between self-end mt-[7.61px]"}>
               <img
                 style={{ width: "160px", height: "69px" }}
                 src="/image/landingpage/footer-left.png"
