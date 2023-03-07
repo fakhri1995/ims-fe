@@ -134,7 +134,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   const [dataContract, setDataContract] = useState({
-    id: dataEmployee?.contracts[0]?.id,
+    id: dataEmployee?.contracts?.[0]?.id,
     employee_id: employeeId,
     is_employee_active: 0,
     contract_name: "",
@@ -228,7 +228,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             if (res2.success) {
               const resData = res2.data;
               const requiredData = {
-                id: dataEmployee?.contracts[0]?.id,
+                id: dataEmployee?.contracts[0]?.id || dataContract.id,
                 employee_id: employeeId,
                 is_employee_active: resData.is_employee_active,
                 contract_name: resData.contract_name,
@@ -380,6 +380,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((response) => response.json())
       .then((response2) => {
         setRefresh((prev) => prev + 1);
+        setDataContract((prev) => ({ ...prev, id: response2.data.id }));
         if (!response2.success) {
           notification.error({
             message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
@@ -471,7 +472,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((response) => response.json())
         .then((response2) => {
-          setRefresh((prev) => prev + 1);
+          // setRefresh((prev) => prev + 1);
           if (response2.success) {
             setShowSuccessIcon(true);
             setTimeout(() => setShowSuccessIcon(false), 1000);
@@ -624,6 +625,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
+  // console.log({ dataContract });
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
