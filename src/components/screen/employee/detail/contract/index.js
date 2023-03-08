@@ -40,6 +40,7 @@ import { ModalHapus2 } from "../../../../modal/modalCustom";
 const EmployeeContractDetail = ({
   employeeId,
   isAllowedToUpdateEmployeeContract,
+  isAllowedToDeleteEmployeeContract,
   dataEmployee,
   initProps,
   setRefresh,
@@ -56,9 +57,6 @@ const EmployeeContractDetail = ({
   }
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
-  const isAllowedToDeleteEmployeeContract = hasPermission(
-    EMPLOYEE_CONTRACT_DELETE
-  );
 
   const [instanceForm] = Form.useForm();
   const rt = useRouter();
@@ -117,8 +115,9 @@ const EmployeeContractDetail = ({
           }
         })
         .catch((err) => {
+          // console.log({ err });
           notification.error({
-            message: `${err.response}`,
+            message: `${err}`,
             duration: 3,
           });
         })

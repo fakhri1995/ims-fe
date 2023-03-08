@@ -39,7 +39,6 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   }
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
-
   //INIT
   const rt = useRouter();
   const { tab: tabId } = rt.query;
@@ -132,6 +131,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
   // 3. Event
 
+  // console.log({ dataEmployee });
   return (
     <LayoutDashboard2
       dataProfile={dataProfile}
@@ -171,7 +171,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
-                {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
+                {Number(dataEmployee?.contracts?.[0]?.is_employee_active) ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-primary100"></div>
                     <h4 className="mig-heading--4">Aktif</h4>
@@ -207,14 +207,14 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.role_name || "-"}</p>
+                  <p>{dataEmployee?.contracts?.[0]?.role?.name || "-"}</p>
                 </div>
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">
                     Status Kontrak
                   </p>
                   <p>
-                    {dataEmployee?.contracts[0]?.contract_status_name || "-"}
+                    {dataEmployee?.contracts?.[0]?.contract_status?.name || "-"}
                   </p>
                 </div>
                 <div className="flex flex-col space-y-1">
@@ -247,16 +247,25 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             }}
           >
             <Tabs.TabPane tab="Detail Profil" key="1">
-              <EmployeeProfileDetail />
+              <EmployeeProfileDetail dataEmployee={dataEmployee} />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Slip Gaji" key="2">
-              <EmployeePayslipDetail employeeId={employeeId} />
+              <EmployeePayslipDetail
+                employeeId={employeeId}
+                initProps={initProps}
+              />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Kontrak Karyawan" key="3">
-              <EmployeeContractDetail employeeId={employeeId} />
+              <EmployeeContractDetail
+                dataEmployee={dataEmployee}
+                initProps={initProps}
+              />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="4">
-              <EmployeeInventoryDetail employeeId={employeeId} />
+              <EmployeeInventoryDetail
+                dataEmployee={dataEmployee}
+                initProps={initProps}
+              />
             </Tabs.TabPane>
           </Tabs>
         </div>
@@ -282,9 +291,6 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 };
 
 export async function getServerSideProps({ req, res, params }) {
-  // TODO: adjust employeeId
-  //   const employeeId = params.employeeId;
-  const employeeId = 1;
   var initProps = {};
   if (!req.headers.cookie) {
     return {
@@ -315,6 +321,7 @@ export async function getServerSideProps({ req, res, params }) {
   );
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
+  const employeeId = await dataProfile.data.employee.id;
 
   return {
     props: {

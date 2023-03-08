@@ -266,7 +266,7 @@ export const isValidDate = (dateValue: any) => {
  */
 export const momentFormatDate = (
   dateValue: string,
-  emptyValue: string,
+  emptyValue: string = "-",
   dateFormat: string = "DD MMMM YYYY"
 ) => {
   if (moment(dateValue).isValid()) {
