@@ -5,6 +5,7 @@ import {
   Form,
   Input,
   Select,
+  Spin,
   Switch,
   Tabs,
   Upload,
@@ -64,7 +65,7 @@ const InventoryForm = ({
   const [instanceForm] = Form.useForm();
 
   // 1. USE STATE
-  const [praloading, setpraloading] = useState(true);
+  const [praloading, setpraloading] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
 
   // File upload
@@ -106,6 +107,12 @@ const InventoryForm = ({
       setReturnFileList([]);
     }
   }, [idx, inventoryList[idx]?.return_file]);
+
+  useEffect(() => {
+    return () => {
+      debouncedApiCall.cancel();
+    };
+  }, []);
 
   // 3. HANDLER
   const onChangeInput = (e) => {
@@ -576,10 +583,21 @@ const InventoryForm = ({
         ))}
 
         <div className="mb-6">
-          <ButtonSys type={"dashed"} onClick={handleAddNewDevice}>
-            <p className="text-primary100 hover:text-primary75">
-              + Tambah Piranti
-            </p>
+          <ButtonSys
+            type={"dashed"}
+            onClick={() => {
+              setpraloading(true);
+              setTimeout(() => {
+                handleAddNewDevice();
+                setpraloading(false);
+              }, 5001);
+            }}
+          >
+            <Spin spinning={praloading}>
+              <p className="text-primary100 hover:text-primary75">
+                + Tambah Piranti
+              </p>
+            </Spin>
           </ButtonSys>
         </div>
       </div>

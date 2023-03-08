@@ -23,11 +23,8 @@ import {
 import ButtonSys from "../../../../components/button";
 import {
   CheckIconSvg,
-  ClipboardListIconSvg,
-  CloudUploadIconSvg,
   LeftIconSvg,
   RightIconSvg,
-  UploadIconSvg,
   XIconSvg,
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";

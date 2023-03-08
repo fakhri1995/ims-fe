@@ -49,6 +49,7 @@ const EmployeeInventoryDetail = ({
   initProps,
   employeeId,
   isAllowedToUpdateEmployeeInventory,
+  isAllowedToDeleteEmployeeInventory,
   dataEmployee,
   setRefresh,
 }) => {
@@ -64,9 +65,6 @@ const EmployeeInventoryDetail = ({
   }
 
   const isAllowedToGetEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_GET);
-  const isAllowedToDeleteEmployeeInventory = hasPermission(
-    EMPLOYEE_INVENTORY_DELETE
-  );
 
   const [instanceForm] = Form.useForm();
   const rt = useRouter();
