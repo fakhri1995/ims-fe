@@ -287,7 +287,9 @@ function JoinOurTeam({ dataCareers, empData }) {
           {/*tampilan mobile */}
           <div className={"mt-7 md:hidden"}>
             <div
-              className={"flex flex-row bg-white rounded-lg h-[91px] px-4 py-3"}
+              className={
+                "flex flex-row bg-white rounded-lg h-[110px] px-4 py-3"
+              }
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
               <div className={" justify-center self-center w-1/5"}>
@@ -307,7 +309,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             </div>
             <div
               className={
-                "flex flex-row bg-white rounded-lg h-[91px] px-4 py-3 mt-4"
+                "flex flex-row bg-white rounded-lg h-[110px] px-4 py-3 mt-4"
               }
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
@@ -328,7 +330,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             </div>
             <div
               className={
-                "flex flex-row bg-white rounded-lg h-[91px] mt-4 px-4 py-3"
+                "flex flex-row bg-white rounded-lg h-[110px] mt-4 px-4 py-3"
               }
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
             >
@@ -666,29 +668,42 @@ function JoinOurTeam({ dataCareers, empData }) {
             }
           >
             <p className={"text-xl font-gilroysemibold"}>
-              Fulfill your IT needs easily!
+              {t.contactussectiontitle}
             </p>
-            <p className={"py-5 text-sm font-gilroyregular"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+            <p className={" text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle1}
             </p>
-            <Linkk href="/contactus">
-              <button
-                className={
-                  "text-base text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>{t.contactuscta}</p>
-                  <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Linkk>
+            <p className={"text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle2}
+            </p>
+            <div className="mt-4 flex flex-row justify-center">
+              <div className={"mr-1.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
         <div className={"flex justify-between self-end mt-[7.61px]"}>
