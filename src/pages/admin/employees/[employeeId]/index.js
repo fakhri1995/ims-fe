@@ -11,10 +11,12 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   EMPLOYEE_CONTRACT_ADD,
+  EMPLOYEE_CONTRACT_DELETE,
   EMPLOYEE_CONTRACT_UPDATE,
   EMPLOYEE_DELETE,
   EMPLOYEE_GET,
   EMPLOYEE_INVENTORY_ADD,
+  EMPLOYEE_INVENTORY_DELETE,
   EMPLOYEE_INVENTORY_UPDATE,
   EMPLOYEE_UPDATE,
 } from "lib/features";
@@ -62,9 +64,15 @@ const EmployeeDetailIndex = ({
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
   );
+  const isAllowedToDeleteEmployeeContract = hasPermission(
+    EMPLOYEE_CONTRACT_DELETE
+  );
   const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
   const isAllowedToUpdateEmployeeInventory = hasPermission(
     EMPLOYEE_INVENTORY_UPDATE
+  );
+  const isAllowedToDeleteEmployeeInventory = hasPermission(
+    EMPLOYEE_INVENTORY_DELETE
   );
 
   //INIT
@@ -436,6 +444,9 @@ const EmployeeDetailIndex = ({
                 isAllowedToUpdateEmployeeContract={
                   isAllowedToUpdateEmployeeContract
                 }
+                isAllowedToDeleteEmployeeContract={
+                  isAllowedToDeleteEmployeeContract
+                }
                 dataEmployee={dataEmployee}
                 setRefresh={setRefresh}
               />
@@ -446,6 +457,9 @@ const EmployeeDetailIndex = ({
                 employeeId={employeeId}
                 isAllowedToUpdateEmployeeInventory={
                   isAllowedToUpdateEmployeeInventory
+                }
+                isAllowedToDeleteEmployeeInventory={
+                  isAllowedToDeleteEmployeeInventory
                 }
                 dataEmployee={dataEmployee}
                 setRefresh={setRefresh}
