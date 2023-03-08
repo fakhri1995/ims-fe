@@ -908,6 +908,7 @@ function Software({}) {
                   <div className={"w-[392px]"}>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        locale={locale == "en" ? "en" : "id"}
                         minDate={dateNow}
                         onChange={onPanelChange}
                         value={valueDate}
@@ -1005,7 +1006,13 @@ function Software({}) {
                       className={"text-sm text-blackmig font-gilroysemibold"}
                     >
                       <p className={"text-blackmig text-base"}>
-                        {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        {locale == "en"
+                          ? moment(valueDateTemp)
+                              .locale("en")
+                              .format("dddd, DD MMMM YYYY")
+                          : moment(valueDateTemp)
+                              .locale("id")
+                              .format("dddd, DD MMMM YYYY")}
                       </p>
                       <p className={"text-blackmig text-base"}>
                         {labelMeetingTime}
@@ -1471,6 +1478,7 @@ function Software({}) {
                   <div className={"w-full"}>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        locale={locale == "en" ? "en" : "id"}
                         minDate={dateNow}
                         onChange={onPanelChange}
                         value={valueDate}
@@ -1497,7 +1505,13 @@ function Software({}) {
                         className={"text-sm text-blackmig font-gilroysemibold"}
                       >
                         <p className={"text-blackmig text-sm"}>
-                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                          {locale == "en"
+                            ? moment(valueDateTemp)
+                                .locale("en")
+                                .format("dddd, DD MMMM YYYY")
+                            : moment(valueDateTemp)
+                                .locale("id")
+                                .format("dddd, DD MMMM YYYY")}
                         </p>
                         <p className={"text-blackmig text-sm"}>
                           {labelMeetingTime}
@@ -1752,7 +1766,7 @@ function Software({}) {
               </div>
             </div>
             <div className={"block md:hidden py-9 px-4"}>
-              <div className={"px-3"}>
+              <div className={""}>
                 <p
                   className={
                     "text-blackmig text-xl text-center font-gilroysemibold"
@@ -1762,7 +1776,7 @@ function Software({}) {
                 </p>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
-                  className={"w-[304px] h-[174px]"}
+                  className={"w-[304px] h-[174px] mx-auto mt-6"}
                 ></img>
                 <p
                   className={
