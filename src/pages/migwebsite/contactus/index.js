@@ -2,6 +2,8 @@ import { CheckCircleTwoTone } from "@ant-design/icons";
 import { Button, Checkbox, Form, Input, Select, notification } from "antd";
 import Head from "next/head";
 import Link from "next/link";
+import Linkk from "next/link";
+import { useRouter } from "next/router";
 import { React, useEffect, useState } from "react";
 
 import LayoutFormContactUs from "../../../components/migwebsite/layout-form-contact-us.js";
@@ -9,11 +11,18 @@ import Layout from "../../../components/migwebsite/layout.js";
 import LeftContactUs from "../../../components/migwebsite/left-contact-us.js";
 import RightContactUs from "../../../components/migwebsite/right-contact-us.js";
 import useAnalyticsEventTracker from "../../../components/migwebsite/useAnalyticsEventTracker.js";
+import en from "../../../locales/en";
+import id from "../../../locales/id";
 
 function ContactUs({}) {
   const gaEventTracker = useAnalyticsEventTracker("Contact us");
   const [form] = Form.useForm();
   const { Option } = Select;
+  const router = useRouter();
+
+  const { locale } = router;
+  const t = locale === "en" ? en : id;
+
   const handleSubmit = () => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addMessage`, {
       method: "POST",
@@ -95,39 +104,54 @@ function ContactUs({}) {
         </div>
       </section>
       <section
-        className={
-          "contactusphone mt-20 md:relative block md:hidden md:flex bg-bgfooter pt-8"
-        }
+        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
-          <div class="bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8">
+          <div
+            className={
+              "bg-white border-3 border-solid shadow-2xl rounded-[8px] text-center mx-5  -mt-24 py-4 px-8"
+            }
+          >
             <p className={"text-xl font-gilroysemibold"}>
-              Fulfill your IT needs easily!
+              {t.contactussectiontitle}
             </p>
-            <p className={"py-5 text-sm font-gilroyregular"}>
-              Need help in providing your needs? Whether they related to
-              hardware, software, or even talent hiring? Contact us and hear
-              what service can we offer to you and your company!
+            <p className={" text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle1}
             </p>
-            <Link href="/hardware">
-              <button
-                className={
-                  "text-base text-center text-white border-2 bg-primarygreen rounded border-primarygreen px-4 py-2 md:px-4 mt-4"
-                }
-              >
-                <div className={"flex flex-row justify-between"}>
-                  <p className={"px-1"}>Contact Us</p>
-                  <img
-                    className={"py-1 px-1"}
-                    style={{ width: "15px" }}
-                    src="/image/landingpage/arrow-forward.png"
-                  />
-                </div>
-              </button>
-            </Link>
+            <p className={"text-sm font-gilroyregular"}>
+              {t.contactussectionsubtitle2}
+            </p>
+            <div className="mt-4 flex flex-row justify-center">
+              <div className={"mr-1.5"}>
+                <Linkk href="/contactus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctacontactuslandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+              <div>
+                <Linkk href="/aboutus">
+                  <button
+                    className={
+                      "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
+                    }
+                  >
+                    <p className={"text-base font-gilroysemibold"}>
+                      {t.ctalearnmorelandingpage}
+                    </p>
+                  </button>
+                </Linkk>
+              </div>
+            </div>
           </div>
         </div>
-        <div className={"flex justify-between self-end"}>
+        <div className={"flex justify-between self-end mt-[7.61px]"}>
           <img
             style={{ width: "160px", height: "69px" }}
             src="/image/landingpage/footer-left.png"

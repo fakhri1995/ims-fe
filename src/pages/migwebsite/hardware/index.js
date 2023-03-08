@@ -1,9 +1,4 @@
-import {
-  CheckCircleTwoTone,
-  CloudUploadOutlined,
-  ConsoleSqlOutlined,
-  InboxOutlined,
-} from "@ant-design/icons";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Card,
   Checkbox,
@@ -55,6 +50,7 @@ function Hardware({}) {
   const [dataUps, setDataUps] = useState(null);
   const [dateNow, setDateNow] = useState(new Date());
   const [dataTestimonial, setDataTestimonial] = useState(null);
+  const [showCollapsible, setShowCollapsible] = useState(false);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProduct`, {
@@ -430,6 +426,7 @@ function Hardware({}) {
     }
   };
   const onPanelChange = (value) => {
+    console.log("date valuenya ", value);
     setMeetingDateStatus(false);
     onChangeDateTemp(value);
     onChangeDate(value);
@@ -1979,6 +1976,7 @@ function Hardware({}) {
                   <div className={"w-[392px]"}>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        locale={locale == "en" ? "en" : "id"}
                         onChange={onPanelChange}
                         value={valueDate}
                         tileDisabled={tileDisabled}
@@ -2076,7 +2074,13 @@ function Hardware({}) {
                       className={"text-base text-blackmig font-gilroysemibold"}
                     >
                       <p className={""}>
-                        {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        {locale == "en"
+                          ? moment(valueDateTemp)
+                              .locale("en")
+                              .format("dddd, DD MMMM YYYY")
+                          : moment(valueDateTemp)
+                              .locale("id")
+                              .format("dddd, DD MMMM YYYY")}
                       </p>
                       <p>{labelMeetingTime}</p>
                     </div>
@@ -2361,7 +2365,7 @@ function Hardware({}) {
                     </div>
                     <div className={"border border-dividermig w-[90%]"}></div>
                     <Form.Item>
-                      <div className={"w-full flex justify-center mt-2"}>
+                      <div className={"w-full flex justify-center mt-2 mb-4"}>
                         <button
                           type={"submit"}
                           className={
@@ -2431,7 +2435,7 @@ function Hardware({}) {
                   </Radio.Group>
                 </div>
                 <div className={"border border-dividermig w-full mt-9"} />
-                <div className={"mt-9 flex flex-row justify-between"}>
+                <div className={"mt-9 flex flex-row justify-between pb-4"}>
                   <button
                     className={"bg-white py-2 px-4"}
                     onClick={() => handleForm("first")}
@@ -2441,7 +2445,7 @@ function Hardware({}) {
                         "text-base text-primarygreen font-gilroysemibold"
                       }
                     >
-                      Back
+                      {t.back}
                     </p>
                   </button>
                   <button
@@ -2450,7 +2454,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Next</p>
+                    <p className={"text-base text-white"}>{t.next}</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "20px", height: "20px" }}
@@ -2804,12 +2808,12 @@ function Hardware({}) {
                       </p>
                     )}
                     {hardwareSuggestion.length > 0 && (
-                      <div className={"flex flex-row mt-3"}>
+                      <div className={"flex flex-wrap mt-3"}>
                         {hardwareSuggestion.map((data, index) => (
                           <div
                             onClick={() => handleSuggestionHardware(data)}
                             className={
-                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                              " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 mt-2"
                             }
                           >
                             <p
@@ -2837,8 +2841,8 @@ function Hardware({}) {
                         <p className={"text-sm"}>
                           {" "}
                           {locale == "en"
-                            ? " How many product in"
-                            : " Berapa banyak produk"}
+                            ? "How many product in "
+                            : "Berapa banyak produk "}
                           <span className={"font-gilroysemibold text-blackmig"}>
                             {kindOfHardware ? kindOfHardware : ""}{" "}
                           </span>
@@ -2964,7 +2968,7 @@ function Hardware({}) {
                     </Form.Item>
                   </div>
                   <div className={"border border-dividermig w-full mt-9"} />
-                  <div className={"mt-9 flex flex-row justify-between"}>
+                  <div className={"mt-9 flex flex-row justify-between pb-4"}>
                     <button
                       className={"bg-white py-2 px-4"}
                       onClick={() => handleForm("second")}
@@ -3049,6 +3053,7 @@ function Hardware({}) {
                     </p>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        locale={"en"}
                         onChange={onPanelChange}
                         value={valueDate}
                         tileDisabled={tileDisabled}
@@ -3078,8 +3083,14 @@ function Hardware({}) {
                       <div
                         className={"text-sm text-blackmig font-gilroysemibold"}
                       >
-                        <p className={""}>
-                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        <p className={"text-sm"}>
+                          {locale == "en"
+                            ? moment(valueDateTemp)
+                                .locale("en")
+                                .format("dddd, DD MMMM YYYY")
+                            : moment(valueDateTemp)
+                                .locale("id")
+                                .format("dddd, DD MMMM YYYY")}
                         </p>
                         <p>{labelMeetingTime}</p>
                       </div>
@@ -3196,87 +3207,130 @@ function Hardware({}) {
             {formActive == "third" ? (
               dataHardwareSummary.length > 0 && (
                 <div
-                  className={" h-[100%] py-4 pl-4 pr-[17px] sticky mt-4 "}
+                  className={" h-[100%] py-4 pl-4 pr-[17px] mt-4 mb-4"}
                   style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                 >
-                  <p className={"font-gilroybold text-primarygreen text-base"}>
-                    {t.hardwarerequestsummary}
-                  </p>
+                  <div className={"flex justify-between"}>
+                    <p className={"font-gilroybold text-primarygreen text-sm"}>
+                      {t.hardwarerequestsummary}
+                    </p>
+                    {showCollapsible ? (
+                      <DownOutlined
+                        onClick={() => setShowCollapsible(false)}
+                        className={"self-center"}
+                        style={{
+                          height: "6.59px",
+                          width: "11.18px",
+                          color: "#188E4D",
+                        }}
+                      />
+                    ) : (
+                      <UpOutlined
+                        onClick={() => setShowCollapsible(true)}
+                        className={"self-center"}
+                        style={{
+                          height: "6.59px",
+                          width: "11.18px",
+                          color: "#188E4D",
+                        }}
+                      />
+                    )}
+                  </div>
                   <div className={"mt-3 border border-dividermig"} />
-                  {dataHardwareSummary.map((data, index) => (
-                    <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
-                      <div className={"flex flex-row"}>
-                        <button
-                          className={"bg-transparent w-[90%] text-left"}
-                          onClick={() => handleEdit(index)}
-                        >
-                          <div className={""}>
-                            <p
-                              className={
-                                "text-blackmig font-gilroysemibold text-sm "
-                              }
-                            >
-                              {data.kindOfHardware}
-                            </p>
-                            <p
-                              className={
-                                "text-blackmig font-gilroyregular text-sm"
-                              }
-                            >
-                              {data.timeUsed +
-                                " month duration, " +
-                                data.urgently +
-                                " , " +
-                                data.manyTalent +
-                                " products"}
-                            </p>
-                            <div className={"flex"}>
+                  {dataHardwareSummary.map((data, index) =>
+                    showCollapsible ? (
+                      <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                        <div className={"flex flex-row"}>
+                          <button
+                            className={"bg-transparent w-[90%] text-left"}
+                            onClick={() => handleEdit(index)}
+                          >
+                            <div className={""}>
                               <p
                                 className={
-                                  "text-blackmig text-xs font-gilroysemibold"
+                                  "text-blackmig font-gilroysemibold text-xs "
                                 }
                               >
-                                Hardware:{" "}
-                                {data.product.map((data, index) => (
-                                  <span
-                                    className={
-                                      "text-xs text-blackmig font-gilroyregular"
-                                    }
-                                  >
-                                    {data}
-                                    {" ,"}
-                                  </span>
-                                ))}
+                                {data.kindOfHardware}
                               </p>
+                              <p
+                                className={
+                                  "text-blackmig font-gilroyregular text-xs"
+                                }
+                              >
+                                {data.timeUsed +
+                                  " month duration, " +
+                                  data.urgently +
+                                  " , " +
+                                  data.manyTalent +
+                                  " products"}
+                              </p>
+                              <div className={"flex"}>
+                                <p
+                                  className={
+                                    "text-blackmig text-xs font-gilroysemibold"
+                                  }
+                                >
+                                  Hardware:{" "}
+                                  {data.product.map((data, index) => (
+                                    <span
+                                      className={
+                                        "text-xs text-blackmig font-gilroyregular"
+                                      }
+                                    >
+                                      {data}
+                                      {" ,"}
+                                    </span>
+                                  ))}
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        </button>
-                        <div className={"w-[10%] flex justify-end self-center"}>
-                          <button
-                            className={"bg-transparent"}
-                            onClick={() =>
-                              handleDeleteHardware(data.kindOfHardware, index)
-                            }
-                          >
-                            <img src="image/trash.png" className={"w-6 h-6"} />
                           </button>
+                          <div
+                            className={"w-[10%] flex justify-end self-center"}
+                          >
+                            <button
+                              className={"bg-transparent"}
+                              onClick={() =>
+                                handleDeleteHardware(data.kindOfHardware, index)
+                              }
+                            >
+                              <img
+                                src="image/trash.png"
+                                className={"w-6 h-6"}
+                              />
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ) : (
+                      <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                        <p
+                          className={
+                            "text-blackmig font-gilroysemibold text-xs "
+                          }
+                        >
+                          {data.manyTalent + " products"}
+                        </p>
+                        <p className={"text-blackmig text-xs mt-2"}>
+                          {data.kindOfHardware}
+                        </p>
+                      </div>
+                    )
+                  )}
                   <button
                     onClick={handleSubmitHardware}
                     className={
-                      "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
+                      "mt-4 py-2 bg-primarygreen w-full rounded self-center"
                     }
                   >
-                    <div className={"flex flex-row justify-between"}>
+                    <div className={"flex flex-row justify-center"}>
                       <p className={"text-white text-base font-gilroysemibold"}>
                         {t.submitrequest}
                       </p>
                       <div
                         className={
-                          "w-[22px] h-[22px] bg-white rounded-[100px] items-center self-center"
+                          "w-[22px] h-[22px] ml-2 bg-white rounded-[100px] items-center self-center"
                         }
                       >
                         <p
@@ -3464,7 +3518,7 @@ function Hardware({}) {
               <div className={"px-3"}>
                 <p
                   className={
-                    "text-blackmig text-xl text-center font-gilroysemibold w-[328px]"
+                    "text-blackmig text-xl text-center font-gilroysemibold"
                   }
                 >
                   {t.hardwareherosection}
@@ -3475,7 +3529,7 @@ function Hardware({}) {
                 ></img>
                 <p
                   className={
-                    "py-6 text-center text-base font-gilroyregular text-blackmig w-[328px] mx-auto"
+                    "py-6 text-center text-base font-gilroyregular text-blackmig mx-auto"
                   }
                 >
                   {t.hardwareherosectionsubtitle}

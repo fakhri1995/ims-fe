@@ -17,7 +17,7 @@ function LeftContactUs({ children }) {
     <div className={"w-full md:w-1/2 md:px-4"}>
       <p
         style={{ lineHeight: "120%" }}
-        className={"text-[30px] font-gilroysemibold text-blackmig"}
+        className={"text-xl lg:text-[30px] font-gilroysemibold text-blackmig"}
       >
         {t.contactusleftsectiontitle}
       </p>

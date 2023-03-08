@@ -1,8 +1,4 @@
-import {
-  CheckCircleTwoTone,
-  CheckOutlined,
-  CloseOutlined,
-} from "@ant-design/icons";
+import { DownOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Card,
   Checkbox,
@@ -76,6 +72,7 @@ function Talents({}) {
   const [modalTalentsDesign, setModalTalentsDesign] = useState(false);
   const [modalTalentsMobile, setModalTalentsMobile] = useState(false);
   const [modalTalentsDataMobile, setModalTalentsDataMobile] = useState(false);
+  const [showCollapsible, setShowCollapsible] = useState(false);
   const [modalTalentsProductMobile, setModalTalentsProductMobile] =
     useState(false);
   const [modalTalentsDesignMobile, setModalTalentsDesignMobile] =
@@ -1908,8 +1905,14 @@ function Talents({}) {
                     <div
                       className={"text-base text-blackmig font-gilroysemibold"}
                     >
-                      <p className={""}>
-                        {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                      <p className={"text-base"}>
+                        {locale == "en"
+                          ? moment(valueDateTemp)
+                              .locale("en")
+                              .format("dddd, DD MMMM YYYY")
+                          : moment(valueDateTemp)
+                              .locale("id")
+                              .format("dddd, DD MMMM YYYY")}
                       </p>
                       <p>{labelMeetingTime}</p>
                     </div>
@@ -2603,12 +2606,12 @@ function Talents({}) {
                     </div>
                   )}
                   {skillSuggestion.length > 0 && (
-                    <div className={"flex flex-row mt-3"}>
+                    <div className={"flex flex-wrap mt-3"}>
                       {skillSuggestion.map((data, index) => (
                         <a
                           onClick={() => handleSuggestionSkill(data)}
                           className={
-                            " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 h-[29px]"
+                            " border bg-white border-transp45 rounded-[20px] py-1 px-2 flex flex-row mr-3 mt-2"
                           }
                         >
                           <p
@@ -2940,7 +2943,13 @@ function Talents({}) {
                         className={"text-sm text-blackmig font-gilroysemibold"}
                       >
                         <p className={"text-blackmig text-sm"}>
-                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                          {locale == "en"
+                            ? moment(valueDateTemp)
+                                .locale("en")
+                                .format("dddd, DD MMMM YYYY")
+                            : moment(valueDateTemp)
+                                .locale("id")
+                                .format("dddd, DD MMMM YYYY")}
                         </p>
                         <p className={"text-blackmig text-sm"}>
                           {labelMeetingTime}
@@ -3063,94 +3072,129 @@ function Talents({}) {
                     className={"py-4 pl-4 pr-[17px] mt-4"}
                     style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                   >
-                    <p
-                      className={"font-gilroybold text-primarygreen text-base"}
-                    >
-                      {t.talentrequestsummary}
-                    </p>
+                    <div className={"flex justify-between"}>
+                      <p
+                        className={"font-gilroybold text-primarygreen text-sm"}
+                      >
+                        {t.talentrequestsummary}
+                      </p>
+                      {showCollapsible ? (
+                        <DownOutlined
+                          onClick={() => setShowCollapsible(false)}
+                          className={"self-center"}
+                          style={{
+                            height: "6.59px",
+                            width: "11.18px",
+                            color: "#188E4D",
+                          }}
+                        />
+                      ) : (
+                        <UpOutlined
+                          onClick={() => setShowCollapsible(true)}
+                          className={"self-center"}
+                          style={{
+                            height: "6.59px",
+                            width: "11.18px",
+                            color: "#188E4D",
+                          }}
+                        />
+                      )}
+                    </div>
+
                     <div className={"mt-3 border border-dividermig"} />
-                    {dataTalents.map((data, index) => (
-                      <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
-                        <div className={"flex flex-row"}>
-                          <button
-                            className={"bg-transparent text-left"}
-                            onClick={() => handleEdit(index)}
-                          >
-                            <div className={"w-[90%]"}>
-                              <p
-                                className={
-                                  "text-blackmig font-gilroysemibold text-sm "
-                                }
-                              >
-                                {data.kindOfTalent}
-                              </p>
-                              <p
-                                className={
-                                  "text-blackmig font-gilroyregular text-sm"
-                                }
-                              >
-                                {data.levelEmployee +
-                                  " - level, " +
-                                  data.manyTalent +
-                                  " talent, " +
-                                  data.urgently +
-                                  ", " +
-                                  data.timeUsed +
-                                  " duration"}
-                              </p>
-                              <div className={"flex"}>
+                    {dataTalents.map((data, index) =>
+                      showCollapsible ? (
+                        <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                          <div className={"flex flex-row"}>
+                            <button
+                              className={"bg-transparent text-left"}
+                              onClick={() => handleEdit(index)}
+                            >
+                              <div className={"w-[90%]"}>
                                 <p
                                   className={
-                                    "text-blackmig text-xs font-gilroysemibold"
+                                    "text-blackmig font-gilroysemibold text-xs "
                                   }
                                 >
-                                  {t.roleorskills}
+                                  {data.kindOfTalent}
                                 </p>
-                                <div className="flex flex-row ml-2">
-                                  {data.product.map(
-                                    (data_product, index_product) => (
-                                      <p className={"text-xs text-blackmig"}>
-                                        {data_product}{" "}
-                                        {index_product ==
-                                        data.product.length - 1
-                                          ? " "
-                                          : ", "}
-                                      </p>
-                                    )
-                                  )}
+                                <p
+                                  className={
+                                    "text-blackmig font-gilroyregular text-xs"
+                                  }
+                                >
+                                  {data.levelEmployee +
+                                    " - level, " +
+                                    data.manyTalent +
+                                    " talent, " +
+                                    data.urgently +
+                                    ", " +
+                                    data.timeUsed +
+                                    " duration"}
+                                </p>
+                                <div className={"flex"}>
+                                  <p
+                                    className={
+                                      "text-blackmig text-xs font-gilroysemibold"
+                                    }
+                                  >
+                                    {t.roleorskills}
+                                  </p>
+                                  <div className="flex flex-row ml-2">
+                                    {data.product.map(
+                                      (data_product, index_product) => (
+                                        <p className={"text-xs text-blackmig"}>
+                                          {data_product}{" "}
+                                          {index_product ==
+                                          data.product.length - 1
+                                            ? " "
+                                            : ", "}
+                                        </p>
+                                      )
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </button>
-                          <div
-                            className={"w-[10%] flex justify-end self-center"}
-                          >
-                            <button
-                              className={"bg-transparent"}
-                              onClick={() =>
-                                handleDeleteTalents(data.kindOfTalent, index)
-                              }
-                            >
-                              <img
-                                src="image/trash.png"
-                                className={"w-6 h-6"}
-                              />
                             </button>
+                            <div
+                              className={"w-[10%] flex justify-end self-center"}
+                            >
+                              <button
+                                className={"bg-transparent"}
+                                onClick={() =>
+                                  handleDeleteTalents(data.kindOfTalent, index)
+                                }
+                              >
+                                <img
+                                  src="image/trash.png"
+                                  className={"w-6 h-6"}
+                                />
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ) : (
+                        <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                          <p
+                            className={
+                              "text-blackmig font-gilroysemibold text-xs "
+                            }
+                          >
+                            {data.manyTalent + " talents"}
+                          </p>
+                          <p className={"text-blackmig text-xs mt-2"}>
+                            {data.kindOfTalent}
+                          </p>
+                        </div>
+                      )
+                    )}
                     <button
                       onClick={handleSubmitTalents}
-                      className={
-                        "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] rounded"
-                      }
+                      className={"mt-8 py-2  bg-primarygreen rounded w-full"}
                     >
-                      <div className={"flex flex-row justify-between"}>
+                      <div className={"flex flex-row justify-center"}>
                         <p
-                          className={
-                            "text-white text-[18px] font-gilroysemibold"
-                          }
+                          className={"text-white text-base font-gilroysemibold"}
                         >
                           {t.submitrequest}
                         </p>
@@ -3161,7 +3205,7 @@ function Talents({}) {
                         >
                           <p
                             className={
-                              "text-primarygreen text-[18px] font-gilroysemibold"
+                              "text-primarygreen text-base font-gilroysemibold"
                             }
                           >
                             {dataTalents.length}

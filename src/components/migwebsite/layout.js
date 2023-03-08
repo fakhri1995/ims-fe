@@ -810,7 +810,7 @@ function layout({ children }) {
             <div>
               <div className=" bg-white h-full">
                 <div className="px-0 relative" id="wrapper">
-                  <main className=" md:pt-20" style={{ height: `auto` }}>
+                  <main className="pt-9 lg:pt-20" style={{ height: `auto` }}>
                     {children}
                   </main>
                 </div>

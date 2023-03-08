@@ -61,13 +61,15 @@ function FreeConsultation({}) {
       </Head>
       <section
         className={
-          "xl:pl-[112px] 2xl:pl-[224px] py-[76px] flex flex-row md:justify-between"
+          "xl:pl-[112px] 2xl:pl-[224px] flex flex-row md:justify-between"
         }
       >
-        <div className="w-[52%]">
+        <div className="lg:pt-0 w-full lg:w-[52%] px-4 lg:px-0">
           <p
             style={{ lineHeight: "120%" }}
-            className={"text-[30px] text-primarygreen font-gilroysemibold"}
+            className={
+              "text-xl lg:text-[30px] text-primarygreen font-gilroysemibold"
+            }
           >
             {t.thankyouforyourinterest}
           </p>
@@ -77,7 +79,7 @@ function FreeConsultation({}) {
           >
             {t.beforewereach}
           </p>
-          <div className="mt-6">
+          <div className="mt-6 lg:px-0">
             <Form
               id="formcontact"
               hidden={!feedback}
@@ -85,7 +87,7 @@ function FreeConsultation({}) {
               onFinish={submitFormConsultation}
               form={form}
             >
-              <div className={"w-[495px]"}>
+              <div className={"w-full lg:w-[495px]"}>
                 <Form.Item
                   name={t.companyname}
                   className={"gilroy-medium text-base"}
@@ -129,7 +131,7 @@ function FreeConsultation({}) {
                   />
                 </Form.Item>
               </div>
-              <div className={"w-[495px]"}>
+              <div className={"w-full lg:w-[495px]"}>
                 <Form.Item
                   name={"Contact Name"}
                   className={"gilroy-medium text-base -mt-2"}
@@ -181,10 +183,48 @@ function FreeConsultation({}) {
                   />
                 </Form.Item>
               </div>
-              <p className={"text-blackmig text-base font-gilroysemibold"}>
+              <div className={"lg:hidden mt-4"}>
+                <Form.Item
+                  name="kind_of_solution"
+                  className={" text-sm"}
+                  label={
+                    <p style={{ fontSize: "14px" }}>
+                      What kind of solution are you looking for?
+                    </p>
+                  }
+                  // rules={[
+                  //   {
+                  //     required: true,
+                  //     message: "This input is must be filled",
+                  //   },
+                  // ]}
+                >
+                  <Select
+                    style={{
+                      border: "1px solid #B8B8B8",
+                      fontSize: "14px",
+                    }}
+                    // dropdownStyle={{ backgroundColor: "green" }}
+                    name="kind_of_solution"
+                    onChange={(value) => {
+                      handleKindOfHardware(value);
+                    }}
+                    allowClear
+                  >
+                    <Option value="Hardware">Hardware</Option>
+                    <Option value="Software">Software</Option>
+                    <Option value="Talents">Talents</Option>
+                  </Select>
+                </Form.Item>
+              </div>
+              <p
+                className={
+                  "hidden lg:block text-blackmig text-base font-gilroysemibold"
+                }
+              >
                 What kind of solution are you looking for?
               </p>
-              <div className={"flex flex-row mt-4"}>
+              <div className={"hidden lg:flex lg:flex-row lg:mt-4"}>
                 <a
                   className={"bg-white"}
                   onClick={() => handleKindOfHardware("Hardware")}
@@ -347,7 +387,7 @@ function FreeConsultation({}) {
                   >
                     <div className={"flex flex-row justify-between"}>
                       <p className={"text-[18px] font-gilroysemibold"}>
-                        Get Started
+                        {t.getstarted}
                       </p>
                       <img
                         className={"self-center"}
@@ -361,7 +401,7 @@ function FreeConsultation({}) {
             </Form>
           </div>
         </div>
-        <div className={"w-[50%] flex justify-end"}>
+        <div className={"hidden lg:block w-[50%] flex justify-end"}>
           <img
             className={"w-[607px] h-[354px]"}
             src="/image/landingpage/Talents-2.png"
