@@ -444,6 +444,13 @@ function Software({}) {
   const { locale } = router;
   const t = locale === "en" ? en : id;
   useEffect(() => {}, []);
+  const readTestimoni = (page_path) => {
+    let path = "/migwebsite/customerstories/" + page_path;
+    let pathname = "/migwebsite/customerstories/[stories_id]";
+    router.push(pathname, path, { locale: "id" });
+    // rt.push("/id/migwebsite/customerstories/" + page_path);
+  };
+
   return (
     <Layout>
       <Head>
@@ -2597,10 +2604,39 @@ function Software({}) {
                                     __html: data1.description,
                                   }}
                                 />
-                                <Linkk
-                                  href={`/customerstories/${data1.page_path}`}
-                                >
+                                {locale == "en" ? (
+                                  <Linkk
+                                    href={`/customerstories/${data1.page_path}`}
+                                  >
+                                    <button
+                                      className={
+                                        "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                      }
+                                    >
+                                      <div
+                                        className={
+                                          "flex flex-row justify-between"
+                                        }
+                                      >
+                                        <p
+                                          className={
+                                            "pr-[13.52px] text-base font-gilroysemibold"
+                                          }
+                                        >
+                                          Read Story
+                                        </p>
+                                        <img
+                                          className={"w-5 h-5"}
+                                          src="/image/landingpage/arrow_forward_ios2.png"
+                                        />
+                                      </div>
+                                    </button>
+                                  </Linkk>
+                                ) : (
                                   <button
+                                    onClick={() =>
+                                      readTestimoni(data1.page_path_id)
+                                    }
                                     className={
                                       "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                                     }
@@ -2615,7 +2651,7 @@ function Software({}) {
                                           "pr-[13.52px] text-base font-gilroysemibold"
                                         }
                                       >
-                                        Read Story
+                                        Baca Testimoni
                                       </p>
                                       <img
                                         className={"w-5 h-5"}
@@ -2623,7 +2659,7 @@ function Software({}) {
                                       />
                                     </div>
                                   </button>
-                                </Linkk>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -2741,46 +2777,76 @@ function Software({}) {
                         </div>
                       )}
                       <div className={"mt-3 flex justify-end"}>
-                        <button
-                          className={
-                            "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                          }
-                        >
-                          <p
+                        {locale == "en" ? (
+                          <Linkk
+                            href={`/migwebsite/customerstories/${data1.page_path}`}
+                          >
+                            <button
+                              className={
+                                "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                              }
+                            >
+                              <div className={"flex flex-row justify-between"}>
+                                <p
+                                  className={
+                                    "pr-[13.52px] text-base font-gilroysemibold"
+                                  }
+                                >
+                                  Read Story
+                                </p>
+                                <img
+                                  className={"w-5 h-5"}
+                                  src="/image/landingpage/arrow_forward_ios2.png"
+                                />
+                              </div>
+                            </button>
+                          </Linkk>
+                        ) : (
+                          <button
+                            onClick={() => readTestimoni(data1.page_path_id)}
                             className={
-                              "text-base text-white font-gilroysemibold"
+                              "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                             }
                           >
-                            Read Story
-                          </p>
-                          <img
-                            className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                            src="/image/landingpage/arrow_forward_ios2.png"
-                            alt=""
-                          />
-                        </button>
+                            <div className={"flex flex-row justify-between"}>
+                              <p
+                                className={
+                                  "pr-[13.52px] text-base font-gilroysemibold"
+                                }
+                              >
+                                Baca Testimoni
+                              </p>
+                              <img
+                                className={"w-5 h-5"}
+                                src="/image/landingpage/arrow_forward_ios2.png"
+                              />
+                            </div>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
                 </Slider>
               </div>
               <div className={"block md:hidden mt-16 flex justify-center"}>
-                <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
-                  <div className={"flex flex-row justify-around"}>
-                    <p
-                      className={
-                        "text-base text-primarygreen font-gilroysemibold"
-                      }
-                    >
-                      Read More
-                    </p>
-                    <img
-                      className={"self-center"}
-                      style={{ height: "15.64px", width: "8.95px" }}
-                      src="/image/landingpage/arrow-forward-ios.png"
-                    />
-                  </div>
-                </button>
+                <Linkk href={`/migwebsite/customerstories`}>
+                  <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
+                    <div className={"flex flex-row justify-around"}>
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        {locale == "en" ? "Read More" : "Baca Lainnya"}
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ height: "15.64px", width: "8.95px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </button>
+                </Linkk>
               </div>
             </section>
           )}

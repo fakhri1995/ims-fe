@@ -440,6 +440,14 @@ function Hardware({}) {
       setLabelMeetingTime(label);
     }
   };
+
+  const readTestimoni = (page_path) => {
+    let path = "/migwebsite/customerstories/" + page_path;
+    let pathname = "/migwebsite/customerstories/[stories_id]";
+    router.push(pathname, path, { locale: "id" });
+    // rt.push("/id/migwebsite/customerstories/" + page_path);
+  };
+
   const handleSubmitHardware = () => {
     setModalSubmit(true);
   };
@@ -3957,6 +3965,7 @@ function Hardware({}) {
                     <Slider {...sliderSettingsPhone2}>
                       {dataBanking.map((data, index) => (
                         <div
+                          onClick={handleShowForm}
                           className={
                             "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
                           }
@@ -3989,6 +3998,7 @@ function Hardware({}) {
                     <Slider {...sliderSettingsPhone2}>
                       {dataWorkstation.map((data, index) => (
                         <div
+                          onClick={handleShowForm}
                           className={
                             "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
                           }
@@ -4024,6 +4034,7 @@ function Hardware({}) {
                       <Slider {...sliderSettingsPhone2}>
                         {dataServer.map((data, index) => (
                           <div
+                            onClick={handleShowForm}
                             className={
                               "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
                             }
@@ -4046,6 +4057,7 @@ function Hardware({}) {
                       </Slider>
                     ) : (
                       <div
+                        onClick={handleShowForm}
                         className={
                           "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
                         }
@@ -4076,6 +4088,7 @@ function Hardware({}) {
                       <Slider {...sliderSettingsPhone2}>
                         {dataUps.map((data, index) => (
                           <div
+                            onClick={handleShowForm}
                             className={
                               "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
                             }
@@ -4098,6 +4111,7 @@ function Hardware({}) {
                       </Slider>
                     ) : (
                       <div
+                        onClick={handleShowForm}
                         className={
                           "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
                         }
@@ -4580,10 +4594,39 @@ function Hardware({}) {
                                     __html: data1.description,
                                   }}
                                 />
-                                <Linkk
-                                  href={`/customerstories/${data1.page_path}`}
-                                >
+                                {locale == "en" ? (
+                                  <Linkk
+                                    href={`/migwebsite/customerstories/${data1.page_path}`}
+                                  >
+                                    <button
+                                      className={
+                                        "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                      }
+                                    >
+                                      <div
+                                        className={
+                                          "flex flex-row justify-between"
+                                        }
+                                      >
+                                        <p
+                                          className={
+                                            "pr-[13.52px] text-base font-gilroysemibold"
+                                          }
+                                        >
+                                          Read Story
+                                        </p>
+                                        <img
+                                          className={"w-5 h-5"}
+                                          src="/image/landingpage/arrow_forward_ios2.png"
+                                        />
+                                      </div>
+                                    </button>
+                                  </Linkk>
+                                ) : (
                                   <button
+                                    onClick={() =>
+                                      readTestimoni(data1.page_path_id)
+                                    }
                                     className={
                                       "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                                     }
@@ -4598,9 +4641,7 @@ function Hardware({}) {
                                           "pr-[13.52px] text-base font-gilroysemibold"
                                         }
                                       >
-                                        {locale == "en"
-                                          ? "Read Story"
-                                          : "Baca Cerita"}
+                                        Baca Testimoni
                                       </p>
                                       <img
                                         className={"w-5 h-5"}
@@ -4608,7 +4649,7 @@ function Hardware({}) {
                                       />
                                     </div>
                                   </button>
-                                </Linkk>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -4726,46 +4767,74 @@ function Hardware({}) {
                         </div>
                       )}
                       <div className={"mt-3 flex justify-end"}>
-                        <button
-                          className={
-                            "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                          }
-                        >
-                          <p
+                        {locale == "en" ? (
+                          <Linkk
+                            href={`/migwebsite/customerstories/${data1.page_path}`}
+                          >
+                            <button
+                              className={
+                                "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
+                              }
+                            >
+                              <p
+                                className={
+                                  "text-base text-white font-gilroysemibold"
+                                }
+                              >
+                                Read Story
+                              </p>
+                              <img
+                                className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                                src="/image/landingpage/arrow_forward_ios2.png"
+                                alt=""
+                              />
+                            </button>
+                          </Linkk>
+                        ) : (
+                          <button
+                            onClick={() => readTestimoni(data1.page_path_id)}
                             className={
-                              "text-base text-white font-gilroysemibold"
+                              "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
                             }
                           >
-                            Read Story
-                          </p>
-                          <img
-                            className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                            src="/image/landingpage/arrow_forward_ios2.png"
-                            alt=""
-                          />
-                        </button>
+                            <p
+                              className={
+                                "text-base text-white font-gilroysemibold"
+                              }
+                            >
+                              Baca Testimoni
+                            </p>
+                            <img
+                              className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                              src="/image/landingpage/arrow_forward_ios2.png"
+                              alt=""
+                            />
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
                 </Slider>
               </div>
               <div className={"block md:hidden mt-16 flex justify-center"}>
-                <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
-                  <div className={"flex flex-row justify-around"}>
-                    <p
-                      className={
-                        "text-base text-primarygreen  font-gilroysemibold"
-                      }
-                    >
-                      Read More
-                    </p>
-                    <img
-                      className={"self-center"}
-                      style={{ height: "15.64px", width: "8.95px" }}
-                      src="/image/landingpage/arrow-forward-ios.png"
-                    />
-                  </div>
-                </button>
+                <Linkk href={`/migwebsite/customerstories`}>
+                  <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
+                    <div className={"flex flex-row justify-around"}>
+                      <p
+                        className={
+                          "text-base text-primarygreen  font-gilroysemibold"
+                        }
+                      >
+                        {locale == "en" ? "Read More" : "Baca Lainnya"}
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ height: "15.64px", width: "8.95px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </button>
+                </Linkk>
               </div>
             </section>
           )}
