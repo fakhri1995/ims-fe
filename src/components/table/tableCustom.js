@@ -2262,8 +2262,9 @@ const TableCustomPayslipList = ({
               process.env.NEXT_PUBLIC_BACKEND_URL
             }/getEmployeePayslips?sort_by=${sorting.sort_by}&sort_type=${
               sorting.sort_type
-            }&role_ids=${selectedRoleId}&placements=${selectedPlacement}&is_posted=${
-              selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+            }&role_ids=${selectedRoleId}&placements=${selectedPlacement}${
+              selectedPayslipStatusId &&
+              `&is_posted=${selectedPayslipStatusId - 1}`
             }&keyword=${searching}&page=${page}&rows=${pageSize}`,
             {
               method: `GET`,
@@ -2291,8 +2292,9 @@ const TableCustomPayslipList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?role_ids=${selectedRoleId}&is_posted=${
-                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+              }/getEmployeePayslips?role_ids=${selectedRoleId}${
+                selectedPayslipStatusId &&
+                `&is_posted=${selectedPayslipStatusId - 1}`
               }&placements=${selectedPlacement}&sort_by=${
                 sorter.column.dataIndex
               }&sort_type=${
@@ -2327,8 +2329,9 @@ const TableCustomPayslipList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?role_ids=${selectedRoleId}&is_posted=${
-                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+              }/getEmployeePayslips?role_ids=${selectedRoleId}${
+                selectedPayslipStatusId &&
+                `&is_posted=${selectedPayslipStatusId - 1}`
               }&placements=${selectedPlacement}&sort_by=&sort_type=&keyword=${searching}&page=${
                 pagination.current
               }&rows=${pagination.pageSize}`,

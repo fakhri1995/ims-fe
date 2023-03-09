@@ -134,7 +134,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
   const [selectedPlacement, setSelectedPlacement] = useState(0);
   const [selectedRoleId, setSelectedRoleId] = useState(0);
-  const [selectedPayslipStatusId, setSelectedPayslipStatusId] = useState(0);
+  const [selectedPayslipStatusId, setSelectedPayslipStatusId] = useState("");
 
   // sorting
   const [sortingPayslips, setSortingEmployees] = useState({
@@ -191,8 +191,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getEmployeePayslips?rows=${rowsPayslips}&page=${pagePayslips}&is_posted=${
-        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+      }/getEmployeePayslips?rows=${rowsPayslips}&page=${pagePayslips}${
+        selectedPayslipStatusId && `&is_posted=${selectedPayslipStatusId - 1}`
       }`,
       {
         method: `GET`,
@@ -397,7 +397,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       }&sort_type=${
         sortingPayslips.sort_type
       }&role_ids=${selectedRoleId}&placements=${selectedPlacement}&is_posted=${
-        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
+        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : ""
       }&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
       {
         method: `GET`,
@@ -714,15 +714,15 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by payslip status (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={selectedPayslipStatusId ? selectedPayslipStatusId : null}
+                value={selectedPayslipStatusId ? selectedPayslipStatusId : ""}
                 allowClear
                 name={`status`}
                 placeholder="Semua Status Slip Gaji"
-                defaultValue={null}
+                defaultValue={""}
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedPayslipStatusId(null)
+                  value == undefined
+                    ? setSelectedPayslipStatusId("")
                     : setSelectedPayslipStatusId(value);
                 }}
               >
