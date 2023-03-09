@@ -271,6 +271,13 @@ function Talents({}) {
     handleSetForm(index);
   };
 
+  const readTestimoni = (page_path) => {
+    let path = "/migwebsite/customerstories/" + page_path;
+    let pathname = "/migwebsite/customerstories/[stories_id]";
+    router.push(pathname, path, { locale: "id" });
+    // rt.push("/id/migwebsite/customerstories/" + page_path);
+  };
+
   const handleSetForm = (index) => {
     console.log("data talents ", dataTalents[index]);
     form.setFieldsValue({ urgently_need: dataTalents[index].urgently });
@@ -299,6 +306,26 @@ function Talents({}) {
 
   const handleCancel = () => {
     setModalTalents(false);
+    // setShowform(true);
+  };
+  const handleContactOurSales = () => {
+    setModalTalents(false);
+    handleSubmit("second");
+    // setShowform(true);
+  };
+  const handleContactOurData = () => {
+    setModalTalentsData(false);
+    handleSubmit("second");
+    // setShowform(true);
+  };
+  const handleContactOurProduct = () => {
+    setModalTalentsProduct(false);
+    handleSubmit("second");
+    // setShowform(true);
+  };
+  const handleContactOurDesign = () => {
+    setModalTalentsDesign(false);
+    handleSubmit("second");
     // setShowform(true);
   };
   const handleHireTalent = () => {
@@ -4047,7 +4074,7 @@ function Talents({}) {
                     {t.interestwithourtalent}
                   </p>
                   <button
-                    onClick={handleCancel}
+                    onClick={handleContactOurSales}
                     className={
                       "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
@@ -4203,7 +4230,7 @@ function Talents({}) {
                     {t.interestwithourtalent}
                   </p>
                   <button
-                    onClick={handleCancelData}
+                    onClick={handleContactOurData}
                     className={
                       "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
@@ -4360,7 +4387,7 @@ function Talents({}) {
                     {t.interestwithourtalent}
                   </p>
                   <button
-                    onClick={handleCancelProduct}
+                    onClick={handleContactOurProduct}
                     className={
                       "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
@@ -4512,7 +4539,7 @@ function Talents({}) {
                     {t.interestwithourtalent}
                   </p>
                   <button
-                    onClick={handleCancelDesign}
+                    onClick={handleContactOurDesign}
                     className={
                       "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
@@ -5097,10 +5124,39 @@ function Talents({}) {
                                     __html: data1.description,
                                   }}
                                 />
-                                <Linkk
-                                  href={`/customerstories/${data1.page_path}`}
-                                >
+                                {locale == "en" ? (
+                                  <Linkk
+                                    href={`/customerstories/${data1.page_path}`}
+                                  >
+                                    <button
+                                      className={
+                                        "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                      }
+                                    >
+                                      <div
+                                        className={
+                                          "flex flex-row justify-between"
+                                        }
+                                      >
+                                        <p
+                                          className={
+                                            "pr-[13.52px] text-base font-gilroysemibold"
+                                          }
+                                        >
+                                          Read Story
+                                        </p>
+                                        <img
+                                          className={"w-5 h-5"}
+                                          src="/image/landingpage/arrow_forward_ios2.png"
+                                        />
+                                      </div>
+                                    </button>
+                                  </Linkk>
+                                ) : (
                                   <button
+                                    onClick={() =>
+                                      readTestimoni(data1.page_path_id)
+                                    }
                                     className={
                                       "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                                     }
@@ -5115,9 +5171,7 @@ function Talents({}) {
                                           "pr-[13.52px] text-base font-gilroysemibold"
                                         }
                                       >
-                                        {locale == "en"
-                                          ? "Read Story"
-                                          : "Baca Cerita"}
+                                        Baca Cerita
                                       </p>
                                       <img
                                         className={"w-5 h-5"}
@@ -5125,7 +5179,7 @@ function Talents({}) {
                                       />
                                     </div>
                                   </button>
-                                </Linkk>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -5243,46 +5297,76 @@ function Talents({}) {
                         </div>
                       )}
                       <div className={"mt-3 flex justify-end"}>
-                        <button
-                          className={
-                            "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                          }
-                        >
-                          <p
+                        {locale == "en" ? (
+                          <Linkk
+                            href={`/migwebsite/customerstories/${data1.page_path}`}
+                          >
+                            <button
+                              className={
+                                "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                              }
+                            >
+                              <div className={"flex flex-row justify-between"}>
+                                <p
+                                  className={
+                                    "pr-[13.52px] text-base font-gilroysemibold"
+                                  }
+                                >
+                                  Read Story
+                                </p>
+                                <img
+                                  className={"w-5 h-5"}
+                                  src="/image/landingpage/arrow_forward_ios2.png"
+                                />
+                              </div>
+                            </button>
+                          </Linkk>
+                        ) : (
+                          <button
+                            onClick={() => readTestimoni(data1.page_path_id)}
                             className={
-                              "text-base text-white font-gilroysemibold"
+                              "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                             }
                           >
-                            Read Story
-                          </p>
-                          <img
-                            className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                            src="/image/landingpage/arrow_forward_ios2.png"
-                            alt=""
-                          />
-                        </button>
+                            <div className={"flex flex-row justify-between"}>
+                              <p
+                                className={
+                                  "pr-[13.52px] text-base font-gilroysemibold"
+                                }
+                              >
+                                Baca Testimoni
+                              </p>
+                              <img
+                                className={"w-5 h-5"}
+                                src="/image/landingpage/arrow_forward_ios2.png"
+                              />
+                            </div>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
                 </Slider>
               </div>
               <div className={"block md:hidden mt-16 flex justify-center"}>
-                <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
-                  <div className={"flex flex-row justify-around"}>
-                    <p
-                      className={
-                        "text-base text-primarygreen  font-gilroysemibold"
-                      }
-                    >
-                      Read More
-                    </p>
-                    <img
-                      className={"self-center"}
-                      style={{ height: "15.64px", width: "8.95px" }}
-                      src="/image/landingpage/arrow-forward-ios.png"
-                    />
-                  </div>
-                </button>
+                <Linkk href={`/migwebsite/customerstories`}>
+                  <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
+                    <div className={"flex flex-row justify-around"}>
+                      <p
+                        className={
+                          "text-base text-primarygreen  font-gilroysemibold"
+                        }
+                      >
+                        {locale == "en" ? "Read More" : "Baca Lainnya"}
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ height: "15.64px", width: "8.95px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </button>
+                </Linkk>
               </div>
             </section>
           )}
