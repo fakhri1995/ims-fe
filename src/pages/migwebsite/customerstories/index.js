@@ -251,7 +251,7 @@ function CustomerStories({ dataBlog }) {
             <div className={"grid justify-items-center text-center"}>
               <Link
                 activeClass="active"
-                to="section2blog"
+                to="allarticles"
                 spy={true}
                 smooth={true}
                 offset={-70}
@@ -686,7 +686,7 @@ function CustomerStories({ dataBlog }) {
             offset={-70}
             duration={500}
           >
-            <div className="flex mt-5 rounded mx-auto border-2 border-primarygreen pl-4 pr-[12.18px] py-2">
+            <div className="flex justify-center mt-5 rounded mx-auto border-2 border-primarygreen pl-4 pr-[12.18px] py-2">
               <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
                 {t.customerstorieshearwhatcta}
               </p>

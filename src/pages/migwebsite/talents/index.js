@@ -3434,7 +3434,7 @@ function Talents({}) {
                   </button>
                 </div>
               </div>
-              <div
+              {/* <div
                 className={
                   "mt-6 w-[328px] border rounded-lg p-2 bg-greentrans15"
                 }
@@ -3470,7 +3470,7 @@ function Talents({}) {
                     </ul>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </section>
           <section
@@ -4076,12 +4076,14 @@ function Talents({}) {
                   <button
                     onClick={handleContactOurSales}
                     className={
-                      "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
+                      "text-base w-full h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
                   >
-                    <div className={"flex flex-row justify-between"}>
+                    <div className={"flex flex-row justify-center"}>
                       <p
-                        className={"text-base font-gilroysemibold self-center"}
+                        className={
+                          "text-base font-gilroysemibold self-center mr-2"
+                        }
                       >
                         Contact our sales team
                       </p>
@@ -4232,12 +4234,14 @@ function Talents({}) {
                   <button
                     onClick={handleContactOurData}
                     className={
-                      "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
+                      "text-base w-full h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
                   >
-                    <div className={"flex flex-row justify-between"}>
+                    <div className={"flex flex-row justify-center"}>
                       <p
-                        className={"text-base font-gilroysemibold self-center"}
+                        className={
+                          "text-base font-gilroysemibold self-center mr-2"
+                        }
                       >
                         Contact our sales team
                       </p>
@@ -4389,12 +4393,14 @@ function Talents({}) {
                   <button
                     onClick={handleContactOurProduct}
                     className={
-                      "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
+                      "text-base w-full h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
                   >
-                    <div className={"flex flex-row justify-between"}>
+                    <div className={"flex flex-row justify-center"}>
                       <p
-                        className={"text-base font-gilroysemibold self-center"}
+                        className={
+                          "text-base font-gilroysemibold self-center mr-2"
+                        }
                       >
                         Contact our sales team
                       </p>
@@ -4527,9 +4533,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"block md:hidden"}>
-              <div
-                className={"mt-8 bg-bgjoinmig h-[108px] w-[340px] -mx-5 -mb-6"}
-              >
+              <div className={"mt-8 bg-bgjoinmig h-auto w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
@@ -4541,12 +4545,14 @@ function Talents({}) {
                   <button
                     onClick={handleContactOurDesign}
                     className={
-                      "text-base w-[237px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
+                      "text-base w-full h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen mt-3 pl-4 pr-3"
                     }
                   >
-                    <div className={"flex flex-row justify-between"}>
+                    <div className={"flex flex-row justify-center"}>
                       <p
-                        className={"text-base font-gilroysemibold self-center"}
+                        className={
+                          "text-base font-gilroysemibold self-center mr-2"
+                        }
                       >
                         Contact our sales team
                       </p>
