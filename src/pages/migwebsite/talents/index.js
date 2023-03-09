@@ -309,23 +309,24 @@ function Talents({}) {
     // setShowform(true);
   };
   const handleContactOurSales = () => {
+    console.log("handle contact our sales ");
     setModalTalents(false);
-    handleSubmit("second");
+    setShowform(true);
     // setShowform(true);
   };
   const handleContactOurData = () => {
     setModalTalentsData(false);
-    handleSubmit("second");
+    setShowform(true);
     // setShowform(true);
   };
   const handleContactOurProduct = () => {
     setModalTalentsProduct(false);
-    handleSubmit("second");
+    setShowform(true);
     // setShowform(true);
   };
   const handleContactOurDesign = () => {
     setModalTalentsDesign(false);
-    handleSubmit("second");
+    setShowform(true);
     // setShowform(true);
   };
   const handleHireTalent = () => {
@@ -4062,9 +4063,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"block md:hidden"}>
-              <div
-                className={"mt-8 bg-bgjoinmig h-[108px] w-[340px] -mx-5 -mb-6"}
-              >
+              <div className={"mt-8 bg-bgjoinmig h-[108px] w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
@@ -4220,9 +4219,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"block md:hidden"}>
-              <div
-                className={"mt-8 bg-bgjoinmig h-[108px] w-[340px] -mx-5 -mb-6"}
-              >
+              <div className={"mt-8 bg-bgjoinmig h-[108px] w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
@@ -4379,9 +4376,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"block md:hidden"}>
-              <div
-                className={"mt-8 bg-bgjoinmig h-[108px] w-[340px] -mx-5 -mb-6"}
-              >
+              <div className={"mt-8 bg-bgjoinmig h-[108px] w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
