@@ -135,9 +135,9 @@ function FreeConsultation({}) {
                 <Form.Item
                   name={"Contact Name"}
                   className={"gilroy-medium text-base -mt-2"}
-                  label={<p style={{ fontSize: "16px" }}>Contact Name</p>}
+                  label={<p style={{ fontSize: "16px" }}>{t.contactname}</p>}
                   rules={[
-                    { required: true, message: "Contact name is required" },
+                    { required: true, message: t.contactname + " is required" },
                   ]}
                 >
                   <Input
@@ -153,13 +153,13 @@ function FreeConsultation({}) {
                         name: e.target.value,
                       });
                     }}
-                    placeholder="Enter your name here"
+                    placeholder={t.contactnameplaceholder}
                   />
                 </Form.Item>
                 <Form.Item
                   name={"Phone Number"}
                   className={"gilroy-medium text-base -mt-2"}
-                  label={<p style={{ fontSize: "16px" }}>Phone Number</p>}
+                  label={<p style={{ fontSize: "16px" }}>{t.phonenumber}</p>}
                   rules={[
                     {
                       required: true,
@@ -179,7 +179,7 @@ function FreeConsultation({}) {
                       });
                     }}
                     style={{ fontSize: "16px" }}
-                    placeholder="Enter your phone number here"
+                    placeholder={t.phonenumberplaceholder}
                   />
                 </Form.Item>
               </div>
@@ -188,9 +188,7 @@ function FreeConsultation({}) {
                   name="kind_of_solution"
                   className={" text-sm"}
                   label={
-                    <p style={{ fontSize: "14px" }}>
-                      What kind of solution are you looking for?
-                    </p>
+                    <p style={{ fontSize: "14px" }}>{t.formlandingpage1}</p>
                   }
                   // rules={[
                   //   {
@@ -222,7 +220,7 @@ function FreeConsultation({}) {
                   "hidden lg:block text-blackmig text-base font-gilroysemibold"
                 }
               >
-                What kind of solution are you looking for?
+                {t.formlandingpage1}
               </p>
               <div className={"hidden lg:flex lg:flex-row lg:mt-4"}>
                 <a

@@ -279,11 +279,11 @@ function LandingPage({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage bg-white mx-auto md:px-[56.5px] md:pt-[64px] lg:pb-[94px] lg:px-[113.5px]"
+          "section1landingpage bg-white mx-auto md:px-[113.5px] md:pt-[64px] lg:pb-[94px] lg:px-[113.5px]"
         }
       >
         {/* Browser View */}
-        <div className={"hidden md:flex container relative mx-auto"}>
+        <div className={"hidden md:flex flex-row justify-between mx-auto"}>
           <div className={"flex-col w-1/2"}>
             <h1
               style={{ lineHeight: "120%" }}
@@ -382,7 +382,7 @@ function LandingPage({ dataBlog }) {
               </div>
             </div>
           </div>
-          <div className={"flex-col w-1/2"}>
+          <div className={"flex justify-end w-1/2"}>
             <img
               src="/image/landingpage/mitramas-infosys-global-landing-page-hero.png"
               className={"w-[742px] h-[395px]  "}
@@ -606,28 +606,97 @@ function LandingPage({ dataBlog }) {
               {t.landingpagetitlelogo}
             </h2>
           </div>
-          <div className={"flex flex-row justify-center mt-6"}>
-            <img
-              className={"mr-[42.4px]"}
-              style={{ width: "47.5px", height: "40px" }}
-              src="/image/landingpage/client1.png"
-            />
-            <img
-              className={"mr-[42.4px]"}
-              style={{ width: "27.54px", height: "32px" }}
-              src="/image/landingpage/client2.png"
-            />
-            <img
-              className={"mr-[42.4px]"}
-              style={{ width: "40px", height: "40px" }}
-              src="/image/landingpage/client3.png"
-            />
-            <img
-              className={""}
-              style={{ width: "35.27px", height: "40px" }}
-              src="/image/landingpage/client4.png"
-            />
-          </div>
+          <section className={"logoMarqueeSection"}>
+            <div className={"container"} id="logoMarqueeSection">
+              <div className="default-content-container flex items-center">
+                <div className="default-content-container-inner marquee-wrapper relative overflow-hidden inline-block">
+                  <div className="marquee" style={{ animationDuration: "10s" }}>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/bulog-logo-cs-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/setneg-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/shipper-logo-gray.png"
+                      />
+                    </div>
+
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/bulog-logo-cs-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/setneg-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/shipper-logo-gray.png"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
           <div className={"mt-7 text-center"}>
             <p className={"text-blackmig font-gilroysemibold text-sm px-4"}>
               <span className={"text-primarygreen"}>45+ </span>
@@ -642,7 +711,7 @@ function LandingPage({ dataBlog }) {
       {/*section it resource */}
       <section
         className={
-          "youronestop hidden md:block py-4 md:py-12 md:px-[113.5px] 2xl:px-[226px] bg-white text-center"
+          "youronestop hidden md:block py-4 md:py-12 md:px-[113.5px] bg-white text-center"
         }
       >
         <div className={"container mx-auto"}>

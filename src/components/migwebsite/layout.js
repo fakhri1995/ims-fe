@@ -566,6 +566,76 @@ function layout({ children }) {
             <Menu mode="inline" className={"w-auto"}>
               <SubMenu
                 key="sub 1"
+                title={
+                  locale == "en" ? (
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"relative self-center"}
+                        style={{ display: "inline-block" }}
+                        width={20}
+                        src={"/image/english.png"}
+                      />
+                      <p
+                        className={
+                          "text-base ml-2 text-blackmig font-gilroyregular"
+                        }
+                      >
+                        English
+                      </p>
+                    </div>
+                  ) : (
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"relative self-center"}
+                        style={{ display: "inline-block" }}
+                        width={20}
+                        src={"/image/indonesia.png"}
+                      />
+                      <p
+                        className={
+                          "text-base ml-2 text-blackmig font-gilroyregular"
+                        }
+                      >
+                        Indonesia
+                      </p>
+                    </div>
+                  )
+                }
+                className="text-base font-gilroyregular text-blackmig "
+              >
+                <Menu.Item key="1">
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={40}
+                    src={"/image/english.png"}
+                  ></img>
+                  <a
+                    onClick={() => changeLanguage("en")}
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    English
+                  </a>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={40}
+                    src={"/image/indonesia.png"}
+                  ></img>
+                  <a
+                    onClick={() => changeLanguage("id")}
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    Indonesia
+                  </a>
+                </Menu.Item>
+              </SubMenu>
+              <SubMenu
+                key="sub 2"
                 title="Solutions"
                 className="text-base font-gilroyregular text-blackmig "
               >
@@ -618,47 +688,12 @@ function layout({ children }) {
                   </Link>
                 </Menu.Item>
               </SubMenu>
-              <SubMenu
-                key="sub 2"
-                title={locale == "en" ? "English" : "Indonesia"}
-                className="text-base font-gilroyregular text-blackmig "
-              >
-                <Menu.Item key="1">
-                  <img
-                    className={"relative"}
-                    style={{ display: "inline-block" }}
-                    width={40}
-                    src={"/image/english.png"}
-                  ></img>
-                  <a
-                    onClick={() => changeLanguage("en")}
-                    style={{ textDecoration: "none" }}
-                    className="text-base font-gilroyregular text-blackmig  pl-3"
-                  >
-                    English
-                  </a>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <img
-                    className={"relative"}
-                    style={{ display: "inline-block" }}
-                    width={40}
-                    src={"/image/indonesia.png"}
-                  ></img>
-                  <a
-                    onClick={() => changeLanguage("en")}
-                    style={{ textDecoration: "none" }}
-                    className="text-base font-gilroyregular text-blackmig  pl-3"
-                  >
-                    Indonesia
-                  </a>
-                </Menu.Item>
-              </SubMenu>
+
               <Menu.Item key="4">
                 <Link href="/aboutus">
                   <a
                     style={{ textDecoration: "none" }}
-                    className="text-lg gilroy-medium"
+                    className="text-base font-gilroyregular text-blackmig"
                   >
                     About Us
                   </a>
@@ -668,7 +703,7 @@ function layout({ children }) {
                 <Link href="/joinourteam">
                   <a
                     style={{ textDecoration: "none" }}
-                    className="text-lg gilroy-medium"
+                    className="text-base font-gilroyregular text-blackmig"
                   >
                     Career in MIG
                   </a>
@@ -757,7 +792,7 @@ function layout({ children }) {
               <Link href="/contactus">
                 <a
                   style={{ textDecoration: "none" }}
-                  className="text-lg gilroy-medium menu-navbar"
+                  className="text-base font-gilroyregular text-blackmig menu-navbar"
                 >
                   Contact Us{" "}
                 </a>

@@ -1702,7 +1702,7 @@ function Hardware({}) {
                         onPressEnter={(e) => {
                           handleInputProduct(e.target.value);
                         }}
-                        placeholder="Enter product"
+                        placeholder={t.enterproduct}
                       />
                     </Form.Item>
                   </div>
@@ -1769,7 +1769,7 @@ function Hardware({}) {
                     <p
                       className={"text-blackmig text-base font-gilroysemibold"}
                     >
-                      2. Additional Information
+                      {t.additionalinformation}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -2002,7 +2002,7 @@ function Hardware({}) {
                         "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     <div className={"mt-4 flex flex-row"}>
                       <div
@@ -2775,7 +2775,7 @@ function Hardware({}) {
                         onPressEnter={(e) => {
                           handleInputProduct(e.target.value);
                         }}
-                        placeholder="Enter product"
+                        placeholder={t.enterproduct}
                       />
                     </Form.Item>
                   </div>
@@ -2840,7 +2840,7 @@ function Hardware({}) {
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
                     <p className={"text-blackmig text-sm font-gilroysemibold"}>
-                      2. Additional Information
+                      {t.additionalinformation}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -2920,9 +2920,7 @@ function Hardware({}) {
                     <Form.Item
                       name={"Details"}
                       className={" text-base"}
-                      label={
-                        <p style={{ fontSize: "16px" }}>Details (Optional)</p>
-                      }
+                      label={<p style={{ fontSize: "16px" }}>{t.details}</p>}
                       // rules={[{ required: true }]}
                     >
                       <TextArea
@@ -2986,7 +2984,7 @@ function Hardware({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     {statusEdit ? (
@@ -3057,7 +3055,7 @@ function Hardware({}) {
                         "text-sm text-blackmig font-gilroyregular mb-1"
                       }
                     >
-                      *Meeting Date
+                      *{t.meetingdate}
                     </p>
                     <div className="site-calendar-demo-card">
                       <Calendar
@@ -3081,7 +3079,7 @@ function Hardware({}) {
                         "text-xs text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
@@ -3192,7 +3190,7 @@ function Hardware({}) {
                         "text-base text-primarygreen font-gilroysemibold"
                       }
                     >
-                      Back
+                      {t.back}
                     </p>
                   </button>
                   <button
@@ -3202,7 +3200,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Next</p>
+                    <p className={"text-base text-white"}>{t.next}</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "20px", height: "20px" }}

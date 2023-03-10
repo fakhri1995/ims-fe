@@ -585,6 +585,7 @@ function Talents({}) {
   const clearForm = () => {
     setKindOfTalent(null);
     setSkillSuggestion([]);
+    form.resetFields(["kind_of_talent"]);
     form.resetFields(["level_employee"]);
     form.resetFields(["many_talent"]);
     form.resetFields(["time_used"]);
@@ -1168,9 +1169,7 @@ function Talents({}) {
                 >
                   {t.talentinformation}
                 </p>
-                <p className={"mt-9 text-base"}>
-                  What kind of talent are you looking for?
-                </p>
+                <p className={"mt-9 text-base"}>{t.whatkindoftalent}</p>
                 <Form
                   id="formtalentdetail"
                   hidden={!feedback}
@@ -1854,7 +1853,7 @@ function Talents({}) {
                         "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     <div className={"mt-4 flex flex-row"}>
                       <div
@@ -2270,7 +2269,7 @@ function Talents({}) {
                     style={{ lineHeight: "120%" }}
                     className={"text-base text-blackmig font-gilroysemibold"}
                   >
-                    General Information
+                    {t.generalinformation}
                   </p>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
                   <div className={"mt-9"}>
@@ -2357,7 +2356,7 @@ function Talents({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     <button
@@ -2523,7 +2522,7 @@ function Talents({}) {
                   id="formtalentdetail"
                   hidden={!feedback}
                   layout={"vertical"}
-                  // onFinish={handleSubmitThird}
+                  onFinish={() => handleAddAnotherProduct()}
                   form={form}
                 >
                   {/* choose product */}
@@ -2532,9 +2531,7 @@ function Talents({}) {
                       name="kind_of_talent"
                       className={"font-gilroyregular text-sm"}
                       label={
-                        <p style={{ fontSize: "14px" }}>
-                          What kind of talent are you looking for?
-                        </p>
+                        <p style={{ fontSize: "14px" }}>{t.whatkindoftalent}</p>
                       }
                     >
                       <Select
@@ -2898,11 +2895,12 @@ function Talents({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     <button
-                      onClick={handleAddAnotherProduct}
+                      // onClick={handleAddAnotherProduct}
+                      type={"submit"}
                       className={
                         "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
@@ -2960,7 +2958,7 @@ function Talents({}) {
                         "text-xs text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
@@ -3073,7 +3071,7 @@ function Talents({}) {
                         "text-base text-primarygreen font-gilroysemibold"
                       }
                     >
-                      Back
+                      {t.back}
                     </p>
                   </button>
                   <button
