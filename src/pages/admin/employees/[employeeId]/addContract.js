@@ -86,7 +86,7 @@ const EmployeeContractAddIndex = ({
     placement: "",
     new_office: "",
     resign_at: "",
-    benefit: {},
+    salaries: [],
   });
 
   const [refresh, setRefresh] = useState(-1);
@@ -122,7 +122,10 @@ const EmployeeContractAddIndex = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setDataContract({ ...response2.data, is_employee_active: 1 });
+            setDataContract({
+              ...response2.data,
+              is_employee_active: 1,
+            });
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -206,12 +209,39 @@ const EmployeeContractAddIndex = ({
   // 3. Event
   // Save Employee Contract
   const handleSaveContract = () => {
-    const payloadFormData = objectToFormData(dataContract);
-
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
       return;
     }
+
+    // Setup form data to be sent in API
+    let payloadFormData;
+    if (dataContract?.salaries?.length > 0) {
+      // Mapping salaries list to required format in API updateEmployeeContract form-data
+      let benefitObjectList = dataContract?.salaries?.map((benefit, idx) => {
+        let obj = {};
+        obj[`benefit[${idx}][employee_salary_column_id]`] =
+          benefit.employee_salary_column_id;
+        obj[`benefit[${idx}][value]`] = benefit.value;
+        return obj;
+      });
+
+      let allBenefitObject = {};
+      for (let benefitObject of benefitObjectList) {
+        Object.assign(allBenefitObject, benefitObject);
+      }
+
+      const payload = {
+        ...dataContract,
+        ...allBenefitObject,
+      };
+
+      // convert object to form data
+      payloadFormData = objectToFormData(payload);
+    } else {
+      payloadFormData = objectToFormData(dataContract);
+    }
+
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
       method: "POST",

@@ -145,7 +145,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     placement: "",
     new_office: "",
     resign_at: "",
-    benefit: {},
+    salaries: [],
     gaji_pokok: 0,
     pph21: 0,
     salaries: [],
@@ -239,7 +239,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 placement: resData.placement,
                 new_office: resData.new_office,
                 resign_at: resData.resign_at,
-                benefit: resData.benefit,
+                salaries: resData.salaries,
                 gaji_pokok: resData.gaji_pokok ?? 0,
                 pph21: resData.pph21,
                 salaries: resData.salaries || null,
@@ -457,7 +457,33 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
 
     if (contractData) {
-      const payloadFormData = objectToFormData(contractData);
+      // Setup form data to be sent in API
+      let payloadFormData;
+      if (contractData?.salaries?.length > 0) {
+        // Mapping salaries list to required format in API updateEmployeeContract form-data
+        let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
+          let obj = {};
+          obj[`benefit[${idx}][employee_salary_column_id]`] =
+            benefit.employee_salary_column_id;
+          obj[`benefit[${idx}][value]`] = benefit.value;
+          return obj;
+        });
+
+        let allBenefitObject = {};
+        for (let benefitObject of benefitObjectList) {
+          Object.assign(allBenefitObject, benefitObject);
+        }
+
+        const payload = {
+          ...contractData,
+          ...allBenefitObject,
+        };
+
+        // convert object to form data
+        payloadFormData = objectToFormData(payload);
+      } else {
+        payloadFormData = objectToFormData(contractData);
+      }
 
       setLoadingUpdate(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
@@ -739,6 +765,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <Tabs.TabPane tab="Profil Karyawan" key="1">
               <EmployeeProfileForm
+                initProps={initProps}
                 dataEmployee={dataEmployee}
                 setDataEmployee={setDataEmployee}
                 debouncedApiCall={debouncedSaveProfile}

@@ -137,9 +137,9 @@ const DrawerPayslipDetail = ({
           <div className="flex flex-col col-span-2">
             <p className="mig-caption--medium text-mono80">Jumlah Diterima</p>
             <div className="flex flex-row">
-              <p>Rp{detailPayslip?.take_home_pay.toLocaleString("id-ID")}</p>
               <p>
-                &nbsp;({convertTerbilang(detailPayslip?.take_home_pay) || "Nol"}{" "}
+                Rp{detailPayslip?.take_home_pay.toLocaleString("id-ID")} (
+                {convertTerbilang(detailPayslip?.take_home_pay) || "Nol"}{" "}
                 Rupiah)
               </p>
             </div>

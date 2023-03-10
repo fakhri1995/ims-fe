@@ -23,6 +23,7 @@ import {
 } from "../../../../../lib/helper";
 
 const EmployeeProfileForm = ({
+  initProps,
   dataEmployee,
   setDataEmployee,
   debouncedApiCall,
@@ -43,6 +44,7 @@ const EmployeeProfileForm = ({
   // 1. USE STATE
   const [fileList, setFileList] = useState([]);
   const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
+  const [bankList, setBankList] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. Display id card filename when available
@@ -54,6 +56,33 @@ const EmployeeProfileForm = ({
       setFileList([]);
     }
   }, [dataEmployee?.id_card_photo]);
+
+  // 2.2. Get bank list for options
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBankLists`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setBankList(res2.data);
+        } else {
+          notification.error({
+            message: res2?.message?.errorInfo?.reason,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: err?.message,
+          duration: 3,
+        });
+      });
+  }, []);
 
   // 3. HANDLER
   // 3.1. Handle input change and auto save in "Tambah Karyawan"
@@ -588,19 +617,27 @@ const EmployeeProfileForm = ({
             ]}
             className="w-1/3"
           >
-            <Select
-              value={dataEmployee.acc_name_another}
-              name={"acc_name_another"}
-              placeholder="Pilih nama bank"
-              onChange={(value) => onChangeSelect(value, "acc_name_another")}
-              options={[
-                { value: "Mandiri", label: "Mandiri" },
-                { value: "BRI", label: "BRI" },
-                { value: "BNI", label: "BNI" },
-                { value: "BTN", label: "BTN" },
-                { value: "BCA", label: "BCA" },
-              ]}
-            />
+            <>
+              <Select
+                showSearch
+                value={dataEmployee.acc_name_another}
+                name={"acc_name_another"}
+                placeholder="Pilih nama bank"
+                onChange={(value) => onChangeSelect(value, "acc_name_another")}
+                defaultActiveFirstOption={false}
+                optionFilterProp="children"
+                notFoundContent={null}
+                filterOption={(input, option) => {
+                  return (option?.value ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase());
+                }}
+                options={bankList.map((bank) => ({
+                  value: bank.name,
+                  // label: bank.bank_code,
+                }))}
+              />
+            </>
           </Form.Item>
           <Form.Item
             name={"acc_number_another"}
@@ -612,12 +649,14 @@ const EmployeeProfileForm = ({
             ]}
             className="w-2/3"
           >
-            <Input
-              value={dataEmployee.acc_number_another}
-              name={"acc_number_another"}
-              placeholder="Masukkan nomor rekening bank lainnya"
-              onChange={onChangeInput}
-            />
+            <>
+              <Input
+                value={dataEmployee.acc_number_another}
+                name={"acc_number_another"}
+                placeholder="Masukkan nomor rekening bank lainnya"
+                onChange={onChangeInput}
+              />
+            </>
           </Form.Item>
         </div>
       </Form.Item>

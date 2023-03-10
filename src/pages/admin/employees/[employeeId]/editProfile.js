@@ -240,6 +240,7 @@ const EmployeeProfileEditIndex = ({
           </div>
         </div>
         <EmployeeProfileForm
+          initProps={initProps}
           dataEmployee={dataEmployee}
           setDataEmployee={setDataEmployee}
         />
