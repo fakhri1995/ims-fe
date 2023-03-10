@@ -78,7 +78,7 @@ const EmployeeContractEditIndex = ({
     placement: "",
     new_office: "",
     resign_at: "",
-    benefit: {},
+    salaries: [],
   });
 
   const [refresh, setRefresh] = useState(-1);
@@ -166,16 +166,39 @@ const EmployeeContractEditIndex = ({
   // 3. Event
   // 3.1. Save Employee Contract
   const handleSaveContract = () => {
-    const payload = {
-      ...dataContract,
-      benefit: JSON.stringify(dataContract.benefit),
-    };
-    const payloadFormData = objectToFormData(payload);
-
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
       return;
     }
+
+    // Setup form data to be sent in API
+    let payloadFormData;
+    if (dataContract?.salaries?.length > 0) {
+      // Mapping salaries list to required format in API updateEmployeeContract form-data
+      let benefitObjectList = dataContract?.salaries?.map((benefit, idx) => {
+        let obj = {};
+        obj[`benefit[${idx}][employee_salary_column_id]`] =
+          benefit.employee_salary_column_id;
+        obj[`benefit[${idx}][value]`] = benefit.value;
+        return obj;
+      });
+
+      let allBenefitObject = {};
+      for (let benefitObject of benefitObjectList) {
+        Object.assign(allBenefitObject, benefitObject);
+      }
+
+      const payload = {
+        ...dataContract,
+        ...allBenefitObject,
+      };
+
+      // convert object to form data
+      payloadFormData = objectToFormData(payload);
+    } else {
+      payloadFormData = objectToFormData(dataContract);
+    }
+
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
       method: "POST",

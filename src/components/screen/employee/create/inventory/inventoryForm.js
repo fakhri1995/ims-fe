@@ -110,7 +110,7 @@ const InventoryForm = ({
 
   useEffect(() => {
     return () => {
-      debouncedApiCall.cancel();
+      debouncedApiCall?.cancel();
     };
   }, []);
 

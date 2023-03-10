@@ -40,12 +40,7 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import {
-  CircleCheckIconSvg,
-  SquarePlusIconSvg,
-  TrashIconSvg,
-  UploadIconSvg,
-} from "../../../../icon";
+import { UploadIconSvg } from "../../../../icon";
 import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
 import CustomCurrencyInput from "../../CustomCurrencyInput";
 
