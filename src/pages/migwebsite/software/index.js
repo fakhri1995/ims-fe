@@ -750,7 +750,7 @@ function Software({}) {
                       <Form.Item
                         name={"Budget Minimal"}
                         className={"text-blackmig text-base"}
-                        label={<p style={{ fontSize: "16px" }}>From</p>}
+                        label={<p style={{ fontSize: "16px" }}>{t.from}</p>}
                         rules={[
                           {
                             required: true,
@@ -791,7 +791,7 @@ function Software({}) {
                       <Form.Item
                         name={"Budget Maximal"}
                         className={"text-blackmig text-base"}
-                        label={<p style={{ fontSize: "16px" }}>To</p>}
+                        label={<p style={{ fontSize: "16px" }}>{t.to}</p>}
                         rules={[
                           {
                             required: true,
@@ -933,7 +933,7 @@ function Software({}) {
                         "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     <div className={"mt-4 flex flex-row"}>
                       <div
@@ -1325,7 +1325,7 @@ function Software({}) {
                       <Form.Item
                         name={"Budget Minimal"}
                         className={"text-blackmig text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>From</p>}
+                        label={<p style={{ fontSize: "14px" }}>{t.from}</p>}
                         rules={[
                           {
                             required: true,
@@ -1366,7 +1366,7 @@ function Software({}) {
                       <Form.Item
                         name={"Budget Maximal"}
                         className={"text-blackmig text-sm"}
-                        label={<p style={{ fontSize: "14px" }}>To</p>}
+                        label={<p style={{ fontSize: "14px" }}>{t.to}</p>}
                         rules={[
                           {
                             required: true,
@@ -1450,7 +1450,7 @@ function Software({}) {
                           "text-base text-primarygreen fontgilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     <button
@@ -1501,7 +1501,7 @@ function Software({}) {
                         "text-xs text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
@@ -1611,7 +1611,7 @@ function Software({}) {
                         "text-base text-primarygreen font-gilroysemibold"
                       }
                     >
-                      Back
+                      {t.back}
                     </p>
                   </button>
                   <button
