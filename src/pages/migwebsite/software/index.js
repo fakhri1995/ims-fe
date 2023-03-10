@@ -444,6 +444,13 @@ function Software({}) {
   const { locale } = router;
   const t = locale === "en" ? en : id;
   useEffect(() => {}, []);
+  const readTestimoni = (page_path) => {
+    let path = "/migwebsite/customerstories/" + page_path;
+    let pathname = "/migwebsite/customerstories/[stories_id]";
+    router.push(pathname, path, { locale: "id" });
+    // rt.push("/id/migwebsite/customerstories/" + page_path);
+  };
+
   return (
     <Layout>
       <Head>
@@ -908,6 +915,7 @@ function Software({}) {
                   <div className={"w-[392px]"}>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        locale={locale == "en" ? "en" : "id"}
                         minDate={dateNow}
                         onChange={onPanelChange}
                         value={valueDate}
@@ -1005,7 +1013,13 @@ function Software({}) {
                       className={"text-sm text-blackmig font-gilroysemibold"}
                     >
                       <p className={"text-blackmig text-base"}>
-                        {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                        {locale == "en"
+                          ? moment(valueDateTemp)
+                              .locale("en")
+                              .format("dddd, DD MMMM YYYY")
+                          : moment(valueDateTemp)
+                              .locale("id")
+                              .format("dddd, DD MMMM YYYY")}
                       </p>
                       <p className={"text-blackmig text-base"}>
                         {labelMeetingTime}
@@ -1471,6 +1485,7 @@ function Software({}) {
                   <div className={"w-full"}>
                     <div className="site-calendar-demo-card">
                       <Calendar
+                        locale={locale == "en" ? "en" : "id"}
                         minDate={dateNow}
                         onChange={onPanelChange}
                         value={valueDate}
@@ -1497,7 +1512,13 @@ function Software({}) {
                         className={"text-sm text-blackmig font-gilroysemibold"}
                       >
                         <p className={"text-blackmig text-sm"}>
-                          {moment(valueDateTemp).format("dddd,MMMM Do YYYY")}
+                          {locale == "en"
+                            ? moment(valueDateTemp)
+                                .locale("en")
+                                .format("dddd, DD MMMM YYYY")
+                            : moment(valueDateTemp)
+                                .locale("id")
+                                .format("dddd, DD MMMM YYYY")}
                         </p>
                         <p className={"text-blackmig text-sm"}>
                           {labelMeetingTime}
@@ -1752,7 +1773,7 @@ function Software({}) {
               </div>
             </div>
             <div className={"block md:hidden py-9 px-4"}>
-              <div className={"px-3"}>
+              <div className={""}>
                 <p
                   className={
                     "text-blackmig text-xl text-center font-gilroysemibold"
@@ -1762,7 +1783,7 @@ function Software({}) {
                 </p>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
-                  className={"w-[304px] h-[174px]"}
+                  className={"w-[304px] h-[174px] mx-auto mt-6"}
                 ></img>
                 <p
                   className={
@@ -2583,10 +2604,39 @@ function Software({}) {
                                     __html: data1.description,
                                   }}
                                 />
-                                <Linkk
-                                  href={`/customerstories/${data1.page_path}`}
-                                >
+                                {locale == "en" ? (
+                                  <Linkk
+                                    href={`/customerstories/${data1.page_path}`}
+                                  >
+                                    <button
+                                      className={
+                                        "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                                      }
+                                    >
+                                      <div
+                                        className={
+                                          "flex flex-row justify-between"
+                                        }
+                                      >
+                                        <p
+                                          className={
+                                            "pr-[13.52px] text-base font-gilroysemibold"
+                                          }
+                                        >
+                                          Read Story
+                                        </p>
+                                        <img
+                                          className={"w-5 h-5"}
+                                          src="/image/landingpage/arrow_forward_ios2.png"
+                                        />
+                                      </div>
+                                    </button>
+                                  </Linkk>
+                                ) : (
                                   <button
+                                    onClick={() =>
+                                      readTestimoni(data1.page_path_id)
+                                    }
                                     className={
                                       "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                                     }
@@ -2601,7 +2651,7 @@ function Software({}) {
                                           "pr-[13.52px] text-base font-gilroysemibold"
                                         }
                                       >
-                                        Read Story
+                                        Baca Testimoni
                                       </p>
                                       <img
                                         className={"w-5 h-5"}
@@ -2609,7 +2659,7 @@ function Software({}) {
                                       />
                                     </div>
                                   </button>
-                                </Linkk>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -2727,46 +2777,76 @@ function Software({}) {
                         </div>
                       )}
                       <div className={"mt-3 flex justify-end"}>
-                        <button
-                          className={
-                            "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                          }
-                        >
-                          <p
+                        {locale == "en" ? (
+                          <Linkk
+                            href={`/migwebsite/customerstories/${data1.page_path}`}
+                          >
+                            <button
+                              className={
+                                "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
+                              }
+                            >
+                              <div className={"flex flex-row justify-between"}>
+                                <p
+                                  className={
+                                    "pr-[13.52px] text-base font-gilroysemibold"
+                                  }
+                                >
+                                  Read Story
+                                </p>
+                                <img
+                                  className={"w-5 h-5"}
+                                  src="/image/landingpage/arrow_forward_ios2.png"
+                                />
+                              </div>
+                            </button>
+                          </Linkk>
+                        ) : (
+                          <button
+                            onClick={() => readTestimoni(data1.page_path_id)}
                             className={
-                              "text-base text-white font-gilroysemibold"
+                              "text-sm rounded mt-8 pl-4 py-2 pr-[12.18px] text-white border-2 bg-primarygreen border-primarygreen"
                             }
                           >
-                            Read Story
-                          </p>
-                          <img
-                            className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                            src="/image/landingpage/arrow_forward_ios2.png"
-                            alt=""
-                          />
-                        </button>
+                            <div className={"flex flex-row justify-between"}>
+                              <p
+                                className={
+                                  "pr-[13.52px] text-base font-gilroysemibold"
+                                }
+                              >
+                                Baca Testimoni
+                              </p>
+                              <img
+                                className={"w-5 h-5"}
+                                src="/image/landingpage/arrow_forward_ios2.png"
+                              />
+                            </div>
+                          </button>
+                        )}
                       </div>
                     </div>
                   ))}
                 </Slider>
               </div>
               <div className={"block md:hidden mt-16 flex justify-center"}>
-                <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
-                  <div className={"flex flex-row justify-around"}>
-                    <p
-                      className={
-                        "text-base text-primarygreen font-gilroysemibold"
-                      }
-                    >
-                      Read More
-                    </p>
-                    <img
-                      className={"self-center"}
-                      style={{ height: "15.64px", width: "8.95px" }}
-                      src="/image/landingpage/arrow-forward-ios.png"
-                    />
-                  </div>
-                </button>
+                <Linkk href={`/migwebsite/customerstories`}>
+                  <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
+                    <div className={"flex flex-row justify-around"}>
+                      <p
+                        className={
+                          "text-base text-primarygreen font-gilroysemibold"
+                        }
+                      >
+                        {locale == "en" ? "Read More" : "Baca Lainnya"}
+                      </p>
+                      <img
+                        className={"self-center"}
+                        style={{ height: "15.64px", width: "8.95px" }}
+                        src="/image/landingpage/arrow-forward-ios.png"
+                      />
+                    </div>
+                  </button>
+                </Linkk>
               </div>
             </section>
           )}

@@ -552,33 +552,38 @@ function CustomerStoriesDetail({}) {
         </div>
       </section>
       <section className={"section2articlepage block md:hidden px-5 py-6"}>
-        <div
-          className={"bg-table p-4 w-full rounded-lg"}
-          style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
-        >
-          <p className={"text-blackmig text-base font-gilroysemibold"}>
-            {locale == "en" ? "TABLE OF CONTENT" : "Tabel Konten"}
-          </p>
-          <div className={"mt-2 border border-dividermig"}></div>
-          <div className={"mt-2"}>
-            <ul class="list-disc">
-              <li class={"text-blackmig text-sm font-gilroyregular"}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing eli.
-              </li>
-              <li
-                class={"text-blackmig text-sm font-regular font-gilroyregular"}
-              >
-                Sed do eiusmod tempor incididunt ut labore et dolore magna
-                aliqua
-              </li>
-              <li
-                class={"text-blackmig text-sm font-regular font-gilroyregular"}
-              >
-                Ut enim ad minim veniam, quis nostrud exercitation.
-              </li>
-            </ul>
+        {tableContent.length > 0 || tableContentH3.length > 0 ? (
+          <div
+            className={"bg-table p-4 w-full rounded-lg"}
+            style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
+          >
+            <p className={"text-blackmig text-base font-gilroysemibold"}>
+              {locale == "en" ? "TABLE OF CONTENT" : "Tabel Konten"}
+            </p>
+            <div className={"mt-2 border border-dividermig"}></div>
+            <div className={"mt-2"}>
+              <ul class="list-disc">
+                {tableContent.map((data, index) => (
+                  <li class={"text-blackmig text-sm font-gilroyregular"}>
+                    {data}
+                  </li>
+                ))}
+              </ul>
+              {tableContentH3.length > 0 && (
+                <ul className={"ml-12"}>
+                  {tableContentH3.map((data, index) => (
+                    <li class={"text-blackmig text-sm font-gilroyregular"}>
+                      {data}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div></div>
+        )}
+
         <div className={"px-2 mt-6"}>
           {locale == "en" && detailBlog ? (
             loadContent(detailBlog.description)

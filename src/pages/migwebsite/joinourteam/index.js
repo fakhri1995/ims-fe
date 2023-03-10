@@ -62,24 +62,46 @@ function JoinOurTeam({ dataCareers, empData }) {
                 {locale == "en" ? "Our Values" : "Pilar Kami"}
               </button>
             </Link>
-            <Link
-              activeClass="active"
-              to="section6careers"
-              spy={true}
-              smooth={true}
-              offset={-120}
-              className={"mr-12"}
-              duration={500}
-            >
-              <button
-                className={
-                  "font-gilroyregular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
-                }
-                style={{}}
+            <div className={"hidden lg:block"}>
+              <Link
+                activeClass="active"
+                to="section6careers"
+                spy={true}
+                smooth={true}
+                offset={-120}
+                className={"mr-12"}
+                duration={500}
               >
-                {locale == "en" ? "Benefits" : " Fasilitas"}
-              </button>
-            </Link>
+                <button
+                  className={
+                    "font-gilroyregular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                  }
+                  style={{}}
+                >
+                  {locale == "en" ? "Benefits" : " Fasilitas"}
+                </button>
+              </Link>
+            </div>
+            <div className={"lg:hidden"}>
+              <Link
+                activeClass="active"
+                to="section6careersmobile"
+                spy={true}
+                smooth={true}
+                offset={-120}
+                className={"mr-12"}
+                duration={500}
+              >
+                <button
+                  className={
+                    "font-gilroyregular text-base text-blackmig cursor-pointer flex-col focus:outline-none jot-underlined bg-transparent"
+                  }
+                  style={{}}
+                >
+                  {locale == "en" ? "Benefits" : " Fasilitas"}
+                </button>
+              </Link>
+            </div>
             <Link
               activeClass="active"
               to="section7careers"
@@ -467,7 +489,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
       {/*section 6 careers mobile view */}
-      <section className={"section6careers md:hidden py-12 px-4"}>
+      <section className={"section6careersmobile md:hidden py-12 px-4"}>
         <p className={"text-center text-blackmig font-gilroysemibold text-xl"}>
           Benefits
         </p>

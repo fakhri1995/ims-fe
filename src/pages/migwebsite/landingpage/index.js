@@ -1397,20 +1397,48 @@ function LandingPage({ dataBlog }) {
                     </div>
                   )}
                   <div className={"mt-3 flex justify-end"}>
-                    <button
-                      className={
-                        "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
-                      }
-                    >
-                      <p className={"text-base text-white font-gilroysemibold"}>
-                        Read Story
-                      </p>
-                      <img
-                        className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
-                        src="/image/landingpage/arrow_forward_ios2.png"
-                        alt=""
-                      />
-                    </button>
+                    {locale == "en" ? (
+                      <Linkk
+                        href={`/migwebsite/customerstories/${data1.page_path}`}
+                      >
+                        <button
+                          className={
+                            "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
+                          }
+                        >
+                          <p
+                            className={
+                              "text-base text-white font-gilroysemibold"
+                            }
+                          >
+                            Read Story
+                          </p>
+                          <img
+                            className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                            src="/image/landingpage/arrow_forward_ios2.png"
+                            alt=""
+                          />
+                        </button>
+                      </Linkk>
+                    ) : (
+                      <button
+                        onClick={() => readTestimoni(data1.page_path_id)}
+                        className={
+                          "bg-primarygreen pl-4 py-[9px] rounded pr-[13.18px] flex flex-row"
+                        }
+                      >
+                        <p
+                          className={"text-base text-white font-gilroysemibold"}
+                        >
+                          Baca Testimoni
+                        </p>
+                        <img
+                          className="w-[8.95px] h-[15.64px] self-center ml-[13.52px]"
+                          src="/image/landingpage/arrow_forward_ios2.png"
+                          alt=""
+                        />
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1775,7 +1803,7 @@ function LandingPage({ dataBlog }) {
           </div>
         </div>
         <div className="self-end mt-5">
-          <a style={{ textDecoration: "none" }} href="#">
+          <a style={{ textDecoration: "none" }} href="/joinourteam">
             <div className="flex mt-5 justify-end mr-5">
               <p className="text-base mr-[13.52px] text-primarygreen font-gilroysemibold">
                 {t.joinmigcta}
