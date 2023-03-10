@@ -714,10 +714,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by payslip status (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={selectedPayslipStatusId ? selectedPayslipStatusId : ""}
+                value={selectedPayslipStatusId}
                 allowClear
                 name={`status`}
-                placeholder="Semua Status Slip Gaji"
                 defaultValue={""}
                 style={{ width: `100%` }}
                 onChange={(value) => {
@@ -726,6 +725,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     : setSelectedPayslipStatusId(value);
                 }}
               >
+                <Select.Option key={-1} value={""}>
+                  <p>Semua Status</p>
+                </Select.Option>
                 {dataPayslipStatusList.map((status, idx) => (
                   <Select.Option key={idx} value={status.id}>
                     <p>{status.name}</p>
