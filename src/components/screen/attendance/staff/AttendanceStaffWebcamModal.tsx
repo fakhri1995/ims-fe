@@ -18,6 +18,7 @@ const WEBCAM_VIDEO_CONSTRAINTS: MediaTrackConstraints = {
  */
 export interface IAttendanceStaffWebcamModal {
   visible: boolean;
+  title: string;
 
   onCancel: () => void;
   onOk: (imageBase64: string) => void;
@@ -28,6 +29,7 @@ export interface IAttendanceStaffWebcamModal {
  */
 export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
   visible = true /** TODO */,
+  title = "Ambil foto bukti kehadiran",
 
   onOk,
   onCancel,
@@ -154,7 +156,7 @@ export const AttendanceStaffWebcamModal: FC<IAttendanceStaffWebcamModal> = ({
   return (
     <Modal
       visible={visible}
-      title="Ambil foto bukti kehadiran"
+      title={title}
       centered
       closable
       destroyOnClose

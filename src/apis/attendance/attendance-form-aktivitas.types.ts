@@ -13,6 +13,7 @@ export enum FormAktivitasTypes {
   CHECKLIST, // value = []
   NUMERAL,
   DROPDOWN, // value = []
+  UNGGAH,
 }
 
 export enum AttendanceFormAktivitasServiceQueryKeys {

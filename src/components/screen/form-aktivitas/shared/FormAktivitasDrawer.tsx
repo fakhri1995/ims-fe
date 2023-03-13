@@ -21,6 +21,7 @@ import {
   CopyIconSvg,
   ListNumbersSvg,
   TrashIconSvg,
+  UploadIconSvg,
 } from "components/icon";
 import { TextAreaRequired } from "components/input";
 import { H2, Label } from "components/typography";
@@ -478,6 +479,12 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                   Dropdown
                                 </div>
                               </Select.Option>
+                              <Select.Option value={FormAktivitasTypes.UNGGAH}>
+                                <div className="flex items-center">
+                                  <UploadIconSvg size={12} color={`#35763B`} />
+                                  Unggah File
+                                </div>
+                              </Select.Option>
                             </Select>
                           </div>
 
@@ -674,6 +681,14 @@ export const FormAktivitasDrawer: FC<IFormAktivitasDrawer> = ({
                                     type: doc.type,
                                     description: doc.description,
                                     lists: [...doc.lists],
+                                  };
+                                } else if (
+                                  doc.type === FormAktivitasTypes.UNGGAH
+                                ) {
+                                  templastdata = {
+                                    name: doc.name,
+                                    type: doc.type,
+                                    description: doc.description,
                                   };
                                 }
                                 templastdata = {
