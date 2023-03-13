@@ -508,7 +508,7 @@ function LandingPage({ dataBlog }) {
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
-                Accelerate your business, fortify your tech capabilities with us
+                {t.landingpagesection1}
               </p>
             </div>
           </div>
@@ -588,7 +588,7 @@ function LandingPage({ dataBlog }) {
                     "flex text-base text-primarygreen px-3 py-2 md:px-4 md:py-3 mt-8 bg-white font-gilroysemibold justify-center items-center"
                   }
                 >
-                  <p className={"text-base"}>Explore Solutions</p>
+                  <p className={"text-base"}>{t.landingpageoursolution2}</p>
                   <img
                     className={"w-4 h-4 ml-3"}
                     src="/image/landingpage/arrow-down-green.png"
@@ -701,7 +701,7 @@ function LandingPage({ dataBlog }) {
             <p className={"text-blackmig font-gilroysemibold text-sm px-4"}>
               <span className={"text-primarygreen"}>45+ </span>
               {t.cities},<span className={"text-primarygreen"}> 9000+ </span>
-              {t.managed}.<span className={"text-primarygreen"}> 100+ </span>
+              {t.managed}.<span className={"text-primarygreen"}> 200+ </span>
               {t.techproject}.
             </p>
           </div>
@@ -901,16 +901,18 @@ function LandingPage({ dataBlog }) {
       >
         <div className={"container mx-auto"}>
           <p className={"text-xl md:text-2xl font-gilroysemibold py-8 md:py-0"}>
-            Discover how our expertise{" "}
+            {locale == "en"
+              ? "Discover how our expertise"
+              : "Solusi teknologi kami"}{" "}
             <span
               style={{
                 borderBottom: "solid 3px #188E4D",
                 paddingBottom: "2.5px",
               }}
             >
-              can enhance
+              {locale == "en" ? "can enhance " : " dapat tingkatkan "}
             </span>{" "}
-            your business
+            {locale == "en" ? "your business" : "bisnis Anda"}
           </p>
         </div>
         <div>
@@ -1274,7 +1276,7 @@ function LandingPage({ dataBlog }) {
                                 {data1.company_logo ? (
                                   <img
                                     className={
-                                      "max-w-[100px] h-auto max-h-[67px]"
+                                      "max-w-[100px] h-auto self-center"
                                     }
                                     src={generateStaticAssetUrl(
                                       data1.company_logo.link
@@ -1283,7 +1285,7 @@ function LandingPage({ dataBlog }) {
                                 ) : (
                                   <img
                                     className={
-                                      "max-w-[100px] h-auto max-h-[67px]"
+                                      "max-w-[100px] h-auto self-center"
                                     }
                                     src={
                                       "/image/landingpage/testimonial-client.png"
@@ -1414,13 +1416,13 @@ function LandingPage({ dataBlog }) {
                     </p>
                     {data1.company_logo ? (
                       <img
-                        className="rounded-full max-w-[100px] h-auto"
+                        className="rounded-full max-w-[100px] max-h-[67px] self-center"
                         src={generateStaticAssetUrl(data1.company_logo.link)}
                         alt=""
                       />
                     ) : (
                       <img
-                        className="rounded-full max-w-[100px] h-auto"
+                        className="rounded-full max-w-[100px] max-h-[67px] self-center"
                         src="/image/landingpage/testimonial-client.png"
                         alt=""
                       />

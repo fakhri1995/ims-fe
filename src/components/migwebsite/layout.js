@@ -274,6 +274,7 @@ function layout({ children }) {
   const [navbarBottom, setNavbarBottom] = useState(true); //true for hidden
 
   const handleNavbar = () => {
+    console.log("handle navbar ");
     setNavbar(!navbar);
     setNavbarSolution(true); //true for hidden
     setNavbarCompany(true); //true for hidden
@@ -306,6 +307,25 @@ function layout({ children }) {
     } else {
       router.push(router.pathname, router.asPath, { locale });
     }
+  };
+  const changeLanguageMobile = (e) => {
+    const locale = e;
+    console.log("change language mobile ");
+    let datatemp = router.asPath;
+    let datasplit = datatemp.split("/");
+    for (let a = 0; a < datasplit.length; a++) {
+      console.log("data ke ", datasplit[a]);
+    }
+    if (datasplit[2] == "customerstories" && datasplit[3] != "") {
+      console.log("masuk customerstories ");
+      getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
+    } else if (datasplit[2] == "blog" && datasplit[3] != "") {
+      getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
+    } else {
+      router.push(router.pathname, router.asPath, { locale });
+    }
+    setNavbar(!navbar);
+    setNavbarBottom(!navbarBottom);
   };
 
   const getDataCustomerStoriesDetail = (page, locale, locale_temp) => {
@@ -611,7 +631,7 @@ function layout({ children }) {
                     src={"/image/english.png"}
                   ></img>
                   <a
-                    onClick={() => changeLanguage("en")}
+                    onClick={() => changeLanguageMobile("en")}
                     style={{ textDecoration: "none" }}
                     className="text-base font-gilroyregular text-blackmig  pl-3"
                   >
@@ -626,7 +646,7 @@ function layout({ children }) {
                     src={"/image/indonesia.png"}
                   ></img>
                   <a
-                    onClick={() => changeLanguage("id")}
+                    onClick={() => changeLanguageMobile("id")}
                     style={{ textDecoration: "none" }}
                     className="text-base font-gilroyregular text-blackmig  pl-3"
                   >
