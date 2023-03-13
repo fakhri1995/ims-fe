@@ -1642,9 +1642,7 @@ function Hardware({}) {
                       name="time_used"
                       className={" text-base"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
-                          How long do you need the product?
-                        </p>
+                        <p style={{ fontSize: "16px" }}>{t.howlongdoyouneed}</p>
                       }
                       rules={[
                         {

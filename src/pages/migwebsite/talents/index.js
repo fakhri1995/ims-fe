@@ -3505,7 +3505,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row md:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3525,7 +3525,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 lg:mt-0 mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row mt-7 lg:mt-0 md:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3549,7 +3549,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row md:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3569,7 +3569,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 items-center lg:mt-0 mx-[25px] w-full lg:w-[500px]"
+                  "flex flex-row mt-7 items-center lg:mt-0 md:mx-[25px] w-full lg:w-[500px]"
                 }
               >
                 <img

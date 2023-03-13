@@ -102,6 +102,7 @@ export default {
   secondprovide: "✔️ Efficient and competitive cost",
   thirdprovide: "✔️ Guaranteed level of service",
   landingpageoursolution: "Explore our solutions",
+  landingpageoursolution2: "Explore Solutions",
   landingpagefreeconsultation: "Get free consultation",
   whoweare: "Our history",
   whowearedescription: `Mitramas Infosys Global (MIG) was established in 2003 and partners directly with global providers and local tech talents to offer a seamless technology experience. With more than a decade of experience serving clients across the archipelago, we have a deep understanding of the business. We value integrity as our core principle and work with our clients to improve their efficiency and reach long-term business goals.`,

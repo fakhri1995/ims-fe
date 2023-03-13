@@ -55,6 +55,7 @@ export default {
   landingpagesection3:
     "Kami memberikan Anda sumber daya terbaik dengan biaya efisien, serta layanan yang terjamin.",
   landingpageoursolution: "Pelajari solusi",
+  landingpageoursolution2: "Pelajari solusi",
   landingpagefreeconsultation: "Dapatkan konsultasi gratis",
   hardwaresolution: "solusi hardware",
   ctacontactuslandingpage: "Hubungi Kami",
