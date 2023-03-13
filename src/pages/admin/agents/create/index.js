@@ -20,7 +20,12 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { AGENT_ADD, COMPANY_BRANCHS_GET, ROLES_GET } from "lib/features";
+import {
+  AGENT_ADD,
+  COMPANY_BRANCHS_GET,
+  COMPANY_CLIENTS_GET,
+  ROLES_GET,
+} from "lib/features";
 import { getBase64 } from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
@@ -40,6 +45,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToAddAgent = hasPermission(AGENT_ADD);
   const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
   const { originPath } = rt.query;
   const tok = initProps;
@@ -110,6 +116,8 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   const [dataroles, setdataroles] = useState([]);
   //is pra rendered loading
   const [praloading, setpraloading] = useState(true);
+  //data companies
+  const [companyList, setCompanyList] = useState([]);
 
   //handle CreateAgent
   const handleCreateAgents = () => {
@@ -244,6 +252,24 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
         setdataroles(res2.data);
       });
   }, [isAllowedToGetRolesList, isAllowedToAddAgent]);
+
+  // Get Company options
+  useEffect(() => {
+    if (isAllowedToGetCompanyClients) {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          console.log({ res2 });
+          setCompanyList(res2.data);
+        });
+      return;
+    }
+  }, [isAllowedToGetCompanyClients]);
 
   return (
     <Layout
@@ -442,6 +468,39 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       value={newuser.nip}
                       name="nip"
                       onChange={onChangeCreateAgents}
+                    />
+                  </Form.Item>
+                  {/* TODO: adjust company field */}
+                  {/* Company */}
+                  <Form.Item label="Company" name="company_id">
+                    <Select
+                      showSearch
+                      allowClear
+                      placeholder="Pilih Company"
+                      options={companyList.map((company) => ({
+                        label: company.name,
+                        value: company.id,
+                      }))}
+                      filterOption={(input, option) => {
+                        return (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase());
+                      }}
+                      // value={}
+                      // onChange={(value) => {
+                      //   if (value === undefined || value === "") {
+                      //     setdataupdate((prev) => ({
+                      //       ...prev,
+                      //       company_id: null,
+                      //     }));
+                      //     return;
+                      //   }
+
+                      //   setdataupdate((prev) => ({
+                      //     ...prev,
+                      //     company_id: value,
+                      //   }));
+                      // }}
                     />
                   </Form.Item>
                   <Form.Item label="Form Aktivitas" name="attendance_form_ids">
