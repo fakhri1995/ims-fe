@@ -44,7 +44,10 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   const { tab: tabId } = rt.query;
 
   const pathArr = rt.pathname.split("/").slice(1);
-  pathArr[pathArr.length - 1] = "Karyawan";
+
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(0, 1, "Karyawan");
 
   const [instanceForm] = Form.useForm();
 
@@ -138,6 +141,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
       <div>
         <div className="flex flex-row gap-5 w-full">
@@ -321,7 +325,7 @@ export async function getServerSideProps({ req, res, params }) {
   );
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
-  const employeeId = await dataProfile.data.employee.id;
+  const employeeId = (await dataProfile.data?.employee?.id) || null;
 
   return {
     props: {

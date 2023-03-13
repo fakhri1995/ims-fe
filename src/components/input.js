@@ -1,4 +1,4 @@
-import { DatePicker, Input, Radio, Select, TreeSelect } from "antd";
+import { DatePicker, Input, Radio, Select, TimePicker, TreeSelect } from "antd";
 import React from "react";
 
 import { Label } from "./typography";
@@ -91,7 +91,7 @@ const InputNotRequired = ({
   value,
 }) => {
   return (
-    <div className="flex flex-col mb-5 px-3">
+    <div className="flex flex-col mb-5">
       <div className="flex mb-1">
         <Label>{label}</Label>
       </div>
@@ -251,7 +251,7 @@ const DateNotRequired = ({
   children,
 }) => {
   return (
-    <div className="flex flex-col mb-5 px-3">
+    <div className="flex flex-col mb-5">
       <div className="flex">
         <Label>{label}</Label>
       </div>
@@ -263,6 +263,33 @@ const DateNotRequired = ({
       >
         {children}
       </DatePicker>
+    </div>
+  );
+};
+
+const TimeNotRequired = ({
+  label,
+  name,
+  defaultValue,
+  onChangeTime,
+  value,
+  children,
+  format,
+}) => {
+  return (
+    <div className="flex flex-col mb-5">
+      <div className="flex">
+        <Label>{label}</Label>
+      </div>
+      <TimePicker
+        name={name}
+        defaultValue={defaultValue}
+        value={value}
+        onChange={onChangeTime}
+        format={format}
+      >
+        {children}
+      </TimePicker>
     </div>
   );
 };
@@ -342,6 +369,7 @@ export {
   TreeSelectRequired,
   DateRequired,
   DateNotRequired,
+  TimeNotRequired,
   TextAreaRequired,
   TextAreaNotRequired,
 };
