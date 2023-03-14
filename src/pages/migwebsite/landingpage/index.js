@@ -1737,10 +1737,10 @@ function LandingPage({ dataBlog }) {
       >
         <div
           className={
-            "hidden lg:flex mx-auto w-[1027px]  flex-row justify-between"
+            "hidden lg:flex mx-auto max-w-[1027px]  flex-row justify-between"
           }
         >
-          <div className={"w-[398px] flex justify-end"}>
+          <div className={"max-w-[398px] flex justify-end"}>
             <img
               src="/image/landingpage/career-mig.png"
               className={"w-[398px] h-[253px]"}
@@ -1912,10 +1912,10 @@ function LandingPage({ dataBlog }) {
             src="/image/landingpage/footer-left.png"
           />
         </div>
-        <div className={"container w-1/2 mx-auto"}>
+        <div className={"container w-1/2 mx-auto px-2"}>
           <div
             className={
-              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
             <h2

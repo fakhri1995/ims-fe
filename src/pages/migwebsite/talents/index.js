@@ -1192,13 +1192,13 @@ function Talents({}) {
                   id="formtalentdetail"
                   hidden={!feedback}
                   layout={"vertical"}
-                  // onFinish={handleSubmitThird}
+                  onFinish={handleAddAnotherProduct}
                   form={form}
                 >
                   {/* choose product */}
-                  <div className={"flex flex-row mt-4"}>
+                  <div className={"flex flex-row flex-wrap"}>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Engineering")}
                     >
                       <div
@@ -1250,7 +1250,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Data")}
                     >
                       <div
@@ -1302,7 +1302,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Product")}
                     >
                       <div
@@ -1354,7 +1354,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Design")}
                     >
                       <div
@@ -1406,7 +1406,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Others")}
                     >
                       <div
@@ -1805,7 +1805,8 @@ function Talents({}) {
                       </p>
                     </button>
                     <button
-                      onClick={handleAddAnotherProduct}
+                      type="submit"
+                      // onClick={handleAddAnotherProduct}
                       className={
                         "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
@@ -3536,7 +3537,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    {t.talentsubpoint1}
+                    {t.section2talentpoint1}
                   </p>
                 </div>
               </div>
@@ -3556,7 +3557,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    {t.talentsubpoint2}
+                    {t.section2talentpoint2}
                   </p>
                 </div>
               </div>
@@ -3580,7 +3581,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    {t.talentsubpoint3}
+                    {t.section2talentpoint3}
                   </p>
                 </div>
               </div>
@@ -3600,7 +3601,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    {t.talentsubpoint4}
+                    {t.section2talentpoint4}
                   </p>
                 </div>
               </div>

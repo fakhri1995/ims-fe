@@ -276,8 +276,8 @@ function layout({ children }) {
   const handleNavbar = () => {
     console.log("handle navbar ");
     setNavbar(!navbar);
-    setNavbarSolution(true); //true for hidden
-    setNavbarCompany(true); //true for hidden
+    // setNavbarSolution(true); //true for hidden
+    // setNavbarCompany(true); //true for hidden
   };
   const handleNavbarBottom = () => {
     if (navbarBottom == true) {
@@ -814,7 +814,7 @@ function layout({ children }) {
                   style={{ textDecoration: "none" }}
                   className="text-base font-gilroyregular text-blackmig menu-navbar"
                 >
-                  Contact Us{" "}
+                  {t.contactus}
                 </a>
               </Link>
               &nbsp;&nbsp;
@@ -1171,7 +1171,7 @@ function layout({ children }) {
                             "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                           }
                         >
-                          {locale == "en" ? "Blog" : "Artikel"}
+                          {locale == "en" ? "Artikel" : "Blog"}
                         </p>
                       </Link>
                     )}
