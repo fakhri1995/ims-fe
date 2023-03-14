@@ -4360,14 +4360,18 @@ function Hardware({}) {
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-              How{" "}
+              {locale == "en"
+                ? "See how we handle your "
+                : "Pelajari cara kami mengelola "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                it works
+                {locale == "en"
+                  ? " IT infrastructure."
+                  : "infrastruktur teknologi Anda."}
               </span>{" "}
               ?
             </p>
@@ -4378,12 +4382,12 @@ function Hardware({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We find high quality hardware products
+                  {t.hardwarehowitworksection1}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We have extensive network and partnerships with hardware
                   principles ready to be leveraged for your advantage
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4393,11 +4397,11 @@ function Hardware({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Custom match with your needs
+                  {t.hardwarehowitworksection2}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We customize our procurement with your specification needs
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4407,11 +4411,11 @@ function Hardware({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We conduct full operation and maintenance for your hardware
+                  {t.hardwarehowitworksection3}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We ensure guaranteed level of hardware performance throughout
-                </p>
+                </p> */}
               </div>
             </div>
           </section>

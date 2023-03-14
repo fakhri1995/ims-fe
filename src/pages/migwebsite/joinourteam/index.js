@@ -491,23 +491,13 @@ function JoinOurTeam({ dataCareers, empData }) {
       {/*section 6 careers mobile view */}
       <section className={"section6careersmobile md:hidden py-12 px-4"}>
         <p className={"text-center text-blackmig font-gilroysemibold text-xl"}>
-          Benefits
+          {t.careersatmigbenefitsection}
         </p>
         <div className={"mt-2"}>
           <p
             className={"text-base font-gilroyregular text-center text-blackmig"}
           >
-            Mitramas is a{" "}
-            <span className={"font-gilroysemibold"}>
-              people-centric business
-            </span>{" "}
-            with a foundation to gives working opportunities for motivated
-            individuals at all levels. Our long-term sustainable business which
-            has been running for +15 years and operated across 45 cities have a{" "}
-            <span className={"font-gilroysemibold"}>
-              strong commitment to offer pleasant experience
-            </span>{" "}
-            for our team, communities, and clients.
+            {t.careersatmigbenefitsectionsubtitle}
           </p>
           <div className={"block md:flex md:flex-row justify-center mt-4"}>
             <div
@@ -524,8 +514,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
-                  We love to empower our team members to solve problems that
-                  matter
+                  {t.careersatmigbenefitsectionpoint1}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -538,7 +527,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
-                  We offer diverse industry exposures and hands-on experience
+                  {t.careersatmigbenefitsectionpoint2}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -551,8 +540,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
-                  We support personal growth through constant experiment and
-                  learning
+                  {t.careersatmigbenefitsectionpoint3}
                 </p>
               </div>
             </div>
@@ -569,8 +557,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
-                  We provide unique and competitive packages to launch your
-                  career
+                  {t.careersatmigbenefitsectionpoint4}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -583,8 +570,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
-                  We value informal social bonding to offer a enjoyable working
-                  environment
+                  {t.careersatmigbenefitsectionpoint5}
                 </p>
               </div>
               <div className={"pb-6 flex-row flex"}>
@@ -597,8 +583,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                     "flex-row my-auto pl-4 text-xs text-blackmig font-gilroyregular"
                   }
                 >
-                  We create engaging environment and believe everyone has a
-                  voice at the table
+                  {t.careersatmigbenefitsectionpoint6}
                 </p>
               </div>
             </div>

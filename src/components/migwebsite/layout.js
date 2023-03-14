@@ -656,7 +656,7 @@ function layout({ children }) {
               </SubMenu>
               <SubMenu
                 key="sub 2"
-                title="Solutions"
+                title={t.navbarsolutions}
                 className="text-base font-gilroyregular text-blackmig "
               >
                 <Menu.Item key="1">
@@ -715,7 +715,7 @@ function layout({ children }) {
                     style={{ textDecoration: "none" }}
                     className="text-base font-gilroyregular text-blackmig"
                   >
-                    About Us
+                    {t.navbaraboutus}
                   </a>
                 </Link>
               </Menu.Item>
@@ -725,7 +725,7 @@ function layout({ children }) {
                     style={{ textDecoration: "none" }}
                     className="text-base font-gilroyregular text-blackmig"
                   >
-                    Career in MIG
+                    {t.navbarcareerinmig}
                   </a>
                 </Link>
               </Menu.Item>
@@ -742,7 +742,7 @@ function layout({ children }) {
                           style={{ textDecoration: "none" }}
                           className="text-base font-gilroyregular text-blackmig  pl-3"
                         >
-                          Customer Stories
+                          {t.navbarcustomerstories}
                         </a>
                       </Link>
                     </Menu.Item>
@@ -1087,7 +1087,7 @@ function layout({ children }) {
                         "font-gilroysemibold py-1 text-xs text-blackmig  py-1"
                       }
                     >
-                      Solutions
+                      {t.navbarsolutions}
                     </p>
                     <Link href={{ pathname: "/hardware" }}>
                       <p
@@ -1121,7 +1121,7 @@ function layout({ children }) {
                     <p
                       className={"gilroy-bold py-1 text-xs text-blackmig py-1"}
                     >
-                      Company
+                      {t.footercompany}
                     </p>
                     <Link href={{ pathname: "/aboutus" }}>
                       <p
@@ -1129,7 +1129,8 @@ function layout({ children }) {
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        About&nbsp;Us
+                        {locale == "en" ? "About" : "Tentang"}&nbsp;
+                        {locale == "en" ? "Us" : "Kami"}
                       </p>
                     </Link>
                     <Link href={{ pathname: "/joinourteam" }}>
@@ -1138,7 +1139,8 @@ function layout({ children }) {
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        Career&nbsp;in&nbsp;Mig
+                        {locale == "en" ? "Career" : "Karir"}&nbsp;
+                        {locale == "en" ? "in" : "di"}&nbsp;Mig
                       </p>
                     </Link>
                     {countStories > 0 && (
@@ -1182,7 +1184,7 @@ function layout({ children }) {
                         "font-gilroysemibold py-1 text-xs text-blackmig py-1"
                       }
                     >
-                      Get in touch
+                      {t.getintouch}
                     </p>
                     <Link href="/contactus">
                       <p
@@ -1190,12 +1192,15 @@ function layout({ children }) {
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        Contact&nbsp;Us
+                        {locale == "en" ? "Contact" : "Kontak"}&nbsp;
+                        {locale == "en" ? "Us" : "Kami"}
                       </p>
                     </Link>
                   </div>
                   <div className={"w-1/2 my-2 lg:my-0 lg:px-16"}>
-                    <p className={"gilroy-bold py-1 text-xs"}>Follow</p>
+                    <p className={"gilroy-bold py-1 text-xs"}>
+                      {t.footersosmed}
+                    </p>
                     <Link href="https://instagram.com/mitramasglobal?utm_medium=copy_link">
                       <div className={"flex"}>
                         <img

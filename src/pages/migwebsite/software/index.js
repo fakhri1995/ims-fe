@@ -1782,7 +1782,7 @@ function Software({}) {
                   {t.softwareherosection}
                 </p>
                 <img
-                  src="/image/hardware/Hardware-Solution.png"
+                  src="/image/landingpage/Software.png"
                   className={"w-[304px] h-[174px] mx-auto mt-6"}
                 ></img>
                 <p
@@ -2051,16 +2051,16 @@ function Software({}) {
             }
           >
             <p className={"text-xl text-center font-gilroysemibold"}>
-              Let’s see what{" "}
+              {t.softwarepastworksectiontitle1}{" "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                IT softwares
+                {t.softwarepastworksectiontitle2}
               </span>{" "}
-              we can offer
+              {t.softwarepastworksectiontitle3}
             </p>
             <div className={"mt-7"}>
               <Slider {...sliderSettingsPhone}>
@@ -2109,12 +2109,12 @@ function Software({}) {
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
                     <p className={"font-gilroysemibold text-blackmig text-sm"}>
-                      MIGSys
+                      AQL Learning Management System (LMS)
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
                       <p
                         className={
-                          "text-primarygreen font-gilroyregular text-xs"
+                          "text-primarygreen font-gilroyregular text-xs text-center"
                         }
                       >
                         Website Development
@@ -2123,10 +2123,7 @@ function Software({}) {
                   </div>
                   <div className={"mt-1"}>
                     <p className={"font-gilroyregular text-blackmig text-sm"}>
-                      A web-based educational platform (learning management
-                      system) that built to digitalize learning programs; plan,
-                      implement and assess learning programs at AQL Islamic
-                      Center.
+                      {t.lmsdescription}
                     </p>
                   </div>
                 </div>
@@ -2140,7 +2137,7 @@ function Software({}) {
                   />
                   <div className={"mt-3 flex flex-row justify-between"}>
                     <p className={"font-gilroysemibold text-blackmig text-sm"}>
-                      MIGSys
+                      Warung Lebaran
                     </p>
                     <div className={"px-2 py-1 bg-greenTrans20 rounded-[20px]"}>
                       <p
@@ -2154,8 +2151,7 @@ function Software({}) {
                   </div>
                   <div className={"mt-1"}>
                     <p className={"font-gilroyregular text-blackmig text-sm"}>
-                      A web-based hardware managed service to enhance the
-                      efficiency of distributions between seller and consumer.
+                      {t.warunglebarandescription}
                     </p>
                   </div>
                 </div>
@@ -2384,14 +2380,16 @@ function Software({}) {
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-              How{" "}
+              {locale == "en"
+                ? "How do MIG's services enable the creation of "
+                : "Bagaimana cara membuat software lewat "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                it works
+                {locale == "en" ? "top-quality software" : "layanan MIG "}
               </span>{" "}
               ?
             </p>

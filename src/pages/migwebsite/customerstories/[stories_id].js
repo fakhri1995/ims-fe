@@ -485,11 +485,19 @@ function CustomerStoriesDetail({}) {
                 : "-"}
             </span>
           </p>
-          <img
-            src="/image/blog.png"
-            className={"w-full h-full rounded-lg"}
-            alt=""
-          />
+          {detailBlog && detailBlog.attachment_article.link ? (
+            <img
+              src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
+              className={"w-full h-full rounded-lg"}
+              alt=""
+            />
+          ) : (
+            <img
+              src="/image/blog.png"
+              className={"w-full h-full rounded-lg"}
+              alt=""
+            />
+          )}
         </div>
         <div className={"py-4 flex flex-row justify-between px-2"}>
           <div className={"flex flex-row justify-around"}>
