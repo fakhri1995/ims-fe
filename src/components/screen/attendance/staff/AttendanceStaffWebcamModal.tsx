@@ -18,7 +18,7 @@ const WEBCAM_VIDEO_CONSTRAINTS: MediaTrackConstraints = {
  */
 export interface IAttendanceStaffWebcamModal {
   visible: boolean;
-  title: string;
+  title?: string;
 
   onCancel: () => void;
   onOk: (imageBase64: string) => void;
