@@ -164,7 +164,7 @@ function Talents({}) {
   const [deleteTalentValue, setDeleteTalentValue] = useState(null);
   const [showEmailError, setShowEmailError] = useState(false);
   const [emailError, setEmailError] = useState(null);
-  const [dataTestimonial, setDataTestimonial] = useState(null);
+  const [dataTestimonial, setDataTestimonial] = useState([]);
   const [captchaStatus, setCaptchaStatus] = useState(false);
   const [meetingDateStatus, setMeetingDateStatus] = useState(false);
   const [meetingTimeStatus, setMeetingTimeStatus] = useState(false);
@@ -249,7 +249,25 @@ function Talents({}) {
       .then((res2) => {
         console.log("get data testimonial ", res2);
         if (res2.success) {
-          setDataTestimonial(res2.data);
+          if (locale == "en") {
+            setDataTestimonial(res2.data);
+          } else {
+            console.log("masuk else id ");
+            let dataTemp = [];
+            for (let i = 0; i < res2.data.length; i++) {
+              if (
+                res2.data[i].title_id != "" &&
+                res2.data[i].description_id != "" &&
+                res2.data[i].page_path_id != "" &&
+                res2.data[i].content_id != "" &&
+                res2.data[i].tags_id != ""
+              ) {
+                dataTemp.push(res2.data[i]);
+                console.log("masuk push");
+              }
+            }
+            setDataTestimonial(dataTemp);
+          }
         } else {
         }
       })
@@ -3483,21 +3501,20 @@ function Talents({}) {
               }
               style={{ lineHeight: "120%" }}
             >
-              Conventional hiring takes massive effort.
+              {t.section2talenttitle}
             </h2>
             <p
               style={{ lineHeight: "150%" }}
               className={"text-base md:text-xl text-blackmig text-center mt-4"}
             >
-              Limited profiles coming in with widely different qualities.
-              Turnover rate is high and you need to do it all over again.
+              {t.section2talentsubtitle}
             </p>
             <div className={"mt-5"}>
               <p
                 style={{ lineHeight: "150%" }}
                 className={"text-blackmig text-xl md:text-2xl text-center"}
               >
-                Let us streamline your process with:
+                {t.section2talentsubtitle2}:
               </p>
             </div>
             <div
@@ -3519,7 +3536,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    On-demand project-based expertise
+                    {t.talentsubpoint1}
                   </p>
                 </div>
               </div>
@@ -3539,7 +3556,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    Flexible talent head counts & working period
+                    {t.talentsubpoint2}
                   </p>
                 </div>
               </div>
@@ -3563,7 +3580,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    Guaranteed talent quality
+                    {t.talentsubpoint3}
                   </p>
                 </div>
               </div>
@@ -3583,7 +3600,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    Cost and admin process efficiency
+                    {t.talentsubpoint4}
                   </p>
                 </div>
               </div>
@@ -4082,7 +4099,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4238,7 +4255,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4395,7 +4412,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4547,7 +4564,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4713,16 +4730,18 @@ function Talents({}) {
               <div className={"md:ml-10 md:py-[53px]"}>
                 <div className="flex flex-col md:w-[662px]">
                   <h4 className="mb-2 text-xl text-center font-gilroysemibold text-blackmig">
-                    Why you should{" "}
+                    {locale == "en" ? "Let us " : "Biarkan MIG "}
                     <span
                       style={{
                         borderBottom: "solid 3px #188E4D",
                         paddingBottom: "2.5px",
                       }}
                     >
-                      trust us
+                      {locale == "en" ? "assist you " : "membangun "}
                     </span>{" "}
-                    in building your own “Avengers” ?
+                    {locale == "en"
+                      ? "in building a powerful  & capable team. "
+                      : "tim yang kuat untuk Anda."}
                   </h4>
                   <div className={"block md:hidden mx-auto my-[17px]"}>
                     <img
@@ -4738,11 +4757,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Customization Based on Your Needs
+                        {t.talentpoint1}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        Numbers of talent and their working period can be
-                        tailored as per required by project.
+                        {t.talentsubpoint1}
                       </p>
                     </div>
                   </div>
@@ -4753,11 +4771,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Full Flexibility
+                        {t.talentpoint2}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        You have full flexibility to rotate and rematch to make
-                        your quality criteria fullfiled.
+                        {t.talentsubpoint2}
                       </p>
                     </div>
                   </div>
@@ -4768,11 +4785,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Tight Candidate Selection
+                        {t.talentpoint3}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        Only less than 10% of all candidates applying to MIG are
-                        selected as our top talent.
+                        {t.talentsubpoint3}
                       </p>
                     </div>
                   </div>
@@ -4783,12 +4799,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Excellent Capability
+                        {t.talentpoint4}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        Extensive test and interview process covering tech
-                        stacks, coding algorithm, systems design, and soft
-                        skills are given to ensure you having qualified talents.
+                        {t.talentsubpoint4}
                       </p>
                     </div>
                   </div>
@@ -4893,14 +4907,14 @@ function Talents({}) {
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-              How{" "}
+              {t.howitworktalenttitle}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                it works
+                MIG
               </span>{" "}
               ?
             </p>
@@ -4911,12 +4925,12 @@ function Talents({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We find high quality hardware products
+                  {t.howitworktalentpoint1}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We have extensive network and partnerships with hardware
                   principles ready to be leveraged for your advantage
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4926,11 +4940,11 @@ function Talents({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Custom match with your needs
+                  {t.howitworktalentpoint2}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We customize our procurement with your specification needs
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4939,12 +4953,16 @@ function Talents({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We conduct full operation and maintenance for your hardware
+                <p
+                  className={
+                    "text-sm text-blackmig font-gilroysemibold self-center"
+                  }
+                >
+                  {t.howitworktalentpoint3}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We ensure guaranteed level of hardware performance throughout
-                </p>
+                </p> */}
               </div>
             </div>
           </section>
@@ -4963,7 +4981,7 @@ function Talents({}) {
                 {t.customerstorieslandingpage}
               </p>
               <div className={"flex flex-row"}>
-                {dataTestimonial ? (
+                {dataTestimonial.length > 0 ? (
                   dataTestimonial.length > 1 ? (
                     <button onClick={() => slider?.current?.slickPrev()}>
                       <div
@@ -5186,7 +5204,7 @@ function Talents({}) {
                       : ""}
                   </Slider>
                 </div>
-                {dataTestimonial ? (
+                {dataTestimonial.length > 0 ? (
                   dataTestimonial.length > 1 ? (
                     <button onClick={() => slider?.current?.slickNext()}>
                       <div
@@ -5211,7 +5229,7 @@ function Talents({}) {
             </section>
           )}
           {/* testimonial mobile */}
-          {dataTestimonial && (
+          {dataTestimonial.length > 0 && (
             <section
               className={
                 "sectiontestimonialmobile block md:hidden bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
