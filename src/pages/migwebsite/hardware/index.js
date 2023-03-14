@@ -4373,7 +4373,6 @@ function Hardware({}) {
                   ? " IT infrastructure."
                   : "infrastruktur teknologi Anda."}
               </span>{" "}
-              ?
             </p>
             <div className={"mt-4 flex flex-row"}>
               <img

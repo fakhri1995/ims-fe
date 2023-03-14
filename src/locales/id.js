@@ -50,7 +50,7 @@ export default {
   talentsubpoint4:
     "Tes dan wawancara yang kompleks untuk memastikan para talenta terampil dalam tech stacks, coding algorithms, system designs, dan soft skills.",
   managed: "managed service hardware",
-  techproject: "tech talents.",
+  techproject: "tech talents",
   companies: "perusahaan",
   landingpagesection3:
     "Kami memberikan Anda sumber daya terbaik dengan biaya efisien, serta layanan yang terjamin.",
