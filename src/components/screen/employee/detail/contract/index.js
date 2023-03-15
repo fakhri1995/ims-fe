@@ -104,9 +104,6 @@ const EmployeeContractDetail = ({
         .then((res2) => {
           if (res2.success) {
             setDataContract(res2.data);
-            if (res2.data?.benefit) {
-              setBenefitObject(JSON.parse(res2.data.benefit));
-            }
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -115,7 +112,6 @@ const EmployeeContractDetail = ({
           }
         })
         .catch((err) => {
-          // console.log({ err });
           notification.error({
             message: `${err}`,
             duration: 3,
@@ -319,14 +315,19 @@ const EmployeeContractDetail = ({
                       {Number(dataContract?.gaji_pokok).toLocaleString("id-ID")}
                     </p>
                   </div>
-                  {/* {dataContract?.benefit?.map((variable) => (
-                  <div className="space-y-1 col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      {variable?.name}
-                    </p>
-                    <p>{variable?.value || "-"}</p>
-                  </div>
-                ))} */}
+                  {dataContract?.salaries
+                    ?.filter((variable) => variable?.column?.type === 1)
+                    ?.map((variable) => (
+                      <div className="space-y-1 col-span-2">
+                        <p className="mig-caption--medium text-mono80">
+                          {variable?.column?.name}
+                        </p>
+                        <p>
+                          {" "}
+                          Rp{Number(variable?.value).toLocaleString("id-ID")}
+                        </p>
+                      </div>
+                    ))}
                 </div>
               </div>
               <div className="mb-3">
@@ -388,14 +389,18 @@ const EmployeeContractDetail = ({
                       Rp{Number(dataContract?.pph21).toLocaleString("id-ID")}
                     </p>
                   </div>
-                  {/* {dataContract?.benefit?.map((variable) => (
-                  <div className="space-y-1 col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      {variable?.name}
-                    </p>
-                    <p>{variable?.value || "-"}</p>
-                  </div>
-                ))} */}
+                  {dataContract?.salaries
+                    ?.filter((variable) => variable?.column?.type === 2)
+                    ?.map((variable) => (
+                      <div className="space-y-1 col-span-2">
+                        <p className="mig-caption--medium text-mono80">
+                          {variable?.column?.name}
+                        </p>
+                        <p>
+                          Rp{Number(variable?.value).toLocaleString("id-ID")}
+                        </p>
+                      </div>
+                    ))}
                 </div>
               </div>
             </div>
