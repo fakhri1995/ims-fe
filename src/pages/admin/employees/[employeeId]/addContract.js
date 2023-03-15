@@ -220,9 +220,9 @@ const EmployeeContractAddIndex = ({
       // Mapping salaries list to required format in API updateEmployeeContract form-data
       let benefitObjectList = dataContract?.salaries?.map((benefit, idx) => {
         let obj = {};
-        obj[`benefit[${idx}][employee_salary_column_id]`] =
+        obj[`salaries[${idx}][employee_salary_column_id]`] =
           benefit.employee_salary_column_id;
-        obj[`benefit[${idx}][value]`] = benefit.value;
+        obj[`salaries[${idx}][value]`] = benefit.value;
         return obj;
       });
 

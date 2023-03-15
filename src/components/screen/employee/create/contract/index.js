@@ -286,14 +286,40 @@ const EmployeeContractForm = ({
           );
 
           // Set checked variables to show as fields in form
-          const requiredReceiveVariables = receiveVariables.filter(
+          const defaultReceiveVariables = receiveVariables.filter(
             (variable) => variable.required === 1
           );
-          const requiredReductionVariables = reductionVariables.filter(
+          const defaultReductionVariables = reductionVariables.filter(
             (variable) => variable.required === 1
           );
-          setReceiveVarFields(requiredReceiveVariables);
-          setReductionVarFields(requiredReductionVariables);
+          setReceiveVarFields(defaultReceiveVariables);
+          setReductionVarFields(defaultReductionVariables);
+
+          // Insert default salary variable to contract form
+          // let tempSalaries = dataContract?.salaries || [];
+          // dataVar
+          //   ?.filter((variable) => variable.required === 1)
+          //   ?.forEach((variable, idx) => {
+          //     const field = {
+          //       id: idx,
+          //       employee_salary_column_id: variable.id,
+          //       employee_payslip_id: dataContract?.id,
+          //       value: 0,
+          //       column: {
+          //         id: variable?.id,
+          //         name: variable?.name,
+          //         type: variable?.type,
+          //         required: variable?.required,
+          //       },
+          //     };
+
+          //     tempSalaries[idx] = field;
+          //   });
+
+          // setDataContract((prev) => ({
+          //   ...prev,
+          //   salaries: tempSalaries,
+          // }));
         } else {
           notification.error({
             message: `${response2.message}`,
@@ -764,18 +790,12 @@ const EmployeeContractForm = ({
             />
           </div>
         </Form.Item>
-        {/* TODO: Loop additional benefit */}
+
         {receiveVarFields.map((variable, idx) => (
           <Form.Item
             key={idx}
             label={variable.name}
             name={formatVariableName(variable?.name)}
-            rules={[
-              {
-                required: variable.required,
-                message: `${variable.name} wajib diisi`,
-              },
-            ]}
           >
             <div className="flex flex-row items-center space-x-2">
               <CustomCurrencyInput
@@ -791,7 +811,6 @@ const EmployeeContractForm = ({
                 idx={idx}
                 dataColumn={variable}
                 payslipId={dataContract?.id}
-                // disabled={true} //TODO: delete if API is done
               />
               {/* {!variable.required && (
                     <Button
@@ -950,12 +969,6 @@ const EmployeeContractForm = ({
               key={reductionFieldId}
               label={variable.name}
               name={formatVariableName(variable.name)}
-              rules={[
-                {
-                  required: variable.required,
-                  message: `${variable.name} wajib diisi`,
-                },
-              ]}
             >
               <div>
                 <CustomCurrencyInput
@@ -971,7 +984,6 @@ const EmployeeContractForm = ({
                   idx={reductionFieldId}
                   dataColumn={variable}
                   payslipId={dataContract?.id}
-                  // disabled={true} //TODO: delete if API is done
                 />
               </div>
             </Form.Item>
@@ -1012,8 +1024,9 @@ const EmployeeContractForm = ({
           setRefresh={setRefresh}
           selectedTags={selectedMultipliers}
           setSelectedTags={setSelectedMultipliers}
-          // payslipId={payslipId}
-          // dataPayslip={dataPayslip}
+          payslipId={dataContract?.id}
+          dataPayslip={dataContract}
+          setDataPayslip={setDataContract}
           // disabled
         />
       </AccessControl>

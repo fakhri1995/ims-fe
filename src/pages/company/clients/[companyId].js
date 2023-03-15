@@ -6,6 +6,7 @@ import {
   Input,
   Spin,
   Switch,
+  TimePicker,
   notification,
 } from "antd";
 import moment from "moment";
@@ -137,6 +138,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     fax: "",
     email: "",
     website: "",
+    jam_masuk: null,
   });
   const [hapusbankdata, sethapusbankdata] = useState({
     id: "",
@@ -502,6 +504,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         website: "-",
         image_logo: "/image/Company.png",
         fax: "-",
+        jam_masuk: null,
       });
       setpraloadingedit(false);
       return;
@@ -542,6 +545,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
           fax: res2.data.fax,
           email: res2.data.email,
           website: res2.data.website,
+          jam_masuk: res2.data?.jam_masuk ? moment(res2.data?.jam_masuk) : null,
         });
         setisenabled(res2.data.is_enabled);
         return res2.data.id;
@@ -846,6 +850,31 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           : moment(displaydata.tanggal_pkp)
                               .locale("id")
                               .format("LL")}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col mb-5">
+                    <Label>Jam Masuk</Label>
+                    {editable ? (
+                      <TimePicker
+                        onChange={(value, dateString) => {
+                          setdisplaydata({
+                            ...displaydata,
+                            jam_masuk: dateString,
+                          });
+                        }}
+                        defaultValue={
+                          displaydata.jam_masuk === null
+                            ? null
+                            : displaydata.jam_masuk
+                        }
+                        format={"HH:mm"}
+                      ></TimePicker>
+                    ) : (
+                      <p className="mb-0">
+                        {displaydata.jam_masuk === null
+                          ? "-"
+                          : displaydata.jam_masuk}
                       </p>
                     )}
                   </div>

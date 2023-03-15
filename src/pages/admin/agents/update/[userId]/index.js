@@ -12,7 +12,12 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import { AGENT_GET, AGENT_UPDATE, ROLES_GET } from "lib/features";
+import {
+  AGENT_GET,
+  AGENT_UPDATE,
+  COMPANY_CLIENTS_GET,
+  ROLES_GET,
+} from "lib/features";
 import {
   generateStaticAssetUrl,
   getBase64,
@@ -45,6 +50,7 @@ function AgentUpdate({
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToGetAgentDetail = hasPermission(AGENT_GET);
   const isAllowedToUpdateAgent = hasPermission(AGENT_UPDATE);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
   const axiosClient = useAxiosClient();
   const rt = useRouter();
@@ -91,6 +97,7 @@ function AgentUpdate({
   //data payload
   const [dataupdate, setdataupdate] = useState({
     id: Number(userid),
+    company_id: null,
     fullname: "",
     phone_number: "",
     profile_image: `/default-users.jpeg`,
@@ -100,16 +107,14 @@ function AgentUpdate({
     nip: "",
     attendance_form_ids: [],
   });
-  //data asal lokasi
-  const [datacompanylist, setdatacompanylist] = useState([]);
+  //data company
+  const [dataCompanyList, setDataCompanyList] = useState([]);
   //data default roles
   const [defaultroles, setdefaultroles] = useState(0);
   //data breadcrumb
   const [patharr, setpatharr] = useState([]);
   //loading pre render
   const [preloading, setpreloading] = useState(true);
-  //data default asal lokasi
-  const [defaultcompany, setdefaultcompany] = useState(0);
   //loading update button
   const [loadingupdate, setLoadingupdate] = useState(false);
   //data roles
@@ -213,6 +218,7 @@ function AgentUpdate({
 
         var temp = {
           id: res2.data.id,
+          company_id: res2.data.company_id,
           fullname: res2.data.name,
           role: res2.data.role,
           phone_number: res2.data.phone_number,
@@ -233,28 +239,11 @@ function AgentUpdate({
         pathArr.splice(3, 1);
         pathArr[pathArr.length - 1] = `Ubah Profil Agent - ` + res2.data.name;
         setpatharr(pathArr);
-        setdefaultcompany(res2.data.company_id);
         setpreloading(false);
       });
   }, [isAllowedToGetAgentDetail]);
 
-  useEffect(() => {
-    if (!isAllowedToGetAgentDetail) {
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatacompanylist([res2.data]);
-      });
-  }, [isAllowedToGetAgentDetail]);
-
+  // Get Role options
   useEffect(() => {
     if (isAllowedToGetRolesList) {
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRoles`, {
@@ -270,6 +259,34 @@ function AgentUpdate({
       return;
     }
   }, [isAllowedToGetRolesList]);
+
+  // Get Company options
+  useEffect(() => {
+    if (!isAllowedToGetCompanyClients) {
+      setpreloading(false);
+      return;
+    }
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataCompanyList(res2.data);
+      })
+      .catch((err) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar company",
+          duration: 3,
+        });
+      })
+      .finally(() => setpreloading(false));
+  }, [isAllowedToGetCompanyClients]);
 
   return (
     <Layout
@@ -365,41 +382,28 @@ function AgentUpdate({
                     form={instanceForm}
                     onFinish={handleSubmitEditAccount}
                   >
-                    <div className="flex flex-col mb-5">
-                      <div className="flex mb-2">
-                        <span className="asal"></span>
-                        <p className="mb-0 ml-1">Asal Lokasi</p>
-                        <style jsx>
-                          {`
-                                                            .asal::before{
-                                                                content: '*';
-                                                                color: red;
-                                                            }
-                                                        `}
-                        </style>
-                      </div>
-                      <TreeSelect
-                        allowClear
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        treeData={datacompanylist}
-                        placeholder="Pilih Asal Lokasi"
-                        treeDefaultExpandAll
-                        defaultValue={defaultcompany}
-                        disabled
-                        showSearch
-                        treeNodeFilterProp="title"
-                        filterTreeNode={(search, item) => {
-                          /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                          /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                          return (
-                            item.title
-                              .toLowerCase()
-                              .indexOf(search.toLowerCase()) >= 0
-                          );
-                        }}
-                      />
-                    </div>
                     {/* </Form.Item> */}
+                    <Form.Item label="Company" name="company_id">
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Pilih company"
+                        value={dataupdate?.company_id}
+                        options={dataCompanyList.map((company) => ({
+                          label: company.name,
+                          value: company.id,
+                        }))}
+                        filterOption={(input, option) => {
+                          return (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase());
+                        }}
+                        onChange={(value) => {
+                          setdataupdate({ ...dataupdate, company_id: value });
+                        }}
+                        disabled={!isAllowedToGetCompanyClients}
+                      />
+                    </Form.Item>
                     <Form.Item
                       label="Nama Lengkap"
                       required

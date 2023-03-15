@@ -26,6 +26,8 @@ const EmployeeInventoryForm = ({
   setInventoryList,
   employeeId,
   debouncedApiCall,
+  refresh,
+  setRefresh,
 }) => {
   /**
    * Dependencies
@@ -49,7 +51,7 @@ const EmployeeInventoryForm = ({
   const [loadingInventories, setLoadingInventories] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
 
-  const [refresh, setRefresh] = useState(-1);
+  // const [refresh, setRefresh] = useState(-1);
 
   // 2. USE EFFECT
   // 2.1. Get Employee Inventories Data
@@ -147,12 +149,6 @@ const EmployeeInventoryForm = ({
         });
       })
       .finally(() => setLoadingAdd(false));
-  };
-
-  const handleRemoveInventory = (idx) => {
-    let data = [...inventoryList];
-    data.splice(idx, 1);
-    setInventoryList(data);
   };
 
   return (
