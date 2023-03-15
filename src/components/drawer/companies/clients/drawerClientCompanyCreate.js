@@ -62,7 +62,7 @@ const DrawerCreateClient = ({
     fax: "",
     email: "",
     website: "",
-    jam_masuk: null,
+    check_in_time: null,
   });
   // const [treedata, settreedata] = useState([]);
   const [lokasiloading, setlokasiloading] = useState(false);
@@ -73,7 +73,7 @@ const DrawerCreateClient = ({
     npwp: false,
     fax: false,
     tanggal_pkp: false,
-    jam_masuk: false,
+    check_in_time: false,
   });
   const [disabledsave, setdisabledsave] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
@@ -118,7 +118,7 @@ const DrawerCreateClient = ({
     setloadingfoto(false);
   };
 
-  const handleCreateLokasi = () => {
+  const handleCreateCompany = () => {
     const createPayload = { ...createdata };
     if ("image_logo" in createPayload) {
       delete createPayload["image_logo"];
@@ -163,7 +163,7 @@ const DrawerCreateClient = ({
                 npwp: false,
                 fax: false,
                 tanggal_pkp: false,
-                jam_masuk: false,
+                check_in_time: false,
               });
               setwarningphonenumber(false);
               setwarningemail(false);
@@ -223,7 +223,7 @@ const DrawerCreateClient = ({
               fax: "",
               email: "",
               website: "",
-              jam_masuk: null,
+              check_in_time: null,
             });
             setdynamicattr({
               email: false,
@@ -231,7 +231,7 @@ const DrawerCreateClient = ({
               npwp: false,
               fax: false,
               tanggal_pkp: false,
-              jam_masuk: false,
+              check_in_time: false,
             });
             setwarningphonenumber(false);
             setwarningemail(false);
@@ -281,7 +281,6 @@ const DrawerCreateClient = ({
     }
   }, [disabledtrigger]);
 
-  console.log({ createdata });
   return (
     <DrawerCore
       title={title}
@@ -300,7 +299,7 @@ const DrawerCreateClient = ({
           fax: "",
           email: "",
           website: "",
-          jam_masuk: null,
+          check_in_time: null,
         });
         setdynamicattr({
           email: false,
@@ -308,7 +307,7 @@ const DrawerCreateClient = ({
           npwp: false,
           fax: false,
           tanggal_pkp: false,
-          jam_masuk: false,
+          check_in_time: false,
         });
         setwarningphonenumber(false);
         setwarningemail(false);
@@ -316,7 +315,7 @@ const DrawerCreateClient = ({
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
-      onClick={handleCreateLokasi}
+      onClick={handleCreateCompany}
       disabled={disabledsave}
     >
       <Spin spinning={lokasiloading}>
@@ -442,22 +441,22 @@ const DrawerCreateClient = ({
                 }
               ></DateNotRequired>
             )}
-            {dynamicattr.jam_masuk && (
+            {dynamicattr.check_in_time && (
               <TimeNotRequired
-                name="jam_masuk"
+                name="check_in_time"
                 onChangeTime={(time, timestring) => {
                   setcreatedata({
                     ...createdata,
-                    jam_masuk: timestring,
+                    check_in_time: timestring,
                   });
                 }}
                 label="Jam Masuk"
                 defaultValue={
-                  createdata.jam_masuk === null
+                  createdata.check_in_time === null
                     ? null
-                    : moment(createdata.jam_masuk)
+                    : moment(createdata.check_in_time)
                 }
-                format="HH:mm"
+                format="HH:mm:ss"
               ></TimeNotRequired>
             )}
           </div>
@@ -555,7 +554,7 @@ const DrawerCreateClient = ({
                 </div>
               </div>
             )}
-            {!dynamicattr.jam_masuk && (
+            {!dynamicattr.check_in_time && (
               <div className="flex justify-between mb-3">
                 <div className="flex items-center">
                   <div className="mr-2">
@@ -566,7 +565,7 @@ const DrawerCreateClient = ({
                 <div
                   className="cursor-pointer"
                   onClick={() => {
-                    setdynamicattr({ ...dynamicattr, jam_masuk: true });
+                    setdynamicattr({ ...dynamicattr, check_in_time: true });
                   }}
                 >
                   <SquarePlusIconSvg size={18} color={`#808080`} />

@@ -115,6 +115,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
 
   //useState
   const [patharr, setpatharr] = useState([]);
+  const [refresh, setRefresh] = useState(-1);
   const [rawdata, setrawdata] = useState({
     id: "",
     name: "",
@@ -122,7 +123,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     phone_number: "",
     image_logo: "",
     singkatan: "",
-    tanggal_pkp: moment(new Date()),
+    tanggal_pkp: null,
     penanggung_jawab: "",
     npwp: "",
     fax: "",
@@ -142,7 +143,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
     image_logo: "",
     company_logo: null, // File
     singkatan: "",
-    tanggal_pkp: moment(new Date()),
+    tanggal_pkp: null,
     penanggung_jawab: "",
     npwp: "",
     fax: "",
@@ -469,7 +470,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/company/myCompany`);
+            setRefresh((prev) => prev + 1);
           }, 500);
         } else if (!res2.success) {
           notification["error"]({
@@ -680,7 +681,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
         singkatan: "-",
         address: "-",
         penanggung_jawab: "-",
-        tanggal_pkp: "-",
+        tanggal_pkp: null,
         npwp: "-",
         email: "-",
         phone_number: "-",
@@ -719,10 +720,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
           //     ? "/image/Company.png"
           //     : res2.data.image_logo,
           singkatan: res2.data.singkatan,
-          tanggal_pkp:
-            res2.data.tanggal_pkp === null
-              ? moment(new Date())
-              : moment(res2.data.tanggal_pkp),
+          tanggal_pkp: res2.data.tanggal_pkp ?? null,
           penanggung_jawab: res2.data.penanggung_jawab,
           npwp: res2.data.npwp,
           fax: res2.data.fax,
@@ -759,7 +757,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
             setpraloadingedit(false);
           });
       });
-  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
+  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog, refresh]);
 
   useEffect(() => {
     if (!isAllowedToGetMainBanks) {
@@ -833,12 +831,14 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     alt=""
                     className="object-fit max-h-24 w-full rounded-t"
                   />
-                  <div className="absolute -bottom-1/2 bg-white left-28 rounded-full">
-                    <img
-                      src={displaydata.image_logo}
-                      alt=""
-                      className="object-contain w-24 h-24 rounded-full"
-                    />
+                  <div className="absolute -bottom-1/2 left-1/2">
+                    <div className="relative -left-1/2 bg-white rounded-full">
+                      <img
+                        src={displaydata.image_logo}
+                        alt=""
+                        className="object-contain w-24 h-24 rounded-full"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="mt-14 flex flex-col justify-center text-center">
@@ -880,13 +880,17 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           },
                         ]}
                       >
-                        <Input name="name" onChange={onChangeInput}></Input>
+                        <Input
+                          name="name"
+                          defaultValue={rawdata.name}
+                          onChange={onChangeInput}
+                        ></Input>
                       </Form.Item>
                     </div>
                   ) : (
-                    <H1>{displaydata.name ?? "-"}</H1>
+                    <H1>{rawdata.name ?? "-"}</H1>
                   )}
-                  <Label>{displaydata.singkatan}</Label>
+                  <Label>{rawdata.singkatan ?? "-"}</Label>
                 </div>
                 {editable ? (
                   <div className="flex justify-center items-center mt-5">
@@ -948,11 +952,11 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                     {editable ? (
                       <Input
                         name="singkatan"
-                        defaultValue={displaydata.singkatan ?? "-"}
+                        defaultValue={rawdata.singkatan ?? "-"}
                         onChange={onChangeInput}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{displaydata.singkatan ?? "-"}</p>
+                      <p className="mb-0">{rawdata.singkatan ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -961,10 +965,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       <Input
                         name="address"
                         onChange={onChangeInput}
-                        defaultValue={displaydata.address ?? "-"}
+                        defaultValue={rawdata.address ?? "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{displaydata.address ?? "-"}</p>
+                      <p className="mb-0">{rawdata.address ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -973,12 +977,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       <Input
                         name="penanggung_jawab"
                         onChange={onChangeInput}
-                        defaultValue={displaydata.penanggung_jawab ?? "-"}
+                        defaultValue={rawdata.penanggung_jawab ?? "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">
-                        {displaydata.penanggung_jawab ?? "-"}
-                      </p>
+                      <p className="mb-0">{rawdata.penanggung_jawab ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -992,18 +994,18 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           });
                         }}
                         defaultValue={
-                          displaydata.tanggal_pkp === "-"
+                          rawdata.tanggal_pkp === null
                             ? null
-                            : moment(displaydata.tanggal_pkp)
+                            : moment(rawdata.tanggal_pkp)
                         }
                       ></DatePicker>
                     ) : (
                       <p className="mb-0">
-                        {displaydata.tanggal_pkp === "-"
-                          ? "-"
-                          : moment(displaydata.tanggal_pkp)
+                        {rawdata?.tanggal_pkp
+                          ? moment(rawdata.tanggal_pkp)
                               .locale("id")
-                              .format("LL")}
+                              .format("LL")
+                          : "-"}
                       </p>
                     )}
                   </div>
@@ -1013,10 +1015,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                       <Input
                         name="npwp"
                         onChange={onChangeInput}
-                        defaultValue={displaydata.npwp ?? "-"}
+                        defaultValue={rawdata.npwp ?? "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{displaydata.npwp ?? "-"}</p>
+                      <p className="mb-0">{rawdata.npwp ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -1026,7 +1028,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         name="email"
                         onChange={onChangeInput}
                         prefix={<EmailIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={displaydata.email ?? "-"}
+                        defaultValue={rawdata.email ?? "-"}
                       ></Input>
                     ) : (
                       <div className="flex">
@@ -1034,10 +1036,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           <EmailIconSvg size={20} color={`#35763B`} />
                         </div>
                         <a
-                          href={`mailto:${displaydata.email}`}
-                          className="text-primary100 hover:text-primary75"
+                          href={`mailto:${rawdata.email}`}
+                          className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {displaydata.email}
+                          {rawdata.email}
                         </a>
                       </div>
                     )}
@@ -1049,7 +1051,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         name="phone_number"
                         onChange={onChangeInput}
                         prefix={<PhoneIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={displaydata.phone_number ?? "-"}
+                        defaultValue={rawdata.phone_number ?? "-"}
                       ></Input>
                     ) : (
                       <div className="flex">
@@ -1057,10 +1059,10 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           <PhoneIconSvg size={20} color={`#35763B`} />
                         </div>
                         <a
-                          href={`tel:${displaydata.phone_number}`}
+                          href={`tel:${rawdata.phone_number}`}
                           className="text-primary100 hover:text-primary75"
                         >
-                          {displaydata.phone_number}
+                          {rawdata.phone_number}
                         </a>
                       </div>
                     )}
@@ -1072,7 +1074,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                         name="website"
                         onChange={onChangeInput}
                         prefix={<WebIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={displaydata.website ?? "-"}
+                        defaultValue={rawdata.website ?? "-"}
                       ></Input>
                     ) : (
                       <div className="flex">
@@ -1080,10 +1082,12 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           <WebIconSvg size={20} color={`#35763B`} />
                         </div>
                         <a
-                          href={`${displaydata.website}`}
-                          className="text-primary100 hover:text-primary75"
+                          href={`${rawdata.website}`}
+                          target="_blank"
+                          rel="external"
+                          className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {displaydata.website}
+                          {rawdata.website}
                         </a>
                       </div>
                     )}
@@ -1233,7 +1237,7 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                 title={"Edit Relasi"}
                 visible={drawerupdaterelasi}
                 onClose={() => {
-                  /*console.log(dataApiadd)*/ setdrawerupdaterelasi(false);
+                  setdrawerupdaterelasi(false);
                 }}
                 buttonOkText={"Simpan Relasi"}
                 onClick={handleUpdateRelationshipItem}
