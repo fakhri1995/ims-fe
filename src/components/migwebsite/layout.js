@@ -274,9 +274,10 @@ function layout({ children }) {
   const [navbarBottom, setNavbarBottom] = useState(true); //true for hidden
 
   const handleNavbar = () => {
+    console.log("handle navbar ");
     setNavbar(!navbar);
-    setNavbarSolution(true); //true for hidden
-    setNavbarCompany(true); //true for hidden
+    // setNavbarSolution(true); //true for hidden
+    // setNavbarCompany(true); //true for hidden
   };
   const handleNavbarBottom = () => {
     if (navbarBottom == true) {
@@ -306,6 +307,25 @@ function layout({ children }) {
     } else {
       router.push(router.pathname, router.asPath, { locale });
     }
+  };
+  const changeLanguageMobile = (e) => {
+    const locale = e;
+    console.log("change language mobile ");
+    let datatemp = router.asPath;
+    let datasplit = datatemp.split("/");
+    for (let a = 0; a < datasplit.length; a++) {
+      console.log("data ke ", datasplit[a]);
+    }
+    if (datasplit[2] == "customerstories" && datasplit[3] != "") {
+      console.log("masuk customerstories ");
+      getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
+    } else if (datasplit[2] == "blog" && datasplit[3] != "") {
+      getDataCustomerStoriesDetail(datasplit[3], router.locale, locale);
+    } else {
+      router.push(router.pathname, router.asPath, { locale });
+    }
+    setNavbar(!navbar);
+    setNavbarBottom(!navbarBottom);
   };
 
   const getDataCustomerStoriesDetail = (page, locale, locale_temp) => {
@@ -566,7 +586,77 @@ function layout({ children }) {
             <Menu mode="inline" className={"w-auto"}>
               <SubMenu
                 key="sub 1"
-                title="Solutions"
+                title={
+                  locale == "en" ? (
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"relative self-center"}
+                        style={{ display: "inline-block" }}
+                        width={20}
+                        src={"/image/english.png"}
+                      />
+                      <p
+                        className={
+                          "text-base ml-2 text-blackmig font-gilroyregular"
+                        }
+                      >
+                        English
+                      </p>
+                    </div>
+                  ) : (
+                    <div className={"flex flex-row"}>
+                      <img
+                        className={"relative self-center"}
+                        style={{ display: "inline-block" }}
+                        width={20}
+                        src={"/image/indonesia.png"}
+                      />
+                      <p
+                        className={
+                          "text-base ml-2 text-blackmig font-gilroyregular"
+                        }
+                      >
+                        Indonesia
+                      </p>
+                    </div>
+                  )
+                }
+                className="text-base font-gilroyregular text-blackmig "
+              >
+                <Menu.Item key="1">
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={40}
+                    src={"/image/english.png"}
+                  ></img>
+                  <a
+                    onClick={() => changeLanguageMobile("en")}
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    English
+                  </a>
+                </Menu.Item>
+                <Menu.Item key="2">
+                  <img
+                    className={"relative"}
+                    style={{ display: "inline-block" }}
+                    width={40}
+                    src={"/image/indonesia.png"}
+                  ></img>
+                  <a
+                    onClick={() => changeLanguageMobile("id")}
+                    style={{ textDecoration: "none" }}
+                    className="text-base font-gilroyregular text-blackmig  pl-3"
+                  >
+                    Indonesia
+                  </a>
+                </Menu.Item>
+              </SubMenu>
+              <SubMenu
+                key="sub 2"
+                title={t.navbarsolutions}
                 className="text-base font-gilroyregular text-blackmig "
               >
                 <Menu.Item key="1">
@@ -618,49 +708,14 @@ function layout({ children }) {
                   </Link>
                 </Menu.Item>
               </SubMenu>
-              <SubMenu
-                key="sub 2"
-                title={locale == "en" ? "English" : "Indonesia"}
-                className="text-base font-gilroyregular text-blackmig "
-              >
-                <Menu.Item key="1">
-                  <img
-                    className={"relative"}
-                    style={{ display: "inline-block" }}
-                    width={40}
-                    src={"/image/english.png"}
-                  ></img>
-                  <a
-                    onClick={() => changeLanguage("en")}
-                    style={{ textDecoration: "none" }}
-                    className="text-base font-gilroyregular text-blackmig  pl-3"
-                  >
-                    English
-                  </a>
-                </Menu.Item>
-                <Menu.Item key="2">
-                  <img
-                    className={"relative"}
-                    style={{ display: "inline-block" }}
-                    width={40}
-                    src={"/image/indonesia.png"}
-                  ></img>
-                  <a
-                    onClick={() => changeLanguage("en")}
-                    style={{ textDecoration: "none" }}
-                    className="text-base font-gilroyregular text-blackmig  pl-3"
-                  >
-                    Indonesia
-                  </a>
-                </Menu.Item>
-              </SubMenu>
+
               <Menu.Item key="4">
                 <Link href="/aboutus">
                   <a
                     style={{ textDecoration: "none" }}
-                    className="text-lg gilroy-medium"
+                    className="text-base font-gilroyregular text-blackmig"
                   >
-                    About Us
+                    {t.navbaraboutus}
                   </a>
                 </Link>
               </Menu.Item>
@@ -668,9 +723,9 @@ function layout({ children }) {
                 <Link href="/joinourteam">
                   <a
                     style={{ textDecoration: "none" }}
-                    className="text-lg gilroy-medium"
+                    className="text-base font-gilroyregular text-blackmig"
                   >
-                    Career in MIG
+                    {t.navbarcareerinmig}
                   </a>
                 </Link>
               </Menu.Item>
@@ -687,7 +742,7 @@ function layout({ children }) {
                           style={{ textDecoration: "none" }}
                           className="text-base font-gilroyregular text-blackmig  pl-3"
                         >
-                          Customer Stories
+                          {t.navbarcustomerstories}
                         </a>
                       </Link>
                     </Menu.Item>
@@ -757,9 +812,9 @@ function layout({ children }) {
               <Link href="/contactus">
                 <a
                   style={{ textDecoration: "none" }}
-                  className="text-lg gilroy-medium menu-navbar"
+                  className="text-base font-gilroyregular text-blackmig menu-navbar"
                 >
-                  Contact Us{" "}
+                  {t.contactus}
                 </a>
               </Link>
               &nbsp;&nbsp;
@@ -1032,7 +1087,7 @@ function layout({ children }) {
                         "font-gilroysemibold py-1 text-xs text-blackmig  py-1"
                       }
                     >
-                      Solutions
+                      {t.navbarsolutions}
                     </p>
                     <Link href={{ pathname: "/hardware" }}>
                       <p
@@ -1066,7 +1121,7 @@ function layout({ children }) {
                     <p
                       className={"gilroy-bold py-1 text-xs text-blackmig py-1"}
                     >
-                      Company
+                      {t.footercompany}
                     </p>
                     <Link href={{ pathname: "/aboutus" }}>
                       <p
@@ -1074,7 +1129,8 @@ function layout({ children }) {
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        About&nbsp;Us
+                        {locale == "en" ? "About" : "Tentang"}&nbsp;
+                        {locale == "en" ? "Us" : "Kami"}
                       </p>
                     </Link>
                     <Link href={{ pathname: "/joinourteam" }}>
@@ -1083,7 +1139,8 @@ function layout({ children }) {
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        Career&nbsp;in&nbsp;Mig
+                        {locale == "en" ? "Career" : "Karir"}&nbsp;
+                        {locale == "en" ? "in" : "di"}&nbsp;Mig
                       </p>
                     </Link>
                     {countStories > 0 && (
@@ -1114,7 +1171,7 @@ function layout({ children }) {
                             "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                           }
                         >
-                          {locale == "en" ? "Blog" : "Artikel"}
+                          {locale == "en" ? "Artikel" : "Blog"}
                         </p>
                       </Link>
                     )}
@@ -1127,7 +1184,7 @@ function layout({ children }) {
                         "font-gilroysemibold py-1 text-xs text-blackmig py-1"
                       }
                     >
-                      Get in touch
+                      {t.getintouch}
                     </p>
                     <Link href="/contactus">
                       <p
@@ -1135,12 +1192,15 @@ function layout({ children }) {
                           "font-gilroyregular text-xs text-blackmig cursor-pointer menu-underlined py-1 w-min hover:text-green-500"
                         }
                       >
-                        Contact&nbsp;Us
+                        {locale == "en" ? "Contact" : "Kontak"}&nbsp;
+                        {locale == "en" ? "Us" : "Kami"}
                       </p>
                     </Link>
                   </div>
                   <div className={"w-1/2 my-2 lg:my-0 lg:px-16"}>
-                    <p className={"gilroy-bold py-1 text-xs"}>Follow</p>
+                    <p className={"gilroy-bold py-1 text-xs"}>
+                      {t.footersosmed}
+                    </p>
                     <Link href="https://instagram.com/mitramasglobal?utm_medium=copy_link">
                       <div className={"flex"}>
                         <img

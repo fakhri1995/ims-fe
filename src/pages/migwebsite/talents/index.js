@@ -164,7 +164,7 @@ function Talents({}) {
   const [deleteTalentValue, setDeleteTalentValue] = useState(null);
   const [showEmailError, setShowEmailError] = useState(false);
   const [emailError, setEmailError] = useState(null);
-  const [dataTestimonial, setDataTestimonial] = useState(null);
+  const [dataTestimonial, setDataTestimonial] = useState([]);
   const [captchaStatus, setCaptchaStatus] = useState(false);
   const [meetingDateStatus, setMeetingDateStatus] = useState(false);
   const [meetingTimeStatus, setMeetingTimeStatus] = useState(false);
@@ -249,7 +249,25 @@ function Talents({}) {
       .then((res2) => {
         console.log("get data testimonial ", res2);
         if (res2.success) {
-          setDataTestimonial(res2.data);
+          if (locale == "en") {
+            setDataTestimonial(res2.data);
+          } else {
+            console.log("masuk else id ");
+            let dataTemp = [];
+            for (let i = 0; i < res2.data.length; i++) {
+              if (
+                res2.data[i].title_id != "" &&
+                res2.data[i].description_id != "" &&
+                res2.data[i].page_path_id != "" &&
+                res2.data[i].content_id != "" &&
+                res2.data[i].tags_id != ""
+              ) {
+                dataTemp.push(res2.data[i]);
+                console.log("masuk push");
+              }
+            }
+            setDataTestimonial(dataTemp);
+          }
         } else {
         }
       })
@@ -585,6 +603,7 @@ function Talents({}) {
   const clearForm = () => {
     setKindOfTalent(null);
     setSkillSuggestion([]);
+    form.resetFields(["kind_of_talent"]);
     form.resetFields(["level_employee"]);
     form.resetFields(["many_talent"]);
     form.resetFields(["time_used"]);
@@ -1168,20 +1187,18 @@ function Talents({}) {
                 >
                   {t.talentinformation}
                 </p>
-                <p className={"mt-9 text-base"}>
-                  What kind of talent are you looking for?
-                </p>
+                <p className={"mt-9 text-base"}>{t.whatkindoftalent}</p>
                 <Form
                   id="formtalentdetail"
                   hidden={!feedback}
                   layout={"vertical"}
-                  // onFinish={handleSubmitThird}
+                  onFinish={handleAddAnotherProduct}
                   form={form}
                 >
                   {/* choose product */}
-                  <div className={"flex flex-row mt-4"}>
+                  <div className={"flex flex-row flex-wrap"}>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Engineering")}
                     >
                       <div
@@ -1233,7 +1250,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Data")}
                     >
                       <div
@@ -1285,7 +1302,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Product")}
                     >
                       <div
@@ -1337,7 +1354,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Design")}
                     >
                       <div
@@ -1389,7 +1406,7 @@ function Talents({}) {
                       </div>
                     </a>
                     <a
-                      className={"bg-white"}
+                      className={"bg-white mt-4"}
                       onClick={() => handleKindOfTalent("Others")}
                     >
                       <div
@@ -1788,7 +1805,8 @@ function Talents({}) {
                       </p>
                     </button>
                     <button
-                      onClick={handleAddAnotherProduct}
+                      type="submit"
+                      // onClick={handleAddAnotherProduct}
                       className={
                         "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
@@ -1854,7 +1872,7 @@ function Talents({}) {
                         "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     <div className={"mt-4 flex flex-row"}>
                       <div
@@ -2270,7 +2288,7 @@ function Talents({}) {
                     style={{ lineHeight: "120%" }}
                     className={"text-base text-blackmig font-gilroysemibold"}
                   >
-                    General Information
+                    {t.generalinformation}
                   </p>
                   {/* <p className={"mt-9"}>* What type of project are you hiring us for?</p> */}
                   <div className={"mt-9"}>
@@ -2357,7 +2375,7 @@ function Talents({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     <button
@@ -2523,7 +2541,7 @@ function Talents({}) {
                   id="formtalentdetail"
                   hidden={!feedback}
                   layout={"vertical"}
-                  // onFinish={handleSubmitThird}
+                  onFinish={() => handleAddAnotherProduct()}
                   form={form}
                 >
                   {/* choose product */}
@@ -2532,9 +2550,7 @@ function Talents({}) {
                       name="kind_of_talent"
                       className={"font-gilroyregular text-sm"}
                       label={
-                        <p style={{ fontSize: "14px" }}>
-                          What kind of talent are you looking for?
-                        </p>
+                        <p style={{ fontSize: "14px" }}>{t.whatkindoftalent}</p>
                       }
                     >
                       <Select
@@ -2898,11 +2914,12 @@ function Talents({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     <button
-                      onClick={handleAddAnotherProduct}
+                      // onClick={handleAddAnotherProduct}
+                      type={"submit"}
                       className={
                         "text-white bg-white border-2 border-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
                       }
@@ -2960,7 +2977,7 @@ function Talents({}) {
                         "text-xs text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
@@ -3073,7 +3090,7 @@ function Talents({}) {
                         "text-base text-primarygreen font-gilroysemibold"
                       }
                     >
-                      Back
+                      {t.back}
                     </p>
                   </button>
                   <button
@@ -3485,21 +3502,20 @@ function Talents({}) {
               }
               style={{ lineHeight: "120%" }}
             >
-              Conventional hiring takes massive effort.
+              {t.section2talenttitle}
             </h2>
             <p
               style={{ lineHeight: "150%" }}
               className={"text-base md:text-xl text-blackmig text-center mt-4"}
             >
-              Limited profiles coming in with widely different qualities.
-              Turnover rate is high and you need to do it all over again.
+              {t.section2talentsubtitle}
             </p>
             <div className={"mt-5"}>
               <p
                 style={{ lineHeight: "150%" }}
                 className={"text-blackmig text-xl md:text-2xl text-center"}
               >
-                Let us streamline your process with:
+                {t.section2talentsubtitle2}:
               </p>
             </div>
             <div
@@ -3507,7 +3523,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row md:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3521,13 +3537,13 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    On-demand project-based expertise
+                    {t.section2talentpoint1}
                   </p>
                 </div>
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 lg:mt-0 mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row mt-7 lg:mt-0 md:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3541,7 +3557,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    Flexible talent head counts & working period
+                    {t.section2talentpoint2}
                   </p>
                 </div>
               </div>
@@ -3551,7 +3567,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row md:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3565,13 +3581,13 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    Guaranteed talent quality
+                    {t.section2talentpoint3}
                   </p>
                 </div>
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 items-center lg:mt-0 mx-[25px] w-full lg:w-[500px]"
+                  "flex flex-row mt-7 items-center lg:mt-0 md:mx-[25px] w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3585,7 +3601,7 @@ function Talents({}) {
                       "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
-                    Cost and admin process efficiency
+                    {t.section2talentpoint4}
                   </p>
                 </div>
               </div>
@@ -4084,7 +4100,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4240,7 +4256,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4397,7 +4413,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4549,7 +4565,7 @@ function Talents({}) {
                           "text-base font-gilroysemibold self-center mr-2"
                         }
                       >
-                        Contact our sales team
+                        {t.contactoursalesteam}
                       </p>
                       <img
                         className={"self-center"}
@@ -4715,16 +4731,18 @@ function Talents({}) {
               <div className={"md:ml-10 md:py-[53px]"}>
                 <div className="flex flex-col md:w-[662px]">
                   <h4 className="mb-2 text-xl text-center font-gilroysemibold text-blackmig">
-                    Why you should{" "}
+                    {locale == "en" ? "Let us " : "Biarkan MIG "}
                     <span
                       style={{
                         borderBottom: "solid 3px #188E4D",
                         paddingBottom: "2.5px",
                       }}
                     >
-                      trust us
+                      {locale == "en" ? "assist you " : "membangun "}
                     </span>{" "}
-                    in building your own “Avengers” ?
+                    {locale == "en"
+                      ? "in building a powerful  & capable team. "
+                      : "tim yang kuat untuk Anda."}
                   </h4>
                   <div className={"block md:hidden mx-auto my-[17px]"}>
                     <img
@@ -4740,11 +4758,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Customization Based on Your Needs
+                        {t.talentpoint1}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        Numbers of talent and their working period can be
-                        tailored as per required by project.
+                        {t.talentsubpoint1}
                       </p>
                     </div>
                   </div>
@@ -4755,11 +4772,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Full Flexibility
+                        {t.talentpoint2}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        You have full flexibility to rotate and rematch to make
-                        your quality criteria fullfiled.
+                        {t.talentsubpoint2}
                       </p>
                     </div>
                   </div>
@@ -4770,11 +4786,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Tight Candidate Selection
+                        {t.talentpoint3}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        Only less than 10% of all candidates applying to MIG are
-                        selected as our top talent.
+                        {t.talentsubpoint3}
                       </p>
                     </div>
                   </div>
@@ -4785,12 +4800,10 @@ function Talents({}) {
                     />
                     <div>
                       <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
-                        Excellent Capability
+                        {t.talentpoint4}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
-                        Extensive test and interview process covering tech
-                        stacks, coding algorithm, systems design, and soft
-                        skills are given to ensure you having qualified talents.
+                        {t.talentsubpoint4}
                       </p>
                     </div>
                   </div>
@@ -4895,14 +4908,14 @@ function Talents({}) {
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-              How{" "}
+              {t.howitworktalenttitle}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                it works
+                MIG
               </span>{" "}
               ?
             </p>
@@ -4913,12 +4926,12 @@ function Talents({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We find high quality hardware products
+                  {t.howitworktalentpoint1}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We have extensive network and partnerships with hardware
                   principles ready to be leveraged for your advantage
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4928,11 +4941,11 @@ function Talents({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Custom match with your needs
+                  {t.howitworktalentpoint2}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We customize our procurement with your specification needs
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4941,12 +4954,16 @@ function Talents({}) {
                 className="w-[44px] h-[44px]"
               />
               <div className={"ml-3"}>
-                <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We conduct full operation and maintenance for your hardware
+                <p
+                  className={
+                    "text-sm text-blackmig font-gilroysemibold self-center"
+                  }
+                >
+                  {t.howitworktalentpoint3}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We ensure guaranteed level of hardware performance throughout
-                </p>
+                </p> */}
               </div>
             </div>
           </section>
@@ -4965,7 +4982,7 @@ function Talents({}) {
                 {t.customerstorieslandingpage}
               </p>
               <div className={"flex flex-row"}>
-                {dataTestimonial ? (
+                {dataTestimonial.length > 0 ? (
                   dataTestimonial.length > 1 ? (
                     <button onClick={() => slider?.current?.slickPrev()}>
                       <div
@@ -5188,7 +5205,7 @@ function Talents({}) {
                       : ""}
                   </Slider>
                 </div>
-                {dataTestimonial ? (
+                {dataTestimonial.length > 0 ? (
                   dataTestimonial.length > 1 ? (
                     <button onClick={() => slider?.current?.slickNext()}>
                       <div
@@ -5213,7 +5230,7 @@ function Talents({}) {
             </section>
           )}
           {/* testimonial mobile */}
-          {dataTestimonial && (
+          {dataTestimonial.length > 0 && (
             <section
               className={
                 "sectiontestimonialmobile block md:hidden bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"

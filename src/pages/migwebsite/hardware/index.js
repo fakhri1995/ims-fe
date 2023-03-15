@@ -1642,9 +1642,7 @@ function Hardware({}) {
                       name="time_used"
                       className={" text-base"}
                       label={
-                        <p style={{ fontSize: "16px" }}>
-                          How long do you need the product?
-                        </p>
+                        <p style={{ fontSize: "16px" }}>{t.howlongdoyouneed}</p>
                       }
                       rules={[
                         {
@@ -1702,7 +1700,7 @@ function Hardware({}) {
                         onPressEnter={(e) => {
                           handleInputProduct(e.target.value);
                         }}
-                        placeholder="Enter product"
+                        placeholder={t.enterproduct}
                       />
                     </Form.Item>
                   </div>
@@ -1769,7 +1767,7 @@ function Hardware({}) {
                     <p
                       className={"text-blackmig text-base font-gilroysemibold"}
                     >
-                      2. Additional Information
+                      {t.additionalinformation}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -2002,7 +2000,7 @@ function Hardware({}) {
                         "text-base text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     <div className={"mt-4 flex flex-row"}>
                       <div
@@ -2775,7 +2773,7 @@ function Hardware({}) {
                         onPressEnter={(e) => {
                           handleInputProduct(e.target.value);
                         }}
-                        placeholder="Enter product"
+                        placeholder={t.enterproduct}
                       />
                     </Form.Item>
                   </div>
@@ -2840,7 +2838,7 @@ function Hardware({}) {
                     className={"mt-8 bg-lightgreen py-2.5 pl-2.5 rounded-lg"}
                   >
                     <p className={"text-blackmig text-sm font-gilroysemibold"}>
-                      2. Additional Information
+                      {t.additionalinformation}
                     </p>
                   </div>
                   <div className={"mt-8"}>
@@ -2920,9 +2918,7 @@ function Hardware({}) {
                     <Form.Item
                       name={"Details"}
                       className={" text-base"}
-                      label={
-                        <p style={{ fontSize: "16px" }}>Details (Optional)</p>
-                      }
+                      label={<p style={{ fontSize: "16px" }}>{t.details}</p>}
                       // rules={[{ required: true }]}
                     >
                       <TextArea
@@ -2986,7 +2982,7 @@ function Hardware({}) {
                           "text-base text-primarygreen font-gilroysemibold"
                         }
                       >
-                        Back
+                        {t.back}
                       </p>
                     </button>
                     {statusEdit ? (
@@ -3057,7 +3053,7 @@ function Hardware({}) {
                         "text-sm text-blackmig font-gilroyregular mb-1"
                       }
                     >
-                      *Meeting Date
+                      *{t.meetingdate}
                     </p>
                     <div className="site-calendar-demo-card">
                       <Calendar
@@ -3081,7 +3077,7 @@ function Hardware({}) {
                         "text-xs text-blackmig font-gilroyregular mt-1"
                       }
                     >
-                      Meeting duration: 30 minutes
+                      {t.meetingduration}: 30 {t.minutes}
                     </p>
                     {valueDateTemp == null ? (
                       <p className={"mt-1 text-redmig text-xs"}>
@@ -3192,7 +3188,7 @@ function Hardware({}) {
                         "text-base text-primarygreen font-gilroysemibold"
                       }
                     >
-                      Back
+                      {t.back}
                     </p>
                   </button>
                   <button
@@ -3202,7 +3198,7 @@ function Hardware({}) {
                       "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
                     }
                   >
-                    <p className={"text-base text-white"}>Next</p>
+                    <p className={"text-base text-white"}>{t.next}</p>
                     <img
                       className={"self-center ml-[13.52px]"}
                       style={{ width: "20px", height: "20px" }}
@@ -4364,16 +4360,19 @@ function Hardware({}) {
             className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
-              How{" "}
+              {locale == "en"
+                ? "See how we handle your "
+                : "Pelajari cara kami mengelola "}
               <span
                 style={{
                   borderBottom: "solid 3px #188E4D",
                   paddingBottom: "2.5px",
                 }}
               >
-                it works
+                {locale == "en"
+                  ? " IT infrastructure."
+                  : "infrastruktur teknologi Anda."}
               </span>{" "}
-              ?
             </p>
             <div className={"mt-4 flex flex-row"}>
               <img
@@ -4382,12 +4381,12 @@ function Hardware({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We find high quality hardware products
+                  {t.hardwarehowitworksection1}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We have extensive network and partnerships with hardware
                   principles ready to be leveraged for your advantage
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4397,11 +4396,11 @@ function Hardware({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  Custom match with your needs
+                  {t.hardwarehowitworksection2}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We customize our procurement with your specification needs
-                </p>
+                </p> */}
               </div>
             </div>
             <div className={"mt-4 flex flex-row"}>
@@ -4411,11 +4410,11 @@ function Hardware({}) {
               />
               <div className={"ml-3"}>
                 <p className={"text-sm text-blackmig font-gilroysemibold"}>
-                  We conduct full operation and maintenance for your hardware
+                  {t.hardwarehowitworksection3}
                 </p>
-                <p className={"text-sm text-blackmig font-gilroyregular"}>
+                {/* <p className={"text-sm text-blackmig font-gilroyregular"}>
                   We ensure guaranteed level of hardware performance throughout
-                </p>
+                </p> */}
               </div>
             </div>
           </section>
