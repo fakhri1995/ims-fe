@@ -182,7 +182,6 @@ function AgentDetail({
     profile_image: `/default-users.jpeg`,
     position: "",
     attendance_forms: [],
-    company: "",
   });
   //data email
   const [dataemail, setdataemail] = useState("");
@@ -191,7 +190,7 @@ function AgentDetail({
   const [patharr, setpatharr] = useState([]);
   //custom breadcrumb
   const [isenabled, setisenabled] = useState(false);
-  //nama asal lokasi
+  //nama company
   const [origincomp, setorigincomp] = useState("");
   const [ubahstatus, setubahstatus] = useState(false);
   //modal to non aktif
@@ -375,8 +374,6 @@ function AgentDetail({
           //     : res2.data.profile_image,
           position: res2.data.position,
           attendance_forms: res2.data.attendance_forms,
-          // TODO: adjust company if API is done
-          company: res2.data?.company?.name || "-",
         };
         setisenabled(res2.data.is_enabled);
         setData1(temp);
@@ -535,12 +532,6 @@ function AgentDetail({
                         </h1>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Company:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1?.company}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
@@ -551,7 +542,7 @@ function AgentDetail({
                         </div>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Asal Lokasi:</h1>
+                        <h1 className="font-semibold text-sm">Company:</h1>
                         <h1 className="text-sm font-normal text-black">
                           {origincomp}
                         </h1>
@@ -654,12 +645,6 @@ function AgentDetail({
                         </h1>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Company:</h1>
-                        <h1 className="text-sm font-normal text-black">
-                          {data1?.company}
-                        </h1>
-                      </div>
-                      <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
@@ -670,7 +655,7 @@ function AgentDetail({
                         </div>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Asal Lokasi:</h1>
+                        <h1 className="font-semibold text-sm">Company:</h1>
                         <h1 className="text-sm font-normal text-black">
                           {origincomp}
                         </h1>

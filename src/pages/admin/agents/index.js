@@ -12,7 +12,7 @@ import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { AGENTS_GET, AGENT_ADD, COMPANY_BRANCHS_GET } from "lib/features";
+import { AGENTS_GET, AGENT_ADD, COMPANY_CLIENTS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 import { generateStaticAssetUrl } from "lib/helper";
 
@@ -32,7 +32,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
   }
   const isAllowedToGetAgentList = hasPermission(AGENTS_GET);
   const isAllowedToAddAganet = hasPermission(AGENT_ADD);
-  const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
   const rt = useRouter();
 
@@ -59,8 +59,8 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     to: null,
     total: null,
   });
-  //data lokasi
-  const [datalokasi, setdatalokasi] = useState([]);
+  //data company
+  const [dataCompany, setDataCompany] = useState([]);
   //loading pre render
   const [datarawloading, setdatarawloading] = useState(false);
   //loading pre render
@@ -112,7 +112,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
       dataIndex: "phone_number",
     },
     {
-      title: "Asal Lokasi",
+      title: "Company",
       dataIndex: "company_name",
     },
     {
@@ -144,7 +144,7 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
       name: e.target.value === "" ? undefined : e.target.value,
     });
   };
-  const onChangeAsalLokasi = (value) => {
+  const onChangeCompany = (value) => {
     setQueryParams({
       company_id: value,
     });
@@ -228,38 +228,66 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
     queryParams.rows,
   ]);
 
+  // Get Company options
   useEffect(() => {
-    if (!isAllowedToGetBranchCompanyList) {
+    if (!isAllowedToGetCompanyClients) {
       setdatarawloading(false);
       return;
     }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
-        var selectedBranchCompany = {};
-        const recursiveSearchBranchCompany = (doc, key) => {
-          for (var i = 0; i < doc.length; i++) {
-            if (doc[i].id === key) {
-              selectedBranchCompany = doc[i];
-            } else {
-              if (doc[i].children) {
-                recursiveSearchBranchCompany(doc[i].children, key);
-              }
-            }
-          }
-        };
-        recursiveSearchBranchCompany([res2.data], Number(namaasset));
-        // setdefasset(selectedBranchCompany.key);
-        setdatalokasi([res2.data]);
-        setdatarawloading(false);
-      });
-  }, [isAllowedToGetBranchCompanyList]);
+        setDataCompany(res2.data);
+      })
+      .catch((err) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar company",
+          duration: 3,
+        });
+      })
+      .finally(() => setdatarawloading(false));
+  }, [isAllowedToGetCompanyClients]);
+
+  // useEffect(() => {
+  //   if (!isAllowedToGetCompanyClients) {
+  //     setdatarawloading(false);
+  //     return;
+  //   }
+
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       var selectedBranchCompany = {};
+  //       const recursiveSearchBranchCompany = (doc, key) => {
+  //         for (var i = 0; i < doc.length; i++) {
+  //           if (doc[i].id === key) {
+  //             selectedBranchCompany = doc[i];
+  //           } else {
+  //             if (doc[i].children) {
+  //               recursiveSearchBranchCompany(doc[i].children, key);
+  //             }
+  //           }
+  //         }
+  //       };
+  //       recursiveSearchBranchCompany([res2.data], Number(namaasset));
+  //       // setdefasset(selectedBranchCompany.key);
+  //       setDataCompany([res2.data]);
+  //       setdatarawloading(false);
+  //     });
+  // }, [isAllowedToGetBranchCompanyList]);
 
   return (
     <Layout
@@ -316,32 +344,27 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
                       ></Input>
                     </div>
                     <div className="col-span-2 mr-1">
-                      <TreeSelect
-                        disabled={!isAllowedToGetBranchCompanyList}
-                        defaultValue={queryParams.company_id}
-                        // defaultValue={
-                        //   location_id1 === "" ? null : Number(defasset)
-                        // }
-                        allowClear
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        treeData={datalokasi}
-                        placeholder="Cari asal lokasi agent"
-                        treeDefaultExpandAll
-                        style={{ width: `100%`, marginRight: `0.5rem` }}
-                        onChange={onChangeAsalLokasi}
+                      <Select
                         showSearch
-                        treeNodeFilterProp="title"
-                        filterTreeNode={(search, item) => {
-                          /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                          /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                          return (
-                            item.title
-                              .toLowerCase()
-                              .indexOf(search.toLowerCase()) >= 0
-                          );
+                        allowClear
+                        placeholder="Cari company agent"
+                        defaultValue={queryParams.company_id}
+                        options={dataCompany.map((company) => ({
+                          label: company.name,
+                          value: company.id,
+                        }))}
+                        filterOption={(input, option) => {
+                          return (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase());
                         }}
+                        onChange={onChangeCompany}
+                        disabled={!isAllowedToGetCompanyClients}
+                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
+                        style={{ width: `100%`, marginRight: `0.5rem` }}
                       />
                     </div>
+
                     <div className="col-span-1 mr-1">
                       <Select
                         disabled={!isAllowedToGetAgentList}

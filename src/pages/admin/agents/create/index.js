@@ -20,12 +20,7 @@ import { useAccessControl } from "contexts/access-control";
 import { useAxiosClient } from "hooks/use-axios-client";
 import { useDebounce } from "hooks/use-debounce-value";
 
-import {
-  AGENT_ADD,
-  COMPANY_BRANCHS_GET,
-  COMPANY_CLIENTS_GET,
-  ROLES_GET,
-} from "lib/features";
+import { AGENT_ADD, COMPANY_CLIENTS_GET, ROLES_GET } from "lib/features";
 import { getBase64 } from "lib/helper";
 
 import { AttendanceFormAktivitasService } from "apis/attendance";
@@ -44,7 +39,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetRolesList = hasPermission(ROLES_GET);
   const isAllowedToAddAgent = hasPermission(AGENT_ADD);
-  const isAllowedToGetBranchCompanyList = hasPermission(COMPANY_BRANCHS_GET);
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
   const { originPath } = rt.query;
@@ -116,8 +110,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   const [dataroles, setdataroles] = useState([]);
   //is pra rendered loading
   const [praloading, setpraloading] = useState(true);
-  //data companies
-  const [companyList, setCompanyList] = useState([]);
 
   //handle CreateAgent
   const handleCreateAgents = () => {
@@ -216,25 +208,6 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
   );
 
   //useEffect
-  //get Asal Lokasi
-  useEffect(() => {
-    if (!isAllowedToGetBranchCompanyList) {
-      setpraloading(false);
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatacompanylist([res2.data]);
-        setpraloading(false);
-      });
-  }, [isAllowedToGetBranchCompanyList]);
   //data Roles
   useEffect(() => {
     if (!isAllowedToAddAgent || !isAllowedToGetRolesList) {
@@ -255,20 +228,30 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
 
   // Get Company options
   useEffect(() => {
-    if (isAllowedToGetCompanyClients) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
+    if (!isAllowedToGetCompanyClients) {
+      setpraloading(false);
+      return;
+    }
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
         },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setdatacompanylist(res2.data);
       })
-        .then((res) => res.json())
-        .then((res2) => {
-          console.log({ res2 });
-          setCompanyList(res2.data);
+      .catch((err) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar company",
+          duration: 3,
         });
-      return;
-    }
+      })
+      .finally(() => setpraloading(false));
   }, [isAllowedToGetCompanyClients]);
 
   return (
@@ -296,7 +279,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                   disabled={
                     praloading ||
                     !isAllowedToAddAgent ||
-                    !isAllowedToGetBranchCompanyList
+                    !isAllowedToGetCompanyClients
                   }
                   type="primary"
                   loading={loadingsave}
@@ -341,37 +324,25 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                   className="createAgentsForm"
                   onFinish={handleCreateAgents}
                 >
-                  <Form.Item
-                    label="Asal Lokasi"
-                    name="company_id"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Asal Lokasi wajib diisi",
-                      },
-                    ]}
-                  >
-                    <TreeSelect
+                  <Form.Item label="Company" name="company_id">
+                    <Select
+                      showSearch
                       allowClear
-                      dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                      treeData={datacompanylist}
-                      disabled={!isAllowedToGetBranchCompanyList}
-                      placeholder="Pilih Asal Lokasi"
-                      treeDefaultExpandAll
+                      placeholder="Pilih company"
+                      value={newuser?.company_id}
+                      options={datacompanylist.map((company) => ({
+                        label: company.name,
+                        value: company.id,
+                      }))}
+                      filterOption={(input, option) => {
+                        return (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase());
+                      }}
                       onChange={(value) => {
                         setNewuser({ ...newuser, company_id: value });
                       }}
-                      showSearch
-                      treeNodeFilterProp="title"
-                      filterTreeNode={(search, item) => {
-                        /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                        /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                        return (
-                          item.title
-                            .toLowerCase()
-                            .indexOf(search.toLowerCase()) >= 0
-                        );
-                      }}
+                      disabled={!isAllowedToGetCompanyClients}
                     />
                   </Form.Item>
                   <Form.Item
@@ -470,39 +441,7 @@ function AgentsCreate({ initProps, dataProfile, sidemenu }) {
                       onChange={onChangeCreateAgents}
                     />
                   </Form.Item>
-                  {/* TODO: adjust company field */}
-                  {/* Company */}
-                  <Form.Item label="Company" name="company_id">
-                    <Select
-                      showSearch
-                      allowClear
-                      placeholder="Pilih Company"
-                      options={companyList.map((company) => ({
-                        label: company.name,
-                        value: company.id,
-                      }))}
-                      filterOption={(input, option) => {
-                        return (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase());
-                      }}
-                      // value={}
-                      // onChange={(value) => {
-                      //   if (value === undefined || value === "") {
-                      //     setdataupdate((prev) => ({
-                      //       ...prev,
-                      //       company_id: null,
-                      //     }));
-                      //     return;
-                      //   }
 
-                      //   setdataupdate((prev) => ({
-                      //     ...prev,
-                      //     company_id: value,
-                      //   }));
-                      // }}
-                    />
-                  </Form.Item>
                   <Form.Item label="Form Aktivitas" name="attendance_form_ids">
                     <Select
                       showSearch

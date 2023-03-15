@@ -97,6 +97,7 @@ function AgentUpdate({
   //data payload
   const [dataupdate, setdataupdate] = useState({
     id: Number(userid),
+    company_id: null,
     fullname: "",
     phone_number: "",
     profile_image: `/default-users.jpeg`,
@@ -106,22 +107,18 @@ function AgentUpdate({
     nip: "",
     attendance_form_ids: [],
   });
-  //data asal lokasi
-  const [dataLocationList, setDataLocationList] = useState([]);
+  //data company
+  const [dataCompanyList, setDataCompanyList] = useState([]);
   //data default roles
   const [defaultroles, setdefaultroles] = useState(0);
   //data breadcrumb
   const [patharr, setpatharr] = useState([]);
   //loading pre render
   const [preloading, setpreloading] = useState(true);
-  //data default asal lokasi
-  const [defaultLocation, setDefaultLocation] = useState(0);
   //loading update button
   const [loadingupdate, setLoadingupdate] = useState(false);
   //data roles
   const [dataroles, setdataroles] = useState({ data: [] });
-  //data companies
-  const [companyList, setCompanyList] = useState([]);
 
   const onChangeRole = (value) => {
     setdataupdate({
@@ -221,6 +218,7 @@ function AgentUpdate({
 
         var temp = {
           id: res2.data.id,
+          company_id: res2.data.company_id,
           fullname: res2.data.name,
           role: res2.data.role,
           phone_number: res2.data.phone_number,
@@ -241,26 +239,7 @@ function AgentUpdate({
         pathArr.splice(3, 1);
         pathArr[pathArr.length - 1] = `Ubah Profil Agent - ` + res2.data.name;
         setpatharr(pathArr);
-        setDefaultLocation(res2.data.company_id);
         setpreloading(false);
-      });
-  }, [isAllowedToGetAgentDetail]);
-
-  // Get Asal Lokasi options
-  useEffect(() => {
-    if (!isAllowedToGetAgentDetail) {
-      return;
-    }
-
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getBranchCompanyList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataLocationList([res2.data]);
       });
   }, [isAllowedToGetAgentDetail]);
 
@@ -283,19 +262,30 @@ function AgentUpdate({
 
   // Get Company options
   useEffect(() => {
-    if (isAllowedToGetCompanyClients) {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
+    if (!isAllowedToGetCompanyClients) {
+      setpreloading(false);
+      return;
+    }
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
         },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataCompanyList(res2.data);
       })
-        .then((res) => res.json())
-        .then((res2) => {
-          setCompanyList(res2.data);
+      .catch((err) => {
+        notification.error({
+          message: "Gagal mendapatkan daftar company",
+          duration: 3,
         });
-      return;
-    }
+      })
+      .finally(() => setpreloading(false));
   }, [isAllowedToGetCompanyClients]);
 
   return (
@@ -392,41 +382,28 @@ function AgentUpdate({
                     form={instanceForm}
                     onFinish={handleSubmitEditAccount}
                   >
-                    <div className="flex flex-col mb-5">
-                      <div className="flex mb-2">
-                        <span className="asal"></span>
-                        <p className="mb-0 ml-1">Asal Lokasi</p>
-                        <style jsx>
-                          {`
-                                                            .asal::before{
-                                                                content: '*';
-                                                                color: red;
-                                                            }
-                                                        `}
-                        </style>
-                      </div>
-                      <TreeSelect
-                        allowClear
-                        dropdownStyle={{ maxHeight: 400, overflow: "auto" }}
-                        treeData={dataLocationList}
-                        placeholder="Pilih Asal Lokasi"
-                        treeDefaultExpandAll
-                        defaultValue={defaultLocation}
-                        disabled
-                        showSearch
-                        treeNodeFilterProp="title"
-                        filterTreeNode={(search, item) => {
-                          /** `showSearch`, `filterTreeNode`, and `treeNodeFilterProp` */
-                          /** @see https://stackoverflow.com/questions/58499570/search-ant-design-tree-select-by-title */
-                          return (
-                            item.title
-                              .toLowerCase()
-                              .indexOf(search.toLowerCase()) >= 0
-                          );
-                        }}
-                      />
-                    </div>
                     {/* </Form.Item> */}
+                    <Form.Item label="Company" name="company_id">
+                      <Select
+                        showSearch
+                        allowClear
+                        placeholder="Pilih company"
+                        value={dataupdate?.company_id}
+                        options={dataCompanyList.map((company) => ({
+                          label: company.name,
+                          value: company.id,
+                        }))}
+                        filterOption={(input, option) => {
+                          return (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase());
+                        }}
+                        onChange={(value) => {
+                          setdataupdate({ ...dataupdate, company_id: value });
+                        }}
+                        disabled={!isAllowedToGetCompanyClients}
+                      />
+                    </Form.Item>
                     <Form.Item
                       label="Nama Lengkap"
                       required
@@ -527,40 +504,6 @@ function AgentUpdate({
                         value={dataupdate.nip}
                         name="nip"
                         onChange={onChangeEditAgents}
-                      />
-                    </Form.Item>
-
-                    {/* TODO: adjust company field */}
-                    {/* Company */}
-                    <Form.Item label="Company" name="company_id">
-                      <Select
-                        showSearch
-                        allowClear
-                        placeholder="Pilih Company"
-                        options={companyList.map((company) => ({
-                          label: company.name,
-                          value: company.id,
-                        }))}
-                        filterOption={(input, option) => {
-                          return (option?.label ?? "")
-                            .toLowerCase()
-                            .includes(input.toLowerCase());
-                        }}
-                        // value={}
-                        // onChange={(value) => {
-                        //   if (value === undefined || value === "") {
-                        //     setdataupdate((prev) => ({
-                        //       ...prev,
-                        //       company_id: null,
-                        //     }));
-                        //     return;
-                        //   }
-
-                        //   setdataupdate((prev) => ({
-                        //     ...prev,
-                        //     company_id: value,
-                        //   }));
-                        // }}
                       />
                     </Form.Item>
 
