@@ -39,10 +39,10 @@ function JoinOurTeam({ dataCareers, empData }) {
         <meta name="description" content={t.careermetadescription} />
       </Head>
       <section
-        className={"section2careers  px-4 md:px-[112px] z-50"}
+        className={"section2careers  px-4 lg:px-[112px] z-50"}
         style={{ background: "#F4F4F4" }}
       >
-        <div className={"block md:flex"}>
+        <div className={"block lg:flex"}>
           <div className={"flex py-4"}>
             <Link
               activeClass="active"
@@ -125,16 +125,16 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
       <section
         className={
-          "section1careers hidden md:block py-4 md:py-16 md:px-[113.5px]"
+          "section1careers hidden lg:block py-4 lg:py-16 lg:px-[113.5px]"
         }
       >
-        <div className={"block md:flex"}>
+        <div className={"block lg:flex"}>
           <div className={"flex-col w-1/2 self-center"}>
             <div className={""}>
               <h1
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-2xl md:text-[36px] text-center md:text-left font-gilroysemibold text-blackmig"
+                  "text-2xl lg:text-[36px] text-center lg:text-left font-gilroysemibold text-blackmig"
                 }
               >
                 {t.careersatmig}
@@ -142,16 +142,16 @@ function JoinOurTeam({ dataCareers, empData }) {
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  "text-xl font-gilroyregular text-blackmig my-4 md:my-8"
+                  "text-xl font-gilroyregular text-blackmig my-4 lg:my-8"
                 }
               >
                 {t.careersatmigsubtitle}
               </p>
-              <div className={"text-center md:text-left"}>
+              <div className={"text-center lg:text-left"}>
                 <Link to="section7careers" smooth={true}>
                   <button
                     className={
-                      "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 md:px-6 md:py-4 font-gilroysemibold"
+                      "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-3 py-2 lg:px-6 lg:py-4 font-gilroysemibold"
                     }
                   >
                     <p className={"self-center"}>{t.careersatmigbuttontitle}</p>
@@ -165,7 +165,7 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
             </div>
           </div>
-          <div className={"flex-col hidden md:flex w-1/2"}>
+          <div className={"flex-col hidden lg:flex w-1/2"}>
             <img
               className={"w-full h-auto"}
               src="/image/joinourteam/joinourteam_image.png"
@@ -174,7 +174,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
       {/* section career1 mobile */}
-      <section className={"section1careers md:hidden py-12 px-4"}>
+      <section className={"section1careers lg:hidden py-12 px-4"}>
         <p className={"text-2xl text-center font-gilroysemibold text-blackmig"}>
           {t.careersatmig}
         </p>
@@ -195,7 +195,7 @@ function JoinOurTeam({ dataCareers, empData }) {
           <Link to="section7careers" smooth={true}>
             <button
               className={
-                "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-6 py-3 md:px-6 md:py-4 font-gilroysemibold"
+                "flex flex-row justify-between text-xl w-[294px] rounded h-[54px] text-white border-2 bg-primarygreen border-primarygreen px-6 py-3 lg:px-6 lg:py-4 font-gilroysemibold"
               }
             >
               <p className={"self-center"}>{t.careersatmigbuttontitle}</p>
@@ -208,23 +208,23 @@ function JoinOurTeam({ dataCareers, empData }) {
           </Link>
         </div>
       </section>
-      <section className={"h-8 hidden md:block"}></section>
+      <section className={"h-8 hidden lg:block"}></section>
 
       <section className={"section3careers bg-transp60"}>
-        <div className={"py-4 md:py-6 px-4 md:px-[113.5px]"}>
+        <div className={"py-4 lg:py-6 px-4 lg:px-[113.5px]"}>
           <h2
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-[36px] font-gilroysemibold text-blackmig text-center "
+              "text-xl lg:text-[36px] font-gilroysemibold text-blackmig text-center "
             }
           >
             {t.careersatmigvaluesectiontitle}
           </h2>
           {/*tampilan dekstpp */}
-          <div className={"hidden md:flex md:flex-row md:justify-between mt-6"}>
+          <div className={"hidden lg:flex lg:flex-row lg:justify-between mt-6"}>
             <div
               className={
-                "flex-col flex text-center w-[300px] md:w-[384px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4"
+                "flex-col flex text-center w-[300px] lg:w-[384px] bg-white  p-4 border-2 border-black-300 shadow-lg rounded-lg pb-4"
               }
             >
               <div className={""}>
@@ -237,14 +237,14 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg md:text-2xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg lg:text-2xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Agility
                 </p>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"text-blackmig text-sm md:text-xl mt-2"}
+                  className={"text-blackmig text-sm lg:text-xl mt-2"}
                 >
                   {t.careersatmigvaluesectionsubtitlebox1}
                 </p>
@@ -253,7 +253,7 @@ function JoinOurTeam({ dataCareers, empData }) {
 
             <div
               className={
-                "flex-col flex text-center w-[300px] md:w-[384px] md:mx-8 bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
+                "flex-col flex text-center w-[300px] lg:w-[384px] lg:mx-8 bg-white mr-0  p-4  border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
               }
             >
               <div className={""}>
@@ -266,19 +266,19 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg md:text-2xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg lg:text-2xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Perseverance
                 </p>
-                <p className={"text-black text-sm md:text-xl mt-2"}>
+                <p className={"text-black text-sm lg:text-xl mt-2"}>
                   {t.careersatmigvaluesectionsubtitlebox2}
                 </p>
               </div>
             </div>
             <div
               className={
-                "flex-col flex text-center w-[300px] md:w-[384px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
+                "flex-col flex text-center w-[300px] lg:w-[384px] bg-white mr-0 p-4 border-2 border-black-300 shadow-lg rounded-lg hover:shadow-lg"
               }
             >
               <div className={""}>
@@ -291,7 +291,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg md:text-2xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg lg:text-2xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Integrity
@@ -299,7 +299,7 @@ function JoinOurTeam({ dataCareers, empData }) {
 
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"text-blackmig mt-2 text-sm md:text-xl"}
+                  className={"text-blackmig mt-2 text-sm lg:text-xl"}
                 >
                   {t.careersatmigvaluesectionsubtitlebox3}
                 </p>
@@ -307,7 +307,7 @@ function JoinOurTeam({ dataCareers, empData }) {
             </div>
           </div>
           {/*tampilan mobile */}
-          <div className={"mt-7 md:hidden"}>
+          <div className={"mt-7 lg:hidden"}>
             <div
               className={
                 "flex flex-row bg-white rounded-lg h-[110px] px-4 py-3"
@@ -375,11 +375,11 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
 
-      <section className={"section6careers hidden md:block py-8 md:py-16"}>
+      <section className={"section6careers hidden lg:block py-8 md:py-16"}>
         <h2
           style={{ lineHeight: "120%" }}
           className={
-            "text-center text-blackmig font-gilroysemibold text-2xl md:text-[36px]"
+            "text-center text-blackmig font-gilroysemibold text-2xl lg:text-[36px]"
           }
         >
           {t.careersatmigbenefitsection}
@@ -489,7 +489,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
       {/*section 6 careers mobile view */}
-      <section className={"section6careersmobile md:hidden py-12 px-4"}>
+      <section className={"section6careersmobile lg:hidden py-12 px-4"}>
         <p className={"text-center text-blackmig font-gilroysemibold text-xl"}>
           {t.careersatmigbenefitsection}
         </p>
@@ -499,9 +499,9 @@ function JoinOurTeam({ dataCareers, empData }) {
           >
             {t.careersatmigbenefitsectionsubtitle}
           </p>
-          <div className={"block md:flex md:flex-row justify-center mt-4"}>
+          <div className={"block lg:flex lg:flex-row justify-center mt-4"}>
             <div
-              className={"block md:flex md:flex-col justify-center md:w-1/2"}
+              className={"block lg:flex lg:flex-col justify-center lg:w-1/2"}
             >
               <div className={"pb-6 flex-row flex "}>
                 <img
@@ -545,7 +545,7 @@ function JoinOurTeam({ dataCareers, empData }) {
               </div>
             </div>
             <div
-              className={"block md:flex md:flex-col justify-center md:w-1/2"}
+              className={"block lg:flex lg:flex-col justify-center lg:w-1/2"}
             >
               <div className={"pb-6 flex-row flex"}>
                 <img
@@ -595,7 +595,7 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
       <section
         className={
-          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[50px] h-[173px]"
+          "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[50px] h-[173px]"
         }
       >
         <div className={"justify-start self-end"}>
@@ -607,7 +607,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         <div className={"container w-1/2 mx-auto"}>
           <div
             className={
-              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[150px] py-[31.38px]  px-[31.38px]"
+              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[150px] py-[31.38px]  px-[31.38px]"
             }
           >
             <h2
@@ -666,7 +666,7 @@ function JoinOurTeam({ dataCareers, empData }) {
         </div>
       </section>
       <section
-        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+        className={"contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div

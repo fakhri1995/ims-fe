@@ -18,7 +18,7 @@ export const CareersAtMig: FC = () => {
       <div>
         <h2
           style={{ lineHeight: "120%" }}
-          className="text-center gilroy-semibold text-2xl text-blackmig font-semibold md:text-[36px] pb-8"
+          className="text-center gilroy-semibold text-2xl text-blackmig font-semibold lg:text-[36px] pb-8"
         >
           {t.vacancylistsectiontitle}
         </h2>
@@ -38,7 +38,7 @@ export const CareersAtMig: FC = () => {
 
       {/* Notes */}
       <div className="flex flex-col justify-center items-center">
-        <span className="h-[2px] bg-primarygreen w-[200px] md:w-60 block" />
+        <span className="h-[2px] bg-primarygreen w-[200px] lg:w-60 block" />
 
         <p
           style={{ lineHeight: "150%" }}
@@ -48,7 +48,7 @@ export const CareersAtMig: FC = () => {
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          className="pb-12 md:pb-8 text-xl text-black text-center"
+          className="pb-12 lg:pb-8 text-xl text-black text-center"
         >
           {t.vacancylistsectiondescriptionbelow3}{" "}
           <a

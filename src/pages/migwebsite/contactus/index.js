@@ -69,10 +69,10 @@ function ContactUs({}) {
       </Head>
       <section
         className={
-          "hidden md:block px-4 py-16 sm:py-8 sm:px-[61px] md:py-16 md:px-[113.5px]"
+          "hidden lg:block px-4 py-16 sm:py-8 sm:px-[61px] lg:py-16 lg:px-[113.5px]"
         }
       >
-        <div className={"container md:flex "}>
+        <div className={"container lg:flex "}>
           <LeftContactUs analytics={gaEventTracker} />
           <RightContactUs
             feedback={feedback}
@@ -87,10 +87,10 @@ function ContactUs({}) {
       </section>
       <section
         className={
-          "block md:hidden px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "block lg:hidden px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
-        <div className={"container mx-auto  md:flex"}>
+        <div className={"container mx-auto  lg:flex"}>
           <RightContactUs
             feedback={feedback}
             heightt={heightt}
@@ -104,7 +104,7 @@ function ContactUs({}) {
         </div>
       </section>
       <section
-        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+        className={"contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div

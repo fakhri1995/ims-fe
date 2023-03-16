@@ -121,7 +121,7 @@ export const JobListTable: FC = () => {
   const t = locale === "en" ? en : id;
 
   return (
-    <div className="grid grid-cols-1 mt-5  md:gap-y-8 px-4 md:px-[112px]">
+    <div className="grid grid-cols-1 mt-5  lg:gap-y-8 px-4 lg:px-[112px]">
       <p
         dangerouslySetInnerHTML={{
           __html: searchMessage,

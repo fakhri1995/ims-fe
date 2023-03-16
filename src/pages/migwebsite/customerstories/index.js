@@ -474,7 +474,9 @@ function CustomerStories({ dataBlog }) {
         <div className={"md:hidden"}>
           {articleList ? (
             articleList.map((dataarticle) => (
-              <Linkk href={`/customerstories/${dataarticle.page_path}`}>
+              <Linkk
+                href={`/migwebsite/customerstories/${dataarticle.page_path}`}
+              >
                 <div
                   className={"bg-white w-full rounded-lg mt-3 p-4"}
                   style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}

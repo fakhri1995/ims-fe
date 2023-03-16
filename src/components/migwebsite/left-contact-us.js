@@ -14,7 +14,7 @@ function LeftContactUs({ children }) {
   const t = locale === "en" ? en : id;
 
   return (
-    <div className={"w-full md:w-1/2 md:px-4"}>
+    <div className={"w-full lg:w-1/2"}>
       <p
         style={{ lineHeight: "120%" }}
         className={"text-xl lg:text-[30px] font-gilroysemibold text-blackmig"}
@@ -23,11 +23,11 @@ function LeftContactUs({ children }) {
       </p>
       <p
         style={{ lineHeight: "150%" }}
-        className={"text-[18px] font-gilroyregular mt-3 w-full md:w-[400px]"}
+        className={"text-[18px] font-gilroyregular mt-3 w-full lg:w-[400px]"}
       >
         {t.contactusleftsectiondescription}
       </p>
-      <div className="pt-6 hidden md:block">
+      <div className="pt-6 hidden lg:block">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2594377018986!2d106.85151101396694!3d-6.229487895490642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3cf13d3fd29%3A0xd79c8011caa6f98c!2sPT%20Mitramas%20Infosys%20Global!5e0!3m2!1sid!2sid!4v1668590778820!5m2!1sid!2sid"
           width="374"
@@ -39,7 +39,7 @@ function LeftContactUs({ children }) {
           tabindex="0"
         ></iframe>
       </div>
-      <div className="pt-6 block md:hidden mx-auto">
+      <div className="pt-6 block lg:hidden mx-auto">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.2594377018986!2d106.85151101396694!3d-6.229487895490642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f3cf13d3fd29%3A0xd79c8011caa6f98c!2sPT%20Mitramas%20Infosys%20Global!5e0!3m2!1sid!2sid!4v1668590778820!5m2!1sid!2sid"
           width="282"
@@ -59,13 +59,13 @@ function LeftContactUs({ children }) {
       <div className={"flex flex-row mt-6"}>
         <p
           style={{ lineHeight: "150%" }}
-          className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
+          className={"font-gilroysemibold text-sm lg:text-[18px] text-blackmig"}
         >
           {locale == "en" ? "Location:" : "Kantor pusat:"}&nbsp;
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          className={"text-sm md:text-[18px] text-blackmig font-gilroyregular"}
+          className={"text-sm lg:text-[18px] text-blackmig font-gilroyregular"}
         >
           Tebet raya no. 42{" "}
           {locale == "en" ? "South Jakarta" : "Jakarta Selatan"}, DKI
@@ -75,14 +75,14 @@ function LeftContactUs({ children }) {
       <div className={"flex flex-row mt-3"}>
         <p
           style={{ lineHeight: "150%" }}
-          className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
+          className={"font-gilroysemibold text-sm lg:text-[18px] text-blackmig"}
         >
           {locale == "en" ? "Phone:" : "Telepon:"}&nbsp;
         </p>
         <a href="tel:+62218314522">
           <p
             style={{ lineHeight: "150%" }}
-            className={"text-accentblue text-sm md:text-[18px] underline"}
+            className={"text-accentblue text-sm lg:text-[18px] underline"}
           >
             +62-21-831-4522
           </p>
@@ -91,20 +91,20 @@ function LeftContactUs({ children }) {
       <div className={"flex flex-row mt-3"}>
         <p
           style={{ lineHeight: "150%" }}
-          className={"font-gilroysemibold text-sm md:text-[18px] text-blackmig"}
+          className={"font-gilroysemibold text-sm lg:text-[18px] text-blackmig"}
         >
           Email:&nbsp;
         </p>
         <a
           href="mailto:help@mitrasolusi.group"
           style={{ lineHeight: "150%" }}
-          className={"text-accentblue text-sm md:text-[18px] underline"}
+          className={"text-accentblue text-sm lg:text-[18px] underline"}
         >
           help@mitrasolusi.group
         </a>
       </div>
 
-      <div className={"mt-[54px] hidden md:block"}>
+      <div className={"mt-[54px] hidden lg:block"}>
         <p
           style={{ lineHeight: "150%" }}
           className={"text-[18px] text-blackmig font-gilroysemibold"}
