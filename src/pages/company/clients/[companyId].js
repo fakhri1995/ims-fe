@@ -832,6 +832,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                     <Label>Tanggal PKP</Label>
                     {editable ? (
                       <DatePicker
+                        allowClear
                         onChange={(value, dateString) => {
                           setdisplaydata({
                             ...displaydata,
@@ -839,14 +840,14 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           });
                         }}
                         defaultValue={
-                          rawdata?.tanggal_pkp === null
-                            ? null
-                            : moment(rawdata?.tanggal_pkp)
+                          moment(rawdata?.tanggal_pkp).isValid()
+                            ? moment(rawdata?.tanggal_pkp)
+                            : null
                         }
                       ></DatePicker>
                     ) : (
                       <p className="mb-0">
-                        {rawdata?.tanggal_pkp
+                        {moment(rawdata?.tanggal_pkp).isValid()
                           ? moment(rawdata?.tanggal_pkp)
                               .locale("id")
                               .format("LL")
@@ -854,6 +855,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       </p>
                     )}
                   </div>
+                  {console.log({ displaydata })}
                   <div className="flex flex-col mb-5">
                     <Label>Jam Masuk</Label>
                     {editable ? (
@@ -866,14 +868,21 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           });
                         }}
                         defaultValue={
-                          displaydata.check_in_time
+                          moment(
+                            displaydata.check_in_time,
+                            "HH:mm:ss"
+                          ).isValid()
                             ? moment(displaydata?.check_in_time, "HH:mm:ss")
                             : null
                         }
                         format={"HH:mm:ss"}
                       />
                     ) : (
-                      <p className="mb-0">{rawdata?.check_in_time ?? "-"}</p>
+                      <p className="mb-0">
+                        {moment(rawdata.check_in_time, "HH:mm:ss").isValid()
+                          ? rawdata?.check_in_time
+                          : "-"}
+                      </p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">

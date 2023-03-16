@@ -994,15 +994,15 @@ const MyCompanyIndex2 = ({ initProps, dataProfile, sidemenu }) => {
                           });
                         }}
                         defaultValue={
-                          rawdata.tanggal_pkp === null
-                            ? null
-                            : moment(rawdata.tanggal_pkp)
+                          moment(rawdata?.tanggal_pkp).isValid()
+                            ? moment(rawdata?.tanggal_pkp)
+                            : null
                         }
                       ></DatePicker>
                     ) : (
                       <p className="mb-0">
-                        {rawdata?.tanggal_pkp
-                          ? moment(rawdata.tanggal_pkp)
+                        {moment(rawdata?.tanggal_pkp).isValid()
+                          ? moment(rawdata?.tanggal_pkp)
                               .locale("id")
                               .format("LL")
                           : "-"}

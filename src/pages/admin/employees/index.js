@@ -84,6 +84,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
   const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
+  const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
 
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
@@ -736,7 +737,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="flex flex-col space-y-2">
                   <ButtonSysColor
                     type={"default"}
-                    // disabled={!isAllowedToEditDraft}
+                    disabled={!isAllowedToUpdateEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(`/admin/employees/create?id=${record.id}`);
