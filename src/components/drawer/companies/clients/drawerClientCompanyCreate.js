@@ -13,6 +13,7 @@ import { CompanyService } from "apis/company";
 import ButtonSys from "../../../button";
 import {
   CameraIconSvg,
+  ClockIconSvg,
   EmailIconSvg,
   FaxIconSvg,
   NotesIconSvg,
@@ -24,7 +25,8 @@ import {
 import {
   DateNotRequired, // DateRequired,
   InputNotRequired,
-  InputRequired, // RadioRequired,
+  InputRequired,
+  TimeNotRequired, // RadioRequired,
   // TreeSelectRequired,
 } from "../../../input";
 import { H2, Label, Text } from "../../../typography";
@@ -60,6 +62,7 @@ const DrawerCreateClient = ({
     fax: "",
     email: "",
     website: "",
+    check_in_time: null,
   });
   // const [treedata, settreedata] = useState([]);
   const [lokasiloading, setlokasiloading] = useState(false);
@@ -70,6 +73,7 @@ const DrawerCreateClient = ({
     npwp: false,
     fax: false,
     tanggal_pkp: false,
+    check_in_time: false,
   });
   const [disabledsave, setdisabledsave] = useState(true);
   const [disabledtrigger, setdisabledtrigger] = useState(-1);
@@ -114,7 +118,7 @@ const DrawerCreateClient = ({
     setloadingfoto(false);
   };
 
-  const handleCreateLokasi = () => {
+  const handleCreateCompany = () => {
     const createPayload = { ...createdata };
     if ("image_logo" in createPayload) {
       delete createPayload["image_logo"];
@@ -159,6 +163,7 @@ const DrawerCreateClient = ({
                 npwp: false,
                 fax: false,
                 tanggal_pkp: false,
+                check_in_time: false,
               });
               setwarningphonenumber(false);
               setwarningemail(false);
@@ -218,6 +223,7 @@ const DrawerCreateClient = ({
               fax: "",
               email: "",
               website: "",
+              check_in_time: null,
             });
             setdynamicattr({
               email: false,
@@ -225,6 +231,7 @@ const DrawerCreateClient = ({
               npwp: false,
               fax: false,
               tanggal_pkp: false,
+              check_in_time: false,
             });
             setwarningphonenumber(false);
             setwarningemail(false);
@@ -273,6 +280,7 @@ const DrawerCreateClient = ({
       }
     }
   }, [disabledtrigger]);
+
   return (
     <DrawerCore
       title={title}
@@ -291,6 +299,7 @@ const DrawerCreateClient = ({
           fax: "",
           email: "",
           website: "",
+          check_in_time: null,
         });
         setdynamicattr({
           email: false,
@@ -298,6 +307,7 @@ const DrawerCreateClient = ({
           npwp: false,
           fax: false,
           tanggal_pkp: false,
+          check_in_time: false,
         });
         setwarningphonenumber(false);
         setwarningemail(false);
@@ -305,7 +315,7 @@ const DrawerCreateClient = ({
         onvisible(false);
       }}
       buttonOkText={buttonOkText}
-      onClick={handleCreateLokasi}
+      onClick={handleCreateCompany}
       disabled={disabledsave}
     >
       <Spin spinning={lokasiloading}>
@@ -431,6 +441,24 @@ const DrawerCreateClient = ({
                 }
               ></DateNotRequired>
             )}
+            {dynamicattr.check_in_time && (
+              <TimeNotRequired
+                name="check_in_time"
+                onChangeTime={(time, timestring) => {
+                  setcreatedata({
+                    ...createdata,
+                    check_in_time: timestring,
+                  });
+                }}
+                label="Jam Masuk"
+                defaultValue={
+                  createdata.check_in_time === null
+                    ? null
+                    : moment(createdata.check_in_time)
+                }
+                format="HH:mm:ss"
+              ></TimeNotRequired>
+            )}
           </div>
           <div className="mb-5 flex flex-col">
             <div className="mb-3">
@@ -520,6 +548,24 @@ const DrawerCreateClient = ({
                   className="cursor-pointer"
                   onClick={() => {
                     setdynamicattr({ ...dynamicattr, tanggal_pkp: true });
+                  }}
+                >
+                  <SquarePlusIconSvg size={18} color={`#808080`} />
+                </div>
+              </div>
+            )}
+            {!dynamicattr.check_in_time && (
+              <div className="flex justify-between mb-3">
+                <div className="flex items-center">
+                  <div className="mr-2">
+                    <ClockIconSvg size={18} color={`#808080`} />
+                  </div>
+                  Jam Masuk
+                </div>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setdynamicattr({ ...dynamicattr, check_in_time: true });
                   }}
                 >
                   <SquarePlusIconSvg size={18} color={`#808080`} />

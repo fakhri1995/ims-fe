@@ -1,4 +1,6 @@
+import { CameraOutlined, UploadOutlined } from "@ant-design/icons";
 import {
+  Button,
   Checkbox,
   Form,
   Input,
@@ -6,10 +8,14 @@ import {
   Modal,
   Select,
   Skeleton,
+  Upload,
+  UploadProps,
   notification,
 } from "antd";
+import { UploadChangeParam } from "antd/lib/upload";
+import { RcFile, UploadFile } from "antd/lib/upload/interface";
 import type { AxiosError, AxiosResponse } from "axios";
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
@@ -23,7 +29,7 @@ import {
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import { getBase64, permissionWarningNotification } from "lib/helper";
 
 import {
   FormAktivitasTypes,
@@ -34,6 +40,8 @@ import {
 } from "apis/attendance";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 import { Detail } from "apis/auth";
+
+import { AttendanceStaffWebcamModal } from "./AttendanceStaffWebcamModal";
 
 /**
  * Component AttendanceStaffAktivitasDrawer's props.
@@ -102,6 +110,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
         case FormAktivitasTypes.TEKS:
         case FormAktivitasTypes.PARAGRAPH:
         case FormAktivitasTypes.DROPDOWN:
+        case FormAktivitasTypes.UNGGAH:
           defaultValue = "";
           break;
         case FormAktivitasTypes.NUMERAL:
@@ -307,6 +316,112 @@ const _renderDynamicInput = (
   type: FormAktivitasTypes,
   list?: Pick<Detail, "list">["list"]
 ) => {
+  // START: Upload Field
+  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
+
+  /** Uploaded file object. Wrapped as RcFile. Used as payload. */
+  const [uploadedActivityPicture, setUploadedActivityPicture] = useState<
+    RcFile | Blob | File
+  >(null);
+
+  /** Toggle preview modal on and off. */
+  const [isPreviewActivityPicture, setIsPreviewActivityPicture] =
+    useState(false);
+
+  /** Either empty string or long long string (base64) from a file (`uploadedActivityPicture`). */
+  const [previewActivityPictureData, setPreviewActivityPictureData] =
+    useState("");
+
+  const [fileList, setFileList] = useState<UploadFile<RcFile>[]>([]);
+  const onUploadChange = useCallback(
+    ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
+      setUploadPictureLoading(file.status === "uploading");
+
+      if (file.status !== "removed") {
+        setFileList([file]);
+      }
+    },
+    []
+  );
+  const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
+
+  /**
+   * Validating uploaded file before finally attached to the paylaod.
+   *
+   * - Size max 5 MiB
+   * - File type should satisfy ["image/png", "image/jpeg"]
+   */
+  const beforeUploadEvidencePicture = useCallback<
+    Pick<UploadProps, "beforeUpload">["beforeUpload"]
+  >((uploadedFile) => {
+    const allowedFileTypes = ["image/png", "image/jpeg"];
+    if (!allowedFileTypes.includes(uploadedFile.type)) {
+      return Upload.LIST_IGNORE;
+    }
+
+    const fileSizeInMb = Number.parseFloat(
+      (uploadedFile.size / 1024 / 1024).toFixed(4)
+    );
+    if (fileSizeInMb > 5) {
+      notification.error({
+        message: "Ukuran file melebih batas persyaratan!",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    setUploadedActivityPicture(uploadedFile);
+  }, []);
+
+  const onRemoveActivityPicture = useCallback(() => {
+    setFileList([]);
+    setUploadedActivityPicture(null);
+  }, []);
+
+  const onPreviewActivityPicture = useCallback(async () => {
+    const previewImageData = (await getBase64(
+      uploadedActivityPicture
+    )) as string;
+
+    setPreviewActivityPictureData(previewImageData);
+    setIsPreviewActivityPicture(true);
+  }, [uploadedActivityPicture]);
+
+  const onWebcamModalFinished = useCallback((result: string) => {
+    /**
+     * 1. Set uploaded evidence picture
+     * 2. Set uploaded evidence picture data (base64) for preview purpose
+     */
+    (async () => {
+      const base64ToBlob = await (await fetch(result)).blob();
+
+      const fileLastModifiedTimestamp = Date.now();
+      const fileName = `capture_${fileLastModifiedTimestamp}.jpeg`;
+
+      const blobFile = new File([base64ToBlob], "webcam_picture.jpeg", {
+        type: "image/jpeg",
+        lastModified: fileLastModifiedTimestamp,
+      });
+
+      // Update the image preview component
+      setFileList([
+        {
+          uid: fileLastModifiedTimestamp.toString(),
+          name: fileName,
+          status: "done",
+          url: result,
+        },
+      ]);
+      // Update File payload
+      setUploadedActivityPicture(blobFile);
+      // Set preview base64 data
+      setPreviewActivityPictureData(result);
+
+      // close the modal
+      setIsWebcamModalShown(false);
+    })();
+  }, []);
+  // END: Upload field
+
   switch (type) {
     case FormAktivitasTypes.TEKS:
       return <Input name="" type="text" />;
@@ -337,6 +452,69 @@ const _renderDynamicInput = (
             </Select.Option>
           ))}
         </Select>
+      );
+
+    case FormAktivitasTypes.UNGGAH:
+      return (
+        <div className="flex flex-col space-y-6">
+          <div className="relative">
+            {/* Gunakan camera */}
+            <div className="flex items-center space-x-5">
+              <Button
+                className="mig-button mig-button--outlined-primary self-start"
+                onClick={() => {
+                  setIsWebcamModalShown(true);
+                }}
+              >
+                <CameraOutlined />
+                Ambil Foto
+              </Button>
+
+              <span className="mig-caption--medium text-mono50">Atau</span>
+            </div>
+
+            {/* Upload from file */}
+            <Upload
+              capture
+              listType="picture"
+              name="file"
+              accept="image/png, image/jpeg"
+              maxCount={1}
+              beforeUpload={beforeUploadEvidencePicture}
+              onRemove={onRemoveActivityPicture}
+              onPreview={onPreviewActivityPicture}
+              disabled={uploadPictureLoading}
+              fileList={fileList}
+              onChange={onUploadChange}
+            >
+              <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
+                <UploadOutlined />
+                Unggah File
+              </Button>
+            </Upload>
+          </div>
+
+          <em className="text-mono50">Unggah File JPEG (Maksimal 5 MB)</em>
+          <Modal
+            title="Foto Aktivitas"
+            visible={isPreviewActivityPicture}
+            footer={null}
+            onCancel={() => setIsPreviewActivityPicture(false)}
+            centered
+          >
+            <img
+              alt="Preview Activity Picture"
+              src={previewActivityPictureData}
+            />
+          </Modal>
+
+          <AttendanceStaffWebcamModal
+            visible={isWebcamModalShown}
+            title="Ambil foto aktivitas"
+            onCancel={() => setIsWebcamModalShown(false)}
+            onOk={onWebcamModalFinished}
+          />
+        </div>
       );
   }
 };

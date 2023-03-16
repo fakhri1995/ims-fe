@@ -6,10 +6,10 @@ import {
   Input,
   Spin,
   Switch,
+  TimePicker,
   notification,
 } from "antd";
 import moment from "moment";
-// import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
 import CountUp from "react-countup";
@@ -92,8 +92,8 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
 
   const rt = useRouter();
   const axiosClient = useAxiosClient();
-
   const tok = initProps;
+
   const [instanceForm] = Form.useForm();
   var activeTab = "profile";
   const { active } = rt.query;
@@ -103,6 +103,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
 
   //useState
   const [patharr, setpatharr] = useState([]);
+  const [refresh, setRefresh] = useState(-1);
   const [rawdata, setrawdata] = useState({
     id: "",
     name: "",
@@ -111,18 +112,20 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     image_logo: "",
     singkatan: "",
     is_enabled: "",
-    tanggal_pkp: moment(new Date()),
+    tanggal_pkp: null,
     penanggung_jawab: "",
     npwp: "",
     fax: "",
     email: "",
     website: "",
+    check_in_time: null,
     role: "",
     induk_level_1_count: "",
     induk_level_2_count: "",
     induk_level_3_count: "",
     relationship_inventories: [],
   });
+
   const [displaydata, setdisplaydata] = useState({
     id: "",
     name: "",
@@ -131,12 +134,13 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
     image_logo: "",
     company_logo: null, // File | null
     singkatan: "",
-    tanggal_pkp: moment(new Date()),
+    tanggal_pkp: null,
     penanggung_jawab: "",
     npwp: "",
     fax: "",
     email: "",
     website: "",
+    check_in_time: null,
   });
   const [hapusbankdata, sethapusbankdata] = useState({
     id: "",
@@ -374,7 +378,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/company/clients/${companyid}`);
+            setRefresh((prev) => prev + 1);
           }, 500);
         } else if (!res2.success) {
           notification["error"]({
@@ -495,13 +499,14 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
         singkatan: "-",
         address: "-",
         penanggung_jawab: "-",
-        tanggal_pkp: "-",
+        tanggal_pkp: null,
         npwp: "-",
         email: "-",
         phone_number: "-",
         website: "-",
         image_logo: "/image/Company.png",
         fax: "-",
+        check_in_time: null,
       });
       setpraloadingedit(false);
       return;
@@ -519,7 +524,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       .then((res) => res.json())
       .then((res2) => {
         var temp2 = rt.pathname.split("/").slice(1);
-        temp2[temp2.length - 1] = res2.data.name;
+        temp2[temp2.length - 1] = res2.data?.name ?? "-";
         setpatharr(temp2);
         setrawdata(res2.data);
         setdisplaydata({
@@ -533,15 +538,13 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
           //     ? "/image/Company.png"
           //     : res2.data.image_logo,
           singkatan: res2.data.singkatan,
-          tanggal_pkp:
-            res2.data.tanggal_pkp === null
-              ? moment(new Date())
-              : moment(res2.data.tanggal_pkp),
+          tanggal_pkp: res2.data?.tanggal_pkp ?? null,
           penanggung_jawab: res2.data.penanggung_jawab,
           npwp: res2.data.npwp,
           fax: res2.data.fax,
           email: res2.data.email,
           website: res2.data.website,
+          check_in_time: res2.data?.check_in_time ?? null,
         });
         setisenabled(res2.data.is_enabled);
         return res2.data.id;
@@ -573,7 +576,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
             setpraloadingedit(false);
           });
       });
-  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog]);
+  }, [isAllowedToGetCompanyDetail, isAllowedToGetCompanyLog, refresh]);
 
   useEffect(() => {
     if (!isAllowedToGetListBank) {
@@ -629,12 +632,12 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
       { name: "Clients", hrefValue: "/company/clients" },
     ];
 
-    if (rawdata.name !== "") {
+    if (rawdata?.name) {
       pageBreadcrumbValue.push({ name: rawdata.name });
     }
 
     return pageBreadcrumbValue;
-  }, [rawdata.name]);
+  }, [rawdata]);
 
   return (
     <Layout
@@ -657,12 +660,14 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                     alt=""
                     className="object-fit max-h-24 w-full rounded-t"
                   />
-                  <div className="absolute -bottom-1/2 bg-white left-28 rounded-full">
-                    <img
-                      src={displaydata.image_logo}
-                      alt=""
-                      className="object-contain w-24 h-24 rounded-full"
-                    />
+                  <div className="absolute -bottom-1/2 left-1/2">
+                    <div className="relative bg-white rounded-full -left-1/2">
+                      <img
+                        src={displaydata.image_logo}
+                        alt=""
+                        className="object-contain max-w-24 max-h-24 rounded-full "
+                      />
+                    </div>
                   </div>
                 </div>
                 <div className="mt-14 flex flex-col justify-center text-center">
@@ -710,7 +715,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                   ) : (
                     <H1>{displaydata.name ?? "-"}</H1>
                   )}
-                  <Label>{displaydata.singkatan}</Label>
+                  <Label>{rawdata?.singkatan ?? "-"}</Label>
                 </div>
                 {editable ? (
                   <div className="flex justify-center items-center mt-5">
@@ -718,6 +723,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       className="mx-1"
                       onClick={() => {
                         seteditable(false);
+                        setdisplaydata(rawdata);
                       }}
                     >
                       <Buttonsys type="default">X Batalkan</Buttonsys>
@@ -785,16 +791,17 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       )}
                     </div>
                   </AccessControl>
+
                   <div className={`flex flex-col mb-5`}>
                     <Label>Singkatan</Label>
                     {editable ? (
                       <Input
                         name="singkatan"
-                        defaultValue={displaydata.singkatan ?? "-"}
+                        defaultValue={rawdata?.singkatan ?? "-"}
                         onChange={onChangeInput}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{displaydata.singkatan ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.singkatan ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -803,10 +810,10 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <Input
                         name="address"
                         onChange={onChangeInput}
-                        defaultValue={displaydata.address ?? "-"}
+                        defaultValue={rawdata?.address ?? "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{displaydata.address ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.address ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -815,18 +822,17 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <Input
                         name="penanggung_jawab"
                         onChange={onChangeInput}
-                        defaultValue={displaydata.penanggung_jawab ?? "-"}
+                        defaultValue={rawdata?.penanggung_jawab ?? "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">
-                        {displaydata.penanggung_jawab ?? "-"}
-                      </p>
+                      <p className="mb-0">{rawdata?.penanggung_jawab ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
                     <Label>Tanggal PKP</Label>
                     {editable ? (
                       <DatePicker
+                        allowClear
                         onChange={(value, dateString) => {
                           setdisplaydata({
                             ...displaydata,
@@ -834,18 +840,48 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                           });
                         }}
                         defaultValue={
-                          displaydata.tanggal_pkp === "-"
-                            ? null
-                            : moment(displaydata.tanggal_pkp)
+                          moment(rawdata?.tanggal_pkp).isValid()
+                            ? moment(rawdata?.tanggal_pkp)
+                            : null
                         }
                       ></DatePicker>
                     ) : (
                       <p className="mb-0">
-                        {displaydata.tanggal_pkp === "-"
-                          ? "-"
-                          : moment(displaydata.tanggal_pkp)
+                        {moment(rawdata?.tanggal_pkp).isValid()
+                          ? moment(rawdata?.tanggal_pkp)
                               .locale("id")
-                              .format("LL")}
+                              .format("LL")
+                          : "-"}
+                      </p>
+                    )}
+                  </div>
+                  {console.log({ displaydata })}
+                  <div className="flex flex-col mb-5">
+                    <Label>Jam Masuk</Label>
+                    {editable ? (
+                      <TimePicker
+                        allowClear
+                        onChange={(value, dateString) => {
+                          setdisplaydata({
+                            ...displaydata,
+                            check_in_time: dateString,
+                          });
+                        }}
+                        defaultValue={
+                          moment(
+                            displaydata.check_in_time,
+                            "HH:mm:ss"
+                          ).isValid()
+                            ? moment(displaydata?.check_in_time, "HH:mm:ss")
+                            : null
+                        }
+                        format={"HH:mm:ss"}
+                      />
+                    ) : (
+                      <p className="mb-0">
+                        {moment(rawdata.check_in_time, "HH:mm:ss").isValid()
+                          ? rawdata?.check_in_time
+                          : "-"}
                       </p>
                     )}
                   </div>
@@ -855,10 +891,10 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <Input
                         name="npwp"
                         onChange={onChangeInput}
-                        defaultValue={displaydata.npwp ?? "-"}
+                        defaultValue={rawdata?.npwp ?? "-"}
                       ></Input>
                     ) : (
-                      <p className="mb-0">{displaydata.npwp ?? "-"}</p>
+                      <p className="mb-0">{rawdata?.npwp ?? "-"}</p>
                     )}
                   </div>
                   <div className="flex flex-col mb-5">
@@ -868,18 +904,18 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         name="email"
                         onChange={onChangeInput}
                         prefix={<EmailIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={displaydata.email ?? "-"}
+                        defaultValue={rawdata?.email ?? "-"}
                       ></Input>
                     ) : (
-                      <div className="flex">
+                      <div className="flex items-center">
                         <div className="mr-1">
                           <EmailIconSvg size={20} color={`#35763B`} />
                         </div>
                         <a
-                          href={`mailto:${displaydata.email}`}
-                          className="text-primary100 hover:text-primary75"
+                          href={`mailto:${rawdata?.email}`}
+                          className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {displaydata.email}
+                          {rawdata?.email}
                         </a>
                       </div>
                     )}
@@ -891,18 +927,18 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         name="phone_number"
                         onChange={onChangeInput}
                         prefix={<PhoneIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={displaydata.phone_number ?? "-"}
+                        defaultValue={rawdata?.phone_number ?? "-"}
                       ></Input>
                     ) : (
-                      <div className="flex">
+                      <div className="flex items-center">
                         <div className="mr-1">
                           <PhoneIconSvg size={20} color={`#35763B`} />
                         </div>
                         <a
-                          href={`tel:${displaydata.phone_number}`}
+                          href={`tel:${rawdata?.phone_number}`}
                           className="text-primary100 hover:text-primary75"
                         >
-                          {displaydata.phone_number}
+                          {rawdata?.phone_number}
                         </a>
                       </div>
                     )}
@@ -914,18 +950,20 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         name="website"
                         onChange={onChangeInput}
                         prefix={<WebIconSvg size={15} color={`#35763B`} />}
-                        defaultValue={displaydata.website ?? "-"}
+                        defaultValue={rawdata?.website ?? "-"}
                       ></Input>
                     ) : (
-                      <div className="flex">
+                      <div className="flex items-center">
                         <div className="mr-1">
                           <WebIconSvg size={20} color={`#35763B`} />
                         </div>
                         <a
-                          href={`${displaydata.website}`}
-                          className="text-primary100 hover:text-primary75"
+                          href={rawdata?.website}
+                          target="_blank"
+                          rel="external"
+                          className="text-primary100 hover:text-primary75 truncate"
                         >
-                          {displaydata.website}
+                          {rawdata?.website}
                         </a>
                       </div>
                     )}
@@ -985,7 +1023,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                         type="default"
                         onClick={() => {
                           setmodalstatus(false);
-                          setisenabled(rawdata.is_enabled);
+                          setisenabled(rawdata?.is_enabled);
                           setstatusloading(false);
                         }}
                       >
@@ -1029,7 +1067,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 <LocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
-                    <CountUp end={rawdata.induk_level_1_count} />
+                    <CountUp end={rawdata?.induk_level_1_count} />
                   </p>
                   <p className="text-sm text-white mb-0">Induk</p>
                 </div>
@@ -1038,7 +1076,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 <SubLocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
-                    <CountUp end={rawdata.induk_level_2_count} />
+                    <CountUp end={rawdata?.induk_level_2_count} />
                   </p>
                   <p className="text-sm text-white mb-0">Sub Induk 1</p>
                 </div>
@@ -1047,7 +1085,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                 <SubLocationIconSvg size={50} color={"#FFFFFF"} />
                 <div className="flex flex-col items-center">
                   <p className="text-2xl text-white font-bold mb-0">
-                    <CountUp end={rawdata.induk_level_3_count} />
+                    <CountUp end={rawdata?.induk_level_3_count} />
                   </p>
                   <p className="text-sm text-white mb-0">Sub Lokasi Induk 1</p>
                 </div>
@@ -1359,7 +1397,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       </Label>
                     </div>
                   </div>
-                  {rawdata.relationship_inventories.map((doc, idx) => {
+                  {rawdata?.relationship_inventories.map((doc, idx) => {
                     if (idx <= 2) {
                       return (
                         <div className="flex items-center mt-5">

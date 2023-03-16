@@ -586,14 +586,10 @@ const InventoryForm = ({
           <ButtonSys
             type={"dashed"}
             onClick={() => {
-              setpraloading(true);
-              setTimeout(() => {
-                handleAddNewDevice();
-                setpraloading(false);
-              }, 5001);
+              handleAddNewDevice();
             }}
           >
-            <Spin spinning={praloading}>
+            <Spin spinning={loadingAdd}>
               <p className="text-primary100 hover:text-primary75">
                 + Tambah Piranti
               </p>

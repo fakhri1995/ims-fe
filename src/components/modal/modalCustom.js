@@ -1596,10 +1596,10 @@ const ModalAddSalaryVar = ({
                         setReceiveVarFields((prev) => [...prev, option]);
                       } else {
                         // handle benefit fields in form
-                        const newReceiveVarFields = receiveVarFields.filter(
-                          (variable) => variable.id !== option.id
-                        );
-                        setReceiveVarFields(newReceiveVarFields);
+                        // const newReceiveVarFields = receiveVarFields.filter(
+                        //   (variable) => variable.id !== option.id
+                        // );
+                        // setReceiveVarFields(newReceiveVarFields);
 
                         // Remove attribute in dataPaylip's salaries
                         const updatedSalaryVars = dataPayslip?.salaries?.filter(
@@ -1750,11 +1750,12 @@ const ModalAddSalaryVar = ({
                         if (e.target.checked) {
                           setReductionVarFields((prev) => [...prev, option]);
                         } else {
-                          const newReductionVarFields =
-                            reductionVarFields.filter(
-                              (variable) => variable.id !== option.id
-                            );
-                          setReductionVarFields(newReductionVarFields);
+                          // const newReductionVarFields =
+                          //   reductionVarFields.filter(
+                          //     (variable) => variable.id !== option.id
+                          //   );
+                          // setReductionVarFields(newReductionVarFields);
+
                           // Remove attribute in dataPaylip's salaries
                           const updatedSalaryVars =
                             dataPayslip?.salaries?.filter(

@@ -190,7 +190,7 @@ function AgentDetail({
   const [patharr, setpatharr] = useState([]);
   //custom breadcrumb
   const [isenabled, setisenabled] = useState(false);
-  //nama asal lokasi
+  //nama company
   const [origincomp, setorigincomp] = useState("");
   const [ubahstatus, setubahstatus] = useState(false);
   //modal to non aktif
@@ -403,7 +403,7 @@ function AgentDetail({
           <Sticky containerSelectorFocus="#formAgentsWrapper">
             <div className="flex justify-between p-2 pt-4 border-t-2 border-b-2 bg-white mb-8">
               <h1 className="font-semibold py-2">Detail Profil Agent</h1>
-              <div className="flex space-x-2">
+              <div className="flex items-end space-x-0 space-y-2 md:space-y-0 md:space-x-2 md:flex-row flex-col">
                 <Link href={`/admin/agents`}>
                   <Button type="default">Kembali</Button>
                 </Link>
@@ -429,7 +429,7 @@ function AgentDetail({
                 }
                 {
                   // [115].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                  <div className="w-full h-auto">
+                  <div className=" h-auto">
                     <Button
                       disabled={praloading || !isAllowedToUpdatePassword}
                       type="primary"
@@ -444,7 +444,7 @@ function AgentDetail({
                   </div>
                 }
                 {
-                  <div className="w-full h-auto">
+                  <div className=" h-auto">
                     <Button
                       disabled={!isAllowedToDeleteAgent}
                       type="danger"
@@ -542,7 +542,7 @@ function AgentDetail({
                         </div>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Asal Lokasi:</h1>
+                        <h1 className="font-semibold text-sm">Company:</h1>
                         <h1 className="text-sm font-normal text-black">
                           {origincomp}
                         </h1>
@@ -639,6 +639,12 @@ function AgentDetail({
                         </h1>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
+                        <h1 className="font-semibold text-sm">Posisi:</h1>
+                        <h1 className="text-sm font-normal text-black">
+                          {data1.position}
+                        </h1>
+                      </div>
+                      <div className="col-span-1 flex flex-col mb-5">
                         <h1 className="font-semibold text-sm">Role:</h1>
                         <div className=" flex items-center">
                           {namarolearr.map((doc, idx) => (
@@ -649,7 +655,7 @@ function AgentDetail({
                         </div>
                       </div>
                       <div className="col-span-1 flex flex-col mb-5">
-                        <h1 className="font-semibold text-sm">Asal Lokasi:</h1>
+                        <h1 className="font-semibold text-sm">Company:</h1>
                         <h1 className="text-sm font-normal text-black">
                           {origincomp}
                         </h1>
