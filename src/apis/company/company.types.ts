@@ -39,6 +39,7 @@ export interface UpdateCompanyPayload {
   email: string;
   website: string;
   level: number;
+  check_in_time?: number;
 }
 
 /**
