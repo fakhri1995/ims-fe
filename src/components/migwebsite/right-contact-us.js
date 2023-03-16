@@ -23,12 +23,12 @@ function RightContactUs({
   const { locale } = router;
   const t = locale === "en" ? en : id;
   return (
-    <div className={"w-full md:w-1/2"}>
+    <div className={"w-full lg:w-1/2"}>
       <div className={"w-full"}>
         <p
           style={{ lineHeight: "120%" }}
           className={
-            "text-xl pt-6 md:pt-0 md:text-[30px] font-gilroysemibold text-blackmig"
+            "text-xl pt-6 md:pt-12 lg:pt-0 lg:text-[30px] font-gilroysemibold text-blackmig"
           }
         >
           {locale == "en"
@@ -37,7 +37,7 @@ function RightContactUs({
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          className={"text-xs md:text-[18px] mt-1 md:mt-3 text-blackmig mb-5"}
+          className={"text-xs lg:text-[18px] mt-1 lg:mt-3 text-blackmig mb-5"}
         >
           {locale == "en"
             ? "Kindly provide your contact details, our team will get in touch shortly"
@@ -45,7 +45,7 @@ function RightContactUs({
         </p>
         <div
           hidden={feedback}
-          className={"bg-white hidden md:block"}
+          className={"bg-white hidden lg:block"}
           style={{ height: `${heightt}` }}
         >
           <div className={"h-1/3"}></div>
@@ -56,7 +56,7 @@ function RightContactUs({
           >
             <div className={"mx-auto my-auto"}>
               <p
-                className={"text-3xl md:text-4xl gilroy-bold py-0"}
+                className={"text-3xl lg:text-4xl gilroy-bold py-0"}
                 style={{ color: "#188E4D" }}
               >
                 <CheckCircleTwoTone
@@ -76,7 +76,7 @@ function RightContactUs({
         </div>
         <div
           hidden={feedback}
-          className={"bg-white md:hidden"}
+          className={"bg-white lg:hidden"}
           style={{ height: `${heightt}` }}
         >
           <div className={"h-1/3"}></div>
@@ -87,7 +87,7 @@ function RightContactUs({
           >
             <div className={"mx-auto my-auto"}>
               <p
-                className={"text-3xl md:text-4xl gilroy-bold py-0"}
+                className={"text-3xl lg:text-4xl gilroy-bold py-0"}
                 style={{ color: "#188E4D" }}
               >
                 <CheckCircleTwoTone
@@ -285,7 +285,7 @@ function RightContactUs({
               <button
                 type={"submit"}
                 className={
-                  "text-center rounded w-[113px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                  "text-center rounded w-[113px] text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 lg:px-4 mt-4"
                 }
               >
                 <div className={"flex flex-row justify-between"}>

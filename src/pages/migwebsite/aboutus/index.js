@@ -38,14 +38,14 @@ function AboutUs({}) {
 
       <section
         className={
-          "section2people pt-8 md:pt-16 pb-5 md:pb-[40px] px-4 md:px-[113.5px] text-center"
+          "section2people pt-8 md:pt-16 pb-5 lg:pb-[40px] px-4 lg:px-[113.5px] text-center"
         }
       >
         <div className={""}>
           <h1
             style={{ lineHeight: "120%" }}
             className={
-              "text-2xl md:text-[36px] font-gilroysemibold text-blackmig"
+              "text-2xl lg:text-[36px] font-gilroysemibold text-blackmig"
             }
           >
             {t.aboutustitle}
@@ -54,18 +54,18 @@ function AboutUs({}) {
           <p
             style={{ lineHeight: "150%" }}
             className={
-              "text-sm md:text-xl text-blackmig font-gilroyregular mt-12 md:mt-4 px-4 md:px-0"
+              "text-sm lg:text-xl text-blackmig font-gilroyregular mt-12 lg:mt-4 px-4 lg:px-0"
             }
           >
             {t.aboutussubtitle}
           </p>
         </div>
       </section>
-      <section className={"block bg-white py-4 md:py-6 px-4 md:px-[113.5px]"}>
+      <section className={"block bg-white py-4 lg:py-6 px-4 lg:px-[113.5px]"}>
         <h2
           style={{ lineHeight: "120%" }}
           className={
-            "font-gilroysemibold text-left pb-0 text-base md:text-[32px]"
+            "font-gilroysemibold text-left pb-0 text-base lg:text-[32px]"
           }
         >
           {t.whoweare}
@@ -75,13 +75,13 @@ function AboutUs({}) {
                     </div> */}
         <p
           style={{ lineHeight: "150%" }}
-          className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+          className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
         >
           {t.whowearedescription}
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+          className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
         >
           {t.whowearedescription2}
         </p>
@@ -89,13 +89,13 @@ function AboutUs({}) {
           <div>
             <p
               style={{ lineHeight: "150%" }}
-              className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+              className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
             >
               {t.whowearedescription3}
             </p>
             <p
               style={{ lineHeight: "150%" }}
-              className={"mt-3 md:mt-4 font-gilroyregular text-sm md:text-xl"}
+              className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
             >
               {t.whowearedescription4}
             </p>
@@ -104,7 +104,7 @@ function AboutUs({}) {
 
         <p
           style={{ lineHeight: "120%" }}
-          className={"mt-4 text-sm md:text-xl font-gilroyregular"}
+          className={"mt-4 text-sm lg:text-xl font-gilroyregular"}
         >
           {t.whowearejoinmig}{" "}
           <Link href="joinourteam">
@@ -115,12 +115,12 @@ function AboutUs({}) {
         </p>
       </section>
       <section
-        className={"pt-12 md:pt-[40px] pb-12 md:pb-8 px-4 md:px-[113.5px]"}
+        className={"pt-12 lg:pt-[40px] pb-12 lg:pb-8 px-4 lg:px-[113.5px]"}
       >
         <h2
           style={{ lineHeight: "120%" }}
           className={
-            "text-base md:text-[32px] font-gilroysemibold text-blackmig"
+            "text-base lg:text-[32px] font-gilroysemibold text-blackmig"
           }
         >
           {t.supportyourbusiness}
@@ -128,7 +128,9 @@ function AboutUs({}) {
         <div>
           <p
             style={{ lineHeight: "150%" }}
-            className={"text-sm md:text-xl mt-3 md:mt-4 font-gilroyregular"}
+            className={
+              "text-sm lg:text-xl mt-3 lg:-mb-24 lg:mt-4 font-gilroyregular"
+            }
           >
             {t.supportyourbusinessdetail}{" "}
           </p>
@@ -136,13 +138,13 @@ function AboutUs({}) {
         {/* hardware, software, talent */}
         <div
           className={
-            "mt-[118px] hidden w-full lg:w-[1122px] lg:flex lg:flex-row lg:justify-between mx-auto"
+            "mt-[118px] hidden w-full lg:max-w-[1122px] lg:flex lg:flex-wrap lg:justify-between mx-auto"
           }
         >
           <div className={"flex flex-col items-center"}>
             <div
               className={
-                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24 mt-24"
               }
             >
               <div className={"grid justify-items-center"}>
@@ -205,7 +207,7 @@ function AboutUs({}) {
           <div className={"flex flex-col items-center"}>
             <div
               className={
-                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24 mt-24"
               }
             >
               <div className={"grid justify-items-center"}>
@@ -268,7 +270,7 @@ function AboutUs({}) {
           <div className={"flex flex-col items-center"}>
             <div
               className={
-                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24 mt-24"
               }
             >
               <div className={"grid justify-items-center"}>
@@ -329,7 +331,7 @@ function AboutUs({}) {
             </div>
           </div>
         </div>
-        <div className={"block md:hidden mt-3"}>
+        <div className={"block md:hidden lg:hidden mt-3"}>
           <Slider {...sliderSettingsPhone}>
             <div className={"flex flex-col items-center mt-20"}>
               <div
@@ -522,18 +524,213 @@ function AboutUs({}) {
             </div>
           </Slider>
         </div>
+        <div
+          className={
+            "hidden md:flex md:flex-wrap md:justify-between lg:hidden mt-3"
+          }
+        >
+          <div className={"flex flex-col items-center mt-20"}>
+            <div
+              className={
+                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+              }
+            >
+              <div className={"grid justify-items-center"}>
+                <img
+                  src="/image/landingpage/hero-talent.png"
+                  alt=""
+                  className={
+                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                  }
+                />
+              </div>
+              <div>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-center text-2xl text-accentblue font-gilroybold font-bold"
+                  }
+                >
+                  Hardware
+                </p>
+                {/* <p
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
+                  }
+                >
+                  Lighten up your heavy capital in IT infrastructure
+                </p> */}
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                  }
+                >
+                  {t.aboutushardwaredescription}
+                </p>
+
+                <div className={"text-center"}>
+                  <Linkk href="/hardware">
+                    <button
+                      className={
+                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"px-1"}>
+                          {locale == "en" ? "Get Yours" : "Cek pilihan"}
+                        </p>
+                        <img
+                          className={"py-1 px-1"}
+                          style={{ width: "15px" }}
+                          src="/image/landingpage/arrow-forward.png"
+                        />
+                      </div>
+                    </button>
+                  </Linkk>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={"flex flex-col items-center mt-20"}>
+            <div
+              className={
+                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+              }
+            >
+              <div className={"grid justify-items-center"}>
+                <img
+                  src="/image/landingpage/hero-software.png"
+                  alt=""
+                  className={
+                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                  }
+                />
+              </div>
+              <div>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-center text-2xl text-darkgreen font-gilroybold font-bold"
+                  }
+                >
+                  Software
+                </p>
+                {/* <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold font-gilroysemibold mt-1 pb-[42.5px]"
+                  }
+                >
+                  Delivering custom-made software
+                </p> */}
+                <p
+                  className={
+                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                  }
+                >
+                  {t.aboutussoftwaredescription}
+                </p>
+
+                <div className={"text-center"}>
+                  <Linkk href="/software">
+                    <button
+                      className={
+                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"px-1"}>
+                          {locale == "en" ? "Build Now" : "Mulai sekarang"}
+                        </p>
+                        <img
+                          className={"py-1 px-1"}
+                          style={{ width: "15px" }}
+                          src="/image/landingpage/arrow-forward.png"
+                        />
+                      </div>
+                    </button>
+                  </Linkk>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className={"flex flex-col items-center mt-20"}>
+            <div
+              className={
+                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+              }
+            >
+              <div className={"grid justify-items-center"}>
+                <img
+                  src="/image/landingpage/hero-hardware.png"
+                  alt=""
+                  className={
+                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                  }
+                />
+              </div>
+              <div>
+                <p
+                  style={{ lineHeight: "120%" }}
+                  className={
+                    "text-center text-2xl text-accentpurple font-gilroybold font-bold"
+                  }
+                >
+                  Talents
+                </p>
+                {/* <p
+                  className={
+                    "text-center text-blackmig text-base font-gilroysemibold mt-1 pb-8"
+                  }
+                >
+                  Our people, your growth
+                </p> */}
+                <p
+                  style={{ lineHeight: "150%" }}
+                  className={
+                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                  }
+                >
+                  {t.aboutustalentdescription}
+                </p>
+
+                <div className={"text-center"}>
+                  <Linkk href="/talents">
+                    <button
+                      className={
+                        "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                      }
+                    >
+                      <div className={"flex flex-row justify-between"}>
+                        <p className={"px-1"}>
+                          {locale == "en" ? "Hire Now" : "Dirikan tim Anda"}
+                        </p>
+                        <img
+                          className={"py-1 px-1"}
+                          style={{ width: "15px" }}
+                          src="/image/landingpage/arrow-forward.png"
+                        />
+                      </div>
+                    </button>
+                  </Linkk>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </section>
 
       <section
         className={
-          "px-4 md:px-[113.5px] pt-4 md:pt-8 md:pb-[145px] bg-transp60"
+          "px-4 lg:px-[113.5px] pt-4 lg:pt-8 lg:pb-[145px] bg-transp60"
         }
       >
         <div>
           <h2
             style={{ lineHeight: "120%" }}
             className={
-              "font-gilroysemibold text-2xl text-blackmig md:text-[32px] pb-2"
+              "font-gilroysemibold text-2xl text-blackmig lg:text-[32px] pb-2"
             }
           >
             {t.aboutuslocation}
@@ -541,7 +738,7 @@ function AboutUs({}) {
           <p
             style={{ lineHeight: "120%" }}
             className={
-              "font-gilroysemibold pb-2 text-xl md:text-2xl text-blackmig"
+              "font-gilroysemibold pb-2 text-xl lg:text-2xl text-blackmig"
             }
           >
             {t.aboutusheadquarter}
@@ -589,7 +786,7 @@ function AboutUs({}) {
           <h2
             style={{ lineHeight: "120%" }}
             className={
-              "py-4 text-blackmig font-gilroysemibold text-xl md:text-[32px]"
+              "py-4 text-blackmig font-gilroysemibold text-xl lg:text-[32px]"
             }
           >
             {locale == "en" ? "Coverages" : "Area jangkauan kami"}
@@ -903,7 +1100,7 @@ function AboutUs({}) {
       </section>
       <section
         className={
-          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+          "youronestop hidden lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[31px] h-[173px]"
         }
       >
         <div className={"justify-start self-end"}>
@@ -915,7 +1112,7 @@ function AboutUs({}) {
         <div className={"container w-1/2 mx-auto"}>
           <div
             className={
-              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
             <h2
@@ -974,7 +1171,7 @@ function AboutUs({}) {
         </div>
       </section>
       <section
-        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+        className={"contactusphone mt-[100px] block lg:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div
