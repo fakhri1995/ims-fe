@@ -27,7 +27,8 @@ export class AttendanceActivityService {
    */
   static async add(
     axiosClient: AxiosInstance,
-    payload: IAddAttendanceActivityPayload
+    // payload: IAddAttendanceActivityPayload
+    payload: FormData
   ) {
     return await axiosClient.post<IAddAttendanceActivitySucceedResponse>(
       "/addAttendanceActivity",
@@ -36,13 +37,15 @@ export class AttendanceActivityService {
   }
 
   /**
-   * @access PUT /updateAttendanceActivity
+   * @access POST /updateAttendanceActivity
+   * update function must use POST because it cannot use PUT if File type in payload
    */
   static async update(
     axiosClient: AxiosInstance,
-    payload: IUpdateAttendanceActivityPayload
+    // payload: IUpdateAttendanceActivityPayload
+    payload: FormData
   ) {
-    return await axiosClient.put<HttpRequestBaseSucceedResponse>(
+    return await axiosClient.post<HttpRequestBaseSucceedResponse>(
       "/updateAttendanceActivity",
       payload
     );

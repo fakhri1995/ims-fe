@@ -102,11 +102,32 @@ export const AttendanceStaffAktivitasSection: FC<
       },
     ];
 
+    const renderCell = (text: string) => {
+      const regex = /\.(png|jpe?g|pdf|csv|docx?|pptx?|xlsx?)$/i;
+
+      if (regex.test(text)) {
+        return (
+          <a
+            onClick={(e) => e.stopPropagation()}
+            href={`https://cdn.mig.id/${text}`}
+            target="_blank"
+            rel="external"
+            className="truncate max-w-[200px]"
+          >
+            {text}
+          </a>
+        );
+      }
+
+      return text;
+    };
+
     dynamicNameFieldPairs.columnNames.forEach((column, index) => {
       columns.push({
         key: dynamicNameFieldPairs.fieldKeys[index],
         title: column,
         dataIndex: dynamicNameFieldPairs.fieldKeys[index],
+        render: renderCell,
       });
     });
 

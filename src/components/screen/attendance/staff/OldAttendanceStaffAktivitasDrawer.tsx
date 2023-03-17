@@ -12,19 +12,10 @@ import {
   UploadProps,
   notification,
 } from "antd";
-import { FormInstance } from "antd/es/form/Form";
 import { UploadChangeParam } from "antd/lib/upload";
 import { RcFile, UploadFile } from "antd/lib/upload/interface";
 import type { AxiosError, AxiosResponse } from "axios";
-import {
-  Dispatch,
-  FC,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 import DrawerCore from "components/drawer/drawerCore";
@@ -38,11 +29,7 @@ import {
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
 } from "lib/features";
-import {
-  getBase64,
-  objectToFormData,
-  permissionWarningNotification,
-} from "lib/helper";
+import { getBase64, permissionWarningNotification } from "lib/helper";
 
 import {
   FormAktivitasTypes,
@@ -86,8 +73,6 @@ export const AttendanceStaffAktivitasDrawer: FC<
   const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
 
-  const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
-
   const {
     addMutation: {
       mutate: addAttendanceActivity,
@@ -125,6 +110,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
         case FormAktivitasTypes.TEKS:
         case FormAktivitasTypes.PARAGRAPH:
         case FormAktivitasTypes.DROPDOWN:
+        case FormAktivitasTypes.UNGGAH:
           defaultValue = "";
           break;
         case FormAktivitasTypes.NUMERAL:
@@ -133,13 +119,12 @@ export const AttendanceStaffAktivitasDrawer: FC<
         case FormAktivitasTypes.CHECKLIST:
           defaultValue = [];
           break;
-        case FormAktivitasTypes.UNGGAH:
-          defaultValue = {};
-          break;
       }
       return { ...prev, [curr.key]: defaultValue };
     }, {});
   }, [userAttendanceForm]);
+
+  console.log({ formInitialValue });
 
   const onMutationSucceed = useCallback((response: AxiosResponse<any, any>) => {
     form.resetFields();
@@ -159,36 +144,25 @@ export const AttendanceStaffAktivitasDrawer: FC<
         return;
       }
 
-      // format payload to needed form in FormData
-      let allDetailObject = {};
-      let formValuesArr = Object.entries(formValues);
-      if (formValuesArr.length > 0) {
-        let detailObjectList = formValuesArr.map((detail, idx) => {
-          let obj = {};
-          obj[`details[${idx}][key]`] = detail[0];
-          obj[`details[${idx}][value]`] = _safeCastPayloadValue(detail[1]);
-          return obj;
-        });
-
-        for (let detailObject of detailObjectList) {
-          Object.assign(allDetailObject, detailObject);
-        }
-      }
-
       if (action === "create") {
         if (!isAllowedToAddActivity) {
           permissionWarningNotification("Membuat", "Aktivitas");
           return;
         }
 
-        const payload = {
+        const payload: IAddAttendanceActivityPayload = {
           attendance_form_id: userAttendanceForm.id,
-          ...allDetailObject,
+          details: [],
         };
 
-        const payloadFormData = objectToFormData(payload);
+        for (const [key, value] of Object.entries(formValues)) {
+          payload.details.push({
+            key,
+            value: _safeCastPayloadValue(value),
+          });
+        }
 
-        addAttendanceActivity(payloadFormData, {
+        addAttendanceActivity(payload, {
           onSuccess: onMutationSucceed,
           onError: onMutationFailed,
         });
@@ -198,14 +172,19 @@ export const AttendanceStaffAktivitasDrawer: FC<
           return;
         }
 
-        const payload = {
+        const payload: IUpdateAttendanceActivityPayload = {
           id: activityFormId,
-          ...allDetailObject,
+          details: [],
         };
 
-        const payloadFormData = objectToFormData(payload);
+        for (const [key, value] of Object.entries(formValues)) {
+          payload.details.push({
+            key,
+            value: _safeCastPayloadValue(value),
+          });
+        }
 
-        updateAttendanceActivity(payloadFormData, {
+        updateAttendanceActivity(payload, {
           onSuccess: onMutationSucceed,
           onError: onMutationFailed,
         });
@@ -314,21 +293,9 @@ export const AttendanceStaffAktivitasDrawer: FC<
                     >
                       <p className="mb-4 mt-2">{description}</p>
 
-                      {type === 6 ? (
-                        <Form.Item name={key} rules={[{ required }]}>
-                          {_renderDynamicUpload(
-                            key,
-                            form,
-                            isWebcamModalShown,
-                            setIsWebcamModalShown,
-                            visible
-                          )}
-                        </Form.Item>
-                      ) : (
-                        <Form.Item name={key} rules={[{ required }]}>
-                          {_renderDynamicInput(type, list)}
-                        </Form.Item>
-                      )}
+                      <Form.Item name={key} rules={[{ required }]}>
+                        {_renderDynamicInput(type, list)}
+                      </Form.Item>
                     </Form.Item>
                   );
                 }
@@ -350,59 +317,13 @@ const _renderDynamicInput = (
   type: FormAktivitasTypes,
   list?: Pick<Detail, "list">["list"]
 ) => {
-  switch (type) {
-    case FormAktivitasTypes.TEKS:
-      return <Input name="" type="text" />;
-
-    case FormAktivitasTypes.PARAGRAPH:
-      return <Input.TextArea />;
-
-    case FormAktivitasTypes.CHECKLIST:
-      return (
-        <Checkbox.Group className="flex flex-col space-x-0 space-y-4">
-          {list?.map((value, idx) => (
-            <Checkbox value={idx} key={idx}>
-              {value}
-            </Checkbox>
-          ))}
-        </Checkbox.Group>
-      );
-
-    case FormAktivitasTypes.NUMERAL:
-      return <InputNumber className="w-full" />;
-
-    case FormAktivitasTypes.DROPDOWN:
-      return (
-        <Select placeholder="Pilih nilai" allowClear>
-          {list?.map((value, idx) => (
-            <Select.Option value={value} key={idx}>
-              {value}
-            </Select.Option>
-          ))}
-        </Select>
-      );
-  }
-};
-
-/**
- * Generates a child for <Form.Item> component with upload type (UNGGAH).
- *
- * @private
- */
-const _renderDynamicUpload = (
-  key: string,
-  form: FormInstance<any>,
-  isWebcamModalShown: boolean,
-  setIsWebcamModalShown: Dispatch<SetStateAction<boolean>>,
-  visible: boolean
-) => {
   // START: Upload Field
+  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
 
   /** Uploaded file object. Wrapped as RcFile. Used as payload. */
   const [uploadedActivityPicture, setUploadedActivityPicture] = useState<
     RcFile | Blob | File
   >(null);
-  const [uploadPictureLoading, setUploadPictureLoading] = useState(false);
 
   /** Toggle preview modal on and off. */
   const [isPreviewActivityPicture, setIsPreviewActivityPicture] =
@@ -413,15 +334,6 @@ const _renderDynamicUpload = (
     useState("");
 
   const [fileList, setFileList] = useState<UploadFile<RcFile>[]>([]);
-
-  // Remove uploaded file when drawer closed
-  useEffect(() => {
-    if (!visible) {
-      onRemoveActivityPicture();
-      return;
-    }
-  }, [visible]);
-
   const onUploadChange = useCallback(
     ({ file }: UploadChangeParam<UploadFile<RcFile>>) => {
       setUploadPictureLoading(file.status === "uploading");
@@ -429,39 +341,21 @@ const _renderDynamicUpload = (
       if (file.status !== "removed") {
         setFileList([file]);
       }
-
-      form.setFieldsValue({ [key]: file?.originFileObj });
     },
     []
   );
+  const [isWebcamModalShown, setIsWebcamModalShown] = useState(false);
 
   /**
    * Validating uploaded file before finally attached to the paylaod.
    *
    * - Size max 5 MiB
-   * - File type should satisfy  [
-        "image/png",
-        "image/jpeg",
-        "application/pdf",
-        "text/csv",
-        "application/msword",
-        "application/vnd.ms-powerpoint",
-        "application/vnd.ms-excel",
-      ]
+   * - File type should satisfy ["image/png", "image/jpeg"]
    */
-  const beforeUploadActivityPicture = useCallback<
+  const beforeUploadEvidencePicture = useCallback<
     Pick<UploadProps, "beforeUpload">["beforeUpload"]
   >((uploadedFile) => {
-    const allowedFileTypes = [
-      "image/png",
-      "image/jpeg",
-      "application/pdf",
-      "text/csv",
-      "application/msword",
-      "application/vnd.ms-powerpoint",
-      "application/vnd.ms-excel",
-    ];
-
+    const allowedFileTypes = ["image/png", "image/jpeg"];
     if (!allowedFileTypes.includes(uploadedFile.type)) {
       return Upload.LIST_IGNORE;
     }
@@ -476,13 +370,11 @@ const _renderDynamicUpload = (
       return Upload.LIST_IGNORE;
     }
 
-    form.setFieldsValue({ [key]: uploadedFile });
     setUploadedActivityPicture(uploadedFile);
   }, []);
 
   const onRemoveActivityPicture = useCallback(() => {
     setFileList([]);
-    form.setFieldsValue({ [key]: "" });
     setUploadedActivityPicture(null);
   }, []);
 
@@ -520,11 +412,8 @@ const _renderDynamicUpload = (
           url: result,
         },
       ]);
-
       // Update File payload
-      form.setFieldsValue({ [key]: blobFile });
       setUploadedActivityPicture(blobFile);
-
       // Set preview base64 data
       setPreviewActivityPictureData(result);
 
@@ -534,68 +423,101 @@ const _renderDynamicUpload = (
   }, []);
   // END: Upload field
 
-  return (
-    <div className="flex flex-col space-y-6">
-      <div className="relative">
-        {/* Gunakan camera */}
-        <div className="flex items-center space-x-5">
-          <Button
-            className="mig-button mig-button--outlined-primary self-start"
-            onClick={() => {
-              setIsWebcamModalShown(true);
-            }}
+  switch (type) {
+    case FormAktivitasTypes.TEKS:
+      return <Input name="" type="text" />;
+
+    case FormAktivitasTypes.PARAGRAPH:
+      return <Input.TextArea />;
+
+    case FormAktivitasTypes.CHECKLIST:
+      return (
+        <Checkbox.Group className="flex flex-col space-x-0 space-y-4">
+          {list?.map((value, idx) => (
+            <Checkbox value={idx} key={idx}>
+              {value}
+            </Checkbox>
+          ))}
+        </Checkbox.Group>
+      );
+
+    case FormAktivitasTypes.NUMERAL:
+      return <InputNumber className="w-full" />;
+
+    case FormAktivitasTypes.DROPDOWN:
+      return (
+        <Select placeholder="Pilih nilai" allowClear>
+          {list?.map((value, idx) => (
+            <Select.Option value={value} key={idx}>
+              {value}
+            </Select.Option>
+          ))}
+        </Select>
+      );
+
+    case FormAktivitasTypes.UNGGAH:
+      return (
+        <div className="flex flex-col space-y-6">
+          <div className="relative">
+            {/* Gunakan camera */}
+            <div className="flex items-center space-x-5">
+              <Button
+                className="mig-button mig-button--outlined-primary self-start"
+                onClick={() => {
+                  setIsWebcamModalShown(true);
+                }}
+              >
+                <CameraOutlined />
+                Ambil Foto
+              </Button>
+
+              <span className="mig-caption--medium text-mono50">Atau</span>
+            </div>
+
+            {/* Upload from file */}
+            <Upload
+              capture
+              listType="picture"
+              name="file"
+              accept="image/png, image/jpeg"
+              maxCount={1}
+              beforeUpload={beforeUploadEvidencePicture}
+              onRemove={onRemoveActivityPicture}
+              onPreview={onPreviewActivityPicture}
+              disabled={uploadPictureLoading}
+              fileList={fileList}
+              onChange={onUploadChange}
+            >
+              <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
+                <UploadOutlined />
+                Unggah File
+              </Button>
+            </Upload>
+          </div>
+
+          <em className="text-mono50">Unggah File JPEG (Maksimal 5 MB)</em>
+          <Modal
+            title="Foto Aktivitas"
+            visible={isPreviewActivityPicture}
+            footer={null}
+            onCancel={() => setIsPreviewActivityPicture(false)}
+            centered
           >
-            <CameraOutlined />
-            Ambil Foto
-          </Button>
+            <img
+              alt="Preview Activity Picture"
+              src={previewActivityPictureData}
+            />
+          </Modal>
 
-          <span className="mig-caption--medium text-mono50">Atau</span>
+          <AttendanceStaffWebcamModal
+            visible={isWebcamModalShown}
+            title="Ambil foto aktivitas"
+            onCancel={() => setIsWebcamModalShown(false)}
+            onOk={onWebcamModalFinished}
+          />
         </div>
-
-        {/* Upload from file */}
-        <Upload
-          capture
-          listType="picture"
-          name="file"
-          accept="image/png, image/jpeg, application/pdf,
-                      text/csv,
-                      application/msword,
-                      application/vnd.ms-powerpoint,
-                      application/vnd.ms-excel"
-          maxCount={1}
-          beforeUpload={beforeUploadActivityPicture}
-          onRemove={onRemoveActivityPicture}
-          onPreview={onPreviewActivityPicture}
-          disabled={uploadPictureLoading}
-          fileList={fileList}
-          onChange={onUploadChange}
-        >
-          <Button className="mig-button mig-button--outlined-primary absolute top-0 right-0">
-            <UploadOutlined />
-            Unggah File
-          </Button>
-        </Upload>
-      </div>
-
-      <em className="text-mono50">Unggah File JPEG (Maksimal 5 MB)</em>
-      <Modal
-        title="Foto Aktivitas"
-        visible={isPreviewActivityPicture}
-        footer={null}
-        onCancel={() => setIsPreviewActivityPicture(false)}
-        centered
-      >
-        <img alt="Preview Activity Picture" src={previewActivityPictureData} />
-      </Modal>
-
-      <AttendanceStaffWebcamModal
-        visible={isWebcamModalShown}
-        title="Ambil foto aktivitas"
-        onCancel={() => setIsWebcamModalShown(false)}
-        onOk={onWebcamModalFinished}
-      />
-    </div>
-  );
+      );
+  }
 };
 
 /**
