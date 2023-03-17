@@ -515,16 +515,20 @@ export const useMutateAttendanceActivity = () => {
   }, []);
 
   const addMutation = useMutation(
-    (payload: IAddAttendanceActivityPayload) =>
-      AttendanceActivityService.add(axiosClient, payload),
+    (
+      payload: FormData
+      // IAddAttendanceActivityPayload
+    ) => AttendanceActivityService.add(axiosClient, payload),
     {
       onSuccess: onSucceed,
     }
   );
 
   const updateMutation = useMutation(
-    (payload: IUpdateAttendanceActivityPayload) =>
-      AttendanceActivityService.update(axiosClient, payload),
+    (
+      payload: FormData
+      // IUpdateAttendanceActivityPayload
+    ) => AttendanceActivityService.update(axiosClient, payload),
     {
       onSuccess: onSucceed,
     }
