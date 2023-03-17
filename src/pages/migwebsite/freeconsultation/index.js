@@ -61,7 +61,7 @@ function FreeConsultation({}) {
       </Head>
       <section
         className={
-          "xl:pl-[112px] 2xl:pl-[224px] flex flex-row md:justify-between"
+          "px-[60px] xl:pl-[112px] 2xl:pl-[224px] flex flex-row lg:justify-between"
         }
       >
         <div className="lg:pt-0 w-full lg:w-[52%] px-4 lg:px-0">
