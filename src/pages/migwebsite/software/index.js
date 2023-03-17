@@ -460,11 +460,11 @@ function Software({}) {
       {showForm == false && (
         <section
           className={
-            "section1advantages hidden md:block fixed w-full z-50 px-4 md:px-[113.5px]"
+            "section1advantages hidden lg:block fixed w-full z-50 px-4 lg:px-[113.5px]"
           }
           style={{ background: "#F4F4F4" }}
         >
-          <div className={"block md:flex container mx-auto"}>
+          <div className={"block lg:flex container mx-auto"}>
             <div className={"flex py-4"}>
               <Link href={{ pathname: "/hardware" }}>
                 <p
@@ -506,8 +506,8 @@ function Software({}) {
           <section
             className={
               formActive == "first"
-                ? "hidden xl:pl-[112px] 2xl:pl-[224px] py-[76px] md:flex md:flex-row md:justify-between"
-                : "hidden xl:pl-[112px] 2xl:pl-[224px] py-[76px] md:flex md:flex-row"
+                ? "hidden xl:pl-[112px] 2xl:pl-[224px] py-[76px] lg:flex lg:flex-row lg:justify-between"
+                : "hidden xl:pl-[112px] 2xl:pl-[224px] py-[76px] lg:flex lg:flex-row"
             }
           >
             {formActive == "first" ? (
@@ -1075,13 +1075,11 @@ function Software({}) {
           {/* section form mobile */}
           <section
             className={
-              formActive == "first"
-                ? "px-4 py-9 lg:hidden"
-                : "px-4 py-9 lg:hidden"
+              formActive == "first" ? "px-4 lg:hidden" : "px-4 lg:hidden"
             }
           >
             {formActive == "first" ? (
-              <div className="w-full">
+              <div className="w-full mt-0 md:mt-12">
                 <p
                   style={{ lineHeight: "120%" }}
                   className={"text-xl text-primarygreen font-gilroysemibold"}
@@ -1212,7 +1210,7 @@ function Software({}) {
                     </div>
                     <div className={"border border-dividermig w-full"}></div>
                     <Form.Item>
-                      <div className={"w-full flex justify-start mt-2"}>
+                      <div className={"w-full flex justify-start mt-2 mb-4"}>
                         <button
                           type={"submit"}
                           className={
@@ -1455,7 +1453,7 @@ function Software({}) {
                     </button>
                     <button
                       className={
-                        "text-white bg-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between"
+                        "text-white bg-primarygreen rounded py-2 pl-4 pr-2.5 flex flex-row justify-between mb-4"
                       }
                     >
                       <p className={"text-base text-white"}>{t.next}</p>
@@ -1618,7 +1616,7 @@ function Software({}) {
                     type={"submit"}
                     onClick={() => submitFormSoftware("mobile")}
                     className={
-                      "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] flex flex-row justify-between"
+                      "text-white bg-primarygreen rounded py-2 pl-4 pr-[12.18px] mb-4 flex flex-row justify-between"
                     }
                   >
                     <p className={"text-base text-white"}>{t.next}</p>
@@ -1651,9 +1649,9 @@ function Software({}) {
       ) : (
         <div className={"noform"}>
           <section
-            className={"section2software py-4 md:py-16 px-4 md:px-[113.5px]"}
+            className={"section2software py-4 lg:py-16 px-4 lg:px-[113.5px]"}
           >
-            <div className={"hidden md:flex container mt-16 mx-auto"}>
+            <div className={"hidden lg:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <h1
                   style={{ lineHeight: "120%" }}
@@ -1772,7 +1770,7 @@ function Software({}) {
                 <img src="/image/landingpage/Software.png"></img>
               </div>
             </div>
-            <div className={"block md:hidden py-9 px-4"}>
+            <div className={"block lg:hidden py-9 px-4"}>
               <div className={""}>
                 <p
                   className={
@@ -1793,7 +1791,7 @@ function Software({}) {
                   {t.softwareheosectionsubtitle}
                 </p>
               </div>
-              <div>
+              <div className={"w-[328px] mx-auto"}>
                 <p className={"font-gilroysemibold text-primarygreen text-sm"}>
                   {t.hardwarereachus}
                 </p>
@@ -1824,7 +1822,7 @@ function Software({}) {
               </div>
               <div
                 className={
-                  "mt-6 w-[328px] border rounded-lg p-2 bg-greentrans15"
+                  "mt-6 w-[328px] border rounded-lg p-2 bg-greentrans15 mx-auto"
                 }
               >
                 <div className={"flex flex-row"}>
@@ -1868,13 +1866,13 @@ function Software({}) {
           {/*section software portofolio */}
           <section
             className={
-              "section3software hidden md:block bg-bgjoinmig px-[52px] md:px-[113.5px] py-12"
+              "section3software hidden lg:block bg-bgjoinmig px-[52px] lg:px-[113.5px] py-12"
             }
           >
             <h2
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-[36px] text-center font-gilroysemibold py-8 md:py-0 mb-10"
+                "text-xl lg:text-[36px] text-center font-gilroysemibold py-8 lg:py-0 mb-10"
               }
             >
               {t.softwarepastworksectiontitle1}{" "}
@@ -1903,7 +1901,7 @@ function Software({}) {
                 </div>
               </button>
               <div
-                className={"center md:content-around hidden md:block"}
+                className={"center lg:content-around hidden lg:block"}
                 style={{ maxWidth: "1145px" }}
               >
                 <Slider {...sliderSettings2} ref={slider2}>
@@ -2047,7 +2045,7 @@ function Software({}) {
           {/*section portofolio mobile */}
           <section
             className={
-              "section3software block md:hidden bg-bgjoinmig px-6 pt-9 pb-[72px]"
+              "section3software block lg:hidden bg-bgjoinmig px-6 pt-9 pb-[72px]"
             }
           >
             <p className={"text-xl text-center font-gilroysemibold"}>
@@ -2158,7 +2156,7 @@ function Software({}) {
               </Slider>
             </div>
           </section>
-          <section className={"px-8 md:px-[113.5px] py-9 md:py-16"}>
+          <section className={"px-8 lg:px-[113.5px] py-9 lg:py-16"}>
             <div className={"container mx-auto text-center"}>
               <div className={"pb-12"}>
                 <p
@@ -2171,11 +2169,11 @@ function Software({}) {
                 </p>
               </div>
               <img className={"m-auto w-full"} src="/image-software.png"></img>
-              <div className={"mt-1 md:mt-4 mx-auto"}>
+              <div className={"mt-1 lg:mt-4 mx-auto"}>
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm md:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
+                      "text-sm lg:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2 mt-4"
                     }
                   >
                     <p className={"text-base lg:text-xl font-gilroysemibold"}>
@@ -2192,15 +2190,15 @@ function Software({}) {
               "section3softwarebrowser bg-transp60 py-9 lg:py-12 px-4 lg:px-[113.5px]"
             }
           >
-            <div className={"flex md:flex-row"}>
-              <div className={"hidden md:block w-2/5"}>
+            <div className={"flex lg:flex-row"}>
+              <div className={"hidden lg:block w-2/5"}>
                 <img
                   src="/image/people/People-Solution.png"
                   className={"w-full h-[282px]"}
                   alt=""
                 />
               </div>
-              <div className="flex flex-col md:w-3/5 md:ml-[40px]">
+              <div className="flex flex-col lg:w-3/5 lg:ml-[40px]">
                 <h2
                   style={{ lineHeight: "120%" }}
                   className="mb-2 text-xl lg:text-[28px] text-center lg:text-left font-gilroysemibold text-blackmig"
@@ -2216,7 +2214,7 @@ function Software({}) {
                   </span>{" "}
                   {t.softwarewhyussectiontitle3}
                 </h2>
-                <div className={"block md:hidden mx-auto my-[17px]"}>
+                <div className={"block lg:hidden mx-auto my-[17px]"}>
                   <img
                     src="/image/people/People-Solution.png"
                     className={"w-[253px] h-[150px]"}
@@ -2231,7 +2229,7 @@ function Software({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="ml-3.5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.softwarehyyousectionlist1}
                     </h5>
@@ -2251,7 +2249,7 @@ function Software({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="ml-3.5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.softwarehyyousectionlist2}
                     </h5>
@@ -2271,7 +2269,7 @@ function Software({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="ml-3.5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.softwarehyyousectionlist3}
                     </h5>
@@ -2289,14 +2287,14 @@ function Software({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser hidden lg:block bg-white py-4 md:py-16 px-4 md:px-[113.5]"
+              "section4howitworkbrowser hidden lg:block bg-white py-4 lg:py-16 px-4 lg:px-[113.5]"
             }
           >
             <div className={"container text-center mx-auto"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl md:text-[36px] font-gilroysemibold py-8 md:py-0"
+                  "text-xl lg:text-[36px] font-gilroysemibold py-8 lg:py-0"
                 }
               >
                 {locale == "en"
@@ -2313,7 +2311,7 @@ function Software({}) {
                 ?
               </h2>
             </div>
-            <div className={"flex flex-row justify-between md:px-20 mt-10"}>
+            <div className={"flex flex-row justify-between lg:px-20 mt-10"}>
               <div className={""}>
                 <div className={"w-[360px]"}>
                   <img
@@ -2324,7 +2322,7 @@ function Software({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm md:text-xl font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm lg:text-xl font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.softwarehowitwork1}
@@ -2346,7 +2344,7 @@ function Software({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-xl font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-xl font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork2}
@@ -2367,7 +2365,7 @@ function Software({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-xl font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-xl font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork3}
@@ -2377,7 +2375,7 @@ function Software({}) {
           </section>
           {/*section how it work mobile */}
           <section
-            className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
+            className={"section4howitworkmobile lg:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
               {locale == "en"
@@ -2431,12 +2429,12 @@ function Software({}) {
           {dataTestimonial && (
             <section
               className={
-                "section3landingpageadvantages hidden md:block bg-bgjoinmig pt-4 md:pt-12 pb-[30px] md:pb-[179px] px-[30px] md:px-[106px]"
+                "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-4 lg:pt-12 pb-[30px] lg:pb-[179px] px-[30px] lg:px-[106px]"
               }
             >
               <p
                 className={
-                  "text-xl md:text-[32px] text-center font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-[32px] text-center font-gilroysemibold mb-[42px]"
                 }
               >
                 {t.customerstorieslandingpage}
@@ -2464,13 +2462,13 @@ function Software({}) {
                   ""
                 )}
                 <div
-                  className={"center md:content-around hidden md:block"}
+                  className={"center lg:content-around hidden lg:block"}
                   style={{ maxWidth: 1000 }}
                 >
                   <Slider {...sliderSettings2} ref={slider}>
                     {dataTestimonial
                       ? dataTestimonial.map((data1) => (
-                          <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
+                          <div className="pt-6 pb-8 lg:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
                             <div className={"flex flex-row justify-between"}>
                               <div className={"w-[45%]"}>
                                 <div className={"flex relative self-center "}>
@@ -2604,7 +2602,7 @@ function Software({}) {
                                 />
                                 {locale == "en" ? (
                                   <Linkk
-                                    href={`/customerstories/${data1.page_path}`}
+                                    href={`/migwebsite/customerstories/${data1.page_path}`}
                                   >
                                     <button
                                       className={
@@ -2693,17 +2691,17 @@ function Software({}) {
           {dataTestimonial && (
             <section
               className={
-                "sectiontestimonialmobile block md:hidden bg-bgjoinmig pt-8 pb-[178px] px-[30px] md:px-10"
+                "sectiontestimonialmobile block lg:hidden bg-bgjoinmig pt-8 pb-[178px] px-[30px] lg:px-10"
               }
             >
               <p
                 className={
-                  "text-xl md:text-[32px] text-center font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                  "text-xl lg:text-[32px] text-center font-gilroysemibold lg:py-0 mb-7 lg:mb-10"
                 }
               >
                 {t.customerstorieslandingpage}
               </p>
-              <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
+              <div className={"block lg:hidden"} style={{ maxWidth: 1000 }}>
                 <Slider {...sliderSettingsPhone}>
                   {dataTestimonial.map((data1) => (
                     <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
@@ -2826,7 +2824,7 @@ function Software({}) {
                   ))}
                 </Slider>
               </div>
-              <div className={"block md:hidden mt-16 flex justify-center"}>
+              <div className={"block lg:hidden mt-16 flex justify-center"}>
                 <Linkk href={`/migwebsite/customerstories`}>
                   <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
                     <div className={"flex flex-row justify-around"}>
@@ -2851,8 +2849,8 @@ function Software({}) {
           <section
             className={
               dataTestimonial
-                ? "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter -mt-3 pt-8"
-                : "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter mt-[100px] pt-8"
+                ? "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter -mt-3 pt-8"
+                : "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter mt-[100px] pt-8"
             }
           >
             <div className={"justify-start self-end"}>
@@ -2862,7 +2860,7 @@ function Software({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
+              <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}
@@ -2921,7 +2919,7 @@ function Software({}) {
           {/*section contact us mobile */}
           <section
             className={
-              "contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"
+              "contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"
             }
           >
             <div className={"container mx-auto"}>

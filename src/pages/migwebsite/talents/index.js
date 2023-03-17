@@ -742,11 +742,11 @@ function Talents({}) {
       {showForm == false && (
         <section
           className={
-            "section1advantages hidden md:block fixed w-full z-50 px-4 md:px-[112px]"
+            "section1advantages hidden lg:block fixed w-full z-50 px-4 lg:px-[112px]"
           }
           style={{ background: "#F4F4F4" }}
         >
-          <div className={"block md:flex container mx-auto"}>
+          <div className={"block lg:flex container mx-auto"}>
             <div className={"flex py-4"}>
               <Link href={{ pathname: "/hardware" }}>
                 <p
@@ -2139,7 +2139,7 @@ function Talents({}) {
             }
           >
             {formActive == "first" ? (
-              <div className="w-full">
+              <div className="w-full mt-0 md:mt-8">
                 <p className={"text-xl text-primarygreen font-gilroysemibold"}>
                   {t.thankyouforyourinterest}
                 </p>
@@ -2257,7 +2257,7 @@ function Talents({}) {
                         <button
                           type={"submit"}
                           className={
-                            "rounded text-white border-2 bg-primarygreen border-primarygreen py-2 pl-4 pr-[12.18px] mt-9"
+                            "rounded text-white border-2 bg-primarygreen border-primarygreen py-2 pl-4 pr-[12.18px] mt-9 mx-auto"
                           }
                         >
                           <div className={"flex flex-row justify-between"}>
@@ -2277,7 +2277,7 @@ function Talents({}) {
                 </div>
               </div>
             ) : formActive == "second" ? (
-              <div className="w-full">
+              <div className="w-full mt-0 md:mt-8">
                 <Form
                   id="formsoftware"
                   layout={"vertical"}
@@ -2394,7 +2394,7 @@ function Talents({}) {
                 </Form>
               </div>
             ) : formActive == "third" ? (
-              <div className="w-full">
+              <div className="w-full mt-0 md:mt-8">
                 <Modal
                   open={modalDelete}
                   onCancel={handleCancelDelete}
@@ -2941,7 +2941,7 @@ function Talents({}) {
                 </Form>
               </div>
             ) : (
-              <div className="w-full">
+              <div className="w-full mt-0 md:mt-8">
                 <p
                   style={{ lineHeight: "120%" }}
                   className={"text-base text-blackmig font-gilroysemibold"}
@@ -3275,10 +3275,10 @@ function Talents({}) {
         <div>
           <section
             className={
-              "section2talents py-4 md:py-12 md:px-[113.5px] px-4 mx-auto mt:4 md:mt-12"
+              "section2talents py-4 lg:py-12 lg:px-[113.5px] px-4 mx-auto mt:4 lg:mt-12"
             }
           >
-            <div className={"hidden md:flex justify-between container mx-auto"}>
+            <div className={"hidden lg:flex justify-between container mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <h1
                   style={{ lineHeight: "120%" }}
@@ -3402,7 +3402,7 @@ function Talents({}) {
               </div>
             </div>
             {/*section 1 talents mobile */}
-            <div className={"block md:hidden py-9 px-4"}>
+            <div className={"block lg:hidden py-9 px-4"}>
               <div className={""}>
                 <p
                   className={
@@ -3423,7 +3423,7 @@ function Talents({}) {
                   {t.talentherodescription}
                 </p>
               </div>
-              <div>
+              <div className={"w-[328px] mx-auto"}>
                 <p className={"font-gilroysemibold text-primarygreen text-sm"}>
                   {t.talentheroreachus}
                 </p>
@@ -3493,7 +3493,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section2talentsnew py-4 md:py-12 md:px-[113.5px] px-4 mx-auto mt:4 md:mt-12"
+              "section2talentsnew py-4 lg:py-12 lg:px-[113.5px] px-4 mx-auto mt:4 lg:mt-12"
             }
           >
             <h2
@@ -3506,24 +3506,24 @@ function Talents({}) {
             </h2>
             <p
               style={{ lineHeight: "150%" }}
-              className={"text-base md:text-xl text-blackmig text-center mt-4"}
+              className={"text-base lg:text-xl text-blackmig text-center mt-4"}
             >
               {t.section2talentsubtitle}
             </p>
             <div className={"mt-5"}>
               <p
                 style={{ lineHeight: "150%" }}
-                className={"text-blackmig text-xl md:text-2xl text-center"}
+                className={"text-blackmig text-xl lg:text-2xl text-center"}
               >
                 {t.section2talentsubtitle2}:
               </p>
             </div>
             <div
-              className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
+              className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
             >
               <div
                 className={
-                  "flex flex-row md:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3534,7 +3534,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
                     {t.section2talentpoint1}
@@ -3543,7 +3543,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 lg:mt-0 md:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3554,7 +3554,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
                     {t.section2talentpoint2}
@@ -3563,11 +3563,11 @@ function Talents({}) {
               </div>
             </div>
             <div
-              className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
+              className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
             >
               <div
                 className={
-                  "flex flex-row md:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3578,7 +3578,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
                     {t.section2talentpoint3}
@@ -3587,7 +3587,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 items-center lg:mt-0 md:mx-[25px] w-full lg:w-[500px]"
+                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3598,7 +3598,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base md:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
                     }
                   >
                     {t.section2talentpoint4}
@@ -3609,13 +3609,13 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section3talents bg-bgjoinmig py-9 md:py-12 px-4 md:px-[113.5px]"
+              "section3talents bg-bgjoinmig py-9 lg:py-12 px-4 lg:px-[113.5px]"
             }
           >
             <h2
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-[36px] text-center font-gilroysemibold"
+                "text-xl lg:text-[36px] text-center font-gilroysemibold"
               }
             >
               {locale == "en"
@@ -3633,37 +3633,37 @@ function Talents({}) {
             </h2>
 
             <div
-              className={"mt-7 md:mt-12 md:flex md:flex-row md:justify-center"}
+              className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
             >
               <div
                 className={
-                  "md:w-[600px] h-[151px] md:h-[176px] bg-white md:mr-[19px] rounded-lg p-4 pb-6"
+                  "lg:w-[600px] h-[151px] lg:h-[176px] bg-white lg:mr-[19px] rounded-lg p-4 pb-6"
                 }
                 style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
                     className={
-                      "w-[56px] h-[56px] self-center md:self-start md:w-[100px] md:h-[100px]"
+                      "w-[56px] h-[56px] self-center lg:self-start lg:w-[100px] lg:h-[100px]"
                     }
                     src="/image/people/engineering.png"
                   />
                   <div
                     className={
-                      "ml-4 md:w-[452px] flex flex-col justify-between pb-1 h-[81px] self-center"
+                      "ml-4 lg:w-[452px] flex flex-col justify-between pb-1 h-[81px] self-center"
                     }
                   >
                     <div>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentblue font-gilroybold text-base md:text-2xl"
+                          "text-accentblue font-gilroybold text-base lg:text-2xl"
                         }
                       >
                         Engineering
                       </p>
                     </div>
-                    <div className={"mt-2 md:mt-0"}>
+                    <div className={"mt-2 lg:mt-0"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3673,7 +3673,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
                         }
                       >
                         Website Developer, Android/IOS Developer,{" "}
@@ -3706,14 +3706,14 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "mt-7 md:mt-0 md:w-[600px] h-[151px] md:h-[176px] bg-white rounded-lg p-4 pb-6"
+                  "mt-7 lg:mt-0 lg:w-[600px] h-[151px] lg:h-[176px] bg-white rounded-lg p-4 pb-6"
                 }
                 style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
                     className={
-                      "w-[56px] h-[56px] self-center md:self-start md:w-[100px] md:h-[100px]"
+                      "w-[56px] h-[56px] self-center lg:self-start lg:w-[100px] lg:h-[100px]"
                     }
                     src="/image/people/data.png"
                   />
@@ -3726,13 +3726,13 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentpink font-gilroybold text-base md:text-2xl"
+                          "text-accentpink font-gilroybold text-base lg:text-2xl"
                         }
                       >
                         Data
                       </p>
                     </div>
-                    <div className={"mt-2 md:mt-0"}>
+                    <div className={"mt-2 lg:mt-0"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3742,7 +3742,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
                         }
                       >
                         Data Scientist, Data/Business Intelligence Analyst,{" "}
@@ -3776,32 +3776,32 @@ function Talents({}) {
             </div>
             <div
               className={
-                "mt-7 md:mt-[42px] md:flex md:flex-row md:justify-center"
+                "mt-7 lg:mt-[42px] lg:flex lg:flex-row lg:justify-center"
               }
             >
               <div
                 className={
-                  "md:w-[600px] h-[151px] md:h-[176px] bg-white md:mr-[19px] rounded-lg p-4 pb-6"
+                  "lg:w-[600px] h-[151px] lg:h-[176px] bg-white lg:mr-[19px] rounded-lg p-4 pb-6"
                 }
                 style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
                     className={
-                      "w-[56px] h-[56px] self-center md:self-start md:w-[100px] md:h-[100px]"
+                      "w-[56px] h-[56px] self-center lg:self-start lg:w-[100px] lg:h-[100px]"
                     }
                     src="/image/people/design.png"
                   />
                   <div
                     className={
-                      "ml-4 md:w-[452px] flex flex-col justify-between pb-1 h-[81px] self-center"
+                      "ml-4 lg:w-[452px] flex flex-col justify-between pb-1 h-[81px] self-center"
                     }
                   >
                     <div>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentpurple font-gilroybold text-base md:text-2xl"
+                          "text-accentpurple font-gilroybold text-base lg:text-2xl"
                         }
                       >
                         Design
@@ -3817,7 +3817,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
                         }
                       >
                         Product Designer, Web Designer, Graphic Designer,{" "}
@@ -3850,14 +3850,14 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "mt-7 md:mt-0 md:w-[600px] h-[151px]  md:h-[176px] bg-white rounded-lg p-4 pb-6"
+                  "mt-7 lg:mt-0 lg:w-[600px] h-[151px]  lg:h-[176px] bg-white rounded-lg p-4 pb-6"
                 }
                 style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
               >
                 <div className={"flex flex-row"}>
                   <img
                     className={
-                      "w-[56px] h-[56px] self-center md:self-start md:w-[100px] md:h-[100px]"
+                      "w-[56px] h-[56px] self-center lg:self-start lg:w-[100px] lg:h-[100px]"
                     }
                     src="/image/people/product.png"
                   />
@@ -3870,13 +3870,13 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-primarygreen font-gilroybold text-lg md:text-2xl"
+                          "text-primarygreen font-gilroybold text-lg lg:text-2xl"
                         }
                       >
                         Product
                       </p>
                     </div>
-                    <div className={"mt-2 md:mt-0"}>
+                    <div className={"mt-2 lg:mt-0"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3886,7 +3886,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs md:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
                         }
                       >
                         Product Manager, Product Analyst, Project Manager,{" "}
@@ -3920,13 +3920,13 @@ function Talents({}) {
             </div>
             <div
               className={
-                "mt-7 md:mt-[42px] text-center md:mx-auto md:w-[646px]"
+                "mt-7 lg:mt-[42px] text-center lg:mx-auto lg:w-[646px]"
               }
             >
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  " font-gilroysemibold text-sm px-2 md:px-0  md:text-xl"
+                  " font-gilroysemibold text-sm px-2 lg:px-0  lg:text-xl"
                 }
               >
                 {t.talentherocustomizetext}
@@ -3934,17 +3934,17 @@ function Talents({}) {
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  "font-regular font-gilroyregular text-sm px-2 md:px-0  md:text-xl"
+                  "font-regular font-gilroyregular text-sm px-2 lg:px-0  lg:text-xl"
                 }
               >
                 {t.talentherocustomizetext2}
               </p>
             </div>
-            <div className={"mt-1 md:mt-4 flex justify-center"}>
+            <div className={"mt-1 lg:mt-4 flex justify-center"}>
               <Link href="/contactus">
                 <button
                   className={
-                    "text-sm md:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-bgjoinmig border-primarygreen px-4 py-2 md:px-2 mt-4"
+                    "text-sm lg:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-bgjoinmig border-primarygreen px-4 py-2 lg:px-2 mt-4"
                   }
                 >
                   <p className={"text-xl  font-gilroysemibold"}>
@@ -3967,7 +3967,7 @@ function Talents({}) {
             }
             footer={null}
           >
-            <div className={"hidden md:flex  flex-row"}>
+            <div className={"hidden lg:flex  flex-row"}>
               <img
                 className={"w-[63px] h-[63px]"}
                 src="/image/people/engineering.png"
@@ -3988,7 +3988,7 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"md:hidden mx-auto"}>
+            <div className={"lg:hidden mx-auto"}>
               <p className={"text-center text-xl font-gilroybold"}>
                 Engineering
               </p>
@@ -4000,7 +4000,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"text-darkgrey"}>
-              <div className={"mt-8 md:hidden"}>
+              <div className={"mt-8 lg:hidden"}>
                 <p className={"text-xs text-darkgrey font-gilroysemibold"}>
                   {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
@@ -4046,14 +4046,14 @@ function Talents({}) {
                 </ul>
               </div>
             </div>
-            <div className={"hidden md:block"}>
+            <div className={"hidden lg:block"}>
               <div
                 className={"mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6"}
               >
                 <div className={"flex flex-row justify-end mr-4"}>
                   <p
                     className={
-                      "text-base text-mig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-mig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                     }
                   >
                     {t.interestwithourtalent}
@@ -4061,7 +4061,7 @@ function Talents({}) {
                   <button
                     onClick={handleHireTalent}
                     className={
-                      "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
+                      "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen lg:px-4 mt-3.5"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
@@ -4078,12 +4078,12 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"block md:hidden"}>
+            <div className={"block lg:hidden"}>
               <div className={"mt-8 bg-bgjoinmig h-[108px] w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-mig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-mig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                     }
                   >
                     {t.interestwithourtalent}
@@ -4126,7 +4126,7 @@ function Talents({}) {
             }
             footer={null}
           >
-            <div className={"hidden md:flex  flex-row"}>
+            <div className={"hidden lg:flex  flex-row"}>
               <img
                 className={"w-[63px] h-[63px]"}
                 src="/image/people/data.png"
@@ -4147,7 +4147,7 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"md:hidden mx-auto"}>
+            <div className={"lg:hidden mx-auto"}>
               <p className={"text-center text-xl font-gilroybold"}>Data</p>
               <div className={"flex justify-center mt-4"}>
                 <img
@@ -4157,7 +4157,7 @@ function Talents({}) {
               </div>
             </div>
             <div classname={"text-darkgrey"}>
-              <div className={"mt-8 md:hidden"}>
+              <div className={"mt-8 lg:hidden"}>
                 <p className={"text-xs font-gilroysemibold"}>
                   {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
@@ -4204,13 +4204,13 @@ function Talents({}) {
             </div>
             <div
               className={
-                "mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6 hidden md:block"
+                "mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6 hidden lg:block"
               }
             >
               <div className={"flex flex-row justify-end mr-4"}>
                 <p
                   className={
-                    "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                    "text-base text-blackmig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                   }
                 >
                   {t.interestwithourtalent}
@@ -4218,7 +4218,7 @@ function Talents({}) {
                 <button
                   onClick={handleHireTalent}
                   className={
-                    "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
+                    "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen lg:px-4 mt-3.5"
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
@@ -4234,12 +4234,12 @@ function Talents({}) {
                 </button>
               </div>
             </div>
-            <div className={"block md:hidden"}>
+            <div className={"block lg:hidden"}>
               <div className={"mt-8 bg-bgjoinmig h-[108px] w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-blackmig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                     }
                   >
                     {t.interestwithourtalent}
@@ -4283,7 +4283,7 @@ function Talents({}) {
             }
             footer={null}
           >
-            <div className={"hidden md:flex  flex-row"}>
+            <div className={"hidden lg:flex  flex-row"}>
               <img
                 className={"w-[63px] h-[63px]"}
                 src="/image/people/product.png"
@@ -4310,7 +4310,7 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"md:hidden mx-auto"}>
+            <div className={"lg:hidden mx-auto"}>
               <p className={"text-center text-xl font-gilroybold"}>Product</p>
               <div className={"flex justify-center mt-4"}>
                 <img
@@ -4320,7 +4320,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"text-darkgrey"}>
-              <div className={"mt-8 md:hidden"}>
+              <div className={"mt-8 lg:hidden"}>
                 <p className={"text-xs font-gilroysemibold"}>
                   {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
@@ -4361,13 +4361,13 @@ function Talents({}) {
             </div>
             <div
               className={
-                "mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6 hidden md:block"
+                "mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6 hidden lg:block"
               }
             >
               <div className={"flex flex-row justify-end mr-4"}>
                 <p
                   className={
-                    "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                    "text-base text-blackmig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                   }
                 >
                   {t.interestwithourtalent}
@@ -4375,7 +4375,7 @@ function Talents({}) {
                 <button
                   onClick={handleHireTalent}
                   className={
-                    "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
+                    "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen lg:px-4 mt-3.5"
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
@@ -4391,12 +4391,12 @@ function Talents({}) {
                 </button>
               </div>
             </div>
-            <div className={"block md:hidden"}>
+            <div className={"block lg:hidden"}>
               <div className={"mt-8 bg-bgjoinmig h-[108px] w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-blackmig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                     }
                   >
                     {t.interestwithourtalent}
@@ -4439,7 +4439,7 @@ function Talents({}) {
             }
             footer={null}
           >
-            <div className={"hidden md:flex  flex-row"}>
+            <div className={"hidden lg:flex  flex-row"}>
               <img
                 className={"w-[63px] h-[63px]"}
                 src="/image/people/design.png"
@@ -4460,7 +4460,7 @@ function Talents({}) {
                 </div>
               </div>
             </div>
-            <div className={"md:hidden mx-auto"}>
+            <div className={"lg:hidden mx-auto"}>
               <p className={"text-center text-xl font-gilroybold"}>Design</p>
               <div className={"flex justify-center mt-4"}>
                 <img
@@ -4470,7 +4470,7 @@ function Talents({}) {
               </div>
             </div>
             <div className={"text-darkgrey"}>
-              <div className={"mt-8 md:hidden"}>
+              <div className={"mt-8 lg:hidden"}>
                 <p className={"text-xs font-gilroysemibold"}>
                   {locale == "en" ? "Working Period" : "Pilihan Masa Kontrak"}
                 </p>
@@ -4513,13 +4513,13 @@ function Talents({}) {
             </div>
             <div
               className={
-                "mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6 hidden md:block"
+                "mt-8 bg-bgjoinmig h-[72px] w-[777px] -mx-6 -mb-6 hidden lg:block"
               }
             >
               <div className={"flex flex-row justify-end mr-4"}>
                 <p
                   className={
-                    "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                    "text-base text-blackmig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                   }
                 >
                   {t.interestwithourtalent}
@@ -4527,7 +4527,7 @@ function Talents({}) {
                 <button
                   onClick={handleHireTalent}
                   className={
-                    "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen md:px-4 mt-3.5"
+                    "text-sm w-[125px] h-[40px] text-white border-2 rounded bg-primarygreen border-primarygreen lg:px-4 mt-3.5"
                   }
                 >
                   <div className={"flex flex-row justify-between"}>
@@ -4543,12 +4543,12 @@ function Talents({}) {
                 </button>
               </div>
             </div>
-            <div className={"block md:hidden"}>
+            <div className={"block lg:hidden"}>
               <div className={"mt-8 bg-bgjoinmig h-auto w-full mx-auto"}>
                 <div className={"text-center"}>
                   <p
                     className={
-                      "text-base text-blackmig font-gilroysemibold px-4 py-2 md:px-4 mt-3.5"
+                      "text-base text-blackmig font-gilroysemibold px-4 py-2 lg:px-4 mt-3.5"
                     }
                   >
                     {t.interestwithourtalent}
@@ -4583,13 +4583,13 @@ function Talents({}) {
           {/*section why you should */}
           <section
             className={
-              "section4talents hidden md:block bg-bgtalents pt-4 pb-6 md:pt-12 md:pb-24 px-4 sm:px-10 md:px-[113.5px]"
+              "section4talents hidden lg:block bg-bgtalents pt-4 pb-6 lg:pt-12 lg:pb-24 px-4 sm:px-10 lg:px-[113.5px]"
             }
           >
             <h2
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-[36px] text-center  font-gilroysemibold py-8 md:py-0"
+                "text-xl lg:text-[36px] text-center  font-gilroysemibold py-8 lg:py-0"
               }
             >
               {locale == "en" ? "Let us " : "Biarkan MIG "}
@@ -4610,7 +4610,7 @@ function Talents({}) {
             {/* <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-center text-sm  md:text-xl text-black font-gilroyregular pt-6"
+                "text-center text-sm  lg:text-xl text-black font-gilroyregular pt-6"
               }
             >
               With on-demand expertise and flexibility in talent head counts and
@@ -4618,7 +4618,7 @@ function Talents({}) {
             </p> */}
             <div
               className={
-                "md:my-[40px] mx-auto h-[222px] w-[1142px] flex md:items-stretch"
+                "lg:my-[40px] mx-auto h-[222px] w-[1142px] flex lg:items-stretch"
               }
             >
               <img
@@ -4634,7 +4634,7 @@ function Talents({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="px-5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="px-5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.talentpoint1}
                     </h5>
@@ -4654,7 +4654,7 @@ function Talents({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="px-5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="px-5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.talentpoint2}
                     </h5>
@@ -4669,10 +4669,10 @@ function Talents({}) {
               </div>
             </div>
             <div
-              className={"mx-auto h-[222px] w-[1142px] flex md:items-stretch"}
+              className={"mx-auto h-[222px] w-[1142px] flex lg:items-stretch"}
             >
               <div className={"w-[603px] h-[188px] py-1"}>
-                <div className={"flex md:flex-row"}>
+                <div className={"flex lg:flex-row"}>
                   <img
                     style={{ width: "42px", height: "42px" }}
                     src="/image/people/icon-talents1.png"
@@ -4692,7 +4692,7 @@ function Talents({}) {
                     </p>
                   </div>
                 </div>
-                <div className={"flex md:flex-row mt-[20px]"}>
+                <div className={"flex lg:flex-row mt-[20px]"}>
                   <img
                     style={{ width: "42px", height: "42px" }}
                     src="/image/people/icon-talents2.png"
@@ -4722,14 +4722,14 @@ function Talents({}) {
             </div>
           </section>
           {/*section why you should mobile*/}
-          <section className={"section3softwarebrowser bg-transp60 md:hidden"}>
+          <section className={"section3softwarebrowser bg-transp60 lg:hidden"}>
             <div
               className={
-                "flex md:flex-row md:justify-center py-9 md:py-0 px-4 md:px-0"
+                "flex lg:flex-row lg:justify-center py-9 lg:py-0 px-4 lg:px-0"
               }
             >
-              <div className={"md:ml-10 md:py-[53px]"}>
-                <div className="flex flex-col md:w-[662px]">
+              <div className={"lg:ml-10 lg:py-[53px]"}>
+                <div className="flex flex-col lg:w-[662px]">
                   <h4 className="mb-2 text-xl text-center font-gilroysemibold text-blackmig">
                     {locale == "en" ? "Let us " : "Biarkan MIG "}
                     <span
@@ -4744,7 +4744,7 @@ function Talents({}) {
                       ? "in building a powerful  & capable team. "
                       : "tim yang kuat untuk Anda."}
                   </h4>
-                  <div className={"block md:hidden mx-auto my-[17px]"}>
+                  <div className={"block lg:hidden mx-auto my-[17px]"}>
                     <img
                       src="/image/landingpage/hero-hardware.png"
                       className={"w-[253px] h-[150px]"}
@@ -4757,7 +4757,7 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm lg:text-base font-gilroysemibold text-blackmig">
                         {t.talentpoint1}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
@@ -4771,7 +4771,7 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm lg:text-base font-gilroysemibold text-blackmig">
                         {t.talentpoint2}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
@@ -4785,7 +4785,7 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm lg:text-base font-gilroysemibold text-blackmig">
                         {t.talentpoint3}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
@@ -4799,7 +4799,7 @@ function Talents({}) {
                       className="w-[42px] h-[42px]"
                     />
                     <div>
-                      <h5 className="ml-3.5 text-sm md:text-base font-gilroysemibold text-blackmig">
+                      <h5 className="ml-3.5 text-sm lg:text-base font-gilroysemibold text-blackmig">
                         {t.talentpoint4}
                       </h5>
                       <p className="text-left ml-3.5 text-base text-blackmig font-gilroyregular">
@@ -4820,14 +4820,14 @@ function Talents({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 md:py-16 md:mb-10 hidden md:block px-4 sm:px-10 md:px-[113.5px]"
+              "section4howitworkbrowser bg-white py-4 lg:py-16 lg:mb-10 hidden lg:block px-4 sm:px-10 lg:px-[113.5px]"
             }
           >
             <div className={"container text-center mx-auto"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl md:text-[36px] font-gilroybold py-8 md:py-0"
+                  "text-xl lg:text-[36px] font-gilroybold py-8 lg:py-0"
                 }
               >
                 {t.howitworktalenttitle}
@@ -4852,7 +4852,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.howitworktalentpoint1}
@@ -4874,7 +4874,7 @@ function Talents({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.howitworktalentpoint2}
@@ -4895,7 +4895,7 @@ function Talents({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.howitworktalentpoint3}
@@ -4905,7 +4905,7 @@ function Talents({}) {
           </section>
           {/* section how it work mobile */}
           <section
-            className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
+            className={"section4howitworkmobile lg:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
               {t.howitworktalenttitle}
@@ -4971,12 +4971,12 @@ function Talents({}) {
           {dataTestimonial && (
             <section
               className={
-                "section3landingpageadvantages hidden md:block bg-bgjoinmig pt-8 pb-[172px] px-[30px] md:px-10"
+                "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-8 pb-[172px] px-[30px] lg:px-10"
               }
             >
               <p
                 className={
-                  "text-xl md:text-[32px] text-center  font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-[32px] text-center  font-gilroysemibold mb-[42px]"
                 }
               >
                 {t.customerstorieslandingpage}
@@ -5004,13 +5004,13 @@ function Talents({}) {
                   ""
                 )}
                 <div
-                  className={"center md:content-around hidden md:block"}
+                  className={"center lg:content-around hidden lg:block"}
                   style={{ maxWidth: 1000 }}
                 >
                   <Slider {...sliderSettings2} ref={slider}>
                     {dataTestimonial
                       ? dataTestimonial.map((data1) => (
-                          <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
+                          <div className="pt-6 pb-8 lg:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
                             <div className={"flex flex-row justify-between"}>
                               <div className={"w-[45%]"}>
                                 <div className={"flex relative self-center "}>
@@ -5144,7 +5144,7 @@ function Talents({}) {
                                 />
                                 {locale == "en" ? (
                                   <Linkk
-                                    href={`/customerstories/${data1.page_path}`}
+                                    href={`/migwebsite/customerstories/${data1.page_path}`}
                                   >
                                     <button
                                       className={
@@ -5233,17 +5233,17 @@ function Talents({}) {
           {dataTestimonial.length > 0 && (
             <section
               className={
-                "sectiontestimonialmobile block md:hidden bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
+                "sectiontestimonialmobile block lg:hidden bg-bgjoinmig py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
               }
             >
               <p
                 className={
-                  "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                  "text-xl lg:text-3xl text-center  font-gilroysemibold lg:py-0 mb-7 lg:mb-10"
                 }
               >
                 {t.customerstorieslandingpage}
               </p>
-              <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
+              <div className={"block lg:hidden"} style={{ maxWidth: 1000 }}>
                 <Slider {...sliderSettingsPhone}>
                   {dataTestimonial.map((data1) => (
                     <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
@@ -5366,7 +5366,7 @@ function Talents({}) {
                   ))}
                 </Slider>
               </div>
-              <div className={"block md:hidden mt-16 flex justify-center"}>
+              <div className={"block lg:hidden mt-16 flex justify-center"}>
                 <Linkk href={`/migwebsite/customerstories`}>
                   <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
                     <div className={"flex flex-row justify-around"}>
@@ -5704,7 +5704,7 @@ function Talents({}) {
           </section> */}
           <section
             className={
-              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[20px] h-[173px]"
+              "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[20px] h-[173px]"
             }
           >
             <div className={"justify-start self-end"}>
@@ -5714,7 +5714,7 @@ function Talents({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-24 py-4 px-8">
+              <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-24 py-4 px-8">
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={"text-[28px] font-gilroysemibold text-black"}
@@ -5772,7 +5772,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"
+              "contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"
             }
           >
             <div className={"container mx-auto"}>

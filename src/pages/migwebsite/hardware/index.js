@@ -909,11 +909,11 @@ function Hardware({}) {
       {showForm == false && (
         <section
           className={
-            "section1advantages hidden md:block fixed w-full z-50 px-4 md:px-[112px]"
+            "section1advantages hidden lg:block fixed w-full z-50 px-4 lg:px-[112px]"
           }
           style={{ background: "#F4F4F4" }}
         >
-          <div className={"block md:flex container mx-auto"}>
+          <div className={"block lg:flex container mx-auto"}>
             <div className={"flex py-4"}>
               <Link href={{ pathname: "/hardware" }}>
                 <p
@@ -947,12 +947,12 @@ function Hardware({}) {
           <section
             className={
               formActive == "first"
-                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden md:flex md:flex-row md:justify-between"
-                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden md:flex md:flex-row"
+                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row lg:justify-between"
+                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row"
             }
           >
             {formActive == "first" ? (
-              <div className="w-[100%] md:w-[52%]">
+              <div className="w-[100%] lg:w-[52%]">
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
@@ -2230,7 +2230,7 @@ function Hardware({}) {
                 </div>
               )
             ) : (
-              <div className={"w-[50%] md:flex md:justify-end"}>
+              <div className={"w-[50%] lg:flex lg:justify-end"}>
                 <img
                   className={"w-[607px] h-[354px]"}
                   src="/image/landingpage/Talents-2.png"
@@ -2241,7 +2241,7 @@ function Hardware({}) {
           {/* section form mobile */}
           <section
             className={
-              formActive == "first" ? "px-4 md:hidden" : "px-4 md:hidden"
+              formActive == "first" ? "px-4 lg:hidden" : "px-4 lg:hidden"
             }
           >
             {formActive == "first" ? (
@@ -3350,7 +3350,7 @@ function Hardware({}) {
                 </div>
               )
             ) : (
-              <div className={"w-[50%] md:flex md:justify-end"}>
+              <div className={"w-[50%] lg:flex lg:justify-end"}>
                 {/* <img
                   className={"w-[607px] h-[354px]"}
                   src="/image/landingpage/Talents-2.png"
@@ -3365,18 +3365,18 @@ function Hardware({}) {
         </div>
       ) : (
         <div className={"sectionhardware noform"}>
-          <section className={"section2hardware py-4 md:py-16 md:px-[113.5px]"}>
-            <div className={"hidden md:flex  mt-16 justify-between mx-auto"}>
+          <section className={"section2hardware py-4 lg:py-16 lg:px-[113.5px]"}>
+            <div className={"hidden lg:flex  mt-16 justify-between mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <h1
                   style={{ lineHeight: "120%" }}
-                  className={"text-xl md:text-[36px] pb-4 font-gilroysemibold"}
+                  className={"text-xl lg:text-[36px] pb-4 font-gilroysemibold"}
                 >
                   {t.hardwareherosection}
                 </h1>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"mt:4 md:mt-8 font-gilroyregular text-xl"}
+                  className={"mt:4 lg:mt-8 font-gilroyregular text-xl"}
                 >
                   {t.hardwareherosectionsubtitle}
                 </p>
@@ -3405,7 +3405,7 @@ function Hardware({}) {
                     <button
                       onClick={handleLetsTalk}
                       className={
-                        "text-[18px] text-center rounded ml-4 md:w-[131px] py-1 md:py-2 pl-2 pr-1 md:pl-4 md:pr-3 text-white border-2 bg-primarygreen border-primarygreen"
+                        "text-[18px] text-center rounded ml-4 lg:w-[131px] py-1 lg:py-2 pl-2 pr-1 lg:pl-4 lg:pr-3 text-white border-2 bg-primarygreen border-primarygreen"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
@@ -3518,7 +3518,7 @@ function Hardware({}) {
                 />
               </div>
             </div>
-            <div className={"block md:hidden py-9 px-4"}>
+            <div className={"block lg:hidden py-9 px-4"}>
               <div className={"px-3"}>
                 <p
                   className={
@@ -3612,7 +3612,7 @@ function Hardware({}) {
           {/* section jenis hardware */}
           <section
             className={
-              "section2somehardwarebrowser bg-bgjoinmig py-4 md:py-12 px-4 md:px-[113.5px]"
+              "section2somehardwarebrowser bg-bgjoinmig py-4 lg:py-12 px-4 lg:px-[113.5px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -3620,7 +3620,7 @@ function Hardware({}) {
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={
-                    "text-xl md:text-[36px] px-8 md:px-0 font-gilroysemibold"
+                    "text-xl lg:text-[36px] px-8 lg:px-0 font-gilroysemibold"
                   }
                 >
                   Explore our{" "}
@@ -3638,7 +3638,7 @@ function Hardware({}) {
                 <h2
                   style={{ lineHeight: "120%" }}
                   className={
-                    "text-xl md:text-[36px] px-8 md:px-0 font-gilroysemibold"
+                    "text-xl lg:text-[36px] px-8 lg:px-0 font-gilroysemibold"
                   }
                 >
                   Jelajahi beragam{" "}
@@ -3653,7 +3653,7 @@ function Hardware({}) {
                   kami.
                 </h2>
               )}
-              <div className={"hidden md:block"}>
+              <div className={"hidden lg:block"}>
                 {dataBanking && (
                   <div className={"flex flex-row mt-[42px] justify-between"}>
                     <div
@@ -3948,7 +3948,7 @@ function Hardware({}) {
                   </div>
                 )}
               </div>
-              <div className={"block md:hidden"}>
+              <div className={"block lg:hidden"}>
                 {dataBanking && (
                   <div className={"mt-7 px-2"}>
                     <p
@@ -4015,7 +4015,6 @@ function Hardware({}) {
                     </Slider>
                   </div>
                 )}
-                {console.log("data server isinya ", dataServer)}
                 {dataServer && (
                   <div className={"mt-7 px-2"}>
                     <p
@@ -4128,13 +4127,13 @@ function Hardware({}) {
               </div>
               <div
                 className={
-                  "mt-7 md:mt-[42px] text-left md:text-center md:mx-auto md:w-[646px]"
+                  "mt-7 lg:mt-[42px] text-left lg:text-center lg:mx-auto lg:w-[646px]"
                 }
               >
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
-                    "font-gilroysemibold text-sm px-2 md:px-0  md:text-xl"
+                    "font-gilroysemibold text-sm px-2 lg:px-0  lg:text-xl"
                   }
                 >
                   {t.hardwarecustomizetext}
@@ -4142,17 +4141,17 @@ function Hardware({}) {
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
-                    "font-gilroyregular text-sm px-2 md:px-0  md:text-xl"
+                    "font-gilroyregular text-sm px-2 lg:px-0  lg:text-xl"
                   }
                 >
                   {t.hardwarecustomizetext2}
                 </p>
               </div>
-              <div className={"mt-1 md:mt-4 mx-auto"}>
+              <div className={"mt-1 lg:mt-4 mx-auto"}>
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 md:px-2 mt-4"
+                      "text-sm -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2 mt-4"
                     }
                   >
                     <p className={"text-xl  font-gilroysemibold"}>
@@ -4165,21 +4164,21 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "section3hardwarebrowser bg-transp60 py-4 md:py-12 px-4 md:px-[113.5px]"
+              "section3hardwarebrowser bg-transp60 py-4 lg:py-12 px-4 lg:px-[113.5px]"
             }
           >
-            <div className={"flex md:flex-row"}>
-              <div className={"hidden md:block w-2/5"}>
+            <div className={"flex lg:flex-row"}>
+              <div className={"hidden lg:block w-2/5"}>
                 <img
                   src="/image/people/People-Solution.png"
                   className={"w-full h-[282px]"}
                   alt=""
                 />
               </div>
-              <div className="flex flex-col md:w-3/5 md:ml-[40px] ">
+              <div className="flex flex-col lg:w-3/5 md:lg-[40px] ">
                 <h2
                   style={{ lineHeight: "120%" }}
-                  className="mb-2 text-[28px] text-center md:text-left font-gilroysemibold text-blackmig"
+                  className="mb-2 text-[28px] text-center lg:text-left font-gilroysemibold text-blackmig"
                 >
                   {locale == "en" ? "We are " : "Kami adalah "}
                   <span
@@ -4195,7 +4194,7 @@ function Hardware({}) {
                     : "untuk mengelola hardware Anda."}
                 </h2>
 
-                <div className={"block md:hidden mx-auto my-[17px]"}>
+                <div className={"block lg:hidden mx-auto my-[17px]"}>
                   <img
                     src="/image/people/People-Solution.png"
                     className={"w-[253px] h-[150px]"}
@@ -4210,7 +4209,7 @@ function Hardware({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="ml-3.5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.hardwarewhyussection1}
                     </h5>
@@ -4230,7 +4229,7 @@ function Hardware({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="ml-3.5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.hardwarewhyussection2}
                     </h5>
@@ -4250,7 +4249,7 @@ function Hardware({}) {
                   <div>
                     <h5
                       style={{ lineHeight: "150%" }}
-                      className="ml-3.5 text-sm md:text-xl font-gilroysemibold text-blackmig"
+                      className="ml-3.5 text-sm lg:text-xl font-gilroysemibold text-blackmig"
                     >
                       {t.hardwarewhyussection3}
                     </h5>
@@ -4268,14 +4267,14 @@ function Hardware({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 md:py-16 md:mb-10 hidden md:block px-4 sm:px-10 md:px-[113.5px]"
+              "section4howitworkbrowser bg-white py-4 lg:py-16 lg:mb-10 hidden lg:block px-4 sm:px-10 lg:px-[113.5px]"
             }
           >
             <div className={"container text-center mx-auto"}>
               <h2
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl md:text-[36px] font-gilroybold py-8 md:py-0"
+                  "text-xl lg:text-[36px] font-gilroybold py-8 lg:py-0"
                 }
               >
                 {locale == "en"
@@ -4304,7 +4303,7 @@ function Hardware({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.hardwarehowitworksection1}
@@ -4326,7 +4325,7 @@ function Hardware({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.hardwarehowitworksection2}
@@ -4347,7 +4346,7 @@ function Hardware({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm md:text-xl  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.hardwarehowitworksection3}
@@ -4357,7 +4356,7 @@ function Hardware({}) {
           </section>
           {/* section how it work mobile */}
           <section
-            className={"section4howitworkmobile md:hidden bg-white py-9 px-4"}
+            className={"section4howitworkmobile lg:hidden bg-white py-9 px-4"}
           >
             <p className="mb-2 text-2xl text-center font-gilroysemibold text-blackmig">
               {locale == "en"
@@ -4422,12 +4421,12 @@ function Hardware({}) {
           {dataTestimonial && (
             <section
               className={
-                "section3landingpageadvantages hidden md:block bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
+                "section3landingpageadvantages hidden lg:block bg-bgjoinmig py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
               }
             >
               <p
                 className={
-                  "text-xl md:text-3xl text-center  font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-3xl text-center  font-gilroysemibold mb-[42px]"
                 }
               >
                 {t.customerstorieslandingpage}
@@ -4455,13 +4454,13 @@ function Hardware({}) {
                   ""
                 )}
                 <div
-                  className={"center md:content-around hidden md:block"}
+                  className={"center lg:content-around hidden lg:block"}
                   style={{ maxWidth: 1000 }}
                 >
                   <Slider {...sliderSettings2} ref={slider}>
                     {dataTestimonial
                       ? dataTestimonial.map((data1) => (
-                          <div className="pt-6 pb-8 md:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
+                          <div className="pt-6 pb-8 lg:px-16 bg-bgadvantagecard border border-advantagecard rounded-lg">
                             <div className={"flex flex-row justify-between"}>
                               <div className={"w-[45%]"}>
                                 <div className={"flex relative self-center "}>
@@ -4684,17 +4683,17 @@ function Hardware({}) {
           {dataTestimonial && (
             <section
               className={
-                "sectiontestimonialmobile block md:hidden bg-bgjoinmig py-8 md:pt-8 md:py-16 px-[30px] md:px-10"
+                "sectiontestimonialmobile block lg:hidden bg-bgjoinmig py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
               }
             >
               <p
                 className={
-                  "text-xl md:text-3xl text-center  font-gilroysemibold md:py-0 mb-7 md:mb-10"
+                  "text-xl lg:text-3xl text-center  font-gilroysemibold lg:py-0 mb-7 lg:mb-10"
                 }
               >
                 {t.customerstorieslandingpage}
               </p>
-              <div className={"block md:hidden"} style={{ maxWidth: 1000 }}>
+              <div className={"block lg:hidden"} style={{ maxWidth: 1000 }}>
                 <Slider {...sliderSettingsPhone}>
                   {dataTestimonial.map((data1) => (
                     <div className={"p-4 bg-bgadvantagecard rounded-lg"}>
@@ -4815,7 +4814,7 @@ function Hardware({}) {
                   ))}
                 </Slider>
               </div>
-              <div className={"block md:hidden mt-16 flex justify-center"}>
+              <div className={"block lg:hidden mt-16 flex justify-center"}>
                 <Linkk href={`/migwebsite/customerstories`}>
                   <button className={"w-[142px] py-2 px-4 bg-bgjoinmig"}>
                     <div className={"flex flex-row justify-around"}>
@@ -4840,13 +4839,13 @@ function Hardware({}) {
           {/* coverages */}
           <section
             className={
-              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-[113.5px]"
+              "sectioncoverages hidden lg:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 lg:px-[113.5px]"
             }
           >
             <h2
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl md:text-[36px] text-blackmig text-center  font-gilroysemibold py-8 md:py-0 mb-10"
+                "text-xl lg:text-[36px] text-blackmig text-center  font-gilroysemibold py-8 lg:py-0 mb-10"
               }
             >
               {locale == "en" ? "Coverages" : "Area jangkauan kami"}
@@ -4997,7 +4996,7 @@ function Hardware({}) {
           {/*coverages mobile */}
           <section
             className={
-              "sectioncoveragesmobile block md:hidden bg-transp60 pt-4 px-4 py-[118px]"
+              "sectioncoveragesmobile block lg:hidden bg-transp60 pt-4 px-4 py-[118px]"
             }
           >
             <p
@@ -5152,7 +5151,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[113.5px] h-[173px]"
+              "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[113.5px] h-[173px]"
             }
           >
             <div className={"justify-start self-end"}>
@@ -5164,7 +5163,7 @@ function Hardware({}) {
             <div className={"container w-1/2 mx-auto"}>
               <div
                 className={
-                  "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[220px] py-[31.38px]  px-[31.38px]"
+                  "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[220px] py-[31.38px]  px-[31.38px]"
                 }
               >
                 <h2
@@ -5224,7 +5223,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"
+              "contactusphone mt-[30px] block lg:hidden bg-bgfooter pt-8"
             }
           >
             <div className={"container mx-auto"}>

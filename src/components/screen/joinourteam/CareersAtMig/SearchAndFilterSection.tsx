@@ -74,7 +74,7 @@ export const SearchAndFilter: FC = () => {
   return (
     <Form
       form={form}
-      className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 md:px-[122px]"
+      className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-6 lg:px-[122px]"
       onFinish={onFormSubmitted}
       onValuesChange={onFormValueChanged}
     >
@@ -87,7 +87,7 @@ export const SearchAndFilter: FC = () => {
       </Form.Item>
 
       {/* Filter: Employment type */}
-      <div className="flex flex-col space-y-4 md:flex-row md:space-x-6 md:space-y-0">
+      <div className="flex flex-col space-y-4 lg:flex-row lg:space-x-6 lg:space-y-0">
         <FilterDropdown
           label={t.employ_type}
           data={hardcodedEmploymentTypeData}
@@ -105,7 +105,7 @@ export const SearchAndFilter: FC = () => {
       {/* Button search */}
       <Button
         className={
-          "bg-primarygreen hidden md:block rounded text-white text-base w-[85px] h-[40px]"
+          "bg-primarygreen hidden lg:block rounded text-white text-base w-[85px] h-[40px]"
         }
         onClick={onSearchButtonClicked}
       >
@@ -113,7 +113,7 @@ export const SearchAndFilter: FC = () => {
       </Button>
       <Button
         className={
-          "bg-primarygreen md:hidden rounded text-white text-base w-full h-[40px]"
+          "bg-primarygreen lg:hidden rounded text-white text-base w-full h-[40px]"
         }
         onClick={onSearchButtonClicked}
       >
