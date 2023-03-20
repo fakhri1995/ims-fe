@@ -19,7 +19,7 @@ import {
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
+import { getFileName, permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -105,6 +105,7 @@ export const AttendanceStaffAktivitasSection: FC<
     const renderCell = (text: string) => {
       const regex = /\.(png|jpe?g|pdf|csv|docx?|pptx?|xlsx?)$/i;
 
+      // use for displaying url of uploaded file
       if (regex.test(text)) {
         return (
           <a
@@ -114,7 +115,7 @@ export const AttendanceStaffAktivitasSection: FC<
             rel="external"
             className="truncate max-w-[200px]"
           >
-            {text}
+            {getFileName(text)}
           </a>
         );
       }
