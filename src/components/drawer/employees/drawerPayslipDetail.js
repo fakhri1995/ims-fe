@@ -75,17 +75,39 @@ const DrawerPayslipDetail = ({
               (benefit) => benefit?.column?.type === 2
             );
 
-            // Then merge "Gaji Pokok" to receive
+            // Merge "Gaji Pokok" to receive benefit
             receiveBenefits.unshift({
               column: { name: "Gaji Pokok" },
               value: payslipDetail?.gaji_pokok,
             });
-            // reductionBenefits.unshift({
-            //   column: { name: "PPh 21" },
-            //   value: payslipDetail?.pph,
-            // });
 
-            //TODO: add BPJS to reductionBenefit
+            // Merge "PPh 21" to reduction benefit
+            reductionBenefits.unshift({
+              column: { name: "PPh 21" },
+              value: payslipDetail?.pph21,
+            });
+
+            // Merge bpjs to reduction benefit
+            reductionBenefits.unshift({
+              column: { name: "BPJS TK-JP" },
+              value: payslipDetail?.bpjs_tk_jp,
+            });
+            reductionBenefits.unshift({
+              column: { name: "BPJS TK-JKM" },
+              value: payslipDetail?.bpjs_tk_jkm,
+            });
+            reductionBenefits.unshift({
+              column: { name: "BPJS TK-JKK" },
+              value: payslipDetail?.bpjs_tk_jkk,
+            });
+            reductionBenefits.unshift({
+              column: { name: "BPJS TK-JHT" },
+              value: payslipDetail?.bpjs_tk_jht,
+            });
+            reductionBenefits.unshift({
+              column: { name: "BPJS KS" },
+              value: payslipDetail?.bpjs_ks,
+            });
 
             setDetailPayslip(payslipDetail);
             setDetailReceive(receiveBenefits);
@@ -178,7 +200,7 @@ const DrawerPayslipDetail = ({
                     dataIndex: "value",
                     render: (text) => (
                       <p className="font-bold text-right">
-                        {text?.toLocaleString("id-ID") || "-"}
+                        {Number(text)?.toLocaleString("id-ID") || "-"}
                       </p>
                     ),
                   },
@@ -227,7 +249,7 @@ const DrawerPayslipDetail = ({
                     dataIndex: "value",
                     render: (text) => (
                       <p className="font-bold text-right">
-                        {text?.toLocaleString("id-ID") || "-"}
+                        {Number(text)?.toLocaleString("id-ID") || "-"}
                       </p>
                     ),
                   },

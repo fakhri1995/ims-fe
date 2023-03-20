@@ -260,11 +260,11 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/admin/employees">Daftar Karyawan</Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_EMPLOYEE_PAYSLIP) && (
+          {/* {hasPermission(SIDEBAR_EMPLOYEE_PAYSLIP) && (
             <Menu.Item key="employee-salary">
               <Link href="/admin/employees/payslip">Slip Gaji</Link>
             </Menu.Item>
-          )}
+          )} */}
         </SubMenu>
       )}
 

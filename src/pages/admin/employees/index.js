@@ -937,7 +937,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 allowClear
                 showSearch
                 value={selectedPlacement}
-                name={`role`}
+                name={`placement`}
                 disabled={!isAllowedToGetCompanyList}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}

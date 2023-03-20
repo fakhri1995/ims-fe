@@ -322,7 +322,7 @@ const EmployeeDetailIndex = ({
       pathTitleArr={pathTitleArr}
     >
       <div className="grid grid-cols-1 ">
-        <div className="flex flex-col md:flex-row md:gap-5 w-full">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
           {/* Left Column - ID Card Photo */}
           {dataEmployee.id_card_photo ? (
             <img
@@ -333,9 +333,9 @@ const EmployeeDetailIndex = ({
           ) : (
             <div
               className="md:w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
-              justify-center space-y-2 p-4"
+              justify-center space-y-2 p-4 "
             >
-              <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
+              <OneUserIconSvg size={160} color={"black"} strokeWidth={1} />
               <h4 className="mig-heading--4 text-center">
                 {dataEmployee?.name || "-"}
               </h4>
@@ -343,10 +343,10 @@ const EmployeeDetailIndex = ({
           )}
 
           {/* Right column */}
-          <div className="md:flex md:flex-col md:w-4/5 md:gap-5">
+          <div className="md:flex md:flex-col md:w-4/5 gap-3 md:gap-5">
             {/* Employee Status */}
             <div
-              className="shadow-lg rounded-md bg-white md:px-6 py-3 
+              className="shadow-lg rounded-md bg-white px-3 md:px-6 py-3 
               flex flex-row justify-between items-center"
             >
               <div className="flex flex-col space-x-0 space-y-2 justify-between ">
@@ -383,7 +383,7 @@ const EmployeeDetailIndex = ({
             </div>
 
             {/* Profile summary */}
-            <div className="shadow-lg rounded-md bg-white pb-4 md:py-4 md:px-6 divide-y-2 h-full">
+            <div className="shadow-lg rounded-md bg-white pb-4 py-3 md:py-4 px-3 md:px-6 divide-y-2 mt-3 md:mt-0">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
@@ -422,7 +422,7 @@ const EmployeeDetailIndex = ({
         </div>
 
         {/* Employee detail */}
-        <div className="shadow-lg rounded-md bg-white md:p-4 mt-8">
+        <div className="shadow-lg rounded-md bg-white md:p-4 mt-8 p-3">
           <Tabs
             defaultActiveKey="1"
             tabBarGutter={60}
