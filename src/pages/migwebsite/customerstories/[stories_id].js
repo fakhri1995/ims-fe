@@ -271,14 +271,14 @@ function CustomerStoriesDetail({}) {
       <section
         className={
           dataOthers.length > 0
-            ? "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[74px]"
-            : "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[150px]"
+            ? "section1landingpage hidden lg:block px-4 lg:px-[112px] pt-8 lg:pt-16 pb-10 lg:pb-[74px]"
+            : "section1landingpage hidden lg:block px-4 lg:px-[112px] pt-8 lg:pt-16 pb-10 lg:pb-[150px]"
         }
       >
         <div className={"w-5/6"}>
           <p
             className={
-              "text-2xl md:text-[32px] text-blackmig font-gilroysemibold"
+              "text-2xl lg:text-[32px] text-blackmig font-gilroysemibold"
             }
           >
             {locale == "en" && detailBlog
@@ -332,7 +332,7 @@ function CustomerStoriesDetail({}) {
           >
             <p
               className={
-                "text-sm text-darkgrey md:text-base font-gilroysemibold"
+                "text-sm text-darkgrey lg:text-base font-gilroysemibold"
               }
             >
               {locale == "en" ? "Share" : "Bagikan"}
@@ -452,12 +452,12 @@ function CustomerStoriesDetail({}) {
       </section>
       <section
         className={
-          "section1articlepagephone block md:hidden pt-6 md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section1articlepagephone block lg:hidden pt-6 mt-8 lg:mt-6 px-4 sm:px-10 lg:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"px-2 py-2"}>
           <p
-            className={"text-2xl md:text-3xl text-blackmig font-gilroysemibold"}
+            className={"text-2xl lg:text-3xl text-blackmig font-gilroysemibold"}
           >
             {locale == "en" && detailBlog
               ? detailBlog.title
@@ -503,7 +503,7 @@ function CustomerStoriesDetail({}) {
           <div className={"flex flex-row justify-around"}>
             <p
               className={
-                "text-xs text-darkgrey md:text-base font-gilroysemibold self-center"
+                "text-xs text-darkgrey lg:text-base font-gilroysemibold self-center"
               }
             >
               {locale == "en" ? "Share" : "Bagikan"}
@@ -559,7 +559,7 @@ function CustomerStoriesDetail({}) {
           </div>
         </div>
       </section>
-      <section className={"section2articlepage block md:hidden px-5 py-6"}>
+      <section className={"section2articlepage block lg:hidden px-5 py-6"}>
         {tableContent.length > 0 || tableContentH3.length > 0 ? (
           <div
             className={"bg-table p-4 w-full rounded-lg"}
@@ -693,24 +693,24 @@ function CustomerStoriesDetail({}) {
       {dataOthers.length > 0 && (
         <section
           className={
-            "section2blog hidden md:block md:pt-[25px] md:px-[113.5px] md:pb-[150px] bg-bgjoinmig "
+            "section2blog hidden lg:block lg:pt-[25px] lg:px-[113.5px] lg:pb-[150px] bg-bgjoinmig "
           }
         >
           <div className={"flex flex-row justify-between"}>
-            <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
+            <p className={"text-base lg:text-xl gilroy-bold text-primarygreen"}>
               {locale == "en" ? "Read Other Stories" : "Baca Cerita Lainnya"}
             </p>
             <Linkk href={`/customerstories`}>
               <p
                 className={
-                  "text-base pr-10 md:text-base gilroy-bold text-darkgreen"
+                  "text-base pr-10 lg:text-base gilroy-bold text-darkgreen"
                 }
               >
                 {locale == "en" ? "See More" : "Lihat Semua"}
               </p>
             </Linkk>
           </div>
-          <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
+          <div className={"grid lg:grid-cols-4 gap-4  mt-[25px]"}>
             {dataOthers
               ? dataOthers.map((dataarticle) => (
                   <Linkk
@@ -780,10 +780,10 @@ function CustomerStoriesDetail({}) {
         </section>
       )}
       {dataOthers.length > 0 && (
-        <section className={"section2blog block md:hidden p-4 bg-bgjoinmig "}>
+        <section className={"section2blog block lg:hidden p-4 bg-bgjoinmig "}>
           <p
             className={
-              "text-base md:text-xl font-gilroybold text-primarygreen px-4"
+              "text-base lg:text-xl font-gilroybold text-primarygreen px-4"
             }
           >
             {locale == "en" ? "Read Other Stories" : "Baca Cerita Lainnya"}
@@ -1206,7 +1206,7 @@ function CustomerStoriesDetail({}) {
       </section> */}
       <section
         className={
-          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+          "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[31px] h-[173px]"
         }
       >
         <div className={"justify-start self-end"}>
@@ -1218,7 +1218,7 @@ function CustomerStoriesDetail({}) {
         <div className={"container w-1/2 mx-auto"}>
           <div
             className={
-              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
             <h2
@@ -1277,7 +1277,7 @@ function CustomerStoriesDetail({}) {
         </div>
       </section>
       <section
-        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+        className={"contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div

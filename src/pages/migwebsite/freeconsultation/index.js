@@ -43,7 +43,6 @@ function FreeConsultation({}) {
   };
 
   const submitFormConsultation = () => {
-    console.log("submit free consultation ");
     localStorage.setItem("dataForm", JSON.stringify(dataHardware));
     if (kindOfHardware == null || kindOfHardware == "Hardware") {
       rt.push("/hardware");

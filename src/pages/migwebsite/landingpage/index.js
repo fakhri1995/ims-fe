@@ -123,7 +123,6 @@ function LandingPage({ dataBlog }) {
   };
 
   const readTestimoni = (page_path) => {
-    console.log("baca testimoni ", page_path);
     let path = "/migwebsite/customerstories/" + page_path;
     let pathname = "/migwebsite/customerstories/[stories_id]";
     rt.push(pathname, path, { locale: "id" });
@@ -136,12 +135,10 @@ function LandingPage({ dataBlog }) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           if (locale == "en") {
             setDataTestimonial(res2.data);
           } else {
-            console.log("masuk else id ");
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
               if (
@@ -152,12 +149,10 @@ function LandingPage({ dataBlog }) {
                 res2.data[i].tags_id != ""
               ) {
                 dataTemp.push(res2.data[i]);
-                console.log("masuk push");
               }
             }
             setDataTestimonial(dataTemp);
           }
-          console.log("datanya ", dataTestimonial);
         } else {
         }
       })
@@ -2045,7 +2040,6 @@ export async function getStaticProps() {
       method: `GET`,
     }
   );
-  console.log("hasil get api ", resources);
   const resjson = await resources.json();
   dataBlogs = resjson.data;
   return {
