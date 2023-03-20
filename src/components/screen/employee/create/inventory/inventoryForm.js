@@ -62,8 +62,6 @@ const InventoryForm = ({
     hasPermission(EMPLOYEE_DEVICE_ADD);
   const isAllowedToDeleteDevice = hasPermission(EMPLOYEE_DEVICE_DELETE);
 
-  const [instanceForm] = Form.useForm();
-
   // 1. USE STATE
   const [praloading, setpraloading] = useState(false);
   const [loadingAdd, setLoadingAdd] = useState(false);
@@ -341,11 +339,7 @@ const InventoryForm = ({
   return (
     <>
       <div>
-        <Form
-          layout="vertical"
-          form={instanceForm}
-          className="md:grid md:grid-cols-2 md:gap-x-8"
-        >
+        <Form layout="vertical" className="md:grid md:grid-cols-2 md:gap-x-8">
           <h5 className="mig-heading--5 md:col-span-2 mb-3">
             INVENTARIS {idx + 1}/PIRANTI 1
           </h5>

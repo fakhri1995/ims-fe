@@ -40,6 +40,7 @@ import {
 } from "lib/features";
 import {
   getBase64,
+  getFileName,
   objectToFormData,
   permissionWarningNotification,
 } from "lib/helper";
@@ -252,6 +253,7 @@ export const AttendanceStaffAktivitasDrawer: FC<
     }
   }, [visible]);
 
+  // display available data in drawer update
   useEffect(() => {
     if (action !== "update" || !todayActivities) {
       return;
@@ -262,8 +264,14 @@ export const AttendanceStaffAktivitasDrawer: FC<
     const clickedActivityData = findTodayActivity(activityFormId);
     clickedActivityData.details.forEach((detail) => {
       const { key, value } = detail;
+      let valueDisplay = value;
 
-      formFieldsValue[key] = value;
+      // use for displaying checked option in checkbox field
+      if (Array.isArray(value)) {
+        valueDisplay = value.map((v) => Number(v));
+      }
+
+      formFieldsValue[key] = valueDisplay;
     });
 
     form.setFieldsValue(formFieldsValue);
@@ -398,7 +406,7 @@ const _renderDynamicUpload = (
 ) => {
   // START: Upload Field
 
-  /** Uploaded file object. Wrapped as RcFile. Used as payload. */
+  /** Uploaded file object. Wrapped as RcFile. */
   const [uploadedActivityPicture, setUploadedActivityPicture] = useState<
     RcFile | Blob | File
   >(null);
@@ -414,11 +422,22 @@ const _renderDynamicUpload = (
 
   const [fileList, setFileList] = useState<UploadFile<RcFile>[]>([]);
 
-  // Remove uploaded file when drawer closed
   useEffect(() => {
+    // Remove uploaded file when drawer closed
     if (!visible) {
       onRemoveActivityPicture();
       return;
+    }
+
+    // Display file name if available
+    const fileUrl = form.getFieldValue(key);
+    if (fileUrl) {
+      setFileList([
+        {
+          uid: "-1",
+          name: getFileName(fileUrl),
+        } as RcFile,
+      ]);
     }
   }, [visible]);
 

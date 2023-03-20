@@ -132,7 +132,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // filter search & selected options
   const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
-  const [selectedPlacement, setSelectedPlacement] = useState(0);
+  const [selectedPlacement, setSelectedPlacement] = useState("");
   const [selectedRoleId, setSelectedRoleId] = useState(0);
   const [selectedPayslipStatusId, setSelectedPayslipStatusId] = useState("");
 
@@ -666,8 +666,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by position (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={selectedRoleId === 0 ? null : selectedRoleId}
                 allowClear
+                showSearch
+                value={selectedRoleId === 0 ? null : selectedRoleId}
                 name={`role`}
                 disabled={!isAllowedToGetRoleList}
                 placeholder="Semua Posisi"
@@ -677,8 +678,13 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     ? setSelectedRoleId(0)
                     : setSelectedRoleId(value);
                 }}
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option.children ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               >
-                {/* <Select.Option value={0}>Semua Role</Select.Option> */}
                 {dataRoleList.map((role) => (
                   <Select.Option key={role.id} value={role.id}>
                     {role.name}
@@ -690,21 +696,30 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by company (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={selectedPlacement === 0 ? null : selectedPlacement}
                 allowClear
+                showSearch
+                value={selectedPlacement}
                 name={`placement`}
                 disabled={!isAllowedToGetCompanyList}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
                   typeof value === "undefined"
-                    ? setSelectedPlacement(0)
+                    ? setSelectedPlacement("")
                     : setSelectedPlacement(value);
                 }}
+                filterOption={(input, option) =>
+                  (option?.value ?? "")
+                    .toLowerCase()
+                    .includes(input.toLocaleLowerCase())
+                }
+                optionFilterProp="children"
               >
-                {/* <Select.Option value={0}>Semua Role</Select.Option> */}
+                <Select.Option key={-1} value={""}>
+                  Semua Penempatan
+                </Select.Option>
                 {dataCompanyList.map((company) => (
-                  <Select.Option key={company.id} value={company.id}>
+                  <Select.Option key={company.id} value={company.name}>
                     {company.name}
                   </Select.Option>
                 ))}
