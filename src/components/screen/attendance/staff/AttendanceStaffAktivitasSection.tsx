@@ -19,7 +19,11 @@ import {
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
 } from "lib/features";
-import { getFileName, permissionWarningNotification } from "lib/helper";
+import {
+  generateStaticAssetUrl,
+  getFileName,
+  permissionWarningNotification,
+} from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import {
@@ -110,7 +114,7 @@ export const AttendanceStaffAktivitasSection: FC<
         return (
           <a
             onClick={(e) => e.stopPropagation()}
-            href={`https://cdn.mig.id/${text}`}
+            href={generateStaticAssetUrl(text)}
             target="_blank"
             rel="external"
             className="truncate max-w-[200px]"
