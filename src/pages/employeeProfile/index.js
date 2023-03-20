@@ -176,7 +176,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
     }
   };
 
-  // console.log({ dataEmployee });
+  // console.log({ dataProfile });
   return (
     <LayoutDashboard2
       dataProfile={dataProfile}
@@ -185,19 +185,21 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div>
-        <div className="flex flex-row gap-5 w-full">
+      <div className="grid grid-cols-1">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-5 w-full">
           {/* Left Column - ID Card Photo */}
           {dataEmployee.id_card_photo ? (
             <img
-              src={generateStaticAssetUrl(dataEmployee.id_card_photo?.link)}
-              alt={dataEmployee.id_card_photo?.description}
-              className="w-1/5 bg-cover object-cover rounded-md shadow-lg"
+              src={generateStaticAssetUrl(
+                dataProfile?.data?.profile_image?.link
+              )}
+              alt={dataProfile?.data?.profile_image?.description}
+              className="md:w-1/5 bg-cover object-cover rounded-md shadow-lg"
             />
           ) : (
             <div
-              className="w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
-                justify-center space-y-2 p-4"
+              className="md:w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
+              justify-center space-y-2 p-4"
             >
               <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
               <h4 className="mig-heading--4 text-center">
@@ -207,13 +209,13 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
           )}
 
           {/* Right column */}
-          <div className="flex flex-col w-3/4 gap-5">
+          <div className="md:flex md:flex-col md:w-4/5 gap-3 md:gap-5">
             {/* Employee Status */}
             <div
-              className="shadow-lg rounded-md bg-white px-6 py-3 flex flex-row 
-							justify-between items-center"
+              className="shadow-lg rounded-md bg-white px-3 md:px-6 py-3 
+              flex flex-row justify-between items-center"
             >
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col space-x-0 space-y-2 justify-between ">
                 <p className="mig-caption--medium text-mono80">
                   Status Karyawan
                 </p>
@@ -229,21 +231,20 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                   </div>
                 )}
               </div>
-              <ButtonSys
+              {/* <ButtonSys
                 type={!isAllowedToGetEmployee ? "primary" : "default"}
                 onClick={() => {
                   handleGetLatestPayslip();
                   setModalDownload(true);
                 }}
-                disabled={!isAllowedToGetEmployee}
-              >
+                disabled={!isAllowedToGetEmployee}>
                 <DownloadIconSvg color={"#35763B"} size={16} />
                 <p className="ml-2">Unduh Slip Gaji</p>
-              </ButtonSys>
+              </ButtonSys> */}
             </div>
 
             {/* Profile summary */}
-            <div className="shadow-lg rounded-md bg-white py-4 px-6 divide-y-2">
+            <div className="shadow-lg rounded-md bg-white pb-4 py-3 md:py-4 px-3 md:px-6 divide-y-2 mt-3 md:mt-0">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
               <div className="grid grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
@@ -282,7 +283,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
         </div>
 
         {/* Employee detail */}
-        <div className="shadow-lg rounded-md bg-white p-4 mt-8">
+        <div className="shadow-lg rounded-md bg-white md:p-4 mt-8 p-3">
           <Tabs
             defaultActiveKey="2"
             tabBarGutter={60}
@@ -298,12 +299,12 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             <Tabs.TabPane tab="Detail Profil" key="1">
               <EmployeeProfileDetail dataEmployee={dataEmployee} />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Slip Gaji" key="2">
+            {/* <Tabs.TabPane tab="Slip Gaji" key="2">
               <EmployeePayslipDetail
                 employeeId={employeeId}
                 initProps={initProps}
               />
-            </Tabs.TabPane>
+            </Tabs.TabPane> */}
             <Tabs.TabPane tab="Kontrak Karyawan" key="3">
               <EmployeeContractDetail
                 dataEmployee={dataEmployee}
