@@ -89,19 +89,19 @@ function CustomerStories({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage md:relative md:py-16 px-4 md:px-[112px]"
+          "section1landingpage lg:relative lg:py-16 px-4 lg:px-[112px]"
         }
       >
         {/* Browser View */}
         {/* Browser View */}
-        <div className={"hidden md:flex container mx-auto "}>
+        <div className={"hidden lg:flex container mx-auto "}>
           <div className={"flex-col w-1/2"}>
             <img
               className={"w-[614px] h-[336px]"}
               src="/image/landingpage/hero-blog.png"
             />
           </div>
-          <div className={"flex w-1/2 md:ml-[50px] xl:ml-[60px]"}>
+          <div className={"flex w-1/2 lg:ml-[50px] xl:ml-[60px]"}>
             <div className={"w-3/4 flex flex-col justify-between"}>
               <div>
                 <p className={"text-[32px] font-gilroysemibold text-blackmig"}>
@@ -138,7 +138,7 @@ function CustomerStories({ dataBlog }) {
                 >
                   <button
                     className={
-                      "text-sm text-center w-[223px] text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 md:px-4 mt-4"
+                      "text-sm text-center w-[223px] text-white border-2 rounded bg-primarygreen border-primarygreen px-4 py-2 lg:px-4 mt-4"
                     }
                   >
                     <div className={"flex flex-row justify-between px-4 "}>
@@ -156,7 +156,7 @@ function CustomerStories({ dataBlog }) {
             <div className={"w-1/4 grid justify-end self-center "}>
               <p
                 className={
-                  "text-sm text-darkgrey md:text-base font-gilroysemibold"
+                  "text-sm text-darkgrey lg:text-base font-gilroysemibold"
                 }
               >
                 {locale == "en" ? "Share" : "Bagikan"}
@@ -207,7 +207,7 @@ function CustomerStories({ dataBlog }) {
         </div>
         {/* ---------- */}
         {/* Phone View */}
-        <div className={"block md:hidden py-8"}>
+        <div className={"block lg:hidden py-8"}>
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
@@ -278,7 +278,7 @@ function CustomerStories({ dataBlog }) {
             <div className={"text-center mt-7"}>
               <p
                 className={
-                  "text-base text-darkgrey md:text-base font-gilroysemibold"
+                  "text-base text-darkgrey lg:text-base font-gilroysemibold"
                 }
               >
                 {locale == "en" ? "Share" : "Bagikan"}
@@ -336,11 +336,11 @@ function CustomerStories({ dataBlog }) {
       </section>
 
       <section
-        className={"allarticles py-4 md:py-[69px] px-[17px] md:px-[112px]"}
+        className={"allarticles py-4 lg:py-[69px] px-[17px] lg:px-[112px]"}
       >
         <div className={"flex flex-row justify-between mb-[5px]"}>
           <p
-            className={"text-base md:text-xl font-gilroybold text-primarygreen"}
+            className={"text-base lg:text-xl font-gilroybold text-primarygreen"}
           >
             {locale == "en" ? "All Stories" : "Semua Testimoni"}
           </p>
@@ -382,7 +382,7 @@ function CustomerStories({ dataBlog }) {
             />
           </div> */}
         </div>
-        <div className={"hidden md:grid md:grid-cols-4 gap-4"}>
+        <div className={"hidden lg:grid lg:grid-cols-4 gap-4"}>
           {articleList
             ? articleList.map((dataarticle) => (
                 <Linkk
@@ -471,7 +471,7 @@ function CustomerStories({ dataBlog }) {
           </div>
         )} */}
 
-        <div className={"md:hidden"}>
+        <div className={"lg:hidden"}>
           {articleList ? (
             articleList.map((dataarticle) => (
               <Linkk
@@ -484,7 +484,7 @@ function CustomerStories({ dataBlog }) {
                   {dataarticle.attachment_article ? (
                     <img
                       className={
-                        "w-full h-[185px] rounded-lg flex justify-center"
+                        "w-full h-auto lg:h-[185px] rounded-lg flex justify-center"
                       }
                       src={generateStaticAssetUrl(
                         dataarticle.attachment_article.link
@@ -542,7 +542,7 @@ function CustomerStories({ dataBlog }) {
       {/*section join mig*/}
       <section
         className={
-          "section2landingpagebrowser mt-10 bg-bgjoinmig pt-8 md:pt-[53px] pb-[53px] md:pb-[134px] hidden md:block px-4 md:px-10 "
+          "section2landingpagebrowser mt-10 bg-bgjoinmig pt-8 lg:pt-[53px] pb-[53px] lg:pb-[134px] hidden lg:block px-4 lg:px-10 "
         }
       >
         <div className={"container mx-auto"}>
@@ -625,10 +625,10 @@ function CustomerStories({ dataBlog }) {
         </div>
       </section>
 
-      <section className={"section2landingpagephone block md:hidden px-4"}>
+      <section className={"section2landingpagephone block lg:hidden px-4"}>
         <p
           className={
-            "text-xl text-blackmig text-center font-gilroysemibold py-8 md:py-0 px-4 w-[328px]"
+            "text-xl text-blackmig text-center font-gilroysemibold py-8 lg:py-0 px-4 w-[328px]"
           }
         >
           {t.customerstorieshearwhat}
@@ -703,7 +703,7 @@ function CustomerStories({ dataBlog }) {
       </section>
       <section
         className={
-          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+          "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[31px] h-[173px]"
         }
       >
         <div className={"justify-start self-end"}>
@@ -715,7 +715,7 @@ function CustomerStories({ dataBlog }) {
         <div className={"container w-1/2 mx-auto"}>
           <div
             className={
-              "bg-white border-3 mx-auto w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
             <h2
@@ -774,7 +774,7 @@ function CustomerStories({ dataBlog }) {
         </div>
       </section>
       <section
-        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+        className={"contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div

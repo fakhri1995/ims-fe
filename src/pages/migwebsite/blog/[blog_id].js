@@ -95,7 +95,6 @@ function BlogDetail({}) {
       )
         .then((res) => res.json())
         .then((res2) => {
-          console.log("res article ", res2);
           if (res2.success) {
             if (locale == "en") {
               setDetailBlog(res2.data[0]);
@@ -203,17 +202,13 @@ function BlogDetail({}) {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log("get other ", res2.data);
-          console.log("language ", locale);
           if (locale == "en") {
-            console.log("masuk en ", router.query.blog_id);
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
               if (res2.data[i].page_path != router.query.blog_id) {
                 dataTemp.push(res2.data[i]);
               }
             }
-            console.log("data temp ", dataTemp);
             setArticleList(dataTemp);
           } else {
             let dataTemp = [];
@@ -249,14 +244,14 @@ function BlogDetail({}) {
       <section
         className={
           articleList.length > 0
-            ? "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[74px]"
-            : "section1landingpage hidden md:block px-4 md:px-[112px] pt-8 md:pt-16 pb-10 md:pb-[174px]"
+            ? "section1landingpage hidden lg:block px-4 lg:px-[112px] pt-8 lg:pt-16 pb-10 lg:pb-[74px]"
+            : "section1landingpage hidden lg:block px-4 lg:px-[112px] pt-8 lg:pt-16 pb-10 lg:pb-[174px]"
         }
       >
         <div className={"w-5/6"}>
           <p
             className={
-              "text-2xl md:text-[32px] text-blackmig font-gilroysemibold"
+              "text-2xl lg:text-[32px] text-blackmig font-gilroysemibold"
             }
           >
             {locale == "en" && detailBlog
@@ -307,7 +302,7 @@ function BlogDetail({}) {
           >
             <p
               className={
-                "text-sm text-darkgrey md:text-base font-gilroysemibold"
+                "text-sm text-darkgrey lg:text-base font-gilroysemibold"
               }
             >
               {locale == "en" ? "Share" : "Bagikan"}
@@ -427,12 +422,12 @@ function BlogDetail({}) {
       </section>
       <section
         className={
-          "section1articlepagephone block md:hidden pt-6 md:mt-6 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"
+          "section1articlepagephone block lg:hidden pt-6 mt-8 lg:mt-6 px-4 sm:px-10 lg:px-10 lg:px-10 xl:px-10 2xl:px-20"
         }
       >
         <div className={"px-2 py-2"}>
           <p
-            className={"text-2xl md:text-3xl text-blackmig font-gilroysemibold"}
+            className={"text-2xl lg:text-3xl text-blackmig font-gilroysemibold"}
           >
             {locale == "en" && detailBlog
               ? detailBlog.title
@@ -456,8 +451,6 @@ function BlogDetail({}) {
               {moment(detailBlog?.created_at).format("DD MMMM YYYY")}
             </span>
           </p>
-          {detailBlog &&
-            console.log("attachment article ", detailBlog.attachment_article)}
           {detailBlog && detailBlog.attachment_article ? (
             <img
               src={generateStaticAssetUrl(detailBlog.attachment_article.link)}
@@ -476,7 +469,7 @@ function BlogDetail({}) {
           <div className={"flex flex-row justify-around"}>
             <p
               className={
-                "text-xs text-darkgrey md:text-base font-gilroysemibold self-center"
+                "text-xs text-darkgrey lg:text-base font-gilroysemibold self-center"
               }
             >
               Share
@@ -532,7 +525,7 @@ function BlogDetail({}) {
           </div>
         </div>
       </section>
-      <section className={"section2articlepage block md:hidden px-5 py-6"}>
+      <section className={"section2articlepage block lg:hidden px-5 py-6"}>
         {tableContent.length > 0 || tableContentH3.length > 0 ? (
           <div
             className={"bg-table p-4 w-full rounded-lg"}
@@ -662,24 +655,24 @@ function BlogDetail({}) {
       {articleList.length > 0 && (
         <section
           className={
-            "section2blog hidden md:block md:pt-[25px] md:px-[112px] md:pb-[150px] bg-bgjoinmig "
+            "section2blog hidden lg:block lg:pt-[25px] lg:px-[112px] lg:pb-[150px] bg-bgjoinmig "
           }
         >
           <div className={"flex flex-row justify-between"}>
-            <p className={"text-base md:text-xl gilroy-bold text-primarygreen"}>
+            <p className={"text-base lg:text-xl gilroy-bold text-primarygreen"}>
               {locale == "en" ? "Read Other Articles" : "Baca Artikel Lain"}
             </p>
             <Linkk href={`/blog`}>
               <p
                 className={
-                  "text-base pr-10 md:text-base gilroy-bold text-darkgreen"
+                  "text-base pr-10 lg:text-base gilroy-bold text-darkgreen"
                 }
               >
                 {locale == "en" ? "See More" : "Lihat semua"}
               </p>
             </Linkk>
           </div>
-          <div className={"grid md:grid-cols-4 gap-4  mt-[25px]"}>
+          <div className={"grid lg:grid-cols-4 gap-4  mt-[25px]"}>
             {articleList &&
               articleList.map((data1) => (
                 <div className={"mx-2 bg-white w-full rounded-lg p-4"}>
@@ -731,10 +724,10 @@ function BlogDetail({}) {
         </section>
       )}
       {articleList.length > 0 && (
-        <section className={"section2blog block md:hidden p-4 bg-bgjoinmig "}>
+        <section className={"section2blog block lg:hidden p-4 bg-bgjoinmig "}>
           <p
             className={
-              "text-base md:text-xl font-gilroybold text-primarygreen px-4"
+              "text-base lg:text-xl font-gilroybold text-primarygreen px-4"
             }
           >
             {locale == "en" ? "Read Other Articles" : "Baca Artikel Lain"}
@@ -1152,7 +1145,7 @@ function BlogDetail({}) {
       </section> */}
       <section
         className={
-          "youronestop hidden md:block md:flex md:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+          "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[31px] h-[173px]"
         }
       >
         <div className={"justify-start self-end"}>
@@ -1223,7 +1216,7 @@ function BlogDetail({}) {
         </div>
       </section>
       <section
-        className={"contactusphone mt-[140px] block md:hidden bg-bgfooter pt-8"}
+        className={"contactusphone mt-[140px] block lg:hidden bg-bgfooter pt-8"}
       >
         <div className={"container mx-auto"}>
           <div
