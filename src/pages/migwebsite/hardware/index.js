@@ -947,8 +947,8 @@ function Hardware({}) {
           <section
             className={
               formActive == "first"
-                ? "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row lg:justify-between"
-                : "xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row"
+                ? "px-[60px] xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row lg:justify-between"
+                : "px-[60px] xl:pl-[112px] 2xl:pl-[224px] py-[76px] hidden lg:flex lg:flex-row"
             }
           >
             {formActive == "first" ? (

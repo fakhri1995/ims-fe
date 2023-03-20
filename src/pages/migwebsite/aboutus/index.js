@@ -28,6 +28,15 @@ function AboutUs({}) {
     swipeToSlide: true,
     arrows: false,
   };
+  const sliderSettingsPhone2 = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 2,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    arrows: false,
+  };
 
   return (
     <Layout>
@@ -331,7 +340,7 @@ function AboutUs({}) {
             </div>
           </div>
         </div>
-        <div className={"block md:hidden lg:hidden mt-3"}>
+        <div className={"block md:hidden mt-3"}>
           <Slider {...sliderSettingsPhone}>
             <div className={"flex flex-col items-center mt-20"}>
               <div
@@ -524,99 +533,96 @@ function AboutUs({}) {
             </div>
           </Slider>
         </div>
-        <div
-          className={
-            "hidden md:flex md:flex-wrap md:justify-between lg:hidden mt-3"
-          }
-        >
-          <div className={"flex flex-col items-center mt-20"}>
-            <div
-              className={
-                "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
-              }
-            >
-              <div className={"grid justify-items-center"}>
-                <img
-                  src="/image/landingpage/hero-talent.png"
-                  alt=""
-                  className={
-                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
-                  }
-                />
-              </div>
-              <div>
-                <p
-                  style={{ lineHeight: "120%" }}
-                  className={
-                    "text-center text-2xl text-accentblue font-gilroybold font-bold"
-                  }
-                >
-                  Hardware
-                </p>
-                {/* <p
+        <div className={"hidden md:block lg:hidden mt-3"}>
+          <Slider {...sliderSettingsPhone2}>
+            <div className={"flex flex-col items-center mt-20"}>
+              <div
+                className={
+                  "bg-lightblue hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+                }
+              >
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-talent.png"
+                    alt=""
+                    className={
+                      "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                    }
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-center text-2xl text-accentblue font-gilroybold font-bold"
+                    }
+                  >
+                    Hardware
+                  </p>
+                  {/* <p
                   className={
                     "text-center text-blackmig text-base font-gilroysemibold gilroy-semibold mt-1"
                   }
                 >
                   Lighten up your heavy capital in IT infrastructure
                 </p> */}
-                <p
-                  style={{ lineHeight: "150%" }}
-                  className={
-                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
-                  }
-                >
-                  {t.aboutushardwaredescription}
-                </p>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                    }
+                  >
+                    {t.aboutushardwaredescription}
+                  </p>
 
-                <div className={"text-center"}>
-                  <Linkk href="/hardware">
-                    <button
-                      className={
-                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
-                      }
-                    >
-                      <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>
-                          {locale == "en" ? "Get Yours" : "Cek pilihan"}
-                        </p>
-                        <img
-                          className={"py-1 px-1"}
-                          style={{ width: "15px" }}
-                          src="/image/landingpage/arrow-forward.png"
-                        />
-                      </div>
-                    </button>
-                  </Linkk>
+                  <div className={"text-center"}>
+                    <Linkk href="/hardware">
+                      <button
+                        className={
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p className={"px-1"}>
+                            {locale == "en" ? "Get Yours" : "Cek pilihan"}
+                          </p>
+                          <img
+                            className={"py-1 px-1"}
+                            style={{ width: "15px" }}
+                            src="/image/landingpage/arrow-forward.png"
+                          />
+                        </div>
+                      </button>
+                    </Linkk>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className={"flex flex-col items-center mt-20"}>
-            <div
-              className={
-                "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
-              }
-            >
-              <div className={"grid justify-items-center"}>
-                <img
-                  src="/image/landingpage/hero-software.png"
-                  alt=""
-                  className={
-                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
-                  }
-                />
-              </div>
-              <div>
-                <p
-                  style={{ lineHeight: "120%" }}
-                  className={
-                    "text-center text-2xl text-darkgreen font-gilroybold font-bold"
-                  }
-                >
-                  Software
-                </p>
-                {/* <p
+            <div className={"flex flex-col items-center mt-20"}>
+              <div
+                className={
+                  "bg-lightgreen hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+                }
+              >
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-software.png"
+                    alt=""
+                    className={
+                      "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                    }
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-center text-2xl text-darkgreen font-gilroybold font-bold"
+                    }
+                  >
+                    Software
+                  </p>
+                  {/* <p
                   style={{ lineHeight: "150%" }}
                   className={
                     "text-center text-blackmig text-base font-gilroysemibold font-gilroysemibold mt-1 pb-[42.5px]"
@@ -624,100 +630,101 @@ function AboutUs({}) {
                 >
                   Delivering custom-made software
                 </p> */}
-                <p
-                  className={
-                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
-                  }
-                >
-                  {t.aboutussoftwaredescription}
-                </p>
+                  <p
+                    className={
+                      "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                    }
+                  >
+                    {t.aboutussoftwaredescription}
+                  </p>
 
-                <div className={"text-center"}>
-                  <Linkk href="/software">
-                    <button
-                      className={
-                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
-                      }
-                    >
-                      <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>
-                          {locale == "en" ? "Build Now" : "Mulai sekarang"}
-                        </p>
-                        <img
-                          className={"py-1 px-1"}
-                          style={{ width: "15px" }}
-                          src="/image/landingpage/arrow-forward.png"
-                        />
-                      </div>
-                    </button>
-                  </Linkk>
+                  <div className={"text-center"}>
+                    <Linkk href="/software">
+                      <button
+                        className={
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p className={"px-1"}>
+                            {locale == "en" ? "Build Now" : "Mulai sekarang"}
+                          </p>
+                          <img
+                            className={"py-1 px-1"}
+                            style={{ width: "15px" }}
+                            src="/image/landingpage/arrow-forward.png"
+                          />
+                        </div>
+                      </button>
+                    </Linkk>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className={"flex flex-col items-center mt-20"}>
-            <div
-              className={
-                "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
-              }
-            >
-              <div className={"grid justify-items-center"}>
-                <img
-                  src="/image/landingpage/hero-hardware.png"
-                  alt=""
-                  className={
-                    "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
-                  }
-                />
-              </div>
-              <div>
-                <p
-                  style={{ lineHeight: "120%" }}
-                  className={
-                    "text-center text-2xl text-accentpurple font-gilroybold font-bold"
-                  }
-                >
-                  Talents
-                </p>
-                {/* <p
+            <div className={"flex flex-col items-center mt-20"}>
+              <div
+                className={
+                  "bg-lightgrey hover:shadow-2xl rounded-xl w-[332px] h-[360px] pb-8 px-4 relative pt-24"
+                }
+              >
+                <div className={"grid justify-items-center"}>
+                  <img
+                    src="/image/landingpage/hero-hardware.png"
+                    alt=""
+                    className={
+                      "absolute w-[241px] h-[139px] hover:w-[300px] hover:h-[180px] -top-20"
+                    }
+                  />
+                </div>
+                <div>
+                  <p
+                    style={{ lineHeight: "120%" }}
+                    className={
+                      "text-center text-2xl text-accentpurple font-gilroybold font-bold"
+                    }
+                  >
+                    Talents
+                  </p>
+                  {/* <p
                   className={
                     "text-center text-blackmig text-base font-gilroysemibold mt-1 pb-8"
                   }
                 >
                   Our people, your growth
                 </p> */}
-                <p
-                  style={{ lineHeight: "150%" }}
-                  className={
-                    "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
-                  }
-                >
-                  {t.aboutustalentdescription}
-                </p>
+                  <p
+                    style={{ lineHeight: "150%" }}
+                    className={
+                      "text-center text-blackmig text-xl font-gilroyregular h-[130px] mt-5"
+                    }
+                  >
+                    {t.aboutustalentdescription}
+                  </p>
 
-                <div className={"text-center"}>
-                  <Linkk href="/talents">
-                    <button
-                      className={
-                        "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
-                      }
-                    >
-                      <div className={"flex flex-row justify-between"}>
-                        <p className={"px-1"}>
-                          {locale == "en" ? "Hire Now" : "Dirikan tim Anda"}
-                        </p>
-                        <img
-                          className={"py-1 px-1"}
-                          style={{ width: "15px" }}
-                          src="/image/landingpage/arrow-forward.png"
-                        />
-                      </div>
-                    </button>
-                  </Linkk>
+                  <div className={"text-center"}>
+                    <Linkk href="/talents">
+                      <button
+                        className={
+                          "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p className={"px-1"}>
+                            {locale == "en" ? "Hire Now" : "Dirikan tim Anda"}
+                          </p>
+                          <img
+                            className={"py-1 px-1"}
+                            style={{ width: "15px" }}
+                            src="/image/landingpage/arrow-forward.png"
+                          />
+                        </div>
+                      </button>
+                    </Linkk>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          </Slider>
         </div>
       </section>
 
