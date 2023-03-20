@@ -42,10 +42,7 @@ import {
 import { FilePlusIconSvg } from "../../../../../components/icon";
 import LayoutDashboard from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
-import {
-  TableCustomPayslipEmployeeList,
-  TableCustomPayslipList,
-} from "../../../../../components/table/tableCustom";
+import { TableCustomPayslipEmployeeList } from "../../../../../components/table/tableCustom";
 import {
   generateStaticAssetUrl,
   momentFormatDate,
@@ -372,7 +369,9 @@ const EmployeePayslipDetailIndex = ({
       dataIndex: "total_gross_penerimaan",
       render: (text, record, index) => {
         return {
-          children: <>{record.total_gross_penerimaan || "-"}</>,
+          children: (
+            <>{record.total_gross_penerimaan.toLocaleString("id-ID") || "-"}</>
+          ),
         };
       },
     },
@@ -381,7 +380,9 @@ const EmployeePayslipDetailIndex = ({
       dataIndex: "total_gross_pengurangan",
       render: (text, record, index) => {
         return {
-          children: <>{record.total_gross_pengurangan || "-"}</>,
+          children: (
+            <>{record.total_gross_pengurangan.toLocaleString("id-ID") || "-"}</>
+          ),
         };
       },
     },
@@ -390,7 +391,7 @@ const EmployeePayslipDetailIndex = ({
       dataIndex: "take_home_pay",
       render: (text, record, index) => {
         return {
-          children: <>{record.take_home_pay || "-"}</>,
+          children: <>{record.take_home_pay.toLocaleString("id-ID") || "-"}</>,
         };
       },
     },
