@@ -368,7 +368,7 @@ function LandingPage({ dataBlog }) {
                 <button
                   onClick={getFreeConsultation}
                   className={
-                    "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 gilroy-medium bg-white"
+                    "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4"
                   }
                 >
                   <p className={"text-xl"}>{t.landingpagefreeconsultation}</p>
