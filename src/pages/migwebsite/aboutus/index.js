@@ -194,7 +194,7 @@ function AboutUs({}) {
                   <Linkk href="/hardware">
                     <button
                       className={
-                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
@@ -257,7 +257,7 @@ function AboutUs({}) {
                   <Linkk href="/software">
                     <button
                       className={
-                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
@@ -320,7 +320,7 @@ function AboutUs({}) {
                   <Linkk href="/talents">
                     <button
                       className={
-                        "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                        "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
@@ -386,7 +386,7 @@ function AboutUs({}) {
                     <Linkk href="/hardware">
                       <button
                         className={
-                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium"
                         }
                       >
                         <div className={"flex flex-row justify-between"}>
@@ -449,7 +449,7 @@ function AboutUs({}) {
                     <Linkk href="/software">
                       <button
                         className={
-                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
                         }
                       >
                         <div className={"flex flex-row justify-between"}>
@@ -512,7 +512,7 @@ function AboutUs({}) {
                     <Linkk href="/talents">
                       <button
                         className={
-                          "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                          "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
                         }
                       >
                         <div className={"flex flex-row justify-between"}>
@@ -579,7 +579,7 @@ function AboutUs({}) {
                     <Linkk href="/hardware">
                       <button
                         className={
-                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
                         }
                       >
                         <div className={"flex flex-row justify-between"}>
@@ -642,7 +642,7 @@ function AboutUs({}) {
                     <Linkk href="/software">
                       <button
                         className={
-                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                          "text-xl text-center rounded text-white border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
                         }
                       >
                         <div className={"flex flex-row justify-between"}>
@@ -705,7 +705,7 @@ function AboutUs({}) {
                     <Linkk href="/talents">
                       <button
                         className={
-                          "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium bg-white"
+                          "text-xl text-center text-white rounded border-2 bg-primarygreen border-primarygreen px-4 py-2 focus:outline-none gilroy-medium "
                         }
                       >
                         <div className={"flex flex-row justify-between"}>

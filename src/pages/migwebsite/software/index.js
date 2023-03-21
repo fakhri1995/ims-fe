@@ -1658,7 +1658,7 @@ function Software({}) {
                     <button
                       onClick={handleLetsTalk}
                       className={
-                        "text-[18px] ml-4 rounded text-white py-2 pl-4 pr-2.5 bg-primarygreen border-primarygreen bg-white"
+                        "text-[18px] ml-4 rounded text-white py-2 pl-4 pr-2.5 bg-primarygreen border-primarygreen"
                       }
                     >
                       <div className={"flex flex-row justify-between gap-2"}>
