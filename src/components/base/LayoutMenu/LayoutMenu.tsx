@@ -33,8 +33,11 @@ import {
   SIDEBAR_ATTENDANCE_FORM_ACTIVITY,
   SIDEBAR_ATTENDANCE_MY,
   SIDEBAR_CMS,
+  SIDEBAR_CMS_BLOG,
   SIDEBAR_CMS_CAREER,
+  SIDEBAR_CMS_FORM_SOLUTION,
   SIDEBAR_CMS_MESSAGE,
+  SIDEBAR_CMS_PRODUCT,
   SIDEBAR_COMPANY,
   SIDEBAR_COMPANY_PROFILE,
   SIDEBAR_DASHBOARD,
@@ -333,17 +336,17 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
               <Link href="/admin/messages">Message</Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_CMS_MESSAGE) && (
+          {hasPermission(SIDEBAR_CMS_FORM_SOLUTION) && (
             <Menu.Item key="93">
               <Link href="/admin/form-solution">Form Solution</Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_CMS_MESSAGE) && (
+          {hasPermission(SIDEBAR_CMS_BLOG) && (
             <Menu.Item key="94">
               <Link href="/admin/blog">Blog</Link>
             </Menu.Item>
           )}
-          {hasPermission(SIDEBAR_CMS_MESSAGE) && (
+          {hasPermission(SIDEBAR_CMS_PRODUCT) && (
             <Menu.Item key="95">
               <Link href="/admin/product">Product</Link>
             </Menu.Item>
