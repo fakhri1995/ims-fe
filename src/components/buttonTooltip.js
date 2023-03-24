@@ -23,9 +23,15 @@ const ButtonTooltip = ({
     "btn font-semibold px-6 border"
   );
 
-  const buttonOutlineColorsClassName = clsx(`
-    hover:opacity-75 ${color}
-  `);
+  const buttonOutlineColorsClassName = clsx(
+    {
+      "border-state2 hover:border-state2 hover:bg-state2":
+        color == "state2" && !disabled,
+      "border-secondary100 hover:border-secondary100 hover:bg-secondary100":
+        color == "secondary100" && !disabled,
+    },
+    "hover:bg-opacity-75"
+  );
 
   const defaultButtonClassName = clsx(
     commonButtonClassName,
@@ -35,18 +41,13 @@ const ButtonTooltip = ({
   const buttonType = submit ? "submit" : "button";
 
   return (
-    <Tooltip
-      placement="bottom"
-      title={tooltipTitle}
-      color={tooltipColor}
-      className
-    >
+    <Tooltip placement="bottom" title={tooltipTitle} color={tooltipColor}>
       <Button
         disabled={disabled}
         form={form}
         onClick={onClick}
         type={buttonType}
-        className={`${defaultButtonClassName} bg-transparent hover:bg-transparent`}
+        className={`${defaultButtonClassName} `}
       >
         {children}
       </Button>

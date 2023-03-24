@@ -2,7 +2,7 @@ import {
   AppstoreOutlined,
   CloseOutlined,
   DownOutlined,
-  FileOutlined,
+  MailOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 import {
@@ -1344,7 +1344,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setEmailDrawerShown(true);
                 }}
               >
-                <MailForwardIconSvg size={16} color={`#35763B`} />
+                <MailOutlined />
               </ButtonSys>
 
               {record.user?.is_enabled === 0 ? (
@@ -1357,11 +1357,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     setDataRowClicked(record);
                     setModalSendAccess(true);
                   }}
-                  color={
-                    record.owner_id
-                      ? "border-state2 hover:border-state2 hover:bg-state2 hover:opacity-75"
-                      : "border-secondary100 hover:border-secondary100  hover:bg-secondary100 hover:opacity-75"
-                  }
+                  color={record.owner_id ? "state2" : "secondary100"}
                   tooltipTitle={
                     record.owner_id
                       ? "Sudah diberi akses"
