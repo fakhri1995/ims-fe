@@ -1,3 +1,4 @@
+import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   DatePicker,
@@ -15,12 +16,7 @@ import { useCallback } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { UploadIconSvg } from "../../../../../components/icon";
-import {
-  beforeUploadFileMaxSize,
-  generateStaticAssetUrl,
-  permissionWarningNotification,
-} from "../../../../../lib/helper";
+import { beforeUploadFileMaxSize } from "../../../../../lib/helper";
 
 const EmployeeProfileForm = ({
   initProps,
@@ -193,11 +189,11 @@ const EmployeeProfileForm = ({
         >
           <Button
             className="btn-sm btn font-semibold px-6 space-x-2 border
-            text-primary100 bg-white  border-primary100 
+            text-primary100 hover:text-white bg-white border-primary100 
             hover:bg-primary75 hover:border-primary75  
-            focus:border-primary75 focus:text-primary100"
+            focus:border-primary75 focus:text-primary100 "
           >
-            <UploadIconSvg size={16} color="#35763B" />
+            <UploadOutlined />
             <p>Unggah File</p>
           </Button>
         </Upload>
