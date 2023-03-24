@@ -1,3 +1,8 @@
+import {
+  DownloadOutlined,
+  EditOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
 import { Input, Select, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -27,10 +32,8 @@ import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
   CheckIconSvg,
   CircleCheckIconSvg,
-  EditIconSvg,
   SearchIconSvg,
 } from "../../../../components/icon";
-import { DownloadIconSvg, SettingsIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import {
@@ -540,7 +543,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <EditIconSvg size={16} color={`#35763B`} />
+                      <EditOutlined />
                       <p className="whitespace-nowrap">Edit Draft</p>
                     </div>
                   </ButtonSys>
@@ -557,7 +560,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <DownloadIconSvg size={16} color={`#35763B`} />
+                      <DownloadOutlined />
                       <p className="whitespace-nowrap">Unduh</p>
                     </div>
                   </ButtonSys>
@@ -621,7 +624,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 // disabled
               >
                 <div className="flex space-x-2 items-center">
-                  <SettingsIconSvg size={16} color="#35763B" />
+                  <SettingOutlined />
                   <p>Kelola Variabel Gaji</p>
                 </div>
               </ButtonSys>
@@ -632,7 +635,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               >
                 <div className="flex space-x-2 items-center">
                   <CheckIconSvg size={16} color="#FFFFFF" />
-                  <p className="">Terbitkan Draft Slip Gaji</p>
+                  <p>Terbitkan Draft Slip Gaji</p>
                 </div>
               </ButtonSys>
             </div>

@@ -1,8 +1,8 @@
+import { DeleteOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../lib/helper";
-import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
 const DrawerRoleUpdate = ({
@@ -155,7 +155,7 @@ const DrawerRoleUpdate = ({
       buttonCancelText={
         isAllowedToDeleteRole && (
           <div className="flex flex-row space-x-2 items-center">
-            <TrashIconSvg size={16} color={"#BF4A40"} />
+            <DeleteOutlined />
             <p>Hapus Role</p>
           </div>
         )

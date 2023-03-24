@@ -1,4 +1,4 @@
-import { notification } from "antd";
+import { Button, Tooltip, notification } from "antd";
 import { useCallback, useRef } from "react";
 
 import clsx from "clsx";
@@ -57,27 +57,33 @@ const ButtonSys = ({
     {
       "btn-sm": size !== "large",
       "w-full": fullWidth,
-      "bg-disabled border-disabled": disabled,
+      "bg-disabled text-white border-disabled": disabled,
     },
-    "btn text-white font-semibold px-6 border"
+    "btn font-semibold px-6 border"
   );
 
   const buttonSolidColorsClassName = clsx({
-    "bg-state1 hover:bg-state12 border-state1 hover:border-state1":
+    "bg-state1 hover:bg-state12 text-white border-state1 hover:border-state1":
       color === "danger" && !disabled,
     "bg-white hover:bg-gray-100 border-white hover:border-gray-100":
       color === "white" && !disabled,
-    "bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75":
+    "bg-primary100 hover:bg-primary75 text-white border-primary100 hover:border-primary75":
       !color && !disabled,
   });
 
   const buttonOutlineColorsClassName = clsx(
     {
-      "text-state1 hover:bg-state1 border-state1": color === "danger",
-      "text-primary100 hover:bg-primary75 border-primary100 hover:border-primary75":
+      "text-state1 hover:bg-state1 border-state1 ": color === "danger",
+      "text-notice border-notice bg-notice bg-opacity-10 hover:bg-notice hover:opacity-75":
+        color === "notice",
+      "text-warning border-warning bg-warning bg-opacity-10 hover:bg-warning hover:opacity-75":
+        color === "warning",
+      "text-mono30 border-mono30 hover:bg-mono30 hover:opacity-75":
+        color === "mono30",
+      "text-primary100 border-primary100 hover:bg-primary75 hover:border-primary75":
         !color,
     },
-    "hover:text-white bg-white"
+    "hover:text-white"
   );
 
   const primaryButtonClassName = clsx(

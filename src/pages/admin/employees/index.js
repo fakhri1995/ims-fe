@@ -1,4 +1,4 @@
-import { UpOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Button,
   Collapse,
@@ -38,7 +38,6 @@ import { permissionWarningNotification } from "lib/helper";
 import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
-import ButtonSysColor from "../../../components/buttonColor";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
 import {
   EditIconSvg,
@@ -726,46 +725,48 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                       event.stopPropagation();
                       rt.push(`/admin/employees/${record.id}?tab=2`);
                     }}
+                    icon={<EditOutlined />}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <EditIconSvg size={16} color={`#35763B`} />
+                      {/* <EditIconSvg size={16} color={`#35763B`} /> */}
+                      <EditOutlined />
                       <p className="whitespace-nowrap">Edit Kontrak</p>
                     </div>
                   </ButtonSys>
                 </div>
               ) : (
                 <div className="flex flex-col space-y-2">
-                  <ButtonSysColor
-                    type={"default"}
+                  <ButtonSys
+                    type={isAllowedToUpdateEmployee ? "default" : "primary"}
                     disabled={!isAllowedToUpdateEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(`/admin/employees/create?id=${record.id}`);
                     }}
-                    color={"border-notice text-notice bg-notice bg-opacity-10"}
+                    color={"notice"}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <EditIconSvg size={16} color={`#DDB44A`} />
+                      {/* <EditIconSvg size={16} color={`#DDB44A`} /> */}
+                      <EditOutlined />
                       <p className="whitespace-nowrap">Edit Draft</p>
                     </div>
-                  </ButtonSysColor>
-                  <ButtonSysColor
-                    type={"default"}
+                  </ButtonSys>
+                  <ButtonSys
+                    type={isAllowedToDeleteEmployee ? "default" : "primary"}
                     disabled={!isAllowedToDeleteEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
                       setDataRowClicked(record);
                       setModalDelete(true);
                     }}
-                    color={
-                      "border-warning text-warning bg-warning bg-opacity-10"
-                    }
+                    color={"warning"}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <TrashIconSvg size={16} color={`#BF4A40`} />
+                      {/* <TrashIconSvg size={16} color={`#BF4A40`} /> */}
+                      <DeleteOutlined />
                       <p className="whitespace-nowrap">Hapus Draft</p>
                     </div>
-                  </ButtonSysColor>
+                  </ButtonSys>
                 </div>
               )}
             </>

@@ -1,4 +1,4 @@
-import { SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Modal, Table, notification } from "antd";
 import moment from "moment";
 import Link from "next/link";
@@ -11,7 +11,6 @@ import { AccessControl } from "components/features/AccessControl";
 import { MESSAGES_GET } from "lib/features";
 
 import ButtonSys from "../../../components/button";
-import ButtonSysColor from "../../../components/buttonColor";
 import {
   EditIconSvg,
   SearchIconSvg,
@@ -125,21 +124,21 @@ const Product = ({ initProps, dataProfile, sidemenu }) => {
           },
           children: (
             <div className="flex flex-col space-y-2">
-              <ButtonSysColor
+              <ButtonSys
                 type={"default"}
                 // disabled={!isAllowedToEditDraft}
                 onClick={(event) => {
                   event.stopPropagation();
                   rt.push(`/admin/product/create?id=${record.id}`);
                 }}
-                color={"border-notice text-notice bg-notice bg-opacity-10"}
+                color={"notice"}
               >
                 <div className="flex flex-row space-x-2 items-center">
-                  <EditIconSvg size={16} color={`#DDB44A`} />
+                  <EditOutlined />
                   <p className="whitespace-nowrap">Edit Product</p>
                 </div>
-              </ButtonSysColor>
-              <ButtonSysColor
+              </ButtonSys>
+              <ButtonSys
                 type={"default"}
                 // disabled={!isAllowedToDeleteEmployee}
                 onClick={(event) => {
@@ -147,13 +146,13 @@ const Product = ({ initProps, dataProfile, sidemenu }) => {
                   setDataRowClicked(record);
                   setModalDelete(true);
                 }}
-                color={"border-warning text-warning bg-warning bg-opacity-10"}
+                color={"warning"}
               >
                 <div className="flex flex-row space-x-2 items-center">
-                  <TrashIconSvg size={16} color={`#BF4A40`} />
+                  <DeleteOutlined />
                   <p className="whitespace-nowrap">Hapus Product</p>
                 </div>
-              </ButtonSysColor>
+              </ButtonSys>
             </div>
           ),
         };
