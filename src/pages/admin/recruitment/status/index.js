@@ -1,3 +1,8 @@
+import {
+  AppstoreAddOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { Input, Select, notification } from "antd";
 // import DrawerStatusCreate from "../../../../components/drawer/recruitment/drawerStatusCreate";
 import dynamic from "next/dynamic";
@@ -23,12 +28,7 @@ import { permissionWarningNotification } from "lib/helper";
 import ButtonSys from "../../../../components/button";
 import DrawerCore from "../../../../components/drawer/drawerCore";
 import DrawerStatusUpdate from "../../../../components/drawer/recruitment/drawerStatusUpdate";
-import {
-  EditIconSvg,
-  LayoutGridAddSvg,
-  SearchIconSvg,
-  TrashIconSvg,
-} from "../../../../components/icon";
+import { SearchIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -406,7 +406,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditIconSvg size={15} color={`#35763B`} />
+                <EditOutlined />
               </ButtonSys>
               <ButtonSys
                 type={StatusisAllowedToDeleteStatus ? "default" : "primary"}
@@ -418,7 +418,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   // setModalDelete(true);
                 }}
               >
-                <TrashIconSvg size={15} color={`#BF4A40`} />
+                <DeleteOutlined />
               </ButtonSys>
             </div>
           ),
@@ -452,7 +452,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 disabled={!isAllowedToAddStatus}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
-                  <LayoutGridAddSvg size={16} color="#35763B" />
+                  <AppstoreAddOutlined />
                   <p>Tambah Status</p>
                 </div>
               </ButtonSys>
@@ -556,7 +556,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           width={380}
           buttonUpdateText={
             <div className="flex flex-row space-x-2 items-center">
-              <EditIconSvg size={16} color={"#35763B"} />
+              <EditOutlined />
               <p>Ubah Status</p>
             </div>
           }

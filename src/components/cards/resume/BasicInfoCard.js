@@ -1,15 +1,10 @@
-import { InfoCircleFilled } from "@ant-design/icons";
-import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Steps,
-  Timeline,
-  notification,
-} from "antd";
+  CloseOutlined,
+  DeleteOutlined,
+  DownloadOutlined,
+} from "@ant-design/icons";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import { Form, Input, Select, Spin } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -25,18 +20,14 @@ import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
-  DownloadIconSvg,
   EditIconSvg,
   EmailIconSvg,
   InfoCircleIconSvg,
   MappinIconSvg,
   OneUserIconSvg,
   PhoneIconSvg,
-  TrashIconSvg,
-  XIconSvg,
 } from "../../icon";
 import { ModalHapus2 } from "../../modal/modalCustom";
-import { H1 } from "../../typography";
 
 const BasicInfoCard = ({
   dataDisplay,
@@ -86,7 +77,6 @@ const BasicInfoCard = ({
           <ButtonSys
             type={"default"}
             color={"danger"}
-            className="flex flex-row"
             onClick={() => {
               isCreateForm
                 ? rt.back()
@@ -101,8 +91,10 @@ const BasicInfoCard = ({
               setIsShowInput(false);
             }}
           >
-            <XIconSvg size={16} color={`#BF4A40`} />
-            <p>Batalkan</p>
+            <div className="flex flex-row space-x-2">
+              <CloseOutlined />
+              <p>Batalkan</p>
+            </div>
           </ButtonSys>
           <ButtonSys
             type={"primary"}
@@ -300,7 +292,7 @@ const BasicInfoCard = ({
               onClick={() => setModalDelete(true)}
             >
               <div className="flex flex-row space-x-2 items-center">
-                <TrashIconSvg size={16} color={`#BF4A40`} />
+                <DeleteOutlined />
                 <p className="whitespace-nowrap">Remove Candidate</p>
               </div>
             </ButtonSys>
@@ -312,7 +304,7 @@ const BasicInfoCard = ({
             >
               <ButtonSys type={"default"}>
                 <div className="flex flex-row space-x-2 items-center">
-                  <DownloadIconSvg size={16} color={"#35763B"} />
+                  <DownloadOutlined />
                   <p className="whitespace-nowrap">Download Resume</p>
                 </div>
               </ButtonSys>

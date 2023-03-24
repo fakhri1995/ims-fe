@@ -1,3 +1,4 @@
+import { UploadOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -33,7 +34,6 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import { UploadIconSvg } from "../../../../icon";
 import { ModalHapus2 } from "../../../../modal/modalCustom";
 import DeviceForm from "./deviceForm";
 
@@ -522,7 +522,7 @@ const InventoryForm = ({
                   hover:border-primary75 hover:text-white bg-white space-x-2
                   focus:border-primary75 focus:text-primary100"
                 >
-                  <UploadIconSvg size={16} color="#35763B" />
+                  <UploadOutlined />
                   <p>Unggah File</p>
                 </Button>
               </Upload>
@@ -553,7 +553,7 @@ const InventoryForm = ({
                   hover:border-primary75 hover:text-white bg-white space-x-2
                   focus:border-primary75 focus:text-primary100"
                 >
-                  <UploadIconSvg size={16} color="#35763B" />
+                  <UploadOutlined />
                   <p>Unggah File</p>
                 </Button>
               </Upload>

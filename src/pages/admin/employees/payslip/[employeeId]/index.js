@@ -1,4 +1,9 @@
-import { UpOutlined } from "@ant-design/icons";
+import {
+  DownloadOutlined,
+  EditOutlined,
+  EyeOutlined,
+  FileAddOutlined,
+} from "@ant-design/icons";
 import {
   Collapse,
   Input,
@@ -30,16 +35,9 @@ import ButtonSys from "../../../../../components/button";
 import DrawerPayslipDetail from "../../../../../components/drawer/employees/drawerPayslipDetail";
 import {
   AlertIconSvg,
-  CirclePlusIconSvg,
-  DownloadIconSvg,
-  EditIconSvg,
-  EyeCheckIconSvg,
   OneUserIconSvg,
   SearchIconSvg,
-  TrashIconSvg,
-  UploadIconSvg,
 } from "../../../../../components/icon";
-import { FilePlusIconSvg } from "../../../../../components/icon";
 import LayoutDashboard from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import { TableCustomPayslipEmployeeList } from "../../../../../components/table/tableCustom";
@@ -449,7 +447,7 @@ const EmployeePayslipDetailIndex = ({
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <FilePlusIconSvg size={16} color={`#35763B`} />
+                      <FileAddOutlined />
                       <p className="whitespace-nowrap">Buat Slip Gaji</p>
                     </div>
                   </ButtonSys>
@@ -463,7 +461,7 @@ const EmployeePayslipDetailIndex = ({
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">
-                      <EditIconSvg size={16} color={`#35763B`} />
+                      <EditOutlined />
                       <p className="whitespace-nowrap">Edit Draft</p>
                     </div>
                   </ButtonSys>
@@ -479,7 +477,7 @@ const EmployeePayslipDetailIndex = ({
                       setDrawerDetail(true);
                     }}
                   >
-                    <EyeCheckIconSvg size={16} color={`#35763B`} />
+                    <EyeOutlined />
                   </ButtonSys>
                   <ButtonSys
                     type={isAllowedToGetPayslip ? "default" : "primary"}
@@ -489,7 +487,7 @@ const EmployeePayslipDetailIndex = ({
                       // download pdf payslip
                     }}
                   >
-                    <DownloadIconSvg size={16} color={`#35763B`} />
+                    <DownloadOutlined />
                   </ButtonSys>
                 </div>
               )}
@@ -565,7 +563,7 @@ const EmployeePayslipDetailIndex = ({
                   onClick={() => rt.push(`${employeeId}/addPayslip`)}
                   disabled={!isAllowedToAddPayslip}
                 >
-                  <FilePlusIconSvg color={"#35763B"} size={16} />
+                  <FileAddOutlined />
                   <p className="ml-2">Buat Slip Gaji</p>
                 </ButtonSys>
               ) : dataPayslip?.status === "draft" ? (
@@ -576,7 +574,7 @@ const EmployeePayslipDetailIndex = ({
                   }
                   disabled={!isAllowedToUpdatePayslip}
                 >
-                  <EditIconSvg color={"#35763B"} size={16} />
+                  <EditOutlined />
                   <p className="ml-2">Edit Draft</p>
                 </ButtonSys>
               ) : (
@@ -585,7 +583,7 @@ const EmployeePayslipDetailIndex = ({
                   // onClick={() => download pdf payslip}
                   disabled={!isAllowedToGetPayslip}
                 >
-                  <DownloadIconSvg color={"#35763B"} size={16} />
+                  <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
                 </ButtonSys>
               )}

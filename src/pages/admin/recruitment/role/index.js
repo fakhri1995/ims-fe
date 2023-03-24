@@ -1,3 +1,8 @@
+import {
+  AppstoreAddOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { Input, Select, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -22,20 +27,12 @@ import { permissionWarningNotification } from "lib/helper";
 import ButtonSys from "../../../../components/button";
 import DrawerRoleCreate from "../../../../components/drawer/recruitment/drawerRoleCreate";
 import DrawerRoleUpdate from "../../../../components/drawer/recruitment/drawerRoleUpdate";
-import {
-  EditIconSvg,
-  LayoutGridAddSvg,
-  SearchIconSvg,
-  TrashIconSvg,
-} from "../../../../components/icon";
+import { SearchIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
 import SetupMenu from "../../../../components/setupMenu";
-import {
-  TableCustomRecruitmentRole,
-  TableCustomTickets,
-} from "../../../../components/table/tableCustom";
+import { TableCustomRecruitmentRole } from "../../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../../lib/helper";
 import httpcookie from "cookie";
 
@@ -403,7 +400,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditIconSvg size={15} color={`#35763B`} />
+                <EditOutlined />
               </ButtonSys>
               <ButtonSys
                 type={isAllowedToDeleteRole ? "default" : "primary"}
@@ -415,7 +412,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   // setModalDelete(true);
                 }}
               >
-                <TrashIconSvg size={15} color={`#BF4A40`} />
+                <DeleteOutlined />
               </ButtonSys>
             </div>
           ),
@@ -449,7 +446,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 disabled={!isAllowedToAddRole}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
-                  <LayoutGridAddSvg size={16} color="#35763B" />
+                  <AppstoreAddOutlined />
                   <p>Tambah Role</p>
                 </div>
               </ButtonSys>

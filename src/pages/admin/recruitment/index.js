@@ -1,4 +1,11 @@
 import {
+  AppstoreOutlined,
+  CloseOutlined,
+  DownOutlined,
+  MailOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
   Button,
   DatePicker,
   Dropdown,
@@ -53,7 +60,7 @@ import { permissionWarningNotification } from "lib/helper";
 import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
-import ButtonSysColor from "../../../components/buttonColor";
+import ButtonTooltip from "../../../components/buttonTooltip";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerCandidateCreate from "../../../components/drawer/recruitment/drawerCandidateCreate";
 import DrawerCandidatePreview from "../../../components/drawer/recruitment/drawerCandidatePreview";
@@ -61,19 +68,16 @@ import DrawerCandidateSendEmail from "../../../components/drawer/recruitment/dra
 import {
   CheckIconSvg,
   CopyIconSvg,
-  DownIconSvg,
   DownloadIconSvg,
   FileExportIconSvg,
   FilePlusIconSvg,
   InfoSquareIconSvg,
-  LayoutGridSvg,
   MailForwardIconSvg,
   PlusIconSvg,
   SearchIconSvg,
   TrashIconSvg,
   TrendingUpIconSvg,
   UserPlusIconSvg,
-  XIconSvg,
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
@@ -1319,19 +1323,19 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       render: (text, record) => {
         return {
           children: (
-            <div className="grid grid-rows-3 lg:grid-rows-1 grid-cols-1 lg:grid-cols-3 gap-3">
-              <ButtonSysColor
+            <div className="grid grid-rows-3 xl:grid-rows-1 grid-cols-1 xl:grid-cols-3 gap-3">
+              <ButtonSys
                 type={"default"}
                 disabled={!isAllowedToGetRecruitment}
                 onClick={(event) => {
                   event.stopPropagation();
                   rt.push(`/admin/recruitment/${record.id}`);
                 }}
-                color={"border-mono30"}
+                color={"mono30"}
               >
-                <SearchIconSvg size={16} color={`#100F0F`} />
-              </ButtonSysColor>
-              <ButtonSysColor
+                <SearchOutlined />
+              </ButtonSys>
+              <ButtonSys
                 type={"default"}
                 disabled={!isAllowedToSendEmailRecruitment}
                 onClick={(event) => {
@@ -1339,27 +1343,21 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setDataRowClicked(record);
                   setEmailDrawerShown(true);
                 }}
-                color={"border-primary100"}
               >
-                <MailForwardIconSvg size={16} color={`#35763B`} />
-              </ButtonSysColor>
+                <MailOutlined />
+              </ButtonSys>
 
               {record.user?.is_enabled === 0 ? (
                 <></>
               ) : (
-                <ButtonSysColor
-                  type={"tooltip"}
+                <ButtonTooltip
                   disabled={!isAllowedToGenerateRecruitmentAccount}
                   onClick={(event) => {
                     event.stopPropagation();
                     setDataRowClicked(record);
                     setModalSendAccess(true);
                   }}
-                  color={
-                    record.owner_id
-                      ? "border-state2 hover:border-state2"
-                      : "border-secondary100 hover:border-secondary100"
-                  }
+                  color={record.owner_id ? "state2" : "secondary100"}
                   tooltipTitle={
                     record.owner_id
                       ? "Sudah diberi akses"
@@ -1371,7 +1369,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     size={16}
                     color={record.owner_id ? "#DDB44A" : "#00589F"}
                   />
-                </ButtonSysColor>
+                </ButtonTooltip>
               )}
             </div>
           ),
@@ -1457,7 +1455,8 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="flex flex-col lg:flex-row space-x-6 space-y-2 lg:space-y-0">
                   <ButtonSys type={"default"} onClick={() => setBulk(true)}>
                     <div className="flex flex-row space-x-2.5 items-center">
-                      <LayoutGridSvg size={16} color="#35763B" />
+                      {/* <LayoutGridSvg size={16} color="#35763B" /> */}
+                      <AppstoreOutlined />
                       <p>Bulk Action</p>
                     </div>
                   </ButtonSys>
@@ -1496,7 +1495,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }}
                   >
                     <div className="flex flex-row space-x-1 items-center">
-                      <XIconSvg size={16} color={"#BF4A40"} />
+                      <CloseOutlined />
                       <p>Batal</p>
                     </div>
                   </ButtonSys>
@@ -1516,7 +1515,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                     >
                       <div className="flex flex-row items-center space-x-3.5">
                         <p>Aksi</p>
-                        <DownIconSvg size={16} color={"#35763B"} />
+                        <DownOutlined />
                       </div>
                     </Button>
                   </Dropdown>

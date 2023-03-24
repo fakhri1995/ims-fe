@@ -1,5 +1,5 @@
+import { CloseOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { Spin, Tabs, notification } from "antd";
-import { size } from "lodash";
 import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -21,12 +21,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import {
-  CheckIconSvg,
-  LeftIconSvg,
-  RightIconSvg,
-  XIconSvg,
-} from "../../../../components/icon";
+import { CheckIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { objectToFormData } from "../../../../lib/helper";
@@ -684,7 +679,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                     handleCancelAddEmployee();
                   }}
                 >
-                  <XIconSvg size={18} color={`#BF4A40`} />
+                  <CloseOutlined />
                   <p className="ml-2">Batalkan</p>
                 </ButtonSys>
               ) : (
@@ -697,7 +692,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                     handleAutoSaveOnTabChange();
                   }}
                 >
-                  <LeftIconSvg size={18} color={`#35763B`} />
+                  <LeftOutlined />
                   <p className="ml-2">Kembali</p>
                 </ButtonSys>
               )}
@@ -743,7 +738,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 >
                   <div className="flex flex-row flex-nowrap items-center">
                     <p className="mr-2">Selanjutnya</p>
-                    <RightIconSvg size={18} color={`white`} />
+                    <RightOutlined />
                   </div>
                 </ButtonSys>
               )}

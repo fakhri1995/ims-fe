@@ -20,10 +20,6 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  ASSESSMENTS_GET,
-  RESUME_ADD,
-  RESUME_ASSESSMENT_ADD,
-  RESUME_ASSESSMENT_DELETE,
   RESUME_ASSESSMENT_LIST,
   RESUME_ASSESSMENT_UPDATE,
   RESUME_DELETE,
