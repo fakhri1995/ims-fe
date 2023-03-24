@@ -99,7 +99,6 @@ function Hardware({}) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           setDataTestimonial(res2.data);
         } else {
@@ -326,7 +325,6 @@ function Hardware({}) {
 
   const deleteProduct = (index) => {
     let arr_product = [...productSelected];
-    console.log("delete product ", index);
     arr_product.splice(index, 1);
     setProductSelected([...arr_product]);
   };
@@ -334,7 +332,6 @@ function Hardware({}) {
     setShowform(true);
   };
   const changeCaptcha = (value) => {
-    console.log("valuenya ", value);
     setCaptchaStatus(false);
   };
   const submitFormSoftware = (device) => {
@@ -386,8 +383,6 @@ function Hardware({}) {
         ...allDevicesObject,
       };
       payloadFormData = objectToFormData(inventoryDataWithDevice);
-
-      console.log("datahardware ", payloadFormData);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionHardware`, {
         method: "POST",
         headers: {
@@ -426,7 +421,6 @@ function Hardware({}) {
     }
   };
   const onPanelChange = (value) => {
-    console.log("date valuenya ", value);
     setMeetingDateStatus(false);
     onChangeDateTemp(value);
     onChangeDate(value);
@@ -511,7 +505,6 @@ function Hardware({}) {
   };
 
   const handleAddAnotherProduct = () => {
-    console.log("oe ", statusEdit);
     if (
       productSelected.length == 0 ||
       urgently == null ||
@@ -539,7 +532,6 @@ function Hardware({}) {
         setMaxBudgetErrorStatus(true);
       }
     } else {
-      console.log("status edit ", statusEdit);
       if (statusEdit == true) {
         let array_hardwares = [];
         for (let i = 0; i < dataHardwareSummary.length; i++) {
@@ -596,12 +588,6 @@ function Hardware({}) {
   };
 
   const handleUpdateProduct = () => {
-    console.log("update ", statusEdit);
-    console.log("1 ", productSelected.length);
-    console.log("2 ", urgently);
-    console.log("3 ", manyTalent);
-    console.log("4 ", timeUsed);
-    console.log("5 ", maxBudget);
     if (
       productSelected.length == 0 ||
       urgently == null ||
@@ -613,12 +599,6 @@ function Hardware({}) {
       maxBudget == null ||
       maxBudget == 0
     ) {
-      console.log("masuk if ");
-      console.log("productSelected.length ", productSelected.length);
-      console.log("urgently ", urgently);
-      console.log("manyTalent ", manyTalent);
-      console.log("timeUsed ", timeUsed);
-      console.log("maxBudget ", maxBudget);
       if (productSelected.length == 0) {
         setProductErrorStatus(true);
       }
@@ -635,8 +615,6 @@ function Hardware({}) {
         setMaxBudgetErrorStatus(true);
       }
     } else {
-      console.log("status edit ", statusEdit);
-
       let array_hardwares = [];
       for (let i = 0; i < dataHardwareSummary.length; i++) {
         if (i == indexEdit) {
@@ -651,8 +629,6 @@ function Hardware({}) {
             attachment: attachment,
           });
         } else {
-          console.log("index ke ", i);
-          console.log("dataHardware[i] ", dataHardwareSummary[i]);
           array_hardwares.push({
             kindOfHardware: dataHardwareSummary[i].kindOfHardware,
             product: dataHardwareSummary[i].product,
@@ -805,16 +781,18 @@ function Hardware({}) {
     swipeToSlide: true,
     arrows: false,
   };
+  const sliderSettingsPhone3 = {
+    dots: false,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    arrows: false,
+  };
 
   const handleLetsTalk = () => {
-    console.log(
-      "data email ",
-      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(
-        dataHardware.company_email
-      )
-    );
     if (dataHardware.company_email == null) {
-      console.log("set show form email first");
       setShowEmailError(true);
       setEmailError("you must filled email first");
     } else if (
@@ -824,11 +802,9 @@ function Hardware({}) {
           /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
         )
     ) {
-      console.log("set show form email third");
       setShowEmailError(false);
       setShowform(true);
     } else {
-      console.log("set show form email second");
       setEmailError("your email is invalid");
     }
   };
@@ -874,7 +850,6 @@ function Hardware({}) {
         numbersCopy[i] = productSelected[i];
       }
       numbersCopy.push(e.target.value);
-      console.log("numbers copy ", numbersCopy);
       setProductSelected([...numbersCopy]);
       form.resetFields([product]);
     }
@@ -1704,7 +1679,6 @@ function Hardware({}) {
                       />
                     </Form.Item>
                   </div>
-                  {console.log("product selected  render", productSelected)}
                   {productSelected.length > 0 && (
                     <div className={"flex flex-wrap w-full mt-3"}>
                       {productSelected.map((data, index) => (
@@ -2777,7 +2751,6 @@ function Hardware({}) {
                       />
                     </Form.Item>
                   </div>
-                  {console.log("product selected  render", productSelected)}
                   {productSelected.length > 0 && (
                     <div className={"flex flex-wrap w-full mt-3"}>
                       {productSelected.map((data, index) => (
@@ -3958,28 +3931,58 @@ function Hardware({}) {
                     >
                       Banking Machinery
                     </p>
-                    <Slider {...sliderSettingsPhone2}>
-                      {dataBanking.map((data, index) => (
-                        <div
-                          onClick={handleShowForm}
-                          className={
-                            "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                          }
-                        >
-                          <img
-                            className={"w-[110px] h-[77.79px]"}
-                            src={generateStaticAssetUrl(
-                              data.attachment_product.link
-                            )}
-                          />
-                          <p
-                            className={"text-blackmig font-gilroybold text-xs"}
+                    <div className={"md:hidden"}>
+                      <Slider {...sliderSettingsPhone2}>
+                        {dataBanking.map((data, index) => (
+                          <div
+                            onClick={handleShowForm}
+                            className={
+                              "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                            }
                           >
-                            {data.name_product}
-                          </p>
-                        </div>
-                      ))}
-                    </Slider>
+                            <img
+                              className={"w-[110px] h-[77.79px]"}
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                            />
+                            <p
+                              className={
+                                "text-blackmig font-gilroybold text-xs"
+                              }
+                            >
+                              {data.name_product}
+                            </p>
+                          </div>
+                        ))}
+                      </Slider>
+                    </div>
+                    <div className={"hidden md:block"}>
+                      <Slider {...sliderSettingsPhone3}>
+                        {dataBanking.map((data, index) => (
+                          <div
+                            onClick={handleShowForm}
+                            className={
+                              "mt-2  bg-white h-[130px] w-[130px] p-[10.11px] px-[10px] mr-1"
+                            }
+                          >
+                            <img
+                              className={"w-[110px] h-[77.79px] mx-auto"}
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                            />
+                            <p
+                              className={
+                                "text-blackmig font-gilroybold text-xs"
+                              }
+                            >
+                              {data.name_product}
+                            </p>
+                          </div>
+                        ))}
+                      </Slider>
+                    </div>
                   </div>
                 )}
                 {dataWorkstation && (
@@ -3991,28 +3994,58 @@ function Hardware({}) {
                     >
                       Workstation
                     </p>
-                    <Slider {...sliderSettingsPhone2}>
-                      {dataWorkstation.map((data, index) => (
-                        <div
-                          onClick={handleShowForm}
-                          className={
-                            "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
-                          }
-                        >
-                          <img
-                            className={"w-[110px] h-[77.79px]"}
-                            src={generateStaticAssetUrl(
-                              data.attachment_product.link
-                            )}
-                          />
-                          <p
-                            className={"text-blackmig font-gilroybold text-xs"}
+                    <div className={"md:hidden"}>
+                      <Slider {...sliderSettingsPhone2}>
+                        {dataWorkstation.map((data, index) => (
+                          <div
+                            onClick={handleShowForm}
+                            className={
+                              "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                            }
                           >
-                            {data.name_product}
-                          </p>
-                        </div>
-                      ))}
-                    </Slider>
+                            <img
+                              className={"w-[110px] h-[77.79px]"}
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                            />
+                            <p
+                              className={
+                                "text-blackmig font-gilroybold text-xs"
+                              }
+                            >
+                              {data.name_product}
+                            </p>
+                          </div>
+                        ))}
+                      </Slider>
+                    </div>
+                    <div className={"hidden md:block"}>
+                      <Slider {...sliderSettingsPhone3}>
+                        {dataWorkstation.map((data, index) => (
+                          <div
+                            onClick={handleShowForm}
+                            className={
+                              "mt-2  bg-white w-[130px] p-[10.11px] px-[10px] mr-1"
+                            }
+                          >
+                            <img
+                              className={"w-[110px] h-[77.79px]"}
+                              src={generateStaticAssetUrl(
+                                data.attachment_product.link
+                              )}
+                            />
+                            <p
+                              className={
+                                "text-blackmig font-gilroybold text-xs"
+                              }
+                            >
+                              {data.name_product}
+                            </p>
+                          </div>
+                        ))}
+                      </Slider>
+                    </div>
                   </div>
                 )}
                 {dataServer && (

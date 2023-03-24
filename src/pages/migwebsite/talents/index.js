@@ -43,7 +43,6 @@ function Talents({}) {
   const { Option } = Select;
   const { TextArea } = Input;
   const handleSubmit = (value) => {
-    console.log("set form active ", value);
     setFormActive(value);
   };
   const handleSubmitThird = () => {
@@ -226,7 +225,6 @@ function Talents({}) {
   useEffect(() => {
     if (localStorage.getItem("dataForm")) {
       let dataForm = JSON.parse(localStorage.getItem("dataForm"));
-      console.log("dataform ", dataForm);
       setDataPeople({
         ...dataPeople,
         company_email: dataForm.company_email,
@@ -247,12 +245,10 @@ function Talents({}) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           if (locale == "en") {
             setDataTestimonial(res2.data);
           } else {
-            console.log("masuk else id ");
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
               if (
@@ -263,7 +259,6 @@ function Talents({}) {
                 res2.data[i].tags_id != ""
               ) {
                 dataTemp.push(res2.data[i]);
-                console.log("masuk push");
               }
             }
             setDataTestimonial(dataTemp);
@@ -278,7 +273,6 @@ function Talents({}) {
   };
 
   const handleEdit = (index) => {
-    console.log("handle edit ", index);
     setStatusEdit(true);
     setIndexEdit(index);
     setProductSelected(dataTalents[index].product);
@@ -297,7 +291,6 @@ function Talents({}) {
   };
 
   const handleSetForm = (index) => {
-    console.log("data talents ", dataTalents[index]);
     form.setFieldsValue({ urgently_need: dataTalents[index].urgently });
     form.setFieldsValue({ level_employee: dataTalents[index].levelEmployee });
     form.setFieldsValue({ time_used: dataTalents[index].timeUsed });
@@ -308,11 +301,9 @@ function Talents({}) {
     form.setFieldsValue({ open_remote: dataTalents[index].openRemote });
   };
   const onChangeValuePurpose = (e) => {
-    console.log("radio checked", e.target.value);
     setValuePurpose(e.target.value);
   };
   const onChangeValueKindProject = (e) => {
-    console.log("radio checked", e.target.value);
     setValueKindProject(e.target.value);
   };
   const handleForm = (value) => {
@@ -327,7 +318,6 @@ function Talents({}) {
     // setShowform(true);
   };
   const handleContactOurSales = () => {
-    console.log("handle contact our sales ");
     setModalTalents(false);
     setShowform(true);
     // setShowform(true);
@@ -431,7 +421,6 @@ function Talents({}) {
   };
 
   const onPanelChange = (value) => {
-    console.log("helo calendar ", value);
     setMeetingDateStatus(false);
     onChangeDateTemp(value);
     onChangeDate(value);
@@ -449,7 +438,6 @@ function Talents({}) {
     let arr_product = productSelected;
     arr_product.push(product);
     setProductSelected(arr_product);
-    console.log("selected ", formActive);
     setProduct(null);
     form.setFieldsValue({ product: null });
   };
@@ -461,14 +449,12 @@ function Talents({}) {
   };
 
   const handleSuggestionSkill = (skill) => {
-    console.log("handle suggestion skill ", skill);
     let arr_product = productSelected;
     arr_product.push(skill);
     setProductSelected([...arr_product]);
     // form.setFieldValue(form, "product", "");
   };
   const changeCaptcha = (value) => {
-    console.log("valuenya ", value);
     setCaptchaStatus(false);
   };
   const submitFormSoftware = (device) => {
@@ -497,8 +483,6 @@ function Talents({}) {
           moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
         talent_list: dataTalents,
       };
-      // let formData = objectToFormData(dataTalentPost);
-      console.log("talent post ", dataTalentPost);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolutionTalent`, {
         method: "POST",
         headers: {
@@ -537,9 +521,6 @@ function Talents({}) {
   };
 
   const handleAddAnotherProduct = () => {
-    console.log("edit status ", statusEdit);
-    console.log("edit status manyTalent", manyTalent);
-
     if (statusEdit == true) {
       let array_talents = [];
       for (let i = 0; i < dataTalents.length; i++) {
@@ -577,7 +558,6 @@ function Talents({}) {
       });
     } else {
       let array_talents = dataTalents;
-      console.log("datatalents ", dataTalents);
       array_talents.push({
         kindOfTalent: kindOfTalent,
         product: productSelected,
@@ -596,7 +576,6 @@ function Talents({}) {
         duration: 3,
       });
     }
-    console.log("array talents ", openRemote);
     clearForm();
   };
 
@@ -649,12 +628,10 @@ function Talents({}) {
       arr.push("Robotica");
       arr.push("Line Tracer");
     }
-    console.log("array ", arr);
     setSkillSuggestion(arr);
   };
 
   const handleDeleteTalents = (value, index) => {
-    console.log("index ke ", index);
     setIndexEdit(index);
     setDeleteTalentValue(value);
     setModalDelete(true);
@@ -670,8 +647,6 @@ function Talents({}) {
       setModalDelete(false);
       setDataTalents([...array_talents]);
     }
-
-    console.log("handle delete confirm ", array_talents);
   };
 
   const handleSubmitTalents = () => {
@@ -1557,7 +1532,6 @@ function Talents({}) {
                       ))}
                     </div>
                   )}
-                  {console.log("formactive ", formActive)}
 
                   <div className={"mt-8 w-1/2"}>
                     <Form.Item
@@ -1829,7 +1803,6 @@ function Talents({}) {
               </div>
             ) : (
               <div className="w-[52%]">
-                {console.log("form active ", formActive)}
                 <p
                   style={{ lineHeight: "120%" }}
                   className={"text-[30px] text-blackmig font-gilroysemibold"}
@@ -2669,7 +2642,6 @@ function Talents({}) {
                       ))}
                     </div>
                   )}
-                  {console.log("formactive ", formActive)}
 
                   <div className={"mt-8 w-full"}>
                     <Form.Item

@@ -37,28 +37,6 @@ function Software({}) {
   const { TextArea } = Input;
 
   const handleSubmit = (value) => {
-    // fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addMessage`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(dataHardware),
-    // })
-    //   .then((res) => res.json())
-    //   .then((res2) => {
-    //     if (res2.success) {
-    //       form.resetFields();
-    //       setFeedback(false);
-    //       setTimeout(() => {
-    //         setFeedback(true);
-    //       }, 5000);
-    //     } else if (!res2.success) {
-    //       notification["error"]({
-    //         message: res2.message.errorInfo.status_detail,
-    //         duration: 5,
-    //       });
-    //     }
-    //   });
     setFormActive(value);
     window.scrollTo(0, 0);
   };
@@ -68,7 +46,6 @@ function Software({}) {
     window.scrollTo(0, 0);
   };
   const normFile = (e) => {
-    console.log("Upload event:", e);
     if (Array.isArray(e)) {
       return e;
     }
@@ -180,7 +157,6 @@ function Software({}) {
   useEffect(() => {
     if (localStorage.getItem("dataForm")) {
       let dataForm = JSON.parse(localStorage.getItem("dataForm"));
-      console.log("dataform ", dataForm);
       setDataSoftware({
         ...dataSoftware,
         company_email: dataForm.company_email,
@@ -202,7 +178,6 @@ function Software({}) {
     })
       .then((res) => res.json())
       .then((res2) => {
-        console.log("get data testimonial ", res2);
         if (res2.success) {
           setDataTestimonial(res2.data);
         } else {
@@ -214,7 +189,6 @@ function Software({}) {
       });
   };
   const onChangeValuePurpose = (e) => {
-    console.log("radio checked", e.target.value);
     // setValuePurpose(e.target.value);
     setDataSoftware({
       ...dataSoftware,
@@ -233,7 +207,6 @@ function Software({}) {
   };
 
   const onPanelChange = (value) => {
-    console.log("helo calendar ", value);
     setMeetingDateStatus(false);
     onChangeDateTemp(value);
     onChangeDate(value);
@@ -344,7 +317,6 @@ function Software({}) {
     if (info.file.status === "done") {
       const blobFile = info.file.originFileObj;
       const base64Data = await getBase64(blobFile);
-      console.log("info file ", info);
       setDataSoftware({
         ...dataSoftware,
         attachment: blobFile,
@@ -353,7 +325,6 @@ function Software({}) {
   };
 
   const changeCaptcha = (value) => {
-    console.log("valuenya ", value);
     setCaptchaStatus(false);
   };
 
@@ -387,7 +358,6 @@ function Software({}) {
         attachment: dataSoftware.attachment,
       };
       let formData = objectToFormData(dataSoftwarePost);
-      console.log("data meeting schedule ", dataSoftwarePost.meeting_schedule);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addFormSolution`, {
         method: "POST",
         headers: {
@@ -1688,7 +1658,7 @@ function Software({}) {
                     <button
                       onClick={handleLetsTalk}
                       className={
-                        "text-[18px] ml-4 rounded text-white py-2 pl-4 pr-2.5 bg-primarygreen border-primarygreen bg-white"
+                        "text-[18px] ml-4 rounded text-white py-2 pl-4 pr-2.5 bg-primarygreen border-primarygreen"
                       }
                     >
                       <div className={"flex flex-row justify-between gap-2"}>

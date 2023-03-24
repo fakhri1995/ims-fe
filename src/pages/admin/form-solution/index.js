@@ -177,7 +177,7 @@ const FormSolution = ({ initProps, dataProfile, dataMessages, sidemenu }) => {
       tok={initProps}
       dataProfile={dataProfile}
       pathArr={pathArr}
-      sidemenu={"92"}
+      sidemenu={"93"}
       st={st}
     >
       <div className="w-full grid grid-cols-5 border-t border-opacity-30 border-gray-500 bg-white">
