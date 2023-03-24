@@ -400,7 +400,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
@@ -408,7 +408,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
@@ -416,7 +416,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
@@ -424,7 +424,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
@@ -432,7 +432,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
@@ -441,7 +441,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
@@ -449,7 +449,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
@@ -457,7 +457,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
@@ -465,7 +465,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
@@ -473,7 +473,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
@@ -608,7 +608,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
@@ -616,7 +616,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
@@ -624,7 +624,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
@@ -632,7 +632,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
@@ -640,7 +640,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
@@ -649,7 +649,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
@@ -657,7 +657,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
@@ -665,7 +665,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
@@ -673,7 +673,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
@@ -681,7 +681,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[26.5px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
@@ -1202,7 +1202,7 @@ function LandingPage({ dataBlog }) {
                 <button onClick={() => slider?.current?.slickPrev()}>
                   <div
                     className={
-                      "self-center flex items-center justify-center  absolute left-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                      "self-center flex items-center justify-center  absolute left-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                     }
                   >
                     <img
@@ -1273,7 +1273,7 @@ function LandingPage({ dataBlog }) {
                                 </p>
                               </div>
                               <div>
-                                {data1.company_logo ? (
+                                {data1.company_logo && (
                                   <img
                                     className={
                                       "max-w-[100px] h-auto self-center"
@@ -1281,15 +1281,6 @@ function LandingPage({ dataBlog }) {
                                     src={generateStaticAssetUrl(
                                       data1.company_logo.link
                                     )}
-                                  />
-                                ) : (
-                                  <img
-                                    className={
-                                      "max-w-[100px] h-auto self-center"
-                                    }
-                                    src={
-                                      "/image/landingpage/testimonial-client.png"
-                                    }
                                   />
                                 )}
                               </div>
@@ -1373,7 +1364,7 @@ function LandingPage({ dataBlog }) {
                 <button onClick={() => slider?.current?.slickNext()}>
                   <div
                     className={
-                      "self-center flex items-center justify-center  absolute right-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                      "self-center flex items-center justify-center  absolute right-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                     }
                   >
                     <img
@@ -1423,16 +1414,10 @@ function LandingPage({ dataBlog }) {
                         {data1.company_name}
                       </p>
                     </div>
-                    {data1.company_logo ? (
+                    {data1.company_logo && (
                       <img
                         className="rounded-full max-w-[100px] max-h-[67px] self-center"
                         src={generateStaticAssetUrl(data1.company_logo.link)}
-                        alt=""
-                      />
-                    ) : (
-                      <img
-                        className="rounded-full max-w-[100px] max-h-[67px] self-center"
-                        src="/image/landingpage/testimonial-client.png"
                         alt=""
                       />
                     )}
@@ -1546,7 +1531,7 @@ function LandingPage({ dataBlog }) {
             "hidden lg:flex lg:flex-row lg:justify-between mx-auto lg:max-w-[1108px]"
           }
         >
-          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:h-[152px] lg:w-[533px] border border-advantage bg-bgadvantagecard rounded-lg lg:flex-row ">
+          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:h-[170px] lg:w-[533px] border border-advantage bg-bgadvantagecard rounded-lg lg:flex-row ">
             {/* <div className={""}> */}
             <img
               className="w-[117px] h-[136px]"
@@ -1578,7 +1563,7 @@ function LandingPage({ dataBlog }) {
               </p>
             </div> */}
           </div>
-          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:w-[533px] lg:h-[152px] border-advantage bg-bgadvantagecard rounded-lg lg:flex-row">
+          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:w-[533px] lg:h-[170px] border-advantage bg-bgadvantagecard rounded-lg lg:flex-row">
             <img
               className="w-[117px] h-[136px]"
               src="/image/landingpage/reliable_partner.png"
@@ -1605,7 +1590,7 @@ function LandingPage({ dataBlog }) {
             "hidden lg:flex lg:flex-row lg:justify-between mx-auto lg:max-w-[1108px]"
           }
         >
-          <div className="flex mt-4 lg:mt-[42px] lg:mx-[21px] py-1 lg:py-2 px-2 lg:px-4 lg:w-[533px] items-center border-advantage bg-bgadvantagecard rounded-lg lg:flex-row ">
+          <div className="flex mt-4 lg:mt-[42px] lg:mx-[21px] py-1 lg:py-2 px-2 lg:px-4 lg:h-[170px] lg:w-[533px] items-center border-advantage bg-bgadvantagecard rounded-lg lg:flex-row ">
             <img
               className="w-[117px] h-[136px]"
               src="/image/landingpage/competitive_rates.png"
@@ -1626,7 +1611,7 @@ function LandingPage({ dataBlog }) {
               </p>
             </div>
           </div>
-          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:w-[533px] border-advantage bg-bgadvantagecard rounded-lg lg:flex-row">
+          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:h-[170px] lg:w-[533px] border-advantage bg-bgadvantagecard rounded-lg lg:flex-row">
             <img
               src="/image/landingpage/cost_efficient.png"
               alt=""
