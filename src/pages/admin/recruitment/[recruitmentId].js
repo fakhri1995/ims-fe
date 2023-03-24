@@ -1,3 +1,8 @@
+import {
+  DownloadOutlined,
+  EditOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import {
   Button,
@@ -708,7 +713,7 @@ const RecruitmentDetailIndex = ({
                 disabled={!isAllowedToUpdateRecruitment}
               >
                 <div className="flex flex-row space-x-3 items-center">
-                  <EditIconSvg size={16} color="#35763B" />
+                  <EditOutlined />
                   <p>Ubah Kandidat</p>
                 </div>
               </ButtonSys>
@@ -892,24 +897,20 @@ const RecruitmentDetailIndex = ({
                       <Menu>
                         <Menu.Item key={"update_stage"}>
                           <button
-                            className="flex flex-row space-x-2 items-center 
-													bg-transparent w-full border-0"
+                            className={`flex flex-row space-x-2 items-center 
+                            bg-transparent w-full border-0 ${
+                              canUpdateStage
+                                ? `mig-caption--medium text-mono30`
+                                : `mig-caption--medium text-gray-300`
+                            }`}
                             onClick={() => {
                               setModalUpdate(true);
                               setModeUpdate("stage");
                             }}
                             disabled={!canUpdateStage}
                           >
-                            <EditIconSvg size={20} color="#4D4D4D" />
-                            <p
-                              className={
-                                canUpdateStage
-                                  ? `mig-caption--medium text-mono30`
-                                  : `mig-caption--medium text-gray-300`
-                              }
-                            >
-                              Ubah Stage
-                            </p>
+                            <EditOutlined />
+                            <p>Ubah Stage</p>
                           </button>
                         </Menu.Item>
                       </Menu>
@@ -957,24 +958,20 @@ const RecruitmentDetailIndex = ({
                       <Menu>
                         <Menu.Item key={"update_status"}>
                           <button
-                            className="flex flex-row space-x-2 items-center 
-													bg-transparent w-full"
+                            className={`flex flex-row space-x-2 items-center 
+													  bg-transparent w-full ${
+                              canUpdateStatus
+                                ? `mig-caption--medium text-mono30`
+                                : `mig-caption--medium text-gray-300`
+                            }`}
                             onClick={() => {
                               setModalUpdate(true);
                               setModeUpdate("status");
                             }}
                             disabled={!canUpdateStatus}
                           >
-                            <EditIconSvg size={20} color="#4D4D4D" />
-                            <p
-                              className={
-                                canUpdateStatus
-                                  ? `mig-caption--medium text-mono30`
-                                  : `mig-caption--medium text-gray-300`
-                              }
-                            >
-                              Ubah Status
-                            </p>
+                            <EditOutlined />
+                            <p>Ubah Status</p>
                           </button>
                         </Menu.Item>
                       </Menu>
@@ -1043,7 +1040,7 @@ const RecruitmentDetailIndex = ({
                         disabled={!resumeId || !isAllowedToGetResume}
                       >
                         <div className="flex flex-row space-x-2 items-center">
-                          <DownloadIconSvg size={16} color={"#35763B"} />
+                          <DownloadOutlined />
                           <p>Unduh Resume</p>
                         </div>
                       </ButtonSys>
@@ -1061,7 +1058,8 @@ const RecruitmentDetailIndex = ({
                     onClick={() => rt.push(`${recruitmentId}/${resumeId}`)}
                   >
                     <div className="flex flex-row space-x-3 items-center">
-                      <EditIconSvg size={16} color="#35763B" />
+                      {/* <EditIconSvg size={16} color="#35763B" /> */}
+                      <EditOutlined />
                       <p>Ubah Resume</p>
                     </div>
                   </ButtonSys>
@@ -1080,7 +1078,8 @@ const RecruitmentDetailIndex = ({
                     onClick={() => setOpenAccessModal(true)}
                   >
                     <div className="flex flex-row space-x-3 items-center">
-                      <AlertIconSvg size={20} color="#BF4A40" />
+                      {/* <AlertIconSvg size={20} color="#BF4A40" /> */}
+                      <WarningOutlined />
                       <p>Hentikan Akses</p>
                     </div>
                   </ButtonSys>

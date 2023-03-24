@@ -1,3 +1,4 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Input, Modal, Select, Spin, notification } from "antd";
 import moment from "moment";
@@ -404,7 +405,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                   setOpenDownloadModal(true);
                 }}
               >
-                <DownloadIconSvg size={15} color={`#35763B`} />
+                <DownloadOutlined />
               </ButtonSys>
             </div>
           ),
@@ -544,7 +545,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                     type={"default"}
                     // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
                   >
-                    <DownloadIconSvg size={15} color={`#35763B`} />
+                    <DownloadOutlined />
                   </ButtonSys>
                 </PDFDownloadLink>
               </div>

@@ -1,3 +1,8 @@
+import {
+  AppstoreAddOutlined,
+  DeleteOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
 import { Input, Select, notification } from "antd";
 import parse from "html-react-parser";
 import dynamic from "next/dynamic";
@@ -22,12 +27,7 @@ import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../../../components/button";
 import DrawerCore from "../../../../components/drawer/drawerCore";
-import {
-  EditIconSvg,
-  LayoutGridAddSvg,
-  SearchIconSvg,
-  TrashIconSvg,
-} from "../../../../components/icon";
+import { SearchIconSvg } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -386,7 +386,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   setUpdateDrawerShown(true);
                 }}
               >
-                <EditIconSvg size={15} color={`#35763B`} />
+                <EditOutlined />
               </ButtonSys>
               <ButtonSys
                 type={isAllowedToDeleteEmailTemplate ? "default" : "primary"}
@@ -397,7 +397,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   onOpenDeleteModal(record);
                 }}
               >
-                <TrashIconSvg size={15} color={`#BF4A40`} />
+                <DeleteOutlined />
               </ButtonSys>
             </div>
           ),
@@ -431,7 +431,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                 disabled={!isAllowedToAddEmailTemplate}
               >
                 <div className="flex flex-row space-x-2.5 items-center">
-                  <LayoutGridAddSvg size={16} color="#35763B" />
+                  <AppstoreAddOutlined />
                   <p>Tambah Template</p>
                 </div>
               </ButtonSys>
@@ -508,7 +508,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           width={380}
           buttonUpdateText={
             <div className="flex flex-row space-x-2 items-center">
-              <EditIconSvg size={16} color={"#35763B"} />
+              <EditOutlined />
               <p>Ubah Template</p>
             </div>
           }
@@ -520,7 +520,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           }}
           buttonCancelText={
             <div className="flex flex-row space-x-2 items-center">
-              <TrashIconSvg size={16} color={"#BF4A40"} />
+              <DeleteOutlined />
               <p>Hapus Template</p>
             </div>
           }

@@ -1,14 +1,8 @@
-import { Form, Input, Select, Spin, notification } from "antd";
-import { useRouter } from "next/router";
+import { DeleteOutlined } from "@ant-design/icons";
+import { Form, Input, Spin, notification } from "antd";
 import React, { useEffect, useState } from "react";
 
-import { useAccessControl } from "contexts/access-control";
-
 import { permissionWarningNotification } from "../../../lib/helper";
-import ButtonSys from "../../button";
-import { TrashIconSvg } from "../../icon";
-import { InputRequired } from "../../input";
-import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 const DrawerStageUpdate = ({
@@ -155,7 +149,7 @@ const DrawerStageUpdate = ({
       disabled={disabledUpdate}
       buttonCancelText={
         <div className="flex flex-row space-x-2 items-center">
-          <TrashIconSvg size={16} color={"#BF4A40"} />
+          <DeleteOutlined />
           <p>Hapus Stage</p>
         </div>
       }

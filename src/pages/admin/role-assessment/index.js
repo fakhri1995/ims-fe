@@ -1,3 +1,4 @@
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Input, Modal, Spin, notification } from "antd";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -23,12 +24,7 @@ import { ChartVerticalBar } from "../../../components/chart/chartCustom";
 import DrawerCore from "../../../components/drawer/drawerCore";
 import DrawerAssessmentCreate from "../../../components/drawer/resume/drawerAssessmentCreate";
 import DrawerAssessmentUpdate from "../../../components/drawer/resume/drawerAssessmentUpdate";
-import {
-  ClipboardIconSvg,
-  EditIconSvg,
-  TrashIconSvg,
-  UsersIconSvg,
-} from "../../../components/icon";
+import { ClipboardIconSvg, UsersIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
@@ -384,7 +380,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
                   setDrawUpdate(true);
                 }}
               >
-                <EditIconSvg size={15} color={`#35763B`} />
+                <EditOutlined />
               </ButtonSys>
               <ButtonSys
                 type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
@@ -395,7 +391,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
                   onOpenDeleteModal(record);
                 }}
               >
-                <TrashIconSvg size={15} color={`#BF4A40`} />
+                <DeleteOutlined />
               </ButtonSys>
             </div>
           ),

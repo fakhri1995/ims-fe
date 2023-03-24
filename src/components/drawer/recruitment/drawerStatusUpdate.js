@@ -1,9 +1,9 @@
+import { DeleteOutlined } from "@ant-design/icons";
 import { Form, Input, Select, Spin, notification } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, { useEffect, useState } from "react";
 
 import { permissionWarningNotification } from "../../../lib/helper";
-import { TrashIconSvg } from "../../icon";
 import DrawerCore from "../drawerCore";
 
 const DrawerStatusUpdate = ({
@@ -151,7 +151,7 @@ const DrawerStatusUpdate = ({
       disabled={disabledUpdate}
       buttonCancelText={
         <div className="flex flex-row space-x-2 items-center">
-          <TrashIconSvg size={16} color={"#BF4A40"} />
+          <DeleteOutlined />
           <p>Hapus Status</p>
         </div>
       }

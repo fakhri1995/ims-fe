@@ -1,3 +1,4 @@
+import { EditOutlined } from "@ant-design/icons";
 import { Tag, Timeline, notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";
@@ -11,7 +12,6 @@ import { useAccessControl } from "contexts/access-control";
 import { RECRUITMENT_GET, RESUME_GET, RESUME_UPDATE } from "lib/features";
 
 import ButtonSys from "../../components/button";
-import { EditIconSvg } from "../../components/icon";
 import LayoutDashboard2 from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
 import { permissionWarningNotification } from "../../lib/helper";
@@ -201,7 +201,7 @@ const CandidateRecruitmentDetailIndex = ({
                 onClick={() => rt.push(`/myApplication/edit/${resumeId}`)}
               >
                 <div className="flex flex-row space-x-3 items-center">
-                  <EditIconSvg size={16} color="#35763B" />
+                  <EditOutlined />
                   <p>Ubah Profil</p>
                 </div>
               </ButtonSys>
