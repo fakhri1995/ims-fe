@@ -30,7 +30,7 @@ const ButtonTooltip = ({
       "border-secondary100 hover:border-secondary100 hover:bg-secondary100":
         color == "secondary100" && !disabled,
     },
-    "hover:bg-opacity-75"
+    "hover:bg-opacity-75 hover:text-white"
   );
 
   const defaultButtonClassName = clsx(
@@ -47,7 +47,7 @@ const ButtonTooltip = ({
         form={form}
         onClick={onClick}
         type={buttonType}
-        className={`${defaultButtonClassName} `}
+        className={defaultButtonClassName}
       >
         {children}
       </Button>
