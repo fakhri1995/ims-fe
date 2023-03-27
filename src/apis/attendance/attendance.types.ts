@@ -162,6 +162,7 @@ export interface UserAttendanceDetailData {
   lat_check_out: string;
   geo_loc_check_in: GeolocationCheckInOut | null;
   geo_loc_check_out: GeolocationCheckInOut | null;
+  is_late: number;
   is_wfo: number;
   checked_out_by_system: number;
   evidence: Evidence[];

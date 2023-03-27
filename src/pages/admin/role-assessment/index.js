@@ -371,7 +371,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
           children: (
             <div className="flex items-center space-x-2">
               <ButtonSys
-                type={canUpdateRoleAssessment ? "default" : "primary"}
+                type={"default"}
                 disabled={!canUpdateRoleAssessment}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -383,7 +383,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <EditOutlined />
               </ButtonSys>
               <ButtonSys
-                type={isAllowedToDeleteRoleAssessment ? "default" : "primary"}
+                type={"default"}
                 color="danger"
                 disabled={!isAllowedToDeleteRoleAssessment}
                 onClick={(event) => {
