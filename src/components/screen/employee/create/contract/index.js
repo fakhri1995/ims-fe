@@ -591,7 +591,7 @@ const EmployeeContractForm = ({
             fileList={fileList}
           >
             <Button
-              className="btn-sm btn text-white font-semibold px-6 border
+              className="btn-sm btn font-semibold px-6 border
               text-primary100 hover:bg-primary75 border-primary100 
               hover:border-primary75 hover:text-white bg-white space-x-2
               focus:border-primary75 focus:text-primary100"
