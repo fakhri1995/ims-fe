@@ -397,6 +397,7 @@ function layout({ children }) {
             position: "fixed",
             zIndex: 31,
             width: "100%",
+            paddingLeft: "100ps",
             // boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
           }}
         >
@@ -874,7 +875,7 @@ function layout({ children }) {
           </div>
         </Content>
         <div
-          className={"px-4 lg:[113.5px]"}
+          className={"px-4 lg:px-[113.5px]"}
           style={{ textAlign: "left", backgroundColor: "#EEF1EE" }}
         >
           <div className={"container mx-auto"}>

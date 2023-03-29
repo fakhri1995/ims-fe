@@ -130,14 +130,23 @@ function LandingPage({ dataBlog }) {
   };
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTestimonialLandingPage`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCustomerStoriesPage`, {
       method: `GET`,
     })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
           if (locale == "en") {
-            setDataTestimonial(res2.data);
+            let dataTestiTemp = [];
+            for (let i = 0; i < res2.data.length; i++) {
+              console.log("dataTestiTemp.length ", dataTestiTemp.length);
+              if (dataTestiTemp.length < 6) {
+                dataTestiTemp.push(res2.data[i]);
+              } else {
+                i = res2.data.length;
+              }
+            }
+            setDataTestimonial(dataTestiTemp);
           } else {
             let dataTemp = [];
             for (let i = 0; i < res2.data.length; i++) {
