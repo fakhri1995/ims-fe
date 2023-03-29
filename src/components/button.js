@@ -73,15 +73,16 @@ const ButtonSys = ({
 
   const buttonOutlineColorsClassName = clsx(
     {
-      "text-state1 hover:bg-state1 border-state1 ": color === "danger",
+      "text-state1 bg-transparent hover:bg-state1 border-state1 ":
+        color === "danger" && !disabled,
       "text-notice border-notice bg-notice bg-opacity-10 hover:bg-notice hover:opacity-75":
-        color === "notice",
+        color === "notice" && !disabled,
       "text-warning border-warning bg-warning bg-opacity-10 hover:bg-warning hover:opacity-75":
-        color === "warning",
+        color === "warning" && !disabled,
       "text-mono30 border-mono30 hover:bg-mono30 hover:opacity-75":
-        color === "mono30",
-      "text-primary100 border-primary100 hover:bg-primary75 hover:border-primary75":
-        !color,
+        color === "mono30" && !disabled,
+      "text-primary100 border-primary100 bg-transparent hover:bg-primary75 hover:border-primary75":
+        !color && !disabled,
     },
     "hover:text-white"
   );

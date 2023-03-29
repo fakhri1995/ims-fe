@@ -50,20 +50,24 @@ export const AttendanceDetailMetaCard: FC<IAttendanceDetailMetaCard> = memo(
           const attendanceMeta = response.data.data.user_attendance;
           console.log("response data ", response.data.data);
           const attendanceCheckInDate = new Date(attendanceMeta.check_in);
-          const attendanceComparableTime = new Date(
-            attendanceCheckInDate.getFullYear(),
-            attendanceCheckInDate.getMonth(),
-            attendanceCheckInDate.getDate(),
-            ATTENDANCE_SAFE_TIME.HOUR,
-            ATTENDANCE_SAFE_TIME.MINUTE,
-            0
-          );
-          const isLate = isAfter(
-            attendanceCheckInDate,
-            attendanceComparableTime
-          )
-            ? "Terlambat"
-            : "Tepat Waktu";
+
+          /** Commented code below currently isn't used anymore */
+          // const attendanceComparableTime = new Date(
+          //   attendanceCheckInDate.getFullYear(),
+          //   attendanceCheckInDate.getMonth(),
+          //   attendanceCheckInDate.getDate(),
+          //   ATTENDANCE_SAFE_TIME.HOUR,
+          //   ATTENDANCE_SAFE_TIME.MINUTE,
+          //   0
+          // );
+          // const isLate = isAfter(
+          //   attendanceCheckInDate,
+          //   attendanceComparableTime
+          // )
+          //   ? "Terlambat"
+          //   : "Tepat Waktu";
+
+          const isLate = attendanceMeta.is_late ? "Terlambat" : "Tepat Waktu";
 
           const headerData = formatDateToLocale(
             attendanceCheckInDate,
