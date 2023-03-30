@@ -452,12 +452,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "name",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.name || "-"}</>,
+          children: <>{record?.name || "-"}</>,
         };
       },
       sorter: isAllowedToGetPayslips
-        ? (a, b) =>
-            a.employee?.name?.toLowerCase() > b.employee?.name?.toLowerCase()
+        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
     {
@@ -465,7 +464,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "nip",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.nip || "-"}</>,
+          children: <>{record?.nip || "-"}</>,
         };
       },
     },
@@ -474,7 +473,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.contract?.placement || "-"}</>,
+          children: <>{record?.contract?.placement || "-"}</>,
         };
       },
     },
@@ -483,7 +482,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.contract?.role?.name || "-"}</>,
+          children: <>{record?.contract?.role?.name || "-"}</>,
         };
       },
     },
@@ -492,7 +491,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "phone_number",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.phone_number || "-"}</>,
+          children: <>{record?.phone_number || "-"}</>,
         };
       },
     },
@@ -503,19 +502,19 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.is_posted == 0 ? (
+              {record.is_posted ? (
+                <p
+                  className="bg-primary100 bg-opacity-10 text-primary100 
+                py-1 px-4 rounded-md text-center"
+                >
+                  Diterbitkan
+                </p>
+              ) : (
                 <p
                   className="bg-state2 bg-opacity-10 text-state2 
                   py-1 px-7 rounded-md text-center"
                 >
                   Draft
-                </p>
-              ) : (
-                <p
-                  className="bg-primary100 bg-opacity-10 text-primary100 
-                  py-1 px-4 rounded-md text-center"
-                >
-                  Diterbitkan
                 </p>
               )}
             </>
@@ -530,7 +529,23 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.is_posted == 0 ? (
+              {record.is_posted ? (
+                <div className="flex flex-col space-y-2">
+                  <ButtonSys
+                    type={isAllowedToGetPayslip ? "default" : "primary"}
+                    disabled={!isAllowedToGetPayslip}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      //download pdf
+                    }}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <DownloadOutlined />
+                      <p className="whitespace-nowrap">Unduh</p>
+                    </div>
+                  </ButtonSys>
+                </div>
+              ) : (
                 <div className="flex flex-col space-y-2">
                   <ButtonSys
                     type={isAllowedToGetPayslip ? "default" : "primary"}
@@ -545,23 +560,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     <div className="flex flex-row space-x-2 items-center">
                       <EditOutlined />
                       <p className="whitespace-nowrap">Edit Draft</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              ) : (
-                <div className="flex flex-col space-y-2">
-                  <ButtonSys
-                    // TODO: ubah role access
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      //download pdf
-                    }}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <DownloadOutlined />
-                      <p className="whitespace-nowrap">Unduh</p>
                     </div>
                   </ButtonSys>
                 </div>

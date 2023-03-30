@@ -2359,9 +2359,11 @@ const TableCustomPayslipList = ({
           onClick: () => {
             record?.is_posted === 0
               ? rt.push(
-                  `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                  `/admin/employees/payslip/${record?.contract?.employee_id}/addPayslip?id=${record.id}`
                 )
-              : rt.push(`/admin/employees/payslip/${record.employee_id}`);
+              : rt.push(
+                  `/admin/employees/payslip/${record?.contract?.employee_id}`
+                );
           },
         };
       }}

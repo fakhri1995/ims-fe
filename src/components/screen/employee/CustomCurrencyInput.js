@@ -16,14 +16,10 @@ const CustomCurrencyInput = ({
   // Auto update benefit variable if value change automatically in a disabled field (currently only used in BPJS field)
   useEffect(() => {
     if (disabled) {
-      const timer = setTimeout(() => {
-        setDataForm((prev) => ({
-          ...prev,
-          [fieldName]: value || 0,
-        }));
-      }, 2000);
-
-      return () => clearTimeout(timer);
+      setDataForm((prev) => ({
+        ...prev,
+        [fieldName]: value || 0,
+      }));
     }
   }, [value]);
 
