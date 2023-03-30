@@ -144,6 +144,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     gaji_pokok: 0,
     pph21: 0,
     salaries: [],
+    bpjs_ks: "",
+    bpjs_tk_jht: "",
+    bpjs_tk_jkk: "",
+    bpjs_tk_jkm: "",
+    bpjs_tk_jp: "",
   });
 
   const [inventoryList, setInventoryList] = useState([]);
@@ -220,24 +225,30 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             if (res2.success) {
               const resData = res2.data;
               const requiredData = {
+                ...resData,
                 id: dataEmployee?.contracts[0]?.id || dataContract.id,
                 employee_id: employeeId,
-                is_employee_active: resData.is_employee_active,
-                contract_name: resData.contract_name,
-                contract_file: resData.contract_file,
-                contract_status_id: resData.contract_status_id,
-                role_id: resData.role_id,
-                pkwt_reference: resData.pkwt_reference,
-                annual_leave: resData.annual_leave,
-                contract_start_at: resData.contract_start_at,
-                contract_end_at: resData.contract_end_at,
-                placement: resData.placement,
-                new_office: resData.new_office,
-                resign_at: resData.resign_at,
-                salaries: resData.salaries,
-                gaji_pokok: resData.gaji_pokok ?? 0,
-                pph21: resData.pph21,
-                salaries: resData.salaries || null,
+                // is_employee_active: resData.is_employee_active,
+                // contract_name: resData.contract_name,
+                // contract_file: resData.contract_file,
+                // contract_status_id: resData.contract_status_id,
+                // role_id: resData.role_id,
+                // pkwt_reference: resData.pkwt_reference,
+                // annual_leave: resData.annual_leave,
+                // contract_start_at: resData.contract_start_at,
+                // contract_end_at: resData.contract_end_at,
+                // placement: resData.placement,
+                // new_office: resData.new_office,
+                // resign_at: resData.resign_at,
+                // salaries: resData.salaries,
+                // gaji_pokok: resData.gaji_pokok ?? 0,
+                // pph21: resData.pph21,
+                // salaries: resData.salaries || null,
+                // bpjs_ks: resData.bpjs_ks,
+                // bpjs_tk_jht: resData.bpjs_tk_jht,
+                // bpjs_tk_jkk: resData.bpjs_tk_jkk,
+                // bpjs_tk_jkm: resData.bpjs_tk_jkm,
+                // bpjs_tk_jp: resData.bpjs_tk_jp,
               };
               if (prevpath === "add") {
                 setDataContract({

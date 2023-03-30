@@ -120,7 +120,7 @@ const EmployeeContractForm = ({
   };
 
   // 2.3. Count BPJS value
-  const countBenefitValue = (percent) => {
+  const countBPJSValue = (percent) => {
     // Get penerimaan field value which selected as multiplier
     const selectedMultiplierIds = selectedMultipliers.map(
       (multiplier) => multiplier.id
@@ -137,10 +137,10 @@ const EmployeeContractForm = ({
 
     // Sum with gaji pokok, then calculate final result
     const totalMultiplier =
-      (dataContract?.gaji_pokok ?? 0) + sumValues(selectedMultiplierValues);
+      Number(dataContract?.gaji_pokok ?? 0) +
+      sumValues(selectedMultiplierValues);
 
     let result = Math.round(totalMultiplier * (percent / 100) * 100) / 100;
-
     return result || 0;
   };
 
@@ -295,6 +295,14 @@ const EmployeeContractForm = ({
           setReceiveVarFields(defaultReceiveVariables);
           setReductionVarFields(defaultReductionVariables);
 
+          // insert default selected BPJS multiplier to state
+          const defaultSelectedMultipliers = dataVar.filter(
+            (variable) =>
+              !!variable.is_amount_for_bpjs === true &&
+              !!variable.required === true
+          );
+          setSelectedMultipliers(defaultSelectedMultipliers);
+
           // Insert default salary variable to contract form
           // let tempSalaries = dataContract?.salaries || [];
           // dataVar
@@ -335,6 +343,8 @@ const EmployeeContractForm = ({
       })
       .finally(() => setPraLoading(false));
   }, [isAllowedToGetSalaryColumns]);
+
+  // console.log({ dataContract });
 
   // 3.5. Display contract file when available
   useEffect(() => {
@@ -845,7 +855,7 @@ const EmployeeContractForm = ({
               fieldLabel={`bpjs ks`}
               fieldName={"bpjs_ks"}
               setDataForm={setDataContract}
-              value={countBenefitValue(5)}
+              value={countBPJSValue(5)}
               disabled
             />
           </div>
@@ -865,7 +875,7 @@ const EmployeeContractForm = ({
               fieldLabel={`bpjs tk jht`}
               fieldName={"bpjs_tk_jht"}
               setDataForm={setDataContract}
-              value={countBenefitValue(5.7)}
+              value={countBPJSValue(5.7)}
               disabled
             />
           </div>
@@ -885,7 +895,7 @@ const EmployeeContractForm = ({
               fieldLabel={`bpjs tk jkk`}
               fieldName={"bpjs_tk_jkk"}
               setDataForm={setDataContract}
-              value={countBenefitValue(0.24)}
+              value={countBPJSValue(0.24)}
               disabled
             />
           </div>
@@ -905,7 +915,7 @@ const EmployeeContractForm = ({
               fieldLabel={`bpjs tk jkm`}
               fieldName={"bpjs_tk_jkm"}
               setDataForm={setDataContract}
-              value={countBenefitValue(0.3)}
+              value={countBPJSValue(0.3)}
               disabled
             />
           </div>
@@ -925,7 +935,7 @@ const EmployeeContractForm = ({
               fieldLabel={`bpjs tk jp`}
               fieldName={"bpjs_tk_jp"}
               setDataForm={setDataContract}
-              value={countBenefitValue(3)}
+              value={countBPJSValue(3)}
               disabled
             />
           </div>
