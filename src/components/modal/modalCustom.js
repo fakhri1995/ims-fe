@@ -1,4 +1,4 @@
-import { ExclamationCircleFilled } from "@ant-design/icons";
+import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -1024,17 +1024,12 @@ const ModalManageSalaryVar = ({
       });
   };
 
-  const handleUpdateVariable = (variableData, isRequired) => {
+  const handleUpdateVariable = (variableData) => {
     if (!isAllowedToUpdateSalaryColumn) {
       permissionWarningNotification("Mengubah", "Variabel Gaji");
       setPraLoading(false);
       return;
     }
-
-    const payload = {
-      ...variableData,
-      required: isRequired,
-    };
 
     setPraLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeSalaryColumn`, {
@@ -1043,7 +1038,7 @@ const ModalManageSalaryVar = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(variableData),
     })
       .then((response) => response.json())
       .then((response2) => {
@@ -1107,6 +1102,18 @@ const ModalManageSalaryVar = ({
       .finally(() => setPraLoading(false));
   };
 
+  const handleClickTag = (tag, checked) => {
+    checked
+      ? handleUpdateVariable({
+          ...tag,
+          is_amount_for_bpjs: true,
+        })
+      : handleUpdateVariable({
+          ...tag,
+          is_amount_for_bpjs: false,
+        });
+  };
+
   // hapus semua variabel gaji
   // useEffect(() => {
   //   if (dataVariables.length > 1) {
@@ -1149,9 +1156,14 @@ const ModalManageSalaryVar = ({
         <div className="">
           <h5 className="mig-heading--5 mb-2">PENERIMAAN</h5>
           <div className="flex flex-col space-y-2 space-x-0 mb-2">
-            <Checkbox checked={true} disabled={true}>
-              Gaji Pokok
-            </Checkbox>
+            <div className="flex flex-row items-center justify-between">
+              <Checkbox checked={true} disabled={true}>
+                Gaji Pokok
+              </Checkbox>
+              <Tag color="#35763B" className="rounded text-white m-0">
+                BPJS
+              </Tag>
+            </div>
             {receiveVarOptions?.map((option, idx) => (
               <div
                 key={idx}
@@ -1161,37 +1173,42 @@ const ModalManageSalaryVar = ({
                   value={option.id}
                   checked={option.required}
                   onChange={(e) => {
-                    handleUpdateVariable(option, e.target.checked);
+                    handleUpdateVariable({
+                      ...option,
+                      is_amount_for_bpjs: false,
+                      required: e.target.checked,
+                    });
                   }}
                 >
                   {option.name}
                 </Checkbox>
-                <Popconfirm
-                  title={
-                    <p className="w-40">
-                      Apakah Anda yakin ingin menghapus variabel{" "}
-                      <strong>{option.name}</strong>?
-                    </p>
-                  }
-                  okText={"Ya"}
-                  cancelText={"Tidak"}
-                  onConfirm={() => handleDeleteVariable(option.id)}
-                >
-                  <button className="flex items-center bg-transparent hover:opacity-70">
-                    <XIconSvg color={"#BF4A40"} size={16} />
-                  </button>
-                </Popconfirm>
+
+                <div className="flex flex-row items-center space-x-1">
+                  {/* Show tag "BPJS" if the variable is selected as multiplier */}
+                  {Boolean(option.is_amount_for_bpjs) && (
+                    <Tag color="#35763B" className="rounded text-white m-0">
+                      BPJS
+                    </Tag>
+                  )}
+                  <Popconfirm
+                    title={
+                      <p className="w-40">
+                        Apakah Anda yakin ingin menghapus variabel{" "}
+                        <strong>{option.name}</strong>?
+                      </p>
+                    }
+                    okText={"Ya"}
+                    cancelText={"Tidak"}
+                    onConfirm={() => handleDeleteVariable(option.id)}
+                  >
+                    <button className="flex items-center bg-transparent hover:opacity-70">
+                      <XIconSvg color={"#BF4A40"} size={16} />
+                    </button>
+                  </Popconfirm>
+                </div>
               </div>
             ))}
           </div>
-
-          {/* {receiveVarOptions.length !== 0 && (
-            <Checkbox.Group
-              options={receiveVarOptions}
-              defaultValue={["Gaji Pokok"]}
-              className="space-y-2 mb-2"
-            />
-          )} */}
 
           {isInputReceiveVar ? (
             <div className="flex flex-row items-center -ml-1 space-x-2">
@@ -1335,6 +1352,35 @@ const ModalManageSalaryVar = ({
             </button>
           )}
         </div>
+
+        <div className="col-span-2 mt-5">
+          <p className="mig-heading--5 mb-2">
+            PILIH PENERIMAAN YANG TERMASUK PENGALI NOMINAL BPJS
+          </p>
+          <div className="flex flex-wrap">
+            <Tag color="#35763B" className="py-1 px-3 rounded mb-2">
+              <div className="flex flex-row items-center space-x-1">
+                <PlusOutlined />
+                <p>Gaji Pokok</p>
+              </div>
+            </Tag>
+            {receiveVarOptions
+              .filter((option) => option.required === 1)
+              ?.map((tag, idx) => (
+                <CheckableTag
+                  key={idx}
+                  className="border border-primary100 py-1 px-3 rounded mb-2"
+                  checked={tag?.is_amount_for_bpjs}
+                  onChange={(checked) => handleClickTag(tag, checked)}
+                >
+                  <div className="flex flex-row items-center space-x-1">
+                    <PlusOutlined />
+                    <p>{tag.name}</p>
+                  </div>
+                </CheckableTag>
+              ))}
+          </div>
+        </div>
       </div>
     </Modal>
   );
@@ -1399,7 +1445,6 @@ const ModalAddSalaryVar = ({
         .then((response2) => {
           if (response2.success) {
             let dataVar = response2.data;
-
             // Set checkbox list of variables
             const receiveVariables = dataVar.filter(
               (variable) => variable.type === 1
@@ -1425,7 +1470,7 @@ const ModalAddSalaryVar = ({
         .finally(() => setPraLoading(false));
     }
   }, [isAllowedToGetSalaryColumns, refresh, visible]);
-
+  console.log({ receiveVarOptions });
   /**
    * If form already has payslip Id, then checked variable in modal &
    * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip)
@@ -1536,7 +1581,45 @@ const ModalAddSalaryVar = ({
       .finally(() => setPraLoading(false));
   };
 
+  // Todo: set is_amount_for_bpjs in dataPayslip
   const handleClickTag = (tag, checked) => {
+    // const updatedTag = {id: tag.id,
+    //   name: tag.name,
+    //   percent: tag.percent,
+    //   type: tag.type,
+    //   required: tag.required,
+    //   is_amount_for_bpjs: checked ? true : false}
+
+    //   setDataPayslip({...dataPayslip,
+    //     salaries: {
+    //       ...dataPayslip.salaries,
+
+    //       updatedTag
+    //     }
+    //   })
+
+    // checked
+    //   ? setDataPayslip({...dataPayslip,
+    //       salaries: {
+    //         ...dataPayslip.salaries,
+
+    //       }
+    //       id: tag.id,
+    //       name: tag.name,
+    //       percent: tag.percent,
+    //       type: tag.type,
+    //       required: tag.required,
+    //       is_amount_for_bpjs: true,
+    //     })
+    //   : handleUpdateVariable({
+    //       id: tag.id,
+    //       name: tag.name,
+    //       percent: tag.percent,
+    //       type: tag.type,
+    //       required: tag.required,
+    //       is_amount_for_bpjs: false,
+    //     });
+
     const newSelectedTags = checked
       ? [...selectedTags, tag]
       : selectedTags.filter((t) => t !== tag);
@@ -1860,7 +1943,7 @@ const ModalAddSalaryVar = ({
           <div className="flex flex-wrap">
             <Tag color="#35763B" className="py-1 px-3 rounded mb-2">
               <div className="flex flex-row items-center space-x-1">
-                <PlusIconSvg color={"white"} size={16} />
+                <PlusOutlined />
                 <p>Gaji Pokok</p>
               </div>
             </Tag>
@@ -1869,10 +1952,11 @@ const ModalAddSalaryVar = ({
                 key={idx}
                 className="border border-primary100 py-1 px-3 rounded mb-2"
                 checked={selectedTags.indexOf(tag) > -1}
+                // checked={tag?.is_amount_for_bpjs}
                 onChange={(checked) => handleClickTag(tag, checked)}
               >
                 <div className="flex flex-row items-center space-x-1">
-                  <PlusIconSvg color={"#35763B"} size={16} />
+                  <PlusOutlined />
                   <p>{tag.name}</p>
                 </div>
               </CheckableTag>
