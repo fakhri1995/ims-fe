@@ -481,7 +481,7 @@ const EmployeePayslipDetailIndex = ({
                   disabled={!isAllowedToAddPayslip}
                   onClick={(event) => {
                     event.stopPropagation();
-                    rt.push(`${employeeId}/addPayslip`);
+                    onAddPayslipButtonClicked();
                   }}
                 >
                   <div className="flex flex-row space-x-2 items-center">
@@ -554,12 +554,12 @@ const EmployeePayslipDetailIndex = ({
                   {monthNames[dataEmployee?.last_month_payslip?.month - 1]}{" "}
                   {dataEmployee?.last_month_payslip?.year})
                 </p>
-                {payslipStatus?.status === 0 ? (
+                {payslipStatus === 0 ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-mono80"></div>
                     <h4 className="mig-heading--4">Kosong</h4>
                   </div>
-                ) : payslipStatus?.status === 1 ? (
+                ) : payslipStatus === 1 ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-notice"></div>
                     <h4 className="mig-heading--4">Draft</h4>
@@ -571,16 +571,16 @@ const EmployeePayslipDetailIndex = ({
                   </div>
                 )}
               </div>
-              {payslipStatus?.status === 0 ? (
+              {payslipStatus === 0 ? (
                 <ButtonSys
                   type={!isAllowedToAddPayslip ? "primary" : "default"}
-                  onClick={() => rt.push(`${employeeId}/addPayslip`)}
+                  onClick={onAddPayslipButtonClicked}
                   disabled={!isAllowedToAddPayslip}
                 >
                   <FileAddOutlined />
                   <p className="ml-2">Buat Slip Gaji</p>
                 </ButtonSys>
-              ) : payslipStatus?.status === 1 ? (
+              ) : payslipStatus === 1 ? (
                 <ButtonSys
                   type={!isAllowedToUpdatePayslip ? "primary" : "default"}
                   onClick={() =>

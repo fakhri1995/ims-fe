@@ -22,6 +22,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   EMPLOYEE_PAYSLIP_ADD,
+  EMPLOYEE_PAYSLIP_DELETE,
   EMPLOYEE_PAYSLIP_GET,
   EMPLOYEE_PAYSLIP_UPDATE,
   EMPLOYEE_SALARY_COLUMNS_GET,
@@ -68,6 +69,8 @@ const EmployeePayslipAddIndex = ({
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
+  const isAllowedToDeletePayslip = hasPermission(EMPLOYEE_PAYSLIP_DELETE);
+
   const isAllowedToGetSalaryColumns = hasPermission(
     EMPLOYEE_SALARY_COLUMNS_GET
   );
@@ -147,6 +150,9 @@ const EmployeePayslipAddIndex = ({
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disablePublish, setDisablePublish] = useState(false);
 
+  // 1.3 Delete
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   // 1.3. Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -206,16 +212,28 @@ const EmployeePayslipAddIndex = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setDataPayslip(response2.data);
+            const resData = response2.data;
+            setDataPayslip(resData);
+
+            const receiveVariables = resData?.salaries
+              ?.map((v) => v.column)
+              ?.filter((variable) => variable?.type === 1);
+
+            const reductionVariables = resData?.salaries
+              ?.map((v) => v.column)
+              ?.filter((variable) => variable.type === 2);
+
+            setReceiveVarFields(receiveVariables);
+            setReductionVarFields(reductionVariables);
 
             // insert previously selected BPJS multiplier to state
             const prevSelectedMultipliers = response2.data.salaries
+              ?.map((v) => v.column)
               ?.filter(
                 (variable) =>
-                  !!variable.column.is_amount_for_bpjs === true &&
-                  !!variable.column.required === true
-              )
-              ?.map((filtered) => filtered.column);
+                  !!variable.is_amount_for_bpjs === true &&
+                  !!variable.required === true
+              );
 
             setSelectedMultipliers(prevSelectedMultipliers);
           } else {
@@ -235,66 +253,67 @@ const EmployeePayslipAddIndex = ({
     }
   }, [isAllowedToGetPayslip, payslipId, refresh]);
 
+  // TODO: delete this effect if API for pre-filling payslip form is finished
   // 3.2 Get salary variable list for add new payslip form (Payslip ID is not yet available)
-  useEffect(() => {
-    if (!isAllowedToGetSalaryColumns) {
-      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
-      setpraloading(false);
-      return;
-    }
+  // useEffect(() => {
+  //   if (!isAllowedToGetSalaryColumns) {
+  //     permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+  //     setpraloading(false);
+  //     return;
+  //   }
 
-    if (!payslipId) {
-      setpraloading(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            let dataVar = response2.data;
-            const receiveVariables = dataVar.filter(
-              (variable) => variable.type === 1
-            );
-            const reductionVariables = dataVar.filter(
-              (variable) => variable.type === 2
-            );
+  //   if (!payslipId) {
+  //     setpraloading(true);
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(initProps),
+  //       },
+  //     })
+  //       .then((response) => response.json())
+  //       .then((response2) => {
+  //         if (response2.success) {
+  //           let dataVar = response2.data;
+  //           const receiveVariables = dataVar.filter(
+  //             (variable) => variable.type === 1
+  //           );
+  //           const reductionVariables = dataVar.filter(
+  //             (variable) => variable.type === 2
+  //           );
 
-            // Set checked variables to show as fields in form
-            const requiredReceiveVariables = receiveVariables.filter(
-              (variable) => variable.required === 1
-            );
-            const requiredReductionVariables = reductionVariables.filter(
-              (variable) => variable.required === 1
-            );
-            setReceiveVarFields(requiredReceiveVariables);
-            setReductionVarFields(requiredReductionVariables);
+  //           // Set checked variables to show as fields in form
+  //           const requiredReceiveVariables = receiveVariables.filter(
+  //             (variable) => variable.required === 1
+  //           );
+  //           const requiredReductionVariables = reductionVariables.filter(
+  //             (variable) => variable.required === 1
+  //           );
+  //           setReceiveVarFields(requiredReceiveVariables);
+  //           setReductionVarFields(requiredReductionVariables);
 
-            // insert default selected BPJS multiplier to state
-            const defaultSelectedMultipliers = dataVar.filter(
-              (variable) =>
-                !!variable.is_amount_for_bpjs === true &&
-                !!variable.required === true
-            );
-            setSelectedMultipliers(defaultSelectedMultipliers);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetSalaryColumns, refresh]);
+  //           // insert default selected BPJS multiplier to state
+  //           const defaultSelectedMultipliers = dataVar.filter(
+  //             (variable) =>
+  //               !!variable.is_amount_for_bpjs === true &&
+  //               !!variable.required === true
+  //           );
+  //           setSelectedMultipliers(defaultSelectedMultipliers);
+  //         } else {
+  //           notification.error({
+  //             message: `${response2.message}`,
+  //             duration: 3,
+  //           });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         notification.error({
+  //           message: `${err.response}`,
+  //           duration: 3,
+  //         });
+  //       })
+  //       .finally(() => setpraloading(false));
+  //   }
+  // }, [isAllowedToGetSalaryColumns, refresh]);
 
   // 3.3. Disable "Terbitkan" button if any required field is empty
   useEffect(() => {
@@ -357,7 +376,7 @@ const EmployeePayslipAddIndex = ({
     dataPayslip?.gaji_pokok,
   ]);
 
-  // 3.5. Auto update total gross pengurangan, take home pay
+  // 3.5. Auto update total gross pengurangan & take home pay
   useEffect(() => {
     const reductionBenefits = dataPayslip?.salaries?.filter(
       (benefit) => benefit?.column?.type === 2
@@ -403,64 +422,10 @@ const EmployeePayslipAddIndex = ({
     });
   };
 
-  // 4.2. Handle Add Payslip Draft/Posted
-  const handleAddPayslip = (isPosted) => {
-    if (!isAllowedToAddPayslip) {
-      permissionWarningNotification("Menambah", "Slip Gaji Karyawan");
-      return;
-    }
-
-    const payload = {
-      ...dataPayslip,
-      is_posted: isPosted,
-    };
-
-    setLoadingSave(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeePayslip`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          setModalUpdate(false);
-          if (isDraft) {
-            notification.success({
-              message: `Draft slip gaji berhasil dibuat.`,
-              duration: 3,
-            });
-          } else {
-            notification.success({
-              message: `Slip gaji berhasil ditambahkan.`,
-              duration: 3,
-            });
-          }
-
-          rt.push(`/admin/employees/payslip/${employeeId}`);
-        } else {
-          notification.error({
-            message: `Gagal menambahkan slip gaji karyawan. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan slip gaji karyawan. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingSave(false));
-  };
-
-  // 4.3. Handle Update Payslip Draft/Posted
-  const handleSavePayslip = (isPosted) => {
+  // 4.2. Handle Update Payslip Draft/Posted
+  const handleUpdatePayslip = (isPosted) => {
     if (!isAllowedToUpdatePayslip) {
-      permissionWarningNotification("Menyimpan", "Slip Gaji Karyawan");
+      permissionWarningNotification("Memperbarui", "Slip Gaji Karyawan");
       return;
     }
 
@@ -483,7 +448,7 @@ const EmployeePayslipAddIndex = ({
           setModalUpdate(false);
           if (isDraft) {
             notification.success({
-              message: `Draft slip gaji berhasil dibuat.`,
+              message: `Draft slip gaji berhasil diperbarui.`,
               duration: 3,
             });
           } else {
@@ -496,20 +461,64 @@ const EmployeePayslipAddIndex = ({
           rt.push(`/admin/employees/payslip/${employeeId}`);
         } else {
           notification.error({
-            message: `Gagal menyimpan slip gaji karyawan. ${response2.message}`,
+            message: `Gagal memperbarui slip gaji karyawan. ${response2.message}`,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menyimpan slip gaji karyawan. ${err.response}`,
+          message: `Gagal memperbarui slip gaji karyawan. ${err.response}`,
           duration: 3,
         });
       })
       .finally(() => {
         setLoadingUpdate(false);
       });
+  };
+
+  // 4.3. Handle Delete Payslip
+  const handleDeletePayslip = () => {
+    if (!isAllowedToDeletePayslip) {
+      permissionWarningNotification("Menghapus", "Data Slip Gaji");
+      setLoadingDelete(false);
+      return;
+    }
+
+    if (payslipId) {
+      setLoadingDelete(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeePayslip?id=${payslipId}`,
+        {
+          method: `DELETE`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            notification.success({
+              message: "Slip gaji berhasil dihapus",
+              duration: 3,
+            });
+            rt.back();
+          } else {
+            notification.error({
+              message: "Gagal menghapus slip gaji",
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: "Gagal menghapus slip gaji",
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingDelete(false));
+    }
   };
 
   // console.log({ dataPayslip });
@@ -546,7 +555,7 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(true);
                 setModalUpdate(true);
               }}
-              disabled={!isAllowedToUpdatePayslip || !isAllowedToAddPayslip}
+              disabled={!isAllowedToUpdatePayslip}
             >
               <div className="flex flex-row space-x-2">
                 {/* <ClipboardListIconSvg color={"#35763B"} size={16} /> */}
@@ -560,11 +569,7 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(false);
                 setModalUpdate(true);
               }}
-              disabled={
-                !isAllowedToUpdatePayslip ||
-                !isAllowedToAddPayslip ||
-                disablePublish
-              }
+              disabled={!isAllowedToUpdatePayslip || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -1051,13 +1056,9 @@ const EmployeePayslipAddIndex = ({
           visible={modalUpdate}
           onvisible={setModalUpdate}
           onOk={() => {
-            payslipId
-              ? isDraft
-                ? handleSavePayslip(0)
-                : handleSavePayslip(1)
-              : isDraft
-              ? handleAddPayslip(0)
-              : handleAddPayslip(1);
+            payslipId && isDraft
+              ? handleUpdatePayslip(0)
+              : handleUpdatePayslip(1);
           }}
           onCancel={() => {
             setModalUpdate(false);
