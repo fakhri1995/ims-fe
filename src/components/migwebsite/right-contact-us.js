@@ -25,19 +25,19 @@ function RightContactUs({
   return (
     <div className={"w-full lg:w-1/2"}>
       <div className={"w-full"}>
-        <p
+        <h3
           style={{ lineHeight: "120%" }}
           className={
-            "text-xl pt-6 md:pt-12 lg:pt-0 lg:text-[30px] font-gilroysemibold text-blackmig"
+            "text-xl pt-6 md:pt-12 lg:pt-0 lg:text-[32px] font-gilroysemibold text-blackmig"
           }
         >
           {locale == "en"
             ? "Send us your questions"
             : "Kirimkan pertanyaan Anda di sini"}
-        </p>
+        </h3>
         <p
           style={{ lineHeight: "150%" }}
-          className={"text-xs lg:text-[18px] mt-1 lg:mt-3 text-blackmig mb-5"}
+          className={"text-xs lg:text-base mt-1 lg:mt-3 text-blackmig mb-5"}
         >
           {locale == "en"
             ? "Kindly provide your contact details, our team will get in touch shortly"
@@ -112,10 +112,10 @@ function RightContactUs({
           onFinish={handleSubmit}
           form={form}
         >
-          <div className={""}>
+          <div className={"flex flex-row"}>
             <Form.Item
               name={"Company Name"}
-              className={"font-gilroyregular text-[16px]"}
+              className={"font-gilroyregular text-[16px] w-1/2 mr-2"}
               label={
                 <p style={{ fontSize: "16px" }}>
                   {locale == "en" ? "Company Name" : "Nama Perusahaan"}
@@ -136,28 +136,8 @@ function RightContactUs({
               />
             </Form.Item>
             <Form.Item
-              name={"Email"}
-              className={"font-gilroyregular text-[16px]"}
-              label={<p style={{ fontSize: "16px" }}>Email</p>}
-              rules={[{ required: true, type: "email" }]}
-            >
-              <Input
-                style={{ border: "1px solid #B8B8B8", fontSize: 16 }}
-                name={"Email"}
-                onChange={(e) => {
-                  setDataContactUs({
-                    ...dataContactUs,
-                    company_email: e.target.value,
-                  });
-                }}
-                placeholder=""
-              />
-            </Form.Item>
-          </div>
-          <div className={""}>
-            <Form.Item
               name={"Contact Name"}
-              className={"font-gilroyregular text-[16px]"}
+              className={"font-gilroyregular text-[16px] w-1/2 ml-2"}
               label={
                 <p style={{ fontSize: "16px" }}>
                   {locale == "en" ? "Contact Name" : "Nama"}
@@ -177,9 +157,29 @@ function RightContactUs({
                 placeholder=""
               />
             </Form.Item>
+          </div>
+          <div className={"flex flex-row"}>
+            <Form.Item
+              name={"Email"}
+              className={"font-gilroyregular text-[16px] w-1/2 mr-2"}
+              label={<p style={{ fontSize: "16px" }}>Email</p>}
+              rules={[{ required: true, type: "email" }]}
+            >
+              <Input
+                style={{ border: "1px solid #B8B8B8", fontSize: 16 }}
+                name={"Email"}
+                onChange={(e) => {
+                  setDataContactUs({
+                    ...dataContactUs,
+                    company_email: e.target.value,
+                  });
+                }}
+                placeholder=""
+              />
+            </Form.Item>
             <Form.Item
               name={"Phone Number"}
-              className={"font-gilroyregular text-[16px]"}
+              className={"font-gilroyregular text-[16px] w-1/2 ml-2"}
               label={
                 <p style={{ fontSize: "16px" }}>
                   {locale == "en" ? "Phone Number" : "No. Telepon"}
@@ -291,7 +291,7 @@ function RightContactUs({
                 <div className={"flex flex-row justify-between"}>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className={"text-[18px] font-gilroysemibold"}
+                    className={"text-[16px] font-gilroysemibold"}
                   >
                     {locale == "en" ? "Submit" : "Kirim"}
                   </p>

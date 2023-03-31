@@ -15,15 +15,15 @@ function LeftContactUs({ children }) {
 
   return (
     <div className={"w-full lg:w-1/2"}>
-      <p
+      <h3
         style={{ lineHeight: "120%" }}
-        className={"text-xl lg:text-[30px] font-gilroysemibold text-blackmig"}
+        className={"text-xl lg:text-[32px] font-gilroysemibold text-blackmig"}
       >
         {t.contactusleftsectiontitle}
-      </p>
+      </h3>
       <p
         style={{ lineHeight: "150%" }}
-        className={"text-[18px] font-gilroyregular mt-3 w-full lg:w-[400px]"}
+        className={"text-base font-gilroyregular mt-3 w-full lg:w-[400px]"}
       >
         {t.contactusleftsectiondescription}
       </p>
