@@ -28,6 +28,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_LISTS_GET,
+  EMPLOYEE_CONTRACT_GET,
   EMPLOYEE_SALARY_COLUMNS_GET,
   EMPLOYEE_SALARY_COLUMN_ADD,
   EMPLOYEE_SALARY_COLUMN_DELETE,
@@ -50,13 +51,14 @@ const EmployeeContractForm = ({
   setDataContract,
   debouncedApiCall,
   prevpath,
+  contractId,
+  employeeId,
   // instanceForm,
   // handleSaveContract,
 }) => {
   /**
    * Dependencies
    */
-
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -64,6 +66,7 @@ const EmployeeContractForm = ({
     return null;
   }
 
+  const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoleTypeList = hasPermission(
@@ -112,7 +115,7 @@ const EmployeeContractForm = ({
 
   // 2. HELPER FUNCTION
   // 2.1. Format string variable name. e.g. "tunjangan_transport"
-  const formatVariableName = (name) => name.toLowerCase().split(" ").join("_");
+  const formatVariableName = (name) => name?.toLowerCase().split(" ").join("_");
 
   // 2.2. Count total gross penerimaan & pengurangan
   const sumValues = (arr) => {
@@ -259,92 +262,85 @@ const EmployeeContractForm = ({
       });
   }, [isAllowedToGetRoleTypeList]);
 
-  // 3.4 Get salary variable list
+  // 3.4. Get Employee Contract
   useEffect(() => {
-    if (!isAllowedToGetSalaryColumns) {
-      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+    if (!isAllowedToGetEmployeeContract) {
+      permissionWarningNotification("Mendapatkan", "Data Employee Contract");
       setPraLoading(false);
       return;
     }
 
-    setPraLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          let dataVar = response2.data;
-          const receiveVariables = dataVar.filter(
-            (variable) => variable.type === 1
-          );
-          const reductionVariables = dataVar.filter(
-            (variable) => variable.type === 2
-          );
+    // if (currentTab == "2") {
+    if (contractId) {
+      setPraLoading(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${contractId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            const resData = res2.data;
+            const requiredData = {
+              ...resData,
+              id: contractId,
+              employee_id: employeeId,
+              gaji_pokok: resData.gaji_pokok ?? 0,
+              salaries: resData.salaries || null,
+            };
+            if (prevpath === "add") {
+              setDataContract({
+                ...requiredData,
+                is_employee_active: 1,
+              });
+            } else {
+              setDataContract(requiredData);
+            }
 
-          // Set checked variables to show as fields in form
-          const defaultReceiveVariables = receiveVariables.filter(
-            (variable) => variable.required === 1
-          );
-          const defaultReductionVariables = reductionVariables.filter(
-            (variable) => variable.required === 1
-          );
-          setReceiveVarFields(defaultReceiveVariables);
-          setReductionVarFields(defaultReductionVariables);
+            // Set checked variables to show as fields in form
+            const receiveVariables = resData.salaries
+              ?.filter((variable) => variable?.column?.type === 1)
+              ?.map((variable) => variable.column);
+            const reductionVariables = resData.salaries
+              ?.filter((variable) => variable?.column?.type === 2)
+              ?.map((variable) => variable.column);
 
-          // insert default selected BPJS multiplier to state
-          const defaultSelectedMultipliers = dataVar.filter(
-            (variable) =>
-              !!variable.is_amount_for_bpjs === true &&
-              !!variable.required === true
-          );
-          setSelectedMultipliers(defaultSelectedMultipliers);
+            setReceiveVarFields(receiveVariables);
+            setReductionVarFields(reductionVariables);
 
-          // Insert default salary variable to contract form
-          // let tempSalaries = dataContract?.salaries || [];
-          // dataVar
-          //   ?.filter((variable) => variable.required === 1)
-          //   ?.forEach((variable, idx) => {
-          //     const field = {
-          //       id: idx,
-          //       employee_salary_column_id: variable.id,
-          //       employee_payslip_id: dataContract?.id,
-          //       value: 0,
-          //       column: {
-          //         id: variable?.id,
-          //         name: variable?.name,
-          //         type: variable?.type,
-          //         required: variable?.required,
-          //       },
-          //     };
-
-          //     tempSalaries[idx] = field;
-          //   });
-
-          // setDataContract((prev) => ({
-          //   ...prev,
-          //   salaries: tempSalaries,
-          // }));
-        } else {
+            // insert default selected BPJS multiplier to state
+            const defaultSelectedMultipliers = resData?.salaries
+              ?.filter(
+                (variable) =>
+                  !!variable.column?.is_amount_for_bpjs === true &&
+                  !!variable.column?.required === true
+              )
+              ?.map((variable) => variable.column);
+            setSelectedMultipliers(defaultSelectedMultipliers);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${response2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setPraLoading(false);
         });
-      })
-      .finally(() => setPraLoading(false));
-  }, [isAllowedToGetSalaryColumns]);
-
-  // console.log({ dataContract });
+    }
+    // }
+  }, [isAllowedToGetEmployeeContract, refresh]);
 
   // 3.5. Display contract file when available
   useEffect(() => {
@@ -809,7 +805,7 @@ const EmployeeContractForm = ({
           >
             <div className="flex flex-row items-center space-x-2">
               <CustomCurrencyInput
-                fieldLabel={`${variable.name.toLowerCase()}`}
+                fieldLabel={`${variable.name?.toLowerCase()}`}
                 dataForm={dataContract}
                 setDataForm={setDataContract}
                 value={
@@ -978,7 +974,7 @@ const EmployeeContractForm = ({
             <Form.Item
               key={reductionFieldId}
               label={variable.name}
-              name={formatVariableName(variable.name)}
+              name={formatVariableName(variable?.name)}
             >
               <div>
                 <CustomCurrencyInput
