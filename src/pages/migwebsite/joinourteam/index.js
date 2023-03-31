@@ -131,18 +131,18 @@ function JoinOurTeam({ dataCareers, empData }) {
         <div className={"block lg:flex"}>
           <div className={"flex-col w-1/2 self-center"}>
             <div className={""}>
-              <h1
+              <h3
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-2xl lg:text-[36px] text-center lg:text-left font-gilroysemibold text-blackmig"
+                  "text-2xl lg:text-[32px] text-center lg:text-left font-gilroysemibold text-blackmig"
                 }
               >
                 {t.careersatmig}
-              </h1>
+              </h3>
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  "text-xl font-gilroyregular text-blackmig my-4 lg:my-8"
+                  "text-base font-gilroyregular text-blackmig my-4 lg:my-8"
                 }
               >
                 {t.careersatmigsubtitle}
@@ -212,14 +212,14 @@ function JoinOurTeam({ dataCareers, empData }) {
 
       <section className={"section3careers bg-transp60"}>
         <div className={"py-4 lg:py-6 px-4 lg:px-[113.5px]"}>
-          <h2
+          <h3
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl lg:text-[36px] font-gilroysemibold text-blackmig text-center "
+              "text-xl lg:text-[32px] font-gilroysemibold text-blackmig text-center "
             }
           >
             {t.careersatmigvaluesectiontitle}
-          </h2>
+          </h3>
           {/*tampilan dekstpp */}
           <div className={"hidden lg:flex lg:flex-row lg:justify-between mt-6"}>
             <div
@@ -234,17 +234,17 @@ function JoinOurTeam({ dataCareers, empData }) {
                     src="/image/joinourteam/values-1.png"
                   />
                 </div>
-                <p
+                <h5
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg lg:text-2xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg lg:text-xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Agility
-                </p>
+                </h5>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"text-blackmig text-sm lg:text-xl mt-2"}
+                  className={"text-blackmig text-sm lg:text-base mt-2"}
                 >
                   {t.careersatmigvaluesectionsubtitlebox1}
                 </p>
@@ -263,15 +263,15 @@ function JoinOurTeam({ dataCareers, empData }) {
                     src="/image/joinourteam/values-2.png"
                   />
                 </div>
-                <p
+                <h5
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg lg:text-2xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg lg:text-xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Perseverance
-                </p>
-                <p className={"text-black text-sm lg:text-xl mt-2"}>
+                </h5>
+                <p className={"text-black text-sm lg:text-base mt-2"}>
                   {t.careersatmigvaluesectionsubtitlebox2}
                 </p>
               </div>
@@ -288,18 +288,18 @@ function JoinOurTeam({ dataCareers, empData }) {
                     src="/image/joinourteam/values-3.png"
                   />
                 </div>
-                <p
+                <h5
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-lg lg:text-2xl mt-2 font-gilroysemibold text-blackmig"
+                    "text-lg lg:text-xl mt-2 font-gilroysemibold text-blackmig"
                   }
                 >
                   Integrity
-                </p>
+                </h5>
 
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"text-blackmig mt-2 text-sm lg:text-xl"}
+                  className={"text-blackmig mt-2 text-sm lg:text-base"}
                 >
                   {t.careersatmigvaluesectionsubtitlebox3}
                 </p>
@@ -376,18 +376,18 @@ function JoinOurTeam({ dataCareers, empData }) {
       </section>
 
       <section className={"section6careers hidden lg:block py-8 md:py-16"}>
-        <h2
+        <h3
           style={{ lineHeight: "120%" }}
           className={
-            "text-center text-blackmig font-gilroysemibold text-2xl lg:text-[36px]"
+            "text-center text-blackmig font-gilroysemibold text-2xl lg:text-[32px]"
           }
         >
           {t.careersatmigbenefitsection}
-        </h2>
+        </h3>
         <div className={"px-4 md:px-[112px] mt-4"}>
           <p
             style={{ lineHeight: "150%" }}
-            className={"text-xl font-gilroyregular text-blackmig"}
+            className={"text-base font-gilroyregular text-blackmig"}
           >
             {t.careersatmigbenefitsectionsubtitle}
           </p>
@@ -610,15 +610,15 @@ function JoinOurTeam({ dataCareers, empData }) {
               "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[150px] py-[31.38px]  px-[31.38px]"
             }
           >
-            <h2
+            <h4
               style={{ lineHeight: "120%" }}
-              className={"text-[28px] font-gilroysemibold text-black"}
+              className={"text-2xl font-gilroysemibold text-black"}
             >
               {t.contactussectiontitle}
-            </h2>
+            </h4>
             <div
               className={
-                "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                "mt-3.5 text-base font-gilroyregular text-center text-black"
               }
             >
               <p style={{ lineHeight: "120%" }}>
@@ -636,7 +636,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctacontactuslandingpage}
                     </p>
                   </button>
@@ -649,7 +649,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctalearnmorelandingpage}
                     </p>
                   </button>

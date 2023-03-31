@@ -439,7 +439,7 @@ function Software({}) {
               <Link href={{ pathname: "/hardware" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg gilroy-medium mr-4"
+                    "cursor-pointer flex-col text-base gilroy-medium mr-4"
                   }
                 >
                   Hardware
@@ -448,7 +448,7 @@ function Software({}) {
               <Link href={{ pathname: "/software" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg font-gilroybold mx-4"
+                    "cursor-pointer flex-col text-base font-gilroybold mx-4"
                   }
                   style={{
                     borderBottom: "solid 2px #10B981",
@@ -461,7 +461,7 @@ function Software({}) {
               <Link href={{ pathname: "/talents" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg gilroy-medium mx-4"
+                    "cursor-pointer flex-col text-base gilroy-medium mx-4"
                   }
                 >
                   Talents
@@ -1623,15 +1623,15 @@ function Software({}) {
           >
             <div className={"hidden lg:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
-                <h1
+                <h3
                   style={{ lineHeight: "120%" }}
-                  className={"text-[36px] font-gilroysemibold"}
+                  className={"text-[32px] font-gilroysemibold"}
                 >
                   {t.softwareherosection}
-                </h1>
+                </h3>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"mt-8 font-gilroyregular text-xl"}
+                  className={"mt-8 font-gilroyregular text-base"}
                 >
                   {t.softwareheosectionsubtitle}
                 </p>
@@ -1839,10 +1839,10 @@ function Software({}) {
               "section3software hidden lg:block bg-bgjoinmig px-[52px] lg:px-[113.5px] py-12"
             }
           >
-            <h2
+            <h3
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl lg:text-[36px] text-center font-gilroysemibold py-8 lg:py-0 mb-10"
+                "text-xl lg:text-[32px] text-center font-gilroysemibold py-8 lg:py-0 mb-10"
               }
             >
               {t.softwarepastworksectiontitle1}{" "}
@@ -1855,7 +1855,7 @@ function Software({}) {
                 {t.softwarepastworksectiontitle2}
               </span>{" "}
               {t.softwarepastworksectiontitle3}
-            </h2>
+            </h3>
             <div className={"flex flex-row"}>
               <button onClick={() => slider2?.current?.slickPrev()}>
                 <div
@@ -1890,19 +1890,19 @@ function Software({}) {
                         >
                           Website Development
                         </p>
-                        <p
+                        <h4
                           style={{ lineHeight: "120%" }}
                           className={
-                            "font-gilroybold text-blackmig text-[28px] mt-4"
+                            "font-gilroybold text-blackmig text-2xl mt-4"
                           }
                         >
                           MIGSys
-                        </p>
+                        </h4>
                         <div className={"mt-4"}>
                           <p
                             style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-xl"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
                             {t.migsysdescription}{" "}
@@ -1910,7 +1910,7 @@ function Software({}) {
                           <ul
                             style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-xl"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
                             <li>{t.migsysdetail1}</li>
@@ -1938,19 +1938,19 @@ function Software({}) {
                         >
                           Website Development
                         </p>
-                        <p
+                        <h4
                           style={{ lineHeight: "120%" }}
                           className={
-                            "font-gilroybold text-blackmig text-[28px] mt-4"
+                            "font-gilroybold text-blackmig text-2xl mt-4"
                           }
                         >
                           AQL Learning Management System (LMS)
-                        </p>
+                        </h4>
                         <div className={"mt-4"}>
                           <p
                             style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-xl"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
                             {t.lmsdescription}
@@ -1974,19 +1974,19 @@ function Software({}) {
                         >
                           Website Development
                         </p>
-                        <p
+                        <h4
                           style={{ lineHeight: "120%" }}
                           className={
-                            "font-gilroybold text-blackmig text-[28px] mt-4"
+                            "font-gilroybold text-blackmig text-2xl mt-4"
                           }
                         >
                           Warung Lebaran
-                        </p>
+                        </h4>
                         <div className={"mt-4"}>
                           <p
                             style={{ lineHeight: "150%" }}
                             className={
-                              "font-gilroyregular text-blackmig text-xl"
+                              "font-gilroyregular text-blackmig text-base"
                             }
                           >
                             {t.warunglebarandescription}
@@ -2146,7 +2146,7 @@ function Software({}) {
                       "text-sm lg:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2 mt-4"
                     }
                   >
-                    <p className={"text-base lg:text-xl font-gilroysemibold"}>
+                    <p className={"text-base lg:text-base font-gilroysemibold"}>
                       {locale == "en" ? "Contact our team" : "Kontak tim kami"}
                     </p>
                   </button>
@@ -2169,9 +2169,9 @@ function Software({}) {
                 />
               </div>
               <div className="flex flex-col lg:w-3/5 lg:ml-[40px]">
-                <h2
+                <h4
                   style={{ lineHeight: "120%" }}
-                  className="mb-2 text-xl lg:text-[28px] text-center lg:text-left font-gilroysemibold text-blackmig"
+                  className="mb-2 text-xl lg:text-2xl text-center lg:text-left font-gilroysemibold text-blackmig"
                 >
                   {t.softwarewhyussectiontitle1}{" "}
                   <span
@@ -2183,7 +2183,7 @@ function Software({}) {
                     {t.softwarewhyussectiontitle2}
                   </span>{" "}
                   {t.softwarewhyussectiontitle3}
-                </h2>
+                </h4>
                 <div className={"block lg:hidden mx-auto my-[17px]"}>
                   <img
                     src="/image/people/People-Solution.png"
@@ -2205,7 +2205,7 @@ function Software({}) {
                     </h5>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                      className="text-left ml-3.5 text-base text-blackmig font-gilroyregular"
                     >
                       {t.softwarewhyyousectionsublist1}
                     </p>
@@ -2225,7 +2225,7 @@ function Software({}) {
                     </h5>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                      className="text-left ml-3.5 text-base text-blackmig font-gilroyregular"
                     >
                       {t.softwarewhyyousectionsublist2}
                     </p>
@@ -2245,7 +2245,7 @@ function Software({}) {
                     </h5>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                      className="text-left ml-3.5 text-base text-blackmig font-gilroyregular"
                     >
                       {t.softwarewhyyousectionsublist3}
                     </p>
@@ -2261,10 +2261,10 @@ function Software({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <h2
+              <h3
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl lg:text-[36px] font-gilroysemibold py-8 lg:py-0"
+                  "text-xl lg:text-[32px] font-gilroysemibold py-8 lg:py-0"
                 }
               >
                 {locale == "en"
@@ -2279,7 +2279,7 @@ function Software({}) {
                   {locale == "en" ? "top-quality software" : "layanan MIG "}
                 </span>{" "}
                 ?
-              </h2>
+              </h3>
             </div>
             <div className={"flex flex-row justify-between lg:px-20 mt-10"}>
               <div className={""}>
@@ -2292,7 +2292,7 @@ function Software({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm lg:text-xl font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm lg:text-base font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.softwarehowitwork1}
@@ -2314,7 +2314,7 @@ function Software({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm lg:text-xl font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-base font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork2}
@@ -2335,7 +2335,7 @@ function Software({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm lg:text-xl font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-base font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.softwarehowitwork3}
@@ -2402,13 +2402,13 @@ function Software({}) {
                 "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-4 lg:pt-12 pb-[30px] lg:pb-[179px] px-[30px] lg:px-[106px]"
               }
             >
-              <p
+              <h4
                 className={
-                  "text-xl lg:text-[32px] text-center font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-2xl text-center font-gilroysemibold mb-[42px]"
                 }
               >
                 {t.customerstorieslandingpage}
-              </p>
+              </h4>
               <div className={"flex flex-row"}>
                 {dataTestimonial ? (
                   dataTestimonial.length > 1 ? (
@@ -2525,10 +2525,10 @@ function Software({}) {
                                   className={"flex flex-row justify-between"}
                                 >
                                   <div>
-                                    <h2
+                                    <h5
                                       style={{ lineHeight: "120%" }}
                                       className={
-                                        "text-blackmig text-[22px] font-gilroysemibold"
+                                        "text-blackmig text-xl font-gilroysemibold"
                                       }
                                     >
                                       {locale == "en"
@@ -2537,7 +2537,7 @@ function Software({}) {
                                           data1.title_id != null
                                         ? data1.title_id
                                         : data1.title}
-                                    </h2>
+                                    </h5>
                                     <p
                                       className={
                                         "text-primarygreen text-base font-gilroysemibold mt-1"
@@ -2565,7 +2565,7 @@ function Software({}) {
                                   </div>
                                 </div>
                                 <div
-                                  className="mt-4"
+                                  className="mt-4 text-base"
                                   dangerouslySetInnerHTML={{
                                     __html: data1.description,
                                   }}
@@ -2831,15 +2831,15 @@ function Software({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-36 py-4 px-8">
-                <h2
+                <h4
                   style={{ lineHeight: "120%" }}
-                  className={"text-[28px] font-gilroysemibold text-black"}
+                  className={"text-2xl font-gilroysemibold text-black"}
                 >
                   {t.contactussectiontitle}
-                </h2>
+                </h4>
                 <div
                   className={
-                    "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                    "mt-3.5 text-base font-gilroyregular text-center text-black"
                   }
                 >
                   <p style={{ lineHeight: "120%" }}>
@@ -2857,7 +2857,7 @@ function Software({}) {
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                         }
                       >
-                        <p className={"text-xl font-gilroysemibold"}>
+                        <p className={"text-base font-gilroysemibold"}>
                           {t.ctacontactuslandingpage}
                         </p>
                       </button>
@@ -2870,7 +2870,7 @@ function Software({}) {
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                         }
                       >
-                        <p className={"text-xl font-gilroysemibold"}>
+                        <p className={"text-base font-gilroysemibold"}>
                           {t.ctalearnmorelandingpage}
                         </p>
                       </button>

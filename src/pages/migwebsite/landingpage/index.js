@@ -288,14 +288,14 @@ function LandingPage({ dataBlog }) {
         {/* Browser View */}
         <div className={"hidden lg:flex flex-row justify-between mx-auto"}>
           <div className={"flex-col w-1/2"}>
-            <h1
+            <h3
               style={{ lineHeight: "120%" }}
               className={
-                "md:text-[32px] lg:text-[36px] mt-[34px] font-gilroysemibold text-blackmig"
+                "md:text-[32px] lg:text-[32px] mt-[34px] font-gilroysemibold text-blackmig"
               }
             >
               {t.landingpagesection1}
-            </h1>
+            </h3>
             <p
               style={{ lineHeight: "150%" }}
               className={
@@ -320,7 +320,7 @@ function LandingPage({ dataBlog }) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base md:text-xl font-gilroyregular text-blackmig mt-4"
+                "text-base md:text-base font-gilroyregular text-blackmig mt-4"
               }
             >
               {t.weprovideyou}
@@ -328,7 +328,7 @@ function LandingPage({ dataBlog }) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base md:text-xl  font-gilroyregular text-blackmig"
+                "text-base md:text-base font-gilroyregular text-blackmig"
               }
             >
               {t.firstprovide}
@@ -336,7 +336,7 @@ function LandingPage({ dataBlog }) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base md:text-xl  font-gilroyregular text-blackmig"
+                "text-base md:text-base font-gilroyregular text-blackmig"
               }
             >
               {t.secondprovide}
@@ -344,7 +344,7 @@ function LandingPage({ dataBlog }) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base md:text-xl font-gilroyregular text-blackmig"
+                "text-base md:text-base font-gilroyregular text-blackmig"
               }
             >
               {t.thirdprovide}
@@ -364,7 +364,7 @@ function LandingPage({ dataBlog }) {
                       "flex flex-row justify-center text-xl text-primarygreen rounded border-2 border-primarygreen pl-4 pr-3 py-2 mt-4 bg-white"
                     }
                   >
-                    <p className={"mr-2 text-xl font-gilroysemibold"}>
+                    <p className={"mr-2 text-base font-gilroysemibold"}>
                       {t.landingpageoursolution}
                     </p>
                     <img
@@ -394,12 +394,12 @@ function LandingPage({ dataBlog }) {
         </div>
         <div className={"hidden lg:block"}>
           <div className={"mt-[72px] text-center"}>
-            <h2
+            <h5
               style={{ lineHeight: "150%" }}
               className={"text-xl text-blackmig font-gilroysemibold"}
             >
               {t.landingpagetitlelogo}
-            </h2>
+            </h5>
           </div>
           <section className={"logoMarqueeSection"}>
             <div className={"container"} id="logoMarqueeSection">
@@ -718,10 +718,10 @@ function LandingPage({ dataBlog }) {
         }
       >
         <div className={"container mx-auto"}>
-          <h2
+          <h3
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl lg:text-[36px] text-blackmig font-gilroysemibold md:py-0"
+              "text-xl lg:text-[32px] text-blackmig font-gilroysemibold md:py-0"
             }
           >
             {t.findout}{" "}
@@ -734,28 +734,28 @@ function LandingPage({ dataBlog }) {
               {t.howourexpertise}
             </span>{" "}
             {t.helpyou}
-          </h2>
+          </h3>
         </div>
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
             <div className={"text-left w-1/2"}>
-              <h2
+              <h5
                 style={{ lineHeight: "120%" }}
-                className={"font-gilroybold text-primarygreen text-2xl"}
+                className={"font-gilroybold text-primarygreen text-xl"}
               >
                 Hardware
-              </h2>
-              <h2
+              </h5>
+              <h4
                 style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[24px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.hardwaresubtitlelanding}
-              </h2>
+              </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+                className={" text-blackmig text-base font-gilroyregular mt-5"}
               >
                 {t.hardwaredescription}
               </p>
@@ -763,11 +763,11 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/hardware">
                   <button
                     className={
-                      "text-xl font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                      "text-base font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"mr-[13.52px] text-xl"}>
+                      <p className={"mr-[13.52px] text-base"}>
                         {t.hardwarebuttontitle}
                       </p>
                       <img
@@ -799,23 +799,23 @@ function LandingPage({ dataBlog }) {
               />
             </div>
             <div className={"text-left w-1/2 self-end"}>
-              <h2
+              <h6
                 style={{ lineHeight: "120%" }}
-                className={"font-gilroybold text-primarygreen text-2xl"}
+                className={"font-gilroybold text-primarygreen text-xl"}
               >
                 Software
-              </h2>
-              <h2
+              </h6>
+              <h4
                 style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-2xl font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.softwaresubtitlelanding}
-              </h2>
+              </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+                className={" text-blackmig text-base font-gilroyregular mt-5"}
               >
                 {t.softwaredescription}
               </p>
@@ -823,11 +823,11 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/software">
                   <button
                     className={
-                      "text-xl font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                      "text-base font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"mr-[13.52px] text-xl"}>
+                      <p className={"mr-[13.52px] text-base"}>
                         {t.softwarebuttontitle}
                       </p>
                       <img
@@ -845,23 +845,23 @@ function LandingPage({ dataBlog }) {
         <div className={"mt-[42px]"}>
           <div className={"flex flex-row justify-between"}>
             <div className={"text-left w-1/2"}>
-              <h2
+              <h5
                 style={{ lineHeight: "120%" }}
-                className={"font-gilroybold text-primarygreen text-2xl"}
+                className={"font-gilroybold text-primarygreen text-xl"}
               >
                 Talents
-              </h2>
-              <h2
+              </h5>
+              <h4
                 style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-[36px] font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-2xl font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.talentsubtitle}
-              </h2>
+              </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+                className={" text-blackmig text-base font-gilroyregular mt-5"}
               >
                 {t.talentdescription}
               </p>
@@ -869,11 +869,11 @@ function LandingPage({ dataBlog }) {
                 <Linkk href="/talents">
                   <button
                     className={
-                      "text-xl font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
+                      "text-base font-gilroysemibold rounded text-white border-2 bg-primarygreen border-primarygreen pl-4 py-2 pr-[12.18px]"
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"mr-[13.52px] text-xl"}>
+                      <p className={"mr-[13.52px] text-base"}>
                         {t.talentbuttontitle}
                       </p>
                       <img
@@ -1046,14 +1046,14 @@ function LandingPage({ dataBlog }) {
             "section3landingpageadvantages hidden lg:block bg-white py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
           }
         >
-          <h2
+          <h4
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-[36px] text-center font-gilroysemibold mb-[42px]"
+              "text-xl md:text-[32px] text-center font-gilroysemibold mb-[42px]"
             }
           >
             {t.customerstorieslandingpage}
-          </h2>
+          </h4>
           <div
             className={"center md:content-around block md:hidden"}
             style={{ maxWidth: 1000 }}
@@ -1261,10 +1261,10 @@ function LandingPage({ dataBlog }) {
                           <div className={"w-[45%]"}>
                             <div className={"flex flex-row justify-between"}>
                               <div>
-                                <h2
+                                <h5
                                   style={{ lineHeight: "120%" }}
                                   className={
-                                    "text-blackmig text-[22px] font-gilroysemibold"
+                                    "text-blackmig text-xl font-gilroysemibold"
                                   }
                                 >
                                   {locale == "en"
@@ -1272,7 +1272,7 @@ function LandingPage({ dataBlog }) {
                                     : locale == "id" && data1.title_id != null
                                     ? data1.title_id
                                     : data1.title}
-                                </h2>
+                                </h5>
                                 <p
                                   className={
                                     "text-primarygreen text-base font-gilroysemibold mt-1"
@@ -1518,10 +1518,10 @@ function LandingPage({ dataBlog }) {
       )}
       <section className={"session4landingpage py-4 px-4 lg:py-16 text-center"}>
         <div className={"container mx-auto"}>
-          <h2
+          <h3
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl lg:text-[36px] mt-12 font-gilroysemibold text-blackmig"
+              "text-xl lg:text-[32px] mt-12 font-gilroysemibold text-blackmig"
             }
           >
             {t.landingpagewhyus1}{" "}
@@ -1533,7 +1533,7 @@ function LandingPage({ dataBlog }) {
             >
               {t.landingpagewhyus2}
             </span>{" "}
-          </h2>
+          </h3>
         </div>
         <div
           className={
@@ -1549,15 +1549,15 @@ function LandingPage({ dataBlog }) {
             />
             {/* </div> */}
             <div className=" ml-6 self-center">
-              <h3
+              <h5
                 style={{ lineHeight: "120%" }}
-                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+                className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen "
               >
                 {t.whyustitle1}
-              </h3>
+              </h5>
               <p
                 style={{ lineHeight: "150%" }}
-                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+                className="text-left text-sm md:text-base text-blackmig font-gilroyregular"
               >
                 {t.whyussubtitle1}
               </p>
@@ -1579,15 +1579,15 @@ function LandingPage({ dataBlog }) {
               alt=""
             />
             <div className=" ml-6 self-center">
-              <h3
+              <h5
                 style={{ lineHeight: "120%" }}
-                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+                className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen "
               >
                 {t.whyustitle2}
-              </h3>
+              </h5>
               <p
                 style={{ lineHeight: "150%" }}
-                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+                className="text-left text-sm md:text-base text-blackmig font-gilroyregular"
               >
                 {t.whyussubtitle2}
               </p>
@@ -1606,15 +1606,15 @@ function LandingPage({ dataBlog }) {
               alt=""
             />
             <div className=" ml-6 self-center">
-              <h3
+              <h5
                 style={{ lineHeight: "120%" }}
-                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+                className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen "
               >
                 {t.whyustitle3}
-              </h3>
+              </h5>
               <p
                 style={{ lineHeight: "150%" }}
-                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+                className="text-left text-sm md:text-base text-blackmig font-gilroyregular"
               >
                 {t.whyussubtitle3}
               </p>
@@ -1627,15 +1627,15 @@ function LandingPage({ dataBlog }) {
               className="w-[117px] h-[136px]"
             />
             <div className=" ml-6 self-center">
-              <h3
+              <h5
                 style={{ lineHeight: "120%" }}
-                className="mb-1 text-sm text-left md:text-2xl font-gilroysemibold text-primarygreen "
+                className="mb-1 text-sm text-left md:text-xl font-gilroysemibold text-primarygreen "
               >
                 {t.whyustitle4}
-              </h3>
+              </h5>
               <p
                 style={{ lineHeight: "150%" }}
-                className="text-left text-sm md:text-xl text-blackmig font-gilroyregular"
+                className="text-left text-sm md:text-base text-blackmig font-gilroyregular"
               >
                 {t.whyussubtitle4}
               </p>
@@ -1738,18 +1738,18 @@ function LandingPage({ dataBlog }) {
           </div>
           <div className={"w-[600px] justify-self-start"}>
             <div className="flex flex-col items-start">
-              <h2
+              <h4
                 style={{ lineHeight: "120%" }}
-                className="mb-2 text-[28px] font-gilroysemibold text-blackmig"
+                className="mb-2 text-[24px] font-gilroysemibold text-blackmig"
               >
                 {t.joinmigsection}
-              </h2>
-              <h2
+              </h4>
+              <h5
                 style={{ lineHeight: "120%" }}
-                className={"text-2xl font-gilroyregular text-blackmig mt-5"}
+                className={"text-xl font-gilroyregular text-blackmig mt-5"}
               >
                 {t.joinmigsubtitle}
-              </h2>
+              </h5>
               <div className="flex flex-row items-center mt-3">
                 <div className="">
                   <img
@@ -1760,7 +1760,7 @@ function LandingPage({ dataBlog }) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    className="text-left ml-3.5 text-base text-blackmig font-gilroyregular"
                   >
                     {t.joinmigpoint1}
                   </p>
@@ -1776,7 +1776,7 @@ function LandingPage({ dataBlog }) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    className="text-left ml-3.5 text-base text-blackmig font-gilroyregular"
                   >
                     {t.joinmigpoint2}
                   </p>
@@ -1792,7 +1792,7 @@ function LandingPage({ dataBlog }) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className="text-left ml-3.5 text-xl text-blackmig font-gilroyregular"
+                    className="text-left ml-3.5 text-base text-blackmig font-gilroyregular"
                   >
                     {t.joinmigpoint3}
                   </p>
@@ -1801,7 +1801,7 @@ function LandingPage({ dataBlog }) {
               <div className="mt-3">
                 <a style={{ textDecoration: "none" }} href="/joinourteam">
                   <div className="flex mt-5 justify-end mr-5">
-                    <p className="text-xl mr-2 text-primarygreen font-gilroysemibold">
+                    <p className="text-base mr-2 text-primarygreen font-gilroysemibold">
                       {t.joinmigcta}
                     </p>
                     <img
@@ -1907,21 +1907,21 @@ function LandingPage({ dataBlog }) {
               "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
-            <h2
+            <h4
               style={{ lineHeight: "120%" }}
-              className={"text-[28px] font-gilroysemibold text-black"}
+              className={"text-[24px] font-gilroysemibold text-black"}
             >
               {t.contactussectiontitle}
-            </h2>
+            </h4>
             <div
               className={
                 "mt-3.5 text-xl font-gilroyregular text-center text-black"
               }
             >
-              <p style={{ lineHeight: "120%", fontSize: "20px" }}>
+              <p style={{ lineHeight: "120%", fontSize: "16px" }}>
                 {t.contactussectionsubtitle1}
               </p>
-              <p style={{ lineHeight: "120%", fontSize: "20px" }}>
+              <p style={{ lineHeight: "120%", fontSize: "16px" }}>
                 {t.contactussectionsubtitle2}
               </p>
             </div>
@@ -1933,7 +1933,7 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctacontactuslandingpage}
                     </p>
                   </button>
@@ -1946,7 +1946,7 @@ function LandingPage({ dataBlog }) {
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctalearnmorelandingpage}
                     </p>
                   </button>

@@ -16,15 +16,15 @@ export const CareersAtMig: FC = () => {
     <section className="section7careers pb-10 md:pb-20 px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20 space-y-8">
       {/* Section Heading */}
       <div>
-        <h2
+        <h3
           style={{ lineHeight: "120%" }}
-          className="text-center gilroy-semibold text-2xl text-blackmig font-semibold lg:text-[36px] pb-8"
+          className="text-center gilroy-semibold text-2xl text-blackmig font-semibold lg:text-[32px] pb-8"
         >
           {t.vacancylistsectiontitle}
-        </h2>
+        </h3>
         <p
           style={{ lineHeight: "150%" }}
-          className="pb-8 text-center text-xl gilroy-regular text-blackmig"
+          className="pb-8 text-center text-base gilroy-regular text-blackmig"
         >
           {t.vacancylistsectiondescription}
         </p>
@@ -42,19 +42,19 @@ export const CareersAtMig: FC = () => {
 
         <p
           style={{ lineHeight: "150%" }}
-          className="pb-0 text-xl text-black text-center mt-4"
+          className="pb-0 text-base text-black text-center mt-4"
         >
           {t.vacancylistsectiondescriptionbelow}{" "}
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          className="pb-12 lg:pb-8 text-xl text-black text-center"
+          className="pb-12 lg:pb-8 text-base text-black text-center"
         >
           {t.vacancylistsectiondescriptionbelow3}{" "}
           <a
             style={{ lineHeight: "150%" }}
             href="mailto:recruitment@mitrasolusi.group"
-            className="text-xl text-blackmig font-semibold"
+            className="text-base text-blackmig font-semibold"
           >
             recruitment@mitrasolusi.group
           </a>{" "}

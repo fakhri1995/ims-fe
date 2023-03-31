@@ -718,15 +718,15 @@ function CustomerStories({ dataBlog }) {
               "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
-            <h2
+            <h4
               style={{ lineHeight: "120%" }}
-              className={"text-[28px] font-gilroysemibold text-black"}
+              className={"text-[24px] font-gilroysemibold text-black"}
             >
               {t.contactussectiontitle}
-            </h2>
+            </h4>
             <div
               className={
-                "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                "mt-3.5 text-base font-gilroyregular text-center text-black"
               }
             >
               <p style={{ lineHeight: "120%" }}>
@@ -744,7 +744,7 @@ function CustomerStories({ dataBlog }) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctacontactuslandingpage}
                     </p>
                   </button>
@@ -757,7 +757,7 @@ function CustomerStories({ dataBlog }) {
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctalearnmorelandingpage}
                     </p>
                   </button>

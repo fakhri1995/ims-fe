@@ -51,19 +51,19 @@ function AboutUs({}) {
         }
       >
         <div className={""}>
-          <h1
+          <h3
             style={{ lineHeight: "120%" }}
             className={
-              "text-2xl lg:text-[36px] font-gilroysemibold text-blackmig"
+              "text-2xl lg:text-[32px] font-gilroysemibold text-blackmig"
             }
           >
             {t.aboutustitle}
-          </h1>
+          </h3>
 
           <p
             style={{ lineHeight: "150%" }}
             className={
-              "text-sm lg:text-xl text-blackmig font-gilroyregular mt-12 lg:mt-4 px-4 lg:px-0"
+              "text-sm lg:text-base text-blackmig font-gilroyregular mt-12 lg:mt-4 px-4 lg:px-0"
             }
           >
             {t.aboutussubtitle}
@@ -71,26 +71,24 @@ function AboutUs({}) {
         </div>
       </section>
       <section className={"block bg-white py-4 lg:py-6 px-4 lg:px-[113.5px]"}>
-        <h2
+        <h5
           style={{ lineHeight: "120%" }}
-          className={
-            "font-gilroysemibold text-left pb-0 text-base lg:text-[32px]"
-          }
+          className={"font-gilroysemibold text-left pb-0 text-base lg:text-xl"}
         >
           {t.whoweare}
-        </h2>
+        </h5>
         {/* <div className={'block md:hidden flex-col py-4 md:py-4 m-auto'}>
                         <img src="/image-aboutus.png" className={'block'} style={{width:'400px',height:'auto',margin:'0 auto'}}></img>
                     </div> */}
         <p
           style={{ lineHeight: "150%" }}
-          className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
+          className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-base"}
         >
           {t.whowearedescription}
         </p>
         <p
           style={{ lineHeight: "150%" }}
-          className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
+          className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-base"}
         >
           {t.whowearedescription2}
         </p>
@@ -98,13 +96,13 @@ function AboutUs({}) {
           <div>
             <p
               style={{ lineHeight: "150%" }}
-              className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
+              className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-base"}
             >
               {t.whowearedescription3}
             </p>
             <p
               style={{ lineHeight: "150%" }}
-              className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-xl"}
+              className={"mt-3 lg:mt-4 font-gilroyregular text-sm lg:text-base"}
             >
               {t.whowearedescription4}
             </p>
@@ -126,19 +124,17 @@ function AboutUs({}) {
       <section
         className={"pt-12 lg:pt-[40px] pb-12 lg:pb-8 px-4 lg:px-[113.5px]"}
       >
-        <h2
+        <h5
           style={{ lineHeight: "120%" }}
-          className={
-            "text-base lg:text-[32px] font-gilroysemibold text-blackmig"
-          }
+          className={"text-base lg:text-xl font-gilroysemibold text-blackmig"}
         >
           {t.supportyourbusiness}
-        </h2>
+        </h5>
         <div>
           <p
             style={{ lineHeight: "150%" }}
             className={
-              "text-sm lg:text-xl mt-3 lg:-mb-24 lg:mt-4 font-gilroyregular"
+              "text-sm lg:text-base mt-3 lg:-mb-24 lg:mt-4 font-gilroyregular"
             }
           >
             {t.supportyourbusinessdetail}{" "}
@@ -734,23 +730,19 @@ function AboutUs({}) {
         }
       >
         <div>
-          <h2
+          <h4
             style={{ lineHeight: "120%" }}
-            className={
-              "font-gilroysemibold text-2xl text-blackmig lg:text-[32px] pb-2"
-            }
+            className={"font-gilroysemibold text-2xl text-blackmig pb-2"}
           >
             {t.aboutuslocation}
-          </h2>
-          <p
+          </h4>
+          <h5
             style={{ lineHeight: "120%" }}
-            className={
-              "font-gilroysemibold pb-2 text-xl lg:text-2xl text-blackmig"
-            }
+            className={"font-gilroysemibold pb-2 text-xl text-blackmig"}
           >
             {t.aboutusheadquarter}
-          </p>
-          <p style={{ lineHeight: "120%" }} className={"text-xl "}>
+          </h5>
+          <p style={{ lineHeight: "120%" }} className={"text-base "}>
             <span className="font-gilroysemibold text-darkgrey">
               {locale == "en" ? "Location" : "Lokasi"} :{" "}
             </span>
@@ -762,14 +754,14 @@ function AboutUs({}) {
           <div className={"flex flex-row mt-3"}>
             <p
               style={{ lineHeight: "150%" }}
-              className={"font-gilroysemibold text-xl text-darkgrey"}
+              className={"font-gilroysemibold text-base text-darkgrey"}
             >
               {locale == "en" ? "Phone" : "Telepon"}:&nbsp;
             </p>
             <a href="tel:+62218314522">
               <p
                 style={{ lineHeight: "150%" }}
-                className={"text-accentblue text-xl underline"}
+                className={"text-accentblue text-base underline"}
               >
                 +62-21-831-4522
               </p>
@@ -778,26 +770,26 @@ function AboutUs({}) {
           <div className={"flex flex-row mt-3"}>
             <p
               style={{ lineHeight: "150%" }}
-              className={"font-gilroysemibold text-xl text-darkgrey"}
+              className={"font-gilroysemibold text-base text-darkgrey"}
             >
               Email:&nbsp;
             </p>
             <a
               href="mailto:help@mitrasolusi.group"
               style={{ lineHeight: "150%" }}
-              className={"text-accentblue text-xl underline"}
+              className={"text-accentblue text-base underline"}
             >
               help@mitrasolusi.group
             </a>
           </div>
-          <h2
+          <h4
             style={{ lineHeight: "120%" }}
             className={
-              "py-4 text-blackmig font-gilroysemibold text-xl lg:text-[32px]"
+              "py-4 text-blackmig font-gilroysemibold text-xl lg:text-2xl"
             }
           >
             {locale == "en" ? "Coverages" : "Area jangkauan kami"}
-          </h2>
+          </h4>
           <div
             className={"bg-white p-6 rounded-lg"}
             style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
@@ -1122,15 +1114,15 @@ function AboutUs({}) {
               "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
             }
           >
-            <h2
+            <h4
               style={{ lineHeight: "120%" }}
-              className={"text-[28px] font-gilroysemibold text-black"}
+              className={"text-2xl font-gilroysemibold text-black"}
             >
               {t.contactussectiontitle}
-            </h2>
+            </h4>
             <div
               className={
-                "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                "mt-3.5 text-base font-gilroyregular text-center text-black"
               }
             >
               <p style={{ lineHeight: "120%" }}>
@@ -1148,7 +1140,7 @@ function AboutUs({}) {
                       "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctacontactuslandingpage}
                     </p>
                   </button>
@@ -1161,7 +1153,7 @@ function AboutUs({}) {
                       "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                     }
                   >
-                    <p className={"text-xl font-gilroysemibold"}>
+                    <p className={"text-base font-gilroysemibold"}>
                       {t.ctalearnmorelandingpage}
                     </p>
                   </button>

@@ -64,17 +64,17 @@ function FreeConsultation({}) {
         }
       >
         <div className="lg:pt-0 w-full lg:w-[52%] px-4 lg:px-0">
-          <p
+          <h3
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl lg:text-[30px] text-primarygreen font-gilroysemibold"
+              "text-xl lg:text-[32px] text-primarygreen font-gilroysemibold"
             }
           >
             {t.thankyouforyourinterest}
-          </p>
+          </h3>
           <p
             style={{ lineHeight: "150%" }}
-            className={"mt-4 text-xl text-blackmig"}
+            className={"mt-4 text-base text-blackmig"}
           >
             {t.beforewereach}
           </p>
@@ -383,7 +383,7 @@ function FreeConsultation({}) {
                     }
                   >
                     <div className={"flex flex-row justify-between"}>
-                      <p className={"text-[18px] font-gilroysemibold"}>
+                      <p className={"text-base font-gilroysemibold"}>
                         {t.getstarted}
                       </p>
                       <img
