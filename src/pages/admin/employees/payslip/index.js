@@ -32,6 +32,7 @@ import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
   CheckIconSvg,
   CircleCheckIconSvg,
+  CirclePlusIconSvg,
   SearchIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
@@ -626,16 +627,31 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <p>Kelola Variabel Gaji</p>
                 </div>
               </ButtonSys>
-              <ButtonSys
-                type={isAllowedToPostPayslips ? "primary" : "default"}
-                onClick={() => setModalPost(true)}
-                disabled={!isAllowedToPostPayslips}
-              >
-                <div className="flex space-x-2 items-center">
-                  <CheckIconSvg size={16} color="#FFFFFF" />
-                  <p>Terbitkan Draft Slip Gaji</p>
-                </div>
-              </ButtonSys>
+              {dataPayslips.some(
+                (employee) => !employee?.last_month_payslip
+              ) ? (
+                <ButtonSys
+                  type={"primary"}
+                  // onClick={onAddPayslipButtonClicked}
+                  disabled={!isAllowedToAddPayslip}
+                >
+                  <div className="flex space-x-2 items-center">
+                    <CirclePlusIconSvg size={16} color="#FFFFFF" />
+                    <p>Buat Draft Slip Gaji</p>
+                  </div>
+                </ButtonSys>
+              ) : (
+                <ButtonSys
+                  type={isAllowedToPostPayslips ? "primary" : "default"}
+                  onClick={() => setModalPost(true)}
+                  disabled={!isAllowedToPostPayslips}
+                >
+                  <div className="flex space-x-2 items-center">
+                    <CheckIconSvg size={16} color="#FFFFFF" />
+                    <p>Terbitkan Draft Slip Gaji</p>
+                  </div>
+                </ButtonSys>
+              )}
             </div>
           </div>
 
