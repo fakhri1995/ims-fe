@@ -1,3 +1,4 @@
+import { EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
 import { Tabs, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -22,12 +23,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import {
-  CirclePlusIconSvg,
-  EditIconSvg,
-  OneUserIconSvg,
-  TrashIconSvg,
-} from "../../../../components/icon";
+import { OneUserIconSvg, TrashIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../../components/modal/modalCustom";
@@ -275,7 +271,7 @@ const EmployeeDetailIndex = ({
             disabled={!isAllowedToUpdateEmployee}
           >
             <div className="flex flex-row items-center space-x-2">
-              <EditIconSvg color={"#35763B"} size={16} />
+              <EditOutlined />
               <p>Edit Profil</p>
             </div>
           </ButtonSys>
@@ -289,7 +285,7 @@ const EmployeeDetailIndex = ({
             disabled={!isAllowedToAddEmployeeContract}
           >
             <div className="flex flex-row items-center space-x-2">
-              <CirclePlusIconSvg color={"#35763B"} size={16} />
+              <PlusCircleOutlined />
               <p>Tambah Kontrak</p>
             </div>
           </ButtonSys>
@@ -303,7 +299,7 @@ const EmployeeDetailIndex = ({
             disabled={!isAllowedToAddEmployeeInventory}
           >
             <div className="flex flex-row items-center space-x-2">
-              <CirclePlusIconSvg color={"#35763B"} size={16} />
+              <PlusCircleOutlined />
               <p>Tambah Inventaris</p>
             </div>
           </ButtonSys>
