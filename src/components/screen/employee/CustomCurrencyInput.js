@@ -39,13 +39,13 @@ const CustomCurrencyInput = ({
         // value ie, 2223
         const field = {
           id: idx,
-          employee_salary_column_id: dataColumn?.id,
-          employee_payslip_id: payslipId,
+          employee_salary_column_id: Number(dataColumn?.id),
+          employee_payslip_id: Number(payslipId),
           value: floatValue || 0,
           column: {
-            id: dataColumn?.id,
+            id: Number(dataColumn?.id),
             name: dataColumn?.name,
-            type: dataColumn?.type,
+            type: Number(dataColumn?.type),
             required: dataColumn?.required,
           },
         };

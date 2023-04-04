@@ -348,13 +348,13 @@ const EmployeePayslipDetailIndex = ({
     },
     {
       title: "Periode",
-      dataIndex: "tanggal_dibayarkan",
+      dataIndex: "month",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex flex-row space-x-2 items-center">
               <p>
-                {momentFormatDate(record?.tanggal_dibayarkan, "-", "MMMM YYYY")}
+                {monthNames[record?.month - 1]} {record?.year}
               </p>
               {record.is_main_salary_changed && (
                 <Tooltip
@@ -417,28 +417,31 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.is_posted ? (
-                <p
-                  className="bg-primary100 bg-opacity-10 text-primary100 
+              {
+                record.is_posted ? (
+                  <p
+                    className="bg-primary100 bg-opacity-10 text-primary100 
                   py-1 px-4 rounded-md text-center"
-                >
-                  Diterbitkan
-                </p>
-              ) : record.id === null ? (
-                <p
-                  className="bg-mono30 bg-opacity-10 text-mono30 
+                  >
+                    Diterbitkan
+                  </p>
+                ) : (
+                  <p
+                    className="bg-state2 bg-opacity-10 text-state2 
                     py-1 px-7 rounded-md text-center"
-                >
-                  Kosong
-                </p>
-              ) : (
-                <p
-                  className="bg-state2 bg-opacity-10 text-state2 
-                    py-1 px-7 rounded-md text-center"
-                >
-                  Draft
-                </p>
-              )}
+                  >
+                    Draft
+                  </p>
+                )
+
+                // : record.id === null ? (
+                //   <p
+                //     className="bg-mono30 bg-opacity-10 text-mono30
+                //       py-1 px-7 rounded-md text-center">
+                //     Kosong
+                //   </p>
+                // )
+              }
             </>
           ),
         };
@@ -451,59 +454,61 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.is_posted ? (
-                <div className="flex flex-row space-x-2 items-center">
+              {
+                record.is_posted ? (
+                  <div className="flex flex-row space-x-2 items-center">
+                    <ButtonSys
+                      type={isAllowedToGetPayslip ? "default" : "primary"}
+                      disabled={!isAllowedToGetPayslip}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setPayslipId(record.id);
+                        setDrawerDetail(true);
+                      }}
+                    >
+                      <EyeOutlined />
+                    </ButtonSys>
+                    <ButtonSys
+                      type={isAllowedToGetPayslip ? "default" : "primary"}
+                      disabled={!isAllowedToGetPayslip}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        // download pdf payslip
+                      }}
+                    >
+                      <DownloadOutlined />
+                    </ButtonSys>
+                  </div>
+                ) : (
                   <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
+                    type={isAllowedToUpdatePayslip ? "default" : "primary"}
+                    disabled={!isAllowedToUpdatePayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      setPayslipId(record.id);
-                      setDrawerDetail(true);
+                      rt.push(`${employeeId}/addPayslip?id=${record.id}`);
                     }}
                   >
-                    <EyeOutlined />
+                    <div className="flex flex-row space-x-2 items-center">
+                      <EditOutlined />
+                      <p className="whitespace-nowrap">Edit Draft</p>
+                    </div>
                   </ButtonSys>
-                  <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      // download pdf payslip
-                    }}
-                  >
-                    <DownloadOutlined />
-                  </ButtonSys>
-                </div>
-              ) : record.id === null ? (
-                <ButtonSys
-                  type={isAllowedToAddPayslip ? "default" : "primary"}
-                  disabled={!isAllowedToAddPayslip}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onAddPayslipButtonClicked();
-                  }}
-                >
-                  <div className="flex flex-row space-x-2 items-center">
-                    <FileAddOutlined />
-                    <p className="whitespace-nowrap">Buat Slip Gaji</p>
-                  </div>
-                </ButtonSys>
-              ) : (
-                <ButtonSys
-                  type={isAllowedToUpdatePayslip ? "default" : "primary"}
-                  disabled={!isAllowedToUpdatePayslip}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    rt.push(`${employeeId}/addPayslip?id=${record.id}`);
-                  }}
-                >
-                  <div className="flex flex-row space-x-2 items-center">
-                    <EditOutlined />
-                    <p className="whitespace-nowrap">Edit Draft</p>
-                  </div>
-                </ButtonSys>
-              )}
+                )
+                // : record.id === null ? (
+                //   <ButtonSys
+                //     type={isAllowedToAddPayslip ? "default" : "primary"}
+                //     disabled={!isAllowedToAddPayslip}
+                //     onClick={(event) => {
+                //       event.stopPropagation();
+                //       onAddPayslipButtonClicked();
+                //     }}>
+                //     <div className="flex flex-row space-x-2 items-center">
+                //       <FileAddOutlined />
+                //       <p className="whitespace-nowrap">Buat Slip Gaji</p>
+                //     </div>
+                //   </ButtonSys>
+                // )
+              }
             </>
           ),
         };
@@ -551,8 +556,7 @@ const EmployeePayslipDetailIndex = ({
               <div className="flex flex-col space-y-2 justify-between">
                 <p className="mig-caption--medium text-mono80">
                   Status Slip Gaji (
-                  {monthNames[dataEmployee?.last_month_payslip?.month - 1]}{" "}
-                  {dataEmployee?.last_month_payslip?.year})
+                  {moment().subtract(1, "month").format("MMMM YYYY")})
                 </p>
                 {payslipStatus === 0 ? (
                   <div className="flex flex-row space-x-2 items-center">

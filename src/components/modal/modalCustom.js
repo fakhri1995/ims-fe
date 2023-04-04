@@ -1470,7 +1470,7 @@ const ModalAddSalaryVar = ({
         .finally(() => setPraLoading(false));
     }
   }, [isAllowedToGetSalaryColumns, refresh, visible]);
-  console.log({ receiveVarOptions });
+
   /**
    * If form already has payslip Id, then checked variable in modal &
    * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip)
@@ -1686,7 +1686,7 @@ const ModalAddSalaryVar = ({
 
                         // Remove attribute in dataPaylip's salaries
                         const updatedSalaryVars = dataPayslip?.salaries?.filter(
-                          (variable) => variable.column.id !== option.id
+                          (variable) => variable.column?.id !== option?.id
                         );
                         setDataPayslip({
                           ...dataPayslip,
@@ -1842,7 +1842,7 @@ const ModalAddSalaryVar = ({
                           // Remove attribute in dataPaylip's salaries
                           const updatedSalaryVars =
                             dataPayslip?.salaries?.filter(
-                              (variable) => variable.column.id !== option.id
+                              (variable) => variable.column?.id !== option?.id
                             );
 
                           setDataPayslip({

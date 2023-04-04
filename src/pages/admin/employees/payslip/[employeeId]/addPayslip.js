@@ -885,7 +885,7 @@ const EmployeePayslipAddIndex = ({
                     const { formattedValue, value, floatValue } = values;
                     setDataPayslip((prev) => ({
                       ...prev,
-                      pph21: floatValue || 0,
+                      pph21: Number(floatValue) || 0,
                     }));
                   }}
                   renderText={(value) => <p>{value}</p>}
