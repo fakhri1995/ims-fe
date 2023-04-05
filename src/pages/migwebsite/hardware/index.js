@@ -3628,10 +3628,10 @@ function Hardware({}) {
               )}
               <div className={"hidden lg:block"}>
                 {dataBanking && (
-                  <div className={"flex flex-row mt-[42px] justify-between"}>
+                  <div className={"flex mt-[42px]"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightblue rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightblue rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
@@ -3676,10 +3676,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-2 ml-[11px]"}>
                       {dataBanking.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3701,10 +3701,10 @@ function Hardware({}) {
                   </div>
                 )}
                 {dataWorkstation && (
-                  <div className={"flex flex-row mt-8"}>
+                  <div className={"flex mt-8"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightgreen rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightgreen rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
@@ -3749,10 +3749,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataWorkstation.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] ml-[11px] text-center flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3775,10 +3775,10 @@ function Hardware({}) {
                 )}
 
                 {dataServer && (
-                  <div className={"flex flex-row mt-8"}>
+                  <div className={"flex mt-8"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightgrey rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightgrey rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
@@ -3823,10 +3823,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataServer.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3848,10 +3848,10 @@ function Hardware({}) {
                   </div>
                 )}
                 {dataUps && (
-                  <div className={"flex flex-row mt-8"}>
+                  <div className={"flex mt-8"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightpink rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightpink rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
@@ -3896,10 +3896,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataUps.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
