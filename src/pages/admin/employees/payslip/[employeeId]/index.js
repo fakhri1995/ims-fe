@@ -13,6 +13,7 @@ import {
   Tooltip,
   notification,
 } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -82,6 +83,9 @@ const EmployeePayslipDetailIndex = ({
   pathTitleArr.splice(1, 3);
   pathTitleArr.splice(1, 3, "Daftar Karyawan", "Slip Gaji", employeeName);
 
+  // Array of 12 month names
+  const monthNames = moment.months();
+
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
@@ -149,8 +153,10 @@ const EmployeePayslipDetailIndex = ({
   // 1.4 View payslip detail
   const [drawerDetail, setDrawerDetail] = useState(false);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  const [dataPayslip, setDataPayslip] = useState({ status: "kosong" });
   const [payslipId, setPayslipId] = useState(0);
+
+  // Current payslip status: 0-kosong, 1-draft, 2-diterbitkan
+  const [payslipStatus, setPayslipStatus] = useState(0);
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
@@ -174,7 +180,16 @@ const EmployeePayslipDetailIndex = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setDataEmployee(response2.data);
+            const resData = response2.data;
+
+            setDataEmployee(resData);
+            if (resData?.last_month_payslip) {
+              if (resData?.last_month_payslip?.is_posted) {
+                setPayslipStatus(2);
+              } else {
+                setPayslipStatus(1);
+              }
+            }
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -333,13 +348,13 @@ const EmployeePayslipDetailIndex = ({
     },
     {
       title: "Periode",
-      dataIndex: "tanggal_dibayarkan",
+      dataIndex: "month",
       render: (text, record, index) => {
         return {
           children: (
             <div className="flex flex-row space-x-2 items-center">
               <p>
-                {momentFormatDate(record?.tanggal_dibayarkan, "-", "MMMM YYYY")}
+                {monthNames[record?.month - 1]} {record?.year}
               </p>
               {record.is_main_salary_changed && (
                 <Tooltip
@@ -368,7 +383,7 @@ const EmployeePayslipDetailIndex = ({
       render: (text, record, index) => {
         return {
           children: (
-            <>{record.total_gross_penerimaan.toLocaleString("id-ID") || "-"}</>
+            <>{record.total_gross_penerimaan?.toLocaleString("id-ID") || "-"}</>
           ),
         };
       },
@@ -379,7 +394,9 @@ const EmployeePayslipDetailIndex = ({
       render: (text, record, index) => {
         return {
           children: (
-            <>{record.total_gross_pengurangan.toLocaleString("id-ID") || "-"}</>
+            <>
+              {record.total_gross_pengurangan?.toLocaleString("id-ID") || "-"}
+            </>
           ),
         };
       },
@@ -389,7 +406,7 @@ const EmployeePayslipDetailIndex = ({
       dataIndex: "take_home_pay",
       render: (text, record, index) => {
         return {
-          children: <>{record.take_home_pay.toLocaleString("id-ID") || "-"}</>,
+          children: <>{record.take_home_pay?.toLocaleString("id-ID") || "-"}</>,
         };
       },
     },
@@ -400,13 +417,13 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.is_posted === 0 ? (
-                record.id === null ? (
+              {
+                record.is_posted ? (
                   <p
-                    className="bg-mono30 bg-opacity-10 text-mono30 
-                    py-1 px-7 rounded-md text-center"
+                    className="bg-primary100 bg-opacity-10 text-primary100 
+                  py-1 px-4 rounded-md text-center"
                   >
-                    Kosong
+                    Diterbitkan
                   </p>
                 ) : (
                   <p
@@ -416,14 +433,15 @@ const EmployeePayslipDetailIndex = ({
                     Draft
                   </p>
                 )
-              ) : (
-                <p
-                  className="bg-primary100 bg-opacity-10 text-primary100 
-                  py-1 px-4 rounded-md text-center"
-                >
-                  Diterbitkan
-                </p>
-              )}
+
+                // : record.id === null ? (
+                //   <p
+                //     className="bg-mono30 bg-opacity-10 text-mono30
+                //       py-1 px-7 rounded-md text-center">
+                //     Kosong
+                //   </p>
+                // )
+              }
             </>
           ),
         };
@@ -436,21 +454,31 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {record.is_posted == 0 ? (
-                record.id === null ? (
-                  <ButtonSys
-                    type={isAllowedToAddPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToAddPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      rt.push(`${employeeId}/addPayslip`);
-                    }}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <FileAddOutlined />
-                      <p className="whitespace-nowrap">Buat Slip Gaji</p>
-                    </div>
-                  </ButtonSys>
+              {
+                record.is_posted ? (
+                  <div className="flex flex-row space-x-2 items-center">
+                    <ButtonSys
+                      type={isAllowedToGetPayslip ? "default" : "primary"}
+                      disabled={!isAllowedToGetPayslip}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setPayslipId(record.id);
+                        setDrawerDetail(true);
+                      }}
+                    >
+                      <EyeOutlined />
+                    </ButtonSys>
+                    <ButtonSys
+                      type={isAllowedToGetPayslip ? "default" : "primary"}
+                      disabled={!isAllowedToGetPayslip}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        // download pdf payslip
+                      }}
+                    >
+                      <DownloadOutlined />
+                    </ButtonSys>
+                  </div>
                 ) : (
                   <ButtonSys
                     type={isAllowedToUpdatePayslip ? "default" : "primary"}
@@ -466,31 +494,21 @@ const EmployeePayslipDetailIndex = ({
                     </div>
                   </ButtonSys>
                 )
-              ) : (
-                <div className="flex flex-row space-x-2 items-center">
-                  <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setPayslipId(record.id);
-                      setDrawerDetail(true);
-                    }}
-                  >
-                    <EyeOutlined />
-                  </ButtonSys>
-                  <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      // download pdf payslip
-                    }}
-                  >
-                    <DownloadOutlined />
-                  </ButtonSys>
-                </div>
-              )}
+                // : record.id === null ? (
+                //   <ButtonSys
+                //     type={isAllowedToAddPayslip ? "default" : "primary"}
+                //     disabled={!isAllowedToAddPayslip}
+                //     onClick={(event) => {
+                //       event.stopPropagation();
+                //       onAddPayslipButtonClicked();
+                //     }}>
+                //     <div className="flex flex-row space-x-2 items-center">
+                //       <FileAddOutlined />
+                //       <p className="whitespace-nowrap">Buat Slip Gaji</p>
+                //     </div>
+                //   </ButtonSys>
+                // )
+              }
             </>
           ),
         };
@@ -538,14 +556,14 @@ const EmployeePayslipDetailIndex = ({
               <div className="flex flex-col space-y-2 justify-between">
                 <p className="mig-caption--medium text-mono80">
                   Status Slip Gaji (
-                  {momentFormatDate(dataPayslip.month, "-", "MMMM YYYY")})
+                  {moment().subtract(1, "month").format("MMMM YYYY")})
                 </p>
-                {dataPayslip?.status === "kosong" ? (
+                {payslipStatus === 0 ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-mono80"></div>
                     <h4 className="mig-heading--4">Kosong</h4>
                   </div>
-                ) : dataPayslip?.status === "draft" ? (
+                ) : payslipStatus === 1 ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-notice"></div>
                     <h4 className="mig-heading--4">Draft</h4>
@@ -557,16 +575,16 @@ const EmployeePayslipDetailIndex = ({
                   </div>
                 )}
               </div>
-              {dataPayslip?.status === "kosong" ? (
+              {payslipStatus === 0 ? (
                 <ButtonSys
                   type={!isAllowedToAddPayslip ? "primary" : "default"}
-                  onClick={() => rt.push(`${employeeId}/addPayslip`)}
+                  onClick={onAddPayslipButtonClicked}
                   disabled={!isAllowedToAddPayslip}
                 >
                   <FileAddOutlined />
                   <p className="ml-2">Buat Slip Gaji</p>
                 </ButtonSys>
-              ) : dataPayslip?.status === "draft" ? (
+              ) : payslipStatus === 1 ? (
                 <ButtonSys
                   type={!isAllowedToUpdatePayslip ? "primary" : "default"}
                   onClick={() =>

@@ -1,3 +1,4 @@
+import { CloseOutlined } from "@ant-design/icons";
 import { notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -16,7 +17,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
+import { CheckIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import InventoryForm from "../../../../components/screen/employee/create/inventory/inventoryForm";
@@ -257,7 +258,7 @@ const EmployeeInventoryEditIndex = ({
               onClick={() => rt.back()}
             >
               <div className="flex flex-row space-x-2">
-                <XIconSvg color={"#BF4A40"} size={16} />
+                <CloseOutlined />
                 <p>Batalkan</p>
               </div>
             </ButtonSys>

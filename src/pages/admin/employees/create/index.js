@@ -144,6 +144,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     gaji_pokok: 0,
     pph21: 0,
     salaries: [],
+    bpjs_ks: "",
+    bpjs_tk_jht: "",
+    bpjs_tk_jkk: "",
+    bpjs_tk_jkm: "",
+    bpjs_tk_jp: "",
   });
 
   const [inventoryList, setInventoryList] = useState([]);
@@ -194,78 +199,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         });
     }
   }, [isAllowedToGetEmployee, refresh]);
-
-  // 2.2. Get Employee Contract
-  useEffect(() => {
-    if (!isAllowedToGetEmployeeContract) {
-      permissionWarningNotification("Mendapatkan", "Data Employee Contract");
-      setLoadingEmployee(false);
-      return;
-    }
-
-    if (currentTab == "2") {
-      if (dataEmployee?.contracts[0]?.id) {
-        setLoadingEmployee(true);
-        fetch(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${dataEmployee?.contracts[0]?.id}`,
-          {
-            method: `GET`,
-            headers: {
-              Authorization: JSON.parse(initProps),
-            },
-          }
-        )
-          .then((res) => res.json())
-          .then((res2) => {
-            if (res2.success) {
-              const resData = res2.data;
-              const requiredData = {
-                id: dataEmployee?.contracts[0]?.id || dataContract.id,
-                employee_id: employeeId,
-                is_employee_active: resData.is_employee_active,
-                contract_name: resData.contract_name,
-                contract_file: resData.contract_file,
-                contract_status_id: resData.contract_status_id,
-                role_id: resData.role_id,
-                pkwt_reference: resData.pkwt_reference,
-                annual_leave: resData.annual_leave,
-                contract_start_at: resData.contract_start_at,
-                contract_end_at: resData.contract_end_at,
-                placement: resData.placement,
-                new_office: resData.new_office,
-                resign_at: resData.resign_at,
-                salaries: resData.salaries,
-                gaji_pokok: resData.gaji_pokok ?? 0,
-                pph21: resData.pph21,
-                salaries: resData.salaries || null,
-              };
-              if (prevpath === "add") {
-                setDataContract({
-                  ...requiredData,
-                  is_employee_active: 1,
-                });
-              } else {
-                setDataContract(requiredData);
-              }
-            } else {
-              notification.error({
-                message: `${res2.message}`,
-                duration: 3,
-              });
-            }
-          })
-          .catch((err) => {
-            notification.error({
-              message: `${err.response}`,
-              duration: 3,
-            });
-          })
-          .finally(() => {
-            setLoadingEmployee(false);
-          });
-      }
-    }
-  }, [isAllowedToGetEmployeeContract, refresh]);
 
   // 2.3. Debounce function for auto save draft
   const debouncedSaveProfile = useCallback(
@@ -772,6 +705,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 dataContract={dataContract}
                 setDataContract={setDataContract}
                 debouncedApiCall={debouncedSaveContract}
+                employeeId={employeeId}
+                contractId={dataEmployee?.contracts[0]?.id}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">

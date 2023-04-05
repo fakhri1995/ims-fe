@@ -4,11 +4,13 @@ import {
   SettingOutlined,
 } from "@ant-design/icons";
 import { Input, Select, Spin, notification } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useEffect, useState } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
+import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -32,6 +34,7 @@ import { ChartHorizontalBar } from "../../../../components/chart/chartCustom";
 import {
   CheckIconSvg,
   CircleCheckIconSvg,
+  CirclePlusIconSvg,
   SearchIconSvg,
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
@@ -112,7 +115,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
   const [payslipStatusCount, setPayslipStatusCount] = useState([]);
-  const [dataColorBar, setDataColorBar] = useState(["#35763B", "#E5C471"]);
+  const dataColorBar = ["#35763B", "#E5C471"];
 
   // 2.2. Table Employee List
   // filter data
@@ -194,7 +197,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getEmployeePayslips?rows=${rowsPayslips}&page=${pagePayslips}${
+      }/getEmployeesPayslip?rows=${rowsPayslips}&page=${pagePayslips}${
         selectedPayslipStatusId && `&is_posted=${selectedPayslipStatusId - 1}`
       }`,
       {
@@ -358,8 +361,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
     setLoadingPost(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/postPayslips`, {
-      method: "POST",
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/postedEmployeeLastPayslips`, {
+      method: "GET",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
@@ -370,7 +373,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         if (response2.success) {
           setRefresh((prev) => prev + 1);
           notification.success({
-            message: `Draft slip gaji untuk semua karyawan berhasil diterbitkan. ${response2.message}`,
+            message: `Draft slip gaji untuk semua karyawan berhasil diterbitkan.`,
             duration: 3,
           });
         } else {
@@ -395,7 +398,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?sort_by=${
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeesPayslip?sort_by=${
         sortingPayslips.sort_by
       }&sort_type=${
         sortingPayslips.sort_type
@@ -452,12 +455,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "name",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.name || "-"}</>,
+          children: <>{record?.name || "-"}</>,
         };
       },
       sorter: isAllowedToGetPayslips
-        ? (a, b) =>
-            a.employee?.name?.toLowerCase() > b.employee?.name?.toLowerCase()
+        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
     {
@@ -465,7 +467,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "nip",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.nip || "-"}</>,
+          children: <>{record?.nip || "-"}</>,
         };
       },
     },
@@ -474,7 +476,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.contract?.placement || "-"}</>,
+          children: <>{record?.contract?.placement || "-"}</>,
         };
       },
     },
@@ -483,7 +485,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "position",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.contract?.role?.name || "-"}</>,
+          children: <>{record?.contract?.role?.name || "-"}</>,
         };
       },
     },
@@ -492,7 +494,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "phone_number",
       render: (text, record, index) => {
         return {
-          children: <>{record?.employee?.phone_number || "-"}</>,
+          children: <>{record?.phone_number || "-"}</>,
         };
       },
     },
@@ -503,19 +505,28 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.is_posted == 0 ? (
-                <p
-                  className="bg-state2 bg-opacity-10 text-state2 
-                  py-1 px-7 rounded-md text-center"
-                >
-                  Draft
-                </p>
+              {record.last_month_payslip ? (
+                record.last_month_payslip?.is_posted ? (
+                  <p
+                    className="bg-primary100 bg-opacity-10 text-primary100 
+                  py-1 px-4 rounded-md text-center"
+                  >
+                    Diterbitkan
+                  </p>
+                ) : (
+                  <p
+                    className="bg-state2 bg-opacity-10 text-state2 
+                    py-1 px-7 rounded-md text-center"
+                  >
+                    Draft
+                  </p>
+                )
               ) : (
                 <p
-                  className="bg-primary100 bg-opacity-10 text-primary100 
-                  py-1 px-4 rounded-md text-center"
+                  className="bg-mono30 bg-opacity-10 text-mono30 
+                    py-1 px-7 rounded-md text-center"
                 >
-                  Diterbitkan
+                  Kosong
                 </p>
               )}
             </>
@@ -530,42 +541,42 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              {record.is_posted == 0 ? (
-                <div className="flex flex-col space-y-2">
-                  <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      rt.push(
-                        `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
-                      );
-                    }}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <EditOutlined />
-                      <p className="whitespace-nowrap">Edit Draft</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              ) : (
-                <div className="flex flex-col space-y-2">
-                  <ButtonSys
-                    // TODO: ubah role access
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      //download pdf
-                    }}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <DownloadOutlined />
-                      <p className="whitespace-nowrap">Unduh</p>
-                    </div>
-                  </ButtonSys>
-                </div>
-              )}
+              {record.last_month_payslip &&
+                (record.last_month_payslip?.is_posted ? (
+                  <div className="flex flex-col space-y-2">
+                    <ButtonSys
+                      type={isAllowedToGetPayslip ? "default" : "primary"}
+                      disabled={!isAllowedToGetPayslip}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        //download pdf
+                      }}
+                    >
+                      <div className="flex flex-row space-x-2 items-center">
+                        <DownloadOutlined />
+                        <p className="whitespace-nowrap">Unduh</p>
+                      </div>
+                    </ButtonSys>
+                  </div>
+                ) : (
+                  <div className="flex flex-col space-y-2">
+                    <ButtonSys
+                      type={isAllowedToGetPayslip ? "default" : "primary"}
+                      disabled={!isAllowedToGetPayslip}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        rt.push(
+                          `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                        );
+                      }}
+                    >
+                      <div className="flex flex-row space-x-2 items-center">
+                        <EditOutlined />
+                        <p className="whitespace-nowrap">Edit Draft</p>
+                      </div>
+                    </ButtonSys>
+                  </div>
+                ))}
             </>
           ),
         };
@@ -588,25 +599,22 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         <div className="shadow-md rounded-md bg-white p-4 mb-6">
           <h4 className="mig-heading--4 ">
             Status Slip Gaji (
-            {momentFormatDate(
-              dataPayslips[0]?.tanggal_dibayarkan,
-              "-",
-              "MMMM YYYY"
-            )}
-            )
+            {moment().subtract(1, "month").format("MMMM YYYY")})
           </h4>
           {/* CHART STATUS SLIP GAJI */}
           {loadingChart ? (
             <>
               <Spin />
             </>
-          ) : (
+          ) : payslipStatusCount.length !== 0 ? (
             <ChartHorizontalBar
               dataChart={payslipStatusCount}
               objName="is_posted"
               value="total"
               colorBarList={dataColorBar}
             />
+          ) : (
+            <DataEmptyState caption="Data status slip gaji kosong." />
           )}
         </div>
 
@@ -628,16 +636,31 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <p>Kelola Variabel Gaji</p>
                 </div>
               </ButtonSys>
-              <ButtonSys
-                type={isAllowedToPostPayslips ? "primary" : "default"}
-                onClick={() => setModalPost(true)}
-                disabled={!isAllowedToPostPayslips}
-              >
-                <div className="flex space-x-2 items-center">
-                  <CheckIconSvg size={16} color="#FFFFFF" />
-                  <p>Terbitkan Draft Slip Gaji</p>
-                </div>
-              </ButtonSys>
+              {dataPayslips.some(
+                (employee) => !employee?.last_month_payslip
+              ) ? (
+                <ButtonSys
+                  type={"primary"}
+                  // onClick={handleCreateDraft}
+                  disabled={!isAllowedToAddPayslip}
+                >
+                  <div className="flex space-x-2 items-center">
+                    <CirclePlusIconSvg size={16} color="#FFFFFF" />
+                    <p>Buat Draft Slip Gaji</p>
+                  </div>
+                </ButtonSys>
+              ) : (
+                <ButtonSys
+                  type={isAllowedToPostPayslips ? "primary" : "default"}
+                  onClick={() => setModalPost(true)}
+                  disabled={!isAllowedToPostPayslips}
+                >
+                  <div className="flex space-x-2 items-center">
+                    <CheckIconSvg size={16} color="#FFFFFF" />
+                    <p>Terbitkan Draft Slip Gaji</p>
+                  </div>
+                </ButtonSys>
+              )}
             </div>
           </div>
 
