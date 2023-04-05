@@ -1455,7 +1455,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="flex flex-col lg:flex-row space-x-6 space-y-2 lg:space-y-0">
                   <ButtonSys type={"default"} onClick={() => setBulk(true)}>
                     <div className="flex flex-row space-x-2.5 items-center">
-                      {/* <LayoutGridSvg size={16} color="#35763B" /> */}
                       <AppstoreOutlined />
                       <p>Bulk Action</p>
                     </div>

@@ -2260,7 +2260,7 @@ const TableCustomPayslipList = ({
           fetch(
             `${
               process.env.NEXT_PUBLIC_BACKEND_URL
-            }/getEmployeePayslips?sort_by=${sorting.sort_by}&sort_type=${
+            }/getEmployeesPayslip?sort_by=${sorting.sort_by}&sort_type=${
               sorting.sort_type
             }&role_ids=${selectedRoleId}&placements=${selectedPlacement}${
               selectedPayslipStatusId &&
@@ -2292,7 +2292,7 @@ const TableCustomPayslipList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?role_ids=${selectedRoleId}${
+              }/getEmployeesPayslip?role_ids=${selectedRoleId}${
                 selectedPayslipStatusId &&
                 `&is_posted=${selectedPayslipStatusId - 1}`
               }&placements=${selectedPlacement}&sort_by=${
@@ -2329,7 +2329,7 @@ const TableCustomPayslipList = ({
             fetch(
               `${
                 process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?role_ids=${selectedRoleId}${
+              }/getEmployeesPayslip?role_ids=${selectedRoleId}${
                 selectedPayslipStatusId &&
                 `&is_posted=${selectedPayslipStatusId - 1}`
               }&placements=${selectedPlacement}&sort_by=&sort_type=&keyword=${searching}&page=${
@@ -2359,9 +2359,11 @@ const TableCustomPayslipList = ({
           onClick: () => {
             record?.is_posted === 0
               ? rt.push(
-                  `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                  `/admin/employees/payslip/${record?.contract?.employee_id}/addPayslip?id=${record.id}`
                 )
-              : rt.push(`/admin/employees/payslip/${record.employee_id}`);
+              : rt.push(
+                  `/admin/employees/payslip/${record?.contract?.employee_id}`
+                );
           },
         };
       }}

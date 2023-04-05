@@ -1,3 +1,4 @@
+import { CloseOutlined, ProfileOutlined } from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -21,6 +22,7 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   EMPLOYEE_PAYSLIP_ADD,
+  EMPLOYEE_PAYSLIP_DELETE,
   EMPLOYEE_PAYSLIP_GET,
   EMPLOYEE_PAYSLIP_UPDATE,
   EMPLOYEE_SALARY_COLUMNS_GET,
@@ -67,6 +69,8 @@ const EmployeePayslipAddIndex = ({
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
+  const isAllowedToDeletePayslip = hasPermission(EMPLOYEE_PAYSLIP_DELETE);
+
   const isAllowedToGetSalaryColumns = hasPermission(
     EMPLOYEE_SALARY_COLUMNS_GET
   );
@@ -120,6 +124,8 @@ const EmployeePayslipAddIndex = ({
     total_gross_penerimaan: 0,
     total_gross_pengurangan: 0,
     take_home_pay: 0,
+    year: 0,
+    month: 0,
     salaries: [
       {
         id: 0,
@@ -144,6 +150,9 @@ const EmployeePayslipAddIndex = ({
   const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [disablePublish, setDisablePublish] = useState(false);
 
+  // 1.3 Delete
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
   // 1.3. Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -159,8 +168,8 @@ const EmployeePayslipAddIndex = ({
   };
 
   // Count BPJS value
-  const countBenefitValue = (percent) => {
-    // Get penerimaan field value which selected as multiplier
+  const countBPJSValue = (percent) => {
+    // Get penerimaan field value which selected as multiplier (PENGALI NOMINAL BPJS)
     const selectedMultiplierIds = selectedMultipliers.map(
       (multiplier) => multiplier.id
     );
@@ -171,16 +180,18 @@ const EmployeePayslipAddIndex = ({
       )
       ?.map((multiplier) => multiplier.value);
 
-    // Sum with gaji pokok, then calculate final result
+    // Sum gaji pokok and multiplier values, then calculate final result
     const totalMultiplier =
-      (dataPayslip?.gaji_pokok ?? 0) + sumValues(selectedMultiplierValues);
+      Number(dataPayslip?.gaji_pokok ?? 0) +
+      sumValues(selectedMultiplierValues);
+
     let result = Math.round(totalMultiplier * (percent / 100) * 100) / 100;
 
     return result || 0;
   };
 
   // 3. USE EFFECT
-  // 3.1 Get employee payslip detail
+  // 3.1 Get employee payslip detail for edit payslip (Payslip ID is available)
   useEffect(() => {
     if (!isAllowedToGetPayslip) {
       permissionWarningNotification("Mendapatkan", "Detail Slip Gaji Karyawan");
@@ -201,7 +212,30 @@ const EmployeePayslipAddIndex = ({
         .then((response) => response.json())
         .then((response2) => {
           if (response2.success) {
-            setDataPayslip(response2.data);
+            const resData = response2.data;
+            setDataPayslip(resData);
+
+            const receiveVariables = resData?.salaries
+              ?.map((v) => v.column)
+              ?.filter((variable) => variable?.type === 1);
+
+            const reductionVariables = resData?.salaries
+              ?.map((v) => v.column)
+              ?.filter((variable) => variable.type === 2);
+
+            setReceiveVarFields(receiveVariables);
+            setReductionVarFields(reductionVariables);
+
+            // insert previously selected BPJS multiplier to state
+            const prevSelectedMultipliers = response2.data.salaries
+              ?.map((v) => v.column)
+              ?.filter(
+                (variable) =>
+                  !!variable.is_amount_for_bpjs === true &&
+                  !!variable.required === true
+              );
+
+            setSelectedMultipliers(prevSelectedMultipliers);
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -219,58 +253,67 @@ const EmployeePayslipAddIndex = ({
     }
   }, [isAllowedToGetPayslip, payslipId, refresh]);
 
-  // 3.2 Get salary variable list for new payslip form (ID not yet available)
-  useEffect(() => {
-    if (!isAllowedToGetSalaryColumns) {
-      permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
-      setpraloading(false);
-      return;
-    }
+  // TODO: delete this effect if API for pre-filling payslip form is finished
+  // 3.2 Get salary variable list for add new payslip form (Payslip ID is not yet available)
+  // useEffect(() => {
+  //   if (!isAllowedToGetSalaryColumns) {
+  //     permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
+  //     setpraloading(false);
+  //     return;
+  //   }
 
-    if (!payslipId) {
-      setpraloading(true);
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            let dataVar = response2.data;
-            const receiveVariables = dataVar.filter(
-              (variable) => variable.type === 1
-            );
-            const reductionVariables = dataVar.filter(
-              (variable) => variable.type === 2
-            );
+  //   if (!payslipId) {
+  //     setpraloading(true);
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(initProps),
+  //       },
+  //     })
+  //       .then((response) => response.json())
+  //       .then((response2) => {
+  //         if (response2.success) {
+  //           let dataVar = response2.data;
+  //           const receiveVariables = dataVar.filter(
+  //             (variable) => variable.type === 1
+  //           );
+  //           const reductionVariables = dataVar.filter(
+  //             (variable) => variable.type === 2
+  //           );
 
-            // Set checked variables to show as fields in form
-            const requiredReceiveVariables = receiveVariables.filter(
-              (variable) => variable.required === 1
-            );
-            const requiredReductionVariables = reductionVariables.filter(
-              (variable) => variable.required === 1
-            );
-            setReceiveVarFields(requiredReceiveVariables);
-            setReductionVarFields(requiredReductionVariables);
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetSalaryColumns, refresh, payslipId]);
+  //           // Set checked variables to show as fields in form
+  //           const requiredReceiveVariables = receiveVariables.filter(
+  //             (variable) => variable.required === 1
+  //           );
+  //           const requiredReductionVariables = reductionVariables.filter(
+  //             (variable) => variable.required === 1
+  //           );
+  //           setReceiveVarFields(requiredReceiveVariables);
+  //           setReductionVarFields(requiredReductionVariables);
+
+  //           // insert default selected BPJS multiplier to state
+  //           const defaultSelectedMultipliers = dataVar.filter(
+  //             (variable) =>
+  //               !!variable.is_amount_for_bpjs === true &&
+  //               !!variable.required === true
+  //           );
+  //           setSelectedMultipliers(defaultSelectedMultipliers);
+  //         } else {
+  //           notification.error({
+  //             message: `${response2.message}`,
+  //             duration: 3,
+  //           });
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         notification.error({
+  //           message: `${err.response}`,
+  //           duration: 3,
+  //         });
+  //       })
+  //       .finally(() => setpraloading(false));
+  //   }
+  // }, [isAllowedToGetSalaryColumns, refresh]);
 
   // 3.3. Disable "Terbitkan" button if any required field is empty
   useEffect(() => {
@@ -296,7 +339,9 @@ const EmployeePayslipAddIndex = ({
 
     // Check if all required fields are filled
     const isAllRequiredPayslipFilled = Boolean(
-      dataPayslip.total_hari_kerja &&
+      dataPayslip.month &&
+        dataPayslip.year &&
+        dataPayslip.total_hari_kerja &&
         dataPayslip.tanggal_dibayarkan &&
         dataPayslip.total_gross_penerimaan &&
         dataPayslip.total_gross_pengurangan &&
@@ -313,23 +358,32 @@ const EmployeePayslipAddIndex = ({
     }
   }, [dataPayslip]);
 
-  // 3.4. Auto update total gross penerimaan, pengurangan, take home pay
+  // 3.4. Auto update total gross penerimaan
   useEffect(() => {
     const receiveBenefits = dataPayslip?.salaries?.filter(
       (benefit) => benefit?.column?.type === 1
     );
+    let receiveBenefitValues = receiveBenefits.map((benefit) => benefit.value);
+    let newTotalGrossPenerimaan =
+      (dataPayslip?.gaji_pokok ?? 0) + sumValues(receiveBenefitValues);
+
+    setDataPayslip((prev) => ({
+      ...prev,
+      total_gross_penerimaan: newTotalGrossPenerimaan,
+    }));
+  }, [
+    ...dataPayslip?.salaries.filter((variable) => variable.column?.type === 1),
+    dataPayslip?.gaji_pokok,
+  ]);
+
+  // 3.5. Auto update total gross pengurangan & take home pay
+  useEffect(() => {
     const reductionBenefits = dataPayslip?.salaries?.filter(
       (benefit) => benefit?.column?.type === 2
     );
-
-    // if (receiveBenefits.length !== 0) {
-    let receiveBenefitValues = receiveBenefits.map((benefit) => benefit.value);
     let reductionBenefitValues = reductionBenefits.map(
       (benefit) => benefit.value
     );
-
-    let newTotalGrossPenerimaan =
-      (dataPayslip?.gaji_pokok ?? 0) + sumValues(receiveBenefitValues);
 
     let newTotalGrossPengurangan =
       Number(dataPayslip?.pph21 ?? 0) +
@@ -342,21 +396,18 @@ const EmployeePayslipAddIndex = ({
 
     setDataPayslip((prev) => ({
       ...prev,
-      total_gross_penerimaan: newTotalGrossPenerimaan,
       total_gross_pengurangan: newTotalGrossPengurangan,
-      take_home_pay: newTotalGrossPenerimaan - newTotalGrossPengurangan,
+      take_home_pay:
+        dataPayslip.total_gross_penerimaan - newTotalGrossPengurangan,
     }));
-  }, [...dataPayslip?.salaries, dataPayslip?.gaji_pokok, dataPayslip?.pph21]);
+  }, [
+    ...dataPayslip?.salaries.filter((variable) => variable.column?.type === 2),
+    dataPayslip?.bpjs_ks,
+    dataPayslip?.pph21,
+  ]);
 
   // 4. Handler
   // 4.1. Handle input change
-  const onChangeInput = (e) => {
-    setDataPayslip({
-      ...dataPayslip,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   const onChangeDatePicker = (datestring, attributeName) => {
     setDataPayslip((prev) => ({
       ...prev,
@@ -371,64 +422,10 @@ const EmployeePayslipAddIndex = ({
     });
   };
 
-  // 4.2. Handle Add Payslip Draft/Posted
-  const handleAddPayslip = (isPosted) => {
-    if (!isAllowedToAddPayslip) {
-      permissionWarningNotification("Menambah", "Slip Gaji Karyawan");
-      return;
-    }
-
-    const payload = {
-      ...dataPayslip,
-      is_posted: isPosted,
-    };
-
-    setLoadingSave(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addEmployeePayslip`, {
-      method: "POST",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          setModalUpdate(false);
-          if (isDraft) {
-            notification.success({
-              message: `Draft slip gaji berhasil dibuat.`,
-              duration: 3,
-            });
-          } else {
-            notification.success({
-              message: `Slip gaji berhasil ditambahkan.`,
-              duration: 3,
-            });
-          }
-
-          rt.push(`/admin/employees/payslip/${employeeId}`);
-        } else {
-          notification.error({
-            message: `Gagal menambahkan slip gaji karyawan. ${response2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambahkan slip gaji karyawan. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingSave(false));
-  };
-
-  // 4.3. Handle Update Payslip Draft/Posted
-  const handleSavePayslip = (isPosted) => {
+  // 4.2. Handle Update Payslip Draft/Posted
+  const handleUpdatePayslip = (isPosted) => {
     if (!isAllowedToUpdatePayslip) {
-      permissionWarningNotification("Menyimpan", "Slip Gaji Karyawan");
+      permissionWarningNotification("Memperbarui", "Slip Gaji Karyawan");
       return;
     }
 
@@ -451,7 +448,7 @@ const EmployeePayslipAddIndex = ({
           setModalUpdate(false);
           if (isDraft) {
             notification.success({
-              message: `Draft slip gaji berhasil dibuat.`,
+              message: `Draft slip gaji berhasil diperbarui.`,
               duration: 3,
             });
           } else {
@@ -464,20 +461,64 @@ const EmployeePayslipAddIndex = ({
           rt.push(`/admin/employees/payslip/${employeeId}`);
         } else {
           notification.error({
-            message: `Gagal menyimpan slip gaji karyawan. ${response2.message}`,
+            message: `Gagal memperbarui slip gaji karyawan. ${response2.message}`,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menyimpan slip gaji karyawan. ${err.response}`,
+          message: `Gagal memperbarui slip gaji karyawan. ${err.response}`,
           duration: 3,
         });
       })
       .finally(() => {
         setLoadingUpdate(false);
       });
+  };
+
+  // 4.3. Handle Delete Payslip
+  const handleDeletePayslip = () => {
+    if (!isAllowedToDeletePayslip) {
+      permissionWarningNotification("Menghapus", "Data Slip Gaji");
+      setLoadingDelete(false);
+      return;
+    }
+
+    if (payslipId) {
+      setLoadingDelete(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteEmployeePayslip?id=${payslipId}`,
+        {
+          method: `DELETE`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            notification.success({
+              message: "Slip gaji berhasil dihapus",
+              duration: 3,
+            });
+            rt.back();
+          } else {
+            notification.error({
+              message: "Gagal menghapus slip gaji",
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: "Gagal menghapus slip gaji",
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingDelete(false));
+    }
   };
 
   // console.log({ dataPayslip });
@@ -504,7 +545,7 @@ const EmployeePayslipAddIndex = ({
               onClick={() => rt.back()}
             >
               <div className="flex flex-row space-x-2">
-                <XIconSvg color={"#BF4A40"} size={16} />
+                <CloseOutlined />
                 <p>Batalkan</p>
               </div>
             </ButtonSys>
@@ -514,10 +555,11 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(true);
                 setModalUpdate(true);
               }}
-              disabled={!isAllowedToUpdatePayslip || !isAllowedToAddPayslip}
+              disabled={!isAllowedToUpdatePayslip}
             >
               <div className="flex flex-row space-x-2">
-                <ClipboardListIconSvg color={"#35763B"} size={16} />
+                {/* <ClipboardListIconSvg color={"#35763B"} size={16} /> */}
+                <ProfileOutlined />
                 <p>Simpan Draft</p>
               </div>
             </ButtonSys>
@@ -527,11 +569,7 @@ const EmployeePayslipAddIndex = ({
                 setIsDraft(false);
                 setModalUpdate(true);
               }}
-              disabled={
-                !isAllowedToUpdatePayslip ||
-                !isAllowedToAddPayslip ||
-                disablePublish
-              }
+              disabled={!isAllowedToUpdatePayslip || disablePublish}
             >
               <div className="flex flex-row space-x-2">
                 <CheckIconSvg color={"white"} size={16} />
@@ -548,6 +586,46 @@ const EmployeePayslipAddIndex = ({
           className="md:grid md:grid-cols-2 md:gap-x-8"
         >
           <Form.Item
+            label="Periode"
+            name={"periode"}
+            className="col-span-2"
+            rules={[
+              {
+                required: true,
+                message: "Periode wajib diisi",
+              },
+            ]}
+          >
+            <>
+              <DatePicker
+                name="periode"
+                placeholder="Pilih periode"
+                className="w-full"
+                picker="month"
+                value={
+                  moment(
+                    `${dataPayslip?.year}-${dataPayslip?.month}`,
+                    "YYYY-M"
+                  ).isValid()
+                    ? moment(
+                        `${dataPayslip?.year}-${dataPayslip?.month}`,
+                        "YYYY-M"
+                      )
+                    : null
+                }
+                format={"YYYY-M"}
+                onChange={(value, datestring) => {
+                  const monthYearArr = datestring.split("-");
+                  setDataPayslip((prev) => ({
+                    ...prev,
+                    year: Number(monthYearArr[0]),
+                    month: Number(monthYearArr[1]),
+                  }));
+                }}
+              />
+            </>
+          </Form.Item>
+          <Form.Item
             label="Total Hari Kerja"
             name={"total_hari_kerja"}
             rules={[
@@ -559,6 +637,8 @@ const EmployeePayslipAddIndex = ({
           >
             <div>
               <InputNumber
+                min={1}
+                max={31}
                 value={dataPayslip?.total_hari_kerja}
                 name={"total_hari_kerja"}
                 onChange={(value) => onChangeSelect(value, "total_hari_kerja")}
@@ -697,7 +777,7 @@ const EmployeePayslipAddIndex = ({
                   fieldLabel={`bpjs ks`}
                   fieldName={"bpjs_ks"}
                   setDataForm={setDataPayslip}
-                  value={countBenefitValue(5)}
+                  value={countBPJSValue(5)}
                   disabled
                 />
               </div>
@@ -718,7 +798,7 @@ const EmployeePayslipAddIndex = ({
                   fieldName={"bpjs_tk_jht"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(5.7)}
+                  value={countBPJSValue(5.7)}
                 />
               </div>
             </Form.Item>
@@ -738,7 +818,7 @@ const EmployeePayslipAddIndex = ({
                   fieldName={"bpjs_tk_jkk"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(0.24)}
+                  value={countBPJSValue(0.24)}
                 />
               </div>
             </Form.Item>
@@ -758,7 +838,7 @@ const EmployeePayslipAddIndex = ({
                   fieldName={"bpjs_tk_jkm"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(0.3)}
+                  value={countBPJSValue(0.3)}
                 />
               </div>
             </Form.Item>
@@ -778,7 +858,7 @@ const EmployeePayslipAddIndex = ({
                   fieldName={"bpjs_tk_jp"}
                   setDataForm={setDataPayslip}
                   disabled
-                  value={countBenefitValue(3)}
+                  value={countBPJSValue(3)}
                 />
               </div>
             </Form.Item>
@@ -805,7 +885,7 @@ const EmployeePayslipAddIndex = ({
                     const { formattedValue, value, floatValue } = values;
                     setDataPayslip((prev) => ({
                       ...prev,
-                      pph21: floatValue || 0,
+                      pph21: Number(floatValue) || 0,
                     }));
                   }}
                   renderText={(value) => <p>{value}</p>}
@@ -947,6 +1027,7 @@ const EmployeePayslipAddIndex = ({
           loading={loadingSave}
           isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
           isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
+          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
           receiveVarFields={receiveVarFields}
@@ -975,13 +1056,9 @@ const EmployeePayslipAddIndex = ({
           visible={modalUpdate}
           onvisible={setModalUpdate}
           onOk={() => {
-            payslipId
-              ? isDraft
-                ? handleSavePayslip(0)
-                : handleSavePayslip(1)
-              : isDraft
-              ? handleAddPayslip(0)
-              : handleAddPayslip(1);
+            payslipId && isDraft
+              ? handleUpdatePayslip(0)
+              : handleUpdatePayslip(1);
           }}
           onCancel={() => {
             setModalUpdate(false);

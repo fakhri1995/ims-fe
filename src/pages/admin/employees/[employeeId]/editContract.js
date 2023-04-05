@@ -1,3 +1,4 @@
+import { CloseOutlined } from "@ant-design/icons";
 import { Form, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -12,7 +13,7 @@ import { useAccessControl } from "contexts/access-control";
 import { EMPLOYEE_CONTRACT_GET, EMPLOYEE_CONTRACT_UPDATE } from "lib/features";
 
 import ButtonSys from "../../../../components/button";
-import { CheckIconSvg, XIconSvg } from "../../../../components/icon";
+import { CheckIconSvg } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import EmployeeContractForm from "../../../../components/screen/employee/create/contract";
@@ -261,7 +262,7 @@ const EmployeeContractEditIndex = ({
               onClick={() => rt.back()}
             >
               <div className="flex flex-row space-x-2">
-                <XIconSvg color={"#BF4A40"} size={16} />
+                <CloseOutlined />
                 <p>Batalkan</p>
               </div>
             </ButtonSys>

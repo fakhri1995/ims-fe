@@ -16,14 +16,10 @@ const CustomCurrencyInput = ({
   // Auto update benefit variable if value change automatically in a disabled field (currently only used in BPJS field)
   useEffect(() => {
     if (disabled) {
-      const timer = setTimeout(() => {
-        setDataForm((prev) => ({
-          ...prev,
-          [fieldName]: value || 0,
-        }));
-      }, 2000);
-
-      return () => clearTimeout(timer);
+      setDataForm((prev) => ({
+        ...prev,
+        [fieldName]: value || 0,
+      }));
     }
   }, [value]);
 
@@ -43,13 +39,13 @@ const CustomCurrencyInput = ({
         // value ie, 2223
         const field = {
           id: idx,
-          employee_salary_column_id: dataColumn?.id,
-          employee_payslip_id: payslipId,
+          employee_salary_column_id: Number(dataColumn?.id),
+          employee_payslip_id: Number(payslipId),
           value: floatValue || 0,
           column: {
-            id: dataColumn?.id,
+            id: Number(dataColumn?.id),
             name: dataColumn?.name,
-            type: dataColumn?.type,
+            type: Number(dataColumn?.type),
             required: dataColumn?.required,
           },
         };
