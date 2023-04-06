@@ -41,6 +41,10 @@ const CustomCurrencyInput = ({
           id: idx,
           employee_salary_column_id: Number(dataColumn?.id),
           employee_payslip_id: Number(payslipId),
+          is_amount_for_bpjs:
+            dataForm.salaries?.find(
+              (benefit) => benefit?.employee_salary_column_id === dataColumn.id
+            )?.is_amount_for_bpjs ?? 0,
           value: floatValue || 0,
           column: {
             id: Number(dataColumn?.id),

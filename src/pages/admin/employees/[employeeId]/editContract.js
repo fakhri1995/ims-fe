@@ -181,6 +181,8 @@ const EmployeeContractEditIndex = ({
         obj[`salaries[${idx}][employee_salary_column_id]`] =
           benefit.employee_salary_column_id;
         obj[`salaries[${idx}][value]`] = benefit.value;
+        obj[`salaries[${idx}][is_amount_for_bpjs]`] =
+          benefit?.is_amount_for_bpjs;
         return obj;
       });
 
