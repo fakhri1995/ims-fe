@@ -1583,48 +1583,28 @@ const ModalAddSalaryVar = ({
 
   // Todo: set is_amount_for_bpjs in dataPayslip
   const handleClickTag = (tag, checked) => {
-    // const updatedTag = {id: tag.id,
-    //   name: tag.name,
-    //   percent: tag.percent,
-    //   type: tag.type,
-    //   required: tag.required,
-    //   is_amount_for_bpjs: checked ? true : false}
-
-    //   setDataPayslip({...dataPayslip,
-    //     salaries: {
-    //       ...dataPayslip.salaries,
-
-    //       updatedTag
-    //     }
-    //   })
-
-    // checked
-    //   ? setDataPayslip({...dataPayslip,
-    //       salaries: {
-    //         ...dataPayslip.salaries,
-
-    //       }
-    //       id: tag.id,
-    //       name: tag.name,
-    //       percent: tag.percent,
-    //       type: tag.type,
-    //       required: tag.required,
-    //       is_amount_for_bpjs: true,
-    //     })
-    //   : handleUpdateVariable({
-    //       id: tag.id,
-    //       name: tag.name,
-    //       percent: tag.percent,
-    //       type: tag.type,
-    //       required: tag.required,
-    //       is_amount_for_bpjs: false,
-    //     });
-
     const newSelectedTags = checked
       ? [...selectedTags, tag]
       : selectedTags.filter((t) => t !== tag);
 
     setSelectedTags(newSelectedTags);
+
+    const selectedMultiplierIds = newSelectedTags.map(
+      (multiplier) => multiplier.id
+    );
+
+    // Adjust is_amount_for_bpjs with selected variable for BPJS multiplier
+    for (let idx in dataPayslip?.salaries) {
+      if (
+        selectedMultiplierIds.includes(
+          dataPayslip?.salaries[idx]?.employee_salary_column_id
+        )
+      ) {
+        dataPayslip.salaries[idx]["is_amount_for_bpjs"] = 1;
+      } else {
+        dataPayslip.salaries[idx]["is_amount_for_bpjs"] = 0;
+      }
+    }
   };
 
   return (

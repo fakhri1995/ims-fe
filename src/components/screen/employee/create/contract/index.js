@@ -304,11 +304,11 @@ const EmployeeContractForm = ({
 
             // Set checked variables to show as fields in form
             const receiveVariables = resData.salaries
-              ?.filter((variable) => variable?.column?.type === 1)
-              ?.map((variable) => variable.column);
+              ?.map((variable) => variable.column)
+              ?.filter((v) => v?.type === 1);
             const reductionVariables = resData.salaries
-              ?.filter((variable) => variable?.column?.type === 2)
-              ?.map((variable) => variable.column);
+              ?.map((variable) => variable.column)
+              ?.filter((v) => v?.type === 2);
 
             setReceiveVarFields(receiveVariables);
             setReductionVarFields(reductionVariables);
@@ -317,10 +317,9 @@ const EmployeeContractForm = ({
             const defaultSelectedMultipliers = resData?.salaries
               ?.filter(
                 (variable) =>
-                  !!variable.column?.is_amount_for_bpjs === true &&
-                  !!variable.column?.required === true
+                  !!variable?.is_amount_for_bpjs && !!variable.column?.required
               )
-              ?.map((variable) => variable.column);
+              ?.map((v) => v.column);
             setSelectedMultipliers(defaultSelectedMultipliers);
           } else {
             notification.error({

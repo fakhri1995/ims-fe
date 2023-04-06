@@ -137,9 +137,13 @@ const EmployeePayslipAddIndex = ({
     ],
   });
 
-  // Use for selected variable list to show as fields in form
+  // Display selected variable list as fields in form
   const [receiveVarFields, setReceiveVarFields] = useState([]);
   const [reductionVarFields, setReductionVarFields] = useState([]);
+
+  // Seperate salaries type
+  const [receiveSalaries, setReceiveSalaries] = useState([]);
+  const [reductionSalaries, setReductionSalaries] = useState([]);
 
   const [refresh, setRefresh] = useState(-1);
   const [isDraft, setIsDraft] = useState(false);
@@ -228,13 +232,11 @@ const EmployeePayslipAddIndex = ({
 
             // insert previously selected BPJS multiplier to state
             const prevSelectedMultipliers = response2.data.salaries
-              ?.map((v) => v.column)
               ?.filter(
                 (variable) =>
-                  !!variable.is_amount_for_bpjs === true &&
-                  !!variable.required === true
-              );
-
+                  !!variable.is_amount_for_bpjs && !!variable.column?.required
+              )
+              ?.map((v) => v.column);
             setSelectedMultipliers(prevSelectedMultipliers);
           } else {
             notification.error({
@@ -253,69 +255,7 @@ const EmployeePayslipAddIndex = ({
     }
   }, [isAllowedToGetPayslip, payslipId, refresh]);
 
-  // TODO: delete this effect if API for pre-filling payslip form is finished
-  // 3.2 Get salary variable list for add new payslip form (Payslip ID is not yet available)
-  // useEffect(() => {
-  //   if (!isAllowedToGetSalaryColumns) {
-  //     permissionWarningNotification("Mendapatkan", "Daftar Variabel Gaji");
-  //     setpraloading(false);
-  //     return;
-  //   }
-
-  //   if (!payslipId) {
-  //     setpraloading(true);
-  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeSalaryColumns`, {
-  //       method: `GET`,
-  //       headers: {
-  //         Authorization: JSON.parse(initProps),
-  //       },
-  //     })
-  //       .then((response) => response.json())
-  //       .then((response2) => {
-  //         if (response2.success) {
-  //           let dataVar = response2.data;
-  //           const receiveVariables = dataVar.filter(
-  //             (variable) => variable.type === 1
-  //           );
-  //           const reductionVariables = dataVar.filter(
-  //             (variable) => variable.type === 2
-  //           );
-
-  //           // Set checked variables to show as fields in form
-  //           const requiredReceiveVariables = receiveVariables.filter(
-  //             (variable) => variable.required === 1
-  //           );
-  //           const requiredReductionVariables = reductionVariables.filter(
-  //             (variable) => variable.required === 1
-  //           );
-  //           setReceiveVarFields(requiredReceiveVariables);
-  //           setReductionVarFields(requiredReductionVariables);
-
-  //           // insert default selected BPJS multiplier to state
-  //           const defaultSelectedMultipliers = dataVar.filter(
-  //             (variable) =>
-  //               !!variable.is_amount_for_bpjs === true &&
-  //               !!variable.required === true
-  //           );
-  //           setSelectedMultipliers(defaultSelectedMultipliers);
-  //         } else {
-  //           notification.error({
-  //             message: `${response2.message}`,
-  //             duration: 3,
-  //           });
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         notification.error({
-  //           message: `${err.response}`,
-  //           duration: 3,
-  //         });
-  //       })
-  //       .finally(() => setpraloading(false));
-  //   }
-  // }, [isAllowedToGetSalaryColumns, refresh]);
-
-  // 3.3. Disable "Terbitkan" button if any required field is empty
+  // 3.2. Disable "Terbitkan" button if any required field is empty
   useEffect(() => {
     // Check if all required dynamic benefit fields are available and filled
     const requiredBenefitIds = receiveVarFields
@@ -358,7 +298,17 @@ const EmployeePayslipAddIndex = ({
     }
   }, [dataPayslip]);
 
-  // 3.4. Auto update total gross penerimaan
+  // 3.3. Auto update total gross penerimaan, total gross pengurangan & take home pay
+  useEffect(() => {
+    setReceiveSalaries(
+      dataPayslip?.salaries?.filter((variable) => variable.column?.type === 1)
+    );
+    setReductionSalaries(
+      dataPayslip?.salaries?.filter((variable) => variable.column?.type === 2)
+    );
+  }, [dataPayslip.salaries]);
+
+  // total gross penerimaan
   useEffect(() => {
     const receiveBenefits = dataPayslip?.salaries?.filter(
       (benefit) => benefit?.column?.type === 1
@@ -371,12 +321,9 @@ const EmployeePayslipAddIndex = ({
       ...prev,
       total_gross_penerimaan: newTotalGrossPenerimaan,
     }));
-  }, [
-    ...dataPayslip?.salaries.filter((variable) => variable.column?.type === 1),
-    dataPayslip?.gaji_pokok,
-  ]);
+  }, [receiveSalaries, dataPayslip?.gaji_pokok]);
 
-  // 3.5. Auto update total gross pengurangan & take home pay
+  // total gross pengurangan & take home pay
   useEffect(() => {
     const reductionBenefits = dataPayslip?.salaries?.filter(
       (benefit) => benefit?.column?.type === 2
@@ -400,11 +347,7 @@ const EmployeePayslipAddIndex = ({
       take_home_pay:
         dataPayslip.total_gross_penerimaan - newTotalGrossPengurangan,
     }));
-  }, [
-    ...dataPayslip?.salaries.filter((variable) => variable.column?.type === 2),
-    dataPayslip?.bpjs_ks,
-    dataPayslip?.pph21,
-  ]);
+  }, [reductionSalaries, dataPayslip?.bpjs_ks, dataPayslip?.pph21]);
 
   // 4. Handler
   // 4.1. Handle input change
@@ -433,6 +376,7 @@ const EmployeePayslipAddIndex = ({
       ...dataPayslip,
       is_posted: isPosted,
     };
+
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeePayslip`, {
       method: "PUT",

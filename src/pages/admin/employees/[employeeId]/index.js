@@ -117,15 +117,11 @@ const EmployeeDetailIndex = ({
 
   const [refresh, setRefresh] = useState(-1);
 
-  // 1.2 Update
-  const [drawerUpdate, setDrawerUpdate] = useState(false);
-  const [triggerUpdate, setTriggerUpdate] = useState(-1);
-
-  // 1.3. Delete
+  // 1.2. Delete
   const [modalDelete, setModalDelete] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
-  // 1.4 Add Contract
+  // 1.3. Add Contract
   const [loadingAdd, setLoadingAdd] = useState(false);
 
   // 2. USE EFFECT
