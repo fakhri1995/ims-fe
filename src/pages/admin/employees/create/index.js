@@ -140,7 +140,15 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     placement: "",
     new_office: "",
     resign_at: "",
-    salaries: [],
+    salaries: [
+      {
+        id: 0,
+        employee_salary_column_id: 0,
+        employee_payslip_id: 0,
+        value: 0,
+        column: [],
+      },
+    ],
     gaji_pokok: 0,
     pph21: 0,
     salaries: [],

@@ -87,7 +87,15 @@ const EmployeeContractAddIndex = ({
     placement: "",
     new_office: "",
     resign_at: "",
-    salaries: [],
+    salaries: [
+      {
+        id: 0,
+        employee_salary_column_id: 0,
+        employee_payslip_id: 0,
+        value: 0,
+        column: [],
+      },
+    ],
   });
 
   const [refresh, setRefresh] = useState(-1);
