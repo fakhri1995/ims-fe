@@ -141,10 +141,6 @@ const EmployeePayslipAddIndex = ({
   const [receiveVarFields, setReceiveVarFields] = useState([]);
   const [reductionVarFields, setReductionVarFields] = useState([]);
 
-  // Seperate salaries type
-  const [receiveSalaries, setReceiveSalaries] = useState([]);
-  const [reductionSalaries, setReductionSalaries] = useState([]);
-
   const [refresh, setRefresh] = useState(-1);
   const [isDraft, setIsDraft] = useState(false);
 
@@ -164,7 +160,7 @@ const EmployeePayslipAddIndex = ({
 
   // 2. HELPER FUNCTION
   // Format string variable name. e.g. "tunjangan_transport"
-  const formatVariableName = (name) => name.toLowerCase().split(" ").join("_");
+  const formatVariableName = (name) => name?.toLowerCase().split(" ").join("_");
 
   // Count total gross penerimaan & pengurangan
   const sumValues = (arr) => {
@@ -174,15 +170,9 @@ const EmployeePayslipAddIndex = ({
   // Count BPJS value
   const countBPJSValue = (percent) => {
     // Get penerimaan field value which selected as multiplier (PENGALI NOMINAL BPJS)
-    const selectedMultiplierIds = selectedMultipliers.map(
-      (multiplier) => multiplier.id
-    );
-
     const selectedMultiplierValues = dataPayslip.salaries
-      ?.filter((benefit) =>
-        selectedMultiplierIds.includes(benefit.employee_salary_column_id)
-      )
-      ?.map((multiplier) => multiplier.value);
+      .filter((benefit) => benefit.is_amount_for_bpjs === 1)
+      .map((b) => b.value);
 
     // Sum gaji pokok and multiplier values, then calculate final result
     const totalMultiplier =
@@ -219,24 +209,21 @@ const EmployeePayslipAddIndex = ({
             const resData = response2.data;
             setDataPayslip(resData);
 
-            const receiveVariables = resData?.salaries
-              ?.map((v) => v.column)
-              ?.filter((variable) => variable?.type === 1);
+            const receiveVariables = resData?.salaries?.filter(
+              (variable) => variable?.column.type === 1
+            );
 
-            const reductionVariables = resData?.salaries
-              ?.map((v) => v.column)
-              ?.filter((variable) => variable.type === 2);
+            const reductionVariables = resData?.salaries?.filter(
+              (variable) => variable?.column.type === 2
+            );
 
             setReceiveVarFields(receiveVariables);
             setReductionVarFields(reductionVariables);
 
             // insert previously selected BPJS multiplier to state
-            const prevSelectedMultipliers = response2.data.salaries
-              ?.filter(
-                (variable) =>
-                  !!variable.is_amount_for_bpjs && !!variable.column?.required
-              )
-              ?.map((v) => v.column);
+            const prevSelectedMultipliers = response2.data.salaries?.filter(
+              (variable) => variable.is_amount_for_bpjs
+            );
             setSelectedMultipliers(prevSelectedMultipliers);
           } else {
             notification.error({
@@ -300,10 +287,10 @@ const EmployeePayslipAddIndex = ({
 
   // 3.3. Auto update total gross penerimaan, total gross pengurangan & take home pay
   useEffect(() => {
-    setReceiveSalaries(
+    setReceiveVarFields(
       dataPayslip?.salaries?.filter((variable) => variable.column?.type === 1)
     );
-    setReductionSalaries(
+    setReductionVarFields(
       dataPayslip?.salaries?.filter((variable) => variable.column?.type === 2)
     );
   }, [dataPayslip.salaries]);
@@ -321,7 +308,7 @@ const EmployeePayslipAddIndex = ({
       ...prev,
       total_gross_penerimaan: newTotalGrossPenerimaan,
     }));
-  }, [receiveSalaries, dataPayslip?.gaji_pokok]);
+  }, [receiveVarFields, dataPayslip?.gaji_pokok]);
 
   // total gross pengurangan & take home pay
   useEffect(() => {
@@ -347,7 +334,7 @@ const EmployeePayslipAddIndex = ({
       take_home_pay:
         dataPayslip.total_gross_penerimaan - newTotalGrossPengurangan,
     }));
-  }, [reductionSalaries, dataPayslip?.bpjs_ks, dataPayslip?.pph21]);
+  }, [reductionVarFields, dataPayslip?.bpjs_ks, dataPayslip?.pph21]);
 
   // 4. Handler
   // 4.1. Handle input change
@@ -466,6 +453,7 @@ const EmployeePayslipAddIndex = ({
   };
 
   // console.log({ dataPayslip });
+  // console.log({ reductionVarFields });
   // console.log({ receiveVarFields });
   return (
     <LayoutDashboard
@@ -663,28 +651,29 @@ const EmployeePayslipAddIndex = ({
               {receiveVarFields.map((variable, idx) => (
                 <Form.Item
                   key={idx}
-                  label={variable?.name}
-                  name={formatVariableName(variable?.name)}
+                  label={variable?.column?.name}
+                  name={formatVariableName(variable?.column?.name)}
                   rules={[
                     {
-                      required: variable?.required,
-                      message: `${variable?.name} wajib diisi`,
+                      required: variable?.column?.required,
+                      message: `${variable?.column?.name} wajib diisi`,
                     },
                   ]}
                 >
                   <div className="flex flex-row items-center space-x-2">
                     <CustomCurrencyInput
-                      fieldLabel={`${variable?.name.toLowerCase()}`}
+                      fieldLabel={`${variable?.column?.name.toLowerCase()}`}
                       dataForm={dataPayslip}
                       setDataForm={setDataPayslip}
                       value={
                         dataPayslip.salaries.find(
                           (benefit) =>
-                            benefit?.employee_salary_column_id === variable.id
+                            benefit?.employee_salary_column_id ===
+                            variable.column.id
                         )?.value
                       }
                       idx={idx}
-                      dataColumn={variable}
+                      dataColumn={variable.column}
                       payslipId={payslipId}
                     />
                     {/* {!variable.required && (
@@ -842,28 +831,29 @@ const EmployeePayslipAddIndex = ({
               return (
                 <Form.Item
                   key={reductionFieldId}
-                  label={variable.name}
-                  name={formatVariableName(variable.name)}
+                  label={variable?.column?.name}
+                  name={formatVariableName(variable?.column?.name)}
                   rules={[
                     {
-                      required: variable.required,
-                      message: `${variable.name} wajib diisi`,
+                      required: variable?.column?.required,
+                      message: `${variable?.column?.name} wajib diisi`,
                     },
                   ]}
                 >
                   <div>
                     <CustomCurrencyInput
-                      fieldLabel={`${variable.name.toLowerCase()}`}
+                      fieldLabel={`${variable?.column?.name?.toLowerCase()}`}
                       dataForm={dataPayslip}
                       setDataForm={setDataPayslip}
                       value={
                         dataPayslip.salaries.find(
                           (benefit) =>
-                            benefit?.employee_salary_column_id === variable.id
+                            benefit?.employee_salary_column_id ===
+                            variable?.column?.id
                         )?.value
                       }
                       idx={reductionFieldId}
-                      dataColumn={variable}
+                      dataColumn={variable.column}
                       payslipId={payslipId}
                     />
                   </div>

@@ -1106,11 +1106,11 @@ const ModalManageSalaryVar = ({
     checked
       ? handleUpdateVariable({
           ...tag,
-          is_amount_for_bpjs: true,
+          is_amount_for_bpjs: 1,
         })
       : handleUpdateVariable({
           ...tag,
-          is_amount_for_bpjs: false,
+          is_amount_for_bpjs: 0,
         });
   };
 
@@ -1481,13 +1481,13 @@ const ModalAddSalaryVar = ({
         (variable) => variable.employee_salary_column_id
       );
 
-      const dataVarReceive = dataPayslip?.salaries
-        ?.filter((variable) => variable.column?.type === 1)
-        ?.map((variable) => variable.column);
+      const dataVarReceive = dataPayslip?.salaries?.filter(
+        (variable) => variable.column?.type === 1
+      );
 
-      const dataVarReduction = dataPayslip?.salaries
-        ?.filter((variable) => variable.column?.type === 2)
-        ?.map((variable) => variable.column);
+      const dataVarReduction = dataPayslip?.salaries?.filter(
+        (variable) => variable.column?.type === 2
+      );
 
       setCurrentVariableIds(dataVarIds);
       setReceiveVarFields(dataVarReceive);
@@ -1581,16 +1581,17 @@ const ModalAddSalaryVar = ({
       .finally(() => setPraLoading(false));
   };
 
-  // Todo: set is_amount_for_bpjs in dataPayslip
   const handleClickTag = (tag, checked) => {
     const newSelectedTags = checked
       ? [...selectedTags, tag]
-      : selectedTags.filter((t) => t !== tag);
+      : selectedTags.filter(
+          (t) => t.employee_salary_column_id !== tag.employee_salary_column_id
+        );
 
     setSelectedTags(newSelectedTags);
 
     const selectedMultiplierIds = newSelectedTags.map(
-      (multiplier) => multiplier.id
+      (multiplier) => multiplier.column.id
     );
 
     // Adjust is_amount_for_bpjs with selected variable for BPJS multiplier
@@ -1656,7 +1657,32 @@ const ModalAddSalaryVar = ({
                     }
                     onChange={(e) => {
                       if (e.target.checked) {
-                        setReceiveVarFields((prev) => [...prev, option]);
+                        let newSalaryVar = {
+                          column: option,
+                          employee_salary_column_id: option.id,
+                          is_amount_for_bpjs: 0,
+                          value: 0,
+                        };
+                        setReceiveVarFields((prev) => [...prev, newSalaryVar]);
+
+                        // deep clone salaries
+                        let updatedSalaryVars = JSON.parse(
+                          JSON.stringify(dataPayslip.salaries)
+                        );
+
+                        let updatedSalaryVarsId = updatedSalaryVars.map(
+                          (v) => v.employee_salary_column_id
+                        );
+
+                        // update salaries
+                        if (!updatedSalaryVarsId.includes(option.id)) {
+                          updatedSalaryVars.push(newSalaryVar);
+                        }
+
+                        setDataPayslip({
+                          ...dataPayslip,
+                          salaries: updatedSalaryVars,
+                        });
                       } else {
                         // handle benefit fields in form
                         // const newReceiveVarFields = receiveVarFields.filter(
@@ -1675,7 +1701,7 @@ const ModalAddSalaryVar = ({
 
                         // use for removing BPJS tag if uncheck
                         const newSelectedTags = selectedTags.filter(
-                          (tag) => tag.id !== option.id
+                          (tag) => tag.column.id !== option.id
                         );
                         setSelectedTags(newSelectedTags);
                       }
@@ -1692,13 +1718,13 @@ const ModalAddSalaryVar = ({
                       } else {
                         // handle benefit fields in form
                         const newReceiveVarFields = receiveVarFields.filter(
-                          (variable) => variable.id !== option.id
+                          (variable) => variable.column.id !== option.id
                         );
                         setReceiveVarFields(newReceiveVarFields);
 
                         // use for removing BPJS tag if uncheck
                         const newSelectedTags = selectedTags.filter(
-                          (tag) => tag.id !== option.id
+                          (tag) => tag.column.id !== option.id
                         );
                         setSelectedTags(newSelectedTags);
                       }
@@ -1710,7 +1736,9 @@ const ModalAddSalaryVar = ({
 
                 <div className="flex flex-row items-center space-x-1">
                   {/* Show tag "BPJS" if the variable is selected as multiplier */}
-                  {selectedTags.some((tag) => tag.name == option.name) && (
+                  {selectedTags.some(
+                    (tag) => tag.column.name == option.name
+                  ) && (
                     <Tag color="#35763B" className="rounded text-white m-0">
                       BPJS
                     </Tag>
@@ -1811,7 +1839,35 @@ const ModalAddSalaryVar = ({
                       }
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setReductionVarFields((prev) => [...prev, option]);
+                          let newSalaryVar = {
+                            column: option,
+                            employee_salary_column_id: option.id,
+                            is_amount_for_bpjs: 0,
+                            value: 0,
+                          };
+                          setReductionVarFields((prev) => [
+                            ...prev,
+                            newSalaryVar,
+                          ]);
+
+                          // deep clone salaries
+                          let updatedSalaryVars = JSON.parse(
+                            JSON.stringify(dataPayslip.salaries)
+                          );
+
+                          let updatedSalaryVarsId = updatedSalaryVars.map(
+                            (v) => v.employee_salary_column_id
+                          );
+
+                          // update salaries
+                          if (!updatedSalaryVarsId.includes(option.id)) {
+                            updatedSalaryVars.push(newSalaryVar);
+                          }
+
+                          setDataPayslip({
+                            ...dataPayslip,
+                            salaries: updatedSalaryVars,
+                          });
                         } else {
                           // const newReductionVarFields =
                           //   reductionVarFields.filter(
@@ -1843,7 +1899,7 @@ const ModalAddSalaryVar = ({
                         } else {
                           const newReductionVarFields =
                             reductionVarFields.filter(
-                              (variable) => variable.id !== option.id
+                              (variable) => variable.column.id !== option.id
                             );
                           setReductionVarFields(newReductionVarFields);
                         }
@@ -1931,13 +1987,16 @@ const ModalAddSalaryVar = ({
               <CheckableTag
                 key={idx}
                 className="border border-primary100 py-1 px-3 rounded mb-2"
-                checked={selectedTags.indexOf(tag) > -1}
-                // checked={tag?.is_amount_for_bpjs}
+                // checked={
+                //   selectedTags.map((tag) => tag.column)?.indexOf(tag.column) >
+                //   -1
+                // }
+                checked={tag?.is_amount_for_bpjs}
                 onChange={(checked) => handleClickTag(tag, checked)}
               >
                 <div className="flex flex-row items-center space-x-1">
                   <PlusOutlined />
-                  <p>{tag.name}</p>
+                  <p>{tag.column.name}</p>
                 </div>
               </CheckableTag>
             ))}
