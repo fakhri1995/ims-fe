@@ -121,12 +121,13 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     acc_number_another: "",
     acc_name_another: "",
     is_posted: 0,
+    contract: {},
     contracts: [],
     inventories: [],
   });
 
   const [dataContract, setDataContract] = useState({
-    id: dataEmployee?.contracts?.[0]?.id,
+    id: dataEmployee?.contract?.id,
     employee_id: employeeId,
     is_employee_active: 0,
     contract_name: "",
@@ -716,7 +717,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setDataContract={setDataContract}
                 debouncedApiCall={debouncedSaveContract}
                 employeeId={employeeId}
-                contractId={dataEmployee?.contracts[0]?.id}
+                contractId={dataEmployee?.contract?.id}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">

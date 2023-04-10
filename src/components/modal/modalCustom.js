@@ -1,12 +1,10 @@
-import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined } from "@ant-design/icons";
 import {
-  Button,
   Checkbox,
   Form,
   Input,
   Modal,
   Popconfirm,
-  Popover,
   Spin,
   Tag,
   notification,
@@ -14,17 +12,13 @@ import {
 import CheckableTag from "antd/lib/tag/CheckableTag";
 import React, { useEffect, useState } from "react";
 
-import {
-  createKeyPressHandler,
-  permissionWarningNotification,
-} from "../../lib/helper";
+import { permissionWarningNotification } from "../../lib/helper";
 import ButtonSys from "../button";
 import {
   AlertIconSvg,
   CheckIconSvg,
   CircleCheckIconSvg,
   DownloadIconSvg,
-  PlusIconSvg,
   SquarePlusIconSvg,
   TrashIconSvg,
   XIconSvg,

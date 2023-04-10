@@ -325,7 +325,7 @@ const EmployeeContractForm = ({
         });
     }
     // }
-  }, [isAllowedToGetEmployeeContract, refresh]);
+  }, [isAllowedToGetEmployeeContract, contractId, refresh]);
 
   // 3.5. Display contract file when available
   useEffect(() => {
