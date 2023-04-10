@@ -274,7 +274,7 @@ const EmployeePayslipAddIndex = ({
         dataPayslip.total_gross_pengurangan &&
         dataPayslip.take_home_pay &&
         dataPayslip.gaji_pokok &&
-        dataPayslip.pph21 &&
+        Number(dataPayslip.pph21) &&
         isAllRequiredBenefitFilled
     );
 
