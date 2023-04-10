@@ -131,6 +131,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const dataPayslipStatusList = [
     {
+      id: 3,
+      name: "Kosong",
+    },
+    {
       id: 1,
       name: "Draft",
     },

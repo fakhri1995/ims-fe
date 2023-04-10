@@ -638,9 +638,11 @@ const EmployeePayslipDetailIndex = ({
                 </ButtonSys>
               ) : (
                 <ButtonSys
-                  type={!isAllowedToGetPayslip ? "primary" : "default"}
-                  // onClick={() => download pdf payslip}
-                  disabled={!isAllowedToGetPayslip}
+                  type={"default"}
+                  onClick={() =>
+                    handleDownloadPayslip(dataEmployee?.last_month_payslip?.id)
+                  }
+                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
                 >
                   <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
