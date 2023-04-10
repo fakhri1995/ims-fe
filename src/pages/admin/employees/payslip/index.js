@@ -19,7 +19,9 @@ import {
   EMPLOYEES_PAYSLIPS_POST,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
+  EMPLOYEE_PAYSLIP_DOWNLOAD,
   EMPLOYEE_PAYSLIP_GET,
+  EMPLOYEE_PAYSLIP_RAISE,
   EMPLOYEE_PAYSLIP_STATUS_COUNT_GET,
   EMPLOYEE_SALARY_COLUMNS_GET,
   EMPLOYEE_SALARY_COLUMN_ADD,
@@ -83,6 +85,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToPostPayslips = hasPermission(EMPLOYEES_PAYSLIPS_POST);
+  const isAllowedToRaisePayslip = hasPermission(EMPLOYEE_PAYSLIP_RAISE);
+  const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
   const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
@@ -126,6 +130,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataRoleList, setDataRoleList] = useState([]);
 
   const dataPayslipStatusList = [
+    {
+      id: 3,
+      name: "Kosong",
+    },
     {
       id: 1,
       name: "Draft",
@@ -171,9 +179,10 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
-  // 2.3. Post payslip
+  // 2.3. Post, download payslip
   const [loadingPost, setLoadingPost] = useState(false);
   const [modalPost, setModalPost] = useState(false);
+  const [loadingDownload, setLoadingDownload] = useState(false);
 
   // 2.4. Delete payslip
   const [modalDelete, setModalDelete] = useState(false);
@@ -182,7 +191,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.5. Add salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
-  const [isInputVar, setInputVar] = useState(false);
 
   // 3. UseEffect
   // 3.1. Get Payslips
@@ -395,6 +403,87 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
+  const handleRaisePayslip = () => {
+    if (!isAllowedToRaisePayslip) {
+      permissionWarningNotification("Membuat", "Draft Slip Gaji");
+      return;
+    }
+    setLoadingPost(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/raiseLastPeriodPayslip`, {
+      method: "GET",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          // TODO: display employee name from response
+          notification.success({
+            message: `Draft slip gaji berhasil dibuat.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal membuat slip gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal membuat slip gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingPost(false);
+      });
+  };
+
+  const handleDownloadPayslip = (payslipId) => {
+    if (!isAllowedToDownloadPayslip) {
+      permissionWarningNotification("Mengunduh", "Slip Gaji");
+      return;
+    }
+    setLoadingDownload(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslipId}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Slip gaji berhasil diunduh.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal mengunduh slip gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengunduh slip gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDownload(false);
+      });
+  };
+
   const onFilterPayslips = () => {
     setLoadingPayslips(true);
     fetch(
@@ -543,39 +632,35 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             <>
               {record.last_month_payslip &&
                 (record.last_month_payslip?.is_posted ? (
-                  <div className="flex flex-col space-y-2">
-                    <ButtonSys
-                      type={isAllowedToGetPayslip ? "default" : "primary"}
-                      disabled={!isAllowedToGetPayslip}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        //download pdf
-                      }}
-                    >
-                      <div className="flex flex-row space-x-2 items-center">
-                        <DownloadOutlined />
-                        <p className="whitespace-nowrap">Unduh</p>
-                      </div>
-                    </ButtonSys>
-                  </div>
+                  <ButtonSys
+                    type={"default"}
+                    disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDownloadPayslip(record.last_month_payslip.id);
+                    }}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <DownloadOutlined />
+                      <p className="whitespace-nowrap">Unduh</p>
+                    </div>
+                  </ButtonSys>
                 ) : (
-                  <div className="flex flex-col space-y-2">
-                    <ButtonSys
-                      type={isAllowedToGetPayslip ? "default" : "primary"}
-                      disabled={!isAllowedToGetPayslip}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        rt.push(
-                          `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
-                        );
-                      }}
-                    >
-                      <div className="flex flex-row space-x-2 items-center">
-                        <EditOutlined />
-                        <p className="whitespace-nowrap">Edit Draft</p>
-                      </div>
-                    </ButtonSys>
-                  </div>
+                  <ButtonSys
+                    type={isAllowedToGetPayslip ? "default" : "primary"}
+                    disabled={!isAllowedToGetPayslip}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(
+                        `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                      );
+                    }}
+                  >
+                    <div className="flex flex-row space-x-2 items-center">
+                      <EditOutlined />
+                      <p className="whitespace-nowrap">Edit Draft</p>
+                    </div>
+                  </ButtonSys>
                 ))}
             </>
           ),
@@ -641,7 +726,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               ) ? (
                 <ButtonSys
                   type={"primary"}
-                  // onClick={handleCreateDraft}
+                  onClick={handleRaisePayslip}
                   disabled={!isAllowedToAddPayslip}
                 >
                   <div className="flex space-x-2 items-center">

@@ -1,4 +1,6 @@
+import { DownloadOutlined } from "@ant-design/icons";
 import { Form, Tabs, notification } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -9,7 +11,11 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { EMPLOYEE_GET, EMPLOYEE_PAYSLIPS_GET } from "lib/features";
+import {
+  EMPLOYEE_GET,
+  EMPLOYEE_PAYSLIPS_GET,
+  EMPLOYEE_PAYSLIP_DOWNLOAD,
+} from "lib/features";
 
 import {
   generateStaticAssetUrl,
@@ -17,7 +23,7 @@ import {
   permissionWarningNotification,
 } from "../..//lib/helper";
 import ButtonSys from "../../components/button";
-import { DownloadIconSvg, OneUserIconSvg } from "../../components/icon";
+import { OneUserIconSvg } from "../../components/icon";
 import LayoutDashboard2 from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
 import { ModalDownloadPayslip } from "../../components/modal/modalCustom";
@@ -41,6 +47,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToGetEmployeePayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
+  const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
   //INIT
   const rt = useRouter();
@@ -53,6 +60,9 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   pathTitleArr.splice(0, 1, "Karyawan");
 
   const [instanceForm] = Form.useForm();
+
+  // Array of 12 month names
+  const monthNames = moment.months();
 
   // 1. STATE
   // 1.1. display
@@ -91,8 +101,6 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   // 1.3. Download
   const [modalDownload, setModalDownload] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
-  const [downloadPass, setDownloadPass] = useState("");
-  const [latestPayslip, setLatestPayslip] = useState({});
 
   // 2. USE EFFECT
   // 2.1 Get employee detail
@@ -135,45 +143,45 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   }, [isAllowedToGetEmployee, employeeId, refresh]);
 
   // 3. Event
-  const handleGetLatestPayslip = () => {
-    if (!isAllowedToGetEmployeePayslips) {
-      permissionWarningNotification("Mendapatkan", "Employee Payslips");
-      setLoadingDownload(false);
+  const handleDownloadPayslip = () => {
+    if (!isAllowedToDownloadPayslip) {
+      permissionWarningNotification("Mengunduh", "Slip Gaji");
       return;
     }
-
-    if (employeeId) {
-      setLoadingDownload(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?employee_id=${employeeId}&rows=1`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setLatestPayslip(res2.data.data?.[0]);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err}`,
+    setLoadingDownload(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${dataEmployee?.last_month_payslip?.id}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Slip gaji berhasil diunduh.`,
             duration: 3,
           });
-        })
-        .finally(() => {
-          setLoadingDownload(false);
+        } else {
+          notification.error({
+            message: `Gagal mengunduh slip gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengunduh slip gaji. ${err.response}`,
+          duration: 3,
         });
-    }
+      })
+      .finally(() => {
+        setLoadingDownload(false);
+      });
   };
 
   // console.log({ dataProfile });
@@ -231,16 +239,17 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                   </div>
                 )}
               </div>
-              {/* <ButtonSys
-                type={!isAllowedToGetEmployee ? "primary" : "default"}
-                onClick={() => {
-                  handleGetLatestPayslip();
-                  setModalDownload(true);
-                }}
-                disabled={!isAllowedToGetEmployee}>
-                <DownloadIconSvg color={"#35763B"} size={16} />
+              <ButtonSys
+                type={"primary"}
+                onClick={
+                  // setModalDownload(true);
+                  handleDownloadPayslip
+                }
+                disabled={!isAllowedToDownloadPayslip || loadingDownload}
+              >
+                <DownloadOutlined />
                 <p className="ml-2">Unduh Slip Gaji</p>
-              </ButtonSys> */}
+              </ButtonSys>
             </div>
 
             {/* Profile summary */}
@@ -299,12 +308,12 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             <Tabs.TabPane tab="Detail Profil" key="1">
               <EmployeeProfileDetail dataEmployee={dataEmployee} />
             </Tabs.TabPane>
-            {/* <Tabs.TabPane tab="Slip Gaji" key="2">
+            <Tabs.TabPane tab="Slip Gaji" key="2">
               <EmployeePayslipDetail
                 employeeId={employeeId}
                 initProps={initProps}
               />
-            </Tabs.TabPane> */}
+            </Tabs.TabPane>
             <Tabs.TabPane tab="Kontrak Karyawan" key="3">
               <EmployeeContractDetail
                 dataEmployee={dataEmployee}
@@ -323,23 +332,21 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
       {/* Modal Download Payslip */}
       {/* TODO: change access control */}
-      <AccessControl hasPermission={EMPLOYEE_GET}>
+      {/* <AccessControl hasPermission={EMPLOYEE_PAYSLIP_DOWNLOAD}>
         <ModalDownloadPayslip
           visible={modalDownload}
           onvisible={setModalDownload}
-          // onOk
+          onOk={handleDownloadPayslip}
           loading={loadingDownload}
           disabled={!isAllowedToGetEmployee}
           downloadPass={downloadPass}
           setDownloadPass={setDownloadPass}
           instanceForm={instanceForm}
-          monthOfPayslip={momentFormatDate(
-            latestPayslip?.tanggal_dibayarkan,
-            "-",
-            "MMMM YYYY"
-          )}
+          monthOfPayslip={`${
+            monthNames[dataEmployee?.last_month_payslip?.month - 1]
+          } ${dataEmployee?.last_month_payslip?.year}`}
         />
-      </AccessControl>
+      </AccessControl> */}
     </LayoutDashboard2>
   );
 };

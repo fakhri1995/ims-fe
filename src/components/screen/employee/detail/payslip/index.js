@@ -1,4 +1,4 @@
-import { UpOutlined } from "@ant-design/icons";
+import { DownloadOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Button,
   Collapse,
@@ -19,7 +19,11 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { EMPLOYEE_PAYSLIPS_GET, EMPLOYEE_PAYSLIP_GET } from "lib/features";
+import {
+  EMPLOYEE_PAYSLIPS_GET,
+  EMPLOYEE_PAYSLIP_DOWNLOAD,
+  EMPLOYEE_PAYSLIP_GET,
+} from "lib/features";
 
 import {
   DownloadIconSvg,
@@ -48,9 +52,13 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
 
   const isAllowedToGetEmployeePayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToGetEmployeePayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
+  const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
   const [instanceForm] = Form.useForm();
   const rt = useRouter();
+
+  // Array of 12 month names
+  const monthNames = moment.months();
 
   // 1. USE STATE
   // Display data payslip
@@ -110,46 +118,45 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
   }, [isAllowedToGetEmployeePayslips, employeeId]);
 
   // 3. EVENT HANDLER
-  // 3.1. Get Employee Payslip Data
-  const handleGetEmployeePayslip = (payslipId) => {
-    if (!isAllowedToGetEmployeePayslips) {
-      permissionWarningNotification("Mendapatkan", "Data Payslip");
-      setLoadingData(false);
+  const handleDownloadPayslip = (idPayslip) => {
+    if (!isAllowedToDownloadPayslip) {
+      permissionWarningNotification("Mengunduh", "Slip Gaji");
       return;
     }
-
-    if (payslipId) {
-      setLoadingData(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslip?id=${payslipId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataPayslip(res2.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err}`,
+    setLoadingDownload(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${idPayslip}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Slip gaji berhasil diunduh.`,
             duration: 3,
           });
-        })
-        .finally(() => {
-          setLoadingData(false);
+        } else {
+          notification.error({
+            message: `Gagal mengunduh slip gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengunduh slip gaji. ${err.response}`,
+          duration: 3,
         });
-    }
+      })
+      .finally(() => {
+        setLoadingDownload(false);
+      });
   };
 
   return (
@@ -169,11 +176,7 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
             header={
               <div className="flex flex-row space-x-3 items-center">
                 <p className="text-sm font-bold">
-                  {momentFormatDate(
-                    payslip?.tanggal_dibayarkan,
-                    "-",
-                    "MMMM YYYY"
-                  )}
+                  {monthNames[payslip?.month - 1]} {payslip?.year}
                 </p>
                 <Tag
                   color="#35763B1A"
@@ -200,20 +203,18 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
                 </div>
               </div>
               <ButtonSys
-                type={!isAllowedToGetEmployeePayslip ? "primary" : "default"}
-                onClick={() => {
-                  setCurrentMonth(
-                    momentFormatDate(
-                      payslip?.tanggal_dibayarkan,
-                      "-",
-                      "MMMM YYYY"
-                    )
-                  );
-                  setModalDownload(true);
-                }}
-                disabled={!isAllowedToGetEmployeePayslip}
+                type={"default"}
+                onClick={() => handleDownloadPayslip(payslip?.id)}
+                disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                //   () => {
+                //   setCurrentMonth(
+                //     `${monthNames[payslip?.month - 1]} ${payslip?.year}`
+                //   );
+                //   setDataPayslip(payslip);
+                //   setModalDownload(true);
+                // }
               >
-                <DownloadIconSvg color={"#35763B"} size={16} />
+                <DownloadOutlined />
                 <p className="ml-2">Unduh Slip Gaji</p>
               </ButtonSys>
             </div>
@@ -222,11 +223,11 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
       </Collapse>
 
       {/* Modal Download Payslip */}
-      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_GET}>
+      {/* <AccessControl hasPermission={EMPLOYEE_PAYSLIP_DOWNLOAD}>
         <ModalDownloadPayslip
           visible={modalDownload}
           onvisible={setModalDownload}
-          // onOk
+          onOk={handleDownloadPayslip}
           loading={loadingDownload}
           disabled={!isAllowedToGetEmployeePayslip}
           downloadPass={downloadPass}
@@ -234,7 +235,7 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
           instanceForm={instanceForm}
           monthOfPayslip={currentMonth}
         />
-      </AccessControl>
+      </AccessControl> */}
     </section>
   );
 };

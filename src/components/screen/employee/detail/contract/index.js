@@ -318,7 +318,7 @@ const EmployeeContractDetail = ({
                   {dataContract?.salaries
                     ?.filter((variable) => variable?.column?.type === 1)
                     ?.map((variable) => (
-                      <div className="space-y-1 col-span-2">
+                      <div key={variable?.id} className="space-y-1 col-span-2">
                         <p className="mig-caption--medium text-mono80">
                           {variable?.column?.name}
                         </p>
@@ -392,7 +392,7 @@ const EmployeeContractDetail = ({
                   {dataContract?.salaries
                     ?.filter((variable) => variable?.column?.type === 2)
                     ?.map((variable) => (
-                      <div className="space-y-1 col-span-2">
+                      <div key={variable?.id} className="space-y-1 col-span-2">
                         <p className="mig-caption--medium text-mono80">
                           {variable?.column?.name}
                         </p>

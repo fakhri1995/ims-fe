@@ -10,10 +10,8 @@ import DrawerCore from "../drawerCore";
 
 const DrawerPayslipDetail = ({
   initProps,
-  title,
   visible,
   onvisible,
-  setRefresh,
   isAllowedToGetPayslip,
   payslipId,
 }) => {
@@ -68,46 +66,57 @@ const DrawerPayslipDetail = ({
             const payslipDetail = response2.data;
 
             // Seperate receive and reduction benefit
-            const receiveBenefits = payslipDetail?.salaries?.filter(
-              (benefit) => benefit?.column?.type === 1
-            );
-            const reductionBenefits = payslipDetail?.salaries?.filter(
-              (benefit) => benefit?.column?.type === 2
-            );
+            const receiveBenefits = payslipDetail?.salaries
+              ?.filter((benefit) => benefit?.column?.type === 1)
+              ?.map((v) => ({ ...v, key: v.column?.name }));
+            const reductionBenefits = payslipDetail?.salaries
+              ?.filter((benefit) => benefit?.column?.type === 2)
+              ?.map((v) => ({ ...v, key: v.column?.name }));
 
             // Merge "Gaji Pokok" to receive benefit
             receiveBenefits.unshift({
+              key: "Gaji Pokok",
               column: { name: "Gaji Pokok" },
               value: payslipDetail?.gaji_pokok,
             });
 
             // Merge "PPh 21" to reduction benefit
             reductionBenefits.unshift({
+              key: "PPh 21",
               column: { name: "PPh 21" },
               value: payslipDetail?.pph21,
             });
 
             // Merge bpjs to reduction benefit
-            reductionBenefits.unshift({
-              column: { name: "BPJS TK-JP" },
-              value: payslipDetail?.bpjs_tk_jp,
-            });
-            reductionBenefits.unshift({
-              column: { name: "BPJS TK-JKM" },
-              value: payslipDetail?.bpjs_tk_jkm,
-            });
-            reductionBenefits.unshift({
-              column: { name: "BPJS TK-JKK" },
-              value: payslipDetail?.bpjs_tk_jkk,
-            });
-            reductionBenefits.unshift({
-              column: { name: "BPJS TK-JHT" },
-              value: payslipDetail?.bpjs_tk_jht,
-            });
-            reductionBenefits.unshift({
-              column: { name: "BPJS KS" },
-              value: payslipDetail?.bpjs_ks,
-            });
+            const bpjs_list = [
+              {
+                name: "BPJS TK-JP",
+                value: payslipDetail?.bpjs_tk_jp,
+              },
+              {
+                name: "BPJS TK-JKM",
+                value: payslipDetail?.bpjs_tk_jkm,
+              },
+              {
+                name: "BPJS TK-JKK",
+                value: payslipDetail?.bpjs_tk_jkk,
+              },
+              {
+                name: "BPJS TK-JHT",
+                value: payslipDetail?.bpjs_tk_jht,
+              },
+              {
+                name: "BPJS KS",
+                value: payslipDetail?.bpjs_ks,
+              },
+            ];
+            for (let v of bpjs_list) {
+              reductionBenefits.unshift({
+                key: v.name,
+                column: { name: v.name },
+                value: v.value,
+              });
+            }
 
             setDetailPayslip(payslipDetail);
             setDetailReceive(receiveBenefits);

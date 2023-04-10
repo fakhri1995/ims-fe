@@ -28,6 +28,7 @@ import {
   EMPLOYEE_GET,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
+  EMPLOYEE_PAYSLIP_DOWNLOAD,
   EMPLOYEE_PAYSLIP_GET,
   EMPLOYEE_PAYSLIP_UPDATE,
 } from "lib/features";
@@ -72,6 +73,7 @@ const EmployeePayslipDetailIndex = ({
   const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
   const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
+  const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
   //INIT
   const rt = useRouter();
@@ -147,12 +149,12 @@ const EmployeePayslipDetailIndex = ({
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
-  // 1.3. Add
+  // 1.3. Add & Download
   const [loadingAdd, setLoadingAdd] = useState(false);
+  const [loadingDownload, setLoadingDownload] = useState(false);
 
   // 1.4 View payslip detail
   const [drawerDetail, setDrawerDetail] = useState(false);
-  const [loadingDetail, setLoadingDetail] = useState(false);
   const [payslipId, setPayslipId] = useState(0);
 
   // Current payslip status: 0-kosong, 1-draft, 2-diterbitkan
@@ -335,15 +337,54 @@ const EmployeePayslipDetailIndex = ({
       .finally(() => setLoadingAdd(false));
   };
 
+  const handleDownloadPayslip = (idPayslip) => {
+    if (!isAllowedToDownloadPayslip) {
+      permissionWarningNotification("Mengunduh", "Slip Gaji");
+      return;
+    }
+    setLoadingDownload(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${idPayslip}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Slip gaji berhasil diunduh.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal mengunduh slip gaji. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengunduh slip gaji. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDownload(false);
+      });
+  };
+
   // Slip gaji table's columns
   const columnPayslip = [
     {
       title: "No.",
       dataIndex: "num",
       render: (text, record, index) => {
-        return {
-          children: <>{dataRawPayslips?.from + index}</>,
-        };
+        return { children: <>{dataRawPayslips?.from + index}</> };
       },
     },
     {
@@ -469,11 +510,11 @@ const EmployeePayslipDetailIndex = ({
                       <EyeOutlined />
                     </ButtonSys>
                     <ButtonSys
-                      type={isAllowedToGetPayslip ? "default" : "primary"}
-                      disabled={!isAllowedToGetPayslip}
+                      type={"default"}
+                      disabled={!isAllowedToGetPayslip || loadingDownload}
                       onClick={(event) => {
                         event.stopPropagation();
-                        // download pdf payslip
+                        handleDownloadPayslip(record.id);
                       }}
                     >
                       <DownloadOutlined />
@@ -597,9 +638,11 @@ const EmployeePayslipDetailIndex = ({
                 </ButtonSys>
               ) : (
                 <ButtonSys
-                  type={!isAllowedToGetPayslip ? "primary" : "default"}
-                  // onClick={() => download pdf payslip}
-                  disabled={!isAllowedToGetPayslip}
+                  type={"default"}
+                  onClick={() =>
+                    handleDownloadPayslip(dataEmployee?.last_month_payslip?.id)
+                  }
+                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
                 >
                   <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
