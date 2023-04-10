@@ -225,31 +225,34 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             >
               <div className="flex flex-col space-x-0 space-y-2 justify-between ">
                 <p className="mig-caption--medium text-mono80">
-                  Status Karyawan
+                  Status Slip Gaji (
+                  {moment().subtract(1, "month").format("MMMM YYYY")})
                 </p>
-                {Number(dataEmployee?.contracts?.[0]?.is_employee_active) ? (
+                {dataEmployee?.last_month_payslip?.is_posted ? (
                   <div className="flex flex-row space-x-2 items-center">
                     <div className="rounded-full w-4 h-4 bg-primary100"></div>
-                    <h4 className="mig-heading--4">Aktif</h4>
+                    <h4 className="mig-heading--4">Diterbitkan</h4>
                   </div>
                 ) : (
                   <div className="flex flex-row space-x-2 items-center">
-                    <div className="rounded-full w-4 h-4 bg-warning"></div>
-                    <h4 className="mig-heading--4">Tidak Aktif</h4>
+                    <div className="rounded-full w-4 h-4 bg-mono80"></div>
+                    <h4 className="mig-heading--4">Kosong</h4>
                   </div>
                 )}
               </div>
-              <ButtonSys
-                type={"primary"}
-                onClick={
-                  // setModalDownload(true);
-                  handleDownloadPayslip
-                }
-                disabled={!isAllowedToDownloadPayslip || loadingDownload}
-              >
-                <DownloadOutlined />
-                <p className="ml-2">Unduh Slip Gaji</p>
-              </ButtonSys>
+              {dataEmployee?.last_month_payslip?.is_posted && (
+                <ButtonSys
+                  type={"primary"}
+                  onClick={
+                    // setModalDownload(true);
+                    handleDownloadPayslip
+                  }
+                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                >
+                  <DownloadOutlined />
+                  <p className="ml-2">Unduh Slip Gaji</p>
+                </ButtonSys>
+              )}
             </div>
 
             {/* Profile summary */}
