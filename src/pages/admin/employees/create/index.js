@@ -121,12 +121,13 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     acc_number_another: "",
     acc_name_another: "",
     is_posted: 0,
+    contract: {},
     contracts: [],
     inventories: [],
   });
 
   const [dataContract, setDataContract] = useState({
-    id: dataEmployee?.contracts?.[0]?.id,
+    id: dataEmployee?.contract?.id,
     employee_id: employeeId,
     is_employee_active: 0,
     contract_name: "",
@@ -140,7 +141,15 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     placement: "",
     new_office: "",
     resign_at: "",
-    salaries: [],
+    salaries: [
+      {
+        id: 0,
+        employee_salary_column_id: 0,
+        employee_payslip_id: 0,
+        value: 0,
+        column: [],
+      },
+    ],
     gaji_pokok: 0,
     pph21: 0,
     salaries: [],
@@ -392,8 +401,10 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
           let obj = {};
           obj[`salaries[${idx}][employee_salary_column_id]`] =
-            benefit.employee_salary_column_id;
-          obj[`salaries[${idx}][value]`] = benefit.value;
+            benefit?.employee_salary_column_id;
+          obj[`salaries[${idx}][value]`] = benefit?.value;
+          obj[`salaries[${idx}][is_amount_for_bpjs]`] =
+            benefit?.is_amount_for_bpjs;
           return obj;
         });
 
@@ -706,7 +717,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setDataContract={setDataContract}
                 debouncedApiCall={debouncedSaveContract}
                 employeeId={employeeId}
-                contractId={dataEmployee?.contracts[0]?.id}
+                contractId={dataEmployee?.contract?.id}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">

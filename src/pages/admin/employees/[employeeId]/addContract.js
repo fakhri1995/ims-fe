@@ -87,7 +87,15 @@ const EmployeeContractAddIndex = ({
     placement: "",
     new_office: "",
     resign_at: "",
-    salaries: [],
+    salaries: [
+      {
+        id: 0,
+        employee_salary_column_id: 0,
+        employee_payslip_id: 0,
+        value: 0,
+        column: [],
+      },
+    ],
   });
 
   const [refresh, setRefresh] = useState(-1);
@@ -224,6 +232,8 @@ const EmployeeContractAddIndex = ({
         obj[`salaries[${idx}][employee_salary_column_id]`] =
           benefit.employee_salary_column_id;
         obj[`salaries[${idx}][value]`] = benefit.value;
+        obj[`salaries[${idx}][is_amount_for_bpjs]`] =
+          benefit?.is_amount_for_bpjs;
         return obj;
       });
 

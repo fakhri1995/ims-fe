@@ -53,8 +53,6 @@ const EmployeeContractForm = ({
   prevpath,
   contractId,
   employeeId,
-  // instanceForm,
-  // handleSaveContract,
 }) => {
   /**
    * Dependencies
@@ -125,18 +123,9 @@ const EmployeeContractForm = ({
   // 2.3. Count BPJS value
   const countBPJSValue = (percent) => {
     // Get penerimaan field value which selected as multiplier
-    const selectedMultiplierIds = selectedMultipliers.map(
-      (multiplier) => multiplier.id
-    );
-
-    const selectedMultiplierValues =
-      dataContract?.salaries?.length > 0
-        ? dataContract?.salaries
-            ?.filter((benefit) =>
-              selectedMultiplierIds.includes(benefit?.employee_salary_column_id)
-            )
-            ?.map((multiplier) => multiplier.value)
-        : [];
+    const selectedMultiplierValues = dataContract.salaries
+      .filter((benefit) => benefit.is_amount_for_bpjs === 1)
+      .map((b) => b.value);
 
     // Sum with gaji pokok, then calculate final result
     const totalMultiplier =
@@ -303,24 +292,20 @@ const EmployeeContractForm = ({
             }
 
             // Set checked variables to show as fields in form
-            const receiveVariables = resData.salaries
-              ?.filter((variable) => variable?.column?.type === 1)
-              ?.map((variable) => variable.column);
-            const reductionVariables = resData.salaries
-              ?.filter((variable) => variable?.column?.type === 2)
-              ?.map((variable) => variable.column);
+            const receiveVariables = resData.salaries?.filter(
+              (v) => v?.column.type === 1
+            );
+            const reductionVariables = resData.salaries?.filter(
+              (v) => v?.column.type === 2
+            );
 
             setReceiveVarFields(receiveVariables);
             setReductionVarFields(reductionVariables);
 
             // insert default selected BPJS multiplier to state
-            const defaultSelectedMultipliers = resData?.salaries
-              ?.filter(
-                (variable) =>
-                  !!variable.column?.is_amount_for_bpjs === true &&
-                  !!variable.column?.required === true
-              )
-              ?.map((variable) => variable.column);
+            const defaultSelectedMultipliers = resData?.salaries?.filter(
+              (variable) => variable?.is_amount_for_bpjs
+            );
             setSelectedMultipliers(defaultSelectedMultipliers);
           } else {
             notification.error({
@@ -340,7 +325,7 @@ const EmployeeContractForm = ({
         });
     }
     // }
-  }, [isAllowedToGetEmployeeContract, refresh]);
+  }, [isAllowedToGetEmployeeContract, contractId, refresh]);
 
   // 3.5. Display contract file when available
   useEffect(() => {
@@ -800,22 +785,22 @@ const EmployeeContractForm = ({
         {receiveVarFields.map((variable, idx) => (
           <Form.Item
             key={idx}
-            label={variable.name}
-            name={formatVariableName(variable?.name)}
+            label={variable?.column?.name}
+            name={formatVariableName(variable?.column?.name)}
           >
             <div className="flex flex-row items-center space-x-2">
               <CustomCurrencyInput
-                fieldLabel={`${variable.name?.toLowerCase()}`}
+                fieldLabel={`${variable.column?.name?.toLowerCase()}`}
                 dataForm={dataContract}
                 setDataForm={setDataContract}
                 value={
                   dataContract?.salaries?.find(
                     (benefit) =>
-                      benefit?.employee_salary_column_id === variable.id
+                      benefit?.employee_salary_column_id === variable.column?.id
                   )?.value
                 }
                 idx={idx}
-                dataColumn={variable}
+                dataColumn={variable.column}
                 payslipId={dataContract?.id}
               />
               {/* {!variable.required && (
@@ -973,22 +958,23 @@ const EmployeeContractForm = ({
           return (
             <Form.Item
               key={reductionFieldId}
-              label={variable.name}
-              name={formatVariableName(variable?.name)}
+              label={variable?.column?.name}
+              name={formatVariableName(variable?.column?.name)}
             >
               <div>
                 <CustomCurrencyInput
-                  fieldLabel={`${variable.name.toLowerCase()}`}
+                  fieldLabel={`${variable?.name?.toLowerCase()}`}
                   dataForm={dataContract}
                   setDataForm={setDataContract}
                   value={
                     dataContract?.salaries?.find(
                       (benefit) =>
-                        benefit?.employee_salary_column_id === variable.id
+                        benefit?.employee_salary_column_id ===
+                        variable?.column?.id
                     )?.value
                   }
                   idx={reductionFieldId}
-                  dataColumn={variable}
+                  dataColumn={variable.column}
                   payslipId={dataContract?.id}
                 />
               </div>
