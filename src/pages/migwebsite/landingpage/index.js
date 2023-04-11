@@ -380,7 +380,9 @@ function LandingPage({ dataBlog }) {
                     "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4"
                   }
                 >
-                  <p className={"text-base"}>{t.landingpagefreeconsultation}</p>
+                  <p className={"text-base font-gilroysemibold"}>
+                    {t.landingpagefreeconsultation}
+                  </p>
                 </button>
               </div>
             </div>
@@ -388,7 +390,7 @@ function LandingPage({ dataBlog }) {
           <div className={"flex justify-end w-1/2"}>
             <img
               src="/image/landingpage/mitramas-infosys-global-landing-page-hero.png"
-              className={"w-[742px] h-[395px]  "}
+              className={"h-auto max-w-[80%]"}
             ></img>
           </div>
         </div>
@@ -409,7 +411,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
@@ -417,7 +419,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
@@ -425,7 +427,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
@@ -433,7 +435,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
@@ -441,7 +443,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
@@ -450,7 +452,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-logo-gray.png"
                       />
@@ -458,7 +460,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/bulog-logo-cs-gray.png"
                       />
@@ -466,7 +468,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/setneg-logo-gray.png"
                       />
@@ -474,7 +476,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
                       />
@@ -482,7 +484,7 @@ function LandingPage({ dataBlog }) {
                     <div>
                       <img
                         className={
-                          "mx-[21px] h-[50px] w-auto filter grayscale opacity-80 marqueelogo"
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
                         }
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
@@ -493,7 +495,7 @@ function LandingPage({ dataBlog }) {
             </div>
           </section>
 
-          <div className={"mt-6 text-center"}>
+          <div className={"text-center"}>
             <h2
               style={{ lineHeight: "150%" }}
               className={"text-blackmig font-gilroysemibold text-xl"}
