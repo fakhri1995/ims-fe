@@ -787,6 +787,12 @@ const EmployeeContractForm = ({
             key={idx}
             label={variable?.column?.name}
             name={formatVariableName(variable?.column?.name)}
+            rules={[
+              {
+                required: variable?.column?.required,
+                message: `${variable?.column?.name} wajib diisi`,
+              },
+            ]}
           >
             <div className="flex flex-row items-center space-x-2">
               <CustomCurrencyInput
@@ -960,6 +966,12 @@ const EmployeeContractForm = ({
               key={reductionFieldId}
               label={variable?.column?.name}
               name={formatVariableName(variable?.column?.name)}
+              rules={[
+                {
+                  required: variable?.column?.required,
+                  message: `${variable?.column?.name} wajib diisi`,
+                },
+              ]}
             >
               <div>
                 <CustomCurrencyInput
