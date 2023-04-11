@@ -170,56 +170,58 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
         )}
         accordion={true}
       >
-        {dataPayslips?.map((payslip) => (
-          <Collapse.Panel
-            key={payslip?.id}
-            header={
-              <div className="flex flex-row space-x-3 items-center">
-                <p className="text-sm font-bold">
-                  {monthNames[payslip?.month - 1]} {payslip?.year}
-                </p>
-                <Tag
-                  color="#35763B1A"
-                  className="text-primary100 px-4 py-1 rounded-md"
+        {dataPayslips
+          ?.filter((payslip) => payslip.is_posted)
+          .map((payslip) => (
+            <Collapse.Panel
+              key={payslip?.id}
+              header={
+                <div className="flex flex-row space-x-3 items-center">
+                  <p className="text-sm font-bold">
+                    {monthNames[payslip?.month - 1]} {payslip?.year}
+                  </p>
+                  <Tag
+                    color="#35763B1A"
+                    className="text-primary100 px-4 py-1 rounded-md"
+                  >
+                    Diterbitkan
+                  </Tag>
+                </div>
+              }
+            >
+              <div className="flex flex-row justify-between items-center">
+                <div className="grid grid-cols-2">
+                  <div className="space-y-1">
+                    <p className="mig-caption--medium text-mono80">
+                      Total Hari Kerja
+                    </p>
+                    <p>{payslip?.total_hari_kerja} hari</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="mig-caption--medium text-mono80">
+                      Tanggal Dibayarkan
+                    </p>
+                    <p>{momentFormatDate(payslip?.tanggal_dibayarkan)}</p>
+                  </div>
+                </div>
+                <ButtonSys
+                  type={"default"}
+                  onClick={() => handleDownloadPayslip(payslip?.id)}
+                  disabled={!isAllowedToDownloadPayslip || loadingDownload}
+                  //   () => {
+                  //   setCurrentMonth(
+                  //     `${monthNames[payslip?.month - 1]} ${payslip?.year}`
+                  //   );
+                  //   setDataPayslip(payslip);
+                  //   setModalDownload(true);
+                  // }
                 >
-                  Diterbitkan
-                </Tag>
+                  <DownloadOutlined />
+                  <p className="ml-2">Unduh Slip Gaji</p>
+                </ButtonSys>
               </div>
-            }
-          >
-            <div className="flex flex-row justify-between items-center">
-              <div className="grid grid-cols-2">
-                <div className="space-y-1">
-                  <p className="mig-caption--medium text-mono80">
-                    Total Hari Kerja
-                  </p>
-                  <p>{payslip?.total_hari_kerja} hari</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="mig-caption--medium text-mono80">
-                    Tanggal Dibayarkan
-                  </p>
-                  <p>{momentFormatDate(payslip?.tanggal_dibayarkan)}</p>
-                </div>
-              </div>
-              <ButtonSys
-                type={"default"}
-                onClick={() => handleDownloadPayslip(payslip?.id)}
-                disabled={!isAllowedToDownloadPayslip || loadingDownload}
-                //   () => {
-                //   setCurrentMonth(
-                //     `${monthNames[payslip?.month - 1]} ${payslip?.year}`
-                //   );
-                //   setDataPayslip(payslip);
-                //   setModalDownload(true);
-                // }
-              >
-                <DownloadOutlined />
-                <p className="ml-2">Unduh Slip Gaji</p>
-              </ButtonSys>
-            </div>
-          </Collapse.Panel>
-        ))}
+            </Collapse.Panel>
+          ))}
       </Collapse>
 
       {/* Modal Download Payslip */}
