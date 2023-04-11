@@ -320,7 +320,7 @@ function LandingPage({ dataBlog }) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base md:text-base font-gilroyregular text-blackmig mt-4"
+                "text-base md:text-base font-gilroyregular text-blackmig"
               }
             >
               {t.weprovideyou}
@@ -380,7 +380,7 @@ function LandingPage({ dataBlog }) {
                     "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4"
                   }
                 >
-                  <p className={"text-xl"}>{t.landingpagefreeconsultation}</p>
+                  <p className={"text-base"}>{t.landingpagefreeconsultation}</p>
                 </button>
               </div>
             </div>
@@ -748,14 +748,14 @@ function LandingPage({ dataBlog }) {
               <h4
                 style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-[24px] font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[30px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.hardwaresubtitlelanding}
               </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-base font-gilroyregular mt-5"}
+                className={" text-blackmig text-xl font-gilroyregular mt-5"}
               >
                 {t.hardwaredescription}
               </p>
@@ -808,14 +808,14 @@ function LandingPage({ dataBlog }) {
               <h4
                 style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-2xl font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[30px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.softwaresubtitlelanding}
               </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-base font-gilroyregular mt-5"}
+                className={" text-blackmig text-xl font-gilroyregular mt-5"}
               >
                 {t.softwaredescription}
               </p>
@@ -854,14 +854,14 @@ function LandingPage({ dataBlog }) {
               <h4
                 style={{ lineHeight: "120%" }}
                 className={
-                  " text-blackmig text-2xl font-gilroysemibold gilroy-semibold mt-1"
+                  " text-blackmig text-[30px] font-gilroysemibold gilroy-semibold mt-1"
                 }
               >
                 {t.talentsubtitle}
               </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-base font-gilroyregular mt-5"}
+                className={" text-blackmig text-xl font-gilroyregular mt-5"}
               >
                 {t.talentdescription}
               </p>
