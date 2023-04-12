@@ -376,6 +376,8 @@ const EmployeeContractAddIndex = ({
           initProps={initProps}
           dataContract={dataContract}
           setDataContract={setDataContract}
+          employeeId={employeeId}
+          contractId={dataContract?.id}
         />
       </div>
 
