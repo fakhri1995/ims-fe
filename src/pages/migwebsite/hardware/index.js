@@ -3815,7 +3815,7 @@ function Hardware({}) {
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
-                              src="/image/hardware/arrow_forward_ios_green.png"
+                              src="/image/hardware/arrow_forward_ios_purple.png"
                               className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
@@ -3888,7 +3888,7 @@ function Hardware({}) {
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
-                              src="/image/hardware/arrow_forward_ios_green.png"
+                              src="/image/hardware/arrow_forward_ios_pink.png"
                               className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
