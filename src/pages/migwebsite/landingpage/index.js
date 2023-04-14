@@ -387,10 +387,10 @@ function LandingPage({ dataBlog }) {
               </div>
             </div>
           </div>
-          <div className={"flex justify-end w-1/2"}>
+          <div className={"flex justify-items-center self-center w-1/2"}>
             <img
               src="/image/landingpage/mitramas-infosys-global-landing-page-hero.png"
-              className={"h-auto max-w-[80%]"}
+              className={"h-fit max-w-[95%] mx-auto"}
             ></img>
           </div>
         </div>
