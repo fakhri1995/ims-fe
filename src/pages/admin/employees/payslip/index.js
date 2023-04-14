@@ -115,6 +115,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   pathTitleArr.splice(1, 2);
   pathTitleArr.splice(1, 2, "Daftar Karyawan", "Slip Gaji");
 
+  // Array of 12 month names
+  const monthNames = moment.months();
+
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
@@ -443,35 +446,41 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  const handleDownloadPayslip = (payslipId) => {
+  const handleDownloadPayslip = (employee) => {
     if (!isAllowedToDownloadPayslip) {
       permissionWarningNotification("Mengunduh", "Slip Gaji");
       return;
     }
+
     setLoadingDownload(true);
+    const payslip = employee?.last_month_payslip;
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslipId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslip?.id}`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
+          "Content-Type": "application/pdf",
         },
       }
     )
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          notification.success({
-            message: `Slip gaji berhasil diunduh.`,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: `Gagal mengunduh slip gaji. ${response2.message}`,
-            duration: 3,
-          });
-        }
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+
+        // Create download link element
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `Slip Gaji ${monthNames[payslip?.month - 1]} ${
+          payslip?.year
+        } - ${employee?.name}`;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
       })
       .catch((err) => {
         notification.error({
@@ -637,7 +646,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToDownloadPayslip || loadingDownload}
                     onClick={(event) => {
                       event.stopPropagation();
-                      handleDownloadPayslip(record.last_month_payslip.id);
+                      handleDownloadPayslip(record);
                     }}
                   >
                     <div className="flex flex-row space-x-2 items-center">

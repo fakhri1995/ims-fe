@@ -1967,9 +1967,12 @@ const ModalDownloadPayslip = ({
   disabled,
   downloadPass,
   setDownloadPass,
-  instanceForm,
   monthOfPayslip,
 }) => {
+  const handleModalClose = () => {
+    setDownloadPass("");
+    onvisible(false);
+  };
   return (
     <Modal
       title={
@@ -1983,10 +1986,14 @@ const ModalDownloadPayslip = ({
       footer={
         <Spin spinning={loading}>
           <div className="flex flex-row justify-between my-2">
-            <ButtonSys type={"default"} onClick={() => onvisible(false)}>
+            <ButtonSys type={"default"} onClick={handleModalClose}>
               Batalkan
             </ButtonSys>
-            <ButtonSys type={"primary"} onClick={onOk} disabled={disabled}>
+            <ButtonSys
+              type={"primary"}
+              onClick={onOk}
+              disabled={disabled || !downloadPass}
+            >
               <div className="flex flex-row space-x-2 items-center">
                 <DownloadIconSvg color={"white"} size={16} />
                 <p>Unduh Slip Gaji</p>
@@ -1997,7 +2004,7 @@ const ModalDownloadPayslip = ({
       }
       loading={loading}
     >
-      <Form layout="vertical" form={instanceForm}>
+      <Form layout="vertical">
         <p className="mb-4">
           Silahkan masukkan kata sandi Anda untuk mengunduh slip gaji{" "}
           <strong>{monthOfPayslip}</strong>
@@ -2012,12 +2019,15 @@ const ModalDownloadPayslip = ({
             },
           ]}
         >
-          <Input
-            value={downloadPass}
-            name={"password"}
-            onChange={(e) => setDownloadPass(e.target.value)}
-            placeholder="Masukkan kata sandi"
-          />
+          <>
+            <Input.Password
+              name={"password"}
+              placeholder="Masukkan kata sandi"
+              type="password"
+              value={downloadPass}
+              onChange={(e) => setDownloadPass(e.target.value)}
+            />
+          </>
         </Form.Item>
       </Form>
     </Modal>
