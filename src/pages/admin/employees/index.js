@@ -1,17 +1,14 @@
 import { DeleteOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Collapse,
-  Form,
-  Input,
-  Menu,
-  Select,
-  Spin,
-  Switch,
-  notification,
-} from "antd";
+import { Collapse, Input, Select, Spin, Switch, notification } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
@@ -71,6 +68,7 @@ Chart.register(
 );
 
 const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
+  // 1. Init
   /**
    * Dependencies
    */
@@ -94,7 +92,19 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
   const isAllowedToGetRoleCount = hasPermission(EMPLOYEE_ROLES_COUNT_GET);
   const isAllowedToGetStatusCount = hasPermission(EMPLOYEE_STATUSES_COUNT_GET);
-  // 1. Init
+
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    role_ids: withDefault(NumberParam, undefined),
+    placements: withDefault(StringParam, undefined),
+    contract_status_ids: withDefault(NumberParam, undefined),
+    is_employee_active: withDefault(NumberParam, 1),
+    keyword: withDefault(StringParam, undefined),
+  });
+
   const rt = useRouter();
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
@@ -114,8 +124,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2.2. Table Employee List
   // filter data
-  const [isEmployeeActive, setIsEmployeeActive] = useState(1);
-
   const [loadingCompanyList, setLoadingCompanyList] = useState(false);
   const [dataCompanyList, setDataCompanyList] = useState([]);
 
@@ -127,16 +135,12 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataContractStatusList, setDataContractStatusList] = useState([]);
 
   // filter search & selected options
-  const [searchingFilterEmployees, setSearchingFilterEmployees] = useState("");
-  const [selectedPlacement, setSelectedPlacement] = useState("");
-  const [selectedRoleId, setSelectedRoleId] = useState(0);
-  const [selectedContractStatusId, setSelectedContractStatusId] = useState(0);
-
-  // sorting
-  const [sortingEmployees, setSortingEmployees] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
+  const [searchingFilterEmployees, setSearchingFilterEmployees] =
+    useState(undefined);
+  const [selectedPlacement, setSelectedPlacement] = useState(undefined);
+  const [selectedRoleId, setSelectedRoleId] = useState(undefined);
+  const [selectedContractStatusId, setSelectedContractStatusId] =
+    useState(undefined);
 
   // table data
   const [loadingEmployees, setLoadingEmployees] = useState(true);
@@ -155,8 +159,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     to: null,
     total: null,
   });
-  const [pageEmployees, setPageEmployees] = useState(1);
-  const [rowsEmployees, setRowsEmployees] = useState(10);
 
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
@@ -177,16 +179,17 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
     setLoadingEmployees(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?rows=${rowsEmployees}&is_employee_active=${isEmployeeActive}&page=${pageEmployees}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees${payload}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -208,7 +211,19 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingEmployees(false);
       });
-  }, [isAllowedToGetEmployees, isEmployeeActive, refresh]);
+  }, [
+    isAllowedToGetEmployees,
+    refresh,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.keyword,
+    queryParams.role_ids,
+    queryParams.placements,
+    queryParams.contract_status_ids,
+    queryParams.is_employee_active,
+  ]);
 
   // 3.2. Get Company Client List
   useEffect(() => {
@@ -558,36 +573,12 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   const onFilterEmployees = () => {
-    setLoadingEmployees(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees?sort_by=${sortingEmployees.sort_by}&sort_type=${sortingEmployees.sort_type}&role_ids=${selectedRoleId}&placements=${selectedPlacement}&contract_status_ids=${selectedContractStatusId}&is_employee_active=${isEmployeeActive}&keyword=${searchingFilterEmployees}&page=${pageEmployees}&rows=${rowsEmployees}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawEmployees(res2.data);
-          setDataEmployees(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingEmployees(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingEmployees(false);
-      });
+    setQueryParams({
+      keyword: searchingFilterEmployees,
+      role_ids: selectedRoleId,
+      placements: selectedPlacement,
+      contract_status_ids: selectedContractStatusId,
+    });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(
@@ -596,14 +587,19 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   const handleSwitchActiveEmployee = () => {
-    if (isEmployeeActive === 1) {
+    if (queryParams.is_employee_active === 1) {
       // fetch all employees
-      setIsEmployeeActive(0);
+      setQueryParams({
+        is_employee_active: 0,
+        page: 1,
+      });
     } else {
       // fetch active employee only
-      setIsEmployeeActive(1);
+      setQueryParams({
+        is_employee_active: 1,
+        page: 1,
+      });
     }
-    setPageEmployees(1);
   };
 
   // Use in statistic for displaying only top 5 data and "Lainnya"
@@ -885,10 +881,10 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             >
               <div className="flex flex-row items-center space-x-2 text-primary100">
                 <Switch
-                  checked={isEmployeeActive}
+                  checked={queryParams.is_employee_active}
                   onClick={handleSwitchActiveEmployee}
                 />
-                {isEmployeeActive ? (
+                {queryParams.is_employee_active ? (
                   <p>Karyawan Aktif</p>
                 ) : (
                   <p>Karyawan Tidak Aktif</p>
@@ -912,20 +908,17 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Search by keyword (kata kunci) */}
             <div className="w-4/12">
               <Input
-                value={
-                  searchingFilterEmployees === ""
-                    ? null
-                    : searchingFilterEmployees
-                }
+                defaultValue={queryParams.keyword}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterEmployees("");
-                  } else {
-                    setSearchingFilterEmployees(e.target.value);
+                  if (!e.target.value) {
+                    setQueryParams({
+                      keyword: undefined,
+                    });
                   }
+                  setSearchingFilterEmployees(e.target.value);
                 }}
                 onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetEmployees}
@@ -937,15 +930,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 allowClear
                 showSearch
-                value={selectedPlacement}
+                defaultValue={queryParams.placements}
                 name={`placement`}
                 disabled={!isAllowedToGetCompanyList}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedPlacement("")
-                    : setSelectedPlacement(value);
+                  setQueryParams({ placements: value });
+                  setSelectedPlacement(value);
                 }}
                 filterOption={(input, option) =>
                   (option?.value ?? "")
@@ -954,9 +946,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 }
                 optionFilterProp="children"
               >
-                <Select.Option key={-1} value={""}>
+                {/* <Select.Option key={-1} value={""}>
                   Semua Penempatan
-                </Select.Option>
+                </Select.Option> */}
                 {dataCompanyList.map((company) => (
                   <Select.Option key={company.id} value={company.name}>
                     {company.name}
@@ -970,15 +962,14 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 allowClear
                 showSearch
-                value={selectedRoleId === 0 ? null : selectedRoleId}
+                defaultValue={queryParams.role_ids}
                 name={`role`}
                 disabled={!isAllowedToGetRoleList}
                 placeholder="Semua Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedRoleId(0)
-                    : setSelectedRoleId(value);
+                  setQueryParams({ role_ids: value });
+                  setSelectedRoleId(value);
                 }}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
@@ -998,21 +989,15 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by contract status (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={
-                  selectedContractStatusId === 0
-                    ? null
-                    : selectedContractStatusId
-                }
+                defaultValue={queryParams.contract_status_ids}
                 allowClear
                 name={`status`}
                 disabled={!isAllowedToGetRoleTypeList}
                 placeholder="Semua Status Kontrak"
-                defaultValue={0}
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedContractStatusId(0)
-                    : setSelectedContractStatusId(value);
+                  setQueryParams({ contract_status_ids: value });
+                  setSelectedContractStatusId(value);
                 }}
               >
                 {dataContractStatusList.map((status) => (
@@ -1037,25 +1022,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           {/* End: Search criteria */}
           <div>
             <TableCustomEmployeeList
+              rt={rt}
               dataSource={dataEmployees}
-              setDataSource={setDataEmployees}
               columns={columnEmployee}
               loading={loadingEmployees}
-              setpraloading={setLoadingEmployees}
-              pageSize={rowsEmployees}
-              setPageSize={setRowsEmployees}
               total={dataRawEmployees?.total}
-              initProps={initProps}
-              setpage={setPageEmployees}
-              pagefromsearch={pageEmployees}
-              setdataraw={setDataRawEmployees}
-              setsorting={setSortingEmployees}
-              sorting={sortingEmployees}
-              searching={searchingFilterEmployees}
-              selectedRoleId={selectedRoleId}
-              selectedContractStatusId={selectedContractStatusId}
-              selectedPlacement={selectedPlacement}
-              isEmployeeActive={isEmployeeActive}
+              queryParams={queryParams}
+              setQueryParams={setQueryParams}
             />
           </div>
         </div>
