@@ -1626,25 +1626,25 @@ const ModalAddSalaryVar = ({
       }
       loading={loading}
     >
-      <div className="grid grid-cols-2 gap-x-8">
-        {/* Variabel penerimaan */}
-        <div className="">
-          <h5 className="mig-heading--5 mb-2">PENERIMAAN</h5>
-          <div className="flex flex-col space-y-2 space-x-0 mb-2">
-            <div className="flex flex-row items-center justify-between">
-              <Checkbox checked={true} disabled={true}>
-                Gaji Pokok
-              </Checkbox>
-              <Tag color="#35763B" className="rounded text-white m-0">
-                BPJS
-              </Tag>
-            </div>
-            {receiveVarOptions?.map((option, idx) => (
-              <div
-                key={idx}
-                className="flex flex-row justify-between items-center"
-              >
-                {payslipId ? (
+      <Spin spinning={praLoading}>
+        <div className="grid grid-cols-2 gap-x-8">
+          {/* Variabel penerimaan */}
+          <div className="">
+            <h5 className="mig-heading--5 mb-2">PENERIMAAN</h5>
+            <div className="flex flex-col space-y-2 space-x-0 mb-2">
+              <div className="flex flex-row items-center justify-between">
+                <Checkbox checked={true} disabled={true}>
+                  Gaji Pokok
+                </Checkbox>
+                <Tag color="#35763B" className="rounded text-white m-0">
+                  BPJS
+                </Tag>
+              </div>
+              {receiveVarOptions?.map((option, idx) => (
+                <div
+                  key={idx}
+                  className="flex flex-row justify-between items-center"
+                >
                   <Checkbox
                     defaultChecked={
                       currentVariableIds?.includes(option.id) ? true : false
@@ -1703,130 +1703,105 @@ const ModalAddSalaryVar = ({
                   >
                     {option.name}
                   </Checkbox>
-                ) : (
-                  <Checkbox
-                    defaultChecked={option.required}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        setReceiveVarFields((prev) => [...prev, option]);
-                      } else {
-                        // handle benefit fields in form
-                        const newReceiveVarFields = receiveVarFields.filter(
-                          (variable) => variable.column.id !== option.id
-                        );
-                        setReceiveVarFields(newReceiveVarFields);
 
-                        // use for removing BPJS tag if uncheck
-                        const newSelectedTags = selectedTags.filter(
-                          (tag) => tag.column.id !== option.id
-                        );
-                        setSelectedTags(newSelectedTags);
+                  <div className="flex flex-row items-center space-x-1">
+                    {/* Show tag "BPJS" if the variable is selected as multiplier */}
+                    {selectedTags.some(
+                      (tag) => tag.column.name == option.name
+                    ) && (
+                      <Tag color="#35763B" className="rounded text-white m-0">
+                        BPJS
+                      </Tag>
+                    )}
+                    <Popconfirm
+                      title={
+                        <p className="w-40">
+                          Apakah Anda yakin ingin menghapus variabel{" "}
+                          <strong>{option.name}</strong>?
+                        </p>
                       }
-                    }}
-                  >
-                    {option.name}
-                  </Checkbox>
-                )}
-
-                <div className="flex flex-row items-center space-x-1">
-                  {/* Show tag "BPJS" if the variable is selected as multiplier */}
-                  {selectedTags.some(
-                    (tag) => tag.column.name == option.name
-                  ) && (
-                    <Tag color="#35763B" className="rounded text-white m-0">
-                      BPJS
-                    </Tag>
-                  )}
-                  <Popconfirm
-                    title={
-                      <p className="w-40">
-                        Apakah Anda yakin ingin menghapus variabel{" "}
-                        <strong>{option.name}</strong>?
-                      </p>
-                    }
-                    okText={"Ya"}
-                    cancelText={"Tidak"}
-                    onConfirm={() => handleDeleteVariable(option.id)}
-                  >
-                    <button className="flex items-center bg-transparent hover:opacity-70">
-                      <XIconSvg color={"#BF4A40"} size={16} />
-                    </button>
-                  </Popconfirm>
+                      okText={"Ya"}
+                      cancelText={"Tidak"}
+                      onConfirm={() => handleDeleteVariable(option.id)}
+                    >
+                      <button className="flex items-center bg-transparent hover:opacity-70">
+                        <XIconSvg color={"#BF4A40"} size={16} />
+                      </button>
+                    </Popconfirm>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {isInputReceiveVar ? (
-            <div className="flex flex-row items-center -ml-1 space-x-2">
+            {isInputReceiveVar ? (
+              <div className="flex flex-row items-center -ml-1 space-x-2">
+                <button
+                  onClick={() => {
+                    dataVariable.name?.length
+                      ? handleAddVariable()
+                      : setInputReceiveVar(false);
+                  }}
+                  className="bg-transparent hover:opacity-75"
+                >
+                  <SquarePlusIconSvg color={"#35763B"} size={24} />
+                </button>
+
+                <Input
+                  size="small"
+                  placeholder="Masukkan variabel"
+                  autoFocus
+                  onPressEnter={() => {
+                    dataVariable.name?.length
+                      ? handleAddVariable()
+                      : setInputReceiveVar(false);
+                  }}
+                  value={dataVariable.name}
+                  onChange={(e) =>
+                    setDataVariable({ ...dataVariable, name: e.target.value })
+                  }
+                  onFocus={() => setDataVariable({ ...dataVariable, type: 1 })}
+                />
+              </div>
+            ) : (
               <button
+                className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
                 onClick={() => {
-                  dataVariable.name?.length
-                    ? handleAddVariable()
-                    : setInputReceiveVar(false);
+                  setDataVariable({ ...dataVariable, name: "" });
+                  setInputReceiveVar(true);
+                  setInputReductionVar(false);
                 }}
-                className="bg-transparent hover:opacity-75"
               >
                 <SquarePlusIconSvg color={"#35763B"} size={24} />
+                <p className="text-primary100 ">Tambah</p>
               </button>
+            )}
+          </div>
 
-              <Input
-                size="small"
-                placeholder="Masukkan variabel"
-                autoFocus
-                onPressEnter={() => {
-                  dataVariable.name?.length
-                    ? handleAddVariable()
-                    : setInputReceiveVar(false);
-                }}
-                value={dataVariable.name}
-                onChange={(e) =>
-                  setDataVariable({ ...dataVariable, name: e.target.value })
-                }
-                onFocus={() => setDataVariable({ ...dataVariable, type: 1 })}
-              />
-            </div>
-          ) : (
-            <button
-              className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
-              onClick={() => {
-                setDataVariable({ ...dataVariable, name: "" });
-                setInputReceiveVar(true);
-                setInputReductionVar(false);
-              }}
-            >
-              <SquarePlusIconSvg color={"#35763B"} size={24} />
-              <p className="text-primary100 ">Tambah</p>
-            </button>
-          )}
-        </div>
-
-        {/* Variabel pengurangan */}
-        <div className="">
-          <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
-          <div className="flex flex-col space-y-2 space-x-0 mb-2">
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS KS (5% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JHT (5,7% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JKK (0,24% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JKM (0,3% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JP (3% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              PPh 21
-            </Checkbox>
-            {reductionVarOptions?.map((option, idx) => (
-              <div key={idx}>
-                <div className="flex flex-row justify-between items-center">
-                  {payslipId ? (
+          {/* Variabel pengurangan */}
+          <div className="">
+            <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
+            <div className="flex flex-col space-y-2 space-x-0 mb-2">
+              <Checkbox defaultChecked={true} disabled={true}>
+                BPJS KS (5% Perusahaan)
+              </Checkbox>
+              <Checkbox defaultChecked={true} disabled={true}>
+                BPJS TK-JHT (5,7% Perusahaan)
+              </Checkbox>
+              <Checkbox defaultChecked={true} disabled={true}>
+                BPJS TK-JKK (0,24% Perusahaan)
+              </Checkbox>
+              <Checkbox defaultChecked={true} disabled={true}>
+                BPJS TK-JKM (0,3% Perusahaan)
+              </Checkbox>
+              <Checkbox defaultChecked={true} disabled={true}>
+                BPJS TK-JP (3% Perusahaan)
+              </Checkbox>
+              <Checkbox defaultChecked={true} disabled={true}>
+                PPh 21
+              </Checkbox>
+              {reductionVarOptions?.map((option, idx) => (
+                <div key={idx}>
+                  <div className="flex flex-row justify-between items-center">
                     <Checkbox
                       defaultChecked={
                         currentVariableIds?.includes(option.id) ? true : false
@@ -1884,119 +1859,102 @@ const ModalAddSalaryVar = ({
                     >
                       {option.name}
                     </Checkbox>
-                  ) : (
-                    <Checkbox
-                      defaultChecked={option.required}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setReductionVarFields((prev) => [...prev, option]);
-                        } else {
-                          const newReductionVarFields =
-                            reductionVarFields.filter(
-                              (variable) => variable.column.id !== option.id
-                            );
-                          setReductionVarFields(newReductionVarFields);
-                        }
-                      }}
+                    <Popconfirm
+                      title={
+                        <p className="w-40">
+                          Apakah Anda yakin ingin menghapus variabel{" "}
+                          <strong>{option.name}</strong>?
+                        </p>
+                      }
+                      okText={"Ya"}
+                      cancelText={"Tidak"}
+                      onConfirm={() => handleDeleteVariable(option.id)}
                     >
-                      {option.name}
-                    </Checkbox>
-                  )}
-                  <Popconfirm
-                    title={
-                      <p className="w-40">
-                        Apakah Anda yakin ingin menghapus variabel{" "}
-                        <strong>{option.name}</strong>?
-                      </p>
-                    }
-                    okText={"Ya"}
-                    cancelText={"Tidak"}
-                    onConfirm={() => handleDeleteVariable(option.id)}
-                  >
-                    <button className="flex items-center bg-transparent hover:opacity-70">
-                      <XIconSvg color={"#BF4A40"} size={16} />
-                    </button>
-                  </Popconfirm>
+                      <button className="flex items-center bg-transparent hover:opacity-70">
+                        <XIconSvg color={"#BF4A40"} size={16} />
+                      </button>
+                    </Popconfirm>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
 
-          {isInputReductionVar ? (
-            <div className="flex flex-row items-center -ml-1 space-x-2">
+            {isInputReductionVar ? (
+              <div className="flex flex-row items-center -ml-1 space-x-2">
+                <button
+                  onClick={() => {
+                    dataVariable.name?.length
+                      ? handleAddVariable()
+                      : setInputReductionVar(false);
+                  }}
+                  className="bg-transparent hover:opacity-75"
+                >
+                  <SquarePlusIconSvg color={"#35763B"} size={24} />
+                </button>
+
+                <Input
+                  size="small"
+                  placeholder="Masukkan variabel"
+                  autoFocus
+                  onPressEnter={() => {
+                    dataVariable.name?.length
+                      ? handleAddVariable()
+                      : setInputReductionVar(false);
+                  }}
+                  value={dataVariable.name}
+                  onChange={(e) =>
+                    setDataVariable({ ...dataVariable, name: e.target.value })
+                  }
+                  onFocus={() => setDataVariable({ ...dataVariable, type: 2 })}
+                />
+              </div>
+            ) : (
               <button
+                className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
                 onClick={() => {
-                  dataVariable.name?.length
-                    ? handleAddVariable()
-                    : setInputReductionVar(false);
+                  setDataVariable({ ...dataVariable, name: "" });
+                  setInputReductionVar(true);
+                  setInputReceiveVar(false);
                 }}
-                className="bg-transparent hover:opacity-75"
               >
                 <SquarePlusIconSvg color={"#35763B"} size={24} />
+                <p className="text-primary100 ">Tambah</p>
               </button>
+            )}
+          </div>
 
-              <Input
-                size="small"
-                placeholder="Masukkan variabel"
-                autoFocus
-                onPressEnter={() => {
-                  dataVariable.name?.length
-                    ? handleAddVariable()
-                    : setInputReductionVar(false);
-                }}
-                value={dataVariable.name}
-                onChange={(e) =>
-                  setDataVariable({ ...dataVariable, name: e.target.value })
-                }
-                onFocus={() => setDataVariable({ ...dataVariable, type: 2 })}
-              />
-            </div>
-          ) : (
-            <button
-              className="flex flex-row items-center -ml-1 bg-transparent hover:opacity-75 space-x-1"
-              onClick={() => {
-                setDataVariable({ ...dataVariable, name: "" });
-                setInputReductionVar(true);
-                setInputReceiveVar(false);
-              }}
-            >
-              <SquarePlusIconSvg color={"#35763B"} size={24} />
-              <p className="text-primary100 ">Tambah</p>
-            </button>
-          )}
-        </div>
-
-        <div className="col-span-2 mt-5">
-          <p className="mig-heading--5 mb-2">
-            PILIH PENERIMAAN YANG TERMASUK PENGALI NOMINAL BPJS
-          </p>
-          <div className="flex flex-wrap">
-            <Tag color="#35763B" className="py-1 px-3 rounded mb-2">
-              <div className="flex flex-row items-center space-x-1">
-                <PlusOutlined />
-                <p>Gaji Pokok</p>
-              </div>
-            </Tag>
-            {receiveVarFields.map((tag, idx) => (
-              <CheckableTag
-                key={idx}
-                className="border border-primary100 py-1 px-3 rounded mb-2"
-                // checked={
-                //   selectedTags.map((tag) => tag.column)?.indexOf(tag.column) >
-                //   -1
-                // }
-                checked={tag?.is_amount_for_bpjs}
-                onChange={(checked) => handleClickTag(tag, checked)}
-              >
+          <div className="col-span-2 mt-5">
+            <p className="mig-heading--5 mb-2">
+              PILIH PENERIMAAN YANG TERMASUK PENGALI NOMINAL BPJS
+            </p>
+            <div className="flex flex-wrap">
+              <Tag color="#35763B" className="py-1 px-3 rounded mb-2">
                 <div className="flex flex-row items-center space-x-1">
                   <PlusOutlined />
-                  <p>{tag.column.name}</p>
+                  <p>Gaji Pokok</p>
                 </div>
-              </CheckableTag>
-            ))}
+              </Tag>
+              {receiveVarFields.map((tag, idx) => (
+                <CheckableTag
+                  key={idx}
+                  className="border border-primary100 py-1 px-3 rounded mb-2"
+                  // checked={
+                  //   selectedTags.map((tag) => tag.column)?.indexOf(tag.column) >
+                  //   -1
+                  // }
+                  checked={tag?.is_amount_for_bpjs}
+                  onChange={(checked) => handleClickTag(tag, checked)}
+                >
+                  <div className="flex flex-row items-center space-x-1">
+                    <PlusOutlined />
+                    <p>{tag.column.name}</p>
+                  </div>
+                </CheckableTag>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </Spin>
     </Modal>
   );
 };
@@ -2009,9 +1967,12 @@ const ModalDownloadPayslip = ({
   disabled,
   downloadPass,
   setDownloadPass,
-  instanceForm,
   monthOfPayslip,
 }) => {
+  const handleModalClose = () => {
+    setDownloadPass("");
+    onvisible(false);
+  };
   return (
     <Modal
       title={
@@ -2025,10 +1986,14 @@ const ModalDownloadPayslip = ({
       footer={
         <Spin spinning={loading}>
           <div className="flex flex-row justify-between my-2">
-            <ButtonSys type={"default"} onClick={() => onvisible(false)}>
+            <ButtonSys type={"default"} onClick={handleModalClose}>
               Batalkan
             </ButtonSys>
-            <ButtonSys type={"primary"} onClick={onOk} disabled={disabled}>
+            <ButtonSys
+              type={"primary"}
+              onClick={onOk}
+              disabled={disabled || !downloadPass}
+            >
               <div className="flex flex-row space-x-2 items-center">
                 <DownloadIconSvg color={"white"} size={16} />
                 <p>Unduh Slip Gaji</p>
@@ -2039,7 +2004,7 @@ const ModalDownloadPayslip = ({
       }
       loading={loading}
     >
-      <Form layout="vertical" form={instanceForm}>
+      <Form layout="vertical">
         <p className="mb-4">
           Silahkan masukkan kata sandi Anda untuk mengunduh slip gaji{" "}
           <strong>{monthOfPayslip}</strong>
@@ -2054,12 +2019,15 @@ const ModalDownloadPayslip = ({
             },
           ]}
         >
-          <Input
-            value={downloadPass}
-            name={"password"}
-            onChange={(e) => setDownloadPass(e.target.value)}
-            placeholder="Masukkan kata sandi"
-          />
+          <>
+            <Input.Password
+              name={"password"}
+              placeholder="Masukkan kata sandi"
+              type="password"
+              value={downloadPass}
+              onChange={(e) => setDownloadPass(e.target.value)}
+            />
+          </>
         </Form.Item>
       </Form>
     </Modal>

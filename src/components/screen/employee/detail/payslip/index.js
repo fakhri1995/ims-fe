@@ -1,15 +1,5 @@
 import { DownloadOutlined, UpOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Collapse,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Tag,
-  Upload,
-  notification,
-} from "antd";
+import { Collapse, Form, Tag, notification } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React, { useEffect } from "react";
@@ -19,26 +9,16 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  EMPLOYEE_PAYSLIPS_GET,
-  EMPLOYEE_PAYSLIP_DOWNLOAD,
-  EMPLOYEE_PAYSLIP_GET,
-} from "lib/features";
+import { EMPLOYEE_PAYSLIPS_GET, EMPLOYEE_PAYSLIP_DOWNLOAD } from "lib/features";
 
 import {
-  DownloadIconSvg,
-  EditIconSvg,
-  UploadIconSvg,
-} from "../../../../../components/icon";
-import {
-  beforeUploadFileMaxSize,
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
 import { ModalDownloadPayslip } from "../../../../modal/modalCustom";
 
-const EmployeePayslipDetail = ({ initProps, employeeId }) => {
+const EmployeePayslipDetail = ({ initProps, employeeId, employeeName }) => {
   /**
    * Dependencies
    */
@@ -51,7 +31,6 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
   }
 
   const isAllowedToGetEmployeePayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
-  const isAllowedToGetEmployeePayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
   const [instanceForm] = Form.useForm();
@@ -72,9 +51,6 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
   const [currentMonth, setCurrentMonth] = useState("");
 
   // 2. USE EFFECT
-  // useEffect(() => {
-  //   handleGetEmployeePayslip(dataPayslips?.contracts[0]?.id);
-  // }, [isAllowedToGetEmployeePayslips, dataPayslips]);
 
   useEffect(() => {
     if (!isAllowedToGetEmployeePayslips) {
@@ -118,35 +94,45 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
   }, [isAllowedToGetEmployeePayslips, employeeId]);
 
   // 3. EVENT HANDLER
-  const handleDownloadPayslip = (idPayslip) => {
+  const handleDownloadPayslip = (payslip) => {
     if (!isAllowedToDownloadPayslip) {
       permissionWarningNotification("Mengunduh", "Slip Gaji");
       return;
     }
+
+    const payload = {
+      password: downloadPass,
+    };
+
     setLoadingDownload(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${idPayslip}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslip?.id}`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(payload),
       }
     )
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          notification.success({
-            message: `Slip gaji berhasil diunduh.`,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: `Gagal mengunduh slip gaji. ${response2.message}`,
-            duration: 3,
-          });
-        }
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+
+        // Create download link element
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `Slip Gaji ${monthNames[payslip?.month - 1]} ${
+          payslip?.year
+        } - ${employeeName}`;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
       })
       .catch((err) => {
         notification.error({
@@ -156,6 +142,8 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
       })
       .finally(() => {
         setLoadingDownload(false);
+        setModalDownload(false);
+        setDownloadPass("");
       });
   };
 
@@ -206,15 +194,14 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
                 </div>
                 <ButtonSys
                   type={"default"}
-                  onClick={() => handleDownloadPayslip(payslip?.id)}
+                  onClick={() => {
+                    setCurrentMonth(
+                      `${monthNames[payslip?.month - 1]} ${payslip?.year}`
+                    );
+                    setDataPayslip(payslip);
+                    setModalDownload(true);
+                  }}
                   disabled={!isAllowedToDownloadPayslip || loadingDownload}
-                  //   () => {
-                  //   setCurrentMonth(
-                  //     `${monthNames[payslip?.month - 1]} ${payslip?.year}`
-                  //   );
-                  //   setDataPayslip(payslip);
-                  //   setModalDownload(true);
-                  // }
                 >
                   <DownloadOutlined />
                   <p className="ml-2">Unduh Slip Gaji</p>
@@ -225,19 +212,19 @@ const EmployeePayslipDetail = ({ initProps, employeeId }) => {
       </Collapse>
 
       {/* Modal Download Payslip */}
-      {/* <AccessControl hasPermission={EMPLOYEE_PAYSLIP_DOWNLOAD}>
+      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_DOWNLOAD}>
         <ModalDownloadPayslip
           visible={modalDownload}
           onvisible={setModalDownload}
-          onOk={handleDownloadPayslip}
+          onOk={() => handleDownloadPayslip(dataPayslip)}
           loading={loadingDownload}
-          disabled={!isAllowedToGetEmployeePayslip}
+          disabled={!isAllowedToDownloadPayslip}
           downloadPass={downloadPass}
           setDownloadPass={setDownloadPass}
           instanceForm={instanceForm}
           monthOfPayslip={currentMonth}
         />
-      </AccessControl> */}
+      </AccessControl>
     </section>
   );
 };

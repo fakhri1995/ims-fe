@@ -19,7 +19,14 @@ import {
   Table,
   notification,
 } from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import React from "react";
 import { useEffect, useState } from "react";
 import { useCallback } from "react";
@@ -108,6 +115,7 @@ Chart.register(
 );
 
 const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
+  // 1. Init
   /**
    * Dependencies
    */
@@ -161,7 +169,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     RECRUITMENT_ACCOUNT_TOKEN_GET
   );
 
-  // 1. Init
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    recruitment_role_id: withDefault(NumberParam, undefined),
+    recruitment_stage_id: withDefault(NumberParam, undefined),
+    recruitment_status_id: withDefault(NumberParam, undefined),
+    keyword: withDefault(StringParam, undefined),
+  });
+
   const rt = useRouter();
   // Breadcrumb url
   const pathArr = rt.pathname.split("/").slice(1);
@@ -171,7 +189,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Rekrutmen");
 
-  const [instanceForm] = Form.useForm();
   // 2. Use state
   // 2.1. Role List & Candidate Count
   const [loadingDataCount, setLoadingDataCount] = useState(false);
@@ -193,16 +210,10 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // filter search & selected options
   const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
-    useState("");
-  const [selectedRoleId, setSelectedRoleId] = useState(0);
-  const [selectedStage, setSelectedStage] = useState(0);
-  const [selectedStatus, setSelectedStatus] = useState(0);
-
-  // sorting
-  const [sortingRecruitments, setSortingRecruitments] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
+    useState(undefined);
+  const [selectedRoleId, setSelectedRoleId] = useState(undefined);
+  const [selectedStage, setSelectedStage] = useState(undefined);
+  const [selectedStatus, setSelectedStatus] = useState(undefined);
 
   // table data
   const [loadingRecruitments, setLoadingRecruitments] = useState(true);
@@ -221,8 +232,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     to: null,
     total: null,
   });
-  const [pageRecruitments, setPageRecruitments] = useState(1);
-  const [rowsRecruitment, setRowsRecruitments] = useState(10);
 
   // bulk
   const [isBulk, setBulk] = useState(false);
@@ -372,16 +381,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
     setLoadingRecruitments(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?rows=${rowsRecruitment}&page=${pageRecruitments}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments${payload}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -402,7 +412,18 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
         setLoadingRecruitments(false);
       });
-  }, [isAllowedToGetRecruitments, refresh]);
+  }, [
+    isAllowedToGetRecruitments,
+    refresh,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.recruitment_role_id,
+    queryParams.recruitment_stage_id,
+    queryParams.recruitment_status_id,
+    queryParams.keyword,
+  ]);
 
   // 3.4. Get Stage List
   useEffect(() => {
@@ -574,7 +595,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       };
       return newOption;
     });
-    // console.log("role",roleOptions)
+
     setDataRoleOptions(roleOptions);
   }, [dataRoleList]);
 
@@ -587,8 +608,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       return newOption;
     });
     setDataJalurDaftarOptions(jalurDaftarOptions);
-
-    // console.log(roleOptions)
   }, [dataJalurDaftarList]);
 
   useEffect(() => {
@@ -621,36 +640,12 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
-    setLoadingRecruitments(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?sort_by=${sortingRecruitments.sort_by}&sort_type=${sortingRecruitments.sort_type}&recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&keyword=${searchingFilterRecruitments}&page=${pageRecruitments}&rows=${rowsRecruitment}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawRecruitments(res2.data);
-          setDataRecruitments(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingRecruitments(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingRecruitments(false);
-      });
+    setQueryParams({
+      recruitment_role_id: selectedRoleId,
+      recruitment_stage_id: selectedStage,
+      recruitment_status_id: selectedStatus,
+      keyword: searchingFilterRecruitments,
+    });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(
@@ -983,7 +978,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     )
       .then((response) => response.blob())
       .then((response2) => {
-        // console.log(response2)
         const url = window.URL.createObjectURL(new Blob([response2]));
         const link = document.createElement("a");
         link.href = url;
@@ -1666,26 +1660,22 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
                 },
               ]}
             />
-
             {/* Start: Search criteria */}
             <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
               {/* Search by keyword (kata kunci) */}
               <div className="w-full md:w-4/12">
                 <Input
-                  value={
-                    searchingFilterRecruitments === ""
-                      ? null
-                      : searchingFilterRecruitments
-                  }
+                  defaultValue={queryParams.keyword}
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
-                      setSearchingFilterRecruitments("");
-                    } else {
-                      setSearchingFilterRecruitments(e.target.value);
+                      setQueryParams({
+                        keyword: undefined,
+                      });
                     }
+                    setSearchingFilterRecruitments(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetRecruitments}
@@ -1695,19 +1685,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by role (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  value={selectedRoleId === 0 ? null : selectedRoleId}
+                  defaultValue={queryParams.recruitment_role_id}
                   allowClear
                   name={`role`}
                   disabled={!isAllowedToGetRecruitmentRolesList}
                   placeholder="Semua Role"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setSelectedRoleId(0)
-                      : setSelectedRoleId(value);
+                    setQueryParams({ recruitment_role_id: value });
+                    setSelectedRoleId(value);
                   }}
                 >
-                  {/* <Select.Option value={0}>Semua Role</Select.Option> */}
                   {dataRoleList.map((role) => (
                     <Select.Option key={role.id} value={role.id}>
                       {role.name}
@@ -1719,20 +1707,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by stage */}
               <div className="w-full md:w-2/12">
                 <Select
-                  value={selectedStage === 0 ? null : selectedStage}
+                  defaultValue={queryParams.recruitment_stage_id}
                   allowClear
                   name={`stage`}
                   disabled={!isAllowedToGetRecruitmentStagesList}
                   placeholder="Semua Stage"
-                  defaultValue={0}
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setSelectedStage(0)
-                      : setSelectedStage(value);
+                    setQueryParams({ recruitment_stage_id: value });
+                    setSelectedStage(value);
                   }}
                 >
-                  <Select.Option value={0}>Semua Stage</Select.Option>
                   {dataStageList.map((stage) => (
                     <Select.Option key={stage.id} value={stage.id}>
                       {stage.name}
@@ -1744,20 +1729,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by status (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  value={selectedStatus === 0 ? null : selectedStatus}
+                  defaultValue={queryParams.recruitment_status_id}
                   allowClear
                   name={`status`}
                   disabled={!isAllowedToGetRecruitmentStatusesList}
                   placeholder="Semua Status"
-                  defaultValue={0}
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    typeof value === "undefined"
-                      ? setSelectedStatus(0)
-                      : setSelectedStatus(value);
+                    setQueryParams({ recruitment_status_id: value });
+                    setSelectedStatus(value);
                   }}
                 >
-                  <Select.Option value={0}>Semua Status</Select.Option>
                   {dataStatusList.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
                       <div className="flex items-center">
@@ -1790,29 +1772,17 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
             <div>
               <TableCustomRecruitmentCandidate
                 dataSource={dataRecruitments}
-                setDataSource={setDataRecruitments}
                 columns={columnRecruitment}
                 loading={loadingRecruitments}
-                setpraloading={setLoadingRecruitments}
-                pageSize={rowsRecruitment}
-                setPageSize={setRowsRecruitments}
                 total={dataRawRecruitments?.total}
-                initProps={initProps}
-                setpage={setPageRecruitments}
-                pagefromsearch={pageRecruitments}
-                setdataraw={setDataRawRecruitments}
-                setsorting={setSortingRecruitments}
-                sorting={sortingRecruitments}
-                searching={searchingFilterRecruitments}
-                selectedRoleId={selectedRoleId}
-                selectedStage={selectedStage}
-                selectedStatus={selectedStatus}
                 isBulk={isBulk}
                 setSelectedRecruitments={setSelectedRecruitments}
                 setSelectedRecruitmentIds={setSelectedRecruitmentIds}
                 setDrawerShown={setPreviewDrawerShown}
                 tempIdClicked={tempIdClicked}
                 setTriggerRowClicked={setTriggerRowClicked}
+                queryParams={queryParams}
+                setQueryParams={setQueryParams}
               />
             </div>
           </div>

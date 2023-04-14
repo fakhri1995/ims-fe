@@ -293,6 +293,8 @@ const EmployeeContractEditIndex = ({
           dataContract={dataContract}
           setDataContract={setDataContract}
           prevpath={prevpath}
+          employeeId={employeeId}
+          contractId={dataContract?.id}
         />
       </div>
     </LayoutDashboard>

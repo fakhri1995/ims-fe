@@ -337,35 +337,40 @@ const EmployeePayslipDetailIndex = ({
       .finally(() => setLoadingAdd(false));
   };
 
-  const handleDownloadPayslip = (idPayslip) => {
+  const handleDownloadPayslip = (payslip) => {
     if (!isAllowedToDownloadPayslip) {
       permissionWarningNotification("Mengunduh", "Slip Gaji");
       return;
     }
+
     setLoadingDownload(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${idPayslip}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslip?.id}`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
+          "Content-Type": "application/pdf",
         },
       }
     )
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          notification.success({
-            message: `Slip gaji berhasil diunduh.`,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: `Gagal mengunduh slip gaji. ${response2.message}`,
-            duration: 3,
-          });
-        }
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+
+        // Create download link element
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `Slip Gaji ${monthNames[payslip?.month - 1]} ${
+          payslip?.year
+        } - ${dataEmployee?.name}`;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
       })
       .catch((err) => {
         notification.error({
@@ -514,7 +519,7 @@ const EmployeePayslipDetailIndex = ({
                       disabled={!isAllowedToGetPayslip || loadingDownload}
                       onClick={(event) => {
                         event.stopPropagation();
-                        handleDownloadPayslip(record.id);
+                        handleDownloadPayslip(record);
                       }}
                     >
                       <DownloadOutlined />
@@ -640,7 +645,7 @@ const EmployeePayslipDetailIndex = ({
                 <ButtonSys
                   type={"default"}
                   onClick={() =>
-                    handleDownloadPayslip(dataEmployee?.last_month_payslip?.id)
+                    handleDownloadPayslip(dataEmployee?.last_month_payslip)
                   }
                   disabled={!isAllowedToDownloadPayslip || loadingDownload}
                 >
