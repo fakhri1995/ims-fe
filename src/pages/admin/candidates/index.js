@@ -1,11 +1,15 @@
 import { DownloadOutlined } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Input, Modal, Select, Spin, notification } from "antd";
-import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useCallback, useEffect, useState } from "react";
-import { useRef } from "react";
-import { Bar, Doughnut } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
@@ -22,15 +26,9 @@ import {
 
 import ButtonSys from "../../../components/button";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
-import {
-  ClipboardIconSvg,
-  DownloadIconSvg,
-  UsersIconSvg,
-} from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
-import { ModalDownload } from "../../../components/modal/modalCustom";
 import { TableCustomCandidate } from "../../../components/table/tableCustom";
 import { H1, H2, Label, Text } from "../../../components/typography";
 import {
@@ -61,6 +59,7 @@ Chart.register(
 );
 
 const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
+  // 1. Init
   /**
    * Dependencies
    */
@@ -76,7 +75,15 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const canDownloadResume = hasPermission(RESUME_GET);
 
-  // 1. Init
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    assessment_ids: withDefault(NumberParam, undefined),
+    keyword: withDefault(StringParam, undefined),
+  });
+
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
@@ -103,18 +110,12 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     total: null,
   });
   const [loadingResumeList, setLoadingResumeList] = useState(true);
-  const [pageResume, setPageResume] = useState(1);
-  const [rowsResume, setRowsResume] = useState(10);
-  const [sortingResume, setSortingResume] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
-  const [assessmentIds, setAssessmentIds] = useState([]);
 
   // Filter
-  const [searchingFilterResume, setSearchingFilterResume] = useState("");
-  const [loadingRoleList, setLoadingRoleList] = useState([]);
-  const [roleFilterResume, setRoleFilterResume] = useState([]);
+  const [selectedRoleId, setSelectedRoleId] = useState(undefined);
+  const [searchingFilterResume, setSearchingFilterResume] = useState(undefined);
+  const [loadingRoleList, setLoadingRoleList] = useState(false);
+  const [roleList, setRoleList] = useState([]);
 
   // 2.3. Download Resume
   const [candidateId, setCandidateId] = useState(null);
@@ -141,7 +142,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setRoleFilterResume(res2.data);
+          setRoleList(res2.data);
         } else {
           notification.error({
             message: `${res2.message}`,
@@ -205,16 +206,17 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
     setLoadingResumeList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes${payload}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -226,16 +228,23 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
             duration: 3,
           });
         }
-        setLoadingResumeList(false);
       })
       .catch((err) => {
         notification.error({
           message: `${err.response}`,
           duration: 3,
         });
-        setLoadingResumeList(false);
-      });
-  }, [isAllowedToGetResumeList]);
+      })
+      .finally(() => setLoadingResumeList(false));
+  }, [
+    isAllowedToGetResumeList,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.keyword,
+    queryParams.assessment_ids,
+  ]);
 
   // 3.4. Get a resume data to download as PDF
   useEffect(() => {
@@ -293,22 +302,10 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   }, []);
 
   const onFilterResume = () => {
-    setLoadingResumeList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sortingResume.sort_by}&sort_type=${sortingResume.sort_type}&keyword=${searchingFilterResume}&page=${pageResume}&rows=${rowsResume}&assessment_ids=${assessmentIds}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setDataRawResume(res2.data);
-        setDataTable(res2.data.data);
-        setLoadingResumeList(false);
-      });
+    setQueryParams({
+      keyword: searchingFilterResume,
+      assessment_ids: selectedRoleId,
+    });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterResume, "Enter");
@@ -457,18 +454,17 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
             <div className="mt-5 flex flex-col">
               <div className="flex flex-row w-full mb-5 space-x-4">
                 <Input
-                  value={
-                    searchingFilterResume === "" ? null : searchingFilterResume
-                  }
+                  defaultValue={queryParams.keyword}
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterResume("");
-                    } else {
-                      setSearchingFilterResume(e.target.value);
+                    if (!e.target.value) {
+                      setQueryParams({
+                        keyword: undefined,
+                      });
                     }
+                    setSearchingFilterResume(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetResumeList}
@@ -477,14 +473,15 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <Select
                   disabled={!isAllowedToGetAssessmentList}
                   placeholder="Semua Role"
-                  defaultValue={0}
+                  defaultValue={queryParams.assessment_ids}
+                  allowClear
                   style={{ width: `50%` }}
                   onChange={(value) => {
-                    setAssessmentIds(value);
+                    setQueryParams({ assessment_ids: value });
+                    setSelectedRoleId(value);
                   }}
                 >
-                  <Select.Option value={0}>Semua Role</Select.Option>
-                  {roleFilterResume.map((doc) => (
+                  {roleList.map((doc) => (
                     <Select.Option key={doc.id} value={doc.id}>
                       {doc.name}
                     </Select.Option>
@@ -500,22 +497,13 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
                 </ButtonSys>
               </div>
               <TableCustomCandidate
+                rt={rt}
                 dataSource={dataTable}
-                setDataSource={setDataTable}
                 columns={columnsResume}
                 loading={loadingResumeList}
-                setpraloading={setLoadingResumeList}
-                pageSize={rowsResume}
-                setPageSize={setRowsResume}
                 total={dataRawResume?.total}
-                initProps={initProps}
-                setpage={setPageResume}
-                pagefromsearch={pageResume}
-                setdataraw={setDataRawResume}
-                setsorting={setSortingResume}
-                sorting={sortingResume}
-                searching={searchingFilterResume}
-                assessmentIds={assessmentIds}
+                queryParams={queryParams}
+                setQueryParams={setQueryParams}
               />
             </div>
           </div>

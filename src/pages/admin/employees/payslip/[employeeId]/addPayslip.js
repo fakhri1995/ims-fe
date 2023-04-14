@@ -41,7 +41,6 @@ import {
   ModalUbah,
 } from "../../../../../components/modal/modalCustom";
 import CustomCurrencyInput from "../../../../../components/screen/employee/CustomCurrencyInput";
-import EmployeeContractForm from "../../../../../components/screen/employee/create/contract";
 import {
   momentFormatDate,
   objectToFormData,

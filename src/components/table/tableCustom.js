@@ -1181,25 +1181,16 @@ const TableCustomRoleAssessment = ({
 };
 
 const TableCustomCandidate = ({
+  rt,
   dataSource,
-  setDataSource,
   columns,
   loading,
-  pageSize,
-  setPageSize,
   total,
-  setpraloading,
-  initProps,
-  setpage,
-  pagefromsearch,
-  setdataraw,
-  setsorting,
-  sorting,
-  searching,
-  assessmentIds,
+  queryParams,
+  setQueryParams,
 }) => {
-  const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
+
   return (
     <Table
       className="tableCandidate"
@@ -1208,98 +1199,33 @@ const TableCustomCandidate = ({
       loading={loading}
       scroll={{ x: 200 }}
       pagination={{
-        current: pagefromsearch,
-        pageSize: pageSize,
+        current: queryParams.page,
+        pageSize: queryParams.rows,
         total: total,
         showSizeChanger: true,
-        onShowSizeChange: (pagefromsearch, pageSize) => {
-          setPageSize(pageSize);
-        },
-        onChange: (page, pageSize) => {
-          setpraloading(true);
-          setpage(page);
-          fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}&assessment_ids=${assessmentIds}`,
-            {
-              method: `GET`,
-              headers: {
-                Authorization: JSON.parse(initProps),
-              },
-            }
-          )
-            .then((res) => res.json())
-            .then((res2) => {
-              setdataraw(res2.data);
-              setDataSource(res2.data.data);
-              setpraloading(false);
-            });
-        },
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        if (extra.action === "sort") {
-          if (sorter.column) {
-            setpraloading(true);
-            setsorting({
-              sort_by: sorter.column.dataIndex,
-              sort_type: sorter.order === "ascend" ? "asc" : "desc",
-            });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=${
-                sorter.column.dataIndex
-              }&sort_type=${
-                sorter.order === "ascend" ? "asc" : "desc"
-              }&keyword=${searching}&page=${pagination.current}&rows=${
-                pagination.pageSize
-              }&assessment_ids=${assessmentIds}`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              })
-              .catch((err) => {
-                // console.log(err);
-                notification.error({
-                  message: `${err.message}`,
-                  duration: 3,
-                });
-                setpraloading(false);
-              });
-          } else {
-            setpraloading(true);
-            setsorting({ sort_by: "", sort_type: "" });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes?sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}&assessment_ids=${assessmentIds}`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          }
-        }
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
       }}
       onRow={(record, rowIndex) => {
         return {
           onMouseOver: (event) => {
             setrowstate(record.id);
           },
-          onClick: (event) => {
-            rt.push(`/admin/candidates/${record.id}`);
+          onClick: () => {
+            rt.push(`candidates/${record.id}`);
           },
         };
       }}
@@ -1313,29 +1239,17 @@ const TableCustomCandidate = ({
 
 const TableCustomRecruitmentCandidate = ({
   dataSource,
-  setDataSource,
   columns,
   loading,
-  pageSize,
-  setPageSize,
   total,
-  setpraloading,
-  initProps,
-  setpage,
-  pagefromsearch,
-  setdataraw,
-  setsorting,
-  sorting,
-  searching,
-  selectedRoleId,
-  selectedStage,
-  selectedStatus,
   isBulk,
   setSelectedRecruitments,
   setSelectedRecruitmentIds,
   setDrawerShown,
   tempIdClicked,
   setTriggerRowClicked,
+  queryParams,
+  setQueryParams,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -1359,92 +1273,25 @@ const TableCustomRecruitmentCandidate = ({
       loading={loading}
       scroll={{ x: 200 }}
       pagination={{
-        current: pagefromsearch,
-        pageSize: pageSize,
+        current: queryParams.page,
+        pageSize: queryParams.rows,
         total: total,
         showSizeChanger: true,
-        onShowSizeChange: (pagefromsearch, pageSize) => {
-          setPageSize(pageSize);
-        },
-        onChange: (page, pageSize) => {
-          setpraloading(true);
-          setpage(page);
-          fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&sort_by=${sorting.sort_by}&sort_type=${sorting.sort_type}&keyword=${searching}&page=${page}&rows=${pageSize}`,
-            {
-              method: `GET`,
-              headers: {
-                Authorization: JSON.parse(initProps),
-              },
-            }
-          )
-            .then((res) => res.json())
-            .then((res2) => {
-              setdataraw(res2.data);
-              setDataSource(res2.data.data);
-              setpraloading(false);
-            });
-        },
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        if (extra.action === "sort") {
-          if (sorter.column) {
-            setpraloading(true);
-            setsorting({
-              sort_by: sorter.column.dataIndex,
-              sort_type: sorter.order === "ascend" ? "asc" : "desc",
-            });
-            fetch(
-              `${
-                process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&sort_by=${
-                sorter.column.dataIndex
-              }&sort_type=${
-                sorter.order === "ascend" ? "asc" : "desc"
-              }&keyword=${searching}&page=${pagination.current}&rows=${
-                pagination.pageSize
-              }`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              })
-              .catch((err) => {
-                // console.log(err);
-                notification.error({
-                  message: `${err.message}`,
-                  duration: 3,
-                });
-                setpraloading(false);
-              });
-          } else {
-            setpraloading(true);
-            setsorting({ sort_by: "", sort_type: "" });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments?recruitment_role_id=${selectedRoleId}&recruitment_stage_id=${selectedStage}&recruitment_status_id=${selectedStatus}&sort_by=&sort_type=&keyword=${searching}&page=${pagination.current}&rows=${pagination.pageSize}`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          }
-        }
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
       }}
       onRow={(record, rowIndex) => {
         return {

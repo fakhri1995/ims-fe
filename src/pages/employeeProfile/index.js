@@ -5,17 +5,12 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
-import Html from "react-pdf-html";
 
 import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  EMPLOYEE_GET,
-  EMPLOYEE_PAYSLIPS_GET,
-  EMPLOYEE_PAYSLIP_DOWNLOAD,
-} from "lib/features";
+import { EMPLOYEE_GET, EMPLOYEE_PAYSLIP_DOWNLOAD } from "lib/features";
 
 import {
   generateStaticAssetUrl,
@@ -46,7 +41,6 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   }
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
-  const isAllowedToGetEmployeePayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
   //INIT
@@ -58,8 +52,6 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
   // Breadcrumb title
   const pathTitleArr = [...pathArr];
   pathTitleArr.splice(0, 1, "Karyawan");
-
-  const [instanceForm] = Form.useForm();
 
   // Array of 12 month names
   const monthNames = moment.months();
@@ -100,6 +92,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
 
   // 1.3. Download
   const [modalDownload, setModalDownload] = useState(false);
+  const [downloadPass, setDownloadPass] = useState("");
   const [loadingDownload, setLoadingDownload] = useState(false);
 
   // 2. USE EFFECT
@@ -148,30 +141,41 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       permissionWarningNotification("Mengunduh", "Slip Gaji");
       return;
     }
+
+    const payslip = dataEmployee?.last_month_payslip;
+    const payload = {
+      password: downloadPass,
+    };
+
     setLoadingDownload(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${dataEmployee?.last_month_payslip?.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/downloadEmployeePayslip?id=${payslip?.id}`,
       {
-        method: "GET",
+        method: "POST",
         headers: {
           Authorization: JSON.parse(initProps),
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(payload),
       }
     )
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          notification.success({
-            message: `Slip gaji berhasil diunduh.`,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: `Gagal mengunduh slip gaji. ${response2.message}`,
-            duration: 3,
-          });
-        }
+      .then((response) => response.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+
+        // Create download link element
+        const downloadLink = document.createElement("a");
+        downloadLink.href = url;
+        downloadLink.download = `Slip Gaji ${monthNames[payslip?.month - 1]} ${
+          payslip?.year
+        } - ${dataEmployee?.name}`;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+        URL.revokeObjectURL(url);
       })
       .catch((err) => {
         notification.error({
@@ -181,6 +185,8 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       })
       .finally(() => {
         setLoadingDownload(false);
+        setModalDownload(false);
+        setDownloadPass("");
       });
   };
 
@@ -243,10 +249,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
               {dataEmployee?.last_month_payslip?.is_posted && (
                 <ButtonSys
                   type={"primary"}
-                  onClick={
-                    // setModalDownload(true);
-                    handleDownloadPayslip
-                  }
+                  onClick={() => setModalDownload(true)}
                   disabled={!isAllowedToDownloadPayslip || loadingDownload}
                 >
                   <DownloadOutlined />
@@ -314,6 +317,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             <Tabs.TabPane tab="Slip Gaji" key="2">
               <EmployeePayslipDetail
                 employeeId={employeeId}
+                employeeName={dataEmployee?.name}
                 initProps={initProps}
               />
             </Tabs.TabPane>
@@ -334,8 +338,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
       </div>
 
       {/* Modal Download Payslip */}
-      {/* TODO: change access control */}
-      {/* <AccessControl hasPermission={EMPLOYEE_PAYSLIP_DOWNLOAD}>
+      <AccessControl hasPermission={EMPLOYEE_PAYSLIP_DOWNLOAD}>
         <ModalDownloadPayslip
           visible={modalDownload}
           onvisible={setModalDownload}
@@ -344,12 +347,11 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
           disabled={!isAllowedToGetEmployee}
           downloadPass={downloadPass}
           setDownloadPass={setDownloadPass}
-          instanceForm={instanceForm}
           monthOfPayslip={`${
             monthNames[dataEmployee?.last_month_payslip?.month - 1]
           } ${dataEmployee?.last_month_payslip?.year}`}
         />
-      </AccessControl> */}
+      </AccessControl>
     </LayoutDashboard2>
   );
 };

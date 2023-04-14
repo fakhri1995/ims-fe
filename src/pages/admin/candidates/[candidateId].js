@@ -72,6 +72,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
   //INIT
   const rt = useRouter();
+
   // Breadcrumb url
   const pathArr = rt.asPath.split("/").slice(1);
 
