@@ -11,6 +11,12 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -137,6 +143,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   //1.Init
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+  });
 
   //useState
   //1.1.STATUS LIST
@@ -587,7 +600,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     setloadingtasks(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
       {
         method: `GET`,
         headers: {
@@ -601,7 +614,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatatasks(res2.data.data); // table main data source
         setloadingtasks(false);
       });
-  }, [loadingcreate, isAllowedToGetTaskList]);
+  }, [
+    loadingcreate,
+    isAllowedToGetTaskList,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+  ]);
 
   useEffect(() => {
     if (!isAllowedToGetCompanyLocationList) {
@@ -1970,25 +1990,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               <div className="flex flex-col">
                 <TableCustomAdminTask
                   dataSource={datatasks}
-                  setDataSource={setdatatasks}
                   columns={columnsTask}
                   loading={loadingtasks}
-                  setpraloading={setloadingtasks}
-                  pageSize={rowstask}
                   total={datarawtask.total}
-                  initProps={initProps}
-                  setpage={setpagetask}
-                  pagefromsearch={pagetask}
-                  setdataraw={setdatarawtask}
-                  sortstate={sortstate}
-                  setsortstate={setsortstate}
-                  searchstate={searchstate}
-                  tasktypefilterstate={tasktypefilterstate}
-                  fromdatefilterstate={fromdatefilterstate}
-                  todatefilterstate={todatefilterstate}
-                  lokasifilterstate={lokasifilterstate}
-                  statusfilterstate={statusfilterstate}
                   prevpath={"admin"}
+                  queryParams={queryParams}
+                  setQueryParams={setQueryParams}
                 />
               </div>
             </div>
