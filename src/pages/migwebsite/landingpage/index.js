@@ -282,7 +282,7 @@ function LandingPage({ dataBlog }) {
       </Head>
       <section
         className={
-          "section1landingpage container bg-white mx-auto px-4 lg:px-[113.5px] lg:pt-[64px] lg:pb-[94px]"
+          "section1landingpage bg-white px-4 lg:px-[120px] lg:pt-[64px] lg:pb-[64px]"
         }
       >
         {/* Browser View */}
@@ -291,7 +291,7 @@ function LandingPage({ dataBlog }) {
             <h3
               style={{ lineHeight: "120%" }}
               className={
-                "md:text-[32px] lg:text-[32px] mt-[34px] font-gilroysemibold text-blackmig"
+                "md:text-[32px] lg:text-[32px] font-gilroysemibold text-blackmig"
               }
             >
               {t.landingpagesection1}
@@ -299,7 +299,7 @@ function LandingPage({ dataBlog }) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base lg:text-xl font-gilroyregular text-blackmig mt-[34px]"
+                "text-base lg:text-xl font-gilroyregular text-blackmig mt-[32px]"
               }
             >
               {t.landingpagesection2}
@@ -349,7 +349,7 @@ function LandingPage({ dataBlog }) {
             >
               {t.thirdprovide}
             </p>
-            <div className={"mt-[34px]"}>
+            <div className={"mt-[40px]"}>
               <div className={"flex flex-row justify-between w-[512px]"}>
                 <Link
                   activeClass="active"
@@ -395,7 +395,7 @@ function LandingPage({ dataBlog }) {
           </div>
         </div>
         <div className={"hidden lg:block"}>
-          <div className={"mt-[72px] text-center"}>
+          <div className={"mt-[64px] text-center"}>
             <h5
               style={{ lineHeight: "150%" }}
               className={"text-xl text-blackmig font-gilroysemibold"}
@@ -716,7 +716,7 @@ function LandingPage({ dataBlog }) {
       {/*section it resource */}
       <section
         className={
-          "youronestop hidden lg:block py-4 lg:py-12 lg:px-[113.5px] bg-white text-center"
+          "youronestop hidden lg:block px-4 py-4 lg:pt-[64px] lg:pb-12 lg:px-[120px] bg-white text-center"
         }
       >
         <div className={"container mx-auto"}>
@@ -757,11 +757,13 @@ function LandingPage({ dataBlog }) {
               </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+                className={
+                  " text-blackmig text-xl font-gilroyregular mt-[32px]"
+                }
               >
                 {t.hardwaredescription}
               </p>
-              <div className={"mt-5"}>
+              <div className={"mt-[32px]"}>
                 <Linkk href="/hardware">
                   <button
                     className={
@@ -817,11 +819,13 @@ function LandingPage({ dataBlog }) {
               </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+                className={
+                  " text-blackmig text-xl font-gilroyregular mt-[32px]"
+                }
               >
                 {t.softwaredescription}
               </p>
-              <div className={"mt-5"}>
+              <div className={"mt-[32px]"}>
                 <Linkk href="/software">
                   <button
                     className={
@@ -863,11 +867,13 @@ function LandingPage({ dataBlog }) {
               </h4>
               <p
                 style={{ lineHeight: "150%" }}
-                className={" text-blackmig text-xl font-gilroyregular mt-5"}
+                className={
+                  " text-blackmig text-xl font-gilroyregular mt-[32px]"
+                }
               >
                 {t.talentdescription}
               </p>
-              <div className={"mt-5"}>
+              <div className={"mt-[32px]"}>
                 <Linkk href="/talents">
                   <button
                     className={
@@ -1045,13 +1051,13 @@ function LandingPage({ dataBlog }) {
       {dataTestimonial.length > 0 && (
         <section
           className={
-            "section3landingpageadvantages hidden lg:block bg-white py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
+            "section3landingpageadvantages hidden lg:block bg-white py-8 lg:pt-[80px] lg:pb-16 px-[120px] lg:px-10"
           }
         >
           <h4
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl md:text-[32px] text-center font-gilroysemibold mb-[42px]"
+              "text-xl md:text-[32px] text-center font-gilroysemibold mb-[64px]"
             }
           >
             {t.customerstorieslandingpage}
@@ -1213,7 +1219,7 @@ function LandingPage({ dataBlog }) {
                 <button onClick={() => slider?.current?.slickPrev()}>
                   <div
                     className={
-                      "self-center flex items-center justify-center  absolute left-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                      "self-center flex items-center justify-center  absolute left-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                     }
                   >
                     <img
@@ -1375,7 +1381,7 @@ function LandingPage({ dataBlog }) {
                 <button onClick={() => slider?.current?.slickNext()}>
                   <div
                     className={
-                      "self-center flex items-center justify-center  absolute right-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                      "self-center flex items-center justify-center  absolute right-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                     }
                   >
                     <img
@@ -1523,7 +1529,7 @@ function LandingPage({ dataBlog }) {
           <h3
             style={{ lineHeight: "120%" }}
             className={
-              "text-xl lg:text-[32px] mt-12 font-gilroysemibold text-blackmig"
+              "text-xl lg:text-[32px] font-gilroysemibold text-blackmig"
             }
           >
             {t.landingpagewhyus1}{" "}
@@ -1542,7 +1548,7 @@ function LandingPage({ dataBlog }) {
             "hidden lg:flex lg:flex-row lg:justify-between mx-auto lg:max-w-[1108px]"
           }
         >
-          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:h-[170px] lg:w-[533px] border border-advantage bg-bgadvantagecard rounded-lg lg:flex-row ">
+          <div className="flex mt-4 lg:mt-[64px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:h-[170px] lg:w-[533px] border border-advantage bg-bgadvantagecard rounded-lg lg:flex-row ">
             {/* <div className={""}> */}
             <img
               className="w-[117px] h-[136px]"
@@ -1574,7 +1580,7 @@ function LandingPage({ dataBlog }) {
               </p>
             </div> */}
           </div>
-          <div className="flex mt-4 lg:mt-[42px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:w-[533px] lg:h-[170px] border-advantage bg-bgadvantagecard rounded-lg lg:flex-row">
+          <div className="flex mt-4 lg:mt-[64px] py-1 lg:py-2 px-2 lg:px-4 lg:mx-[21px] lg:w-[533px] lg:h-[170px] border-advantage bg-bgadvantagecard rounded-lg lg:flex-row">
             <img
               className="w-[117px] h-[136px]"
               src="/image/landingpage/reliable_partner.png"
@@ -1723,7 +1729,7 @@ function LandingPage({ dataBlog }) {
       {/*section join mig*/}
       <section
         className={
-          "section2landingpagebrowser bg-white lg:pt-[53px] lg:pb-[150px] lg:px-[113.5px]"
+          "section2landingpagebrowser bg-white lg:pt-[64px] lg:pb-[160px] lg:px-[113.5px]"
         }
       >
         <div
@@ -1894,7 +1900,7 @@ function LandingPage({ dataBlog }) {
 
       <section
         className={
-          "youronestop hidden lg:block lg:flex lg:flex-row md:justify-between bg-bgfooter pt-[31px] h-[173px]"
+          "youronestop hidden lg:block lg:flex lg:flex-row md:justify-between bg-bgfooter pt-[140px] h-[173px]"
         }
       >
         <div className={"justify-start self-end"}>
@@ -1906,7 +1912,7 @@ function LandingPage({ dataBlog }) {
         <div className={"container w-1/2 mx-auto px-2"}>
           <div
             className={
-              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[144px] py-[31.38px]  px-[31.38px]"
+              "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[220px] py-[31.38px]  px-[31.38px]"
             }
           >
             <h4
