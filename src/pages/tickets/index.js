@@ -1,6 +1,12 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { DatePicker, Empty, Input, Select, Spin, TreeSelect } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -84,6 +90,16 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(
+      StringParam,
+      /** @type {"name"|"count"} */ "raised_at"
+    ),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ "desc"),
+  });
+
   //2.useState
   //2.1.PENYELESAIAN TIKET
   const [dataresolvedtimesticket, setdataresolvedtimesticket] = useState([]);
@@ -139,12 +155,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     resolved_times: [],
   });
   const [loadingtickets, setloadingtickets] = useState(false);
-  const [pagetickets, setpagetickets] = useState(1);
-  const [rowstickets, setrowstickets] = useState(10);
-  const [sortingtickets, setsortingtickets] = useState({
-    sort_by: "raised_at",
-    sort_type: "desc",
-  });
+
   //Filter
   // const [datafilterttickets, setdatafilterttickets] = useState([]);
   const [searcingfiltertickets, setsearcingfiltertickets] = useState("");
@@ -305,9 +316,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`
-      }?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
-        sortingtickets.sort_by
-      }&sort_type=${sortingtickets.sort_type}`,
+      }?page=1&rows=${
+        queryParams.rows
+      }&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
+        queryParams.sort_by
+      }&sort_type=${queryParams.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -320,6 +333,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         setdatarawtickets(res2.data);
         setdatatickets(res2.data.data);
         // setdatafilterttickets(res2.data.data);
+        setQueryParams({ page: 1 });
         setloadingtickets(false);
       });
   };
@@ -379,9 +393,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
         dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`
-      }?page=${pagetickets}&rows=${rowstickets}&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
-        sortingtickets.sort_by
-      }&sort_type=${sortingtickets.sort_type}`,
+      }?page=${queryParams.page}&rows=${
+        queryParams.rows
+      }&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
+        queryParams.sort_by
+      }&sort_type=${queryParams.sort_type}`,
       {
         method: `GET`,
         headers: {
@@ -396,7 +412,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
         // setdatafilterttickets(res2.data.data);
         setloadingtickets(false);
       });
-  }, [refreshcreateticketscreate, isAllowedGetTickets]);
+  }, [
+    refreshcreateticketscreate,
+    isAllowedGetTickets,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+  ]);
 
   useEffect(() => {
     if (!isAllowedGetTicket) {
@@ -1081,25 +1104,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             <div>
               <TableCustomTickets
                 dataSource={datatickets}
-                setDataSource={setdatatickets}
                 columns={columnsTickets}
                 loading={loadingtickets}
-                setpraloading={setloadingtickets}
-                pageSize={rowstickets}
                 total={datarawtickets?.total}
-                initProps={initProps}
-                setpage={setpagetickets}
-                pagefromsearch={pagetickets}
-                setdataraw={setdatarawtickets}
-                setsorting={setsortingtickets}
-                sorting={sortingtickets}
-                searching={searcingfiltertickets}
-                tickettype={tickettypefiltertickets}
-                fromdate={fromfiltertickets}
-                todate={tofiltertickets}
-                location={locfiltertickets}
-                status={statusfiltertickets}
-                dataprofile={dataProfile}
+                queryParams={queryParams}
+                setQueryParams={setQueryParams}
               />
             </div>
           </div>

@@ -254,25 +254,12 @@ const TableCustomTipeTask = ({
 
 const TableCustomTask = ({
   dataSource,
-  setDataSource,
   columns,
   loading,
-  pageSize,
   total,
-  setpraloading,
-  initProps,
-  setpage,
-  pagefromsearch,
-  setdataraw,
-  sortstate,
-  searchstate,
-  setsortstate,
-  tasktypefilterstate,
-  fromdatefilterstate,
-  todatefilterstate,
-  lokasifilterstate,
-  statusfilterstate,
   prevpath,
+  queryParams,
+  setQueryParams,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -284,28 +271,10 @@ const TableCustomTask = ({
       loading={loading}
       scroll={{ x: "max-content" }}
       pagination={{
-        current: pagefromsearch,
-        pageSize: pageSize,
+        current: queryParams.page,
+        pageSize: queryParams.rows,
         total: total,
-        onChange: (page, pageSize) => {
-          setpraloading(true);
-          setpage(page);
-          fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${page}&rows=${pageSize}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
-            {
-              method: `GET`,
-              headers: {
-                Authorization: JSON.parse(initProps),
-              },
-            }
-          )
-            .then((res) => res.json())
-            .then((res2) => {
-              setdataraw(res2.data);
-              setDataSource(res2.data.data);
-              setpraloading(false);
-            });
-        },
+        showSizeChanger: true,
       }}
       onRow={(record, rowIndex) => {
         return {
@@ -323,55 +292,19 @@ const TableCustomTask = ({
         }`;
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        // console.log('params', pagination, filters, sorter, extra, pagefromsearch, searchstate);
-        if (extra.action === "sort") {
-          if (sorter.column) {
-            setpraloading(true);
-            setsortstate({
-              sort_by: sorter.column.dataIndex,
-              sort_type: sorter.order === "ascend" ? "asc" : "desc",
-            });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${
-                pagination.current
-              }&rows=${pagination.pageSize}&sort_by=${
-                sorter.column.dataIndex
-              }&sort_type=${
-                sorter.order === "ascend" ? "asc" : "desc"
-              }&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          } else {
-            setpraloading(true);
-            setsortstate({ sort_by: "", sort_type: "" });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagination.current}&rows=${pagination.pageSize}&sort_by=&sort_type=&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          }
-        }
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
       }}
     />
   );
@@ -397,7 +330,7 @@ const TableCustomAdminTask = ({
       scroll={{ x: "max-content" }}
       pagination={{
         current: queryParams.page,
-        pageSize: queryParams.row,
+        pageSize: queryParams.rows,
         total: total,
         showSizeChanger: true,
       }}
@@ -861,25 +794,11 @@ const TableCustomTicketHistories = ({
 
 const TableCustomTickets = ({
   dataSource,
-  setDataSource,
   columns,
   loading,
-  pageSize,
   total,
-  setpraloading,
-  initProps,
-  setpage,
-  pagefromsearch,
-  setdataraw,
-  setsorting,
-  sorting,
-  searching,
-  tickettype,
-  fromdate,
-  todate,
-  location,
-  status,
-  dataprofile,
+  queryParams,
+  setQueryParams,
 }) => {
   const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
@@ -891,86 +810,25 @@ const TableCustomTickets = ({
       loading={loading}
       scroll={{ x: 200 }}
       pagination={{
-        current: pagefromsearch,
-        pageSize: pageSize,
+        current: queryParams.page,
+        pageSize: queryParams.rows,
         total: total,
-        onChange: (page, pageSize) => {
-          setpraloading(true);
-          setpage(page);
-          fetch(
-            `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
-              dataprofile.data.role === 1 ? `getTickets` : `getClientTickets`
-            }?page=${page}&rows=${pageSize}&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${
-              sorting.sort_by
-            }&sort_type=${sorting.sort_type}`,
-            {
-              method: `GET`,
-              headers: {
-                Authorization: JSON.parse(initProps),
-              },
-            }
-          )
-            .then((res) => res.json())
-            .then((res2) => {
-              setdataraw(res2.data);
-              setDataSource(res2.data.data);
-              setpraloading(false);
-            });
-        },
+        showSizeChanger: true,
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        if (extra.action === "sort") {
-          if (sorter.column) {
-            setpraloading(true);
-            setsorting({
-              sort_by: sorter.column.dataIndex,
-              sort_type: sorter.order === "ascend" ? "asc" : "desc",
-            });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
-                dataprofile.data.role === 1 ? `getTickets` : `getClientTickets`
-              }?page=${pagination.current}&rows=${
-                pagination.pageSize
-              }&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=${
-                sorter.column.dataIndex
-              }&sort_type=${sorter.order === "ascend" ? "asc" : "desc"}`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          } else {
-            setpraloading(true);
-            setsorting({ sort_by: "", sort_type: "" });
-            fetch(
-              `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
-                dataprofile.data.role === 1 ? `getTickets` : `getClientTickets`
-              }?page=${pagination.current}&rows=${
-                pagination.pageSize
-              }&ticket_id=${searching}&type_id=${tickettype}&from=${fromdate}&to=${todate}&location_id=${location}&status_id=${status}&sort_by=&sort_type=`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          }
-        }
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
       }}
       onRow={(record, rowIndex) => {
         return {

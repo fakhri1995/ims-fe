@@ -238,18 +238,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [datafiltertipetasks, setdatafiltertipetasks] = useState([]);
   const [datafilterlokasi, setdatafilterlokasi] = useState([]);
   const [searchstate, setsearchstate] = useState("");
-  const [sortstate, setsortstate] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
+
   const [statusfilterstate, setstatusfilterstate] = useState("");
   const [lokasifilterstate, setlokasifilterstate] = useState("");
   const [fromdatefilterstate, setfromdatefilterstate] = useState("");
   const [todatefilterstate, settodatefilterstate] = useState("");
   const [tasktypefilterstate, settasktypefilterstate] = useState("");
   const [fetchingtasktypes, setfetchingtasktypes] = useState(false);
-  const [pagetask, setpagetask] = useState(1);
-  const [rowstask, setrowstask] = useState(10);
+
   //create - tasks
   const [drawertaskcreate, setdrawertaskcreate] = useState(false);
   //STAFF
@@ -567,7 +563,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const onFilterTask = () => {
     setloadingtasks(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=1&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
       {
         method: `GET`,
         headers: {
@@ -579,6 +575,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       .then((res2) => {
         setdatarawtask(res2.data);
         setdatatasks(res2.data.data);
+        setQueryParams({ page: 1 });
         setloadingtasks(false);
       });
   };
