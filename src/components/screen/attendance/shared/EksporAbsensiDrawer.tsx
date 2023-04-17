@@ -386,12 +386,13 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                     allowClear
                     placeholder="Pilih form aktivitas"
                     filterOption={false}
+                    optionFilterProp="children"
                     filterSort={(optionA, optionB) => {
                       if (isSortAsc) {
-                        return (optionA?.children ?? "")
+                        return String(optionA.children ?? "")
                           .toLowerCase()
                           .localeCompare(
-                            (optionB?.children ?? "").toLowerCase()
+                            String(optionB?.children ?? "").toLowerCase()
                           );
                       } else {
                         return 1;
