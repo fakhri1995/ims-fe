@@ -1,3 +1,4 @@
+import { SortAscendingOutlined } from "@ant-design/icons";
 import { Button, Checkbox, DatePicker, Form, Select, notification } from "antd";
 import type { AxiosError } from "axios";
 import moment from "moment";
@@ -5,6 +6,7 @@ import type { Moment } from "moment";
 import { FC, useCallback, useEffect, useState } from "react";
 import { useQuery } from "react-query";
 
+import ButtonSys from "components/button";
 import DrawerCore from "components/drawer/drawerCore";
 
 import { useAxiosClient } from "hooks/use-axios-client";
@@ -54,6 +56,8 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
   const [selectedFormAktivitasId, setSelectedFormAktivitasId] = useState<
     Array<number> | undefined
   >(undefined);
+  // Use for toggle in Form Aktivitas dropdown
+  const [isSortAsc, setIsSortAsc] = useState(false);
 
   const { data: formAktivitasData, refetch: findFormAktivitas } = useQuery(
     [AttendanceFormAktivitasServiceQueryKeys.FIND, debouncedSearchValue],
@@ -375,21 +379,41 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                 label="Form Aktivitas"
                 rules={[{ required: true }]}
               >
-                <Select
-                  showSearch
-                  mode={"multiple"}
-                  allowClear
-                  placeholder="Pilih form aktivitas"
-                  filterOption={false}
-                  onChange={handleOnChangeFormAktivitas}
-                  onSearch={handleOnSearchFormAktivitas}
-                >
-                  {formAktivitasData?.map(({ id, name }) => (
-                    <Option key={id} value={id}>
-                      {name}
-                    </Option>
-                  ))}
-                </Select>
+                <div className="flex space-x-2">
+                  <Select
+                    showSearch
+                    mode={"multiple"}
+                    allowClear
+                    placeholder="Pilih form aktivitas"
+                    filterOption={false}
+                    filterSort={(optionA, optionB) => {
+                      if (isSortAsc) {
+                        return (optionA?.children ?? "")
+                          .toLowerCase()
+                          .localeCompare(
+                            (optionB?.children ?? "").toLowerCase()
+                          );
+                      } else {
+                        return 1;
+                      }
+                    }}
+                    onChange={handleOnChangeFormAktivitas}
+                    onSearch={handleOnSearchFormAktivitas}
+                  >
+                    {formAktivitasData?.map(({ id, name }) => (
+                      <Option key={id} value={id}>
+                        {name}
+                      </Option>
+                    ))}
+                  </Select>
+                  <ButtonSys
+                    type={isSortAsc ? "primary" : "default"}
+                    icon={<SortAscendingOutlined />}
+                    onClick={() => setIsSortAsc(!isSortAsc)}
+                  >
+                    <SortAscendingOutlined />
+                  </ButtonSys>
+                </div>
               </Form.Item>
               {/* Selectable staff */}
               <Form.Item label="Staff" required className="relative">
