@@ -489,6 +489,86 @@ function LandingPage({ dataBlog }) {
                         src="/image/landingpage/shipper-logo-gray.png"
                       />
                     </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/bulog-logo-cs-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/setneg-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/shipper-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/bulog-logo-cs-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/setneg-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/kb-bukopin-syariah-logo-gray.png"
+                      />
+                    </div>
+                    <div>
+                      <img
+                        className={
+                          "mx-[21px] h-[30px] w-auto filter grayscale opacity-80 marqueelogo"
+                        }
+                        src="/image/landingpage/shipper-logo-gray.png"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
