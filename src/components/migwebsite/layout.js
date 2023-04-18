@@ -397,11 +397,12 @@ function layout({ children }) {
             position: "fixed",
             zIndex: 31,
             width: "100%",
+            paddingLeft: "100ps",
             // boxShadow: "0px 2px 5px rgba(0, 0, 0, 0.1)",
           }}
         >
           <Link href="/">
-            <div className="logo top-4 md:top-4 absolute w-24 md:w-32 cursor-pointer">
+            <div className="logo top-4 md:top-4 absolute w-24 md:w-32 cursor-pointer ml-[55px]">
               <img width={"auto"} height={"auto"} src="/mig.png" />
             </div>
           </Link>
@@ -453,7 +454,7 @@ function layout({ children }) {
             theme="light"
             mode="horizontal"
             style={{ lineHeight: "3.9rem" }}
-            className={"hidden md:block float-right menu pt-2"}
+            className={"hidden md:block float-right menu pt-2 mr-[55px]"}
           >
             <Dropdown overlay={menuLanguanges} placement="bottomCenter">
               <Button
@@ -874,7 +875,7 @@ function layout({ children }) {
           </div>
         </Content>
         <div
-          className={"px-4 sm:px-10 md:px-10 lg:px-10 xl:px-10 2xl:px-20"}
+          className={"px-4 lg:px-[113.5px]"}
           style={{ textAlign: "left", backgroundColor: "#EEF1EE" }}
         >
           <div className={"container mx-auto"}>

@@ -893,7 +893,7 @@ function Hardware({}) {
               <Link href={{ pathname: "/hardware" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col font-gilroybold text-lg mr-4"
+                    "cursor-pointer flex-col font-gilroybold text-base mr-4"
                   }
                   style={{
                     borderBottom: "solid 2px #10B981",
@@ -904,12 +904,12 @@ function Hardware({}) {
                 </p>
               </Link>
               <Link href={{ pathname: "/software" }}>
-                <p className={"cursor-pointer flex-col  text-lg mx-4"}>
+                <p className={"cursor-pointer flex-col  text-base mx-4"}>
                   Software
                 </p>
               </Link>
               <Link href={{ pathname: "/talents" }}>
-                <p className={"cursor-pointer flex-col  text-lg mx-4"}>
+                <p className={"cursor-pointer flex-col  text-base mx-4"}>
                   Talents
                 </p>
               </Link>
@@ -3341,15 +3341,15 @@ function Hardware({}) {
           <section className={"section2hardware py-4 lg:py-16 lg:px-[113.5px]"}>
             <div className={"hidden lg:flex  mt-16 justify-between mx-auto"}>
               <div className={"flex-col w-1/2"}>
-                <h1
+                <h3
                   style={{ lineHeight: "120%" }}
-                  className={"text-xl lg:text-[36px] pb-4 font-gilroysemibold"}
+                  className={"text-xl lg:text-[32px] pb-4 font-gilroysemibold"}
                 >
                   {t.hardwareherosection}
-                </h1>
+                </h3>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"mt:4 lg:mt-8 font-gilroyregular text-xl"}
+                  className={"mt:4 lg:mt-8 font-gilroyregular text-base"}
                 >
                   {t.hardwareherosectionsubtitle}
                 </p>
@@ -3590,10 +3590,10 @@ function Hardware({}) {
           >
             <div className={"container text-center mx-auto"}>
               {locale == "en" ? (
-                <h2
+                <h3
                   style={{ lineHeight: "120%" }}
                   className={
-                    "text-xl lg:text-[36px] px-8 lg:px-0 font-gilroysemibold"
+                    "text-xl lg:text-[32px] px-8 lg:px-0 font-gilroysemibold"
                   }
                 >
                   Explore our{" "}
@@ -3606,7 +3606,7 @@ function Hardware({}) {
                     hardware
                   </span>{" "}
                   options
-                </h2>
+                </h3>
               ) : (
                 <h2
                   style={{ lineHeight: "120%" }}
@@ -3628,10 +3628,10 @@ function Hardware({}) {
               )}
               <div className={"hidden lg:block"}>
                 {dataBanking && (
-                  <div className={"flex flex-row mt-[42px] justify-between"}>
+                  <div className={"flex mt-[42px]"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightblue rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightblue rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
@@ -3662,7 +3662,7 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-xl text-accentblue font-gilroysemibold"
+                                "text-base text-accentblue font-gilroysemibold"
                               }
                             >
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
@@ -3676,10 +3676,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-2 ml-[11px]"}>
                       {dataBanking.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3701,10 +3701,10 @@ function Hardware({}) {
                   </div>
                 )}
                 {dataWorkstation && (
-                  <div className={"flex flex-row mt-8"}>
+                  <div className={"flex mt-8"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightgreen rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightgreen rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
@@ -3735,7 +3735,7 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-xl text-primarygreen font-gilroysemibold"
+                                "text-base text-primarygreen font-gilroysemibold"
                               }
                             >
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
@@ -3749,10 +3749,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataWorkstation.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] ml-[11px] text-center flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3775,16 +3775,16 @@ function Hardware({}) {
                 )}
 
                 {dataServer && (
-                  <div className={"flex flex-row mt-8"}>
+                  <div className={"flex mt-8"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightgrey rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightgrey rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
                         style={{ lineHeight: "150%" }}
                         className={
-                          "text-[22px] font-gilroybold text-primarygreen"
+                          "text-[22px] font-gilroybold text-accentpurple"
                         }
                       >
                         Server & Hosting
@@ -3809,13 +3809,13 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-xl text-primarygreen font-gilroysemibold"
+                                "text-base text-accentpurple font-gilroysemibold"
                               }
                             >
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
-                              src="/image/hardware/arrow_forward_ios_green.png"
+                              src="/image/hardware/arrow_forward_ios_purple.png"
                               className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
@@ -3823,10 +3823,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataServer.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3848,16 +3848,16 @@ function Hardware({}) {
                   </div>
                 )}
                 {dataUps && (
-                  <div className={"flex flex-row mt-8"}>
+                  <div className={"flex mt-8"}>
                     <div
                       className={
-                        "w-[15%] flex flex-col justify-between text-center bg-lightpink rounded-lg p-3"
+                        "w-[241px] flex flex-col justify-between text-center bg-lightpink rounded-lg pt-3 pb-5 px-3"
                       }
                     >
                       <p
                         style={{ lineHeight: "150%" }}
                         className={
-                          "text-[22px] font-gilroybold text-primarygreen"
+                          "text-[22px] font-gilroybold text-accentpink"
                         }
                       >
                         UPS
@@ -3868,7 +3868,7 @@ function Hardware({}) {
                           "text-base font-gilroysemibold italic text-blackmig"
                         }
                       >
-                        {t.hardwareserversubtitle}
+                        {t.hardwareupssubtitle}
                       </p>
                       <div className={"self-center"}>
                         <button
@@ -3882,13 +3882,13 @@ function Hardware({}) {
                           >
                             <p
                               className={
-                                "text-xl text-primarygreen font-gilroysemibold"
+                                "text-base text-accentpink font-gilroysemibold"
                               }
                             >
                               {locale == "en" ? "Get yours" : "Dapatkan produk"}
                             </p>
                             <img
-                              src="/image/hardware/arrow_forward_ios_green.png"
+                              src="/image/hardware/arrow_forward_ios_pink.png"
                               className={"w-[20px] h-[20px] self-center ml-2"}
                               alt=""
                             />
@@ -3896,10 +3896,10 @@ function Hardware({}) {
                         </button>
                       </div>
                     </div>
-                    <div className={"w-[85%] flex flex-row ml-[11px]"}>
+                    <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataUps.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[15%] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -4163,18 +4163,18 @@ function Hardware({}) {
                   "mt-7 lg:mt-[42px] text-left lg:text-center lg:mx-auto lg:w-[646px]"
                 }
               >
-                <p
+                <h5
                   style={{ lineHeight: "120%" }}
                   className={
                     "font-gilroysemibold text-sm px-2 lg:px-0  lg:text-xl"
                   }
                 >
                   {t.hardwarecustomizetext}
-                </p>
+                </h5>
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
-                    "font-gilroyregular text-sm px-2 lg:px-0  lg:text-xl"
+                    "font-gilroyregular text-sm px-2 lg:px-0  lg:text-base"
                   }
                 >
                   {t.hardwarecustomizetext2}
@@ -4187,7 +4187,7 @@ function Hardware({}) {
                       "text-sm -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2 mt-4"
                     }
                   >
-                    <p className={"text-xl  font-gilroysemibold"}>
+                    <p className={"text-base  font-gilroysemibold"}>
                       {t.hardwarecustomizetextcta}
                     </p>
                   </button>
@@ -4304,10 +4304,10 @@ function Hardware({}) {
             }
           >
             <div className={"container text-center mx-auto"}>
-              <h2
+              <h3
                 style={{ lineHeight: "120%" }}
                 className={
-                  "text-xl lg:text-[36px] font-gilroybold py-8 lg:py-0"
+                  "text-xl lg:text-[32px] font-gilroybold py-8 lg:py-0"
                 }
               >
                 {locale == "en"
@@ -4323,7 +4323,7 @@ function Hardware({}) {
                     ? " IT infrastructure."
                     : "infrastruktur teknologi Anda."}
                 </span>{" "}
-              </h2>
+              </h3>
             </div>
             <div className={"flex flex-row justify-between mt-10"}>
               <div className={""}>
@@ -4457,13 +4457,13 @@ function Hardware({}) {
                 "section3landingpageadvantages hidden lg:block bg-bgjoinmig py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
               }
             >
-              <p
+              <h4
                 className={
-                  "text-xl lg:text-3xl text-center  font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-2xl text-center  font-gilroysemibold mb-[42px]"
                 }
               >
                 {t.customerstorieslandingpage}
-              </p>
+              </h4>
               <div className={"flex flex-row"}>
                 {dataTestimonial ? (
                   dataTestimonial.length > 1 ? (
@@ -4580,10 +4580,10 @@ function Hardware({}) {
                                   className={"flex flex-row justify-between"}
                                 >
                                   <div>
-                                    <h2
+                                    <h5
                                       style={{ lineHeight: "120%" }}
                                       className={
-                                        "text-blackmig text-[22px] font-gilroysemibold"
+                                        "text-blackmig text-xl font-gilroysemibold"
                                       }
                                     >
                                       {locale == "en"
@@ -4592,7 +4592,7 @@ function Hardware({}) {
                                           data1.title_id != null
                                         ? data1.title_id
                                         : data1.title}
-                                    </h2>
+                                    </h5>
                                     <p
                                       className={
                                         "text-primarygreen text-base font-gilroysemibold mt-1"
@@ -4620,7 +4620,7 @@ function Hardware({}) {
                                   </div>
                                 </div>
                                 <div
-                                  className="mt-4"
+                                  className="mt-4 text-base"
                                   dangerouslySetInnerHTML={{
                                     __html: data1.description,
                                   }}
@@ -4875,14 +4875,14 @@ function Hardware({}) {
               "sectioncoverages hidden lg:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 lg:px-[113.5px]"
             }
           >
-            <h2
+            <h4
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl lg:text-[36px] text-blackmig text-center  font-gilroysemibold py-8 lg:py-0 mb-10"
+                "text-xl lg:text-[24px] text-blackmig text-center  font-gilroysemibold py-8 lg:py-0 mb-10"
               }
             >
               {locale == "en" ? "Coverages" : "Area jangkauan kami"}
-            </h2>
+            </h4>
             <div
               className={"bg-white p-12 items-center w-[788px] mx-auto"}
               style={{ boxShadow: "0px 0px 20px rgba(0, 0, 0, 0.15)" }}
@@ -5199,15 +5199,15 @@ function Hardware({}) {
                   "bg-white border-3 mx-auto max-w-[645px] border-solid shadow-2xl rounded-lg text-center -mt-[220px] py-[31.38px]  px-[31.38px]"
                 }
               >
-                <h2
+                <h4
                   style={{ lineHeight: "120%" }}
-                  className={"text-[28px] font-gilroysemibold text-black"}
+                  className={"text-2xl font-gilroysemibold text-black"}
                 >
                   {t.contactussectiontitle}
-                </h2>
+                </h4>
                 <div
                   className={
-                    "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                    "mt-3.5 text-base font-gilroyregular text-center text-black"
                   }
                 >
                   <p style={{ lineHeight: "120%" }}>
@@ -5225,7 +5225,7 @@ function Hardware({}) {
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                         }
                       >
-                        <p className={"text-xl font-gilroysemibold"}>
+                        <p className={"text-base font-gilroysemibold"}>
                           {t.ctacontactuslandingpage}
                         </p>
                       </button>
@@ -5238,7 +5238,7 @@ function Hardware({}) {
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                         }
                       >
-                        <p className={"text-xl font-gilroysemibold"}>
+                        <p className={"text-base font-gilroysemibold"}>
                           {t.ctalearnmorelandingpage}
                         </p>
                       </button>

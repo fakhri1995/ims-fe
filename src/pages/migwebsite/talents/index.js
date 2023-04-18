@@ -726,7 +726,7 @@ function Talents({}) {
               <Link href={{ pathname: "/hardware" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg font-gilroyregular mr-4"
+                    "cursor-pointer flex-col text-base font-gilroyregular mr-4"
                   }
                 >
                   Hardware
@@ -735,7 +735,7 @@ function Talents({}) {
               <Link href={{ pathname: "/software" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg font-gilroyregular mx-4"
+                    "cursor-pointer flex-col text-base font-gilroyregular mx-4"
                   }
                 >
                   Software
@@ -744,7 +744,7 @@ function Talents({}) {
               <Link href={{ pathname: "/talents" }}>
                 <p
                   className={
-                    "cursor-pointer flex-col text-lg font-gilroybold mx-4"
+                    "cursor-pointer flex-col text-base font-gilroybold mx-4"
                   }
                   style={{
                     borderBottom: "solid 2px #10B981",
@@ -3252,15 +3252,15 @@ function Talents({}) {
           >
             <div className={"hidden lg:flex justify-between container mx-auto"}>
               <div className={"flex-col w-1/2"}>
-                <h1
+                <h3
                   style={{ lineHeight: "120%" }}
-                  className={"text-[36px] pb-4 font-gilroysemibold"}
+                  className={"text-[32px] pb-4 font-gilroysemibold"}
                 >
                   {t.talentherotitle}
-                </h1>
+                </h3>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"mt-8 font-gilroyregular text-xl"}
+                  className={"mt-8 font-gilroyregular text-base"}
                 >
                   {t.talentherodescription}
                 </p>
@@ -3468,17 +3468,19 @@ function Talents({}) {
               "section2talentsnew py-4 lg:py-12 lg:px-[113.5px] px-4 mx-auto mt:4 lg:mt-12"
             }
           >
-            <h2
+            <h3
               className={
-                "text-xl lg:text-[36px] text-blackmig text-center font-gilroysemibold"
+                "text-xl lg:text-[32px] text-blackmig text-center font-gilroysemibold"
               }
               style={{ lineHeight: "120%" }}
             >
               {t.section2talenttitle}
-            </h2>
+            </h3>
             <p
               style={{ lineHeight: "150%" }}
-              className={"text-base lg:text-xl text-blackmig text-center mt-4"}
+              className={
+                "text-base lg:text-base text-blackmig text-center mt-4"
+              }
             >
               {t.section2talentsubtitle}
             </p>
@@ -3584,10 +3586,10 @@ function Talents({}) {
               "section3talents bg-bgjoinmig py-9 lg:py-12 px-4 lg:px-[113.5px]"
             }
           >
-            <h2
+            <h3
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl lg:text-[36px] text-center font-gilroysemibold"
+                "text-xl lg:text-[32px] text-center font-gilroysemibold"
               }
             >
               {locale == "en"
@@ -3602,7 +3604,7 @@ function Talents({}) {
                 {locale == "en" ? "tech talents " : "talenta teknologi "}
               </span>{" "}
               {locale == "en" ? "with us." : "kami."}
-            </h2>
+            </h3>
 
             <div
               className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
@@ -3626,16 +3628,16 @@ function Talents({}) {
                     }
                   >
                     <div>
-                      <p
+                      <h5
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentblue font-gilroybold text-base lg:text-2xl"
+                          "text-accentblue font-gilroybold text-base lg:text-xl"
                         }
                       >
                         Engineering
-                      </p>
+                      </h5>
                     </div>
-                    <div className={"mt-2 lg:mt-0"}>
+                    <div className={"mt-2"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3645,7 +3647,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-base font-gilroysemibold"
                         }
                       >
                         Website Developer, Android/IOS Developer,{" "}
@@ -3695,16 +3697,16 @@ function Talents({}) {
                     }
                   >
                     <div>
-                      <p
+                      <h5
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentpink font-gilroybold text-base lg:text-2xl"
+                          "text-accentpink font-gilroybold text-base lg:text-xl"
                         }
                       >
                         Data
-                      </p>
+                      </h5>
                     </div>
-                    <div className={"mt-2 lg:mt-0"}>
+                    <div className={"mt-2"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3714,7 +3716,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-base font-gilroysemibold"
                         }
                       >
                         Data Scientist, Data/Business Intelligence Analyst,{" "}
@@ -3770,16 +3772,16 @@ function Talents({}) {
                     }
                   >
                     <div>
-                      <p
+                      <h5
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-accentpurple font-gilroybold text-base lg:text-2xl"
+                          "text-accentpurple font-gilroybold text-base lg:text-xl"
                         }
                       >
                         Design
-                      </p>
+                      </h5>
                     </div>
-                    <div className={""}>
+                    <div className={"mt-2"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3789,7 +3791,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-base font-gilroysemibold"
                         }
                       >
                         Product Designer, Web Designer, Graphic Designer,{" "}
@@ -3839,16 +3841,16 @@ function Talents({}) {
                     }
                   >
                     <div>
-                      <p
+                      <h5
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-primarygreen font-gilroybold text-lg lg:text-2xl"
+                          "text-primarygreen font-gilroybold text-lg lg:text-xl"
                         }
                       >
                         Product
-                      </p>
+                      </h5>
                     </div>
-                    <div className={"mt-2 lg:mt-0"}>
+                    <div className={"mt-2"}>
                       <p
                         style={{ lineHeight: "120%" }}
                         className={"text-base font-gilroyregular text-darkgrey"}
@@ -3858,7 +3860,7 @@ function Talents({}) {
                       <p
                         style={{ lineHeight: "120%" }}
                         className={
-                          "text-blackmig text-xs lg:text-[18px] font-gilroysemibold"
+                          "text-blackmig text-xs lg:text-base font-gilroysemibold"
                         }
                       >
                         Product Manager, Product Analyst, Project Manager,{" "}
@@ -3919,7 +3921,7 @@ function Talents({}) {
                     "text-sm lg:w-[209px] -mt-10 rounded text-primarygreen border-2 bg-bgjoinmig border-primarygreen px-4 py-2 lg:px-2 mt-4"
                   }
                 >
-                  <p className={"text-xl  font-gilroysemibold"}>
+                  <p className={"text-base  font-gilroysemibold"}>
                     {locale == "en" ? "Contact our team" : "Kontak tim kami"}
                   </p>
                 </button>
@@ -4558,10 +4560,10 @@ function Talents({}) {
               "section4talents hidden lg:block bg-bgtalents pt-4 pb-6 lg:pt-12 lg:pb-24 px-4 sm:px-10 lg:px-[113.5px]"
             }
           >
-            <h2
+            <h3
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl lg:text-[36px] text-center  font-gilroysemibold py-8 lg:py-0"
+                "text-xl lg:text-[32px] text-center  font-gilroysemibold py-8 lg:py-0"
               }
             >
               {locale == "en" ? "Let us " : "Biarkan MIG "}
@@ -4578,7 +4580,7 @@ function Talents({}) {
               {locale == "en"
                 ? "in building a powerful  & capable team. "
                 : "tim yang kuat untuk Anda."}
-            </h2>
+            </h3>
             {/* <p
               style={{ lineHeight: "150%" }}
               className={
@@ -4824,7 +4826,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
+                      "text-blackmig text-sm lg:text-base  font-gilroysemibold mt-4 text-center"
                     }
                   >
                     {t.howitworktalentpoint1}
@@ -4846,7 +4848,7 @@ function Talents({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-base  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.howitworktalentpoint2}
@@ -4867,7 +4869,7 @@ function Talents({}) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "text-blackmig text-sm lg:text-xl  font-gilroysemibold mt-4 text-center"
+                    "text-blackmig text-sm lg:text-base  font-gilroysemibold mt-4 text-center"
                   }
                 >
                   {t.howitworktalentpoint3}
@@ -4948,7 +4950,7 @@ function Talents({}) {
             >
               <p
                 className={
-                  "text-xl lg:text-[32px] text-center  font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-[24px] text-center  font-gilroysemibold mb-[42px]"
                 }
               >
                 {t.customerstorieslandingpage}
@@ -5069,10 +5071,10 @@ function Talents({}) {
                                   className={"flex flex-row justify-between"}
                                 >
                                   <div>
-                                    <h2
+                                    <h5
                                       style={{ lineHeight: "120%" }}
                                       className={
-                                        "text-blackmig text-[22px] font-gilroysemibold"
+                                        "text-blackmig text-[20px] font-gilroysemibold"
                                       }
                                     >
                                       {locale == "en"
@@ -5081,7 +5083,7 @@ function Talents({}) {
                                           data1.title_id != null
                                         ? data1.title_id
                                         : data1.title}
-                                    </h2>
+                                    </h5>
                                     <p
                                       className={
                                         "text-primarygreen text-base font-gilroysemibold mt-1"
@@ -5687,15 +5689,15 @@ function Talents({}) {
             </div>
             <div className={"container w-1/2 mx-auto"}>
               <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-24 py-4 px-8">
-                <h2
+                <h4
                   style={{ lineHeight: "120%" }}
-                  className={"text-[28px] font-gilroysemibold text-black"}
+                  className={"text-[24px] font-gilroysemibold text-black"}
                 >
                   {t.contactussectiontitle}
-                </h2>
+                </h4>
                 <div
                   className={
-                    "mt-3.5 text-xl font-gilroyregular text-center text-black"
+                    "mt-3.5 text-base font-gilroyregular text-center text-black"
                   }
                 >
                   <p style={{ lineHeight: "120%" }}>
@@ -5713,7 +5715,7 @@ function Talents({}) {
                           "text-sm px-4 py-2 text-white border-2 rounded bg-primarygreen border-primarygreen"
                         }
                       >
-                        <p className={"text-xl font-gilroysemibold"}>
+                        <p className={"text-base font-gilroysemibold"}>
                           {t.ctacontactuslandingpage}
                         </p>
                       </button>
@@ -5726,7 +5728,7 @@ function Talents({}) {
                           "text-sm px-4 py-2 text-primarygreen border-2 rounded bg-white border-primarygreen"
                         }
                       >
-                        <p className={"text-xl font-gilroysemibold"}>
+                        <p className={"text-base font-gilroysemibold"}>
                           {t.ctalearnmorelandingpage}
                         </p>
                       </button>
