@@ -5,7 +5,14 @@ import {
 } from "@ant-design/icons";
 import { Input, Select, Spin, notification } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import React from "react";
 import { useEffect, useState } from "react";
 
@@ -15,7 +22,7 @@ import { DataEmptyState } from "components/states/DataEmptyState";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  COMPANY_LISTS_GET,
+  COMPANY_CLIENTS_GET,
   EMPLOYEES_PAYSLIPS_POST,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
@@ -88,7 +95,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToRaisePayslip = hasPermission(EMPLOYEE_PAYSLIP_RAISE);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
-  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
   const isAllowedToGetSalaryColumns = hasPermission(
@@ -118,6 +125,17 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // Array of 12 month names
   const monthNames = moment.months();
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    role_ids: withDefault(NumberParam, undefined),
+    placements: withDefault(StringParam, undefined),
+    is_posted: withDefault(NumberParam, undefined),
+    keyword: withDefault(StringParam, undefined),
+  });
+
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
@@ -134,30 +152,26 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const dataPayslipStatusList = [
     {
-      id: 3,
+      id: 2,
       name: "Kosong",
     },
     {
-      id: 1,
+      id: 0,
       name: "Draft",
     },
     {
-      id: 2,
+      id: 1,
       name: "Diterbitkan",
     },
   ];
 
   // filter search & selected options
-  const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
-  const [selectedPlacement, setSelectedPlacement] = useState("");
-  const [selectedRoleId, setSelectedRoleId] = useState(0);
-  const [selectedPayslipStatusId, setSelectedPayslipStatusId] = useState("");
-
-  // sorting
-  const [sortingPayslips, setSortingEmployees] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
+  const [searchingFilterPayslips, setSearchingFilterPayslips] =
+    useState(undefined);
+  const [selectedPlacement, setSelectedPlacement] = useState(undefined);
+  const [selectedRoleId, setSelectedRoleId] = useState(undefined);
+  const [selectedPayslipStatusId, setSelectedPayslipStatusId] =
+    useState(undefined);
 
   // table data
   const [loadingPayslips, setLoadingPayslips] = useState(true);
@@ -176,11 +190,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     to: null,
     total: null,
   });
-  const [pagePayslips, setPagePayslips] = useState(1);
-  const [rowsPayslips, setRowsPayslips] = useState(10);
 
   const [refresh, setRefresh] = useState(-1);
-  const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. Post, download payslip
   const [loadingPost, setLoadingPost] = useState(false);
@@ -204,13 +215,12 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
     setLoadingPayslips(true);
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getEmployeesPayslip?rows=${rowsPayslips}&page=${pagePayslips}${
-        selectedPayslipStatusId && `&is_posted=${selectedPayslipStatusId - 1}`
-      }`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeesPayslip${payload}`,
       {
         method: `GET`,
         headers: {
@@ -239,23 +249,37 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingPayslips(false);
       });
-  }, [isAllowedToGetPayslips, refresh]);
+  }, [
+    isAllowedToGetPayslips,
+    refresh,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.keyword,
+    queryParams.role_ids,
+    queryParams.placements,
+    queryParams.is_posted,
+  ]);
 
   // 3.2. Get Company Client List
   useEffect(() => {
-    if (!isAllowedToGetCompanyList) {
+    if (!isAllowedToGetCompanyClients) {
       permissionWarningNotification("Mendapatkan", "Daftar Company Client");
       setLoadingCompanyList(false);
       return;
     }
 
     setLoadingCompanyList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -276,7 +300,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingCompanyList(false);
       });
-  }, [isAllowedToGetCompanyList]);
+  }, [isAllowedToGetCompanyClients]);
 
   // 3.3. Get Employee Role List
   useEffect(() => {
@@ -494,42 +518,12 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   const onFilterPayslips = () => {
-    setLoadingPayslips(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeesPayslip?sort_by=${
-        sortingPayslips.sort_by
-      }&sort_type=${
-        sortingPayslips.sort_type
-      }&role_ids=${selectedRoleId}&placements=${selectedPlacement}&is_posted=${
-        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : ""
-      }&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawPayslips(res2.data);
-          setDataPayslips(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingPayslips(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingPayslips(false);
-      });
+    setQueryParams({
+      keyword: searchingFilterPayslips,
+      role_ids: selectedRoleId,
+      placements: selectedPlacement,
+      is_posted: selectedPayslipStatusId,
+    });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(
@@ -763,20 +757,16 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Search by keyword (kata kunci) */}
             <div className="w-4/12">
               <Input
-                value={
-                  searchingFilterPayslips === ""
-                    ? null
-                    : searchingFilterPayslips
-                }
+                defaultValue={queryParams.keyword}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterPayslips("");
-                  } else {
-                    setSearchingFilterPayslips(e.target.value);
+                  if (!e.target.value) {
+                    setQueryParams({ keyword: undefined });
                   }
+
+                  setSearchingFilterPayslips(e.target.value);
                 }}
                 onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetPayslips}
@@ -788,15 +778,14 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 allowClear
                 showSearch
-                value={selectedRoleId === 0 ? null : selectedRoleId}
+                defaultValue={queryParams.role_ids}
                 name={`role`}
                 disabled={!isAllowedToGetRoleList}
                 placeholder="Semua Posisi"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedRoleId(0)
-                    : setSelectedRoleId(value);
+                  setQueryParams({ role_ids: value });
+                  setSelectedRoleId(value);
                 }}
                 optionFilterProp="children"
                 filterOption={(input, option) =>
@@ -818,26 +807,22 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 allowClear
                 showSearch
-                value={selectedPlacement}
+                defaultValue={queryParams.placements}
                 name={`placement`}
-                disabled={!isAllowedToGetCompanyList}
+                disabled={!isAllowedToGetCompanyClients}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedPlacement("")
-                    : setSelectedPlacement(value);
+                  setQueryParams({ placements: value });
+                  setSelectedPlacement(value);
                 }}
                 filterOption={(input, option) =>
                   (option?.value ?? "")
                     .toLowerCase()
-                    .includes(input.toLocaleLowerCase())
+                    .includes(input.toLowerCase())
                 }
                 optionFilterProp="children"
               >
-                <Select.Option key={-1} value={""}>
-                  Semua Penempatan
-                </Select.Option>
                 {dataCompanyList.map((company) => (
                   <Select.Option key={company.id} value={company.name}>
                     {company.name}
@@ -849,20 +834,16 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by payslip status (dropdown) */}
             <div className="w-2/12">
               <Select
-                value={selectedPayslipStatusId}
+                defaultValue={queryParams.is_posted}
                 allowClear
                 name={`status`}
-                defaultValue={""}
                 style={{ width: `100%` }}
+                placeholder="Semua status"
                 onChange={(value) => {
-                  value == undefined
-                    ? setSelectedPayslipStatusId("")
-                    : setSelectedPayslipStatusId(value);
+                  setQueryParams({ is_posted: value });
+                  setSelectedPayslipStatusId(value);
                 }}
               >
-                <Select.Option key={-1} value={""}>
-                  <p>Semua Status</p>
-                </Select.Option>
                 {dataPayslipStatusList.map((status, idx) => (
                   <Select.Option key={idx} value={status.id}>
                     <p>{status.name}</p>
@@ -884,24 +865,13 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
           {/* End: Search criteria */}
           <TableCustomPayslipList
+            rt={rt}
             dataSource={dataPayslips}
-            setDataSource={setDataPayslips}
             columns={columnPayslip}
             loading={loadingPayslips}
-            setpraloading={setLoadingPayslips}
-            pageSize={rowsPayslips}
-            setPageSize={setRowsPayslips}
             total={dataRawPayslips?.total}
-            initProps={initProps}
-            setpage={setPagePayslips}
-            pagefromsearch={pagePayslips}
-            setdataraw={setDataRawPayslips}
-            setsorting={setSortingEmployees}
-            sorting={sortingPayslips}
-            searching={searchingFilterPayslips}
-            selectedRoleId={selectedRoleId}
-            selectedPayslipStatusId={selectedPayslipStatusId}
-            selectedPlacement={selectedPlacement}
+            queryParams={queryParams}
+            setQueryParams={setQueryParams}
           />
         </div>
       </div>
