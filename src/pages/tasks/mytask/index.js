@@ -11,6 +11,12 @@ import {
   notification,
 } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useState } from "react";
@@ -109,6 +115,13 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const pathArr = rt.pathname.split("/").slice(1);
   pathArr[pathArr.length - 1] = `My Task`;
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+  });
+
   //useState
   //1.0.SEGERA BERAKHIR
   const [userlasttwo, setuserlasttwo] = useState([]);
@@ -165,18 +178,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [datafiltertipetasks, setdatafiltertipetasks] = useState([]);
   const [datafilterlokasi, setdatafilterlokasi] = useState([]);
   const [searchstate, setsearchstate] = useState("");
-  const [sortstate, setsortstate] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
+
   const [statusfilterstate, setstatusfilterstate] = useState("");
   const [lokasifilterstate, setlokasifilterstate] = useState("");
   const [fromdatefilterstate, setfromdatefilterstate] = useState("");
   const [todatefilterstate, settodatefilterstate] = useState("");
   const [tasktypefilterstate, settasktypefilterstate] = useState("");
   const [fetchingtasktypes, setfetchingtasktypes] = useState(false);
-  const [pagetask, setpagetask] = useState(1);
-  const [rowstask, setrowstask] = useState(10);
+
   //create - tasks
   // const [drawertaskcreate, setdrawertaskcreate] = useState(false);
   //TASK PICK
@@ -527,7 +536,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
   const onFilterTask = () => {
     setloadingtasks(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=1&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=1&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
       {
         method: `GET`,
         headers: {
@@ -537,9 +546,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        setpagetask(1);
         setdatarawtask(res2.data);
         setdatatasks(res2.data.data);
+        setQueryParams({ page: 1 });
         setloadingtasks(false);
       });
   };
@@ -638,7 +647,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     setloadingtasks(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${pagetask}&rows=${rowstask}&sort_by=${sortstate.sort_by}&sort_type=${sortstate.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
       {
         method: `GET`,
         headers: {
@@ -652,7 +661,14 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdatatasks(res2.data.data);
         setloadingtasks(false);
       });
-  }, [/* drawertaskcreate, */ viewtaskpick, isAllowedToGetUserTasks]);
+  }, [
+    /* drawertaskcreate, */ viewtaskpick,
+    isAllowedToGetUserTasks,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+  ]);
 
   // Input "Semua Lokasi" in "Semua Task" and "Open Task" section
   // Tree Dropdown "MappinIconSvg" icon click
@@ -1802,25 +1818,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               <div className="flex flex-col mb-5">
                 <TableCustomTask
                   dataSource={datatasks}
-                  setDataSource={setdatatasks}
                   columns={columnsTask}
                   loading={loadingtasks}
-                  setpraloading={setloadingtasks}
-                  pageSize={rowstask}
                   total={datarawtask.total}
-                  initProps={initProps}
-                  setpage={setpagetask}
-                  pagefromsearch={pagetask}
-                  setdataraw={setdatarawtask}
-                  sortstate={sortstate}
-                  setsortstate={setsortstate}
-                  searchstate={searchstate}
-                  tasktypefilterstate={tasktypefilterstate}
-                  fromdatefilterstate={fromdatefilterstate}
-                  todatefilterstate={todatefilterstate}
-                  lokasifilterstate={lokasifilterstate}
-                  statusfilterstate={statusfilterstate}
                   prevpath={"mytask"}
+                  queryParams={queryParams}
+                  setQueryParams={setQueryParams}
                 />
               </div>
               <div className="flex items-center justify-end">

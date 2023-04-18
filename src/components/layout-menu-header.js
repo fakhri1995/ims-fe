@@ -23,7 +23,7 @@ function LayoutMenuHeader({ dataProfile, Linkheader, handleLogout, st }) {
             <img
               src={generateStaticAssetUrl(dataProfile.data.profile_image?.link)}
               alt={dataProfile.data.profile_image?.description}
-              className="object-cover w-full h-full"
+              className="w-full h-full rounded-full object-cover"
             />
           </div>
           <div className="flex flex-col">
