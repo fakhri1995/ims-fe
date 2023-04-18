@@ -22,7 +22,7 @@ import { DataEmptyState } from "components/states/DataEmptyState";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  COMPANY_LISTS_GET,
+  COMPANY_CLIENTS_GET,
   EMPLOYEES_PAYSLIPS_POST,
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
@@ -95,7 +95,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToRaisePayslip = hasPermission(EMPLOYEE_PAYSLIP_RAISE);
   const isAllowedToDownloadPayslip = hasPermission(EMPLOYEE_PAYSLIP_DOWNLOAD);
 
-  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
   const isAllowedToGetSalaryColumns = hasPermission(
@@ -264,19 +264,22 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Get Company Client List
   useEffect(() => {
-    if (!isAllowedToGetCompanyList) {
+    if (!isAllowedToGetCompanyClients) {
       permissionWarningNotification("Mendapatkan", "Daftar Company Client");
       setLoadingCompanyList(false);
       return;
     }
 
     setLoadingCompanyList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -297,7 +300,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingCompanyList(false);
       });
-  }, [isAllowedToGetCompanyList]);
+  }, [isAllowedToGetCompanyClients]);
 
   // 3.3. Get Employee Role List
   useEffect(() => {
@@ -775,7 +778,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 allowClear
                 showSearch
-                defaultValue={queryParams.selectedRoleId}
+                defaultValue={queryParams.role_ids}
                 name={`role`}
                 disabled={!isAllowedToGetRoleList}
                 placeholder="Semua Posisi"
@@ -804,9 +807,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <Select
                 allowClear
                 showSearch
-                defaultValue={queryParams.selectedPlacement}
+                defaultValue={queryParams.placements}
                 name={`placement`}
-                disabled={!isAllowedToGetCompanyList}
+                disabled={!isAllowedToGetCompanyClients}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
@@ -816,7 +819,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 filterOption={(input, option) =>
                   (option?.value ?? "")
                     .toLowerCase()
-                    .includes(input.toLocaleLowerCase())
+                    .includes(input.toLowerCase())
                 }
                 optionFilterProp="children"
               >

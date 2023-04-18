@@ -19,7 +19,7 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  COMPANY_LISTS_GET,
+  COMPANY_CLIENTS_GET,
   EMPLOYEES_GET,
   EMPLOYEE_ADD,
   EMPLOYEE_DELETE,
@@ -83,7 +83,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
 
-  const isAllowedToGetCompanyList = hasPermission(COMPANY_LISTS_GET);
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoleTypeList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
 
@@ -227,19 +227,22 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Get Company Client List
   useEffect(() => {
-    if (!isAllowedToGetCompanyList) {
+    if (!isAllowedToGetCompanyClients) {
       permissionWarningNotification("Mendapatkan", "Daftar Company Client");
       setLoadingCompanyList(false);
       return;
     }
 
     setLoadingCompanyList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCompanyClientList?with_mig=1`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -260,7 +263,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingCompanyList(false);
       });
-  }, [isAllowedToGetCompanyList]);
+  }, [isAllowedToGetCompanyClients]);
 
   // 3.3. Get Employee Role List
   useEffect(() => {
@@ -932,7 +935,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
                 showSearch
                 defaultValue={queryParams.placements}
                 name={`placement`}
-                disabled={!isAllowedToGetCompanyList}
+                disabled={!isAllowedToGetCompanyClients}
                 placeholder="Semua Penempatan"
                 style={{ width: `100%` }}
                 onChange={(value) => {
