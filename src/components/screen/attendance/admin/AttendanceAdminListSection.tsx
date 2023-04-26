@@ -188,6 +188,7 @@ export const AttendanceAdminListSection: FC<
                 <Select
                   allowClear
                   showSearch
+                  className="w-full"
                   defaultValue={queryParams.placements}
                   disabled={
                     !isAllowedToGetCompanyClients || loadingCompanyClients
