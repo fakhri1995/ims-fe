@@ -361,7 +361,7 @@ function LandingPage({ dataBlog }) {
                 >
                   <button
                     className={
-                      "flex flex-row justify-center text-xl text-primarygreen rounded border-2 border-primarygreen pl-4 pr-3 py-2 mt-4 bg-white"
+                      "flex flex-row justify-center text-xl text-primarygreen rounded border-2 border-primarygreen pl-4 pr-3 py-2 bg-white"
                     }
                   >
                     <p className={"mr-2 text-base font-gilroysemibold"}>
@@ -377,7 +377,7 @@ function LandingPage({ dataBlog }) {
                 <button
                   onClick={getFreeConsultation}
                   className={
-                    "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 ml-4"
+                    "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen ml-4"
                   }
                 >
                   <p className={"text-base font-gilroysemibold"}>
