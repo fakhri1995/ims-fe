@@ -349,8 +349,8 @@ function LandingPage({ dataBlog }) {
             >
               {t.thirdprovide}
             </p>
-            <div className={"mt-[40px]"}>
-              <div className={"flex flex-row justify-between w-[512px]"}>
+            <div className={"mt-[32px]"}>
+              <div className={"flex flex-row  w-[512px]"}>
                 <Link
                   activeClass="active"
                   to="youronestop"
@@ -377,7 +377,7 @@ function LandingPage({ dataBlog }) {
                 <button
                   onClick={getFreeConsultation}
                   className={
-                    "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4"
+                    "text-xl text-center px-4 py-2 text-white rounded border-2 bg-primarygreen border-primarygreen mt-4 ml-4"
                   }
                 >
                   <p className={"text-base font-gilroysemibold"}>
@@ -838,7 +838,7 @@ function LandingPage({ dataBlog }) {
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  " text-blackmig text-xl font-gilroyregular mt-[32px]"
+                  " text-blackmig text-xl font-gilroyregular mt-[24px]"
                 }
               >
                 {t.hardwaredescription}
@@ -900,7 +900,7 @@ function LandingPage({ dataBlog }) {
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  " text-blackmig text-xl font-gilroyregular mt-[32px]"
+                  " text-blackmig text-xl font-gilroyregular mt-[24px]"
                 }
               >
                 {t.softwaredescription}
@@ -948,7 +948,7 @@ function LandingPage({ dataBlog }) {
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  " text-blackmig text-xl font-gilroyregular mt-[32px]"
+                  " text-blackmig text-xl font-gilroyregular mt-[24px]"
                 }
               >
                 {t.talentdescription}
