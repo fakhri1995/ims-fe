@@ -655,7 +655,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(
-                        `/admin/employees/payslip/${record.employee_id}/addPayslip?id=${record.id}`
+                        `/admin/employees/payslip/${record.contract?.employee_id}/addPayslip?id=${record.id}`
                       );
                     }}
                   >
