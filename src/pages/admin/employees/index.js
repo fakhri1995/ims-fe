@@ -458,7 +458,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res2) => {
         if (res2.success) {
           let statusCountRes = res2.data;
-          let mappedStatusCount = statusCountRes.reverse().map((data) => {
+          let mappedStatusCount = statusCountRes.map((data) => {
             return {
               status_count: data.status_count,
               is_employee_active: Number(data.is_employee_active)
