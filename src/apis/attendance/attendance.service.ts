@@ -9,6 +9,8 @@ import {
   AttendanceExportExcelDataCriteria,
   AttendanceExportExcelDataResult,
   IGetAttendanceUserSucceedResponse,
+  IGetAttendanceUsersPaginateParams,
+  IGetAttendanceUsersPaginateSucceedResponse,
   IGetAttendanceUsersSucceedResponse,
   IGetAttendancesUserSucceedResponse,
   ISetAttendanceTogglePayload,
@@ -43,6 +45,23 @@ export class AttendanceService {
   static async findAsAdmin(axiosClient: AxiosInstance) {
     return await axiosClient.get<IGetAttendanceUsersSucceedResponse>(
       "/getAttendancesUsers"
+    );
+  }
+
+  /**
+   * Retrieve all attendances with pagination as an Admin.
+   *
+   * @see {AttendanceServiceQueryKeys.ATTENDANCE_USERS_PAGINATE_GET}
+   * @access GET /getAttendancesUsers
+   */
+  static async findAsAdminPaginate(
+    axiosClient: AxiosInstance,
+    params?: IGetAttendanceUsersPaginateParams
+  ) {
+    const qs = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return await axiosClient.get<IGetAttendanceUsersPaginateSucceedResponse>(
+      "/getAttendancesUsersPaginate" + qs
     );
   }
 
