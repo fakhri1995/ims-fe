@@ -10,7 +10,7 @@ export enum CompanyServiceQueryKeys {
  * @access GET /getCompanyClientList
  */
 export type GetCompanyClientListSucceedResponse =
-  HttpRequestWithDataSucceedResponse<GetCompanyClientListData>;
+  HttpRequestWithDataSucceedResponse<GetCompanyClientListData[]>;
 
 export interface GetCompanyClientListData {
   id: number;

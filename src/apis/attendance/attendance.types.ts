@@ -10,6 +10,9 @@ export enum AttendanceServiceQueryKeys {
   /** Untuk endpoint /getAttendancesUsers (admin) */
   ATTENDANCE_USERS_GET = "ATTENDANCE_USERS_GET",
 
+  /** Untuk endpoint /getAttendancesUsersPaginate (admin) */
+  ATTENDANCE_USERS_PAGINATE_GET = "ATTENDANCE_USERS_PAGINATE_GET",
+
   /** Detail attendance */
   ATTENDANCE_USER_GET = "ATTENDANCE_USER_GET",
 }
@@ -137,6 +140,62 @@ export interface UsersAttendanceUser {
   id: number;
   name: string;
   profile_image: ProfileImageAttribute;
+}
+
+/**
+ * @access GET /getAttendancesUsersPaginate
+ */
+
+export interface IGetAttendanceUsersPaginateParams {
+  page?: number;
+  rows?: number;
+  sort_by?: "name" | "description" | "updated_at" | "count" | string;
+  sort_type?: string;
+  keyword?: string;
+  placements?: string;
+  is_late?: number;
+  is_hadir?: number;
+}
+
+export type IGetAttendanceUsersPaginateSucceedResponse =
+  HttpRequestWithDataSucceedResponse<GetAttendanceUsersPaginateData>;
+
+export interface GetAttendanceUsersPaginateData {
+  current_page: number;
+  data: GetAttendanceUsersPaginateDatum[];
+  first_page_url: string;
+  from: number;
+  last_page: number;
+  last_page_url: string;
+  next_page_url: null;
+  path: string;
+  per_page: number;
+  prev_page_url: string;
+  to: number;
+  total: number;
+}
+
+export interface GetAttendanceUsersPaginateDatum {
+  id: number;
+  name: string;
+  attendance_user: AttendanceUser;
+  profile_image?: ProfileImageAttribute;
+}
+
+export interface AttendanceUser {
+  id: number;
+  user_id: number;
+  check_in: string;
+  check_out: string;
+  long_check_in: string;
+  lat_check_in: string;
+  long_check_out: string;
+  lat_check_out: string;
+  geo_loc_check_in: GeolocationCheckInOut | null;
+  geo_loc_check_out: GeolocationCheckInOut | null;
+  is_wfo: 0 | 1;
+  is_late: 0 | 1;
+  checked_out_by_system: 0 | 1;
 }
 
 /**
