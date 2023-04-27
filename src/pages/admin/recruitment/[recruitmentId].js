@@ -204,19 +204,6 @@ const RecruitmentDetailIndex = ({
         .then((response2) => {
           if (response2.success) {
             setDataRecruitment(response2.data);
-            // setDataRecruitment({
-            //   ...response2.data,
-            //   attachments: [
-            //     {
-            //       title: "judul",
-            //       value: "https://blog.logrocket.com/usestate-vs-useref/",
-            //     },
-            //     {
-            //       title: "judul",
-            //       value: "test non url",
-            //     },
-            //   ],
-            // });
             setResumeId(response2.data.resume?.id);
           } else {
             notification.error({
@@ -354,7 +341,6 @@ const RecruitmentDetailIndex = ({
       setLoadingDataResume(false);
       return;
     }
-    // console.log(resumeId)
     if (resumeId) {
       setLoadingDataResume(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResume?id=${resumeId}`, {
@@ -760,17 +746,21 @@ const RecruitmentDetailIndex = ({
                 <p className="mig-caption--medium text-mono80">
                   Daftar Lampiran
                 </p>
-                {dataRecruitment?.attachments?.length > 0 ? (
+                {dataRecruitment?.lampiran?.length > 0 ? (
                   <ul className="space-y-2">
-                    {dataRecruitment?.attachments?.map((attachment, idx) => (
+                    {dataRecruitment?.lampiran?.map((attachment, idx) => (
                       <li key={idx}>
-                        <p className="font-bold">{attachment.title}</p>
-                        {isURL(attachment.value) ? (
-                          <a href={attachment.value} target={"_blank"}>
-                            <p className="text-md">{attachment.value}</p>
+                        <p className="font-semibold text-ellipsis overflow-hidden">
+                          {attachment?.judul_lampiran}
+                        </p>
+                        {isURL(attachment?.isi_lampiran) ? (
+                          <a href={attachment?.isi_lampiran} target={"_blank"}>
+                            <p className="text-md text-ellipsis overflow-hidden">
+                              {attachment?.isi_lampiran}
+                            </p>
                           </a>
                         ) : (
-                          <p className="text-md">{attachment.value}</p>
+                          <p className="text-md">{attachment?.isi_lampiran}</p>
                         )}
                       </li>
                     ))}
@@ -1522,7 +1512,6 @@ const RecruitmentDetailIndex = ({
             rows={3}
             value={dataNotes.notes}
             onChange={(event) => {
-              // console.log(event.target.value)
               setDataNotes({
                 ...dataNotes,
                 notes: event.target.value,

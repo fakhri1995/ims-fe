@@ -49,7 +49,7 @@ const DrawerCandidateCreate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
-    attachments: [],
+    lampiran: [],
   });
   const [loadingCreate, setLoadingCreate] = useState(false);
   const [disabledcreate, setdisabledcreate] = useState(true);
@@ -90,7 +90,6 @@ const DrawerCandidateCreate = ({
         setLoadingRegistPlatformList(false);
       })
       .catch((err) => {
-        console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,
@@ -139,7 +138,7 @@ const DrawerCandidateCreate = ({
               recruitment_jalur_daftar_id: null,
               recruitment_stage_id: null,
               recruitment_status_id: null,
-              attachments: [],
+              lampiran: [],
             });
           }, 500);
         } else {
@@ -162,10 +161,9 @@ const DrawerCandidateCreate = ({
   // USEEFFECT
   useEffect(() => {
     let allFilled = Object.values(dataCandidate).every((value) => value);
-    let attachmentIsFilled = dataCandidate?.attachments?.every(
-      (attachment) => attachment.title && attachment.value
+    let attachmentIsFilled = dataCandidate?.lampiran?.every(
+      (attachment) => attachment.judul_lampiran && attachment.isi_lampiran
     );
-    // console.log(allFilled)
     if (allFilled && attachmentIsFilled) {
       setdisabledcreate(false);
     } else {
@@ -173,7 +171,6 @@ const DrawerCandidateCreate = ({
     }
   }, [dataCandidate]);
 
-  // console.log(dataCandidate);
   return (
     <DrawerCore
       title={title}
@@ -187,7 +184,7 @@ const DrawerCandidateCreate = ({
           recruitment_jalur_daftar_id: null,
           recruitment_stage_id: null,
           recruitment_status_id: null,
-          attachments: [],
+          lampiran: [],
         });
         onvisible(false);
       }}
@@ -405,34 +402,34 @@ const DrawerCandidateCreate = ({
             </Form.Item>
 
             <p className="my-2">Daftar Lampiran</p>
-            {dataCandidate?.attachments?.map((attachment, idx) => (
+            {dataCandidate?.lampiran?.map((attachment, idx) => (
               <div className="col-span-2 flex flex-row mb-4">
                 <Input
-                  value={attachment?.title}
-                  name={"title"}
+                  value={attachment?.judul_lampiran}
+                  name={"judul_lampiran"}
                   placeholder={"Judul Lampiran"}
                   className="mr-2"
                   onChange={(e) => {
-                    let temp = [...dataCandidate.attachments];
-                    temp[idx].title = e.target.value;
+                    let temp = [...dataCandidate.lampiran];
+                    temp[idx].judul_lampiran = e.target.value;
 
                     setDataCandidate((prev) => ({
                       ...prev,
-                      attachments: temp,
+                      lampiran: temp,
                     }));
                   }}
                 />
                 <Input
-                  value={attachment?.value}
-                  name={"value"}
+                  value={attachment?.isi_lampiran}
+                  name={"isi_lampiran"}
                   type={"url"}
                   placeholder="URL Lampiran"
                   onChange={(e) => {
-                    let temp = [...dataCandidate.attachments];
-                    temp[idx].value = e.target.value;
+                    let temp = [...dataCandidate.lampiran];
+                    temp[idx].isi_lampiran = e.target.value;
                     setDataCandidate((prev) => ({
                       ...prev,
-                      attachments: temp,
+                      lampiran: temp,
                     }));
                   }}
                 />
@@ -440,11 +437,11 @@ const DrawerCandidateCreate = ({
                 <button
                   className="ml-2"
                   onClick={() => {
-                    const temp = [...dataCandidate.attachments];
+                    const temp = [...dataCandidate.lampiran];
                     temp.splice(idx, 1);
                     setDataCandidate((prev) => ({
                       ...prev,
-                      attachments: temp,
+                      lampiran: temp,
                     }));
                   }}
                 >
@@ -458,11 +455,11 @@ const DrawerCandidateCreate = ({
                 onClick={() => {
                   setDataCandidate((prev) => ({
                     ...prev,
-                    attachments: [
-                      ...prev.attachments,
+                    lampiran: [
+                      ...prev.lampiran,
                       {
-                        title: "",
-                        value: "",
+                        judul_lampiran: "",
+                        isi_lampiran: "",
                       },
                     ],
                   }));

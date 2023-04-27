@@ -85,7 +85,7 @@ export const AttendanceAdminListSection: FC<
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    placements: withDefault(StringParam, undefined),
+    company_ids: withDefault(StringParam, undefined),
     is_late: withDefault(NumberParam, undefined),
     is_hadir: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
@@ -99,7 +99,7 @@ export const AttendanceAdminListSection: FC<
         sort_by: newParams.sort_by,
         sort_type: newParams.sort_type,
         keyword: newParams.keyword,
-        placements: newParams.placements,
+        company_ids: newParams.company_ids,
         is_late: newParams.is_late,
         is_hadir: newParams.is_hadir,
       });
@@ -125,7 +125,7 @@ export const AttendanceAdminListSection: FC<
     <>
       <div className="mig-platform space-y-6">
         {/* Header: tabs, buttons, filter, and search box */}
-        <div className="flex flex-col xl:flex-row xl:items-center space-y-2 xl:space-y-0 xl:space-x-2">
+        <div className="flex flex-col xl:flex-row xl:items-center space-y-2 xl:space-y-0">
           <div className="flex flex-row w-full xl:w-3/6 items-center space-x-2 justify-between xl:justify-start">
             <Tabs
               defaultActiveKey="1"
@@ -153,7 +153,7 @@ export const AttendanceAdminListSection: FC<
           <Form
             className="flex w-full xl:w-3/6 justify-between xl:justify-end items-center space-x-2"
             onFinish={(values) => {
-              setQueryParams({ keyword: values.search });
+              setQueryParams({ keyword: values.search, page: 1 });
             }}
           >
             {activeTab === "1" && (
@@ -161,7 +161,7 @@ export const AttendanceAdminListSection: FC<
                 <Switch
                   checked={!queryParams.is_late}
                   onChange={(checked) =>
-                    setQueryParams({ is_late: !checked ? 1 : 0 })
+                    setQueryParams({ is_late: !checked ? 1 : 0, page: 1 })
                   }
                 />
               </Form.Item>
@@ -188,17 +188,18 @@ export const AttendanceAdminListSection: FC<
                 <Select
                   allowClear
                   showSearch
+                  mode="multiple"
                   className="w-full"
-                  defaultValue={queryParams.placements}
+                  defaultValue={queryParams.company_ids}
                   disabled={
                     !isAllowedToGetCompanyClients || loadingCompanyClients
                   }
                   placeholder="Semua Penempatan"
                   onChange={(value) => {
-                    setQueryParams({ placements: value });
+                    setQueryParams({ company_ids: value, page: 1 });
                   }}
                   filterOption={(input, option) =>
-                    ((option?.value as String) ?? "")
+                    (String(option?.children) ?? "")
                       .toLowerCase()
                       .includes(input.toLowerCase())
                   }
@@ -206,7 +207,7 @@ export const AttendanceAdminListSection: FC<
                   optionFilterProp="children"
                 >
                   {dataCompanyList?.map((company) => (
-                    <Select.Option key={company.id} value={company.name}>
+                    <Select.Option key={company.id} value={company.id}>
                       {company.name}
                     </Select.Option>
                   ))}
@@ -242,7 +243,7 @@ export const AttendanceAdminListSection: FC<
               keyword={queryParams.keyword}
               is_late={queryParams.is_late}
               is_hadir={queryParams.is_hadir}
-              placements={queryParams.placements}
+              company_ids={queryParams.company_ids}
               onTriggerChangeParams={onTriggerChangeParams}
             />
           )}
@@ -272,7 +273,7 @@ interface ITable {
   keyword: string;
   is_late: number;
   is_hadir: number;
-  placements: string;
+  company_ids: string;
   onTriggerChangeParams: (
     newParams: Partial<IGetAttendanceUsersPaginateParams>
   ) => void;
@@ -291,7 +292,7 @@ const HadirTable: FC<ITable> = memo(
     keyword = "",
     is_late = 0,
     is_hadir = 1,
-    placements = "",
+    company_ids = "",
   }) => {
     const router = useRouter();
     const axiosClient = useAxiosClient();
@@ -309,9 +310,9 @@ const HadirTable: FC<ITable> = memo(
         keyword,
         is_late,
         is_hadir,
-        placements,
+        company_ids,
       }),
-      [page, rows, sort_by, sort_type, keyword, is_late, is_hadir, placements]
+      [page, rows, sort_by, sort_type, keyword, is_late, is_hadir, company_ids]
     );
 
     const { data, isLoading } = useQuery(
@@ -385,7 +386,7 @@ const HadirTable: FC<ITable> = memo(
         },
         {
           title: "Company",
-          dataIndex: ["attendance_user", "placements"],
+          dataIndex: ["company", "name"],
         },
         {
           title: "Waktu Check In",
@@ -447,7 +448,7 @@ const HadirTable: FC<ITable> = memo(
             rows: pagination.pageSize,
             is_late: is_late,
             is_hadir: is_hadir,
-            placements: placements,
+            company_ids: company_ids,
             keyword: keyword,
           };
 
