@@ -158,6 +158,14 @@ export const AttendanceAdminListSection: FC<
           >
             {activeTab === "1" && (
               <Form.Item noStyle>
+                {queryParams.is_late ? (
+                  <p className="text-overdue">Terlambat</p>
+                ) : (
+                  <p className="text-primary100 lg:whitespace-nowrap">
+                    Tepat Waktu
+                  </p>
+                )}
+
                 <Switch
                   checked={!queryParams.is_late}
                   onChange={(checked) =>
