@@ -390,6 +390,7 @@ const HadirTable: FC<ITable> = memo(
         {
           title: "Kerja",
           dataIndex: ["attendance_user", "is_wfo"],
+          width: "70px",
           render: (is_wfo) => (is_wfo === 1 ? "WFO" : "WFH"),
         },
         {
@@ -450,6 +451,7 @@ const HadirTable: FC<ITable> = memo(
         pagination={tablePaginationConf}
         loading={isLoading}
         className="tableTypeTask"
+        scroll={{ x: 800 }}
         onChange={(pagination, _, sorter) => {
           let criteria: IGetAttendanceUsersPaginateParams = {
             page: pagination.current,
@@ -598,6 +600,7 @@ const AbsenTable: FC<IAbsenTable> = ({ keyword }) => {
       dataSource={filteredData}
       pagination={tablePaginationConf}
       loading={isLoading}
+      scroll={{ x: 500 }}
       className="tableTypeTask"
       onRow={() => {
         return {
