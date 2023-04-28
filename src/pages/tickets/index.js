@@ -454,11 +454,11 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className=" grid grid-cols-10 px-5">
+        <div className="grid grid-cols-2 md:grid-cols-10 px-5">
           {dataProfile.data.role === 1 ? (
             <>
               {/* PENYELESAIAN TIKET */}
-              <div className="col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-3">
+              <div className="col-span-2 md:col-span-3 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-3">
                 <div className="flex items-center justify-between mb-4">
                   <H1>Penyelesaian Tiket</H1>
                 </div>
@@ -568,13 +568,13 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   <Spin />
                 </>
               ) : (
-                <div className="col-span-3 flex flex-col mb-6">
-                  <div className=" mb-3 grid grid-cols-2">
-                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mb-2">
+                <div className="col-span-2 flex flex-col md:col-span-3 lg:col-span-4 xl:col-span-3 mb-6">
+                  <div className=" mb-3 grid grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-2 md:gap-0">
+                    <div className="col-span-1 shadow-md rounded-md bg-white p-5 flex flex-row justify-between md:mx-2 mb-2 space-x-2 xl:space-x-0">
                       <div>
                         <TicketIconSvg size={30} color={`#BF4A40`} />
                       </div>
-                      <div className=" flex flex-col">
+                      <div className="flex flex-col">
                         <div className=" flex items-center justify-end">
                           <p className="mb-0 text-overdue font-semibold text-base mr-1">
                             {datastatusticket[0]?.status_count}
@@ -583,12 +583,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
                           </div>
                         </div>
-                        <div className=" justify-end flex">
+                        <div className="flex justify-end text-right">
                           <Label>{datastatusticket[0]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
-                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mb-2">
+                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between md:mx-2 mb-2 space-x-2 xl:space-x-0">
                       <div>
                         <TicketIconSvg size={30} color={`#2F80ED`} />
                       </div>
@@ -598,27 +598,27 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             {datastatusticket[1]?.status_count}
                           </p>
                         </div>
-                        <div className=" justify-end flex">
+                        <div className="justify-end flex text-right">
                           <Label>{datastatusticket[1]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
-                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 my-2">
+                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between md:mx-2 my-2 space-x-2 xl:space-x-0">
                       <div>
                         <TicketIconSvg size={30} color={`#ED962F`} />
                       </div>
-                      <div className=" flex flex-col">
-                        <div className=" flex items-center justify-end">
+                      <div className="flex flex-col">
+                        <div className="flex items-center justify-end">
                           <p className="mb-0 text-onprogress font-semibold text-base mr-1">
                             {datastatusticket[2]?.status_count}
                           </p>
                         </div>
-                        <div className=" justify-end flex">
+                        <div className="flex justify-end text-right">
                           <Label>{datastatusticket[2]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
-                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 my-2">
+                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between md:mx-2 my-2 space-x-2 xl:space-x-0">
                       <div>
                         <TicketIconSvg size={30} color={`#E5C471`} />
                       </div>
@@ -628,12 +628,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             {datastatusticket[3]?.status_count}
                           </p>
                         </div>
-                        <div className=" justify-end flex">
+                        <div className="flex justify-end text-right">
                           <Label>{datastatusticket[3]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
-                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1 mt-2">
+                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between md:mx-2 mt-2 space-x-2 xl:space-x-0">
                       <div>
                         <TicketIconSvg size={30} color={`#808080`} />
                       </div>
@@ -643,12 +643,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             {datastatusticket[4]?.status_count}
                           </p>
                         </div>
-                        <div className=" justify-end flex">
+                        <div className="flex justify-end  text-right">
                           <Label>{datastatusticket[4]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
-                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2 mt-2">
+                    <div className=" col-span-1 shadow-md rounded-md bg-white p-5 flex justify-between md:mx-2 mt-2 space-x-2 xl:space-x-0">
                       <div>
                         <TicketIconSvg size={30} color={`#F46780`} />
                       </div>
@@ -658,13 +658,13 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                             {datastatusticket[5]?.status_count}
                           </p>
                         </div>
-                        <div className=" justify-end flex">
+                        <div className="flex justify-end text-right">
                           <Label>{datastatusticket[5]?.status_name}</Label>
                         </div>
                       </div>
                     </div>
                   </div>
-                  <div className="shadow-md rounded-md bg-white p-5 mx-2 flex justify-between items-center h-full">
+                  <div className="shadow-md rounded-md bg-white p-5 md:mx-2 flex justify-between items-center h-full">
                     <div>
                       <H1>Total Tiket</H1>
                     </div>
@@ -676,10 +676,10 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   </div>
                 </div>
               )}
-              <div className=" col-span-4 flex flex-col mb-6">
+              <div className="col-span-2 md:col-span-4 lg:col-span-3 xl:col-span-4 flex flex-col mb-6">
                 {/* BUAT TIKET */}
                 <div
-                  className="shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-3 flex items-center mb-2"
+                  className="shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 md:mx-3 flex items-center mb-2"
                   onClick={() => {
                     if (!canCreateNewTicket) {
                       permissionWarningNotification("Membuat", "Tiket Baru");
@@ -702,10 +702,10 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                   </div>
                 </div>
                 {/* KELOLA TIKET */}
-                <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 mx-3 h-full">
+                <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mt-2 md:mx-3 h-full">
                   <div className="flex flex-col justify-center h-full">
                     <div
-                      className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
+                      className=" h-2/6 flex flex-row items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
                       onClick={() => {
                         if (!isAllowedToExportTickets) {
                           permissionWarningNotification(
@@ -729,7 +729,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       </div>
                     </div>
                     <div
-                      className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
+                      className=" h-2/6 flex flex-row items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
                       onClick={() => {
                         rt.push(`/tickets/histories`);
                       }}
@@ -746,7 +746,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                       </div>
                     </div>
                     <div
-                      className=" h-2/6 flex items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
+                      className=" h-2/6 flex flex-row items-center mb-4 cursor-pointer hover:bg-backdrop p-2"
                       onClick={() => {
                         rt.push(`/tickets/tickettypes`);
                       }}
@@ -769,9 +769,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
             </>
           ) : (
-            <div className=" col-span-10 grid grid-cols-12">
-              <div className="col-span-8 grid grid-cols-8 mb-6">
-                <div className=" col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1">
+            <div className="col-span-2 md:col-span-10 grid grid-cols-4 md:grid-cols-12">
+              <div className="col-span-4 md:col-span-8 grid grid-cols-2 md:grid-cols-8 mb-6 gap-2">
+                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#ED962F`} />
                   </div>
@@ -784,12 +784,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                         <AlerttriangleIconSvg size={15} color={`#BF4A40`} />
                       </div>
                     </div>
-                    <div className=" justify-end flex">
+                    <div className=" justify-end flex text-right">
                       <Label>{datastatusticket[0]?.status_name}</Label>
                     </div>
                   </div>
                 </div>
-                <div className=" col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2">
+                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#2F80ED`} />
                   </div>
@@ -799,12 +799,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                         {datastatusticket[1]?.status_count}
                       </p>
                     </div>
-                    <div className=" justify-end flex">
+                    <div className=" justify-end flex text-right">
                       <Label>{datastatusticket[1]?.status_name}</Label>
                     </div>
                   </div>
                 </div>
-                <div className=" col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-2 mr-1">
+                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#808080`} />
                   </div>
@@ -814,12 +814,12 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                         {datastatusticket[2]?.status_count}
                       </p>
                     </div>
-                    <div className=" justify-end flex">
+                    <div className=" justify-end flex text-right">
                       <Label>{datastatusticket[2]?.status_name}</Label>
                     </div>
                   </div>
                 </div>
-                <div className=" col-span-2 shadow-md rounded-md bg-white p-5 flex justify-between ml-1 mr-2">
+                <div className="md:col-span-2 shadow-md rounded-md bg-white items-center lg:items-start p-3 lg:p-5 flex justify-between">
                   <div>
                     <TicketIconSvg size={30} color={`#BF4A40`} />
                   </div>
@@ -829,14 +829,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                         {datastatusticket[3]?.status_count}
                       </p>
                     </div>
-                    <div className=" justify-end flex">
+                    <div className=" justify-end flex text-right">
                       <Label>{datastatusticket[3]?.status_name}</Label>
                     </div>
                   </div>
                 </div>
               </div>
               <div
-                className="col-span-4 shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 mx-3 flex items-center mb-6"
+                className="col-span-4 shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 md:mx-3 flex items-center mb-6"
                 onClick={() => {
                   if (!canCreateNewTicket) {
                     permissionWarningNotification("Membuat", "Tiket Baru");
@@ -861,15 +861,15 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             </div>
           )}
           {/* TABLE TIKET */}
-          <div className="col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mx-2">
+          <div className="col-span-2 md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 md:mx-2">
             <div className="flex items-center justify-between mb-4">
               <H1>Semua Tiket</H1>
             </div>
 
             {/* Start: Search criteria */}
-            <div className="flex items-center mb-4">
+            <div className="mb-4 grid grid-cols-2 lg:grid-cols-12 gap-2 lg:gap-0">
               {/* Search by keyword (kata kunci) */}
-              <div className="mx-1 w-2/12">
+              <div className="mx-1 lg:col-span-2">
                 <Input
                   value={
                     searcingfiltertickets === "" ? null : searcingfiltertickets
@@ -890,7 +890,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by ticket (dropdown) */}
-              <div className="mx-1 w-2/12">
+              <div className="mx-1 lg:col-span-2">
                 <Select
                   value={
                     tickettypefiltertickets === ""
@@ -917,7 +917,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by date */}
-              <div className=" w-3/12 mx-1">
+              <div className="mx-1 lg:col-span-2 xl:col-span-3">
                 <DatePicker.RangePicker
                   style={{ width: `100%` }}
                   allowEmpty
@@ -936,7 +936,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by location */}
-              <div className=" mx-1 w-5/12">
+              <div className="mx-1 lg:col-span-2">
                 <TreeSelect
                   style={{ width: `100%` }}
                   allowClear
@@ -972,7 +972,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by status (dropdown) */}
-              <div className="mx-1 w-2/12">
+              <div className="mx-1 lg:col-span-2">
                 <Select
                   value={
                     statusfiltertickets === "" ? null : statusfiltertickets
@@ -1086,7 +1086,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 </Select>
               </div>
 
-              <div className="mx-1 w-1/12">
+              <div className="mx-1 text-right">
                 <ButtonSys
                   type={`primary`}
                   onClick={onFilterTickets}
