@@ -394,7 +394,7 @@ const EmployeePayslipDetailIndex = ({
     },
     {
       title: "Periode",
-      dataIndex: "month",
+      dataIndex: "period",
       render: (text, record, index) => {
         return {
           children: (
