@@ -32,8 +32,7 @@ import {
 } from "lib/features";
 
 import ButtonSys from "../../../../../components/button";
-import { CheckIconSvg, XIconSvg } from "../../../../../components/icon";
-import { ClipboardListIconSvg } from "../../../../../components/icon";
+import { CheckIconSvg } from "../../../../../components/icon";
 import LayoutDashboard from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
 import {
@@ -233,7 +232,7 @@ const EmployeePayslipAddIndex = ({
         })
         .catch((err) => {
           notification.error({
-            message: `${err.response}`,
+            message: err.response,
             duration: 3,
           });
         })
@@ -244,11 +243,10 @@ const EmployeePayslipAddIndex = ({
   // 3.2. Disable "Terbitkan" button if any required field is empty
   useEffect(() => {
     // Check if all required dynamic benefit fields are available and filled
-    const requiredBenefitIds = receiveVarFields
-      .concat(reductionVarFields)
-      .filter((field) => field.required === 1)
-      .map((field) => field.id);
 
+    const requiredBenefitIds = dataPayslip.salaries
+      ?.filter((field) => field?.column?.required === 1)
+      .map((field) => field?.employee_salary_column_id);
     const salaryIds = dataPayslip?.salaries?.map(
       (salary) => salary.employee_salary_column_id
     );
@@ -292,7 +290,7 @@ const EmployeePayslipAddIndex = ({
     setReductionVarFields(
       dataPayslip?.salaries?.filter((variable) => variable.column?.type === 2)
     );
-  }, [dataPayslip.salaries]);
+  }, [...dataPayslip.salaries]);
 
   // total gross penerimaan
   useEffect(() => {
@@ -645,37 +643,31 @@ const EmployeePayslipAddIndex = ({
             >
               Ubah gaji pokok
             </Checkbox>
-            {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
             <Spin spinning={praloading}>
-              {receiveVarFields.map((variable, idx) => (
-                <Form.Item
-                  key={idx}
-                  label={variable?.column?.name}
-                  name={formatVariableName(variable?.column?.name)}
-                  rules={[
-                    {
-                      required: variable?.column?.required,
-                      message: `${variable?.column?.name} wajib diisi`,
-                    },
-                  ]}
-                >
-                  <div className="flex flex-row items-center space-x-2">
-                    <CustomCurrencyInput
-                      fieldLabel={`${variable?.column?.name.toLowerCase()}`}
-                      dataForm={dataPayslip}
-                      setDataForm={setDataPayslip}
-                      value={
-                        dataPayslip.salaries.find(
-                          (benefit) =>
-                            benefit?.employee_salary_column_id ===
-                            variable.column.id
-                        )?.value
-                      }
-                      idx={idx}
-                      dataColumn={variable.column}
-                      payslipId={payslipId}
-                    />
-                    {/* {!variable.required && (
+              {dataPayslip?.salaries
+                ?.filter((variable) => variable?.column?.type === 1)
+                .map((variable) => (
+                  <Form.Item
+                    key={variable.employee_salary_column_id}
+                    label={variable?.column?.name}
+                    name={formatVariableName(variable?.column?.name)}
+                    rules={[
+                      {
+                        required: variable?.column?.required,
+                        message: `${variable?.column?.name} wajib diisi`,
+                      },
+                    ]}
+                  >
+                    <div className="flex flex-row items-center space-x-2">
+                      <CustomCurrencyInput
+                        fieldLabel={`${variable?.column?.name.toLowerCase()}`}
+                        dataForm={dataPayslip}
+                        setDataForm={setDataPayslip}
+                        value={variable.value}
+                        dataColumn={variable.column}
+                        payslipId={payslipId}
+                      />
+                      {/* {!variable.required && (
                     <Button
                       icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
                       className="border-0 hover:opacity-60"
@@ -686,9 +678,9 @@ const EmployeePayslipAddIndex = ({
                       }}
                     />
                   )} */}
-                  </div>
-                </Form.Item>
-              ))}
+                    </div>
+                  </Form.Item>
+                ))}
             </Spin>
           </div>
 
@@ -825,40 +817,34 @@ const EmployeePayslipAddIndex = ({
               </>
             </Form.Item>
             {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
-            {reductionVarFields.map((variable, idx) => {
-              let reductionFieldId = receiveVarFields.length + idx;
-              return (
-                <Form.Item
-                  key={reductionFieldId}
-                  label={variable?.column?.name}
-                  name={formatVariableName(variable?.column?.name)}
-                  rules={[
-                    {
-                      required: variable?.column?.required,
-                      message: `${variable?.column?.name} wajib diisi`,
-                    },
-                  ]}
-                >
-                  <div>
-                    <CustomCurrencyInput
-                      fieldLabel={`${variable?.column?.name?.toLowerCase()}`}
-                      dataForm={dataPayslip}
-                      setDataForm={setDataPayslip}
-                      value={
-                        dataPayslip.salaries.find(
-                          (benefit) =>
-                            benefit?.employee_salary_column_id ===
-                            variable?.column?.id
-                        )?.value
-                      }
-                      idx={reductionFieldId}
-                      dataColumn={variable.column}
-                      payslipId={payslipId}
-                    />
-                  </div>
-                </Form.Item>
-              );
-            })}
+            {dataPayslip?.salaries
+              ?.filter((variable) => variable?.column?.type === 2)
+              .map((variable) => {
+                return (
+                  <Form.Item
+                    key={variable.employee_salary_column_id}
+                    label={variable?.column?.name}
+                    name={formatVariableName(variable?.column?.name)}
+                    rules={[
+                      {
+                        required: variable?.column?.required,
+                        message: `${variable?.column?.name} wajib diisi`,
+                      },
+                    ]}
+                  >
+                    <div>
+                      <CustomCurrencyInput
+                        fieldLabel={`${variable?.column?.name?.toLowerCase()}`}
+                        dataForm={dataPayslip}
+                        setDataForm={setDataPayslip}
+                        value={variable?.value}
+                        dataColumn={variable.column}
+                        payslipId={payslipId}
+                      />
+                    </div>
+                  </Form.Item>
+                );
+              })}
           </div>
           <div className="col-span-2 mb-6">
             <ButtonSys
@@ -963,10 +949,6 @@ const EmployeePayslipAddIndex = ({
           isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
-          receiveVarFields={receiveVarFields}
-          reductionVarFields={reductionVarFields}
-          setReceiveVarFields={setReceiveVarFields}
-          setReductionVarFields={setReductionVarFields}
           refresh={refresh}
           setRefresh={setRefresh}
           selectedTags={selectedMultipliers}
