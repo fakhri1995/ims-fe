@@ -89,8 +89,8 @@ const EmployeePayslipDetailIndex = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    sort_by: withDefault(StringParam, /** @type {"period"} */ "period"),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ "desc"),
     employee_id: withDefault(NumberParam, employeeId),
     is_posted: withDefault(NumberParam, undefined),
     keyword: withDefault(StringParam, undefined),
@@ -380,9 +380,7 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <div className="flex flex-row space-x-2 items-center">
-              <p>
-                {monthNames[record?.month - 1]} {record?.year}
-              </p>
+              <p>{record?.month_string}</p>
               {record.is_main_salary_changed && (
                 <Tooltip
                   placement="top"
@@ -402,7 +400,6 @@ const EmployeePayslipDetailIndex = ({
       sorter: isAllowedToGetPayslips
         ? (a, b) => a?.tanggal_dibayarkan?.localeCompare(b?.tanggal_dibayarkan)
         : false,
-      defaultSortOrder: "descend",
     },
     {
       title: "Penerimaan (IDR)",
