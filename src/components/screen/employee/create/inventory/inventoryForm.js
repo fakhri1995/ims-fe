@@ -249,9 +249,9 @@ const InventoryForm = ({
     }
 
     // use for auto save
-    if (debouncedApiCall) {
-      debouncedApiCall(data[idx]);
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall(data[idx]);
+    // }
   }, []);
 
   const beforeUploadReturnDocument = useCallback((uploadedFile) => {
@@ -287,9 +287,9 @@ const InventoryForm = ({
     }
 
     // use for auto save
-    if (debouncedApiCall) {
-      debouncedApiCall(data[idx]);
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall(data[idx]);
+    // }
   }, []);
 
   const onUploadAssignChange = useCallback(({ file }) => {
@@ -317,9 +317,9 @@ const InventoryForm = ({
     setInventoryList(data);
 
     // use for auto save
-    if (debouncedApiCall) {
-      debouncedApiCall(data[idx]);
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall(data[idx]);
+    // }
   }, []);
 
   const onUploadReturnRemove = useCallback(() => {
@@ -331,9 +331,9 @@ const InventoryForm = ({
     setInventoryList(data);
 
     // use for auto save
-    if (debouncedApiCall) {
-      debouncedApiCall(data[idx]);
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall(data[idx]);
+    // }
   }, []);
 
   return (
