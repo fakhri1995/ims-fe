@@ -4,17 +4,16 @@ import {
   EyeOutlined,
   FileAddOutlined,
 } from "@ant-design/icons";
-import {
-  Collapse,
-  Input,
-  Select,
-  Table,
-  Tabs,
-  Tooltip,
-  notification,
-} from "antd";
+import { Input, Select, Tooltip, notification } from "antd";
 import moment from "moment";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -45,7 +44,6 @@ import st from "../../../../../components/layout-dashboard.module.css";
 import { TableCustomPayslipEmployeeList } from "../../../../../components/table/tableCustom";
 import {
   generateStaticAssetUrl,
-  momentFormatDate,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import { createKeyPressHandler } from "../../../../../lib/helper";
@@ -88,12 +86,20 @@ const EmployeePayslipDetailIndex = ({
   // Array of 12 month names
   const monthNames = moment.months();
 
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    employee_id: withDefault(NumberParam, employeeId),
+    is_posted: withDefault(NumberParam, undefined),
+    keyword: withDefault(StringParam, undefined),
+  });
+
   // 1. STATE
   // 1.1. display
   const [praloading, setpraloading] = useState(true);
-  const [currentTab, setCurrentTab] = useState("1");
   const [dataEmployee, setDataEmployee] = useState({
-    // id_photo: "",
     id: 0,
     name: "",
     nip: "",
@@ -108,24 +114,20 @@ const EmployeePayslipDetailIndex = ({
   // filter data
   const dataPayslipStatusList = [
     {
-      id: 1,
+      id: 0,
       name: "Draft",
     },
     {
-      id: 2,
+      id: 1,
       name: "Diterbitkan",
     },
   ];
 
   // filter search & selected options
-  const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
-  const [selectedPayslipStatusId, setSelectedPayslipStatusId] = useState(0);
-
-  // sorting
-  const [sortingPayslips, setSortingEmployees] = useState({
-    sort_by: "",
-    sort_type: "",
-  });
+  const [searchingFilterPayslips, setSearchingFilterPayslips] =
+    useState(undefined);
+  const [selectedPayslipStatusId, setSelectedPayslipStatusId] =
+    useState(undefined);
 
   // table data
   const [dataPayslips, setDataPayslips] = useState([]);
@@ -143,8 +145,6 @@ const EmployeePayslipDetailIndex = ({
     to: null,
     total: null,
   });
-  const [pagePayslips, setPagePayslips] = useState(1);
-  const [rowsPayslips, setRowsPayslips] = useState(10);
 
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
@@ -217,9 +217,12 @@ const EmployeePayslipDetailIndex = ({
       return;
     }
     // if (employeeId) {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
     setpraloading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips?employee_id=${employeeId}&rows=${rowsPayslips}&page=${pagePayslips}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips${payload}`,
       {
         method: `GET`,
         headers: {
@@ -247,46 +250,24 @@ const EmployeePayslipDetailIndex = ({
       })
       .finally(() => setpraloading(false));
     // }
-  }, [isAllowedToGetPayslips, refresh]);
+  }, [
+    isAllowedToGetPayslips,
+    refresh,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.employee_id,
+    queryParams.keyword,
+    queryParams.is_posted,
+  ]);
 
   // 3. Event
   const onFilterPayslips = () => {
-    setpraloading(true);
-    fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_URL
-      }/getEmployeePayslips?employee_id=${employeeId}&sort_by=${
-        sortingPayslips.sort_by
-      }&sort_type=${sortingPayslips.sort_type}&is_posted=${
-        selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
-      }&keyword=${searchingFilterPayslips}&page=${pagePayslips}&rows=${rowsPayslips}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawPayslips(res2.data);
-          setDataPayslips(res2.data.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setpraloading(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setpraloading(false);
-      });
+    setQueryParams({
+      keyword: searchingFilterPayslips,
+      is_posted: selectedPayslipStatusId,
+    });
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(
@@ -702,20 +683,15 @@ const EmployeePayslipDetailIndex = ({
             {/* Search by keyword (kata kunci) */}
             <div className="w-7/12">
               <Input
-                value={
-                  searchingFilterPayslips === ""
-                    ? null
-                    : searchingFilterPayslips
-                }
+                defaultValue={queryParams.keyword}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterPayslips("");
-                  } else {
-                    setSearchingFilterPayslips(e.target.value);
+                  if (!e.target.value) {
+                    setQueryParams({ keyword: undefined });
                   }
+                  setSearchingFilterPayslips(e.target.value);
                 }}
                 onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetPayslips}
@@ -725,16 +701,14 @@ const EmployeePayslipDetailIndex = ({
             {/* Filter by payslip status (dropdown) */}
             <div className="w-3/12">
               <Select
-                value={selectedPayslipStatusId ? selectedPayslipStatusId : null}
+                defaultValue={queryParams.is_posted}
                 allowClear
                 name={`status`}
-                placeholder="Semua Status Slip Gaji"
-                defaultValue={null}
+                placeholder="Semua Status"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  typeof value === "undefined"
-                    ? setSelectedPayslipStatusId(null)
-                    : setSelectedPayslipStatusId(value);
+                  setQueryParams({ is_posted: value });
+                  setSelectedPayslipStatusId(value);
                 }}
               >
                 {dataPayslipStatusList.map((status) => (
@@ -758,23 +732,13 @@ const EmployeePayslipDetailIndex = ({
           </div>
           {/* End: Search criteria */}
           <TableCustomPayslipEmployeeList
+            rt={rt}
             dataSource={dataPayslips}
-            setDataSource={setDataPayslips}
             columns={columnPayslip}
             loading={praloading}
-            setpraloading={setpraloading}
-            pageSize={rowsPayslips}
-            setPageSize={setRowsPayslips}
             total={dataRawPayslips?.total}
-            initProps={initProps}
-            setpage={setPagePayslips}
-            pagefromsearch={pagePayslips}
-            setdataraw={setDataRawPayslips}
-            setsorting={setSortingEmployees}
-            sorting={sortingPayslips}
-            searching={searchingFilterPayslips}
-            selectedPayslipStatusId={selectedPayslipStatusId}
-            employeeId={employeeId}
+            queryParams={queryParams}
+            setQueryParams={setQueryParams}
           />
         </div>
       </div>
