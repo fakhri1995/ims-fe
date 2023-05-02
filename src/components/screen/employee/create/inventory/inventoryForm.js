@@ -23,9 +23,9 @@ import { AccessControl } from "components/features/AccessControl";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  EMPLOYEE_DEVICES_GET,
   EMPLOYEE_DEVICE_ADD,
   EMPLOYEE_DEVICE_DELETE,
+  EMPLOYEE_INVENTORY_DELETE,
 } from "lib/features";
 
 import {
@@ -34,6 +34,7 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
+import { TrashIconSvg } from "../../../../icon";
 import { ModalHapus2 } from "../../../../modal/modalCustom";
 import DeviceForm from "./deviceForm";
 
@@ -45,6 +46,8 @@ const InventoryForm = ({
   inventoryId,
   setRefresh,
   debouncedApiCall,
+  handleSaveInventory,
+  isFormAddEmployee,
 }) => {
   /**
    * Dependencies
@@ -55,9 +58,7 @@ const InventoryForm = ({
   if (isAccessControlPending) {
     return null;
   }
-
-  const isAllowedToGetEmployeeInventoryDevices =
-    hasPermission(EMPLOYEE_DEVICES_GET);
+  const isAllowedToDeleteInventory = hasPermission(EMPLOYEE_INVENTORY_DELETE);
   const isAllowedToAddEmployeeInventoryDevice =
     hasPermission(EMPLOYEE_DEVICE_ADD);
   const isAllowedToDeleteDevice = hasPermission(EMPLOYEE_DEVICE_DELETE);
@@ -79,7 +80,14 @@ const InventoryForm = ({
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [dataModalDelete, setDataModalDelete] = useState({
     deviceId: null,
-    deviceName: "",
+    deviceIdx: "",
+  });
+
+  // Delete inventory
+  const [modalDeleteInv, setModalDeleteInv] = useState(false);
+  const [loadingDeleteInv, setLoadingDeleteInv] = useState(false);
+  const [dataModalDeleteInv, setDataModalDeleteInv] = useState({
+    inventoryId: null,
   });
 
   // 2. USE EFFECT
@@ -218,6 +226,53 @@ const InventoryForm = ({
       });
   };
 
+  const handleDeleteInventory = () => {
+    if (!isAllowedToDeleteInventory) {
+      permissionWarningNotification("Menghapus", "Inventaris Karyawan");
+      return;
+    }
+    setLoadingDeleteInv(true);
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/deleteEmployeeInventory?id=${Number(
+        dataModalDeleteInv?.inventoryId
+      )}&employee_id=${Number(inventoryList?.[idx]?.employee_id)}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setRefresh((prev) => prev + 1);
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setModalDeleteInv(false);
+        } else {
+          notification.error({
+            message: `Gagal menghapus inventaris karyawan. ${res2.response}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus inventaris karyawan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingDeleteInv(false);
+      });
+  };
+
   const beforeUploadAssignDocument = useCallback((uploadedFile) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
@@ -340,9 +395,22 @@ const InventoryForm = ({
     <>
       <div>
         <Form layout="vertical" className="md:grid md:grid-cols-2 md:gap-x-8">
-          <h5 className="mig-heading--5 md:col-span-2 mb-3">
-            INVENTARIS {idx + 1}/PIRANTI 1
-          </h5>
+          <div className="flex flex-row items-center space-x-1 col-span-2 mb-3">
+            <h5 className="mig-heading--5">INVENTARIS {idx + 1}/PIRANTI 1</h5>
+            {isFormAddEmployee && isAllowedToDeleteInventory && (
+              <Button
+                className="bg-transparent hover:opacity-70 border-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setDataModalDeleteInv({
+                    inventoryId: inventoryList[idx].id,
+                  });
+                  setModalDeleteInv(true);
+                }}
+                icon={<TrashIconSvg color={"#BF4A40"} size={20} />}
+              />
+            )}
+          </div>
           <Form.Item
             label="ID"
             name={"id_number"}
@@ -579,7 +647,8 @@ const InventoryForm = ({
         <div className="mb-6">
           <ButtonSys
             type={"dashed"}
-            onClick={() => {
+            onClick={async () => {
+              await handleSaveInventory(inventoryList[idx]);
               handleAddNewDevice();
             }}
           >
@@ -606,8 +675,29 @@ const InventoryForm = ({
           loading={loadingDelete}
         >
           <p className="mb-4">
-            Apakah Anda yakin ingin melanjutkan penghapusan piranti&nbsp;
-            <strong>{dataModalDelete.deviceName}</strong>?
+            Apakah Anda yakin ingin melanjutkan penghapusan&nbsp;
+            <strong>PIRANTI {dataModalDelete.deviceIdx}</strong> pada{" "}
+            <strong>INVENTARIS {idx + 1}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
+
+      {/* Modal Delete Inventory */}
+      <AccessControl hasPermission={EMPLOYEE_INVENTORY_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDeleteInv}
+          onvisible={setModalDeleteInv}
+          onOk={handleDeleteInventory}
+          onCancel={() => {
+            setModalDeleteInv(false);
+          }}
+          itemName={"inventaris"}
+          loading={loadingDeleteInv}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan&nbsp;
+            <strong>INVENTARIS {idx + 1}</strong>?
           </p>
         </ModalHapus2>
       </AccessControl>
