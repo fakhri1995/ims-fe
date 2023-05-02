@@ -3247,7 +3247,7 @@ function Talents({}) {
         <div>
           <section
             className={
-              "section2talents py-4 lg:py-12 lg:px-[113.5px] px-4 mx-auto mt:4 lg:mt-12"
+              "section2talents py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt:4 lg:mt-12"
             }
           >
             <div className={"hidden lg:flex justify-between container mx-auto"}>
@@ -3465,7 +3465,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section2talentsnew py-4 lg:py-12 lg:px-[113.5px] px-4 mx-auto mt:4 lg:mt-12"
+              "section2talentsnew py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt:4 lg:mt-12"
             }
           >
             <h3
@@ -3479,7 +3479,7 @@ function Talents({}) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base lg:text-base text-blackmig text-center mt-4"
+                "text-base lg:text-base text-blackmig text-center mt-16"
               }
             >
               {t.section2talentsubtitle}
@@ -3583,7 +3583,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section3talents bg-bgjoinmig py-9 lg:py-12 px-4 lg:px-[113.5px]"
+              "section3talents bg-bgjoinmig py-9 lg:py-16 px-4 lg:px-[120px]"
             }
           >
             <h3
@@ -3607,7 +3607,7 @@ function Talents({}) {
             </h3>
 
             <div
-              className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
+              className={"mt-7 lg:mt-16 lg:flex lg:flex-row lg:justify-center"}
             >
               <div
                 className={
@@ -3894,7 +3894,7 @@ function Talents({}) {
             </div>
             <div
               className={
-                "mt-7 lg:mt-[42px] text-center lg:mx-auto lg:w-[646px]"
+                "mt-7 lg:mt-[64px] text-center lg:mx-auto lg:w-[646px]"
               }
             >
               <p
@@ -4557,7 +4557,7 @@ function Talents({}) {
           {/*section why you should */}
           <section
             className={
-              "section4talents hidden lg:block bg-bgtalents pt-4 pb-6 lg:pt-12 lg:pb-24 px-4 sm:px-10 lg:px-[113.5px]"
+              "section4talents hidden lg:block bg-bgtalents pt-4 pb-6 lg:py-16 px-4 sm:px-10 lg:px-[120px]"
             }
           >
             <h3
@@ -4592,7 +4592,7 @@ function Talents({}) {
             </p> */}
             <div
               className={
-                "lg:my-[40px] mx-auto h-[222px] w-[1142px] flex lg:items-stretch"
+                "lg:my-16 mx-auto h-[222px] w-[1142px] flex lg:items-stretch"
               }
             >
               <img
@@ -4794,7 +4794,7 @@ function Talents({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 lg:py-16 lg:mb-10 hidden lg:block px-4 sm:px-10 lg:px-[113.5px]"
+              "section4howitworkbrowser bg-white py-4 lg:py-16 lg:mb-10 hidden lg:block px-4 sm:px-10 lg:px-[120px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -4815,7 +4815,7 @@ function Talents({}) {
                 </span>{" "}
               </h2>
             </div>
-            <div className={"flex flex-row justify-between mt-10"}>
+            <div className={"flex flex-row justify-between mt-16"}>
               <div className={""}>
                 <div className={"w-[360px]"}>
                   <img
@@ -4945,7 +4945,7 @@ function Talents({}) {
           {dataTestimonial && (
             <section
               className={
-                "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-8 pb-[172px] px-[30px] lg:px-10"
+                "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-16 pb-[160px] px-[30px] lg:px-10"
               }
             >
               <p
@@ -4961,7 +4961,7 @@ function Talents({}) {
                     <button onClick={() => slider?.current?.slickPrev()}>
                       <div
                         className={
-                          "self-center flex items-center justify-center  absolute left-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                          "self-center flex items-center justify-center  absolute left-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                         }
                       >
                         <img
@@ -5184,7 +5184,7 @@ function Talents({}) {
                     <button onClick={() => slider?.current?.slickNext()}>
                       <div
                         className={
-                          "self-center flex items-center justify-center  absolute right-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                          "self-center flex items-center justify-center  absolute right-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                         }
                       >
                         <img
@@ -5366,7 +5366,7 @@ function Talents({}) {
           {/* coverages */}
           {/* <section
             className={
-              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-[113.5px]"
+              "sectioncoverages hidden md:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 md:px-[120px]"
             }
           >
             <h2
@@ -5678,7 +5678,7 @@ function Talents({}) {
           </section> */}
           <section
             className={
-              "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[20px] h-[173px]"
+              "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[140px] h-[173px]"
             }
           >
             <div className={"justify-start self-end"}>
@@ -5688,7 +5688,7 @@ function Talents({}) {
               />
             </div>
             <div className={"container w-1/2 mx-auto"}>
-              <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-24 py-4 px-8">
+              <div class="bg-white border-3 mx-auto  max-w-[645px] border-solid shadow-2xl rounded-[8px] text-center -mt-[220px] py-4 px-8">
                 <h4
                   style={{ lineHeight: "120%" }}
                   className={"text-[24px] font-gilroysemibold text-black"}

@@ -3338,7 +3338,7 @@ function Hardware({}) {
         </div>
       ) : (
         <div className={"sectionhardware noform"}>
-          <section className={"section2hardware py-4 lg:py-16 lg:px-[113.5px]"}>
+          <section className={"section2hardware py-4 lg:py-16 lg:px-[120px]"}>
             <div className={"hidden lg:flex  mt-16 justify-between mx-auto"}>
               <div className={"flex-col w-1/2"}>
                 <h3
@@ -3353,7 +3353,7 @@ function Hardware({}) {
                 >
                   {t.hardwareherosectionsubtitle}
                 </p>
-                <div className={"mt-10"}>
+                <div className={"mt-8"}>
                   <p
                     style={{ lineHeight: "150%" }}
                     className={"font-gilroybold text-primarygreen text-xl"}
@@ -3406,7 +3406,7 @@ function Hardware({}) {
                   )}
                   <div
                     className={
-                      "mt-10 w-[495px] border rounded-lg p-2 bg-greentrans15"
+                      "mt-8 w-[495px] border rounded-lg p-2 bg-greentrans15"
                     }
                   >
                     <div className={"flex flex-row"}>
@@ -3585,7 +3585,7 @@ function Hardware({}) {
           {/* section jenis hardware */}
           <section
             className={
-              "section2somehardwarebrowser bg-bgjoinmig py-4 lg:py-12 px-4 lg:px-[113.5px]"
+              "section2somehardwarebrowser bg-bgjoinmig py-4 lg:py-16 px-4 lg:px-[120px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -3628,7 +3628,7 @@ function Hardware({}) {
               )}
               <div className={"hidden lg:block"}>
                 {dataBanking && (
-                  <div className={"flex mt-[42px]"}>
+                  <div className={"flex mt-[64px]"}>
                     <div
                       className={
                         "w-[241px] flex flex-col justify-between text-center bg-lightblue rounded-lg pt-3 pb-5 px-3"
@@ -4197,7 +4197,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "section3hardwarebrowser bg-transp60 py-4 lg:py-12 px-4 lg:px-[113.5px]"
+              "section3hardwarebrowser bg-transp60 py-4 lg:py-16 px-4 lg:px-[120px]"
             }
           >
             <div className={"flex lg:flex-row"}>
@@ -4300,7 +4300,7 @@ function Hardware({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser bg-white py-4 lg:py-16 lg:mb-10 hidden lg:block px-4 sm:px-10 lg:px-[113.5px]"
+              "section4howitworkbrowser bg-white py-4 lg:py-16 lg:mb-10 hidden lg:block px-4 sm:px-10 lg:px-[120px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -4325,7 +4325,7 @@ function Hardware({}) {
                 </span>{" "}
               </h3>
             </div>
-            <div className={"flex flex-row justify-between mt-10"}>
+            <div className={"flex flex-row justify-between mt-16"}>
               <div className={""}>
                 <div className={"w-[360px]"}>
                   <img
@@ -4454,12 +4454,12 @@ function Hardware({}) {
           {dataTestimonial && (
             <section
               className={
-                "section3landingpageadvantages hidden lg:block bg-bgjoinmig py-8 lg:pt-8 lg:py-16 px-[30px] lg:px-10"
+                "section3landingpageadvantages hidden lg:block bg-bgjoinmig py-8 lg:py-16 px-[30px] lg:px-10"
               }
             >
               <h4
                 className={
-                  "text-xl lg:text-2xl text-center  font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-2xl text-center  font-gilroysemibold mb-[64px]"
                 }
               >
                 {t.customerstorieslandingpage}
@@ -4470,7 +4470,7 @@ function Hardware({}) {
                     <button onClick={() => slider?.current?.slickPrev()}>
                       <div
                         className={
-                          "self-center flex items-center justify-center  absolute left-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                          "self-center flex items-center justify-center  absolute left-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                         }
                       >
                         <img
@@ -4693,7 +4693,7 @@ function Hardware({}) {
                     <button onClick={() => slider?.current?.slickNext()}>
                       <div
                         className={
-                          "self-center flex items-center justify-center  absolute right-[180px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                          "self-center flex items-center justify-center  absolute right-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                         }
                       >
                         <img
@@ -4872,13 +4872,13 @@ function Hardware({}) {
           {/* coverages */}
           <section
             className={
-              "sectioncoverages hidden lg:block bg-transp60 pt-8 pb-32 px-4 sm:px-10 lg:px-[113.5px]"
+              "sectioncoverages hidden lg:block bg-transp60 pt-8 lg:pt-16 pb-32 lg:pb-[160px] px-4 sm:px-10 lg:px-[120px]"
             }
           >
             <h4
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl lg:text-[24px] text-blackmig text-center  font-gilroysemibold py-8 lg:py-0 mb-10"
+                "text-xl lg:text-[24px] text-blackmig text-center  font-gilroysemibold py-8 lg:py-0 mb-16"
               }
             >
               {locale == "en" ? "Coverages" : "Area jangkauan kami"}
@@ -5184,7 +5184,7 @@ function Hardware({}) {
           </section>
           <section
             className={
-              "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[113.5px] h-[173px]"
+              "youronestop hidden lg:block lg:flex lg:flex-row lg:justify-between bg-bgfooter pt-[140px] h-[173px]"
             }
           >
             <div className={"justify-start self-end"}>

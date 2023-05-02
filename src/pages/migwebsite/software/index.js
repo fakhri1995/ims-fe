@@ -430,7 +430,7 @@ function Software({}) {
       {showForm == false && (
         <section
           className={
-            "section1advantages hidden lg:block fixed w-full z-50 px-4 lg:px-[113.5px]"
+            "section1advantages hidden lg:block fixed w-full z-50 px-4 lg:px-[120px]"
           }
           style={{ background: "#F4F4F4" }}
         >
@@ -1619,7 +1619,7 @@ function Software({}) {
       ) : (
         <div className={"noform"}>
           <section
-            className={"section2software py-4 lg:py-16 px-4 lg:px-[113.5px]"}
+            className={"section2software py-4 lg:py-16 px-4 lg:px-[120px]"}
           >
             <div className={"hidden lg:flex container mt-16 mx-auto"}>
               <div className={"flex-col w-1/2"}>
@@ -1635,7 +1635,7 @@ function Software({}) {
                 >
                   {t.softwareheosectionsubtitle}
                 </p>
-                <div className={"mt-[40px]"}>
+                <div className={"mt-[32px]"}>
                   <p
                     style={{ lineHeight: "150%" }}
                     className={"font-gilroysemibold text-primarygreen text-xl"}
@@ -1686,7 +1686,7 @@ function Software({}) {
                   )}
                   <div
                     className={
-                      "my-4 w-3/4 border rounded-lg shadow-lg p-2 bg-green15"
+                      "mt-8 w-3/4 border rounded-lg shadow-lg p-2 bg-green15"
                     }
                   >
                     <div className={"flex flex-row"}>
@@ -1836,13 +1836,13 @@ function Software({}) {
           {/*section software portofolio */}
           <section
             className={
-              "section3software hidden lg:block bg-bgjoinmig px-[52px] lg:px-[113.5px] py-12"
+              "section3software hidden lg:block bg-bgjoinmig px-[52px] lg:px-[120px] py-16"
             }
           >
             <h3
               style={{ lineHeight: "120%" }}
               className={
-                "text-xl lg:text-[32px] text-center font-gilroysemibold py-8 lg:py-0 mb-10"
+                "text-xl lg:text-[32px] text-center font-gilroysemibold py-8 lg:py-0 mb-8"
               }
             >
               {t.softwarepastworksectiontitle1}{" "}
@@ -1860,7 +1860,7 @@ function Software({}) {
               <button onClick={() => slider2?.current?.slickPrev()}>
                 <div
                   className={
-                    "self-center flex items-center justify-center  absolute left-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                    "self-center flex items-center justify-center  absolute left-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                   }
                 >
                   <img
@@ -2000,7 +2000,7 @@ function Software({}) {
               <button onClick={() => slider2?.current?.slickNext()}>
                 <div
                   className={
-                    "self-center flex items-center justify-center  absolute right-[60px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
+                    "self-center flex items-center justify-center  absolute right-[120px] w-[53px] h-[53px] bg-bgIcon rounded-[500px]"
                   }
                 >
                   <img
@@ -2032,9 +2032,7 @@ function Software({}) {
             </p>
             <div className={"mt-7"}>
               <Slider {...sliderSettingsPhone}>
-                <div
-                  className={"py-8 px-[16.25px] h-[445px] bg-white rounded-lg"}
-                >
+                <div className={"px-[16.25px] h-[445px] bg-white rounded-lg"}>
                   <img
                     className={"w-full h-[159px]"}
                     // style={{ width: "284.29px", height: "159px" }}
@@ -2126,9 +2124,9 @@ function Software({}) {
               </Slider>
             </div>
           </section>
-          <section className={"px-8 lg:px-[113.5px] py-9 lg:py-16"}>
+          <section className={"px-8 lg:px-[120px] py-9 lg:py-16"}>
             <div className={"container mx-auto text-center"}>
-              <div className={"pb-12"}>
+              <div className={"pb-16"}>
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
@@ -2139,7 +2137,7 @@ function Software({}) {
                 </p>
               </div>
               <img className={"m-auto w-full"} src="/image-software.png"></img>
-              <div className={"mt-1 lg:mt-4 mx-auto"}>
+              <div className={"mt-1 lg:mt-16 mx-auto"}>
                 <Link href="/contactus">
                   <button
                     className={
@@ -2157,7 +2155,7 @@ function Software({}) {
           {/* section 3 software why you should */}
           <section
             className={
-              "section3softwarebrowser bg-transp60 py-9 lg:py-12 px-4 lg:px-[113.5px]"
+              "section3softwarebrowser bg-transp60 py-9 lg:py-16 px-4 lg:px-[120px]"
             }
           >
             <div className={"flex lg:flex-row"}>
@@ -2257,7 +2255,7 @@ function Software({}) {
           {/* section how it work */}
           <section
             className={
-              "section4howitworkbrowser hidden lg:block bg-white py-4 lg:py-16 px-4 lg:px-[113.5]"
+              "section4howitworkbrowser hidden lg:block bg-white py-4 lg:py-16 px-4 lg:px-[120px]"
             }
           >
             <div className={"container text-center mx-auto"}>
@@ -2281,7 +2279,7 @@ function Software({}) {
                 ?
               </h3>
             </div>
-            <div className={"flex flex-row justify-between lg:px-20 mt-10"}>
+            <div className={"flex flex-row justify-between lg:px-20 mt-16"}>
               <div className={""}>
                 <div className={"w-[360px]"}>
                   <img
@@ -2399,12 +2397,12 @@ function Software({}) {
           {dataTestimonial && (
             <section
               className={
-                "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-4 lg:pt-12 pb-[30px] lg:pb-[179px] px-[30px] lg:px-[106px]"
+                "section3landingpageadvantages hidden lg:block bg-bgjoinmig pt-4 lg:pt-16 pb-[30px] lg:pb-[179px] px-[30px] lg:px-[106px]"
               }
             >
               <h4
                 className={
-                  "text-xl lg:text-2xl text-center font-gilroysemibold mb-[42px]"
+                  "text-xl lg:text-2xl text-center font-gilroysemibold mb-[64px]"
                 }
               >
                 {t.customerstorieslandingpage}
