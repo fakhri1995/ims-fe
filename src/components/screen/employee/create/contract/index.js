@@ -102,10 +102,6 @@ const EmployeeContractForm = ({
   const [fileList, setFileList] = useState([]);
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
 
-  // Use for selected variable list to show as fields in form
-  const [receiveVarFields, setReceiveVarFields] = useState([]);
-  const [reductionVarFields, setReductionVarFields] = useState([]);
-
   // Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -293,18 +289,6 @@ const EmployeeContractForm = ({
             } else {
               setDataContract(requiredData);
             }
-
-            // Set checked variables to show as fields in form
-            const receiveVariables = resData.salaries?.filter(
-              (v) => v?.column.type === 1
-            );
-            const reductionVariables = resData.salaries?.filter(
-              (v) => v?.column.type === 2
-            );
-
-            setReceiveVarFields(receiveVariables);
-            setReductionVarFields(reductionVariables);
-
             // insert default selected BPJS multiplier to state
             const defaultSelectedMultipliers = resData?.salaries?.filter(
               (variable) => variable?.is_amount_for_bpjs
@@ -785,34 +769,36 @@ const EmployeeContractForm = ({
           </div>
         </Form.Item>
 
-        {receiveVarFields.map((variable, idx) => (
-          <Form.Item
-            key={idx}
-            label={variable?.column?.name}
-            name={formatVariableName(variable?.column?.name)}
-            rules={[
-              {
-                required: variable?.column?.required,
-                message: `${variable?.column?.name} wajib diisi`,
-              },
-            ]}
-          >
-            <div className="flex flex-row items-center space-x-2">
-              <CustomCurrencyInput
-                fieldLabel={`${variable.column?.name?.toLowerCase()}`}
-                dataForm={dataContract}
-                setDataForm={setDataContract}
-                value={
-                  dataContract?.salaries?.find(
-                    (benefit) =>
-                      benefit?.employee_salary_column_id === variable.column?.id
-                  )?.value
-                }
-                idx={idx}
-                dataColumn={variable.column}
-                payslipId={dataContract?.id}
-              />
-              {/* {!variable.required && (
+        {dataContract?.salaries
+          ?.filter((variable) => variable?.column?.type === 1)
+          .map((variable) => (
+            <Form.Item
+              key={variable.employee_salary_column_id}
+              label={variable?.column?.name}
+              name={formatVariableName(variable?.column?.name)}
+              rules={[
+                {
+                  required: variable?.column?.required,
+                  message: `${variable?.column?.name} wajib diisi`,
+                },
+              ]}
+            >
+              <div className="flex flex-row items-center space-x-2">
+                <CustomCurrencyInput
+                  fieldLabel={`${variable.column?.name?.toLowerCase()}`}
+                  dataForm={dataContract}
+                  setDataForm={setDataContract}
+                  value={
+                    dataContract?.salaries?.find(
+                      (benefit) =>
+                        benefit?.employee_salary_column_id ===
+                        variable.column?.id
+                    )?.value
+                  }
+                  dataColumn={variable.column}
+                  payslipId={dataContract?.id}
+                />
+                {/* {!variable.required && (
                     <Button
                       icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
                       className="border-0 hover:opacity-60"
@@ -823,9 +809,9 @@ const EmployeeContractForm = ({
                       }}
                     />
                   )} */}
-            </div>
-          </Form.Item>
-        ))}
+              </div>
+            </Form.Item>
+          ))}
       </div>
 
       <div className="flex flex-col space-y-3 mt-5 md:mt-0">
@@ -962,40 +948,40 @@ const EmployeeContractForm = ({
           </>
         </Form.Item>
         {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
-        {reductionVarFields.map((variable, idx) => {
-          let reductionFieldId = receiveVarFields.length + idx;
-          return (
-            <Form.Item
-              key={reductionFieldId}
-              label={variable?.column?.name}
-              name={formatVariableName(variable?.column?.name)}
-              rules={[
-                {
-                  required: variable?.column?.required,
-                  message: `${variable?.column?.name} wajib diisi`,
-                },
-              ]}
-            >
-              <div>
-                <CustomCurrencyInput
-                  fieldLabel={`${variable?.name?.toLowerCase()}`}
-                  dataForm={dataContract}
-                  setDataForm={setDataContract}
-                  value={
-                    dataContract?.salaries?.find(
-                      (benefit) =>
-                        benefit?.employee_salary_column_id ===
-                        variable?.column?.id
-                    )?.value
-                  }
-                  idx={reductionFieldId}
-                  dataColumn={variable.column}
-                  payslipId={dataContract?.id}
-                />
-              </div>
-            </Form.Item>
-          );
-        })}
+        {dataContract?.salaries
+          ?.filter((variable) => variable?.column?.type === 2)
+          .map((variable) => {
+            return (
+              <Form.Item
+                key={variable.employee_salary_column_id}
+                label={variable?.column?.name}
+                name={formatVariableName(variable?.column?.name)}
+                rules={[
+                  {
+                    required: variable?.column?.required,
+                    message: `${variable?.column?.name} wajib diisi`,
+                  },
+                ]}
+              >
+                <div>
+                  <CustomCurrencyInput
+                    fieldLabel={`${variable?.name?.toLowerCase()}`}
+                    dataForm={dataContract}
+                    setDataForm={setDataContract}
+                    value={
+                      dataContract?.salaries?.find(
+                        (benefit) =>
+                          benefit?.employee_salary_column_id ===
+                          variable?.column?.id
+                      )?.value
+                    }
+                    dataColumn={variable.column}
+                    payslipId={dataContract?.id}
+                  />
+                </div>
+              </Form.Item>
+            );
+          })}
       </div>
       <div className="col-span-2 mt-3">
         <ButtonSys
@@ -1023,10 +1009,6 @@ const EmployeeContractForm = ({
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
           isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
-          receiveVarFields={receiveVarFields}
-          reductionVarFields={reductionVarFields}
-          setReceiveVarFields={setReceiveVarFields}
-          setReductionVarFields={setReductionVarFields}
           refresh={refresh}
           setRefresh={setRefresh}
           selectedTags={selectedMultipliers}

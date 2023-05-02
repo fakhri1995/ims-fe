@@ -162,7 +162,6 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
             (error as AxiosError).message
           }`,
         });
-        console.error(error);
       }
     },
     [exportAsAdmin, dataFormAktifitas]
@@ -374,18 +373,18 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
           {exportAsAdmin && (
             <>
               {/* Select Form Aktivitas */}
-              <Form.Item
-                name="form_aktivitas"
-                label="Form Aktivitas"
-                rules={[{ required: true }]}
-              >
-                <div className="flex space-x-2">
+              <div className="flex flex-row space-x-2 items-center">
+                <Form.Item
+                  name="form_aktivitas"
+                  label="Form Aktivitas"
+                  className="w-full"
+                  rules={[{ required: true }]}
+                >
                   <Select
                     showSearch
                     mode={"multiple"}
                     allowClear
                     placeholder="Pilih form aktivitas"
-                    filterOption={false}
                     optionFilterProp="children"
                     filterSort={(optionA, optionB) => {
                       if (isSortAsc) {
@@ -407,6 +406,8 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                       </Option>
                     ))}
                   </Select>
+                </Form.Item>
+                <div className="mt-2">
                   <ButtonSys
                     type={isSortAsc ? "primary" : "default"}
                     icon={<SortAscendingOutlined />}
@@ -415,7 +416,7 @@ export const EksporAbsensiDrawer: FC<IEksporAbsensiDrawer> = ({
                     <SortAscendingOutlined />
                   </ButtonSys>
                 </div>
-              </Form.Item>
+              </div>
               {/* Selectable staff */}
               <Form.Item label="Staff" required className="relative">
                 {Array.isArray(formAktivitasStaffList) &&

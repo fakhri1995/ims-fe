@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import CurrencyFormat from "react-currency-format";
 
 const CustomCurrencyInput = ({
-  idx,
   fieldLabel,
   fieldName,
   dataForm,
@@ -35,10 +34,7 @@ const CustomCurrencyInput = ({
       disabled={disabled}
       onValueChange={(values) => {
         const { formattedValue, value, floatValue } = values;
-        // formattedValue = $2,223
-        // value ie, 2223
         const field = {
-          id: idx,
           employee_salary_column_id: Number(dataColumn?.id),
           employee_payslip_id: Number(payslipId),
           is_amount_for_bpjs:
@@ -55,6 +51,10 @@ const CustomCurrencyInput = ({
         };
 
         let temp = dataForm?.salaries || [];
+        let idx = temp.findIndex(
+          (item) => item.employee_salary_column_id === dataColumn?.id
+        );
+
         temp[idx] = field;
 
         setDataForm((prev) => ({

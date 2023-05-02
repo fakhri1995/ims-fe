@@ -140,7 +140,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
   const [payslipStatusCount, setPayslipStatusCount] = useState([]);
-  const dataColorBar = ["#35763B", "#E5C471"];
+  const dataColorBar = ["#E5C471", "#35763B"];
 
   // 2.2. Table Employee List
   // filter data
@@ -152,7 +152,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const dataPayslipStatusList = [
     {
-      id: 2,
+      id: -1,
       name: "Kosong",
     },
     {
@@ -447,10 +447,18 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((response2) => {
         if (response2.success) {
           setRefresh((prev) => prev + 1);
-          // TODO: display employee name from response
           notification.success({
-            message: `Draft slip gaji berhasil dibuat.`,
-            duration: 3,
+            message: (
+              <div>
+                <p>Draft slip gaji berhasil dibuat untuk karyawan berikut:</p>
+                {response2?.data?.map((item, idx) => (
+                  <p key={idx}>
+                    {idx + 1}. {item?.employee?.name}
+                  </p>
+                ))}
+              </div>
+            ),
+            duration: 5,
           });
         } else {
           notification.error({
@@ -655,7 +663,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(
-                        `/admin/employees/payslip/${record.contract?.employee_id}/addPayslip?id=${record.id}`
+                        `/admin/employees/payslip/${record.id}/addPayslip?id=${record.last_month_payslip?.id}`
                       );
                     }}
                   >

@@ -1389,10 +1389,6 @@ const ModalAddSalaryVar = ({
   disabled,
   refresh,
   setRefresh,
-  receiveVarFields,
-  reductionVarFields,
-  setReceiveVarFields,
-  setReductionVarFields,
   selectedTags,
   setSelectedTags,
   isAllowedToGetSalaryColumns,
@@ -1475,19 +1471,18 @@ const ModalAddSalaryVar = ({
         (variable) => variable.employee_salary_column_id
       );
 
-      const dataVarReceive = dataPayslip?.salaries?.filter(
-        (variable) => variable.column?.type === 1
-      );
-
-      const dataVarReduction = dataPayslip?.salaries?.filter(
-        (variable) => variable.column?.type === 2
-      );
-
       setCurrentVariableIds(dataVarIds);
-      setReceiveVarFields(dataVarReceive);
-      setReductionVarFields(dataVarReduction);
     }
   }, [payslipId, dataPayslip?.salaries]);
+
+  // Triggered if any variable option is deleted
+  useEffect(() => {
+    let newSalaries = dataPayslip?.salaries?.filter((salary) => salary.column);
+    setDataPayslip((prev) => ({
+      ...prev,
+      salaries: newSalaries,
+    }));
+  }, [receiveVarOptions, reductionVarOptions]);
 
   // 3. Event
   const handleAddVariable = () => {
@@ -1657,7 +1652,6 @@ const ModalAddSalaryVar = ({
                           is_amount_for_bpjs: 0,
                           value: 0,
                         };
-                        setReceiveVarFields((prev) => [...prev, newSalaryVar]);
 
                         // deep clone salaries
                         let updatedSalaryVars = JSON.parse(
@@ -1678,12 +1672,6 @@ const ModalAddSalaryVar = ({
                           salaries: updatedSalaryVars,
                         });
                       } else {
-                        // handle benefit fields in form
-                        // const newReceiveVarFields = receiveVarFields.filter(
-                        //   (variable) => variable.id !== option.id
-                        // );
-                        // setReceiveVarFields(newReceiveVarFields);
-
                         // Remove attribute in dataPaylip's salaries
                         const updatedSalaryVars = dataPayslip?.salaries?.filter(
                           (variable) => variable.column?.id !== option?.id
@@ -1695,7 +1683,7 @@ const ModalAddSalaryVar = ({
 
                         // use for removing BPJS tag if uncheck
                         const newSelectedTags = selectedTags.filter(
-                          (tag) => tag.column.id !== option.id
+                          (tag) => tag.column?.id !== option.id
                         );
                         setSelectedTags(newSelectedTags);
                       }
@@ -1707,7 +1695,7 @@ const ModalAddSalaryVar = ({
                   <div className="flex flex-row items-center space-x-1">
                     {/* Show tag "BPJS" if the variable is selected as multiplier */}
                     {selectedTags.some(
-                      (tag) => tag.column.name == option.name
+                      (tag) => tag.column?.name == option.name
                     ) && (
                       <Tag color="#35763B" className="rounded text-white m-0">
                         BPJS
@@ -1814,10 +1802,6 @@ const ModalAddSalaryVar = ({
                             is_amount_for_bpjs: 0,
                             value: 0,
                           };
-                          setReductionVarFields((prev) => [
-                            ...prev,
-                            newSalaryVar,
-                          ]);
 
                           // deep clone salaries
                           let updatedSalaryVars = JSON.parse(
@@ -1838,12 +1822,6 @@ const ModalAddSalaryVar = ({
                             salaries: updatedSalaryVars,
                           });
                         } else {
-                          // const newReductionVarFields =
-                          //   reductionVarFields.filter(
-                          //     (variable) => variable.id !== option.id
-                          //   );
-                          // setReductionVarFields(newReductionVarFields);
-
                           // Remove attribute in dataPaylip's salaries
                           const updatedSalaryVars =
                             dataPayslip?.salaries?.filter(
@@ -1934,23 +1912,21 @@ const ModalAddSalaryVar = ({
                   <p>Gaji Pokok</p>
                 </div>
               </Tag>
-              {receiveVarFields.map((tag, idx) => (
-                <CheckableTag
-                  key={idx}
-                  className="border border-primary100 py-1 px-3 rounded mb-2"
-                  // checked={
-                  //   selectedTags.map((tag) => tag.column)?.indexOf(tag.column) >
-                  //   -1
-                  // }
-                  checked={tag?.is_amount_for_bpjs}
-                  onChange={(checked) => handleClickTag(tag, checked)}
-                >
-                  <div className="flex flex-row items-center space-x-1">
-                    <PlusOutlined />
-                    <p>{tag.column.name}</p>
-                  </div>
-                </CheckableTag>
-              ))}
+              {dataPayslip?.salaries
+                ?.filter((variable) => variable.column?.type === 1)
+                .map((tag, idx) => (
+                  <CheckableTag
+                    key={idx}
+                    className="border border-primary100 py-1 px-3 rounded mb-2"
+                    checked={tag?.is_amount_for_bpjs}
+                    onChange={(checked) => handleClickTag(tag, checked)}
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <PlusOutlined />
+                      <p>{tag.column?.name}</p>
+                    </div>
+                  </CheckableTag>
+                ))}
             </div>
           </div>
         </div>

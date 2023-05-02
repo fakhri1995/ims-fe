@@ -211,14 +211,14 @@ export const AttendanceStaffAktivitasSection: FC<
         <div className="flex items-center justify-between">
           <Tabs
             defaultActiveKey="1"
-            className="w-1/2"
+            className="md:w-1/2"
             onChange={setTabActiveKey}
           >
             <TabPane tab="Hari Ini" key="1" />
             <TabPane tab="Riwayat" key="2" />
           </Tabs>
 
-          <div className="flex space-x-6 w-1/2 justify-end items-center">
+          <div className="flex space-x-6 md:w-1/2 justify-end items-center">
             <ButtonSys
               type="primary"
               onClick={mOnAddActivityButtonClicked}

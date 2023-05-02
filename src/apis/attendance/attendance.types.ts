@@ -152,7 +152,7 @@ export interface IGetAttendanceUsersPaginateParams {
   sort_by?: "name" | "description" | "updated_at" | "count" | string;
   sort_type?: string;
   keyword?: string;
-  placements?: string;
+  company_ids?: string;
   is_late?: number;
   is_hadir?: number;
 }

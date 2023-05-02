@@ -198,7 +198,6 @@ const TableCustomTipeTask = ({
         },
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        // console.log('params', pagination, filters, sorter, extra);
         if (extra.action === "sort") {
           if (sorter.column) {
             setpraloading(true);
@@ -416,7 +415,6 @@ const TableCustomStaffTask = ({
         },
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        // console.log('params', pagination, filters, sorter, extra);
         if (extra.action === "sort") {
           if (sorter.column) {
             setpraloading(true);
@@ -1799,11 +1797,12 @@ const TableCustomPayslipList = ({
         showSizeChanger: true,
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        const sortTypePayload = (sorter.order = "ascend"
-          ? "asc"
-          : sorter.order === "descend"
-          ? "desc"
-          : undefined);
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
 
         setQueryParams({
           sort_type: sortTypePayload,
@@ -1837,25 +1836,14 @@ const TableCustomPayslipList = ({
 };
 
 const TableCustomPayslipEmployeeList = ({
+  rt,
   dataSource,
-  setDataSource,
   columns,
   loading,
-  pageSize,
-  setPageSize,
   total,
-  setpraloading,
-  initProps,
-  setpage,
-  pagefromsearch,
-  setdataraw,
-  setsorting,
-  sorting,
-  searching,
-  selectedPayslipStatusId,
-  employeeId,
+  queryParams,
+  setQueryParams,
 }) => {
-  const rt = useRouter();
   const [rowstate, setrowstate] = useState(0);
   return (
     <Table
@@ -1865,104 +1853,25 @@ const TableCustomPayslipEmployeeList = ({
       loading={loading}
       scroll={{ x: 200 }}
       pagination={{
-        current: pagefromsearch,
-        pageSize: pageSize,
+        current: queryParams.page,
+        pageSize: queryParams.rows,
         total: total,
         showSizeChanger: true,
-        onShowSizeChange: (pagefromsearch, pageSize) => {
-          setPageSize(pageSize);
-        },
-        onChange: (page, pageSize) => {
-          setpraloading(true);
-          setpage(page);
-          fetch(
-            `${
-              process.env.NEXT_PUBLIC_BACKEND_URL
-            }/getEmployeePayslips?employee_id=${employeeId}&sort_by=${
-              sorting.sort_by
-            }&sort_type=${sorting.sort_type}&is_posted=${
-              selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
-            }&keyword=${searching}&page=${page}&rows=${pageSize}`,
-            {
-              method: `GET`,
-              headers: {
-                Authorization: JSON.parse(initProps),
-              },
-            }
-          )
-            .then((res) => res.json())
-            .then((res2) => {
-              setdataraw(res2.data);
-              setDataSource(res2.data.data);
-              setpraloading(false);
-            });
-        },
       }}
       onChange={(pagination, filters, sorter, extra) => {
-        if (extra.action === "sort") {
-          if (sorter.column) {
-            setpraloading(true);
-            setsorting({
-              sort_by: sorter.column.dataIndex,
-              sort_type: sorter.order === "ascend" ? "asc" : "desc",
-            });
-            fetch(
-              `${
-                process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?employee_id=${employeeId}&is_posted=${
-                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
-              }&sort_by=${sorter.column.dataIndex}&sort_type=${
-                sorter.order === "ascend" ? "asc" : "desc"
-              }&keyword=${searching}&page=${pagination.current}&rows=${
-                pagination.pageSize
-              }`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              })
-              .catch((err) => {
-                // console.log(err);
-                notification.error({
-                  message: `${err.message}`,
-                  duration: 3,
-                });
-                setpraloading(false);
-              });
-          } else {
-            setpraloading(true);
-            setsorting({ sort_by: "", sort_type: "" });
-            fetch(
-              `${
-                process.env.NEXT_PUBLIC_BACKEND_URL
-              }/getEmployeePayslips?employee_id=${employeeId}&is_posted=${
-                selectedPayslipStatusId ? selectedPayslipStatusId - 1 : null
-              }&sort_by=&sort_type=&keyword=${searching}&page=${
-                pagination.current
-              }&rows=${pagination.pageSize}`,
-              {
-                method: `GET`,
-                headers: {
-                  Authorization: JSON.parse(initProps),
-                },
-              }
-            )
-              .then((res) => res.json())
-              .then((res2) => {
-                setdataraw(res2.data);
-                setDataSource(res2.data.data);
-                setpraloading(false);
-              });
-          }
-        }
+        const sortTypePayload =
+          sorter.order === "ascend"
+            ? "asc"
+            : sorter.order === "descend"
+            ? "desc"
+            : undefined;
+
+        setQueryParams({
+          sort_type: sortTypePayload,
+          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          page: pagination.current,
+          rows: pagination.pageSize,
+        });
       }}
       onRow={(record, rowIndex) => {
         return {

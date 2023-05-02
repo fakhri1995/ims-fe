@@ -54,7 +54,7 @@ const DrawerCandidateUpdate = ({
     recruitment_jalur_daftar_id: null,
     recruitment_stage_id: null,
     recruitment_status_id: null,
-    attachments: [],
+    lampiran: [],
   });
 
   const [modalUpdate, setModalUpdate] = useState(false);
@@ -80,7 +80,7 @@ const DrawerCandidateUpdate = ({
       recruitment_jalur_daftar_id: dataRecruitment.recruitment_jalur_daftar_id,
       recruitment_stage_id: dataRecruitment.recruitment_stage_id,
       recruitment_status_id: dataRecruitment.recruitment_status_id,
-      // attachments: dataRecruitment?.attachments,
+      lampiran: dataRecruitment?.lampiran ?? [],
     });
   }, [dataRecruitment, visible]);
 
@@ -88,11 +88,10 @@ const DrawerCandidateUpdate = ({
   useEffect(() => {
     let allFilled = Object.values(dataUpdate).every((value) => value);
 
-    let attachmentIsFilled = dataUpdate?.attachments?.every(
-      (attachment) => attachment.title && attachment.value
+    let attachmentIsFilled = dataUpdate?.lampiran?.every(
+      (attachment) => attachment.judul_lampiran && attachment.isi_lampiran
     );
 
-    // console.log(allFilled)
     if (allFilled && attachmentIsFilled) {
       setDisabledUpdate(false);
     } else {
@@ -131,7 +130,6 @@ const DrawerCandidateUpdate = ({
         setLoadingRegistPlatformList(false);
       })
       .catch((err) => {
-        console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,
@@ -168,7 +166,6 @@ const DrawerCandidateUpdate = ({
         setLoadingRoleList(false);
       })
       .catch((err) => {
-        console.log(err);
         notification.error({
           message: `${err.response}`,
           duration: 3,
@@ -242,7 +239,6 @@ const DrawerCandidateUpdate = ({
       });
   };
 
-  // console.log(dataUpdate);
   return (
     <DrawerCore
       title={"Ubah Kandidat"}
@@ -408,46 +404,46 @@ const DrawerCandidateUpdate = ({
             </Form.Item>
 
             <p className="my-2">Daftar Lampiran</p>
-            {dataUpdate?.attachments?.map((attachment, idx) => (
+            {dataUpdate?.lampiran?.map((attachment, idx) => (
               <div className="col-span-2 flex flex-row mb-4">
                 <Input
-                  value={attachment?.title}
-                  name={"title"}
+                  value={attachment?.judul_lampiran}
+                  name={"judul_lampiran"}
                   placeholder={"Judul lampiran"}
                   className="mr-2"
                   onChange={(e) => {
-                    let temp = [...dataUpdate.attachments];
-                    temp[idx].title = e.target.value;
+                    let temp = [...dataUpdate?.lampiran];
+                    temp[idx].judul_lampiran = e.target.value;
 
                     setDataUpdate((prev) => ({
                       ...prev,
-                      attachments: temp,
+                      lampiran: temp,
                     }));
                   }}
                 />
                 <Input
-                  value={attachment?.value}
-                  name={"value"}
+                  value={attachment?.isi_lampiran}
+                  name={"isi_lampiran"}
                   type={"url"}
                   placeholder="Isi lampiran"
                   onChange={(e) => {
-                    let temp = [...dataUpdate.attachments];
-                    temp[idx].value = e.target.value;
+                    let temp = [...dataUpdate?.lampiran];
+                    temp[idx].isi_lampiran = e.target.value;
                     setDataUpdate((prev) => ({
                       ...prev,
-                      attachments: temp,
+                      lampiran: temp,
                     }));
                   }}
                 />
 
                 <button
-                  className="ml-2"
+                  className="ml-2 bg-transparent"
                   onClick={() => {
-                    const temp = [...dataUpdate.attachments];
+                    const temp = [...dataUpdate?.lampiran];
                     temp.splice(idx, 1);
                     setDataUpdate((prev) => ({
                       ...prev,
-                      attachments: temp,
+                      lampiran: temp,
                     }));
                   }}
                 >
@@ -461,11 +457,11 @@ const DrawerCandidateUpdate = ({
                 onClick={() => {
                   setDataUpdate((prev) => ({
                     ...prev,
-                    attachments: [
-                      ...prev.attachments,
+                    lampiran: [
+                      ...prev?.lampiran,
                       {
-                        title: "",
-                        value: "",
+                        judul_lampiran: "",
+                        isi_lampiran: "",
                       },
                     ],
                   }));

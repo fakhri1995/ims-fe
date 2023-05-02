@@ -32,16 +32,9 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
-import SettingsIcon from "assets/vectors/icon-settings.svg";
-
 import ButtonSys from "../../../components/button";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
-import {
-  EditIconSvg,
-  SearchIconSvg,
-  TrashIconSvg,
-  UserPlusIconSvg,
-} from "../../../components/icon";
+import { SearchIconSvg, UserPlusIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
