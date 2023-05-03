@@ -394,12 +394,12 @@ const EmployeeContractForm = ({
     }));
 
     // use for auto save in "Tambah Karyawan"
-    if (debouncedApiCall) {
-      debouncedApiCall({
-        ...dataContract,
-        contract_file: uploadedFile,
-      });
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall({
+    //     ...dataContract,
+    //     contract_file: uploadedFile,
+    //   });
+    // }
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {
@@ -418,12 +418,12 @@ const EmployeeContractForm = ({
     }));
 
     // use for auto save in "Tambah Karyawan"
-    if (debouncedApiCall) {
-      debouncedApiCall({
-        ...dataContract,
-        contract_file: null,
-      });
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall({
+    //     ...dataContract,
+    //     contract_file: null,
+    //   });
+    // }
   }, []);
 
   // console.log({ dataContract });

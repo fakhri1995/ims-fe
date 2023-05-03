@@ -116,7 +116,11 @@ const EmployeePayslipDetail = ({ initProps, employeeId, employeeName }) => {
         body: JSON.stringify(payload),
       }
     )
-      .then((response) => response.blob())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.blob();
+        }
+      })
       .then((blob) => {
         const url = URL.createObjectURL(blob);
 
@@ -136,7 +140,7 @@ const EmployeePayslipDetail = ({ initProps, employeeId, employeeName }) => {
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal mengunduh slip gaji. ${err.response}`,
+          message: `Gagal mengunduh slip gaji. Kata sandi salah.`,
           duration: 3,
         });
       })

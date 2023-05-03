@@ -52,7 +52,7 @@ const DeviceForm = ({
       className="md:grid md:grid-cols-2 md:gap-x-8"
     >
       <div className="flex flex-row items-center space-x-1 col-span-2 mb-3">
-        <h5 className="mig-heading--5 ">
+        <h5 className="mig-heading--5">
           INVENTARIS {idxInv + 1}/PIRANTI {idxDev + 2}
         </h5>
         {isAllowedToDeleteDevice && (
@@ -62,8 +62,7 @@ const DeviceForm = ({
               e.stopPropagation();
               setDataModalDelete({
                 deviceId: inventoryList[idxInv]?.devices[idxDev]?.id,
-                deviceName:
-                  inventoryList[idxInv]?.devices[idxDev]?.device_name || "-",
+                deviceIdx: idxDev + 2,
               });
               setModalDelete(true);
             }}

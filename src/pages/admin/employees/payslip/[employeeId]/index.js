@@ -335,7 +335,11 @@ const EmployeePayslipDetailIndex = ({
         },
       }
     )
-      .then((response) => response.blob())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.blob();
+        }
+      })
       .then((blob) => {
         const url = URL.createObjectURL(blob);
 

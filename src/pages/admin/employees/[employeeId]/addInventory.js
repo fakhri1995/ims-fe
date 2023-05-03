@@ -171,13 +171,13 @@ const EmployeeInventoryAddIndex = ({
 
   // 3. Event
   // Save Employee Inventory
-  const handleSaveInventory = () => {
+  const handleSaveInventory = (inventoryData) => {
     if (!isAllowedToUpdateEmployeeInventory) {
       permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
       return;
     }
 
-    if (!dataInventory[0]) {
+    if (!inventoryData) {
       notification.error({
         message: `Gagal menyimpan data inventaris`,
         duration: 3,
@@ -186,9 +186,9 @@ const EmployeeInventoryAddIndex = ({
 
     // Setup form data to be sent in API
     let payloadFormData;
-    if (dataInventory[0]?.devices) {
+    if (inventoryData?.devices) {
       // Mapping devices list of objects to required format in API updateEmployeeInventory form-data
-      let devicesObjectList = dataInventory[0]?.devices?.map((device, idx) => {
+      let devicesObjectList = inventoryData?.devices?.map((device, idx) => {
         let obj = {};
         obj[`device[${idx}][id]`] = device.id;
         obj[`device[${idx}][employee_inventory_id]`] =
@@ -206,14 +206,14 @@ const EmployeeInventoryAddIndex = ({
       }
 
       let inventoryDataWithDevice = {
-        ...dataInventory[0],
+        ...inventoryData,
         ...allDevicesObject,
       };
 
       // convert object to form data
       payloadFormData = objectToFormData(inventoryDataWithDevice);
     } else {
-      payloadFormData = objectToFormData(dataInventory[0]);
+      payloadFormData = objectToFormData(inventoryData);
     }
 
     // Fetch API
@@ -233,7 +233,6 @@ const EmployeeInventoryAddIndex = ({
             message: `Inventaris karyawan berhasil ditambahkan.`,
             duration: 3,
           });
-          rt.push(`/admin/employees/${employeeId}?tab=3`);
         } else {
           notification.error({
             message: `Gagal menyimpan inventaris karyawan. ${response2.message}`,
@@ -337,6 +336,7 @@ const EmployeeInventoryAddIndex = ({
           setInventoryList={setDataInventory}
           inventoryId={inventoryId}
           setRefresh={setRefresh}
+          handleSaveInventory={handleSaveInventory}
         />
       </div>
 
@@ -354,7 +354,13 @@ const EmployeeInventoryAddIndex = ({
                 </ButtonSys>
                 <ButtonSys
                   type={"primary"}
-                  onClick={handleSaveInventory}
+                  onClick={() => {
+                    handleSaveInventory(dataInventory[0]);
+                    setTimeout(
+                      () => rt.push(`/admin/employees/${employeeId}?tab=3`),
+                      1000
+                    );
+                  }}
                   disabled={!isAllowedToUpdateEmployeeInventory}
                 >
                   <div className="flex flex-row space-x-2">
