@@ -1,5 +1,5 @@
 import { CloseOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Spin, Tabs, notification } from "antd";
+import { Spin, Tabs, Tooltip, notification } from "antd";
 import debounce from "lodash.debounce";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -162,6 +162,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const [inventoryList, setInventoryList] = useState([]);
 
+  // Required form fields
+  const [requiredFields, setRequiredFields] = useState([]);
+
   // 2. USE EFFECT
   useEffect(() => {
     prevTab.current = currentTab;
@@ -240,51 +243,79 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 2.5. Disable "Simpan Karyawan" button if any required field is empty
   useEffect(() => {
-    let requiredProfileField = Boolean(
-      dataEmployee.name &&
-        dataEmployee.nip &&
-        dataEmployee.nik &&
-        dataEmployee.alias &&
-        dataEmployee.email_office &&
-        dataEmployee.email_personal &&
-        dataEmployee.phone_number &&
-        dataEmployee.birth_place &&
-        dataEmployee.birth_date &&
-        dataEmployee.gender
-    );
+    const requiredProfileAndContractFields = [
+      { data: dataEmployee.name, name: "Nama Karyawan" },
+      { data: dataEmployee.nip, name: "NIP Karyawan" },
+      { data: dataEmployee.nik, name: "NIK Karyawan" },
+      { data: dataEmployee.alias, name: "Alias Karyawan" },
+      { data: dataEmployee.email_office, name: "Email Kantor" },
+      { data: dataEmployee.email_personal, name: "Email Pribadi" },
+      { data: dataEmployee.phone_number, name: "Nomor Telepon" },
+      { data: dataEmployee.birth_place, name: "Tempat Lahir" },
+      { data: dataEmployee.birth_date, name: "Tanggal Lahir" },
+      { data: dataEmployee.gender, name: "Jenis Kelamin" },
 
-    let requiredContractField = Boolean(
-      dataContract.contract_name &&
-        dataContract.role_id &&
-        dataContract.contract_status_id &&
-        dataContract.contract_file &&
-        dataContract.pkwt_reference &&
-        dataContract.contract_start_at &&
-        dataContract.contract_end_at &&
-        dataContract.placement &&
-        dataContract.gaji_pokok &&
-        dataContract.pph21
-    );
+      { data: dataContract.contract_name, name: "Nama Kontrak" },
+      { data: dataContract.role_id, name: "Posisi Kontrak" },
+      { data: dataContract.contract_status_id, name: "Status Kontrak" },
+      { data: dataContract.contract_file, name: "Dokumen Kontrak" },
+      { data: dataContract.pkwt_reference, name: "Referensi PKWT" },
+      { data: dataContract.contract_start_at, name: "Awal Kontrak" },
+      { data: dataContract.contract_end_at, name: "Akhir Kontrak" },
+      { data: dataContract.placement, name: "Penempatan Kontrak" },
+      { data: dataContract.gaji_pokok, name: "Gaji Pokok" },
+      { data: dataContract.pph21, name: "PPh 21" },
+    ];
 
-    let requiredInventoryField = inventoryList.every((inventory) => {
-      let isDevicesFilled = inventory.devices?.every((device) =>
-        Boolean(device.id_number && device.device_name)
-      );
-      return Boolean(
-        inventory.id_number &&
-          inventory.device_name &&
-          inventory.referance_invertory &&
-          inventory.delivery_date &&
-          inventory.pic_delivery &&
-          isDevicesFilled
-      );
+    const requiredInventoriesFields = [];
+    inventoryList.forEach((inventory, idx) => {
+      // array to be included in required fields
+      let inventoryField = [
+        { data: inventory.id_number, name: `ID Inventaris ${idx + 1}` },
+        {
+          data: inventory.device_name,
+          name: `Nama Piranti Inventaris ${idx + 1}`,
+        },
+        {
+          data: inventory.referance_invertory,
+          name: `Referensi Inventaris ${idx + 1}`,
+        },
+        {
+          data: inventory.delivery_date,
+          name: `Tanggal Penyerahan Inventaris ${idx + 1}`,
+        },
+        {
+          data: inventory.pic_delivery,
+          name: `Penanggung Jawab Inventaris ${idx + 1}`,
+        },
+      ];
+
+      inventory.devices?.forEach((device, devIdx) => {
+        // array to be included in required fields
+        let deviceField = [
+          {
+            data: device.id_number,
+            name: `ID Piranti ${devIdx + 2} Inventaris ${idx + 1}`,
+          },
+          {
+            data: device.device_name,
+            name: `Nama Piranti ${devIdx + 2} Inventaris ${idx + 1}`,
+          },
+        ];
+        inventoryField = inventoryField.concat(deviceField);
+      });
+
+      requiredInventoriesFields.push(...inventoryField);
     });
 
-    if (
-      !requiredProfileField ||
-      !requiredContractField ||
-      !requiredInventoryField
-    ) {
+    let updatedRequiredFields = [
+      ...requiredProfileAndContractFields,
+      ...requiredInventoriesFields,
+    ];
+
+    setRequiredFields(updatedRequiredFields);
+
+    if (!updatedRequiredFields.every((field) => Boolean(field.data))) {
       setDisablePublish(true);
     } else {
       setDisablePublish(false);
@@ -653,23 +684,51 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               <p className="ml-2">Simpan Draft</p>
             </ButtonSys> */}
               {currentTab == "3" ? (
-                <ButtonSys
-                  type={"primary"}
-                  onClick={() => {
-                    debouncedSaveInventory.cancel();
-                    handleSaveProfile(1, dataEmployee);
-                    dataEmployee.contracts.length !== 0 &&
-                      handleSaveContract(dataContract);
-                    dataEmployee.inventories.length !== 0 &&
-                      handleSaveInventory(inventoryList[0]);
-                  }}
-                  disabled={disablePublish}
+                <Tooltip
+                  title={
+                    disablePublish && (
+                      <div>
+                        <p>Field berikut wajib diisi:</p>
+                        <ol>
+                          {requiredFields
+                            .filter((f) => !f.data)
+                            .map((f) => (
+                              <li key={f.name}>{f.name}</li>
+                            ))}
+                        </ol>
+                      </div>
+                    )
+                  }
+                  placement="bottom"
                 >
-                  <div className="flex flex-row flex-nowrap items-center">
-                    <CheckIconSvg size={18} color={`white`} />
-                    <p className="ml-2">Simpan Karyawan</p>
-                  </div>
-                </ButtonSys>
+                  <button
+                    onClick={() => {
+                      debouncedSaveInventory.cancel();
+                      handleSaveProfile(1, dataEmployee);
+                      dataEmployee.contracts.length !== 0 &&
+                        handleSaveContract(dataContract);
+                      dataEmployee.inventories.length !== 0 &&
+                        handleSaveInventory(inventoryList[0]);
+                    }}
+                    disabled={disablePublish}
+                    className={`btn btn-sm px-6 border  text-white
+                      ${
+                        disablePublish
+                          ? ` bg-disabled border-disabled`
+                          : ` bg-primary100 hover:bg-primary75 border-primary100 hover:border-primary75 `
+                      }`}
+                    style={{
+                      backgroundColor: disablePublish && "transparent",
+                      display: "flex",
+                      fontWeight: 600,
+                    }}
+                  >
+                    <div className="flex flex-row flex-nowrap items-center">
+                      <CheckIconSvg size={18} color={`white`} />
+                      <p className="ml-2">Simpan Karyawan</p>
+                    </div>
+                  </button>
+                </Tooltip>
               ) : (
                 <ButtonSys
                   type={"primary"}
