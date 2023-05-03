@@ -1,4 +1,4 @@
-import { Checkbox, Form, notification } from "antd";
+import { Checkbox, Form, Tooltip, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -147,14 +147,19 @@ const EmployeeInventoryForm = ({
 
   return (
     <>
-      <Checkbox
-        checked={isOwn}
-        disabled={inventoryList.length > 0}
-        onChange={(e) => setIsOwn(e.target.checked)}
-        className="mb-6"
+      <Tooltip
+        title={inventoryList.length > 0 && "Karyawan masih memiliki inventaris"}
+        placement="right"
       >
-        Memiliki inventaris & piranti
-      </Checkbox>
+        <Checkbox
+          checked={isOwn}
+          disabled={inventoryList.length > 0}
+          onChange={(e) => setIsOwn(e.target.checked)}
+          className="mb-6"
+        >
+          Memiliki inventaris & piranti
+        </Checkbox>
+      </Tooltip>
 
       {inventoryList.map((inventory, idx) => (
         <InventoryForm
