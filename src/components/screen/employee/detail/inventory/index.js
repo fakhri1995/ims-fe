@@ -225,7 +225,7 @@ const EmployeeInventoryDetail = ({
                 </div>
               }
             >
-              <div className="grid grid-cols-2">
+              <div className="grid grid-cols-1 md:grid-cols-2">
                 <div className="space-y-1 mb-2">
                   <p className="mig-caption--medium text-mono80">ID</p>
                   <p>{dataInventory.id_number || "-"}</p>

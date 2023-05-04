@@ -42,7 +42,7 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
     ).label;
 
   return (
-    <section className="flex flex-row space-x-4">
+    <section className="flex flex-col md:flex-row md:space-x-4">
       {/* Left column */}
       <div className="space-y-2 w-full">
         <div className="space-y-1">

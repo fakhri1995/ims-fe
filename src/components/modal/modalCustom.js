@@ -1580,7 +1580,7 @@ const ModalAddSalaryVar = ({
     setSelectedTags(newSelectedTags);
 
     const selectedMultiplierIds = newSelectedTags.map(
-      (multiplier) => multiplier.column.id
+      (multiplier) => multiplier?.column?.id
     );
 
     // Adjust is_amount_for_bpjs with selected variable for BPJS multiplier

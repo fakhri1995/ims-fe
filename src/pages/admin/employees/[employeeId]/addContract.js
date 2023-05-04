@@ -344,7 +344,7 @@ const EmployeeContractAddIndex = ({
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="grid grid-cols-1 shadow-lg rounded-md bg-white md:py-7 md:px-5">
+      <div className="grid grid-cols-1 shadow-lg rounded-md bg-white p-3 md:py-7 md:px-5">
         <div className="flex flex-row items-center justify-between mb-7">
           <h4 className="mig-heading--4">Tambah Kontrak</h4>
           <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
