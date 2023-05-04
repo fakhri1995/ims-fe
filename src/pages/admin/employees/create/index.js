@@ -628,7 +628,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       pathArr={pathArr}
       pathTitleArr={pathTitleArr}
     >
-      <div className="shadow-lg rounded-md bg-white py-2 md:py-7 px-2 md:px-4">
+      <div className="shadow-lg rounded-md bg-white p-3 md:py-7 md:px-4">
         <div className="grid grid-cols-1">
           <div className="flex flex-row items-center justify-between mb-4">
             <h3 className="mig-heading--3">Tambah Karyawan</h3>

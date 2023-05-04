@@ -1396,9 +1396,9 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <AccessControl hasPermission={TASK_GET}>
-        <div className="grid grid-cols-12 px-5">
-          <div className=" col-span-9 flex flex-col">
-            <div className="shadow-md rounded-md bg-white p-5 mb-6 mr-3 flex flex-col">
+        <div className="grid grid-cols-1 md:grid-cols-12 px-5">
+          <div className="md:col-span-8 lg:col-span-9 flex flex-col">
+            <div className="shadow-md rounded-md bg-white p-5 mb-6 md:mr-3 flex flex-col">
               <div className="flex justify-between items-center mb-10">
                 <div className="flex items-center">
                   <div
@@ -3111,7 +3111,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
               </AccessControl>
             </div>
           </div>
-          <div className=" col-span-3 flex flex-col">
+          <div className="md:col-span-4 lg:col-span-3 flex flex-col">
             {praloadingtask ? (
               <>
                 <Spin />
@@ -3126,7 +3126,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                   displaytask.status === 5 && `bg-completed`
                 } ${
                   displaytask.status === 6 && `bg-closed`
-                } p-4 mb-3 ml-3 flex items-center flex-col`}
+                } p-4 mb-3 md:ml-3 flex items-center flex-col`}
               >
                 <div className=" my-2 text-white">
                   <H2>Waktu Tersisa</H2>
@@ -3277,7 +3277,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
             )}
             {praloadingtask ? null : displaytask.created_by ===
               dataProfile.data.id ? null : displaytask.status === 4 ? (
-              <div className=" my-3 ml-3">
+              <div className=" my-3 md:ml-3">
                 <div>
                   <Buttonsys
                     onClick={handleCheckInTask}
@@ -3290,7 +3290,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 </div>
               </div>
             ) : (
-              <div className=" my-3 ml-3">
+              <div className=" my-3 md:ml-3">
                 <div>
                   <Buttonsys
                     onClick={handleCheckInTask}
@@ -3310,7 +3310,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 </div>
               </div>
             )}
-            <div className="shadow-md rounded-md bg-white p-4 my-3 ml-3 flex flex-col">
+            <div className="shadow-md rounded-md bg-white p-4 my-3 md:ml-3 flex flex-col">
               <div className="my-3 flex flex-col">
                 <div className="mb-2">
                   <Label>Tipe Task</Label>
@@ -3540,7 +3540,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                 />
               </AccessControl>
             </div>
-            <div className="shadow-md rounded-md bg-white p-4 mt-3 ml-3 flex flex-col">
+            <div className="shadow-md rounded-md bg-white p-4 mt-3 md:ml-3 flex flex-col">
               <div className="mb-3">
                 <H1>Aset</H1>
               </div>

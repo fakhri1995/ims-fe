@@ -237,8 +237,10 @@ const EmployeeContractDetail = ({
               </div>
             }
           >
-            <div className="grid grid-cols-2">
-              <h5 className="mig-heading--5 col-span-2 mb-2">INFORMASI UMUM</h5>
+            <div className="grid grid-cols-1 md:grid-cols-2">
+              <h5 className="mig-heading--5 md:col-span-2 mb-2">
+                INFORMASI UMUM
+              </h5>
               <div className="space-y-1 mb-2">
                 <p className="mig-caption--medium text-mono80">Posisi</p>
                 <p>{dataContract.role?.name || "-"}</p>
@@ -249,7 +251,7 @@ const EmployeeContractDetail = ({
                 </p>
                 <p>{dataContract.contract_status?.name || "-"}</p>
               </div>
-              <div className="space-y-1 col-span-2 mb-2">
+              <div className="space-y-1 md:col-span-2 mb-2">
                 <p className="mig-caption--medium text-mono80">
                   Dokumen Kontrak
                 </p>
@@ -270,7 +272,7 @@ const EmployeeContractDetail = ({
                   "-"
                 )}
               </div>
-              <div className="space-y-1 col-span-2 mb-2">
+              <div className="space-y-1 md:col-span-2 mb-2">
                 <p className="mig-caption--medium text-mono80">
                   Referensi PKWT
                 </p>
@@ -306,7 +308,7 @@ const EmployeeContractDetail = ({
               <div className="mb-3">
                 <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
                 <div className="space-y-2">
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">
                       Gaji Pokok
                     </p>
@@ -318,7 +320,10 @@ const EmployeeContractDetail = ({
                   {dataContract?.salaries
                     ?.filter((variable) => variable?.column?.type === 1)
                     ?.map((variable) => (
-                      <div key={variable?.id} className="space-y-1 col-span-2">
+                      <div
+                        key={variable?.id}
+                        className="space-y-1 md:col-span-2"
+                      >
                         <p className="mig-caption--medium text-mono80">
                           {variable?.column?.name}
                         </p>
@@ -333,7 +338,7 @@ const EmployeeContractDetail = ({
               <div className="mb-3">
                 <p className="mig-heading--5 mb-2">BENEFIT PENGURANGAN</p>
                 <div className="space-y-2">
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">
                       BPJS KS (5% Perusahaan)
                     </p>
@@ -341,7 +346,7 @@ const EmployeeContractDetail = ({
                       Rp{Number(dataContract?.bpjs_ks).toLocaleString("id-ID")}
                     </p>
                   </div>
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">
                       BPKS TK-JHT (5,7% Perusahaan)
                     </p>
@@ -352,7 +357,7 @@ const EmployeeContractDetail = ({
                       )}
                     </p>
                   </div>
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">
                       BPKS TK-JKK (0,24% Perusahaan)
                     </p>
@@ -363,7 +368,7 @@ const EmployeeContractDetail = ({
                       )}
                     </p>
                   </div>
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">
                       BPKS TK-JKM (0,3% Perusahaan)
                     </p>
@@ -374,7 +379,7 @@ const EmployeeContractDetail = ({
                       )}
                     </p>
                   </div>
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">
                       BPKS TK-JP (3% Perusahaan)
                     </p>
@@ -383,7 +388,7 @@ const EmployeeContractDetail = ({
                       {Number(dataContract?.bpjs_tk_jp).toLocaleString("id-ID")}
                     </p>
                   </div>
-                  <div className="space-y-1 col-span-2">
+                  <div className="space-y-1 md:col-span-2">
                     <p className="mig-caption--medium text-mono80">PPh 21</p>
                     <p>
                       Rp{Number(dataContract?.pph21).toLocaleString("id-ID")}
@@ -392,7 +397,10 @@ const EmployeeContractDetail = ({
                   {dataContract?.salaries
                     ?.filter((variable) => variable?.column?.type === 2)
                     ?.map((variable) => (
-                      <div key={variable?.id} className="space-y-1 col-span-2">
+                      <div
+                        key={variable?.id}
+                        className="space-y-1 md:col-span-2"
+                      >
                         <p className="mig-caption--medium text-mono80">
                           {variable?.column?.name}
                         </p>

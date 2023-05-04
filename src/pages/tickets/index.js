@@ -867,9 +867,9 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Start: Search criteria */}
-            <div className="mb-4 grid grid-cols-2 lg:grid-cols-12 gap-2 lg:gap-0">
+            <div className="mb-4 grid grid-cols-2 lg:flex gap-2 lg:gap-1">
               {/* Search by keyword (kata kunci) */}
-              <div className="mx-1 lg:col-span-2">
+              <div className="">
                 <Input
                   value={
                     searcingfiltertickets === "" ? null : searcingfiltertickets
@@ -890,7 +890,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by ticket (dropdown) */}
-              <div className="mx-1 lg:col-span-2">
+              <div className="">
                 <Select
                   value={
                     tickettypefiltertickets === ""
@@ -917,7 +917,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by date */}
-              <div className="mx-1 lg:col-span-2 xl:col-span-3">
+              <div className="">
                 <DatePicker.RangePicker
                   style={{ width: `100%` }}
                   allowEmpty
@@ -936,7 +936,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by location */}
-              <div className="mx-1 lg:col-span-2">
+              <div className="">
                 <TreeSelect
                   style={{ width: `100%` }}
                   allowClear
@@ -972,7 +972,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by status (dropdown) */}
-              <div className="mx-1 lg:col-span-2">
+              <div className="">
                 <Select
                   value={
                     statusfiltertickets === "" ? null : statusfiltertickets
@@ -1086,7 +1086,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
                 </Select>
               </div>
 
-              <div className="mx-1 text-right">
+              <div className="">
                 <ButtonSys
                   type={`primary`}
                   onClick={onFilterTickets}

@@ -900,9 +900,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Start: Search criteria */}
-          <div className="flex flex-row justify-between w-full items-center mb-4">
+          <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-4/12">
+            <div className="md:w-4/12">
               <Input
                 defaultValue={queryParams.keyword}
                 style={{ width: `100%` }}
@@ -922,7 +922,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by company (dropdown) */}
-            <div className="w-2/12">
+            <div className="md:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -954,7 +954,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by position (dropdown) */}
-            <div className="w-2/12">
+            <div className="md:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -983,7 +983,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by contract status (dropdown) */}
-            <div className="w-2/12">
+            <div className="md:w-2/12">
               <Select
                 defaultValue={queryParams.contract_status_ids}
                 allowClear

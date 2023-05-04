@@ -252,7 +252,7 @@ function LayoutDashboard({
                       pathBuilder = pathBuilder + `/${pathArr[idx]}`;
                       if (idx === 0) {
                         return (
-                          <Breadcrumb.Item key={idx} href={`dashboard/${doc}`}>
+                          <Breadcrumb.Item key={idx} href={`/dashboard/${doc}`}>
                             {" "}
                             <strong>{doc}</strong>{" "}
                           </Breadcrumb.Item>

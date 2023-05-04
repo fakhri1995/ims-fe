@@ -753,8 +753,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             {viewdetailstaff && (
               <div className="px-5">
                 <div className="flex flex-col shadow-md rounded-lg bg-white p-5 mb-6 mx-3">
-                  <div className="flex justify-between items-center mb-5">
-                    <div className="flex">
+                  <div className="flex flex-col md:flex-row justify-between md:items-center mb-5">
+                    <div className="flex mb-4 md:mb-0">
                       <div
                         className="mr-2 cursor-pointer"
                         onClick={() => {
@@ -765,10 +765,10 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       </div>
                       <H1>Semua Staff</H1>
                     </div>
-                    <div className="w-8/12 flex justify-end">
+                    <div className="md:w-8/12 flex flex-col md:flex-row justify-end space-y-2 md:space-y-0 md:space-x-2">
                       {intervaldatestafffilter === false && (
                         <div
-                          className=" mx-2 cursor-pointer flex items-center"
+                          className="mx-2 cursor-pointer flex items-center"
                           onClick={() => {
                             setintervaldatestafffilter((prev) => !prev);
                           }}
@@ -813,9 +813,9 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                           }}
                         />
                       )}
-                      <div className="mx-2">
+                      <div>
                         <Input
-                          style={{ width: `20rem`, height: `100%` }}
+                          // style={{ width: `20rem`, height: `100%` }}
                           placeholder="Nama Staff.."
                           allowClear
                           onChange={(e) => {
@@ -864,9 +864,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
             )}
           </>
         ) : (
-          <div className="grid grid-cols-10 px-5" id="wrapper1">
+          <div
+            className="grid grid-cols-1 md:grid-cols-10 px-5 gap-x-3 gap-y-6"
+            id="wrapper1"
+          >
             {/* DEADLINE TASK */}
-            <div className="col-span-3 flex flex-col shadow-md rounded-md p-5 mb-6 mr-3 bg-white">
+            <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md p-5 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Deadline Task</H1>
                 <div className="flex items-center">
@@ -1163,7 +1166,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* STAFF TASK */}
-            <div className="col-span-3 flex flex-col shadow-md rounded-md p-5 mb-6 mr-3 bg-white">
+            <div className="md:col-span-5 lg:col-span-3 flex flex-col shadow-md rounded-md p-5 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Staff</H1>
                 <div className="flex items-center">
@@ -1257,7 +1260,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* KELOLA TASK */}
-            <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
+            <div className="md:col-span-10 lg:col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 ">
               <div className="flex items-center justify-between mb-4">
                 <H1>Kelola Task</H1>
               </div>
@@ -1322,7 +1325,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
             </div>
             {/* STATUS TASK */}
-            <div className="col-span-5 flex flex-col shadow-md rounded-md p-5 mb-6 mx-3 bg-white">
+            <div className="md:col-span-5 flex flex-col shadow-md rounded-md p-5 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Status Task</H1>
                 <div className="flex items-center">
@@ -1608,7 +1611,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* TIPE TASK */}
-            <div className="col-span-5 flex flex-col shadow-md rounded-md p-5 mb-6 mx-3 bg-white">
+            <div className="md:col-span-5 flex flex-col shadow-md rounded-md p-5 bg-white">
               <div className="flex items-center justify-between mb-4">
                 <H1>Tipe Task Terbanyak</H1>
                 <div className="flex items-center">
@@ -1792,12 +1795,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
               )}
             </div>
             {/* TABLE DAFTAR TASK */}
-            <div className="col-span-10 flex flex-col shadow-md rounded-md bg-white p-5 mb-6 mr-3">
+            <div className="md:col-span-10 flex flex-col shadow-md rounded-md bg-white p-5">
               <div className="flex items-center justify-between mb-4">
                 <H1>Semua Task</H1>
               </div>
-              <div className=" flex items-center mb-4">
-                <div className="mx-1 w-2/12">
+              <div className="grid grid-cols-3 xl:flex xl:flex-row items-center mb-4 gap-2">
+                <div>
                   <Input
                     value={searchstate}
                     style={{ width: `100%` }}
@@ -1814,7 +1817,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onKeyPress={onKeyPressHandler}
                   />
                 </div>
-                <div className="mx-1 w-2/12">
+                <div>
                   <Select
                     value={
                       tasktypefilterstate === "" ? null : tasktypefilterstate
@@ -1865,7 +1868,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     ))}
                   </Select>
                 </div>
-                <div className=" w-3/12 mx-1">
+                <div>
                   <DatePicker.RangePicker
                     showTime
                     allowEmpty
@@ -1886,7 +1889,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     }}
                   />
                 </div>
-                <div className=" mx-1 w-2/12">
+                <div>
                   <TreeSelect
                     style={{ width: `100%` }}
                     allowClear
@@ -1919,7 +1922,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     }}
                   ></TreeSelect>
                 </div>
-                <div className=" mx-1 w-2/12">
+                <div>
                   <Select
                     style={{ width: `100%` }}
                     value={statusfilterstate === "" ? null : statusfilterstate}
@@ -1971,16 +1974,16 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     </Select.Option>
                   </Select>
                 </div>
-                <div className="mx-1 w-1/12">
+                <div>
                   <Buttonsys
                     type={`primary`}
                     disabled={!isAllowedToGetTaskList}
                     onClick={onFilterTask}
                   >
-                    <div className="mr-1">
+                    <div className="flex space-x-1">
                       <SearchIconSvg size={15} color={`#ffffff`} />
+                      <p>Cari</p>
                     </div>
-                    Cari
                   </Buttonsys>
                 </div>
               </div>
