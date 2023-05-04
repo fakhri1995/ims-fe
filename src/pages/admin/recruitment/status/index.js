@@ -436,7 +436,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div className="flex flex-col" id="mainWrapper">
-        <div className="grid grid-cols-5 px-5 gap-6">
+        <div className="grid grid-cols-5 md:px-5 gap-6">
           <SetupMenu menu={"4"} />
 
           {/* Table Semua Status */}
