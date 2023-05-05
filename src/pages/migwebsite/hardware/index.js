@@ -3349,7 +3349,7 @@ function Hardware({}) {
                 </h3>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"mt:4 lg:mt-8 font-gilroyregular text-base"}
+                  className={"mt:4 lg:mt-8 font-gilroyregular text-base w-4/5"}
                 >
                   {t.hardwareherosectionsubtitle}
                 </p>
@@ -3484,11 +3484,11 @@ function Hardware({}) {
                   </div>
                 </div>
               </div>
-              <div className={"w-1/2 pl-[40px]"}>
+              <div className={"flex justify-items-center self-center w-1/2"}>
                 <img
                   src="/image/hardware/Hardware-Solution.png"
-                  className={"w-4/5 h-auto"}
-                />
+                  className={"h-fit max-w-[95%] mx-auto"}
+                ></img>
               </div>
             </div>
             <div className={"block lg:hidden py-9 px-4"}>
@@ -3679,7 +3679,7 @@ function Hardware({}) {
                     <div className={"grid grid-cols-6 gap-2 ml-[11px]"}>
                       {dataBanking.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[145px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3691,7 +3691,7 @@ function Hardware({}) {
                           />
                           <p
                             style={{ lineHeight: "120%" }}
-                            className={"mt-3 font-gilroybold text-xl"}
+                            className={"mt-3 font-gilroybold text-base"}
                           >
                             {data.name_product}
                           </p>
@@ -3752,7 +3752,7 @@ function Hardware({}) {
                     <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataWorkstation.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[152px] ml-[11px] text-center flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[145px] ml-[11px] text-center flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3764,7 +3764,7 @@ function Hardware({}) {
                           />
                           <p
                             style={{ lineHeight: "120%" }}
-                            className={"mt-3 font-gilroybold text-xl"}
+                            className={"mt-3 font-gilroybold text-base"}
                           >
                             {data.name_product}
                           </p>
@@ -3826,7 +3826,7 @@ function Hardware({}) {
                     <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataServer.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[145px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3838,7 +3838,7 @@ function Hardware({}) {
                           />
                           <p
                             style={{ lineHeight: "120%" }}
-                            className={"mt-3 font-gilroybold text-xl"}
+                            className={"mt-3 font-gilroybold text-base"}
                           >
                             {data.name_product}
                           </p>
@@ -3899,7 +3899,7 @@ function Hardware({}) {
                     <div className={"grid grid-cols-6 gap-x-[11px] ml-[11px]"}>
                       {dataUps.map((data, index) => (
                         <button
-                          className="bg-white p-3 border border-divider rounded-lg w-[152px] text-center ml-[11px] flex flex-col justify-center items-center"
+                          className="bg-white p-3 border border-divider rounded-lg w-[145px] text-center ml-[11px] flex flex-col justify-center items-center"
                           onClick={handleShowForm}
                         >
                           <img
@@ -3911,7 +3911,7 @@ function Hardware({}) {
                           />
                           <p
                             style={{ lineHeight: "120%" }}
-                            className={"mt-3 font-gilroybold text-xl"}
+                            className={"mt-3 font-gilroybold text-base"}
                           >
                             {data.name_product}
                           </p>
