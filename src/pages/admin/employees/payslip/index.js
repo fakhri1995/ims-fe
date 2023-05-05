@@ -496,7 +496,11 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
         },
       }
     )
-      .then((response) => response.blob())
+      .then((response) => {
+        if (response.status === 200) {
+          return response.blob();
+        }
+      })
       .then((blob) => {
         const url = URL.createObjectURL(blob);
 
@@ -720,7 +724,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             <h4 className="mig-heading--4 ">Slip Gaji</h4>
             <div
               className="flex flex-col md:flex-row space-y-2 md:space-y-0 
-              md:space-x-6 items-end md:items-center"
+              md:space-x-3 lg:space-x-6 items-end md:items-center"
             >
               <ButtonSys
                 type={"default"}
@@ -761,9 +765,9 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Start: Search criteria */}
-          <div className="flex flex-row justify-between w-full items-center mb-4">
+          <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
             {/* Search by keyword (kata kunci) */}
-            <div className="w-4/12">
+            <div className="md:w-4/12">
               <Input
                 defaultValue={queryParams.keyword}
                 style={{ width: `100%` }}
@@ -782,7 +786,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by position (dropdown) */}
-            <div className="w-2/12">
+            <div className="md:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -811,7 +815,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by company (dropdown) */}
-            <div className="w-2/12">
+            <div className="md:w-2/12">
               <Select
                 allowClear
                 showSearch
@@ -840,7 +844,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Filter by payslip status (dropdown) */}
-            <div className="w-2/12">
+            <div className="md:w-2/12">
               <Select
                 defaultValue={queryParams.is_posted}
                 allowClear

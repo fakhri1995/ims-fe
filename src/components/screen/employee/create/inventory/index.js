@@ -1,4 +1,4 @@
-import { Checkbox, Form, notification } from "antd";
+import { Checkbox, Form, Tooltip, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -7,9 +7,9 @@ import { useEffect } from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  COMPANY_LISTS_GET,
   EMPLOYEE_INVENTORIES_GET,
   EMPLOYEE_INVENTORY_ADD,
+  EMPLOYEE_INVENTORY_DELETE,
 } from "lib/features";
 
 import {
@@ -21,13 +21,13 @@ import InventoryForm from "./inventoryForm";
 
 const EmployeeInventoryForm = ({
   initProps,
-  isAdd,
   inventoryList,
   setInventoryList,
   employeeId,
   debouncedApiCall,
   refresh,
   setRefresh,
+  handleSaveInventory,
 }) => {
   /**
    * Dependencies
@@ -43,6 +43,7 @@ const EmployeeInventoryForm = ({
     EMPLOYEE_INVENTORIES_GET
   );
   const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
+  const isAllowedToDeleteInventory = hasPermission(EMPLOYEE_INVENTORY_DELETE);
 
   // 1. USE STATE
   const [isOwn, setIsOwn] = useState(false);
@@ -80,11 +81,11 @@ const EmployeeInventoryForm = ({
         .then((res2) => {
           if (res2.success) {
             if (res2.data.length !== 0) {
-              setInventoryList(res2.data);
               setIsOwn(true);
             } else {
               setIsOwn(false);
             }
+            setInventoryList(res2.data);
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -103,13 +104,6 @@ const EmployeeInventoryForm = ({
         });
     }
   }, [isAllowedToGetEmployeeInventories, employeeId, refresh]);
-
-  // 2.2. Auto add new inventory form when it's use in add inventory
-  useEffect(() => {
-    if (isAdd) {
-      handleAddNewInventory();
-    }
-  }, [isAdd]);
 
   // 3. HANDLER
   const handleAddNewInventory = () => {
@@ -153,39 +147,47 @@ const EmployeeInventoryForm = ({
 
   return (
     <>
-      {!isAdd && (
+      <Tooltip
+        title={inventoryList.length > 0 && "Karyawan masih memiliki inventaris"}
+        placement="right"
+      >
         <Checkbox
           checked={isOwn}
-          onChange={(e) => {
-            setIsOwn(e.target.checked);
-            isOwn ? setInventoryList([]) : handleAddNewInventory();
-          }}
+          disabled={inventoryList.length > 0}
+          onChange={(e) => setIsOwn(e.target.checked)}
           className="mb-6"
         >
           Memiliki inventaris & piranti
         </Checkbox>
-      )}
+      </Tooltip>
 
-      {(isOwn || isAdd) && (
-        <>
-          {inventoryList.map((inventory, idx) => (
-            <InventoryForm
-              key={idx}
-              idx={idx}
-              initProps={initProps}
-              inventoryList={inventoryList}
-              setInventoryList={setInventoryList}
-              inventoryId={inventory.id}
-              debouncedApiCall={debouncedApiCall}
-              setRefresh={setRefresh}
-            />
-          ))}
-          <ButtonSys type={"dashed"} onClick={handleAddNewInventory}>
-            <p className="text-primary100 hover:text-primary75">
-              + Tambah Inventaris
-            </p>
-          </ButtonSys>
-        </>
+      {inventoryList.map((inventory, idx) => (
+        <InventoryForm
+          key={idx}
+          idx={idx}
+          initProps={initProps}
+          inventoryList={inventoryList}
+          setInventoryList={setInventoryList}
+          inventoryId={inventory.id}
+          debouncedApiCall={debouncedApiCall}
+          setRefresh={setRefresh}
+          handleSaveInventory={handleSaveInventory}
+          isFormAddEmployee={true}
+        />
+      ))}
+
+      {isOwn && (
+        <ButtonSys
+          type={"dashed"}
+          onClick={async () => {
+            await handleSaveInventory(inventoryList[inventoryList.length - 1]);
+            handleAddNewInventory();
+          }}
+        >
+          <p className="text-primary100 hover:text-primary75">
+            + Tambah Inventaris
+          </p>
+        </ButtonSys>
       )}
     </>
   );

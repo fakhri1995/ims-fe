@@ -136,12 +136,12 @@ const EmployeeProfileForm = ({
     }));
 
     // use for auto save in "Tambah Karyawan"
-    if (debouncedApiCall) {
-      debouncedApiCall({
-        ...dataEmployee,
-        id_card_photo: uploadedFile,
-      });
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall({
+    //     ...dataEmployee,
+    //     id_card_photo: uploadedFile,
+    //   });
+    // }
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {
@@ -159,12 +159,12 @@ const EmployeeProfileForm = ({
     }));
 
     // use for auto save in "Tambah Karyawan"
-    if (debouncedApiCall) {
-      debouncedApiCall({
-        ...dataEmployee,
-        id_card_photo: null,
-      });
-    }
+    // if (debouncedApiCall) {
+    //   debouncedApiCall({
+    //     ...dataEmployee,
+    //     id_card_photo: null,
+    //   });
+    // }
   }, []);
 
   // console.log({ dataEmployee });

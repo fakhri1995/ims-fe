@@ -377,7 +377,7 @@ const EmployeeDetailIndex = ({
             {/* Profile summary */}
             <div className="shadow-lg rounded-md bg-white pb-4 py-3 md:py-4 px-3 md:px-6 divide-y-2 mt-3 md:mt-0">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
-              <div className="grid grid-cols-2 gap-4 pt-3">
+              <div className="grid md:grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
                   <p>{dataEmployee?.name || "-"}</p>
