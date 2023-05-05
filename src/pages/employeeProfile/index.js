@@ -212,11 +212,11 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                 dataProfile?.data?.profile_image?.link
               )}
               alt={dataProfile?.data?.profile_image?.description}
-              className="md:w-1/5 bg-cover object-cover rounded-md shadow-lg"
+              className="md:w-2/5 lg:w-1/5 bg-cover object-cover rounded-md shadow-lg"
             />
           ) : (
             <div
-              className="md:w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
+              className="md:w-2/5 lg:w-1/5 bg-white rounded-md shadow-lg flex flex-col items-center 
               justify-center space-y-2 p-4"
             >
               <OneUserIconSvg size={200} color={"black"} strokeWidth={1} />
@@ -227,11 +227,11 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
           )}
 
           {/* Right column */}
-          <div className="md:flex md:flex-col md:w-4/5 gap-3 md:gap-5">
+          <div className="md:flex md:flex-col md:w-3/5 lg:w-4/5 gap-3 md:gap-5">
             {/* Employee Status */}
             <div
               className="shadow-lg rounded-md bg-white px-3 md:px-6 py-3 
-              flex flex-row justify-between items-center"
+              flex flex-col md:flex-row justify-between md:items-center space-y-3 md:space-y-0"
             >
               <div className="flex flex-col space-x-0 space-y-2 justify-between ">
                 <p className="mig-caption--medium text-mono80">
@@ -256,8 +256,10 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                   onClick={() => setModalDownload(true)}
                   disabled={!isAllowedToDownloadPayslip || loadingDownload}
                 >
-                  <DownloadOutlined />
-                  <p className="ml-2">Unduh Slip Gaji</p>
+                  <div className="flex space-x-2 whitespace-nowrap">
+                    <DownloadOutlined />
+                    <p>Unduh Slip Gaji</p>
+                  </div>
                 </ButtonSys>
               )}
             </div>
@@ -265,7 +267,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
             {/* Profile summary */}
             <div className="shadow-lg rounded-md bg-white pb-4 py-3 md:py-4 px-3 md:px-6 divide-y-2 mt-3 md:mt-0">
               <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
-              <div className="grid grid-cols-2 gap-4 pt-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
                 <div className="flex flex-col space-y-1">
                   <p className="mig-caption--medium text-mono80">Nama</p>
                   <p>{dataEmployee?.name || "-"}</p>
@@ -286,7 +288,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
                     {dataEmployee?.contracts?.[0]?.contract_status?.name || "-"}
                   </p>
                 </div>
-                <div className="flex flex-col space-y-1">
+                <div className="flex flex-col md:col-span-2 lg:col-span-1 space-y-1">
                   <p className="mig-caption--medium text-mono80">E-mail</p>
                   <p>{dataEmployee?.email_office || "-"}</p>
                 </div>

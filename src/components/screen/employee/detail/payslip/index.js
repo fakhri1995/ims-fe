@@ -181,7 +181,7 @@ const EmployeePayslipDetail = ({ initProps, employeeId, employeeName }) => {
                 </div>
               }
             >
-              <div className="flex flex-row justify-between items-center">
+              <div className="flex flex-col md:flex-row justify-between md:items-center space-y-3 md:space-y-0">
                 <div className="grid grid-cols-2">
                   <div className="space-y-1">
                     <p className="mig-caption--medium text-mono80">
