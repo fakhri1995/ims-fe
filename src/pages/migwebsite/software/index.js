@@ -2704,7 +2704,7 @@ function Software({}) {
                         {data1.company_name}
                       </p>
                       <div
-                        className="mt-2"
+                        className="mt-2 customer-stories"
                         dangerouslySetInnerHTML={{
                           __html:
                             locale == "en"
