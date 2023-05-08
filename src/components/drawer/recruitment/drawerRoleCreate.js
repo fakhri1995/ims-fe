@@ -1,14 +1,7 @@
 import { Form, Input, Select, Spin, notification } from "antd";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 
-import { useAccessControl } from "contexts/access-control";
-
 import { permissionWarningNotification } from "../../../lib/helper";
-import ButtonSys from "../../button";
-import { TrashIconSvg } from "../../icon";
-import { InputRequired } from "../../input";
-import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
 const DrawerRoleCreate = ({
@@ -105,7 +98,6 @@ const DrawerRoleCreate = ({
       });
   };
 
-  // console.log(dataCandidate);
   return (
     <DrawerCore
       title={"Tambah Role"}
