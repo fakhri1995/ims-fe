@@ -143,7 +143,7 @@ function layout({ children }) {
             className={"bg-transparent border-0 border-white "}
             // onClick={() => changeLanguage("en")}
           >
-            <p className={"text-lg gilroy-medium self-center"}>
+            <p className={"text-[14px] gilroy-medium self-center"}>
               {locale == "en" ? "Customer Stories" : "Klien Kami"}
             </p>
           </Button>
@@ -157,7 +157,7 @@ function layout({ children }) {
             className={"bg-transparent border-0 border-white  my-4 pb-4"}
             // onClick={() => changeLanguage("id")}
           >
-            <p className={"text-lg gilroy-medium self-center"}>Blog</p>
+            <p className={"text-[14px] gilroy-medium self-center"}>Blog</p>
           </Button>
         </Link>
       )}

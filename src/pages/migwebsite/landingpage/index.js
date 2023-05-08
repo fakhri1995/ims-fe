@@ -589,7 +589,7 @@ function LandingPage({ dataBlog }) {
         </div>
         {/* ---------- */}
         {/* Phone View */}
-        <div className={"block lg:hidden pt-8"}>
+        <div className={"block lg:hidden pt-5"}>
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
@@ -1007,7 +1007,7 @@ function LandingPage({ dataBlog }) {
           </p>
         </div>
         <div>
-          <div className="bg-lightgreen px-[16.5px] py-3 rounded-lg w-[287px] h-[388px] mx-auto">
+          <div className="bg-lightgreen p-4 rounded-lg w-[287px] mx-auto">
             <div className={"grid justify-items-center text-center"}>
               <img
                 src="/image/landingpage/hero-talent.png"
@@ -1047,7 +1047,7 @@ function LandingPage({ dataBlog }) {
           </div>
         </div>
         <div>
-          <div className="bg-lightblue rounded-lg px-[16.5px] py-3 w-[287px] h-[388px] mt-7 mx-auto">
+          <div className="bg-lightblue rounded-lg p-4 w-[287px] mt-7 mx-auto">
             <div className={"grid justify-items-center text-center"}>
               <img
                 src="/image/landingpage/Software.png"
@@ -1087,7 +1087,7 @@ function LandingPage({ dataBlog }) {
           </div>
         </div>
         <div>
-          <div className="bg-lightgrey rounded-lg px-[16.5px] py-3 w-[287px] h-[388px] mt-7 mx-auto">
+          <div className="bg-lightgrey rounded-lg p-4 w-[287px] mt-7 mx-auto">
             <div className={"grid justify-items-center text-center"}>
               <img
                 src="/image/landingpage/Talents.png"
@@ -1521,7 +1521,7 @@ function LandingPage({ dataBlog }) {
                   </div>
 
                   <div
-                    className="mt-2"
+                    className="mt-2 customer-stories"
                     dangerouslySetInnerHTML={{
                       __html:
                         locale == "en"

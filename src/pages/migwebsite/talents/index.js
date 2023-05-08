@@ -3374,7 +3374,7 @@ function Talents({}) {
               </div>
             </div>
             {/*section 1 talents mobile */}
-            <div className={"block lg:hidden py-9 px-4"}>
+            <div className={"block lg:hidden pt-1 pb-9 px-4"}>
               <div className={""}>
                 <p
                   className={
@@ -3465,7 +3465,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section2talentsnew py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt:4 lg:mt-12"
+              "section2talentsnew py-4 lg:pt-0 lg:pb-16 lg:px-[120px] px-4 mx-auto mt:4"
             }
           >
             <h3
@@ -3508,7 +3508,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint1}
@@ -3528,7 +3528,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint2}
@@ -3552,7 +3552,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint3}
@@ -3572,7 +3572,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint4}

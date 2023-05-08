@@ -404,7 +404,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 pr-8 text-base text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint1}
@@ -418,7 +418,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 pr-8 text-base text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint2}
@@ -432,7 +432,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 pr-8 text-base text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint3}
@@ -450,7 +450,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 pr-8 text-base text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint4}
@@ -464,7 +464,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 pr-8 text-base text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint5}
@@ -478,7 +478,7 @@ function JoinOurTeam({ dataCareers, empData }) {
                 <p
                   style={{ lineHeight: "150%" }}
                   className={
-                    "flex-row my-auto pl-4 text-[18px] text-black font-gilroyregular"
+                    "flex-row my-auto pl-4 pr-8 text-base text-black font-gilroyregular"
                   }
                 >
                   {t.careersatmigbenefitsectionpoint6}
