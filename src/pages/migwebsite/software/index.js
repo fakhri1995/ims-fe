@@ -1743,7 +1743,7 @@ function Software({}) {
                 ></img>
               </div>
             </div>
-            <div className={"block lg:hidden py-9 px-4"}>
+            <div className={"block lg:hidden pt-1 pb-9 px-4"}>
               <div className={""}>
                 <p
                   className={

@@ -3491,7 +3491,7 @@ function Hardware({}) {
                 ></img>
               </div>
             </div>
-            <div className={"block lg:hidden py-9 px-4"}>
+            <div className={"block lg:hidden pt-1 pb-9 px-4"}>
               <div className={"px-3"}>
                 <p
                   className={
@@ -4184,7 +4184,7 @@ function Hardware({}) {
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm -mt-10 rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2 mt-4"
+                      "text-sm -mt-10 rounded text-primarygreen border-2 border-primarygreen px-4 py-2 lg:px-2 mt-4"
                     }
                   >
                     <p className={"text-base  font-gilroysemibold"}>
