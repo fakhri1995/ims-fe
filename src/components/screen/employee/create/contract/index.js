@@ -28,12 +28,14 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   COMPANY_CLIENTS_GET,
+  COMPANY_CLIENT_ADD,
   EMPLOYEE_CONTRACT_GET,
   EMPLOYEE_SALARY_COLUMNS_GET,
   EMPLOYEE_SALARY_COLUMN_ADD,
   EMPLOYEE_SALARY_COLUMN_DELETE,
   EMPLOYEE_SALARY_COLUMN_UPDATE,
   RECRUITMENT_ROLES_LIST_GET,
+  RECRUITMENT_ROLE_ADD,
   RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
 
@@ -42,7 +44,11 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import { ModalAddSalaryVar } from "../../../../modal/modalCustom";
+import {
+  ModalAddCompany,
+  ModalAddRole,
+  ModalAddSalaryVar,
+} from "../../../../modal/modalCustom";
 import CustomCurrencyInput from "../../CustomCurrencyInput";
 
 const EmployeeContractForm = ({
@@ -66,6 +72,8 @@ const EmployeeContractForm = ({
 
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
+  const isAllowedToAddCompanyClient = hasPermission(COMPANY_CLIENT_ADD);
+  const isAllowedToAddRole = hasPermission(RECRUITMENT_ROLE_ADD);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
   const isAllowedToGetRoleTypeList = hasPermission(
     RECRUITMENT_ROLE_TYPES_LIST_GET
@@ -106,6 +114,14 @@ const EmployeeContractForm = ({
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
   const [selectedMultipliers, setSelectedMultipliers] = useState([]);
+
+  //Modal add position role
+  const [modalAddRole, setModalAddRole] = useState(false);
+  const [loadingAddRole, setLoadingAddRole] = useState(false);
+
+  // Modal add placement company
+  const [modalAddCompany, setModalAddCompany] = useState(false);
+  const [loadingAddCompany, setLoadingAddCompany] = useState(false);
 
   // 2. HELPER FUNCTION
   // 2.1. Format string variable name. e.g. "tunjangan_transport"
@@ -168,7 +184,7 @@ const EmployeeContractForm = ({
       .finally(() => {
         setLoadingPositionList(false);
       });
-  }, [isAllowedToGetRoleList]);
+  }, [isAllowedToGetRoleList, refresh]);
 
   // 3.2. Get Company Client List
   useEffect(() => {
@@ -208,7 +224,7 @@ const EmployeeContractForm = ({
       .finally(() => {
         setLoadingCompanyList(false);
       });
-  }, [isAllowedToGetCompanyClients]);
+  }, [isAllowedToGetCompanyClients, refresh]);
 
   // 3.3. Get Role/Position Type List
   useEffect(() => {
@@ -490,32 +506,42 @@ const EmployeeContractForm = ({
           />
         </div>
       </Form.Item>
-      <Form.Item
-        label="Posisi"
-        name={"role_id"}
-        rules={[
-          {
-            required: true,
-            message: "Posisi wajib diisi",
-          },
-        ]}
-      >
-        <>
-          <Select
-            value={dataContract?.role_id && Number(dataContract?.role_id)}
-            onChange={(value) => onChangeSelect(value, "role_id")}
-            placeholder="Pilih posisi"
-          >
-            <>
-              {dataPositionList?.map((option) => (
-                <Select.Option key={option.id} value={option.id}>
-                  {option.name}
-                </Select.Option>
-              ))}
-            </>
-          </Select>
-        </>
-      </Form.Item>
+      <div className="flex items-center space-x-2">
+        <Form.Item
+          label="Posisi"
+          name={"role_id"}
+          rules={[
+            {
+              required: true,
+              message: "Posisi wajib diisi",
+            },
+          ]}
+          className="w-full"
+        >
+          <>
+            <Select
+              value={dataContract?.role_id && Number(dataContract?.role_id)}
+              onChange={(value) => onChangeSelect(value, "role_id")}
+              placeholder="Pilih posisi"
+            >
+              <>
+                {dataPositionList?.map((option) => (
+                  <Select.Option key={option.id} value={option.id}>
+                    {option.name}
+                  </Select.Option>
+                ))}
+              </>
+            </Select>
+          </>
+        </Form.Item>
+        <Button
+          onClick={() => setModalAddRole(true)}
+          disabled={!isAllowedToAddRole}
+          className="px-4 py-2 whitespace-nowrap border-0 bg-transparent text-primary100 shadow-none hover:text-primary75 focus:text-primary100"
+        >
+          Tambah Posisi
+        </Button>
+      </div>
       <Form.Item
         label="Status Kontrak"
         name={"contract_status_id"}
@@ -653,30 +679,39 @@ const EmployeeContractForm = ({
           />
         </>
       </Form.Item>
-      <Form.Item
-        label="Penempatan"
-        name={"placement"}
-        rules={[
-          {
-            required: true,
-            message: "Penempatan wajib diisi",
-          },
-        ]}
-      >
-        <>
-          <Select
-            value={dataContract?.placement}
-            onChange={(value) => onChangeSelect(value, "placement")}
-            placeholder="Pilih penempatan"
-          >
-            {dataCompanyList?.map((option) => (
-              <Select.Option key={option.id} value={option.name}>
-                {option.name}
-              </Select.Option>
-            ))}
-          </Select>
-        </>
-      </Form.Item>
+      <div className="flex items-center space-x-2">
+        <Form.Item
+          label="Penempatan"
+          name={"placement"}
+          rules={[
+            {
+              required: true,
+              message: "Penempatan wajib diisi",
+            },
+          ]}
+          className="w-full"
+        >
+          <>
+            <Select
+              value={dataContract?.placement}
+              onChange={(value) => onChangeSelect(value, "placement")}
+              placeholder="Pilih penempatan"
+            >
+              {dataCompanyList?.map((option) => (
+                <Select.Option key={option.id} value={option.name}>
+                  {option.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </>
+        </Form.Item>
+        <Button
+          onClick={() => setModalAddCompany(true)}
+          className=" px-4 py-2 whitespace-nowrap border-0 bg-transparent text-primary100 shadow-none hover:text-primary75 focus:text-primary100"
+        >
+          Tambah Penempatan
+        </Button>
+      </div>
       <Form.Item label="Kantor Baru" name={"new_office"}>
         <div>
           <Input
@@ -1016,7 +1051,26 @@ const EmployeeContractForm = ({
           payslipId={dataContract?.id}
           dataPayslip={dataContract}
           setDataPayslip={setDataContract}
-          // disabled
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={RECRUITMENT_ROLE_ADD}>
+        <ModalAddRole
+          initProps={initProps}
+          visible={modalAddRole}
+          onvisible={setModalAddRole}
+          isAllowedToAddRole={isAllowedToAddRole}
+          dataRoleTypeList={dataRoleTypeList}
+          setRefresh={setRefresh}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={COMPANY_CLIENT_ADD}>
+        <ModalAddCompany
+          visible={modalAddCompany}
+          onvisible={setModalAddCompany}
+          isAllowedToAddCompany={isAllowedToAddCompanyClient}
+          setRefresh={setRefresh}
         />
       </AccessControl>
     </Form>

@@ -1,5 +1,13 @@
 import { DeleteOutlined, EditOutlined, UpOutlined } from "@ant-design/icons";
-import { Collapse, Input, Select, Spin, Switch, notification } from "antd";
+import {
+  Button,
+  Collapse,
+  Input,
+  Select,
+  Spin,
+  Switch,
+  notification,
+} from "antd";
 import moment from "moment";
 import {
   NumberParam,
@@ -22,6 +30,7 @@ import {
   COMPANY_CLIENTS_GET,
   EMPLOYEES_GET,
   EMPLOYEE_ADD,
+  EMPLOYEE_CONTRACT_UPDATE,
   EMPLOYEE_DELETE,
   EMPLOYEE_GET,
   EMPLOYEE_PLACEMENTS_COUNT_GET,
@@ -75,6 +84,10 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToAddEmployee = hasPermission(EMPLOYEE_ADD);
   const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
+
+  const isAllowedToUpdateEmployeeContract = hasPermission(
+    EMPLOYEE_CONTRACT_UPDATE
+  );
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
@@ -710,55 +723,40 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             <>
               {record.is_posted ? (
                 <div className="flex flex-col space-y-2">
-                  <ButtonSys
-                    type={isAllowedToGetEmployee ? "default" : "primary"}
-                    disabled={!isAllowedToGetEmployee}
+                  <Button
+                    type={"primary"}
+                    disabled={!isAllowedToUpdateEmployeeContract}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(`/admin/employees/${record.id}?tab=2`);
                     }}
                     icon={<EditOutlined />}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      {/* <EditIconSvg size={16} color={`#35763B`} /> */}
-                      <EditOutlined />
-                      <p className="whitespace-nowrap">Edit Kontrak</p>
-                    </div>
-                  </ButtonSys>
+                    className="bg-primary100 border-primary100 hover:bg-primary75 hover:border-primary75 focus:bg-primary75 focus:border-primary75"
+                  />
                 </div>
               ) : (
-                <div className="flex flex-col space-y-2">
-                  <ButtonSys
-                    type={isAllowedToUpdateEmployee ? "default" : "primary"}
+                <div className="flex space-x-2">
+                  <Button
+                    type={"primary"}
                     disabled={!isAllowedToUpdateEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(`/admin/employees/create?id=${record.id}`);
                     }}
-                    color={"notice"}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      {/* <EditIconSvg size={16} color={`#DDB44A`} /> */}
-                      <EditOutlined />
-                      <p className="whitespace-nowrap">Edit Draft</p>
-                    </div>
-                  </ButtonSys>
-                  <ButtonSys
-                    type={isAllowedToDeleteEmployee ? "default" : "primary"}
+                    icon={<EditOutlined />}
+                    className="bg-notice border-notice hover:bg-notice hover:opacity-75 hover:border-notice focus:bg-notice focus:border-notice focus:opacity-75"
+                  />
+                  <Button
+                    type={"primary"}
                     disabled={!isAllowedToDeleteEmployee}
                     onClick={(event) => {
                       event.stopPropagation();
                       setDataRowClicked(record);
                       setModalDelete(true);
                     }}
-                    color={"warning"}
-                  >
-                    <div className="flex flex-row space-x-2 items-center">
-                      {/* <TrashIconSvg size={16} color={`#BF4A40`} /> */}
-                      <DeleteOutlined />
-                      <p className="whitespace-nowrap">Hapus Draft</p>
-                    </div>
-                  </ButtonSys>
+                    icon={<DeleteOutlined />}
+                    className="bg-warning border-warning hover:bg-warning hover:opacity-75 hover:border-warning focus:bg-warning focus:border-warning focus:opacity-75"
+                  />
                 </div>
               )}
             </>

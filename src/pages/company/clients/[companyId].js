@@ -665,7 +665,7 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       <img
                         src={displaydata.image_logo}
                         alt=""
-                        className="object-contain max-w-24 max-h-24 rounded-full "
+                        className="object-contain w-24 h-24 rounded-full "
                       />
                     </div>
                   </div>
@@ -855,7 +855,6 @@ const ClientDetail2 = ({ initProps, dataProfile, sidemenu, companyid }) => {
                       </p>
                     )}
                   </div>
-                  {console.log({ displaydata })}
                   <div className="flex flex-col mb-5">
                     <Label>Jam Masuk</Label>
                     {editable ? (
