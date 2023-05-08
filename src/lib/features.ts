@@ -17,10 +17,18 @@ export const SIDEBAR_DASHBOARD = "SIDEBAR_DASHBOARD";
 /** Items */
 export const SIDEBAR_ITEMS = "SIDEBAR_ITEMS";
 
+/** Lamaran Saya */
+export const SIDEBAR_MY_APPLICATION = "SIDEBAR_MY_APPLICATION";
+
 /** Perusahaan */
 export const SIDEBAR_COMPANY = "SIDEBAR_COMPANY";
 export const SIDEBAR_COMPANY_CLIENT = "SIDEBAR_COMPANY_CLIENT";
 export const SIDEBAR_COMPANY_PROFILE = "SIDEBAR_COMPANY_PROFILE";
+
+/** Proyek */
+export const SIDEBAR_PROJECT = "SIDEBAR_PROJECT";
+export const SIDEBAR_PROJECT_TASK = "SIDEBAR_PROJECT_TASK";
+export const SIDEBAR_PROJECT_TASK_ADMIN = "SIDEBAR_PROJECT_TASK_ADMIN";
 
 /** Task */
 export const SIDEBAR_TASK = "SIDEBAR_TASK";
@@ -29,9 +37,6 @@ export const SIDEBAR_TASK_MY = "SIDEBAR_TASK_MY";
 
 /** Ticket */
 export const SIDEBAR_TICKET = "SIDEBAR_TICKET";
-
-/** Lamaran Saya */
-export const SIDEBAR_MY_APPLICATION = "SIDEBAR_MY_APPLICATION";
 
 /** ------------------ Manajemen ------------------ */
 /** Asset */
