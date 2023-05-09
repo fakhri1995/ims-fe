@@ -3251,7 +3251,7 @@ function Talents({}) {
             }
           >
             <div className={"hidden lg:flex justify-between container mx-auto"}>
-              <div className={"flex-col w-1/2"}>
+              <div className={"flex-col w-1/2 pr-4"}>
                 <h3
                   style={{ lineHeight: "120%" }}
                   className={"text-[32px] pb-4 font-gilroysemibold"}
@@ -3260,7 +3260,7 @@ function Talents({}) {
                 </h3>
                 <p
                   style={{ lineHeight: "150%" }}
-                  className={"mt-8 font-gilroyregular text-base"}
+                  className={"mt-8 font-gilroyregular text-base w-11/12"}
                 >
                   {t.talentherodescription}
                 </p>
@@ -3287,7 +3287,7 @@ function Talents({}) {
                     <button
                       onClick={handleHireNow}
                       className={
-                        "text-[18px] text-center ml-4 rounded text-white border-2 bg-primarygreen border-primarygree py-2 pl-4 pr-3"
+                        "text-[18px] text-center ml-4 rounded text-white border-2 bg-primarygreen border-primarygreen py-2 pl-4 pr-3"
                       }
                     >
                       <div className={"flex flex-row justify-between"}>
@@ -3366,15 +3366,15 @@ function Talents({}) {
                   </div> */}
                 </div>
               </div>
-              <div className={"flex-col w-1/2"}>
+              <div className={"flex justify-items-center self-center w-1/2"}>
                 <img
                   src="/image/landingpage/Talents-2.png"
-                  className={"w-full h-[389px]"}
+                  className={"h-fit max-w-[95%] mx-auto"}
                 ></img>
               </div>
             </div>
             {/*section 1 talents mobile */}
-            <div className={"block lg:hidden py-9 px-4"}>
+            <div className={"block lg:hidden pt-1 pb-9 px-4"}>
               <div className={""}>
                 <p
                   className={
@@ -3465,7 +3465,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section2talentsnew py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt:4 lg:mt-12"
+              "section2talentsnew py-4 lg:pt-0 lg:pb-16 lg:px-[120px] px-4 mx-auto mt:4"
             }
           >
             <h3
@@ -3479,7 +3479,7 @@ function Talents({}) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base lg:text-base text-blackmig text-center mt-16"
+                "text-base lg:text-base text-blackmig text-center mt-16 "
               }
             >
               {t.section2talentsubtitle}
@@ -3508,7 +3508,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint1}
@@ -3528,7 +3528,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint2}
@@ -3552,7 +3552,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint3}
@@ -3572,7 +3572,7 @@ function Talents({}) {
                   <p
                     style={{ lineHeight: "150%" }}
                     className={
-                      "text-base lg:text-xl text-blackmig font-gilroysemibold ml-4"
+                      "text-base text-blackmig font-gilroyregular ml-4"
                     }
                   >
                     {t.section2talentpoint4}
@@ -5249,7 +5249,7 @@ function Talents({}) {
                         {data1.company_name}
                       </p>
                       <div
-                        className="mt-2"
+                        className="mt-2 customer-stories"
                         dangerouslySetInnerHTML={{
                           __html:
                             locale == "en"

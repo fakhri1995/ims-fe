@@ -1736,11 +1736,14 @@ function Software({}) {
                   </div>
                 </div>
               </div>
-              <div className={"flex-col w-1/2"}>
-                <img src="/image/landingpage/Software.png"></img>
+              <div className={"flex justify-items-center self-center w-1/2"}>
+                <img
+                  src="/image/landingpage/Software.png"
+                  className={"h-fit max-w-[95%] mx-auto"}
+                ></img>
               </div>
             </div>
-            <div className={"block lg:hidden py-9 px-4"}>
+            <div className={"block lg:hidden pt-1 pb-9 px-4"}>
               <div className={""}>
                 <p
                   className={
@@ -2126,7 +2129,7 @@ function Software({}) {
           </section>
           <section className={"px-8 lg:px-[120px] py-9 lg:py-16"}>
             <div className={"container mx-auto text-center"}>
-              <div className={"pb-16"}>
+              <div className={"pb-4"}>
                 <p
                   style={{ lineHeight: "120%" }}
                   className={
@@ -2137,11 +2140,11 @@ function Software({}) {
                 </p>
               </div>
               <img className={"m-auto w-full"} src="/image-software.png"></img>
-              <div className={"mt-1 lg:mt-16 mx-auto"}>
+              <div className={"mt-1 lg:mt-4 mx-auto"}>
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm lg:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2 mt-4"
+                      "text-sm lg:text-xl  rounded text-primarygreen border-2 bg-white border-primarygreen px-4 py-2 lg:px-2"
                     }
                   >
                     <p className={"text-base lg:text-base font-gilroysemibold"}>
@@ -2701,7 +2704,7 @@ function Software({}) {
                         {data1.company_name}
                       </p>
                       <div
-                        className="mt-2"
+                        className="mt-2 customer-stories"
                         dangerouslySetInnerHTML={{
                           __html:
                             locale == "en"

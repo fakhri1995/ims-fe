@@ -1,18 +1,28 @@
-import { PlusOutlined } from "@ant-design/icons";
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import {
+  Button,
   Checkbox,
   Form,
   Input,
   Modal,
   Popconfirm,
+  Select,
   Spin,
   Tag,
+  Upload,
   notification,
 } from "antd";
 import CheckableTag from "antd/lib/tag/CheckableTag";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
-import { permissionWarningNotification } from "../../lib/helper";
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import { CompanyService } from "apis/company";
+
+import {
+  beforeUploadFileMaxSize,
+  permissionWarningNotification,
+} from "../../lib/helper";
 import ButtonSys from "../button";
 import {
   AlertIconSvg,
@@ -2010,6 +2020,478 @@ const ModalDownloadPayslip = ({
   );
 };
 
+const ModalAddRole = ({
+  initProps,
+  visible,
+  onvisible,
+  isAllowedToAddRole,
+  dataRoleTypeList,
+  setRefresh,
+}) => {
+  const [dataRole, setDataRole] = useState({
+    name: "",
+    alias: "",
+    recruitment_role_type_id: null,
+  });
+  const [loading, setLoading] = useState(false);
+
+  const clearData = () => {
+    setDataRole({
+      name: "",
+      alias: "",
+      recruitment_role_type_id: null,
+    });
+  };
+
+  const handleAddRole = () => {
+    if (!isAllowedToAddRole) {
+      permissionWarningNotification("Menambah", "Role Rekrutmen");
+      return;
+    }
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitmentRole`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataRole),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          onvisible(false);
+          notification.success({
+            message: `Role berhasil ditambahkan.`,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+          setTimeout(() => {
+            clearData();
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan role. ${response2.message}`,
+            duration: 3,
+          });
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan role. ${err.response}`,
+          duration: 3,
+        });
+        setLoading(false);
+      });
+  };
+
+  return (
+    <Modal
+      title={
+        <div className="flex flex-col space-y-2 ">
+          <p>Tambah Role</p>
+          <p className="text-warning text-[12px] italic">
+            * Informasi ini harus diisi
+          </p>
+        </div>
+      }
+      visible={visible}
+      onCancel={() => {
+        clearData();
+        onvisible(false);
+      }}
+      footer={
+        <Spin spinning={loading}>
+          <ButtonSys
+            type={"primary"}
+            onClick={handleAddRole}
+            disabled={
+              !isAllowedToAddRole ||
+              !dataRole.name ||
+              !dataRole.alias ||
+              !dataRole.recruitment_role_type_id
+            }
+          >
+            <div className="flex flex-row space-x-2 items-center">
+              <CheckIconSvg color={"white"} size={16} />
+              <p>Simpan Role</p>
+            </div>
+          </ButtonSys>
+        </Spin>
+      }
+      loading={loading}
+    >
+      <Form layout="vertical">
+        <Form.Item
+          label="Nama Role"
+          name={"name"}
+          rules={[
+            {
+              required: true,
+              message: "Nama role wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"name"}
+            placeholder="Masukkan nama role"
+            value={dataRole.name}
+            onChange={(e) =>
+              setDataRole((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          label="Alias"
+          name={"alias"}
+          rules={[
+            {
+              required: true,
+              message: "Alias role wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"alias"}
+            placeholder="Masukkan alias"
+            value={dataRole.alias}
+            onChange={(e) =>
+              setDataRole((prev) => ({ ...prev, alias: e.target.value }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          label="Tipe"
+          name={"recruitment_role_type_id"}
+          rules={[
+            {
+              required: true,
+              message: "Tipe role wajib diisi",
+            },
+          ]}
+        >
+          <Select
+            value={dataRole?.recruitment_role_type_id}
+            onChange={(value) =>
+              setDataRole((prev) => ({
+                ...prev,
+                recruitment_role_type_id: value,
+              }))
+            }
+            placeholder="Pilih tipe..."
+          >
+            <>
+              {dataRoleTypeList?.map((option) => (
+                <Select.Option key={option.id} value={option.id}>
+                  {option.name}
+                </Select.Option>
+              ))}
+            </>
+          </Select>
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
+const ModalAddCompany = ({
+  visible,
+  onvisible,
+  isAllowedToAddCompany,
+  setRefresh,
+}) => {
+  const axiosClient = useAxiosClient();
+
+  /** Hardcoded company ID untuk Mitramas Infosys Global */
+  const MIG_COMPANY_ID = 1;
+
+  // 1. USE STATE
+  const [dataCompany, setDataCompany] = useState({
+    parent_id: MIG_COMPANY_ID,
+    name: "",
+    address: "",
+    phone_number: "",
+    company_logo: null, // File | null
+    singkatan: "",
+    penanggung_jawab: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  // Upload image state
+  const [fileList, setFileList] = useState([]);
+  const [uploadImageLoading, setUploadImageLoading] = useState(false);
+
+  // 2. HANDLER
+  const clearData = () => {
+    setDataCompany({
+      parent_id: MIG_COMPANY_ID,
+      name: "",
+      address: "",
+      phone_number: "",
+      company_logo: null, // File | null
+      singkatan: "",
+      penanggung_jawab: "",
+    });
+  };
+
+  const handleAddCompany = () => {
+    if (!isAllowedToAddCompany) {
+      permissionWarningNotification("Menambah", "Perusahaan Penempatan");
+      return;
+    }
+    setLoading(true);
+    CompanyService.addCompany(axiosClient, dataCompany, "client")
+      .then((response) => {
+        const resData = response.data;
+        if (resData.success) {
+          onvisible(false);
+          notification.success({
+            message: resData.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+          setTimeout(() => {
+            clearData();
+          }, 500);
+        } else {
+          notification.error({
+            message: resData.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan penempatan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  // Handle upload image
+  const beforeUploadImage = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = [`image/png`, `image/jpg`, `image/jpeg`];
+
+    if (!allowedFileTypes.includes(uploadedFile.type)) {
+      notification.error({
+        message: "File harus berupa gambar",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    setDataCompany((prev) => ({
+      ...prev,
+      company_logo: uploadedFile,
+    }));
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadImageLoading(file.status === "uploading");
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setDataCompany((prev) => ({
+      ...prev,
+      company_logo: null,
+    }));
+  }, []);
+
+  return (
+    <Modal
+      title={
+        <div className="flex flex-col space-y-2 ">
+          <p>Tambah Penempatan</p>
+          <p className="text-warning text-[12px] italic">
+            * Informasi ini harus diisi
+          </p>
+        </div>
+      }
+      visible={visible}
+      onCancel={() => {
+        clearData();
+        onvisible(false);
+      }}
+      footer={
+        <Spin spinning={loading}>
+          <ButtonSys
+            type={"primary"}
+            onClick={handleAddCompany}
+            disabled={
+              !isAllowedToAddCompany ||
+              !dataCompany.name ||
+              !dataCompany.singkatan ||
+              !dataCompany.address ||
+              !dataCompany.phone_number ||
+              !dataCompany.penanggung_jawab
+            }
+          >
+            <div className="flex flex-row space-x-2 items-center">
+              <CheckIconSvg color={"white"} size={16} />
+              <p>Simpan</p>
+            </div>
+          </ButtonSys>
+        </Spin>
+      }
+      loading={loading}
+    >
+      <Form layout="vertical">
+        <Form.Item
+          label="Foto Profil Perusahaan"
+          name={"company_logo"}
+          className="col-span-2 w-full"
+        >
+          <div className="relative">
+            <em className="text-mono50 mr-10">
+              Unggah File JPEG/PNG (Maksimal 5 MB)
+            </em>
+            <Upload
+              accept=".png, .jpg, .jpeg"
+              listType="picture"
+              maxCount={1}
+              beforeUpload={beforeUploadImage}
+              onChange={onUploadChange}
+              onRemove={onUploadRemove}
+              disabled={uploadImageLoading}
+              fileList={fileList}
+            >
+              <Button
+                className="btn-sm btn font-semibold px-6 border
+              text-primary100 hover:bg-primary75 border-primary100 
+              hover:border-primary75 hover:text-white bg-white space-x-2
+              focus:border-primary75 focus:text-primary100"
+              >
+                <UploadOutlined />
+                <p>Unggah File</p>
+              </Button>
+            </Upload>
+          </div>
+        </Form.Item>
+        <Form.Item
+          label="Nama"
+          name={"name"}
+          rules={[
+            {
+              required: true,
+              message: "Nama perusahaan wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"name"}
+            placeholder="Masukkan nama perusahaan"
+            value={dataCompany.name}
+            onChange={(e) =>
+              setDataCompany((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          label="Singkatan"
+          name={"singkatan"}
+          rules={[
+            {
+              required: true,
+              message: "Singkatan wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"singkatan"}
+            placeholder="Masukkan singkatan"
+            value={dataCompany.singkatan}
+            onChange={(e) =>
+              setDataCompany((prev) => ({
+                ...prev,
+                singkatan: e.target.value,
+              }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          label="Alamat Lokasi"
+          name={"address"}
+          rules={[
+            {
+              required: true,
+              message: "Alamat lokasi wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"address"}
+            placeholder="Masukkan alamat lokasi"
+            value={dataCompany.address}
+            onChange={(e) =>
+              setDataCompany((prev) => ({ ...prev, address: e.target.value }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          label="Nomor Telepon"
+          name={"phone_number"}
+          rules={[
+            {
+              required: true,
+              message: "Nomor telepon wajib diisi",
+            },
+            {
+              pattern: /[0-9]+/,
+              message: "Nomor telepon hanya boleh diisi dengan angka",
+            },
+          ]}
+        >
+          <Input
+            name={"phone_number"}
+            placeholder="Masukkan nomor telepon"
+            value={dataCompany.phone_number}
+            onChange={(e) =>
+              setDataCompany((prev) => ({
+                ...prev,
+                phone_number: e.target.value,
+              }))
+            }
+          />
+        </Form.Item>
+        <Form.Item
+          label="Penanggung Jawab (PIC)"
+          name={"penanggung_jawab"}
+          rules={[
+            {
+              required: true,
+              message: "Penanggung jawab wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"penanggung_jawab"}
+            placeholder="Masukkan penanggung jawab"
+            value={dataCompany.penanggung_jawab}
+            onChange={(e) =>
+              setDataCompany((prev) => ({
+                ...prev,
+                penanggung_jawab: e.target.value,
+              }))
+            }
+          />
+        </Form.Item>
+      </Form>
+    </Modal>
+  );
+};
+
 export {
   ModalEdit,
   ModalHapus,
@@ -2031,4 +2513,6 @@ export {
   ModalManageSalaryVar,
   ModalAddSalaryVar,
   ModalDownloadPayslip,
+  ModalAddRole,
+  ModalAddCompany,
 };
