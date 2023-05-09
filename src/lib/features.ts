@@ -318,6 +318,32 @@ export const EMPLOYEE_PAYSLIP_RAISE = "EMPLOYEE_PAYSLIP_RAISE";
 export const EMPLOYEE_PAYSLIP_DOWNLOAD = "EMPLOYEE_PAYSLIP_DOWNLOAD";
 
 /**
+ * Daftar feature untuk Project Management.
+ * @see
+ */
+
+/** Project */
+export const PROJECT_GET = "PROJECT_GET";
+export const PROJECTS_GET = "PROJECTS_GET";
+export const PROJECT_ADD = "PROJECT_ADD";
+export const PROJECT_UPDATE = "PROJECT_UPDATE";
+export const PROJECT_DELETE = "PROJECT_DELETE";
+
+/** Project Status */
+export const PROJECT_STATUS_GET = "PROJECT_STATUS_GET";
+export const PROJECT_STATUSES_GET = "PROJECT_STATUSES_GET";
+export const PROJECT_STATUS_ADD = "PROJECT_STATUS_ADD";
+export const PROJECT_STATUS_UPDATE = "PROJECT_STATUS_UPDATE";
+export const PROJECT_STATUS_DELETE = "PROJECT_STATUS_DELETE";
+
+/** Projec Task */
+export const PROJECT_TASK_GET = "PROJECT_TASK_GET";
+export const PROJECT_TASKS_GET = "PROJECT_TASKS_GET";
+export const PROJECT_TASK_ADD = "PROJECT_TASK_ADD";
+export const PROJECT_TASK_UPDATE = "PROJECT_TASK_UPDATE";
+export const PROJECT_TASK_DELETE = "PROJECT_TASK_DELETE";
+
+/**
  * Daftar feature untuk User Management.
  *
  * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/72187905/User+Management
