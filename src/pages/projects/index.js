@@ -47,7 +47,9 @@ import {
 } from "../../components/icon";
 import st from "../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../components/layout-dashboardNew";
-import { ModalAddProject } from "../../components/modal/modalCustom";
+import ModalProjectCreate from "../../components/modal/projects/modalProjectCreate";
+import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
+import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
 import { TableCustomGeneral } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
@@ -72,7 +74,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
   const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
 
+  const isAllowedToAddTask = hasPermission(PROJECT_TASK_ADD);
+
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
+  const isAllowedToAddStatus = hasPermission(PROJECT_STATUS_ADD);
+  const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -236,7 +242,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
-  const [modalManageStatus, setModalManageStatue] = useState(false);
+  const [modalAddTask, setModalAddTask] = useState(false);
+  const [modalManageStatus, setModalManageStatus] = useState(false);
 
   // 3. UseEffect
   // 3.1. Get Projects
@@ -605,7 +612,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Kelola Status Task & Proyek */}
           <div className="">
-            <button className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden">
+            <button
+              onClick={() => setModalManageStatus(true)}
+              className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
+            >
               <AdjusmentsHorizontalIconSvg color={"#ffffff"} size={32} />
               <p className="font-bold text-sm">Kelola Status Task & Proyek</p>
             </button>
@@ -615,7 +625,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-2 shadow-md rounded-md bg-white p-4 mb-2 xl:mb-6">
             <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center space-y-2 xl:space-y-0 mb-4 xl:mb-6">
               <h4 className="mig-heading--4 ">Task Saya</h4>
-              <ButtonSys type={"primary"}>
+              <ButtonSys type={"primary"} onClick={() => setModalAddTask(true)}>
                 <div className="flex items-center space-x-2">
                   <PlusIconSvg size={16} color={"#ffffff"} />
                   <p>Tambah Task Saya</p>
@@ -640,11 +650,31 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
       </div>
       <AccessControl hasPermission={PROJECT_ADD}>
-        <ModalAddProject
+        <ModalProjectCreate
           initProps={initProps}
           visible={modalAddProject}
           onvisible={setModalAddProject}
           isAllowedToAddProject={isAllowedToAddProject}
+          setRefresh={setRefresh}
+        />
+      </AccessControl>
+      <AccessControl hasPermission={PROJECT_TASK_ADD}>
+        <ModalProjectTaskCreate
+          initProps={initProps}
+          visible={modalAddTask}
+          onvisible={setModalAddTask}
+          isAllowedToAddTask={isAllowedToAddTask}
+          isAllowedToGetProjects={isAllowedToGetProjects}
+          setRefresh={setRefresh}
+        />
+      </AccessControl>
+      <AccessControl hasPermission={PROJECT_STATUS_UPDATE}>
+        <ModalStatusManage
+          initProps={initProps}
+          visible={modalManageStatus}
+          onvisible={setModalManageStatus}
+          isAllowedToAddStatus={isAllowedToAddStatus}
+          isAllowedToEditStatus={isAllowedToEditStatus}
           setRefresh={setRefresh}
         />
       </AccessControl>
