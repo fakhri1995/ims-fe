@@ -84,6 +84,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
   const isAllowedToAddStatus = hasPermission(PROJECT_STATUS_ADD);
   const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
+  const isAllowedToDeleteStatus = hasPermission(PROJECT_STATUS_DELETE);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -173,6 +174,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2.3. My Task List
   const [dataMyTaskList, setDataMyTaskList] = useState([]);
   const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
+  const [dataProjectList, setDataProjectList] = useState([]);
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
@@ -186,7 +188,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.1. Get Projects
   useEffect(() => {
     if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+      permissionWarningNotification("Mendapatkan", "Data Tabel Proyek");
       setLoadingProjects(false);
       return;
     }
@@ -236,7 +238,39 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     queryParams.to,
   ]);
 
-  // 3.2. Get Project Status List
+  // 3.2. Get project list
+  useEffect(() => {
+    if (!isAllowedToGetProjects) {
+      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataProjectList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetProjects, refresh]);
+
+  // 3.3. Get Project Status List
   useEffect(() => {
     if (!isAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
@@ -273,7 +307,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetStatuses, refresh]);
 
-  // 3.3. Get My Task List
+  // 3.4. Get My Task List
   useEffect(() => {
     if (!isAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Daftar Task Saya");
@@ -629,25 +663,36 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               columns={[
                 {
                   title: "Task",
-                  dataIndex: "task",
+                  dataIndex: "id",
                   key: "id",
-                  render: (_, task) => (
-                    <div key={task.id} className="flex-none w-full rounded-md">
-                      <TaskCard
-                        title={task.name}
-                        projectName={task.project?.name}
-                        toDate={task.end_date}
-                        statusName={task.status?.name}
-                        statusColor={task.status?.color}
-                        taskStaffs={task.task_staffs}
-                        onClick={() => {
-                          console.log(task.id);
-                          setCurrentTaskId(task.id);
-                          setModalDetailTask(true);
-                        }}
-                      />
-                    </div>
-                  ),
+                  render: (_, task) => {
+                    const currentStatus = dataStatusList.find(
+                      (status) => status.id === task.status_id
+                    );
+
+                    const currentProject = dataProjectList.find(
+                      (project) => project.id === task.project_id
+                    );
+                    return (
+                      <div
+                        key={task.id}
+                        className="flex-none w-full rounded-md"
+                      >
+                        <TaskCard
+                          title={task.name}
+                          projectName={currentProject?.name}
+                          toDate={task.end_date}
+                          statusName={currentStatus?.name}
+                          statusColor={currentStatus?.color}
+                          taskStaffs={task.task_staffs}
+                          onClick={() => {
+                            setCurrentTaskId(task.id);
+                            setModalDetailTask(true);
+                          }}
+                        />
+                      </div>
+                    );
+                  },
                 },
               ]}
             />
@@ -677,6 +722,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefresh={setRefresh}
+          dataProjectList={dataProjectList}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>
@@ -688,8 +734,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToUpdateTask={isAllowedToUpdateTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
+          isAllowedToGetStatuses={isAllowedToGetStatuses}
           setRefresh={setRefresh}
           taskId={currentTaskId}
+          dataStatusList={dataStatusList}
+          dataProjectList={dataProjectList}
         />
       </AccessControl>
 
@@ -702,6 +751,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToAddStatus={isAllowedToAddStatus}
           isAllowedToEditStatus={isAllowedToEditStatus}
           isAllowedToGetStatus={isAllowedToGetStatus}
+          isAllowedToDeleteStatus={isAllowedToDeleteStatus}
           setRefresh={setRefresh}
           currentStatusList={dataStatusList}
         />
