@@ -1,3 +1,4 @@
+import { useQuery } from "@chakra-ui/react";
 import {
   DatePicker,
   Form,
@@ -11,15 +12,17 @@ import {
 } from "antd";
 import moment from "moment";
 import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
-import { useAxiosClient } from "hooks/use-axios-client";
+import { useAccessControl } from "contexts/access-control";
 
+import { GROUPS_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { InfoCircleIconSvg } from "../../icon";
+import { InfoCircleIconSvg, XIconSvg } from "../../icon";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -28,11 +31,14 @@ const ModalProjectTaskCreate = ({
   initProps,
   visible,
   onvisible,
+  isAllowedToGetProject,
   isAllowedToAddTask,
   isAllowedToGetProjects,
   setRefresh,
 }) => {
-  const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetUsers = hasPermission(USERS_GET);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
 
   // 1. USE STATE
@@ -47,10 +53,130 @@ const ModalProjectTaskCreate = ({
 
   const [loading, setLoading] = useState(false);
   const [isDetailOn, setIsDetailOn] = useState(false);
-  const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-  const [dataProjects, setDataProjects] = useState([]);
+  const [isSwitchGroup, setIsSwitchGroup] = useState(false);
 
-  // 2. HANDLER
+  const [dataProjects, setDataProjects] = useState([]);
+  const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
+  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
+
+  // 2. USE EFFECT
+  // 2.1. Get project list
+  useEffect(() => {
+    if (!isAllowedToGetProjects) {
+      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataProjects(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetProjects]);
+
+  console.log({ dataStaffsOrGroups });
+
+  // 2.2. Get users or groups for task staff options
+  useEffect(() => {
+    // If task has a project, then staff options will follow project's staff
+    if (dataTask.project_id) {
+      if (!isAllowedToGetProject) {
+        permissionWarningNotification("Mendapatkan", "Detail Proyek");
+        return;
+      }
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProject?id=${dataTask.project_id}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data?.project_staffs);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar staff proyek",
+            duration: 3,
+          })
+        );
+      return;
+    }
+
+    // If task doesn't have a project, then staff options will be taken from users (agent) or groups
+    if (isSwitchGroup) {
+      if (!isAllowedToGetGroups) {
+        permissionWarningNotification("Mendapatkan", "Daftar Group");
+        return;
+      }
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar grup",
+            duration: 3,
+          })
+        );
+    } else {
+      if (!isAllowedToGetUsers) {
+        permissionWarningNotification("Mendapatkan", "Daftar User");
+        return;
+      }
+
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        );
+    }
+  }, [
+    isAllowedToGetGroups,
+    isAllowedToGetUsers,
+    isSwitchGroup,
+    dataTask.project_id,
+  ]);
+
+  // 3. HANDLER
   const clearData = () => {
     setDataTask({
       name: "",
@@ -60,6 +186,11 @@ const ModalProjectTaskCreate = ({
       description: "",
     });
     form.resetFields();
+  };
+
+  const handleClose = () => {
+    onvisible(false);
+    clearData();
   };
 
   const handleAddTask = () => {
@@ -80,15 +211,12 @@ const ModalProjectTaskCreate = ({
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          onvisible(false);
+          handleClose();
           notification.success({
             message: response.message,
             duration: 3,
           });
           setRefresh((prev) => prev + 1);
-          setTimeout(() => {
-            clearData();
-          }, 500);
         } else {
           notification.error({
             message: response.message,
@@ -123,7 +251,7 @@ const ModalProjectTaskCreate = ({
     "link",
   ];
 
-  // console.log({ dataTask });
+  console.log({ dataTask });
   return (
     <Modal
       title={
@@ -225,7 +353,7 @@ const ModalProjectTaskCreate = ({
           <Switch
             checked={isDetailOn}
             onChange={(checked) => setIsDetailOn(checked)}
-          ></Switch>
+          />
         </div>
 
         {isDetailOn && (
@@ -272,21 +400,23 @@ const ModalProjectTaskCreate = ({
                 }}
               />
             </Form.Item>
+
             <div className="flex flex-col md:flex-row">
-              <Form.Item
-                label="Staff Task"
-                name={"task_staffs"}
-                className="w-full"
-              >
+              <div className="w-full mb-2">
+                <p className="mb-2">Staff Task</p>
                 <Select
                   allowClear
                   showSearch
                   mode="multiple"
+                  className="dontShow"
                   value={dataTask.task_staffs}
-                  // disabled={!isAllowedToGetProjects}
-                  placeholder="Cari Nama Staff..."
+                  disabled={!isAllowedToGetUsers}
+                  placeholder={
+                    isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
+                  }
                   style={{ width: `100%` }}
-                  onChange={(value) => {
+                  onChange={(value, option) => {
+                    setSelectedStaffsOrGroups(option);
                     setDataTask((prev) => ({
                       ...prev,
                       task_staffs: value,
@@ -299,29 +429,82 @@ const ModalProjectTaskCreate = ({
                       .includes(input.toLowerCase())
                   }
                 >
-                  {dataStaffsOrGroups.map((item) => (
-                    <Select.Option key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </Select.Option>
-                  ))}
+                  {dataStaffsOrGroups.map((item) => {
+                    return (
+                      <Select.Option
+                        key={item?.id}
+                        value={item.id}
+                        position={item?.position}
+                        image={generateStaticAssetUrl(item.profile_image?.link)}
+                      >
+                        {item?.name}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
-              </Form.Item>
-              <div className="flex space-x-2 items-center absolute right-6">
-                <p>Staff</p>
-                <Switch></Switch>
-                <p>Group</p>
               </div>
+
+              {/* If task doesn't have a project, then show group switch */}
+              {!dataTask.project_id && (
+                <div className="flex space-x-2 items-center absolute right-6">
+                  <p>Staff</p>
+                  <Switch
+                    checked={isSwitchGroup}
+                    onChange={(checked) => {
+                      setIsSwitchGroup(checked);
+                      setSelectedStaffsOrGroups([]);
+                      setDataTask((prev) => ({
+                        ...prev,
+                        task_staffs: [],
+                      }));
+                    }}
+                  />
+                  <p>Group</p>
+                </div>
+              )}
             </div>
-            <div className="flex space-x-2 mb-6">
-              <Tag closable className="flex items-center space-x-2 p-2">
-                <img
-                  src="/image/staffTask.png"
-                  className="w-7 h-7 rounded-full object-contain"
-                />
-                <p>
-                  <strong>Fachry</strong> - Staff
-                </p>
-              </Tag>
+            {/* List of selected users or groups */}
+            <div className="flex flex-wrap mb-4">
+              {selectedStaffsOrGroups.map((staff, idx) => {
+                return (
+                  <Tag
+                    key={staff.key}
+                    closable
+                    onClose={() => {
+                      const newTags = selectedStaffsOrGroups.filter(
+                        (tag) => tag.key !== staff.key
+                      );
+                      setSelectedStaffsOrGroups(newTags);
+                      setDataTask((prev) => ({
+                        ...prev,
+                        task_staffs: newTags.map((tag) => tag.value),
+                      }));
+                    }}
+                    className="flex items-center p-2 w-max mb-2"
+                  >
+                    {isSwitchGroup ? (
+                      // Group Tag
+                      <div className="flex items-center space-x-2">
+                        <p className="truncate">
+                          <strong>{staff?.children}</strong>
+                        </p>
+                      </div>
+                    ) : (
+                      // User Tag
+                      <div className="flex items-center space-x-2">
+                        <img
+                          src={generateStaticAssetUrl(staff?.image)}
+                          alt={staff?.children}
+                          className="w-6 h-6 bg-cover object-cover rounded-full"
+                        />
+                        <p className="truncate">
+                          <strong>{staff?.children}</strong> - {staff?.position}
+                        </p>
+                      </div>
+                    )}
+                  </Tag>
+                );
+              })}
             </div>
 
             <Form.Item label="Deskripsi Task" name={"description"}>
