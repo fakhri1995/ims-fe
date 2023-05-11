@@ -1,4 +1,4 @@
-import { HolderOutlined } from "@ant-design/icons";
+import { DeleteOutlined, HolderOutlined } from "@ant-design/icons";
 import { DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -20,6 +20,7 @@ import {
   LeftIconSvg,
   PlusIconSvg,
 } from "../../icon";
+import { ModalHapus2 } from "../modalCustom";
 
 const ModalStatusManage = ({
   initProps,
@@ -28,6 +29,7 @@ const ModalStatusManage = ({
   isAllowedToAddStatus,
   isAllowedToEditStatus,
   isAllowedToGetStatus,
+  isAllowedToDeleteStatus,
   setRefresh,
   currentStatusList,
 }) => {
@@ -49,6 +51,8 @@ const ModalStatusManage = ({
   const [editStatusId, setEditStatusId] = useState(0);
 
   const [loadingSave, setLoadingSave] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
 
   // 2. USE EFFECT
   useEffect(() => {
@@ -136,7 +140,6 @@ const ModalStatusManage = ({
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          handleClose();
           notification.success({
             message: response.message,
             duration: 3,
@@ -164,7 +167,12 @@ const ModalStatusManage = ({
       return;
     }
 
-    if (dataStatus.id) {
+    const payload = {
+      ...dataStatus,
+      after_id: dataStatusList[dataStatusList.length - 1].id,
+    };
+
+    if (dataStatus?.id) {
       setLoadingSave(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
         method: `PUT`,
@@ -172,7 +180,7 @@ const ModalStatusManage = ({
           Authorization: JSON.parse(initProps),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(dataStatus),
+        body: JSON.stringify(payload),
       })
         .then((res) => res.json())
         .then((response) => {
@@ -197,6 +205,44 @@ const ModalStatusManage = ({
         })
         .finally(() => setLoadingSave(false));
     }
+  };
+
+  const handleDeleteStatus = () => {
+    if (!isAllowedToDeleteStatus) {
+      permissionWarningNotification("Menghapus", "Status Proyek");
+      setLoadingDelete(false);
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProjectStatus?id=${dataStatus?.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setModalDelete(false);
+          setCurrentState("manage");
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus status proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
   };
 
   const onDragEnd = ({ active, over }) => {
@@ -229,9 +275,6 @@ const ModalStatusManage = ({
       handleUpdateStatus();
     }
   };
-
-  console.log({ currentStatusList });
-  console.log({ dataStatus });
 
   // Switch modal header, body, and footer according to current state
   let header = null;
@@ -306,7 +349,7 @@ const ModalStatusManage = ({
             <Input
               name={"name"}
               placeholder="Isi nama status"
-              value={dataStatus.name}
+              value={dataStatus?.name}
               onChange={(e) =>
                 setDataStatus((prev) => ({
                   ...prev,
@@ -328,7 +371,7 @@ const ModalStatusManage = ({
             <Input
               name={"color"}
               type="color"
-              value={dataStatus.color}
+              value={dataStatus?.color}
               onChange={(e) =>
                 setDataStatus((prev) => ({
                   ...prev,
@@ -343,16 +386,20 @@ const ModalStatusManage = ({
         <Spin spinning={loadingSave}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={handleClose}
+              onClick={() => setCurrentState("manage")}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={handleAddStatus}
+              onClick={() => {
+                handleAddStatus();
+                setCurrentState("manage");
+                form.resetFields();
+              }}
               disabled={
-                !isAllowedToAddStatus || !dataStatus.name || !dataStatus.color
+                !isAllowedToAddStatus || !dataStatus?.name || !dataStatus?.color
               }
             >
               <p>Simpan Perubahan</p>
@@ -364,14 +411,29 @@ const ModalStatusManage = ({
 
     case "edit":
       header = (
-        <div className="flex space-x-4 items-center">
-          <button
-            onClick={() => setCurrentState("manage")}
-            className="bg-transparent hover:opacity-75"
+        <div className="flex justify-between">
+          <div className="flex space-x-4 items-center">
+            <button
+              onClick={() => setCurrentState("manage")}
+              className="bg-transparent hover:opacity-75"
+            >
+              <LeftIconSvg size={24} color={"#4D4D4D"} />
+            </button>
+            <p className="mig-heading--4">Edit Status</p>
+          </div>
+          <ButtonSys
+            type={"default"}
+            color={"danger"}
+            onClick={() => {
+              setModalDelete(true);
+            }}
+            disabled={!isAllowedToDeleteStatus}
           >
-            <LeftIconSvg size={24} color={"#4D4D4D"} />
-          </button>
-          <p className="mig-heading--4">Edit Status</p>
+            <div className="flex space-x-2 items-center">
+              <DeleteOutlined />
+              <p>Hapus Status</p>
+            </div>
+          </ButtonSys>
         </div>
       );
       body = (
@@ -415,7 +477,7 @@ const ModalStatusManage = ({
                 <Input
                   name={"color"}
                   type="color"
-                  value={dataStatus.color}
+                  value={dataStatus?.color}
                   onChange={(e) =>
                     setDataStatus((prev) => ({
                       ...prev,
@@ -432,7 +494,7 @@ const ModalStatusManage = ({
         <Spin spinning={loadingSave}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={handleClose}
+              onClick={() => setCurrentState("manage")}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
@@ -441,10 +503,13 @@ const ModalStatusManage = ({
               type={"primary"}
               onClick={() => {
                 handleUpdateStatus();
-                handleClose();
+                setCurrentState("manage");
+                form.resetFields();
               }}
               disabled={
-                !isAllowedToEditStatus || !dataStatus.name || !dataStatus.color
+                !isAllowedToEditStatus ||
+                !dataStatus?.name ||
+                !dataStatus?.color
               }
             >
               <p>Simpan Perubahan</p>
@@ -455,10 +520,28 @@ const ModalStatusManage = ({
       break;
   }
 
-  return (
+  return modalDelete ? (
+    <ModalHapus2
+      title={`Perhatian`}
+      visible={modalDelete}
+      onvisible={setModalDelete}
+      onOk={handleDeleteStatus}
+      onCancel={() => {
+        setModalDelete(false);
+      }}
+      itemName={"status"}
+      loading={loadingDelete}
+    >
+      <p className="mb-4">
+        Apakah Anda yakin ingin menghapus status{" "}
+        <strong>{dataStatus?.name}</strong>?
+      </p>
+    </ModalHapus2>
+  ) : (
     <Modal
       title={header}
       visible={visible}
+      closable={currentState !== "manage" ? false : true}
       onCancel={handleClose}
       maskClosable={false}
       footer={footer}
