@@ -1,3 +1,4 @@
+import { Avatar, Tooltip } from "antd";
 import React from "react";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
@@ -8,15 +9,19 @@ const TaskCard = ({
   projectName,
   toDate,
   statusName,
-  statusBgColor,
-  statusTextColor,
+  statusColor,
   taskStaffs,
+  onClick,
 }) => {
   const currentDate = new Date();
   const deadline = new Date(toDate);
   const isPastDeadline = currentDate > deadline;
+
   return (
-    <div className="shadow-lg rounded-md bg-white p-4 flex flex-col space-y-4">
+    <div
+      onClick={onClick}
+      className="flex flex-col space-y-4 bg-white h-full  px-4 py-6 md:p-4 shadow-lg rounded-md hover:cursor-pointer"
+    >
       {isPastDeadline && (
         <div className="bg-warning bg-opacity-20 rounded-md p-1 flex space-x-2 items-center">
           <InfoCircleIconSvg color={"#BF4A40"} size={16} />
@@ -43,7 +48,11 @@ const TaskCard = ({
             </h5>
           </div>
           <p
-            className={`${statusBgColor} ${statusTextColor} bg-opacity-20 rounded-md p-1 text-center`}
+            className={`rounded-md p-1 text-center`}
+            style={{
+              backgroundColor: (statusColor ?? "#E6E6E6") + "20",
+              color: statusColor ?? "#E6E6E6",
+            }}
           >
             {statusName}
           </p>
@@ -59,17 +68,26 @@ const TaskCard = ({
               {momentFormatDate(toDate, "-", "ddd, D MMMM YYYY")}
             </p>
           </div>
-          {taskStaffs.length > 1 ? (
+          {taskStaffs?.length > 1 ? (
             <div className="flex items-center justify-end">
-              {/* TODO: change component to Avatar from antd */}
-              {taskStaffs.map((staff) => (
-                <img
-                  key={staff.id}
-                  src={generateStaticAssetUrl(staff?.profile_image?.link)}
-                  alt={staff?.profile_image?.description}
-                  className="w-6 h-6 bg-cover object-cover rounded-md -ml-2"
-                />
-              ))}
+              <Avatar.Group
+                size={24}
+                maxCount={2}
+                maxStyle={{
+                  color: "#f56a00",
+                  backgroundColor: "#fde3cf",
+                }}
+              >
+                {taskStaffs.map((staff) => (
+                  <Tooltip key={staff.id} title={staff?.name} placement="top">
+                    <Avatar
+                      src={generateStaticAssetUrl(staff?.profile_image?.link)}
+                      className=""
+                      size={24}
+                    />
+                  </Tooltip>
+                ))}
+              </Avatar.Group>
             </div>
           ) : (
             <div className="flex space-x-2 items-center justify-end">

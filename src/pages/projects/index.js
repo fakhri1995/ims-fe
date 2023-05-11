@@ -1,9 +1,8 @@
-import { PlusOutlined, UpOutlined } from "@ant-design/icons";
-import { Collapse, DatePicker, Input, Select, notification } from "antd";
+import { UpOutlined } from "@ant-design/icons";
+import { Collapse, DatePicker, Input, Select, Table, notification } from "antd";
 import moment from "moment";
 import {
   ArrayParam,
-  DateParam,
   NumberParam,
   StringParam,
   useQueryParams,
@@ -49,10 +48,12 @@ import st from "../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../components/layout-dashboardNew";
 import ModalProjectCreate from "../../components/modal/projects/modalProjectCreate";
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
+import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
 import { TableCustomGeneral } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
+  momentFormatDate,
   permissionWarningNotification,
 } from "../../lib/helper";
 import httpcookie from "cookie";
@@ -75,8 +76,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
 
   const isAllowedToAddTask = hasPermission(PROJECT_TASK_ADD);
+  const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
+  const isAllowedToUpdateTask = hasPermission(PROJECT_TASK_UPDATE);
+  const isAllowedToGetTasks = hasPermission(PROJECT_TASKS_GET);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
+  const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
   const isAllowedToAddStatus = hasPermission(PROJECT_STATUS_ADD);
   const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
 
@@ -166,84 +171,16 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. My Task List
-  const [dataMyTaskList, setDataMyTaskList] = useState([
-    {
-      id: 1,
-      project_id: null,
-      project: null,
-      name: "Nama Task",
-      start_date: "2022-01-01",
-      end_date: "2022-01-02",
-      task_staffs: [
-        {
-          id: 1,
-          name: "Yasmin",
-          profile_image: {
-            id: 0,
-            link: "staging\\/Users\\/default_user.png",
-            description: "profile_image",
-          },
-        },
-      ],
-      description: "text",
-      status_id: 1,
-      created_by: 1,
-      created_at: "2022-01-01 11:50:20",
-      updated_at: "2022-01-01 11:50:20",
-      deleted_at: null,
-      status: {
-        id: 1,
-        name: "On-Going",
-        color: "#DDB44A",
-        display_order: 1,
-      },
-    },
-    {
-      id: 2,
-      project_id: null,
-      project: { name: "nama proyek" },
-      name: "Nama Task",
-      start_date: "2022-01-01",
-      end_date: "2023-05-20",
-      task_staffs: [
-        {
-          id: 1,
-          name: "Yasmin",
-          profile_image: {
-            id: 0,
-            link: "staging\\/Users\\/default_user.png",
-            description: "profile_image",
-          },
-        },
-        {
-          id: 2,
-          name: "Yasmin",
-          profile_image: {
-            id: 0,
-            link: "staging\\/Users\\/default_user.png",
-            description: "profile_image",
-          },
-        },
-      ],
-      description: "text",
-      status_id: 1,
-      created_by: 1,
-      created_at: "2022-01-01 11:50:20",
-      updated_at: "2022-01-01 11:50:20",
-      deleted_at: null,
-      status: {
-        id: 1,
-        name: "Open",
-        color: "#2F80ED",
-        display_order: 1,
-      },
-    },
-  ]);
+  const [dataMyTaskList, setDataMyTaskList] = useState([]);
+  const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
+  const [modalDetailTask, setModalDetailTask] = useState(false);
   const [modalManageStatus, setModalManageStatus] = useState(false);
+
+  const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
   // 3.1. Get Projects
@@ -334,7 +271,44 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingStatusList(false);
       });
-  }, [isAllowedToGetStatuses]);
+  }, [isAllowedToGetStatuses, refresh]);
+
+  // 3.3. Get My Task List
+  useEffect(() => {
+    if (!isAllowedToGetStatuses) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task Saya");
+      setLoadingMyTaskList(false);
+      return;
+    }
+
+    setLoadingMyTaskList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataMyTaskList(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingMyTaskList(false);
+      });
+  }, [isAllowedToGetTasks, refresh]);
 
   // 4. Event
   const onFilterProjects = () => {
@@ -374,7 +348,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "proposed_bys",
       render: (proposedBys, record, index) => {
         return {
-          children: <p>{proposedBys?.[0]?.[0]?.name}</p>,
+          children: <p>{proposedBys?.[0]?.name}</p>,
         };
       },
     },
@@ -383,7 +357,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
         };
       },
     },
@@ -392,7 +366,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "end_date",
       render: (text, record, index) => {
         return {
-          children: <>{text || "-"}</>,
+          children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
         };
       },
     },
@@ -403,9 +377,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <p
-              className={`bg-[${status.color}] text-[${status.color}] bg-opacity-20 rounded-md p-1 text-center`}
+              className={`rounded-md p-1 text-center`}
+              style={{
+                backgroundColor: (status?.color ?? "#E6E6E6") + "20",
+                color: status?.color ?? "#E6E6E6",
+              }}
             >
-              {status.name || "-"}
+              {status?.name ?? "-"}
             </p>
           ),
         };
@@ -622,8 +600,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Task Saya */}
-          <div className="col-span-2 shadow-md rounded-md bg-white p-4 mb-2 xl:mb-6">
-            <div className="flex flex-col xl:flex-row xl:justify-between xl:items-center space-y-2 xl:space-y-0 mb-4 xl:mb-6">
+          <div className="col-span-2 shadow-md rounded-md bg-white mb-2 xl:mb-6">
+            <div
+              className="flex flex-col xl:flex-row xl:justify-between xl:items-center 
+              space-y-2 xl:space-y-0 mb-4 xl:mb-6 p-4 pb-0"
+            >
               <h4 className="mig-heading--4 ">Task Saya</h4>
               <ButtonSys type={"primary"} onClick={() => setModalAddTask(true)}>
                 <div className="flex items-center space-x-2">
@@ -632,23 +613,50 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               </ButtonSys>
             </div>
-            <div className="flex flex-col space-y-4 xl:space-y-6">
-              {dataMyTaskList.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  title={task.name}
-                  projectName={task.project?.name}
-                  toDate={task.end_date}
-                  statusName={task.status?.name}
-                  statusBgColor={`bg-[${task.status?.color}]`}
-                  statusTextColor={`text-[${task.status?.color}]`}
-                  taskStaffs={task.task_staffs}
-                />
-              ))}
-            </div>
+
+            {/* <div
+              className="flex overflow-x-auto md:overflow-hidden md:flex-col 
+              pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6"> */}
+            <Table
+              className="flex overflow-x-auto md:overflow-hidden md:flex-col
+              pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6 px-2 justify-center"
+              showHeader={false}
+              dataSource={dataMyTaskList}
+              loading={loadingMyTaskList}
+              rowClassName={() => {
+                return "back";
+              }}
+              columns={[
+                {
+                  title: "Task",
+                  dataIndex: "task",
+                  key: "id",
+                  render: (_, task) => (
+                    <div key={task.id} className="flex-none w-full rounded-md">
+                      <TaskCard
+                        title={task.name}
+                        projectName={task.project?.name}
+                        toDate={task.end_date}
+                        statusName={task.status?.name}
+                        statusColor={task.status?.color}
+                        taskStaffs={task.task_staffs}
+                        onClick={() => {
+                          console.log(task.id);
+                          setCurrentTaskId(task.id);
+                          setModalDetailTask(true);
+                        }}
+                      />
+                    </div>
+                  ),
+                },
+              ]}
+            />
           </div>
+          {/* </div> */}
         </div>
       </div>
+
+      {/* Modal Project */}
       <AccessControl hasPermission={PROJECT_ADD}>
         <ModalProjectCreate
           initProps={initProps}
@@ -658,6 +666,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           setRefresh={setRefresh}
         />
       </AccessControl>
+
+      {/* Modal Task */}
       <AccessControl hasPermission={PROJECT_TASK_ADD}>
         <ModalProjectTaskCreate
           initProps={initProps}
@@ -665,9 +675,25 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalAddTask}
           isAllowedToAddTask={isAllowedToAddTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
+          isAllowedToGetProject={isAllowedToGetProject}
           setRefresh={setRefresh}
         />
       </AccessControl>
+      <AccessControl hasPermission={PROJECT_TASK_GET}>
+        <ModalProjectTaskDetailUpdate
+          initProps={initProps}
+          visible={modalDetailTask}
+          onvisible={setModalDetailTask}
+          isAllowedToGetTask={isAllowedToGetTask}
+          isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToGetProjects={isAllowedToGetProjects}
+          isAllowedToGetProject={isAllowedToGetProject}
+          setRefresh={setRefresh}
+          taskId={currentTaskId}
+        />
+      </AccessControl>
+
+      {/* Modal Status */}
       <AccessControl hasPermission={PROJECT_STATUS_UPDATE}>
         <ModalStatusManage
           initProps={initProps}
@@ -675,7 +701,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalManageStatus}
           isAllowedToAddStatus={isAllowedToAddStatus}
           isAllowedToEditStatus={isAllowedToEditStatus}
+          isAllowedToGetStatus={isAllowedToGetStatus}
           setRefresh={setRefresh}
+          currentStatusList={dataStatusList}
         />
       </AccessControl>
     </LayoutDashboard>
