@@ -57,6 +57,9 @@ const ModalProjectCreate = ({
   // 2 USE EFFECT
   // 2.1. Get users or groups for task staff options
   useEffect(() => {
+    if (!visible) {
+      return;
+    }
     if (isSwitchGroup) {
       if (!isAllowedToGetGroups) {
         permissionWarningNotification("Mendapatkan", "Daftar Group");

@@ -35,6 +35,7 @@ const ModalProjectTaskCreate = ({
   isAllowedToAddTask,
   isAllowedToGetProjects,
   setRefresh,
+  dataProjectList,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -55,47 +56,16 @@ const ModalProjectTaskCreate = ({
   const [isDetailOn, setIsDetailOn] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
 
-  const [dataProjects, setDataProjects] = useState([]);
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
 
   // 2. USE EFFECT
-  // 2.1. Get project list
+  // 2.1. Get users or groups for task staff options
   useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+    if (!visible) {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataProjects(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetProjects]);
-
-  console.log({ dataStaffsOrGroups });
-
-  // 2.2. Get users or groups for task staff options
-  useEffect(() => {
     // If task has a project, then staff options will follow project's staff
     if (dataTask.project_id) {
       if (!isAllowedToGetProject) {
@@ -251,7 +221,6 @@ const ModalProjectTaskCreate = ({
     "link",
   ];
 
-  console.log({ dataTask });
   return (
     <Modal
       title={
@@ -311,7 +280,7 @@ const ModalProjectTaskCreate = ({
                 .includes(input.toLowerCase())
             }
           >
-            {dataProjects.map((item) => (
+            {dataProjectList.map((item) => (
               <Select.Option key={item?.id} value={item?.id}>
                 {item?.name}
               </Select.Option>

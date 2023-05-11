@@ -1,8 +1,6 @@
 import {
-  Button,
   DatePicker,
   Form,
-  Input,
   Modal,
   Select,
   Spin,
@@ -36,8 +34,11 @@ const ModalProjectTaskDetailUpdate = ({
   isAllowedToUpdateTask,
   isAllowedToGetProjects,
   isAllowedToGetProject,
+  isAllowedToGetStatuses,
   setRefresh,
   taskId,
+  dataStatusList,
+  dataProjectList,
 }) => {
   const { hasPermission } = useAccessControl();
 
@@ -53,6 +54,7 @@ const ModalProjectTaskDetailUpdate = ({
   const [dataTask, setDataTask] = useState({
     id: 0,
     name: "",
+    status_id: 0,
     project_id: 0,
     start_date: "",
     end_date: "",
@@ -65,10 +67,10 @@ const ModalProjectTaskDetailUpdate = ({
 
   // Option data
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-  const [dataProjects, setDataProjects] = useState([]);
 
   // Selected data
   const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
+  const [currentStatus, setCurrentStatus] = useState({});
 
   // 2. USE EFFECT
   // 2.1. Get Task Detail
@@ -79,7 +81,7 @@ const ModalProjectTaskDetailUpdate = ({
       return;
     }
 
-    if (taskId) {
+    if (taskId && visible) {
       setLoadingDataTask(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTask?id=${taskId}`,
@@ -111,42 +113,14 @@ const ModalProjectTaskDetailUpdate = ({
           setLoadingDataTask(false);
         });
     }
-  }, [isAllowedToGetTask, taskId]);
+  }, [isAllowedToGetTask, taskId, visible]);
 
-  // 2.2. Get project list
+  // 2.2. Get users or groups for task staff options
   useEffect(() => {
-    if (!isAllowedToGetProjects) {
-      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+    if (!visible || currentState !== "edit") {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataProjects(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      });
-  }, [isAllowedToGetProjects]);
-
-  // 2.3. Get users or groups for task staff options
-  useEffect(() => {
     // If task has a project, then staff options will follow project's staff
     if (dataTask.project_id) {
       if (!isAllowedToGetProject) {
@@ -225,7 +199,16 @@ const ModalProjectTaskDetailUpdate = ({
     isAllowedToGetUsers,
     isSwitchGroup,
     dataTask.project_id,
+    currentState,
   ]);
+
+  // 2.3. Get current status object
+  useEffect(() => {
+    const status = dataStatusList.find(
+      (status) => status.id === dataTask.status_id
+    );
+    setCurrentStatus(status);
+  }, [dataStatusList, dataTask.status_id]);
 
   // 3. HANDLER
   const clearData = () => {
@@ -239,11 +222,13 @@ const ModalProjectTaskDetailUpdate = ({
       description: "",
     });
     form.resetFields();
+    setSelectedStaffsOrGroups([]);
   };
 
   const handleClose = () => {
     onvisible(false);
     setCurrentState("detail");
+    clearData();
   };
 
   const handleUpdateTask = () => {
@@ -252,8 +237,8 @@ const ModalProjectTaskDetailUpdate = ({
       return;
     }
 
-    const taskStaffsPayload = dataTask.task_staffs?.map((staff) => staff.id);
-    const payload = { ...dataTask, task_staffs: taskStaffsPayload };
+    // const taskStaffsPayload = dataTask.task_staffs?.map((staff) => staff.id);
+    // const payload = { ...dataTask, task_staffs: taskStaffsPayload };
 
     setLoadingSave(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTask`, {
@@ -262,7 +247,7 @@ const ModalProjectTaskDetailUpdate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(dataTask),
     })
       .then((res) => res.json())
       .then((response) => {
@@ -307,57 +292,63 @@ const ModalProjectTaskDetailUpdate = ({
     "link",
   ];
 
+  // Switch modal body and footer according to current state
   let body, footer;
   switch (currentState) {
     case "detail":
       body = (
-        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
-          <div className="flex flex-col space-y-2 md:col-span-2">
-            <p className="mig-caption--bold">Proyek:</p>
-            <p>{dataTask.project?.name ?? "-"}</p>
-          </div>
-          <div className="flex flex-col space-y-2 md:col-span-2">
-            <p className="mig-caption--bold">Status:</p>
-            <p
-              className="px-4 py-2 rounded-md w-max"
-              style={{
-                backgroundColor: (dataTask.status?.color ?? "#E6E6E6") + "20",
-                color: dataTask.status?.color ?? "#000000",
-              }}
-            >
-              {dataTask.status?.name ?? "-"}
-            </p>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <p className="mig-caption--bold">Tanggal Dimulai:</p>
-            <p>{momentFormatDate(dataTask.start_date, "-")}</p>
-          </div>
-          <div className="flex flex-col space-y-2">
-            <p className="mig-caption--bold">Ekspektasi Tanggal Selesai:</p>
-            <p>{momentFormatDate(dataTask.end_date, "-")}</p>
-          </div>
-          <div className="flex flex-col space-y-2 md:col-span-2">
-            <p className="mig-caption--bold">Staff Task:</p>
-            <div className="flex">
-              {dataTask?.task_staffs?.map((staff) => (
-                <li key={staff.id} className="flex space-x-2 items-center p-2">
-                  <img
-                    src={generateStaticAssetUrl(staff?.profile_image?.link)}
-                    alt={staff?.profile_image?.description}
-                    className="w-8 h-8 bg-cover object-cover rounded-md"
-                  />
-                  <p>
-                    <strong>{staff?.name}</strong> - {staff?.position}
-                  </p>
-                </li>
-              ))}
+        <Spin spinning={loadingDataTask}>
+          <div className="grid md:grid-cols-2 gap-4 md:gap-6">
+            <div className="flex flex-col space-y-2 md:col-span-2">
+              <p className="mig-caption--bold">Proyek:</p>
+              <p>{dataTask.project?.name ?? "-"}</p>
+            </div>
+            <div className="flex flex-col space-y-2 md:col-span-2">
+              <p className="mig-caption--bold">Status:</p>
+              <p
+                className="px-4 py-2 rounded-md w-max"
+                style={{
+                  backgroundColor: (currentStatus?.color ?? "#E6E6E6") + "20",
+                  color: currentStatus?.color ?? "#000000",
+                }}
+              >
+                {currentStatus?.name ?? "-"}
+              </p>
+            </div>
+            <div className="flex flex-col space-y-2">
+              <p className="mig-caption--bold">Tanggal Dimulai:</p>
+              <p>{momentFormatDate(dataTask.start_date, "-")}</p>
+            </div>
+            <div className="flex flex-col space-y-2">
+              <p className="mig-caption--bold">Ekspektasi Tanggal Selesai:</p>
+              <p>{momentFormatDate(dataTask.end_date, "-")}</p>
+            </div>
+            <div className="flex flex-col space-y-2 md:col-span-2">
+              <p className="mig-caption--bold">Staff Task:</p>
+              <div className="flex">
+                {dataTask?.task_staffs?.map((staff) => (
+                  <li
+                    key={staff.id}
+                    className="flex space-x-2 items-center p-2"
+                  >
+                    <img
+                      src={generateStaticAssetUrl(staff?.profile_image?.link)}
+                      alt={staff?.profile_image?.description}
+                      className="w-8 h-8 bg-cover object-cover rounded-md"
+                    />
+                    <p>
+                      <strong>{staff?.name}</strong> - {staff?.position}
+                    </p>
+                  </li>
+                ))}
+              </div>
+            </div>
+            <div className="flex flex-col space-y-2 md:col-span-2">
+              <p className="mig-caption--bold">Deskripsi Task</p>
+              <p>{parse(dataTask.description ?? "-")}</p>
             </div>
           </div>
-          <div className="flex flex-col space-y-2 md:col-span-2">
-            <p className="mig-caption--bold">Deskripsi Task</p>
-            <p>{parse(dataTask.description ?? "-")}</p>
-          </div>
-        </div>
+        </Spin>
       );
 
       footer = (
@@ -406,7 +397,7 @@ const ModalProjectTaskDetailUpdate = ({
                       .includes(input.toLowerCase())
                   }
                 >
-                  {dataProjects.map((item) => (
+                  {dataProjectList.map((item) => (
                     <Select.Option key={item?.id} value={item?.id}>
                       {item?.name}
                     </Select.Option>
@@ -421,19 +412,44 @@ const ModalProjectTaskDetailUpdate = ({
             <div className="flex space-x-2 items-center">
               <p
                 style={{
-                  backgroundColor: (dataTask.status?.color ?? "#E6E6E6") + "20",
-                  color: dataTask.status?.color ?? "##808080",
+                  backgroundColor: (currentStatus?.color ?? "#E6E6E6") + "20",
+                  color: currentStatus?.color ?? "#808080",
                 }}
                 className="rounded-md px-4 py-2"
               >
-                {dataTask.status?.name}
+                {currentStatus?.name ?? "-"}
               </p>
-              <button
-                type="button"
-                className="py-2 mig-caption--bold text-secondary100 bg-transparent hover:opacity-75"
+              <Select
+                allowClear
+                value={dataTask.status_id}
+                disabled={!isAllowedToGetStatuses}
+                placeholder="Ubah Status"
+                onChange={(value) => {
+                  setDataTask((prev) => ({
+                    ...prev,
+                    status_id: value,
+                  }));
+                }}
+                optionFilterProp="children"
+                bordered={false}
+                size="small"
+                className="mig-caption--bold text-secondary100 bg-transparent 
+                hover:opacity-75 dontShow"
               >
-                Ubah Status
-              </button>
+                {dataStatusList.map((item) => (
+                  <Select.Option
+                    key={item?.id}
+                    value={item?.id}
+                    style={{
+                      backgroundColor: (item?.color ?? "#E6E6E6") + "20",
+                      color: item?.color ?? "#808080",
+                    }}
+                    className="rounded-md px-4 py-2 m-2"
+                  >
+                    {item?.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </div>
           </div>
 
@@ -521,7 +537,7 @@ const ModalProjectTaskDetailUpdate = ({
                   {dataStaffsOrGroups.map((item) => (
                     <Select.Option
                       key={item?.id}
-                      value={item.id}
+                      value={item?.id}
                       position={item?.position}
                       image={generateStaticAssetUrl(item.profile_image?.link)}
                     >
@@ -530,7 +546,6 @@ const ModalProjectTaskDetailUpdate = ({
                   ))}
                 </Select>
               </div>
-
               {/* If task doesn't have a project, then show group switch */}
               {!dataTask.project_id && (
                 <div className="flex space-x-2 items-center absolute right-6">
@@ -632,7 +647,7 @@ const ModalProjectTaskDetailUpdate = ({
               onClick={handleUpdateTask}
               disabled={!isAllowedToUpdateTask}
             >
-              <p>Simpan</p>
+              Simpan
             </ButtonSys>
           </div>
         </Spin>
@@ -641,7 +656,6 @@ const ModalProjectTaskDetailUpdate = ({
       break;
   }
 
-  console.log({ dataTask });
   return (
     <Modal
       title={<p className="mig-heading--4">{dataTask.name}</p>}
