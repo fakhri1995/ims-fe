@@ -12,12 +12,15 @@ import {
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React, { useState } from "react";
+import { useEffect } from "react";
 import "react-quill/dist/quill.snow.css";
 
-import { useAxiosClient } from "hooks/use-axios-client";
+import { useAccessControl } from "contexts/access-control";
 
+import { GROUPS_GET, USERS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 
 // Quill library for text editor has to be imported dynamically
@@ -30,7 +33,9 @@ const ModalProjectCreate = ({
   isAllowedToAddProject,
   setRefresh,
 }) => {
-  const axiosClient = useAxiosClient();
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetUsers = hasPermission(USERS_GET);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
 
   // 1. USE STATE
@@ -44,8 +49,61 @@ const ModalProjectCreate = ({
 
   const [loading, setLoading] = useState(false);
   const [isDetailOn, setIsDetailOn] = useState(false);
+  const [isSwitchGroup, setIsSwitchGroup] = useState(false);
+
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-  // 2. HANDLER
+  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
+
+  // 2 USE EFFECT
+  // 2.1. Get users or groups for task staff options
+  useEffect(() => {
+    if (isSwitchGroup) {
+      if (!isAllowedToGetGroups) {
+        permissionWarningNotification("Mendapatkan", "Daftar Group");
+        return;
+      }
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar grup",
+            duration: 3,
+          })
+        );
+    } else {
+      if (!isAllowedToGetUsers) {
+        permissionWarningNotification("Mendapatkan", "Daftar User");
+        return;
+      }
+
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        );
+    }
+  }, [isAllowedToGetGroups, isAllowedToGetUsers, isSwitchGroup]);
+
+  // 3. HANDLER
   const clearData = () => {
     setDataProject({
       name: "",
@@ -233,20 +291,21 @@ const ModalProjectCreate = ({
               />
             </Form.Item>
             <div className="flex flex-col md:flex-row">
-              <Form.Item
-                label="Staff Proyek"
-                name={"project_staffs"}
-                className="w-full"
-              >
+              <div className="w-full mb-2">
+                <p className="mb-2">Staff Proyek</p>
                 <Select
                   allowClear
                   showSearch
                   mode="multiple"
+                  className="dontShow"
                   value={dataProject.project_staffs}
-                  // disabled={!isAllowedToGetProjects}
-                  placeholder="Cari Nama Staff..."
+                  disabled={!isAllowedToGetUsers}
+                  placeholder={
+                    isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
+                  }
                   style={{ width: `100%` }}
-                  onChange={(value) => {
+                  onChange={(value, option) => {
+                    setSelectedStaffsOrGroups(option);
                     setDataProject((prev) => ({
                       ...prev,
                       project_staffs: value,
@@ -259,29 +318,78 @@ const ModalProjectCreate = ({
                       .includes(input.toLowerCase())
                   }
                 >
-                  {dataStaffsOrGroups.map((item) => (
-                    <Select.Option key={item?.id} value={item?.id}>
-                      {item?.name}
-                    </Select.Option>
-                  ))}
+                  {dataStaffsOrGroups.map((item) => {
+                    return (
+                      <Select.Option
+                        key={item?.id}
+                        value={item.id}
+                        position={item?.position}
+                        image={generateStaticAssetUrl(item.profile_image?.link)}
+                      >
+                        {item?.name}
+                      </Select.Option>
+                    );
+                  })}
                 </Select>
-              </Form.Item>
+              </div>
               <div className="flex space-x-2 items-center absolute right-6">
                 <p>Staff</p>
-                <Switch></Switch>
+                <Switch
+                  checked={isSwitchGroup}
+                  onChange={(checked) => {
+                    setIsSwitchGroup(checked);
+                    setSelectedStaffsOrGroups([]);
+                    setDataProject((prev) => ({
+                      ...prev,
+                      project_staffs: [],
+                    }));
+                  }}
+                />
                 <p>Group</p>
               </div>
             </div>
-            <div className="flex space-x-2 mb-6">
-              <Tag closable className="flex items-center space-x-2 p-2">
-                <img
-                  src="/image/staffTask.png"
-                  className="w-7 h-7 rounded-full object-contain"
-                />
-                <p>
-                  <strong>Fachry</strong> - Staff
-                </p>
-              </Tag>
+            {/* List of selected users or groups */}
+            <div className="flex flex-wrap mb-4">
+              {selectedStaffsOrGroups.map((staff, idx) => {
+                return (
+                  <Tag
+                    key={staff.key}
+                    closable
+                    onClose={() => {
+                      const newTags = selectedStaffsOrGroups.filter(
+                        (tag) => tag.key !== staff.key
+                      );
+                      setSelectedStaffsOrGroups(newTags);
+                      setDataProject((prev) => ({
+                        ...prev,
+                        project_staffs: newTags.map((tag) => tag.value),
+                      }));
+                    }}
+                    className="flex items-center p-2 w-max mb-2"
+                  >
+                    {isSwitchGroup ? (
+                      // Group Tag
+                      <div className="flex items-center space-x-2">
+                        <p className="truncate">
+                          <strong>{staff?.children}</strong>
+                        </p>
+                      </div>
+                    ) : (
+                      // User Tag
+                      <div className="flex items-center space-x-2">
+                        <img
+                          src={generateStaticAssetUrl(staff?.image)}
+                          alt={staff?.children}
+                          className="w-6 h-6 bg-cover object-cover rounded-full"
+                        />
+                        <p className="truncate">
+                          <strong>{staff?.children}</strong> - {staff?.position}
+                        </p>
+                      </div>
+                    )}
+                  </Tag>
+                );
+              })}
             </div>
 
             <Form.Item label="Deskripsi Proyek" name={"description"}>

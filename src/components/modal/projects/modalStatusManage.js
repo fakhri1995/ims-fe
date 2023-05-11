@@ -1,43 +1,25 @@
-import { DragOutlined, EditOutlined, HolderOutlined } from "@ant-design/icons";
+import { HolderOutlined } from "@ant-design/icons";
 import { DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
   restrictToVerticalAxis,
-  restrictToWindowEdges,
 } from "@dnd-kit/modifiers";
-import {
-  SortableContext,
-  arrayMove,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Spin,
-  Switch,
-  Tag,
-  notification,
-} from "antd";
-import moment from "moment";
-import dynamic from "next/dynamic";
-import React, { useState } from "react";
+import { Form, Input, Modal, Spin, notification } from "antd";
+import React, { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-
-import { useAxiosClient } from "hooks/use-axios-client";
 
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../button";
-import { EditIconSvg, LeftIconSvg, PlusIconSvg } from "../../icon";
-
-// Quill library for text editor has to be imported dynamically
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import {
+  EditIconSvg,
+  EditSquareIconSvg,
+  LeftIconSvg,
+  PlusIconSvg,
+} from "../../icon";
 
 const ModalStatusManage = ({
   initProps,
@@ -45,46 +27,77 @@ const ModalStatusManage = ({
   onvisible,
   isAllowedToAddStatus,
   isAllowedToEditStatus,
+  isAllowedToGetStatus,
   setRefresh,
+  currentStatusList,
 }) => {
   const [form] = Form.useForm();
+
   // 1. USE STATE
   // Modal current state: manage, add, edit
   const [currentState, setCurrentState] = useState("manage");
 
-  const [loading, setLoading] = useState(false);
+  const [dataStatusList, setDataStatusList] = useState([]);
   const [dataStatus, setDataStatus] = useState({
+    id: 0,
     name: "",
     color: "",
     after_id: 0,
   });
-  const [dataStatusList, setDataStatusList] = useState([
-    {
-      id: 1,
-      name: "On-Going",
-      color: "#ABC123",
-      display_order: 1,
-    },
-    {
-      id: 2,
-      name: "Open",
-      color: "#ABC123",
-      display_order: 1,
-    },
-    {
-      id: 3,
-      name: "Close",
-      color: "#ABC123",
-      display_order: 1,
-    },
-  ]);
+  const [loadingStatus, setLoadingStatus] = useState(false);
+
+  const [editStatusId, setEditStatusId] = useState(0);
+
+  const [loadingSave, setLoadingSave] = useState(false);
 
   // 2. USE EFFECT
+  useEffect(() => {
+    setDataStatusList(currentStatusList);
+  }, [currentStatusList]);
+
+  // 2.1. Get Status Detail
+  useEffect(() => {
+    if (!isAllowedToGetStatus) {
+      permissionWarningNotification("Mendapatkan", "Detail Status Proyek");
+      setLoadingStatus(false);
+      return;
+    }
+
+    if (editStatusId) {
+      setLoadingStatus(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatus?id=${editStatusId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataStatus(res2.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingStatus(false);
+        });
+    }
+  }, [isAllowedToGetStatus, editStatusId]);
 
   // 3. HANDLER
-  const handleAddStatus = () => {};
-  const handleUpdateStatus = () => {};
-
   const clearData = () => {
     setDataStatus({
       name: "",
@@ -97,6 +110,93 @@ const ModalStatusManage = ({
     onvisible(false);
     clearData();
     form.resetFields();
+    setCurrentState("manage");
+  };
+
+  const handleAddStatus = () => {
+    if (!isAllowedToAddStatus) {
+      permissionWarningNotification("Menambah", "Status");
+      return;
+    }
+
+    const payload = {
+      ...dataStatus,
+      after_id: dataStatusList[dataStatusList.length - 1].id,
+    };
+
+    setLoadingSave(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectStatus`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          handleClose();
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan status baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
+  const handleUpdateStatus = () => {
+    if (!isAllowedToEditStatus) {
+      permissionWarningNotification("Mengubah", "Status");
+      return;
+    }
+
+    if (dataStatus.id) {
+      setLoadingSave(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
+        method: `PUT`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataStatus),
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.success) {
+            notification.success({
+              message: response.message,
+              duration: 3,
+            });
+            setRefresh((prev) => prev + 1);
+          } else {
+            notification.error({
+              message: response.message,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal mengubah status. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingSave(false));
+    }
   };
 
   const onDragEnd = ({ active, over }) => {
@@ -130,7 +230,8 @@ const ModalStatusManage = ({
     }
   };
 
-  // console.log({ dataStatus });
+  console.log({ currentStatusList });
+  console.log({ dataStatus });
 
   // Switch modal header, body, and footer according to current state
   let header = null;
@@ -152,15 +253,24 @@ const ModalStatusManage = ({
                   id={status.id}
                   statusColor={status?.color}
                   statusName={status?.name}
-                  onClickEdit={(e) => setCurrentState("edit")}
-                ></SortableItem>
+                  onClickEdit={(e) => {
+                    setEditStatusId(status?.id);
+                    setCurrentState("edit");
+                  }}
+                />
               ))}
             </SortableContext>
           </DndContext>
         </div>
       );
       footer = (
-        <ButtonSys type={"dashed"} onClick={() => setCurrentState("add")}>
+        <ButtonSys
+          type={"dashed"}
+          onClick={() => {
+            clearData();
+            setCurrentState("add");
+          }}
+        >
           <div className="flex space-x-2 items-center">
             <PlusIconSvg color={"#35763B"} size={24} />
             <p>Tambah Status Baru</p>
@@ -230,7 +340,7 @@ const ModalStatusManage = ({
         </Form>
       );
       footer = (
-        <Spin spinning={loading}>
+        <Spin spinning={loadingSave}>
           <div className="flex space-x-2 justify-end items-center">
             <button
               onClick={handleClose}
@@ -265,55 +375,61 @@ const ModalStatusManage = ({
         </div>
       );
       body = (
-        <Form layout="vertical" form={form}>
-          <Form.Item
-            label="Nama"
-            name={"name"}
-            rules={[
-              {
-                required: true,
-                message: "Nama status wajib diisi",
-              },
-            ]}
-          >
-            <Input
+        <Spin spinning={loadingStatus}>
+          <Form layout="vertical" form={form}>
+            <Form.Item
+              label="Nama"
               name={"name"}
-              placeholder="Isi nama status"
-              value={dataStatus.name}
-              onChange={(e) =>
-                setDataStatus((prev) => ({
-                  ...prev,
-                  name: e.target.value,
-                }))
-              }
-            />
-          </Form.Item>
-          <Form.Item
-            label="Warna"
-            name={"color"}
-            rules={[
-              {
-                required: true,
-                message: "Warna status wajib diisi",
-              },
-            ]}
-          >
-            <Input
+              rules={[
+                {
+                  required: true,
+                  message: "Nama status wajib diisi",
+                },
+              ]}
+            >
+              <>
+                <Input
+                  name={"name"}
+                  placeholder="Isi nama status"
+                  value={dataStatus?.name}
+                  onChange={(e) =>
+                    setDataStatus((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                />
+              </>
+            </Form.Item>
+            <Form.Item
+              label="Warna"
               name={"color"}
-              type="color"
-              value={dataStatus.color}
-              onChange={(e) =>
-                setDataStatus((prev) => ({
-                  ...prev,
-                  color: e.target.value,
-                }))
-              }
-            />
-          </Form.Item>
-        </Form>
+              rules={[
+                {
+                  required: true,
+                  message: "Warna status wajib diisi",
+                },
+              ]}
+            >
+              <>
+                <Input
+                  name={"color"}
+                  type="color"
+                  value={dataStatus.color}
+                  onChange={(e) =>
+                    setDataStatus((prev) => ({
+                      ...prev,
+                      color: e.target.value,
+                    }))
+                  }
+                />
+              </>
+            </Form.Item>
+          </Form>
+        </Spin>
       );
       footer = (
-        <Spin spinning={loading}>
+        <Spin spinning={loadingSave}>
           <div className="flex space-x-2 justify-end items-center">
             <button
               onClick={handleClose}
@@ -323,7 +439,10 @@ const ModalStatusManage = ({
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={handleUpdateStatus}
+              onClick={() => {
+                handleUpdateStatus();
+                handleClose();
+              }}
               disabled={
                 !isAllowedToEditStatus || !dataStatus.name || !dataStatus.color
               }
@@ -373,7 +492,7 @@ function SortableItem({ id, statusColor, statusName, onClickEdit }) {
             onClick={onClickEdit}
             className="border-none shadow-none hover:opacity-70 bg-transparent"
           >
-            <EditIconSvg size={24} color={"#CCCCCC"} />
+            <EditSquareIconSvg size={24} color={"#CCCCCC"} />
           </button>
           <button
             {...listeners}
