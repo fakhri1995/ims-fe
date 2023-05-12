@@ -8,6 +8,7 @@ import {
   CompanyIconSvg,
   DashboardIconSvg,
   FiturIconSvg,
+  FoldersIconSvg,
   ItemIconSvg,
   ResumeIconSvg,
   TaskIconSvg,
@@ -49,6 +50,9 @@ import {
   SIDEBAR_FEATURE_ROLE,
   SIDEBAR_ITEMS,
   SIDEBAR_MY_APPLICATION,
+  SIDEBAR_PROJECT,
+  SIDEBAR_PROJECT_TASK,
+  SIDEBAR_PROJECT_TASK_ADMIN,
   SIDEBAR_RECRUITMENT,
   SIDEBAR_RECRUITMENT_CANDIDATE,
   SIDEBAR_RECRUITMENT_SETUP,
@@ -188,6 +192,26 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           {hasPermission(SIDEBAR_COMPANY_PROFILE) && (
             <Menu.Item key="52">
               <Link href="/company/clients">Klien</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )}
+
+      {/* Proyek: Proyek & Tugas, Admin Tugas */}
+      {hasPermission(SIDEBAR_PROJECT) && (
+        <SubMenu
+          title="Proyek"
+          key="project"
+          icon={<FoldersIconSvg color={"#597e8d"} />}
+        >
+          {hasPermission(SIDEBAR_PROJECT_TASK) && (
+            <Menu.Item key="projects">
+              <Link href="/projects">Proyek & Tugas</Link>
+            </Menu.Item>
+          )}
+          {hasPermission(SIDEBAR_PROJECT_TASK_ADMIN) && (
+            <Menu.Item key="projects/task-admin">
+              <Link href="/projects/task-admin">Admin Tugas</Link>
             </Menu.Item>
           )}
         </SubMenu>

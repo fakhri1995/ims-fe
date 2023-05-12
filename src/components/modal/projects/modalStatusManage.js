@@ -1,0 +1,593 @@
+import { DeleteOutlined, HolderOutlined } from "@ant-design/icons";
+import { DndContext } from "@dnd-kit/core";
+import {
+  restrictToParentElement,
+  restrictToVerticalAxis,
+} from "@dnd-kit/modifiers";
+import { SortableContext, arrayMove } from "@dnd-kit/sortable";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { Form, Input, Modal, Spin, notification } from "antd";
+import React, { useEffect, useState } from "react";
+import "react-quill/dist/quill.snow.css";
+
+import { permissionWarningNotification } from "lib/helper";
+
+import ButtonSys from "../../button";
+import {
+  EditIconSvg,
+  EditSquareIconSvg,
+  LeftIconSvg,
+  PlusIconSvg,
+} from "../../icon";
+import { ModalHapus2 } from "../modalCustom";
+
+const ModalStatusManage = ({
+  initProps,
+  visible,
+  onvisible,
+  isAllowedToAddStatus,
+  isAllowedToEditStatus,
+  isAllowedToGetStatus,
+  isAllowedToDeleteStatus,
+  setRefresh,
+  currentStatusList,
+}) => {
+  const [form] = Form.useForm();
+
+  // 1. USE STATE
+  // Modal current state: manage, add, edit
+  const [currentState, setCurrentState] = useState("manage");
+
+  const [dataStatusList, setDataStatusList] = useState([]);
+  const [dataStatus, setDataStatus] = useState({
+    id: 0,
+    name: "",
+    color: "",
+    after_id: 0,
+  });
+  const [loadingStatus, setLoadingStatus] = useState(false);
+
+  const [editStatusId, setEditStatusId] = useState(0);
+
+  const [loadingSave, setLoadingSave] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+
+  // 2. USE EFFECT
+  useEffect(() => {
+    setDataStatusList(currentStatusList);
+  }, [currentStatusList]);
+
+  // 2.1. Get Status Detail
+  useEffect(() => {
+    if (!isAllowedToGetStatus) {
+      permissionWarningNotification("Mendapatkan", "Detail Status Proyek");
+      setLoadingStatus(false);
+      return;
+    }
+
+    if (editStatusId) {
+      setLoadingStatus(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatus?id=${editStatusId}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataStatus(res2.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingStatus(false);
+        });
+    }
+  }, [isAllowedToGetStatus, editStatusId]);
+
+  // 3. HANDLER
+  const clearData = () => {
+    setDataStatus({
+      name: "",
+      color: "",
+      after_id: 0,
+    });
+  };
+
+  const handleClose = () => {
+    onvisible(false);
+    clearData();
+    form.resetFields();
+    setCurrentState("manage");
+  };
+
+  const handleAddStatus = () => {
+    if (!isAllowedToAddStatus) {
+      permissionWarningNotification("Menambah", "Status");
+      return;
+    }
+
+    const payload = {
+      ...dataStatus,
+      after_id: dataStatusList[dataStatusList.length - 1].id,
+    };
+
+    setLoadingSave(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectStatus`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan status baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
+  const handleUpdateStatus = () => {
+    if (!isAllowedToEditStatus) {
+      permissionWarningNotification("Mengubah", "Status");
+      return;
+    }
+
+    const payload = {
+      ...dataStatus,
+      after_id: dataStatusList[dataStatusList.length - 1].id,
+    };
+
+    if (dataStatus?.id) {
+      setLoadingSave(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
+        method: `PUT`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.success) {
+            notification.success({
+              message: response.message,
+              duration: 3,
+            });
+            setRefresh((prev) => prev + 1);
+          } else {
+            notification.error({
+              message: response.message,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Gagal mengubah status. ${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => setLoadingSave(false));
+    }
+  };
+
+  const handleDeleteStatus = () => {
+    if (!isAllowedToDeleteStatus) {
+      permissionWarningNotification("Menghapus", "Status Proyek");
+      setLoadingDelete(false);
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProjectStatus?id=${dataStatus?.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setModalDelete(false);
+          setCurrentState("manage");
+          notification.success({
+            message: res2.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus status proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
+  };
+
+  const onDragEnd = ({ active, over }) => {
+    let activeIndex,
+      overIndex = 0;
+    let updatedDataStatusList = [];
+
+    if (active.id !== over?.id) {
+      // Display reordered status list
+      setDataStatusList((prev) => {
+        activeIndex = prev.findIndex((i) => i.id === active.id);
+        overIndex = prev.findIndex((i) => i.id === over?.id);
+        updatedDataStatusList = arrayMove(prev, activeIndex, overIndex);
+        return updatedDataStatusList;
+      });
+
+      // Update a status after_id when reordered
+      let prevIndex = overIndex - 1; // see status above the reordered status
+      // if the reordered status moved to the first order, then set after_id as 0
+      let prevId = prevIndex < 0 ? 0 : updatedDataStatusList[prevIndex].id;
+      let currentStatus = dataStatusList.find(
+        (status) => status.id === active.id
+      );
+      setDataStatus({
+        id: active.id,
+        name: currentStatus?.name,
+        color: currentStatus?.color,
+        after_id: prevId,
+      });
+      handleUpdateStatus();
+    }
+  };
+
+  // Switch modal header, body, and footer according to current state
+  let header = null;
+  let body = null;
+  let footer = null;
+  switch (currentState) {
+    case "manage":
+      header = <p>Kelola Status</p>;
+      body = (
+        <div className="flex flex-col space-y-6">
+          <DndContext
+            onDragEnd={onDragEnd}
+            modifiers={[restrictToVerticalAxis, restrictToParentElement]}
+          >
+            <SortableContext items={dataStatusList.map((i) => i.id)}>
+              {dataStatusList.map((status) => (
+                <SortableItem
+                  key={status?.id}
+                  id={status.id}
+                  statusColor={status?.color}
+                  statusName={status?.name}
+                  onClickEdit={(e) => {
+                    setEditStatusId(status?.id);
+                    setCurrentState("edit");
+                  }}
+                />
+              ))}
+            </SortableContext>
+          </DndContext>
+        </div>
+      );
+      footer = (
+        <ButtonSys
+          type={"dashed"}
+          onClick={() => {
+            clearData();
+            setCurrentState("add");
+          }}
+        >
+          <div className="flex space-x-2 items-center">
+            <PlusIconSvg color={"#35763B"} size={24} />
+            <p>Tambah Status Baru</p>
+          </div>
+        </ButtonSys>
+      );
+      break;
+
+    case "add":
+      header = (
+        <div className="flex space-x-4 items-center">
+          <button
+            onClick={() => setCurrentState("manage")}
+            className="bg-transparent hover:opacity-75"
+          >
+            <LeftIconSvg size={24} color={"#4D4D4D"} />
+          </button>
+          <p className="mig-heading--4">Tambah Status</p>
+        </div>
+      );
+      body = (
+        <Form layout="vertical" form={form}>
+          <Form.Item
+            label="Nama"
+            name={"name"}
+            rules={[
+              {
+                required: true,
+                message: "Nama status wajib diisi",
+              },
+            ]}
+          >
+            <Input
+              name={"name"}
+              placeholder="Isi nama status"
+              value={dataStatus?.name}
+              onChange={(e) =>
+                setDataStatus((prev) => ({
+                  ...prev,
+                  name: e.target.value,
+                }))
+              }
+            />
+          </Form.Item>
+          <Form.Item
+            label="Warna"
+            name={"color"}
+            rules={[
+              {
+                required: true,
+                message: "Warna status wajib diisi",
+              },
+            ]}
+          >
+            <Input
+              name={"color"}
+              type="color"
+              value={dataStatus?.color}
+              onChange={(e) =>
+                setDataStatus((prev) => ({
+                  ...prev,
+                  color: e.target.value,
+                }))
+              }
+            />
+          </Form.Item>
+        </Form>
+      );
+      footer = (
+        <Spin spinning={loadingSave}>
+          <div className="flex space-x-2 justify-end items-center">
+            <button
+              onClick={() => setCurrentState("manage")}
+              className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
+            >
+              Batal
+            </button>
+            <ButtonSys
+              type={"primary"}
+              onClick={() => {
+                handleAddStatus();
+                setCurrentState("manage");
+                form.resetFields();
+              }}
+              disabled={
+                !isAllowedToAddStatus || !dataStatus?.name || !dataStatus?.color
+              }
+            >
+              <p>Simpan Perubahan</p>
+            </ButtonSys>
+          </div>
+        </Spin>
+      );
+      break;
+
+    case "edit":
+      header = (
+        <div className="flex justify-between">
+          <div className="flex space-x-4 items-center">
+            <button
+              onClick={() => setCurrentState("manage")}
+              className="bg-transparent hover:opacity-75"
+            >
+              <LeftIconSvg size={24} color={"#4D4D4D"} />
+            </button>
+            <p className="mig-heading--4">Edit Status</p>
+          </div>
+          <ButtonSys
+            type={"default"}
+            color={"danger"}
+            onClick={() => {
+              setModalDelete(true);
+            }}
+            disabled={!isAllowedToDeleteStatus}
+          >
+            <div className="flex space-x-2 items-center">
+              <DeleteOutlined />
+              <p>Hapus Status</p>
+            </div>
+          </ButtonSys>
+        </div>
+      );
+      body = (
+        <Spin spinning={loadingStatus}>
+          <Form layout="vertical" form={form}>
+            <Form.Item
+              label="Nama"
+              name={"name"}
+              rules={[
+                {
+                  required: true,
+                  message: "Nama status wajib diisi",
+                },
+              ]}
+            >
+              <>
+                <Input
+                  name={"name"}
+                  placeholder="Isi nama status"
+                  value={dataStatus?.name}
+                  onChange={(e) =>
+                    setDataStatus((prev) => ({
+                      ...prev,
+                      name: e.target.value,
+                    }))
+                  }
+                />
+              </>
+            </Form.Item>
+            <Form.Item
+              label="Warna"
+              name={"color"}
+              rules={[
+                {
+                  required: true,
+                  message: "Warna status wajib diisi",
+                },
+              ]}
+            >
+              <>
+                <Input
+                  name={"color"}
+                  type="color"
+                  value={dataStatus?.color}
+                  onChange={(e) =>
+                    setDataStatus((prev) => ({
+                      ...prev,
+                      color: e.target.value,
+                    }))
+                  }
+                />
+              </>
+            </Form.Item>
+          </Form>
+        </Spin>
+      );
+      footer = (
+        <Spin spinning={loadingSave}>
+          <div className="flex space-x-2 justify-end items-center">
+            <button
+              onClick={() => setCurrentState("manage")}
+              className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
+            >
+              Batal
+            </button>
+            <ButtonSys
+              type={"primary"}
+              onClick={() => {
+                handleUpdateStatus();
+                setCurrentState("manage");
+                form.resetFields();
+              }}
+              disabled={
+                !isAllowedToEditStatus ||
+                !dataStatus?.name ||
+                !dataStatus?.color
+              }
+            >
+              <p>Simpan Perubahan</p>
+            </ButtonSys>
+          </div>
+        </Spin>
+      );
+      break;
+  }
+
+  return modalDelete ? (
+    <ModalHapus2
+      title={`Perhatian`}
+      visible={modalDelete}
+      onvisible={setModalDelete}
+      onOk={handleDeleteStatus}
+      onCancel={() => {
+        setModalDelete(false);
+      }}
+      itemName={"status"}
+      loading={loadingDelete}
+    >
+      <p className="mb-4">
+        Apakah Anda yakin ingin menghapus status{" "}
+        <strong>{dataStatus?.name}</strong>?
+      </p>
+    </ModalHapus2>
+  ) : (
+    <Modal
+      title={header}
+      visible={visible}
+      closable={currentState !== "manage" ? false : true}
+      onCancel={handleClose}
+      maskClosable={false}
+      footer={footer}
+    >
+      {body}
+    </Modal>
+  );
+};
+
+function SortableItem({ id, statusColor, statusName, onClickEdit }) {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <li ref={setNodeRef} style={style}>
+      <div className="flex justify-between items-center border border-mono90 py-3 px-4 rounded-md">
+        <div className="flex items-center space-x-3">
+          <div
+            className={`h-6 w-6 rounded-full`}
+            style={{ backgroundColor: `${statusColor}` }}
+          ></div>
+          <p className="text-sm font-bold text-mono30">{statusName}</p>
+        </div>
+        <div className="flex space-x-2 items-center">
+          <button
+            onClick={onClickEdit}
+            className="border-none shadow-none hover:opacity-70 bg-transparent"
+          >
+            <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+          </button>
+          <button
+            {...listeners}
+            {...attributes}
+            className="bg-transparent -mt-1"
+          >
+            <HolderOutlined className="text-lg text-mono50 cursor-move" />
+          </button>
+        </div>
+      </div>
+    </li>
+  );
+}
+
+export default ModalStatusManage;

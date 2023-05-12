@@ -1,0 +1,420 @@
+import {
+  DatePicker,
+  Form,
+  Input,
+  Modal,
+  Select,
+  Spin,
+  Switch,
+  Tag,
+  notification,
+} from "antd";
+import moment from "moment";
+import dynamic from "next/dynamic";
+import React, { useState } from "react";
+import { useEffect } from "react";
+import "react-quill/dist/quill.snow.css";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { GROUPS_GET, USERS_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
+import { generateStaticAssetUrl } from "../../../lib/helper";
+import ButtonSys from "../../button";
+
+// Quill library for text editor has to be imported dynamically
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+
+const ModalProjectCreate = ({
+  initProps,
+  visible,
+  onvisible,
+  isAllowedToAddProject,
+  setRefresh,
+}) => {
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetUsers = hasPermission(USERS_GET);
+  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  const [form] = Form.useForm();
+
+  // 1. USE STATE
+  const [dataProject, setDataProject] = useState({
+    name: "",
+    start_date: "",
+    end_date: "",
+    project_staffs: [],
+    description: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [isDetailOn, setIsDetailOn] = useState(false);
+  const [isSwitchGroup, setIsSwitchGroup] = useState(false);
+
+  const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
+  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
+
+  // 2 USE EFFECT
+  // 2.1. Get users or groups for task staff options
+  useEffect(() => {
+    if (!visible) {
+      return;
+    }
+    if (isSwitchGroup) {
+      if (!isAllowedToGetGroups) {
+        permissionWarningNotification("Mendapatkan", "Daftar Group");
+        return;
+      }
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar grup",
+            duration: 3,
+          })
+        );
+    } else {
+      if (!isAllowedToGetUsers) {
+        permissionWarningNotification("Mendapatkan", "Daftar User");
+        return;
+      }
+
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataStaffsOrGroups(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        );
+    }
+  }, [isAllowedToGetGroups, isAllowedToGetUsers, isSwitchGroup]);
+
+  // 3. HANDLER
+  const clearData = () => {
+    setDataProject({
+      name: "",
+      start_date: "",
+      end_date: "",
+      project_staffs: [],
+      description: "",
+    });
+    form.resetFields();
+  };
+
+  const handleAddProject = () => {
+    if (!isAllowedToAddProject) {
+      permissionWarningNotification("Menambah", "Proyek");
+      return;
+    }
+
+    setLoading(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(dataProject),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          onvisible(false);
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+          setTimeout(() => {
+            clearData();
+          }, 500);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan proyek baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  // Text Editor Config
+  const modules = {
+    toolbar: [
+      ["bold", "italic", "underline"],
+      [{ list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+      ["link"],
+    ],
+  };
+  const formats = [
+    "bold",
+    "italic",
+    "underline",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+  ];
+  return (
+    <Modal
+      title={
+        <div className="flex flex-col space-y-2 ">
+          <p>Tambah Proyek Baru</p>
+          <p className="text-warning text-[12px] italic">
+            * Field ini harus diisi
+          </p>
+        </div>
+      }
+      visible={visible}
+      onCancel={() => {
+        clearData();
+        onvisible(false);
+      }}
+      maskClosable={false}
+      footer={
+        <Spin spinning={loading}>
+          <div className="flex space-x-2 justify-end items-center">
+            <button
+              onClick={() => onvisible(false)}
+              className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
+            >
+              Batal
+            </button>
+            <ButtonSys
+              type={"primary"}
+              onClick={handleAddProject}
+              disabled={!isAllowedToAddProject || !dataProject.name}
+            >
+              <p>Tambah Proyek</p>
+            </ButtonSys>
+          </div>
+        </Spin>
+      }
+      loading={loading}
+    >
+      <Form layout="vertical" form={form}>
+        <Form.Item
+          label="Nama Proyek"
+          name={"name"}
+          rules={[
+            {
+              required: true,
+              message: "Nama proyek wajib diisi",
+            },
+          ]}
+        >
+          <Input
+            name={"name"}
+            placeholder="Masukkan nama proyek"
+            value={dataProject.name}
+            onChange={(e) =>
+              setDataProject((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }))
+            }
+          />
+        </Form.Item>
+
+        <div className="flex justify-between items-center mb-6">
+          <p>Tambahkan Detail Proyek lainnya</p>
+          <Switch
+            checked={isDetailOn}
+            onChange={(checked) => setIsDetailOn(checked)}
+          ></Switch>
+        </div>
+
+        {isDetailOn && (
+          <div>
+            <Form.Item label="Tanggal Dimulai" name={"start_date"}>
+              <DatePicker
+                allowClear
+                allowEmpty
+                showTime={{
+                  format: "HH:mm",
+                }}
+                value={
+                  dataProject.start_date === ""
+                    ? null
+                    : moment(dataProject.start_date)
+                }
+                placeholder={"Pilih Tanggal Mulai"}
+                style={{ width: `100%` }}
+                onChange={(dates, datestrings) => {
+                  setDataProject((prev) => ({
+                    ...prev,
+                    start_date: datestrings,
+                  }));
+                }}
+              />
+            </Form.Item>
+            <Form.Item label="Ekspektasi Tanggal Selesai" name={"end_date"}>
+              <DatePicker
+                allowClear
+                allowEmpty
+                showTime={{
+                  format: "HH:mm",
+                }}
+                value={
+                  dataProject.end_date === ""
+                    ? null
+                    : moment(dataProject.end_date)
+                }
+                placeholder={"Pilih Tanggal Selesai"}
+                style={{ width: `100%` }}
+                onChange={(dates, datestrings) => {
+                  setDataProject((prev) => ({
+                    ...prev,
+                    end_date: datestrings,
+                  }));
+                }}
+              />
+            </Form.Item>
+            <div className="flex flex-col md:flex-row">
+              <div className="w-full mb-2">
+                <p className="mb-2">Staff Proyek</p>
+                <Select
+                  allowClear
+                  showSearch
+                  mode="multiple"
+                  className="dontShow"
+                  value={dataProject.project_staffs}
+                  disabled={!isAllowedToGetUsers}
+                  placeholder={
+                    isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
+                  }
+                  style={{ width: `100%` }}
+                  onChange={(value, option) => {
+                    setSelectedStaffsOrGroups(option);
+                    setDataProject((prev) => ({
+                      ...prev,
+                      project_staffs: value,
+                    }));
+                  }}
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    (option?.children ?? "")
+                      .toLowerCase()
+                      .includes(input.toLowerCase())
+                  }
+                >
+                  {dataStaffsOrGroups.map((item) => {
+                    return (
+                      <Select.Option
+                        key={item?.id}
+                        value={item.id}
+                        position={item?.position}
+                        image={generateStaticAssetUrl(item.profile_image?.link)}
+                      >
+                        {item?.name}
+                      </Select.Option>
+                    );
+                  })}
+                </Select>
+              </div>
+              <div className="flex space-x-2 items-center absolute right-6">
+                <p>Staff</p>
+                <Switch
+                  checked={isSwitchGroup}
+                  onChange={(checked) => {
+                    setIsSwitchGroup(checked);
+                    setSelectedStaffsOrGroups([]);
+                    setDataProject((prev) => ({
+                      ...prev,
+                      project_staffs: [],
+                    }));
+                  }}
+                />
+                <p>Group</p>
+              </div>
+            </div>
+            {/* List of selected users or groups */}
+            <div className="flex flex-wrap mb-4">
+              {selectedStaffsOrGroups.map((staff, idx) => {
+                return (
+                  <Tag
+                    key={staff.key}
+                    closable
+                    onClose={() => {
+                      const newTags = selectedStaffsOrGroups.filter(
+                        (tag) => tag.key !== staff.key
+                      );
+                      setSelectedStaffsOrGroups(newTags);
+                      setDataProject((prev) => ({
+                        ...prev,
+                        project_staffs: newTags.map((tag) => tag.value),
+                      }));
+                    }}
+                    className="flex items-center p-2 w-max mb-2"
+                  >
+                    {isSwitchGroup ? (
+                      // Group Tag
+                      <div className="flex items-center space-x-2">
+                        <p className="truncate">
+                          <strong>{staff?.children}</strong>
+                        </p>
+                      </div>
+                    ) : (
+                      // User Tag
+                      <div className="flex items-center space-x-2">
+                        <img
+                          src={generateStaticAssetUrl(staff?.image)}
+                          alt={staff?.children}
+                          className="w-6 h-6 bg-cover object-cover rounded-full"
+                        />
+                        <p className="truncate">
+                          <strong>{staff?.children}</strong> - {staff?.position}
+                        </p>
+                      </div>
+                    )}
+                  </Tag>
+                );
+              })}
+            </div>
+
+            <Form.Item label="Deskripsi Proyek" name={"description"}>
+              <ReactQuill
+                theme="snow"
+                value={dataProject.description}
+                modules={modules}
+                formats={formats}
+                className="h-44 pb-10"
+                onChange={(value) => {
+                  setDataProject((prev) => ({
+                    ...prev,
+                    description: value,
+                  }));
+                }}
+              />
+            </Form.Item>
+          </div>
+        )}
+      </Form>
+    </Modal>
+  );
+};
+
+export default ModalProjectCreate;
