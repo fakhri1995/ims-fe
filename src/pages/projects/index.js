@@ -316,7 +316,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingMyTaskList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?rows=4`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -382,7 +382,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "proposed_bys",
       render: (proposedBys, record, index) => {
         return {
-          children: <p>{proposedBys?.[0]?.name}</p>,
+          children: (
+            <div className="truncate w-28">
+              {proposedBys?.map((user) => user?.name)?.join(", ")}
+            </div>
+          ),
         };
       },
     },
@@ -408,6 +412,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Status",
       dataIndex: "status",
       render: (status, record, index) => {
+        // const currentStatus = dataStatusList.find(
+        //   (status) => status.id === text
+        // );
         return {
           children: (
             <p
@@ -425,6 +432,113 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
+  const TableProjectSection = (
+    <div className="shadow-md rounded-md bg-white p-4 mb-6">
+      <h4 className="mig-heading--4 mb-6">Semua Proyek</h4>
+
+      {/* Start: Search criteria */}
+      <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
+        {/* Search by keyword (kata kunci) */}
+        <div className="md:w-3/12">
+          <Input
+            defaultValue={queryParams.keyword}
+            style={{ width: `100%` }}
+            placeholder="Kata Kunci.."
+            allowClear
+            onChange={(e) => {
+              if (!e.target.value) {
+                setQueryParams({
+                  keyword: undefined,
+                });
+              }
+              setSearchingFilterProjects(e.target.value);
+            }}
+            onKeyPress={onKeyPressHandler}
+            disabled={!isAllowedToGetProjects}
+          />
+        </div>
+
+        {/* Filter by date */}
+        <div className="md:w-5/12">
+          <DatePicker.RangePicker
+            allowClear
+            allowEmpty
+            showTime={{
+              format: "HH:mm",
+            }}
+            value={
+              selectedFromDate === ""
+                ? [null, null]
+                : [moment(queryParams.from), moment(queryParams.to)]
+            }
+            placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
+            disabled={!isAllowedToGetProjects}
+            style={{ width: `100%` }}
+            onChange={(dates, datestrings) => {
+              setQueryParams({
+                from: datestrings[0],
+                to: datestrings[1],
+              });
+              setSelectedFromDate(datestrings[0]);
+              setSelectedToDate(datestrings[1]);
+            }}
+          />
+        </div>
+
+        {/* Filter by statuses (dropdown) */}
+        <div className="md:w-3/12">
+          <Select
+            allowClear
+            showSearch
+            mode="multiple"
+            defaultValue={queryParams.status_ids}
+            disabled={!isAllowedToGetProjects}
+            placeholder="Semua Status"
+            style={{ width: `100%` }}
+            onChange={(value) => {
+              setQueryParams({ status_ids: value });
+              setSelectedStatus(value);
+            }}
+            optionFilterProp="children"
+            filterOption={(input, option) =>
+              (option.children ?? "")
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
+          >
+            {dataStatusList.map((status) => (
+              <Select.Option key={status.id} value={status.id}>
+                {status.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </div>
+
+        <ButtonSys
+          type={`primary`}
+          onClick={onFilterProjects}
+          disabled={!isAllowedToGetProjects}
+        >
+          <div className="flex flex-row space-x-2.5 w-full items-center">
+            <SearchIconSvg size={15} color={`#ffffff`} />
+            <p>Cari</p>
+          </div>
+        </ButtonSys>
+      </div>
+      {/* End: Search criteria */}
+      <div>
+        <TableCustomGeneral
+          dataSource={dataProjects}
+          columns={columnProjects}
+          loading={loadingProjects}
+          total={dataRawProjects?.total}
+          queryParams={queryParams}
+          setQueryParams={setQueryParams}
+        />
+      </div>
+    </div>
+  );
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -434,11 +548,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       pathArr={pathArr}
     >
       <div
-        className="flex flex-col md:grid md:grid-cols-10 md:grid-rows-6 gap-6 px-4 md:px-5"
+        className="grid grid-cols-1 md:grid-cols-6 gap-6 px-4 md:px-5"
         id="mainWrapper"
       >
-        {/* Statistik Proyek */}
-        <div className="md:col-span-7 md:row-span-1 gap-6">
+        <div className="flex flex-col md:col-span-4 gap-6">
+          {/* Statistik Proyek */}
           <Collapse
             className="shadow-md rounded-md bg-white"
             bordered={false}
@@ -456,7 +570,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               }
             >
-              {/* CHART PENEMPATAN KARYAWAN */}
+              {/* CHART STATUS PROYEK */}
               {loadingChart ? (
                 <Spin />
               ) : (
@@ -479,7 +593,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                     {projectStatusCount.map((status, idx) => (
                       <div
                         key={status.project_status}
-                        className="flex items-center justify-between shadow-md rounded-md bg-white p-5"
+                        className="grid grid-cols-4 items-center shadow-md rounded-md bg-white p-5 text-left"
                       >
                         <ClipboardListIconSvg
                           size={36}
@@ -487,7 +601,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             dataColorBar[idx + (1 % dataColorBar.length) - 1]
                           }
                         />
-                        <div className="flex flex-col text-right">
+                        <div className="flex flex-col text-right col-span-3">
                           <p className="text-lg font-bold text-mono30">
                             {status.project_status_count}
                           </p>
@@ -500,117 +614,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               )}
             </Collapse.Panel>
           </Collapse>
+
+          {/* Table Semua Proyek */}
+          <div className="hidden md:block">{TableProjectSection}</div>
         </div>
 
-        {/* Table Semua Proyek */}
-        <div className="order-last md:col-span-7 md:row-span-5 ">
-          <div className="shadow-md rounded-md bg-white p-4 mb-6">
-            <h4 className="mig-heading--4 mb-6">Semua Proyek</h4>
-
-            {/* Start: Search criteria */}
-            <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="md:w-3/12">
-                <Input
-                  defaultValue={queryParams.keyword}
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    if (!e.target.value) {
-                      setQueryParams({
-                        keyword: undefined,
-                      });
-                    }
-                    setSearchingFilterProjects(e.target.value);
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetProjects}
-                />
-              </div>
-
-              {/* Filter by date */}
-              <div className="md:w-5/12">
-                <DatePicker.RangePicker
-                  allowClear
-                  allowEmpty
-                  showTime={{
-                    format: "HH:mm",
-                  }}
-                  value={
-                    selectedFromDate === ""
-                      ? [null, null]
-                      : [moment(queryParams.from), moment(queryParams.to)]
-                  }
-                  placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
-                  disabled={!isAllowedToGetProjects}
-                  style={{ width: `100%` }}
-                  onChange={(dates, datestrings) => {
-                    setQueryParams({
-                      from: datestrings[0],
-                      to: datestrings[1],
-                    });
-                    setSelectedFromDate(datestrings[0]);
-                    setSelectedToDate(datestrings[1]);
-                  }}
-                />
-              </div>
-
-              {/* Filter by statuses (dropdown) */}
-              <div className="md:w-3/12">
-                <Select
-                  allowClear
-                  showSearch
-                  mode="multiple"
-                  defaultValue={queryParams.status_ids}
-                  disabled={!isAllowedToGetProjects}
-                  placeholder="Semua Status"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    setQueryParams({ status_ids: value });
-                    setSelectedStatus(value);
-                  }}
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option.children ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                >
-                  {dataStatusList.map((status) => (
-                    <Select.Option key={status.id} value={status.id}>
-                      {status.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterProjects}
-                disabled={!isAllowedToGetProjects}
-              >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
-                </div>
-              </ButtonSys>
-            </div>
-            {/* End: Search criteria */}
-            <div>
-              <TableCustomGeneral
-                dataSource={dataProjects}
-                columns={columnProjects}
-                loading={loadingProjects}
-                total={dataRawProjects?.total}
-                queryParams={queryParams}
-                setQueryParams={setQueryParams}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:flex flex-col md:col-span-3 md:row-span-6 gap-6">
+        <div className="grid grid-cols-2 md:flex flex-col md:col-span-2 gap-6">
           {/* Tambah Proyek Baru */}
           <div className="">
             <button
@@ -634,7 +643,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
 
           {/* Task Saya */}
-          <div className="col-span-2 shadow-md rounded-md bg-white mb-2 xl:mb-6">
+          <div className="col-span-2 flex flex-col shadow-md rounded-md bg-white mb-2 xl:mb-6">
             <div
               className="flex flex-col xl:flex-row xl:justify-between xl:items-center 
               space-y-2 xl:space-y-0 mb-4 xl:mb-6 p-4 pb-0"
@@ -652,8 +661,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               className="flex overflow-x-auto md:overflow-hidden md:flex-col 
               pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6"> */}
             <Table
-              className="flex overflow-x-auto md:overflow-hidden md:flex-col
-              pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6 px-2 justify-center"
+              className="p-2"
               showHeader={false}
               dataSource={dataMyTaskList}
               loading={loadingMyTaskList}
@@ -674,10 +682,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                       (project) => project.id === task.project_id
                     );
                     return (
-                      <div
-                        key={task.id}
-                        className="flex-none w-full rounded-md"
-                      >
+                      <div key={task.id} className="flex-none rounded-md ">
                         <TaskCard
                           title={task.name}
                           projectName={currentProject?.name}
@@ -699,6 +704,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
           {/* </div> */}
         </div>
+
+        {/* Table Semua Proyek (in mobile layout)*/}
+        <div className="block md:hidden">{TableProjectSection}</div>
       </div>
 
       {/* Modal Project */}

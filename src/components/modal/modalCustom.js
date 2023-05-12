@@ -808,31 +808,32 @@ const ModalHapus2 = ({
       onCancel={onCancel}
       footer={
         <Spin spinning={loading}>
-          <div className="flex justify-between items-center">
+          <div className="grid grid-cols-3 gap-2 items-center ">
             <ButtonSys
               type="default"
-              // color="danger"
               onClick={() => {
                 onvisible(false);
               }}
             >
               Batalkan
             </ButtonSys>
-            <ButtonSys
-              type={"primary"}
-              color={"danger"}
-              onClick={onOk}
-              disabled={disabled}
-            >
-              <div className="flex flex-row space-x-2">
-                <TrashIconSvg size={16} color={`white`} />
-                {okButtonText ? (
-                  <p>{okButtonText}</p>
-                ) : (
-                  <p>Ya, saya yakin dan hapus {itemName}</p>
-                )}
-              </div>
-            </ButtonSys>
+            <div className="col-span-2">
+              <ButtonSys
+                type={"primary"}
+                color={"danger"}
+                onClick={onOk}
+                disabled={disabled}
+              >
+                <div className="flex flex-row space-x-2">
+                  <TrashIconSvg size={16} color={`white`} />
+                  {okButtonText ? (
+                    <p>{okButtonText}</p>
+                  ) : (
+                    <p>Ya, saya yakin dan hapus {itemName}</p>
+                  )}
+                </div>
+              </ButtonSys>
+            </div>
           </div>
         </Spin>
       }

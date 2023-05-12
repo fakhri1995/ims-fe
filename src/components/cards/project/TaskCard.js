@@ -1,4 +1,5 @@
 import { Avatar, Tooltip } from "antd";
+import moment from "moment";
 import React from "react";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
@@ -20,7 +21,7 @@ const TaskCard = ({
   return (
     <div
       onClick={onClick}
-      className="flex flex-col space-y-4 bg-white h-full  px-4 py-6 md:p-4 shadow-lg rounded-md hover:cursor-pointer"
+      className="grid grid-cols-1 space-y-4 bg-white h-full px-4 py-6 md:p-3 shadow-lg rounded-md hover:cursor-pointer"
     >
       {isPastDeadline && (
         <div className="bg-warning bg-opacity-20 rounded-md p-1 flex space-x-2 items-center">
@@ -31,7 +32,7 @@ const TaskCard = ({
           </p>
         </div>
       )}
-      <div className="flex space-x-2 justify-between">
+      <div className="grid grid-cols-2 space-x-2 ">
         <div className="flex flex-col justify-between space-y-4">
           <div className="space-y-1">
             <h4
@@ -58,16 +59,18 @@ const TaskCard = ({
           </p>
         </div>
         <div className="flex flex-col justify-between">
-          <div
-            className={`flex flex-col space-y-1 text-right ${
-              isPastDeadline ? "text-warning" : "text-mono50"
-            }`}
-          >
-            <p className="mig-caption--bold">Task Deadline:</p>
-            <p className="mig-caption">
-              {momentFormatDate(toDate, "-", "ddd, D MMMM YYYY")}
-            </p>
-          </div>
+          {moment(toDate).isValid() && (
+            <div
+              className={`flex flex-col space-y-1 text-right ${
+                isPastDeadline ? "text-warning" : "text-mono50"
+              }`}
+            >
+              <p className="mig-caption--bold">Task Deadline:</p>
+              <p className="mig-caption">
+                {momentFormatDate(toDate, "-", "ddd, D MMMM YYYY")}
+              </p>
+            </div>
+          )}
           {taskStaffs?.length > 1 ? (
             <div className="flex items-center justify-end">
               <Avatar.Group
@@ -89,7 +92,7 @@ const TaskCard = ({
                 ))}
               </Avatar.Group>
             </div>
-          ) : (
+          ) : taskStaffs?.length > 0 ? (
             <div className="flex space-x-2 items-center justify-end">
               <p
                 className={`mig-caption--bold ${
@@ -120,6 +123,8 @@ const TaskCard = ({
                 </div>
               )}
             </div>
+          ) : (
+            <></>
           )}
         </div>
       </div>

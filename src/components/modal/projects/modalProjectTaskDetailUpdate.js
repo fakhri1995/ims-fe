@@ -326,26 +326,30 @@ const ModalProjectTaskDetailUpdate = ({
             <div className="flex flex-col space-y-2 md:col-span-2">
               <p className="mig-caption--bold">Staff Task:</p>
               <div className="flex">
-                {dataTask?.task_staffs?.map((staff) => (
-                  <li
-                    key={staff.id}
-                    className="flex space-x-2 items-center p-2"
-                  >
-                    <img
-                      src={generateStaticAssetUrl(staff?.profile_image?.link)}
-                      alt={staff?.profile_image?.description}
-                      className="w-8 h-8 bg-cover object-cover rounded-md"
-                    />
-                    <p>
-                      <strong>{staff?.name}</strong> - {staff?.position}
-                    </p>
-                  </li>
-                ))}
+                {dataTask?.task_staffs?.length > 0 ? (
+                  dataTask?.task_staffs?.map((staff) => (
+                    <li
+                      key={staff.id}
+                      className="flex space-x-2 items-center p-2"
+                    >
+                      <img
+                        src={generateStaticAssetUrl(staff?.profile_image?.link)}
+                        alt={staff?.profile_image?.description}
+                        className="w-8 h-8 bg-cover object-cover rounded-md"
+                      />
+                      <p>
+                        <strong>{staff?.name}</strong> - {staff?.position}
+                      </p>
+                    </li>
+                  ))
+                ) : (
+                  <p>-</p>
+                )}
               </div>
             </div>
             <div className="flex flex-col space-y-2 md:col-span-2">
               <p className="mig-caption--bold">Deskripsi Task</p>
-              <p>{parse(dataTask.description ?? "-")}</p>
+              <p>{dataTask.description ? parse(dataTask.description) : "-"}</p>
             </div>
           </div>
         </Spin>
@@ -463,9 +467,9 @@ const ModalProjectTaskDetailUpdate = ({
                     format: "HH:mm",
                   }}
                   value={
-                    dataTask.start_date === ""
-                      ? null
-                      : moment(dataTask.start_date)
+                    moment(dataTask.start_date).isValid()
+                      ? moment(dataTask.start_date)
+                      : null
                   }
                   placeholder={"Pilih Tanggal Mulai"}
                   style={{ width: `100%` }}
@@ -490,7 +494,9 @@ const ModalProjectTaskDetailUpdate = ({
                     format: "HH:mm",
                   }}
                   value={
-                    dataTask.end_date === "" ? null : moment(dataTask.end_date)
+                    moment(dataTask.end_date).isValid()
+                      ? moment(dataTask.end_date)
+                      : null
                   }
                   placeholder={"Pilih Tanggal Selesai"}
                   style={{ width: `100%` }}
@@ -655,7 +661,6 @@ const ModalProjectTaskDetailUpdate = ({
 
       break;
   }
-
   return (
     <Modal
       title={<p className="mig-heading--4">{dataTask.name}</p>}
