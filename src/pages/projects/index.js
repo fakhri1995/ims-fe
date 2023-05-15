@@ -12,6 +12,7 @@ import { useRouter } from "next/router";
 import QueryString from "qs";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useMemo } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -50,7 +51,7 @@ import ModalProjectCreate from "../../components/modal/projects/modalProjectCrea
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
-import { TableCustomGeneral } from "../../components/table/tableCustom";
+import { TableCustomProjectList } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
   momentFormatDate,
@@ -99,6 +100,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
+  const pageBreadcrumbValue = useMemo(
+    () => [{ name: "Manajemen Proyek", hrefValue: "/projects" }],
+    []
+  );
+
   const dataColorBar = [
     "#2F80ED",
     "#BF4A40",
@@ -420,8 +426,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             <p
               className={`rounded-md p-1 text-center`}
               style={{
-                backgroundColor: (status?.color ?? "#E6E6E6") + "20",
-                color: status?.color ?? "#E6E6E6",
+                backgroundColor: status?.color
+                  ? status?.color + "20"
+                  : "#E6E6E6",
+                color: status?.color ?? "#808080",
               }}
             >
               {status?.name ?? "-"}
@@ -436,7 +444,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     <div className="shadow-md rounded-md bg-white p-4 mb-6">
       <h4 className="mig-heading--4 mb-6">Semua Proyek</h4>
 
-      {/* Start: Search criteria */}
+      {/* Start: Filter table */}
       <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center mb-4">
         {/* Search by keyword (kata kunci) */}
         <div className="md:w-3/12">
@@ -525,9 +533,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </ButtonSys>
       </div>
-      {/* End: Search criteria */}
+      {/* End: Filter table */}
       <div>
-        <TableCustomGeneral
+        <TableCustomProjectList
+          rt={rt}
           dataSource={dataProjects}
           columns={columnProjects}
           loading={loadingProjects}
@@ -546,6 +555,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       tok={initProps}
       st={st}
       pathArr={pathArr}
+      fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div
         className="grid grid-cols-1 md:grid-cols-6 gap-6 px-4 md:px-5"
@@ -661,6 +671,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               className="flex overflow-x-auto md:overflow-hidden md:flex-col 
               pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6"> */}
             <Table
+              rowKey={(record) => record.id}
               className="p-2"
               showHeader={false}
               dataSource={dataMyTaskList}
@@ -671,8 +682,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               columns={[
                 {
                   title: "Task",
-                  dataIndex: "id",
-                  key: "id",
+                  dataIndex: "name",
+                  key: "name",
                   render: (_, task) => {
                     const currentStatus = dataStatusList.find(
                       (status) => status.id === task.status_id
