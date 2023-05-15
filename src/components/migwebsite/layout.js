@@ -134,7 +134,7 @@ function layout({ children }) {
 
   const menuResources = (
     <div
-      className={"bg-white px-2 py-4 flex flex-col"}
+      className={"bg-white flex flex-col"}
       // style={{ boxShadow: "0px 0px 3px rgba(50, 50, 50, 0.75)" }}
     >
       {countStories > 0 && (
@@ -154,7 +154,7 @@ function layout({ children }) {
       {countArticle > 0 && (
         <Link href="/blog">
           <Button
-            className={"bg-transparent border-0 border-white  my-4 pb-4"}
+            className={"bg-transparent border-0 border-white"}
             // onClick={() => changeLanguage("id")}
           >
             <p className={"text-[14px] gilroy-medium self-center"}>Blog</p>
@@ -578,7 +578,7 @@ function layout({ children }) {
           type="checkbox"
           id={`menutoggle`}
         />
-        <section className={"md:hidden w-full h-auto mt-3 pt-16"}>
+        <section className={"md:hidden w-full h-auto -mt-2 pt-16"}>
           <div
             theme="light"
             style={{ lineHeight: "3.9rem" }}

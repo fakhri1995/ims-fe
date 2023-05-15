@@ -166,11 +166,13 @@ const Styles = (props) => (
     @media (max-width: 1280px){
       .header{
         padding: 0 3rem;
+        height: 56px !important;
       }
     }
     @media (max-width: 1024px){
       .header{
         padding: 0 3rem;
+        height: 56px !important;
       }
     }
     @media (max-width: 768px){
@@ -178,6 +180,7 @@ const Styles = (props) => (
         padding: 0 1rem;
       }
     }
+    
     .center {
       margin: auto;
       width: 90%;

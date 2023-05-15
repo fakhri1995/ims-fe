@@ -1303,7 +1303,7 @@ function Hardware({}) {
                     You can choose more than one
                   </p> */}
                   {/* choose product */}
-                  <div className={"flex flex-row mt-4"}>
+                  <div className={"flex flex-row mt-4 flex-wrap"}>
                     <a
                       className={"bg-white"}
                       onClick={() => handleKindOfHardware("Bank Machinery")}
@@ -1750,8 +1750,8 @@ function Hardware({}) {
                         <p className={"text-base"}>
                           {" "}
                           {locale == "en"
-                            ? " How many product in"
-                            : " Berapa banyak produk"}
+                            ? " How many product in "
+                            : " Berapa banyak produk "}
                           <span className={"font-gilroysemibold text-blackmig"}>
                             {kindOfHardware ? kindOfHardware : ""}{" "}
                           </span>
@@ -2104,105 +2104,140 @@ function Hardware({}) {
               </div>
             )}
             {formActive == "third" ? (
-              dataHardwareSummary.length > 0 && (
-                <div
-                  className={
-                    "w-[400px] h-[100%] py-4 pl-4 pr-[17px] ml-5 top-20 sticky "
-                  }
-                  style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
-                >
-                  <p className={"font-gilroybold text-primarygreen text-base"}>
-                    {t.hardwarerequestsummary}
-                  </p>
-                  <div className={"mt-3 border border-dividermig"} />
-                  {dataHardwareSummary.map((data, index) => (
-                    <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
-                      <div className={"flex flex-row"}>
-                        <button
-                          className={"bg-transparent w-[90%] text-left"}
-                          onClick={() => handleEdit(index)}
-                        >
-                          <div className={""}>
-                            <p
-                              className={
-                                "text-blackmig font-gilroysemibold text-sm "
-                              }
+              <div>
+                {dataHardwareSummary.length > 0 && (
+                  <div
+                    className={
+                      "w-[400px] py-4 pl-4 pr-[17px] ml-5 fixed flex flex-col"
+                    }
+                    // style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
+                  >
+                    <p
+                      className={
+                        "font-gilroybold text-primarygreen text-2xl mb-4"
+                      }
+                    >
+                      {t.hardwarerequestsummary}
+                    </p>
+                    <div
+                      className={
+                        "h-[389px] overflow-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
+                      }
+                    >
+                      {dataHardwareSummary.map((data, index) => (
+                        <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
+                          <div className={"flex flex-row"}>
+                            <button
+                              className={"bg-transparent w-[90%] text-left"}
+                              onClick={() => handleEdit(index)}
                             >
-                              {data.kindOfHardware}
-                            </p>
-                            <p
-                              className={
-                                "text-blackmig font-gilroyregular text-sm"
-                              }
-                            >
-                              {data.timeUsed +
-                                " month duration, " +
-                                data.urgently +
-                                " , " +
-                                data.manyTalent +
-                                " products"}
-                            </p>
-                            <div className={"flex"}>
-                              <p
-                                className={
-                                  "text-blackmig text-xs font-gilroysemibold"
-                                }
-                              >
-                                Hardware:{" "}
-                                {data.product.map((data, index) => (
-                                  <span
+                              <div className={""}>
+                                <p
+                                  className={
+                                    "text-accentblue font-gilroysemibold text-base"
+                                  }
+                                >
+                                  {data.kindOfHardware}
+                                </p>
+                                <p
+                                  className={
+                                    "text-blackmig font-gilroyregular text-sm mt-[3px]"
+                                  }
+                                >
+                                  {data.timeUsed +
+                                    " month duration, " +
+                                    data.urgently +
+                                    " , " +
+                                    data.manyTalent +
+                                    " products"}
+                                </p>
+                                <div className={"flex"}>
+                                  <p
                                     className={
-                                      "text-xs text-blackmig font-gilroyregular"
+                                      "text-blackmig text-xs font-gilroysemibold mt-[3px]"
                                     }
                                   >
-                                    {data}
-                                    {" ,"}
-                                  </span>
-                                ))}
-                              </p>
+                                    Hardware:{" "}
+                                    {data.product.map((data, index) => (
+                                      <span
+                                        className={
+                                          "text-xs text-blackmig font-gilroyregular"
+                                        }
+                                      >
+                                        {data}
+                                        {" ,"}
+                                      </span>
+                                    ))}
+                                  </p>
+                                </div>
+                              </div>
+                            </button>
+                            <div
+                              className={"w-[10%] flex justify-end self-center"}
+                            >
+                              <button
+                                className={"bg-transparent"}
+                                onClick={() =>
+                                  handleDeleteHardware(
+                                    data.kindOfHardware,
+                                    index
+                                  )
+                                }
+                              >
+                                <img
+                                  src="image/trash.png"
+                                  className={"w-6 h-6"}
+                                />
+                              </button>
                             </div>
                           </div>
-                        </button>
-                        <div className={"w-[10%] flex justify-end self-center"}>
-                          <button
-                            className={"bg-transparent"}
-                            onClick={() =>
-                              handleDeleteHardware(data.kindOfHardware, index)
-                            }
-                          >
-                            <img src="image/trash.png" className={"w-6 h-6"} />
-                          </button>
                         </div>
-                      </div>
+                      ))}
                     </div>
-                  ))}
-                  <button
-                    onClick={handleSubmitHardware}
-                    className={
-                      "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
-                    }
-                  >
-                    <div className={"flex flex-row justify-between"}>
-                      <p className={"text-white text-base font-gilroysemibold"}>
-                        {t.submitrequest}
-                      </p>
-                      <div
+
+                    <div
+                      className={"flex flex-row justify-between mt-8 items-end"}
+                    >
+                      <p
                         className={
-                          "w-[22px] h-[22px] bg-white rounded-[100px] items-center self-center"
+                          "text-base text-blackmig font-gilroysemibold self-center"
                         }
                       >
-                        <p
-                          className={
-                            "text-primarygreen text-base font-gilroysemibold"
-                          }
-                        >
-                          {dataHardwareSummary.length}
-                        </p>
-                      </div>
+                        Total Hardware : {dataHardwareSummary.length}
+                      </p>
+                      <button
+                        onClick={handleSubmitHardware}
+                        className={
+                          "py-2 pl-4 bg-primarygreen pr-[9.3px] w-[176px] rounded"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
+                          <p
+                            className={
+                              "text-white text-base font-gilroysemibold"
+                            }
+                          >
+                            {t.submitrequest}
+                          </p>
+                          <div
+                            className={
+                              "w-[22px] h-[22px] bg-white rounded-[100px] items-center self-center"
+                            }
+                          >
+                            <p
+                              className={
+                                "text-primarygreen text-base font-gilroysemibold"
+                              }
+                            >
+                              {dataHardwareSummary.length}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
                     </div>
-                  </button>
-                </div>
-              )
+                  </div>
+                )}
+              </div>
             ) : (
               <div className={"w-[50%] lg:flex lg:justify-end"}>
                 <img
@@ -4184,7 +4219,7 @@ function Hardware({}) {
                 <Link href="/contactus">
                   <button
                     className={
-                      "text-sm -mt-10 rounded text-primarygreen border-2 border-primarygreen px-4 py-2 lg:px-2 mt-4"
+                      "text-sm -mt-10 rounded text-primarygreen bg-transparent border-2 border-primarygreen px-4 py-2 lg:px-2 mt-4"
                     }
                   >
                     <p className={"text-base  font-gilroysemibold"}>
