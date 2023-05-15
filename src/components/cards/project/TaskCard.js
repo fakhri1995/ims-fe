@@ -51,11 +51,11 @@ const TaskCard = ({
           <p
             className={`rounded-md p-1 text-center`}
             style={{
-              backgroundColor: (statusColor ?? "#E6E6E6") + "20",
-              color: statusColor ?? "#E6E6E6",
+              backgroundColor: statusColor ? statusColor + "20" : "#E6E6E6",
+              color: statusColor ?? "#808080",
             }}
           >
-            {statusName}
+            {statusName ?? "-"}
           </p>
         </div>
         <div className="flex flex-col justify-between">
@@ -107,7 +107,7 @@ const TaskCard = ({
                     taskStaffs?.[0]?.profile_image?.link
                   )}
                   alt={taskStaffs?.[0]?.profile_image?.description}
-                  className="w-6 h-6 bg-cover object-cover rounded-md"
+                  className="w-6 h-6 bg-cover object-cover rounded-full"
                 />
               ) : isPastDeadline ? (
                 <div
