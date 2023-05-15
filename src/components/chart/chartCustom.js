@@ -32,22 +32,22 @@ const dataColorBar = [
   "#808080",
 ];
 
-const ChartDoughnut = ({ title, dataChart, objName, value }) => {
+const ChartDoughnut = ({ title, dataChart, objName, value, customLegend }) => {
   return (
     <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
       <h4 className="mig-heading--4 mb-4">{title}</h4>
       <div className="w-9/12 xl:w-7/12 flex mx-auto">
         <Doughnut
           data={{
-            labels: dataChart.map((doc) => doc[objName]),
+            labels: dataChart?.map((doc) => doc[objName]),
             datasets: [
               {
-                data: dataChart.map((doc) => doc[value]),
-                backgroundColor: dataChart.map(
+                data: dataChart?.map((doc) => doc[value]),
+                backgroundColor: dataChart?.map(
                   (doc, idx) =>
                     dataColorBar[idx + (1 % dataColorBar.length) - 1]
                 ),
-                borderColor: dataChart.map(
+                borderColor: dataChart?.map(
                   (doc, idx) =>
                     dataColorBar[idx + (1 % dataColorBar.length) - 1]
                 ),
@@ -69,26 +69,30 @@ const ChartDoughnut = ({ title, dataChart, objName, value }) => {
         />
       </div>
 
-      <div className="flex flex-col w-full mt-5">
-        {dataChart.map((doc, idx) => (
-          <div key={idx} className="flex justify-between items-center mb-1">
-            <div className="flex">
-              <div
-                className=" w-1 mr-2"
-                style={{
-                  backgroundColor: `${
-                    dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                  }`,
-                }}
-              ></div>
-              <Text>{doc[objName] || "-"}</Text>
+      {!customLegend ? (
+        <div className="flex flex-col w-full mt-5">
+          {dataChart.map((doc, idx) => (
+            <div key={idx} className="flex justify-between items-center mb-1">
+              <div className="flex">
+                <div
+                  className=" w-1 mr-2"
+                  style={{
+                    backgroundColor: `${
+                      dataColorBar[idx + (1 % dataColorBar.length) - 1]
+                    }`,
+                  }}
+                ></div>
+                <Text>{doc[objName] || "-"}</Text>
+              </div>
+              <div className="flex">
+                <H2>{doc[value]}</H2>
+              </div>
             </div>
-            <div className="flex">
-              <H2>{doc[value]}</H2>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        customLegend
+      )}
     </div>
   );
 };

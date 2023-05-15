@@ -17,10 +17,18 @@ export const SIDEBAR_DASHBOARD = "SIDEBAR_DASHBOARD";
 /** Items */
 export const SIDEBAR_ITEMS = "SIDEBAR_ITEMS";
 
+/** Lamaran Saya */
+export const SIDEBAR_MY_APPLICATION = "SIDEBAR_MY_APPLICATION";
+
 /** Perusahaan */
 export const SIDEBAR_COMPANY = "SIDEBAR_COMPANY";
 export const SIDEBAR_COMPANY_CLIENT = "SIDEBAR_COMPANY_CLIENT";
 export const SIDEBAR_COMPANY_PROFILE = "SIDEBAR_COMPANY_PROFILE";
+
+/** Proyek */
+export const SIDEBAR_PROJECT = "SIDEBAR_PROJECT";
+export const SIDEBAR_PROJECT_TASK = "SIDEBAR_PROJECT_TASK";
+export const SIDEBAR_PROJECT_TASK_ADMIN = "SIDEBAR_PROJECT_TASK_ADMIN";
 
 /** Task */
 export const SIDEBAR_TASK = "SIDEBAR_TASK";
@@ -29,9 +37,6 @@ export const SIDEBAR_TASK_MY = "SIDEBAR_TASK_MY";
 
 /** Ticket */
 export const SIDEBAR_TICKET = "SIDEBAR_TICKET";
-
-/** Lamaran Saya */
-export const SIDEBAR_MY_APPLICATION = "SIDEBAR_MY_APPLICATION";
 
 /** ------------------ Manajemen ------------------ */
 /** Asset */
@@ -311,6 +316,32 @@ export const EMPLOYEE_PAYSLIP_STATUS_COUNT_GET =
   "EMPLOYEE_PAYSLIP_STATUS_COUNT_GET";
 export const EMPLOYEE_PAYSLIP_RAISE = "EMPLOYEE_PAYSLIP_RAISE";
 export const EMPLOYEE_PAYSLIP_DOWNLOAD = "EMPLOYEE_PAYSLIP_DOWNLOAD";
+
+/**
+ * Daftar feature untuk Project Management.
+ * @see
+ */
+
+/** Project */
+export const PROJECT_GET = "PROJECT_GET";
+export const PROJECTS_GET = "PROJECTS_GET";
+export const PROJECT_ADD = "PROJECT_ADD";
+export const PROJECT_UPDATE = "PROJECT_UPDATE";
+export const PROJECT_DELETE = "PROJECT_DELETE";
+
+/** Project Status */
+export const PROJECT_STATUS_GET = "PROJECT_STATUS_GET";
+export const PROJECT_STATUSES_GET = "PROJECT_STATUSES_GET";
+export const PROJECT_STATUS_ADD = "PROJECT_STATUS_ADD";
+export const PROJECT_STATUS_UPDATE = "PROJECT_STATUS_UPDATE";
+export const PROJECT_STATUS_DELETE = "PROJECT_STATUS_DELETE";
+
+/** Projec Task */
+export const PROJECT_TASK_GET = "PROJECT_TASK_GET";
+export const PROJECT_TASKS_GET = "PROJECT_TASKS_GET";
+export const PROJECT_TASK_ADD = "PROJECT_TASK_ADD";
+export const PROJECT_TASK_UPDATE = "PROJECT_TASK_UPDATE";
+export const PROJECT_TASK_DELETE = "PROJECT_TASK_DELETE";
 
 /**
  * Daftar feature untuk User Management.
