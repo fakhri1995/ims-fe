@@ -76,6 +76,7 @@ const TaskCard = ({
               <Avatar.Group
                 size={24}
                 maxCount={2}
+                className="cursor-help"
                 maxStyle={{
                   color: "#f56a00",
                   backgroundColor: "#fde3cf",
