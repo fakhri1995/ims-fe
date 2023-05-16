@@ -55,6 +55,7 @@ import { ChartDoughnut } from "../../components/chart/chartCustom";
 import {
   AdjusmentsHorizontalIconSvg,
   ClipboardListIconSvg,
+  EditSquareIconSvg,
   OneUserIconSvg,
   PlusIconSvg,
   SearchIconSvg,
@@ -126,13 +127,6 @@ const ProjectDetailIndex = ({
 
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
-  const pageBreadcrumbValue = useMemo(
-    () => [
-      { name: "Manajemen Proyek", hrefValue: "/projects" },
-      { name: "Nama Proyek", hrefValue: `/projects/${projectId}` },
-    ],
-    []
-  );
 
   const dataColorBar = [
     "#2F80ED",
@@ -173,7 +167,7 @@ const ProjectDetailIndex = ({
     },
   ]);
 
-  // 2.2. Table Projects List
+  // 2.2. Table Task List
   // filter data
   const [loadingStatusList, setLoadingStatusList] = useState(false);
   const [dataStatusList, setDataStatusList] = useState([]);
@@ -207,18 +201,22 @@ const ProjectDetailIndex = ({
 
   // 2.3. Project Detail
   const [dataProject, setDataProject] = useState({});
-  const [dataProjectLogs, setDataProjectLogs] = useState([]);
-  const [dataProjectNotes, setDataProjectNotes] = useState([]);
-
-  const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
-  const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
-
   const [loadingProject, setLoadingProject] = useState(false);
-  const [loadingProjectLog, setLoadingProjectLog] = useState(false);
-  const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
 
-  // 2.4. Modal
-  const [modalEditProject, setModalEditProject] = useState(false);
+  // 2.4. Project Logs
+  const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
+  const [dataProjectLogs, setDataProjectLogs] = useState([]);
+  const [loadingProjectLog, setLoadingProjectLog] = useState(false);
+  const [searchingFilterLogs, setSearchingFilterLogs] = useState(undefined);
+
+  // 2.5. Project Notes
+  const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
+  const [dataProjectNotes, setDataProjectNotes] = useState([]);
+  const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
+  const [searchingFilterNotes, setSearchingFilterNotes] = useState(undefined);
+
+  // 2.6. Modal
+  const [modalUpdateProject, setModalUpdateProject] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
   const [modalAddNote, setModalAddNote] = useState(false);
@@ -399,7 +397,7 @@ const ProjectDetailIndex = ({
     });
 
     setLoadingProjectLog(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs${payload}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${payload}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -449,7 +447,7 @@ const ProjectDetailIndex = ({
     });
 
     setLoadingProjectNotes(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectNotes${payload}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${payload}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -504,7 +502,13 @@ const ProjectDetailIndex = ({
     ?.map((staff, index) => (index !== lastIndexStaff ? staff.name : null))
     ?.join(", ");
 
-  // console.log(staffsString);
+  const pageBreadcrumbValue = useMemo(
+    () => [
+      { name: "Manajemen Proyek", hrefValue: "/projects" },
+      { name: dataProject?.name, hrefValue: `/projects/${projectId}` },
+    ],
+    [dataProject.name]
+  );
 
   return (
     <LayoutDashboard
@@ -516,7 +520,7 @@ const ProjectDetailIndex = ({
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div
-        className="grid grid-cols-1 gap-4 xl:gap-6 px-4 md:px-5"
+        className="grid grid-cols-1 gap-4 lg:gap-6 px-4 md:px-5"
         id="mainWrapper"
       >
         {/* Statistik Proyek */}
@@ -534,7 +538,7 @@ const ProjectDetailIndex = ({
               header={
                 <div className="mig-heading--4 flex space-x-2 items-center">
                   <ClipboardListIconSvg size={32} />
-                  <p>Statistik Proyek</p>
+                  <p>Statistik Proyek {dataProject?.name}</p>
                 </div>
               }
             >
@@ -584,32 +588,34 @@ const ProjectDetailIndex = ({
           </Collapse>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-4 xl:gap-6">
+        <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-6">
           {/* Detail, Log, Catatan Proyek */}
-          <div className="order-last md:order-none md:col-span-2 flex flex-col gap-4 xl:gap-6">
+          <div className="lg:w-2/6 flex flex-col gap-4 lg:gap-6">
+            {/* Detail */}
             <Collapse
               className="shadow-md rounded-md bg-white"
               bordered={false}
               ghost={true}
+              defaultActiveKey={1}
               expandIconPosition="right"
               expandIcon={({ isActive }) => (
                 <UpOutlined rotate={isActive ? 180 : 0} />
               )}
             >
               <Collapse.Panel
+                key={1}
                 header={
                   <div className="mig-heading--4 flex space-x-2 items-center">
-                    <ClipboardListIconSvg size={32} />
-                    <p>Detail Proyek</p>
+                    <p>Detail Proyek {dataProject?.name}</p>
                   </div>
                 }
               >
-                <div className="grid md:grid-cols-2 gap-2 lg:gap-6">
+                <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
                   <div>
                     <p className="text-mono30 font-bold mb-2">Diajukan oleh:</p>
-                    <div className="flex items-center space-x-2">
+                    <div>
                       {dataProject?.proposed_bys?.length > 1 ? (
-                        <div className="flex items-center justify-end">
+                        <div className="flex items-center">
                           <Avatar.Group
                             size={30}
                             maxCount={5}
@@ -627,7 +633,8 @@ const ProjectDetailIndex = ({
                               >
                                 <Avatar
                                   src={generateStaticAssetUrl(
-                                    staff?.profile_image?.link
+                                    staff?.profile_image?.link ??
+                                      "staging/Users/default_user.png"
                                   )}
                                   className=""
                                   size={30}
@@ -638,32 +645,23 @@ const ProjectDetailIndex = ({
                         </div>
                       ) : dataProject?.proposed_bys?.length > 0 ? (
                         <div className="flex items-center space-x-2">
-                          {dataProject?.proposed_bys?.[0]?.profile_image
-                            ?.link ? (
-                            <img
-                              src={generateStaticAssetUrl(
-                                dataProject?.proposed_bys?.[0]?.profile_image
-                                  ?.link
-                              )}
-                              alt={
-                                dataProject?.proposed_bys?.[0]?.profile_image
-                                  ?.description
-                              }
-                              className="w-8 h-8 bg-cover object-cover rounded-full"
-                            />
-                          ) : (
-                            <div
-                              className={`bg-primary100 rounded-full w-8 h-8 flex items-center justify-center`}
-                            >
-                              <OneUserIconSvg size={18} color={"#ffffff"} />
-                            </div>
-                          )}
+                          <img
+                            src={generateStaticAssetUrl(
+                              dataProject?.proposed_bys?.[0]?.profile_image
+                                ?.link ?? "staging/Users/default_user.png"
+                            )}
+                            alt={
+                              dataProject?.proposed_bys?.[0]?.profile_image
+                                ?.description
+                            }
+                            className="w-8 h-8 bg-cover object-cover rounded-full"
+                          />
                           <p className={`mig-caption--medium text-mono50`}>
                             {dataProject?.proposed_bys?.[0]?.name}
                           </p>
                         </div>
                       ) : (
-                        <p>-</p>
+                        <div>-</div>
                       )}
                     </div>
                   </div>
@@ -717,7 +715,8 @@ const ProjectDetailIndex = ({
                               >
                                 <Avatar
                                   src={generateStaticAssetUrl(
-                                    staff?.profile_image?.link
+                                    staff?.profile_image?.link ??
+                                      "staging/Users/default_user.png"
                                   )}
                                   size={30}
                                 />
@@ -737,32 +736,21 @@ const ProjectDetailIndex = ({
                         </div>
                       ) : dataProject?.project_staffs?.length > 0 ? (
                         <div className="flex space-x-2 items-center">
-                          {dataProject?.project_staffs?.[0]?.profile_image
-                            ?.link ? (
-                            <img
-                              src={generateStaticAssetUrl(
-                                dataProject?.project_staffs?.[0]?.profile_image
-                                  ?.link
-                              )}
-                              alt={
-                                dataProject?.project_staffs?.[0]?.profile_image
-                                  ?.description
-                              }
-                              className="w-8 h-8 bg-cover object-cover rounded-full"
-                            />
-                          ) : (
-                            <div
-                              className={`bg-primary100 rounded-full w-8 h-8 flex items-center justify-center`}
-                            >
-                              <OneUserIconSvg size={18} color={"#ffffff"} />
-                            </div>
-                          )}
+                          <img
+                            src={generateStaticAssetUrl(
+                              dataProject?.project_staffs?.[0]?.profile_image
+                                ?.link ?? "staging/Users/default_user.png"
+                            )}
+                            alt={"Profile image"}
+                            className="w-8 h-8 bg-cover object-cover rounded-full"
+                          />
+
                           <p className={`mig-caption--medium text-mono50`}>
                             {dataProject?.project_staffs?.[0]?.name}
                           </p>
                         </div>
                       ) : (
-                        <p>-</p>
+                        <div>-</div>
                       )}
                     </div>
                   </div>
@@ -774,164 +762,390 @@ const ProjectDetailIndex = ({
                         : "-"}
                     </p>
                   </div>
+                  <div className="md:col-span-2">
+                    <ButtonSys
+                      type={"primary"}
+                      fullWidth={true}
+                      size={"large"}
+                      onClick={() => setModalUpdateProject(true)}
+                    >
+                      <div className="flex space-x-2 items-center ">
+                        <EditSquareIconSvg size={24} color={"#ffffff"} />
+                        <p>Edit Detail Proyek</p>
+                      </div>
+                    </ButtonSys>
+                  </div>
                 </div>
               </Collapse.Panel>
             </Collapse>
-            <div>Log Aktivitas Proyek</div>
-            <div>Catatan Proyek</div>
+
+            {/* Log */}
+            <Collapse
+              className="shadow-md rounded-md bg-white"
+              bordered={false}
+              ghost={true}
+              defaultActiveKey={1}
+              expandIconPosition="right"
+              expandIcon={({ isActive }) => (
+                <UpOutlined rotate={isActive ? 180 : 0} />
+              )}
+            >
+              <Collapse.Panel
+                key={1}
+                header={
+                  <div className="mig-heading--4 flex space-x-2 items-center">
+                    <p>Log Aktivitas Proyek {dataProject?.name}</p>
+                  </div>
+                }
+              >
+                <div className="grid gap-2 lg:gap-6">
+                  {/* Search by keyword (kata kunci) */}
+                  <div className="">
+                    <Input
+                      defaultValue={queryParams.keyword}
+                      style={{ width: `100%` }}
+                      placeholder="Kata Kunci.."
+                      allowClear
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          setQueryParams({
+                            keyword: undefined,
+                          });
+                        }
+                        setSearchingFilterLogs(e.target.value);
+                      }}
+                      onKeyPress={onKeyPressHandler}
+                      disabled={!isAllowedToGetLogs}
+                    />
+                  </div>
+
+                  <Table
+                    rowKey={(record) => record.id}
+                    showHeader={false}
+                    dataSource={dataTasks}
+                    loading={loadingTasks}
+                    pagination={{
+                      current: queryParams.page,
+                      pageSize: queryParams.rows,
+                      // total: total,
+                      showSizeChanger: true,
+                    }}
+                    columns={[
+                      {
+                        title: "Task",
+                        dataIndex: "name",
+                        key: "name",
+                        render: (_, task) => {
+                          const currentStatus = dataStatusList.find(
+                            (status) => status.id === task.status_id
+                          );
+
+                          const currentProject = dataProjectList.find(
+                            (project) => project.id === task.project_id
+                          );
+                          return (
+                            <div key={task.id} className="">
+                              <div className="flex justify-between items-center mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <img
+                                    src={generateStaticAssetUrl(
+                                      task?.task_staffs?.[0]?.profile_image
+                                        ?.link ??
+                                        "staging/Users/default_user.png"
+                                    )}
+                                    alt={"profile image"}
+                                    className="w-8 h-8 bg-cover object-cover rounded-full"
+                                  />
+                                  <p className="truncate">
+                                    <strong>
+                                      {task?.task_staffs?.[0]?.name}
+                                    </strong>{" "}
+                                    - {task?.task_staffs?.[0]?.position}
+                                  </p>
+                                </div>
+                                <p className="text-right">
+                                  {momentFormatDate(
+                                    task?.start_date,
+                                    "-",
+                                    "D MMM YYYY, HH:mm",
+                                    true
+                                  )}
+                                </p>
+                              </div>
+                              <p>{dataProjectLogs?.description ?? "-"}</p>
+                            </div>
+                          );
+                        },
+                      },
+                    ]}
+                  />
+                </div>
+              </Collapse.Panel>
+            </Collapse>
+
+            {/* Catatan */}
+            <Collapse
+              className="shadow-md rounded-md bg-white"
+              bordered={false}
+              ghost={true}
+              defaultActiveKey={1}
+              expandIconPosition="right"
+              expandIcon={({ isActive }) => (
+                <UpOutlined rotate={isActive ? 180 : 0} />
+              )}
+            >
+              <Collapse.Panel
+                key={1}
+                header={
+                  <div className="mig-heading--4 flex space-x-2 items-center">
+                    <p>Catatan Proyek {dataProject?.name}</p>
+                  </div>
+                }
+              >
+                <div className="grid gap-2 lg:gap-6">
+                  {/* Search by keyword (kata kunci) */}
+                  <div className="">
+                    <Input
+                      defaultValue={queryParams.keyword}
+                      style={{ width: `100%` }}
+                      placeholder="Kata Kunci.."
+                      allowClear
+                      onChange={(e) => {
+                        if (!e.target.value) {
+                          setQueryParams({
+                            keyword: undefined,
+                          });
+                        }
+                        setSearchingFilterLogs(e.target.value);
+                      }}
+                      onKeyPress={onKeyPressHandler}
+                      disabled={!isAllowedToGetLogs}
+                    />
+                  </div>
+
+                  <Table
+                    rowKey={(record) => record.id}
+                    showHeader={false}
+                    dataSource={dataTasks}
+                    loading={loadingTasks}
+                    pagination={{
+                      current: queryParams.page,
+                      pageSize: queryParams.rows,
+                      // total: total,
+                      showSizeChanger: true,
+                    }}
+                    columns={[
+                      {
+                        title: "Task",
+                        dataIndex: "name",
+                        key: "name",
+                        render: (_, task) => {
+                          const currentStatus = dataStatusList.find(
+                            (status) => status.id === task.status_id
+                          );
+
+                          const currentProject = dataProjectList.find(
+                            (project) => project.id === task.project_id
+                          );
+                          return (
+                            <div key={task.id} className="">
+                              <div className="flex justify-between items-center mb-2">
+                                <div className="flex items-center space-x-2">
+                                  <img
+                                    src={generateStaticAssetUrl(
+                                      task?.task_staffs?.[0]?.profile_image
+                                        ?.link ??
+                                        "staging/Users/default_user.png"
+                                    )}
+                                    alt={"profile image"}
+                                    className="w-8 h-8 bg-cover object-cover rounded-full"
+                                  />
+                                  <p className="truncate">
+                                    <strong>
+                                      {task?.task_staffs?.[0]?.name}
+                                    </strong>{" "}
+                                    - {task?.task_staffs?.[0]?.position}
+                                  </p>
+                                </div>
+                                <p className="text-right">
+                                  {momentFormatDate(
+                                    task?.start_date,
+                                    "-",
+                                    "D MMM YYYY, HH:mm",
+                                    true
+                                  )}
+                                </p>
+                              </div>
+                              <p>{dataProjectLogs?.description ?? "-"}</p>
+                            </div>
+                          );
+                        },
+                      },
+                    ]}
+                  />
+                </div>
+              </Collapse.Panel>
+            </Collapse>
           </div>
 
           {/* Task Proyek */}
-          <div className="md:col-span-4 shadow-md rounded-md bg-white">
-            <div
-              className="flex flex-row justify-between items-center 
-               mb-4 xl:mb-6 p-4 pb-0"
-            >
-              <h4 className="mig-heading--4 ">Task Proyek</h4>
-              <ButtonSys type={"primary"} onClick={() => setModalAddTask(true)}>
-                <div className="flex items-center space-x-2">
-                  <PlusIconSvg size={16} color={"#ffffff"} />
-                  <p>Tambah Task Baru</p>
-                </div>
-              </ButtonSys>
-            </div>
-
-            {/* Start: Filter table */}
-            <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center p-4">
-              {/* Search by keyword (kata kunci) */}
-              <div className="md:w-3/12">
-                <Input
-                  defaultValue={queryParams.keyword}
-                  style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
-                  allowClear
-                  onChange={(e) => {
-                    if (!e.target.value) {
-                      setQueryParams({
-                        keyword: undefined,
-                      });
-                    }
-                    setSearchingFilterProjects(e.target.value);
-                  }}
-                  onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetProjects}
-                />
-              </div>
-
-              {/* Filter by date */}
-              <div className="md:w-5/12">
-                <DatePicker.RangePicker
-                  allowClear
-                  allowEmpty
-                  showTime={{
-                    format: "HH:mm",
-                  }}
-                  value={
-                    selectedFromDate === ""
-                      ? [null, null]
-                      : [moment(queryParams.from), moment(queryParams.to)]
-                  }
-                  placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
-                  disabled={!isAllowedToGetProjects}
-                  style={{ width: `100%` }}
-                  onChange={(dates, datestrings) => {
-                    setQueryParams({
-                      from: datestrings[0],
-                      to: datestrings[1],
-                    });
-                    setSelectedFromDate(datestrings[0]);
-                    setSelectedToDate(datestrings[1]);
-                  }}
-                />
-              </div>
-
-              {/* Filter by statuses (dropdown) */}
-              <div className="md:w-3/12">
-                <Select
-                  allowClear
-                  showSearch
-                  mode="multiple"
-                  defaultValue={queryParams.status_ids}
-                  disabled={!isAllowedToGetProjects}
-                  placeholder="Semua Status"
-                  style={{ width: `100%` }}
-                  onChange={(value) => {
-                    setQueryParams({ status_ids: value });
-                    setSelectedStatus(value);
-                  }}
-                  optionFilterProp="children"
-                  filterOption={(input, option) =>
-                    (option.children ?? "")
-                      .toLowerCase()
-                      .includes(input.toLowerCase())
-                  }
-                >
-                  {dataStatusList.map((status) => (
-                    <Select.Option key={status.id} value={status.id}>
-                      {status.name}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-
-              <ButtonSys
-                type={`primary`}
-                onClick={onFilterTasks}
-                disabled={!isAllowedToGetTasks}
+          <div className="lg:w-4/6">
+            <div className=" shadow-md rounded-md bg-white">
+              <div
+                className="flex flex-row justify-between items-center 
+               mb-4 lg:mb-6 p-4 pb-0"
               >
-                <div className="flex flex-row space-x-2.5 w-full items-center">
-                  <SearchIconSvg size={15} color={`#ffffff`} />
-                  <p>Cari</p>
+                <h4 className="mig-heading--4 ">
+                  Task Proyek {dataProject?.name}
+                </h4>
+                <ButtonSys
+                  type={"primary"}
+                  onClick={() => setModalAddTask(true)}
+                >
+                  <div className="flex items-center space-x-2">
+                    <PlusIconSvg size={16} color={"#ffffff"} />
+                    <p>Tambah Task Baru</p>
+                  </div>
+                </ButtonSys>
+              </div>
+
+              {/* Start: Filter table */}
+              <div className="grid grid-cols-2 gap-2 md:flex md:flex-row justify-between w-full items-center p-4">
+                {/* Search by keyword (kata kunci) */}
+                <div className="md:w-3/12">
+                  <Input
+                    defaultValue={queryParams.keyword}
+                    style={{ width: `100%` }}
+                    placeholder="Kata Kunci.."
+                    allowClear
+                    onChange={(e) => {
+                      if (!e.target.value) {
+                        setQueryParams({
+                          keyword: undefined,
+                        });
+                      }
+                      setSearchingFilterProjects(e.target.value);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetProjects}
+                  />
                 </div>
-              </ButtonSys>
-            </div>
-            {/* End: Filter table */}
 
-            <Table
-              rowKey={(record) => record.id}
-              className="px-2"
-              showHeader={false}
-              dataSource={dataTasks}
-              loading={loadingTasks}
-              pagination={{
-                current: queryParams.page,
-                pageSize: queryParams.rows,
-                // total: total,
-                showSizeChanger: true,
-              }}
-              columns={[
-                {
-                  title: "Task",
-                  dataIndex: "name",
-                  key: "name",
-                  render: (_, task) => {
-                    const currentStatus = dataStatusList.find(
-                      (status) => status.id === task.status_id
-                    );
+                {/* Filter by date */}
+                <div className="md:w-5/12">
+                  <DatePicker.RangePicker
+                    allowClear
+                    allowEmpty
+                    showTime={{
+                      format: "HH:mm",
+                    }}
+                    value={
+                      selectedFromDate === ""
+                        ? [null, null]
+                        : [moment(queryParams.from), moment(queryParams.to)]
+                    }
+                    placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
+                    disabled={!isAllowedToGetProjects}
+                    style={{ width: `100%` }}
+                    onChange={(dates, datestrings) => {
+                      setQueryParams({
+                        from: datestrings[0],
+                        to: datestrings[1],
+                      });
+                      setSelectedFromDate(datestrings[0]);
+                      setSelectedToDate(datestrings[1]);
+                    }}
+                  />
+                </div>
 
-                    const currentProject = dataProjectList.find(
-                      (project) => project.id === task.project_id
-                    );
-                    return (
-                      <div key={task.id} className="flex-none rounded-md ">
-                        <TaskCard
-                          title={task.name}
-                          projectName={currentProject?.name}
-                          toDate={task.end_date}
-                          statusName={currentStatus?.name}
-                          statusColor={currentStatus?.color}
-                          taskStaffs={task.task_staffs}
-                          onClick={() => {
-                            setCurrentTaskId(task.id);
-                            setModalDetailTask(true);
-                          }}
-                        />
-                      </div>
-                    );
+                {/* Filter by statuses (dropdown) */}
+                <div className="md:w-3/12">
+                  <Select
+                    allowClear
+                    showSearch
+                    mode="multiple"
+                    defaultValue={queryParams.status_ids}
+                    disabled={!isAllowedToGetProjects}
+                    placeholder="Semua Status"
+                    style={{ width: `100%` }}
+                    onChange={(value) => {
+                      setQueryParams({ status_ids: value });
+                      setSelectedStatus(value);
+                    }}
+                    optionFilterProp="children"
+                    filterOption={(input, option) =>
+                      (option.children ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                  >
+                    {dataStatusList.map((status) => (
+                      <Select.Option key={status.id} value={status.id}>
+                        {status.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterTasks}
+                  disabled={!isAllowedToGetTasks}
+                >
+                  <div className="flex flex-row space-x-2.5 w-full items-center">
+                    <SearchIconSvg size={15} color={`#ffffff`} />
+                    <p>Cari</p>
+                  </div>
+                </ButtonSys>
+              </div>
+              {/* End: Filter table */}
+
+              <Table
+                rowKey={(record) => record.id}
+                className="px-2"
+                showHeader={false}
+                dataSource={dataTasks}
+                loading={loadingTasks}
+                pagination={{
+                  current: queryParams.page,
+                  pageSize: queryParams.rows,
+                  // total: total,
+                  showSizeChanger: true,
+                }}
+                columns={[
+                  {
+                    title: "Task",
+                    dataIndex: "name",
+                    key: "name",
+                    render: (_, task) => {
+                      const currentStatus = dataStatusList.find(
+                        (status) => status.id === task.status_id
+                      );
+
+                      const currentProject = dataProjectList.find(
+                        (project) => project.id === task.project_id
+                      );
+                      return (
+                        <div key={task.id} className="flex-none rounded-md ">
+                          <TaskCard
+                            title={task.name}
+                            projectName={currentProject?.name}
+                            toDate={task.end_date}
+                            statusName={currentStatus?.name}
+                            statusColor={currentStatus?.color}
+                            taskStaffs={task.task_staffs}
+                            onClick={() => {
+                              setCurrentTaskId(task.id);
+                              setModalDetailTask(true);
+                            }}
+                          />
+                        </div>
+                      );
+                    },
                   },
-                },
-              ]}
-            />
+                ]}
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -940,10 +1154,12 @@ const ProjectDetailIndex = ({
       <AccessControl hasPermission={PROJECT_UPDATE}>
         <ModalProjectUpdate
           initProps={initProps}
-          visible={modalEditProject}
-          onvisible={setModalEditProject}
+          visible={modalUpdateProject}
+          onvisible={setModalUpdateProject}
           isAllowedToUpdateProject={isAllowedToUpdateProject}
           setRefresh={setRefresh}
+          dataProject={dataProject}
+          dataStatusList={dataStatusList}
         />
       </AccessControl>
 
