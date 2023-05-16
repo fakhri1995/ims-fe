@@ -336,12 +336,17 @@ export const PROJECT_STATUS_ADD = "PROJECT_STATUS_ADD";
 export const PROJECT_STATUS_UPDATE = "PROJECT_STATUS_UPDATE";
 export const PROJECT_STATUS_DELETE = "PROJECT_STATUS_DELETE";
 
-/** Projec Task */
+/** Project Task */
 export const PROJECT_TASK_GET = "PROJECT_TASK_GET";
 export const PROJECT_TASKS_GET = "PROJECT_TASKS_GET";
 export const PROJECT_TASK_ADD = "PROJECT_TASK_ADD";
 export const PROJECT_TASK_UPDATE = "PROJECT_TASK_UPDATE";
 export const PROJECT_TASK_DELETE = "PROJECT_TASK_DELETE";
+
+/** Project Notes and Logs */
+export const PROJECT_NOTES_GET = "PROJECT_NOTES_GET";
+export const PROJECT_NOTE_ADD = "PROJECT_NOTE_ADD";
+export const PROJECT_LOGS_GET = "PROJECT_LOGS_GET";
 
 /**
  * Daftar feature untuk User Management.
