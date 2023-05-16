@@ -308,8 +308,10 @@ const ModalProjectTaskDetailUpdate = ({
               <p
                 className="px-4 py-2 rounded-md w-max"
                 style={{
-                  backgroundColor: (currentStatus?.color ?? "#E6E6E6") + "20",
-                  color: currentStatus?.color ?? "#000000",
+                  backgroundColor: currentStatus?.color
+                    ? currentStatus?.color + "20"
+                    : "#E6E6E6",
+                  color: currentStatus?.color ?? "#808080",
                 }}
               >
                 {currentStatus?.name ?? "-"}
@@ -416,7 +418,9 @@ const ModalProjectTaskDetailUpdate = ({
             <div className="flex space-x-2 items-center">
               <p
                 style={{
-                  backgroundColor: (currentStatus?.color ?? "#E6E6E6") + "20",
+                  backgroundColor: currentStatus?.color
+                    ? currentStatus?.color + "20"
+                    : "#E6E6E6",
                   color: currentStatus?.color ?? "#808080",
                 }}
                 className="rounded-md px-4 py-2"

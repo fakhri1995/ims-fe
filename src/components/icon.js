@@ -2331,7 +2331,7 @@ const FoldersIconSvg = ({ size, color }) => {
   const foldersIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-folders"
+      className="icon icon-tabler icon-tabler-folders"
       width={size ? size : 20}
       height={size ? size : 20}
       viewBox="0 0 24 24"

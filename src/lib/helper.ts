@@ -263,17 +263,28 @@ export const isValidDate = (dateValue: any) => {
  * @param dateValue Received date value from backend
  * @param emptyValue Desired value if date is empty
  * @param dateFormat Desired date format
+ * @param isRelativeTime Set to true if need to use relative time format, e.g. "5 hari yang lalu, 03:00"
  */
 export const momentFormatDate = (
   dateValue: string,
   emptyValue: string = "-",
-  dateFormat: string = "DD MMMM YYYY"
+  dateFormat: string = "DD MMMM YYYY",
+  isRelativeTime?: boolean
 ) => {
-  if (moment(dateValue).isValid()) {
-    return moment(dateValue).format(dateFormat);
-  } else {
+  let date = moment(dateValue);
+
+  if (!date.isValid()) {
     return emptyValue;
+  } else {
+    if (isRelativeTime) {
+      const daysDifference = moment().diff(dateValue, "days");
+
+      if (daysDifference <= 7) {
+        return date.fromNow() + ", " + date.format("HH:mm");
+      }
+    }
   }
+  return date.format(dateFormat);
 };
 
 /**

@@ -1895,14 +1895,14 @@ const TableCustomPayslipEmployeeList = ({
   );
 };
 
-const TableCustomGeneral = ({
+const TableCustomProjectList = ({
+  rt,
   dataSource,
   columns,
   loading,
   total,
   queryParams,
   setQueryParams,
-  onRowClick,
 }) => {
   const [rowstate, setrowstate] = useState(0);
   return (
@@ -1938,7 +1938,9 @@ const TableCustomGeneral = ({
           onMouseOver: () => {
             setrowstate(record.id);
           },
-          onClick: onRowClick,
+          onClick: () => {
+            record.id && rt.push(`/projects/${record.id}`);
+          },
         };
       }}
       rowClassName={(record, idx) => {
@@ -1971,5 +1973,5 @@ export {
   TableCustomEmployeeList,
   TableCustomPayslipList,
   TableCustomPayslipEmployeeList,
-  TableCustomGeneral,
+  TableCustomProjectList,
 };
