@@ -296,6 +296,10 @@ function LandingPage({ dataBlog }) {
       {/* <section className={'container mx-auto'}> */}
       <Head>
         <title>{t.landingpagemetatitle}</title>
+        <meta
+          name="google-site-verification"
+          content="2qK-7aoQVjWo7T2_OWW2UzFz5VvE3hwsXNB1-T6znSA"
+        />
         <meta name="description" content={t.landingpagemetadescription} />
         <meta
           name="keywords"
