@@ -61,6 +61,7 @@ const ModalProjectTaskDetailUpdate = ({
     task_staffs: [],
     description: "",
   });
+  const [dataTaskUpdate, setDataTaskUpdate] = useState({});
 
   const [loadingDataTask, setLoadingDataTask] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
@@ -70,6 +71,7 @@ const ModalProjectTaskDetailUpdate = ({
 
   // Selected data
   const [currentStatus, setCurrentStatus] = useState({});
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. Get Task Detail
@@ -80,7 +82,7 @@ const ModalProjectTaskDetailUpdate = ({
       return;
     }
 
-    if (taskId && visible && currentState === "detail") {
+    if (taskId && visible) {
       setLoadingDataTask(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTask?id=${taskId}`,
@@ -99,7 +101,8 @@ const ModalProjectTaskDetailUpdate = ({
               key: staff.id,
             }));
 
-            setDataTask({ ...res2.data, task_staffs: updatedTaskStaffs });
+            setDataTask({ ...res2.data });
+            setDataTaskUpdate({ ...res2.data, task_staffs: updatedTaskStaffs });
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -117,7 +120,7 @@ const ModalProjectTaskDetailUpdate = ({
           setLoadingDataTask(false);
         });
     }
-  }, [isAllowedToGetTask, taskId, visible, currentState]);
+  }, [isAllowedToGetTask, taskId, visible]);
 
   // 2.2. Get users or groups for task staff options
   useEffect(() => {
@@ -126,13 +129,13 @@ const ModalProjectTaskDetailUpdate = ({
     }
 
     // If task has a project, then staff options will follow project's staff
-    if (dataTask.project_id) {
+    if (dataTaskUpdate.project_id) {
       if (!isAllowedToGetProject) {
         permissionWarningNotification("Mendapatkan", "Detail Proyek");
         return;
       }
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProject?id=${dataTask.project_id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProject?id=${dataTaskUpdate.project_id}`,
         {
           method: `GET`,
           headers: {
@@ -159,7 +162,7 @@ const ModalProjectTaskDetailUpdate = ({
         permissionWarningNotification("Mendapatkan", "Daftar Group");
         return;
       }
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`, {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
@@ -202,30 +205,22 @@ const ModalProjectTaskDetailUpdate = ({
     isAllowedToGetGroups,
     isAllowedToGetUsers,
     isSwitchGroup,
-    dataTask.project_id,
+    dataTaskUpdate.project_id,
     currentState,
   ]);
 
   // 2.3. Get current status object
   useEffect(() => {
     const status = dataStatusList.find(
-      (status) => status.id === dataTask.status_id
+      (status) => status.id === dataTaskUpdate.status_id
     );
     setCurrentStatus(status);
-  }, [dataStatusList, dataTask.status_id]);
+  }, [dataStatusList, dataTaskUpdate.status_id]);
 
   // 3. HANDLER
   const clearData = () => {
-    setDataTask({
-      id: 0,
-      name: "",
-      project_id: 0,
-      start_date: "",
-      end_date: "",
-      task_staffs: [],
-      description: "",
-    });
-    form.resetFields();
+    setDataTaskUpdate(dataTask);
+    setSelectedGroups([]);
   };
 
   const handleClose = () => {
@@ -241,8 +236,10 @@ const ModalProjectTaskDetailUpdate = ({
     }
 
     const payload = {
-      ...dataTask,
-      task_staffs: dataTask.task_staffs?.map((staff) => Number(staff.key)),
+      ...dataTaskUpdate,
+      task_staffs: dataTaskUpdate.task_staffs?.map((staff) =>
+        Number(staff.key)
+      ),
     };
 
     setLoadingSave(true);
@@ -336,7 +333,7 @@ const ModalProjectTaskDetailUpdate = ({
                 {dataTask?.task_staffs?.length > 0 ? (
                   dataTask?.task_staffs?.map((staff) => (
                     <div
-                      key={staff.id}
+                      key={staff.key}
                       className="flex space-x-2 items-center p-2"
                     >
                       <img
@@ -393,14 +390,8 @@ const ModalProjectTaskDetailUpdate = ({
                 <Select
                   allowClear
                   showSearch
-                  value={dataTask.project_id}
-                  disabled={!isAllowedToGetProjects}
-                  onChange={(value) => {
-                    setDataTask((prev) => ({
-                      ...prev,
-                      project_id: value,
-                    }));
-                  }}
+                  value={dataTaskUpdate.project_id}
+                  disabled={true}
                   optionFilterProp="children"
                   filterOption={(input, option) =>
                     (option?.children ?? "")
@@ -433,11 +424,11 @@ const ModalProjectTaskDetailUpdate = ({
               </p> */}
               <Select
                 allowClear
-                value={dataTask.status_id}
+                value={dataTaskUpdate.status_id}
                 disabled={!isAllowedToGetStatuses}
                 placeholder="Ubah Status"
                 onChange={(value) => {
-                  setDataTask((prev) => ({
+                  setDataTaskUpdate((prev) => ({
                     ...prev,
                     status_id: value,
                   }));
@@ -480,14 +471,14 @@ const ModalProjectTaskDetailUpdate = ({
                     format: "HH:mm",
                   }}
                   value={
-                    moment(dataTask.start_date).isValid()
-                      ? moment(dataTask.start_date)
+                    moment(dataTaskUpdate.start_date).isValid()
+                      ? moment(dataTaskUpdate.start_date)
                       : null
                   }
                   placeholder={"Pilih Tanggal Mulai"}
                   style={{ width: `100%` }}
                   onChange={(dates, datestrings) => {
-                    setDataTask((prev) => ({
+                    setDataTaskUpdate((prev) => ({
                       ...prev,
                       start_date: datestrings,
                     }));
@@ -507,14 +498,14 @@ const ModalProjectTaskDetailUpdate = ({
                     format: "HH:mm",
                   }}
                   value={
-                    moment(dataTask.end_date).isValid()
-                      ? moment(dataTask.end_date)
+                    moment(dataTaskUpdate.end_date).isValid()
+                      ? moment(dataTaskUpdate.end_date)
                       : null
                   }
                   placeholder={"Pilih Tanggal Selesai"}
                   style={{ width: `100%` }}
                   onChange={(dates, datestrings) => {
-                    setDataTask((prev) => ({
+                    setDataTaskUpdate((prev) => ({
                       ...prev,
                       end_date: datestrings,
                     }));
@@ -533,16 +524,44 @@ const ModalProjectTaskDetailUpdate = ({
                   showSearch
                   mode="multiple"
                   className="dontShow"
-                  value={dataTask.task_staffs}
+                  value={
+                    isSwitchGroup ? selectedGroups : dataTaskUpdate.task_staffs
+                  }
                   disabled={!isAllowedToGetUsers}
                   placeholder={
                     isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                   }
                   style={{ width: `100%` }}
                   onChange={(value, option) => {
-                    setDataTask((prev) => ({
+                    const getStaffsFromGroups = () => {
+                      let staffs = dataTaskUpdate?.task_staffs || [];
+                      for (let group of option) {
+                        for (let user of group?.users) {
+                          if (
+                            !staffs
+                              ?.map((staff) => staff.name)
+                              ?.includes(user.name)
+                          ) {
+                            let userWithKey = { ...user, key: user?.id };
+                            staffs.push(userWithKey);
+                          }
+                        }
+                      }
+
+                      return staffs;
+                    };
+
+                    if (isSwitchGroup) {
+                      setSelectedGroups(option);
+                    }
+
+                    let newTaskStaffs = isSwitchGroup
+                      ? getStaffsFromGroups()
+                      : option;
+
+                    setDataTaskUpdate((prev) => ({
                       ...prev,
-                      task_staffs: option,
+                      task_staffs: newTaskStaffs,
                     }));
                   }}
                   optionFilterProp="children"
@@ -557,6 +576,7 @@ const ModalProjectTaskDetailUpdate = ({
                       key={item?.id}
                       value={item?.id}
                       position={item?.position}
+                      users={item?.users}
                       name={item?.name}
                       profile_image={item?.profile_image}
                     >
@@ -567,17 +587,13 @@ const ModalProjectTaskDetailUpdate = ({
               </div>
 
               {/* If task doesn't have a project, then show group switch */}
-              {!dataTask.project_id && (
+              {!dataTaskUpdate.project_id && (
                 <div className="flex space-x-2 items-center absolute right-6">
                   <p>Staff</p>
                   <Switch
                     checked={isSwitchGroup}
                     onChange={(checked) => {
                       setIsSwitchGroup(checked);
-                      setDataTask((prev) => ({
-                        ...prev,
-                        task_staffs: [],
-                      }));
                     }}
                   />
                   <p>Group</p>
@@ -585,46 +601,37 @@ const ModalProjectTaskDetailUpdate = ({
               )}
             </div>
 
-            {/* List of selected users or groups */}
+            {/* List of selected users */}
             <div className="flex flex-wrap mb-4">
-              {dataTask?.task_staffs?.map((staff, idx) => {
+              {dataTaskUpdate?.task_staffs?.map((staff, idx) => {
                 return (
                   <Tag
                     key={staff.key}
                     closable
                     onClose={() => {
-                      const newTags = dataTask?.task_staffs?.filter(
+                      const newTags = dataTaskUpdate?.task_staffs?.filter(
                         (tag) => tag.key !== staff.key
                       );
-                      setDataTask((prev) => ({
+                      setDataTaskUpdate((prev) => ({
                         ...prev,
-                        task_staffs: newTags.map((tag) => tag.value),
+                        task_staffs: newTags.map((tag) => tag),
                       }));
                     }}
                     className="flex items-center p-2 w-max mb-2"
                   >
-                    {isSwitchGroup ? (
-                      // Group Tag
-                      <div className="flex items-center space-x-2">
-                        <p className="truncate">
-                          <strong>{staff?.name}</strong>
-                        </p>
-                      </div>
-                    ) : (
-                      // User Tag
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src={generateStaticAssetUrl(
-                            staff?.profile_image?.link
-                          )}
-                          alt={staff?.name}
-                          className="w-6 h-6 bg-cover object-cover rounded-full"
-                        />
-                        <p className="truncate">
-                          <strong>{staff?.name}</strong> - {staff?.position}
-                        </p>
-                      </div>
-                    )}
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={generateStaticAssetUrl(
+                          staff?.profile_image?.link ??
+                            "staging/Users/default_user.png"
+                        )}
+                        alt={staff?.name}
+                        className="w-6 h-6 bg-cover object-cover rounded-full"
+                      />
+                      <p className="truncate">
+                        <strong>{staff?.name}</strong> - {staff?.position}
+                      </p>
+                    </div>
                   </Tag>
                 );
               })}
@@ -636,12 +643,12 @@ const ModalProjectTaskDetailUpdate = ({
               <>
                 <ReactQuill
                   theme="snow"
-                  value={dataTask.description}
+                  value={dataTaskUpdate.description}
                   modules={modules}
                   formats={formats}
                   className="h-44 pb-10"
                   onChange={(value) => {
-                    setDataTask((prev) => ({
+                    setDataTaskUpdate((prev) => ({
                       ...prev,
                       description: value,
                     }));
@@ -659,6 +666,7 @@ const ModalProjectTaskDetailUpdate = ({
             <button
               onClick={() => {
                 setCurrentState("detail");
+                clearData();
               }}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
@@ -677,6 +685,7 @@ const ModalProjectTaskDetailUpdate = ({
 
       break;
   }
+
   return (
     <Modal
       title={<p className="mig-heading--4">{dataTask.name}</p>}
