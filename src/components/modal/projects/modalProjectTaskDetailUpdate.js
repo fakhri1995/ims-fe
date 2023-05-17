@@ -69,7 +69,6 @@ const ModalProjectTaskDetailUpdate = ({
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
 
   // Selected data
-  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
   const [currentStatus, setCurrentStatus] = useState({});
 
   // 2. USE EFFECT
@@ -81,7 +80,7 @@ const ModalProjectTaskDetailUpdate = ({
       return;
     }
 
-    if (taskId && visible) {
+    if (taskId && visible && currentState === "detail") {
       setLoadingDataTask(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTask?id=${taskId}`,
@@ -95,7 +94,12 @@ const ModalProjectTaskDetailUpdate = ({
         .then((res) => res.json())
         .then((res2) => {
           if (res2.success) {
-            setDataTask(res2.data);
+            let updatedTaskStaffs = res2.data?.task_staffs?.map((staff) => ({
+              ...staff,
+              key: staff.id,
+            }));
+
+            setDataTask({ ...res2.data, task_staffs: updatedTaskStaffs });
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -113,7 +117,7 @@ const ModalProjectTaskDetailUpdate = ({
           setLoadingDataTask(false);
         });
     }
-  }, [isAllowedToGetTask, taskId, visible]);
+  }, [isAllowedToGetTask, taskId, visible, currentState]);
 
   // 2.2. Get users or groups for task staff options
   useEffect(() => {
@@ -222,7 +226,6 @@ const ModalProjectTaskDetailUpdate = ({
       description: "",
     });
     form.resetFields();
-    setSelectedStaffsOrGroups([]);
   };
 
   const handleClose = () => {
@@ -237,8 +240,10 @@ const ModalProjectTaskDetailUpdate = ({
       return;
     }
 
-    // const taskStaffsPayload = dataTask.task_staffs?.map((staff) => staff.id);
-    // const payload = { ...dataTask, task_staffs: taskStaffsPayload };
+    const payload = {
+      ...dataTask,
+      task_staffs: dataTask.task_staffs?.map((staff) => Number(staff.key)),
+    };
 
     setLoadingSave(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTask`, {
@@ -247,7 +252,7 @@ const ModalProjectTaskDetailUpdate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataTask),
+      body: JSON.stringify(payload),
     })
       .then((res) => res.json())
       .then((response) => {
@@ -330,7 +335,7 @@ const ModalProjectTaskDetailUpdate = ({
               <div className="flex">
                 {dataTask?.task_staffs?.length > 0 ? (
                   dataTask?.task_staffs?.map((staff) => (
-                    <li
+                    <div
                       key={staff.id}
                       className="flex space-x-2 items-center p-2"
                     >
@@ -342,7 +347,7 @@ const ModalProjectTaskDetailUpdate = ({
                       <p>
                         <strong>{staff?.name}</strong> - {staff?.position}
                       </p>
-                    </li>
+                    </div>
                   ))
                 ) : (
                   <p>-</p>
@@ -416,17 +421,16 @@ const ModalProjectTaskDetailUpdate = ({
           <div className="flex flex-col space-y-2 md:col-span-2 mb-4 md:mb-6">
             <p>Status</p>
             <div className="flex space-x-2 items-center">
-              <p
+              {/* <p
                 style={{
                   backgroundColor: currentStatus?.color
                     ? currentStatus?.color + "20"
                     : "#E6E6E6",
                   color: currentStatus?.color ?? "#808080",
                 }}
-                className="rounded-md px-4 py-2"
-              >
+                className="rounded-md px-4 py-2">
                 {currentStatus?.name ?? "-"}
-              </p>
+              </p> */}
               <Select
                 allowClear
                 value={dataTask.status_id}
@@ -440,9 +444,14 @@ const ModalProjectTaskDetailUpdate = ({
                 }}
                 optionFilterProp="children"
                 bordered={false}
-                size="small"
-                className="mig-caption--bold text-secondary100 bg-transparent 
-                hover:opacity-75 dontShow"
+                className="mig-caption--bold bg-transparent hover:opacity-75 
+                rounded-md px-2 py-1 "
+                style={{
+                  backgroundColor: currentStatus?.color
+                    ? currentStatus?.color + "20"
+                    : "#E6E6E6",
+                  color: currentStatus?.color ?? "#808080",
+                }}
               >
                 {dataStatusList.map((item) => (
                   <Select.Option
@@ -531,10 +540,9 @@ const ModalProjectTaskDetailUpdate = ({
                   }
                   style={{ width: `100%` }}
                   onChange={(value, option) => {
-                    setSelectedStaffsOrGroups(option);
                     setDataTask((prev) => ({
                       ...prev,
-                      task_staffs: value,
+                      task_staffs: option,
                     }));
                   }}
                   optionFilterProp="children"
@@ -549,13 +557,15 @@ const ModalProjectTaskDetailUpdate = ({
                       key={item?.id}
                       value={item?.id}
                       position={item?.position}
-                      image={generateStaticAssetUrl(item.profile_image?.link)}
+                      name={item?.name}
+                      profile_image={item?.profile_image}
                     >
                       {item?.name}
                     </Select.Option>
                   ))}
                 </Select>
               </div>
+
               {/* If task doesn't have a project, then show group switch */}
               {!dataTask.project_id && (
                 <div className="flex space-x-2 items-center absolute right-6">
@@ -564,7 +574,6 @@ const ModalProjectTaskDetailUpdate = ({
                     checked={isSwitchGroup}
                     onChange={(checked) => {
                       setIsSwitchGroup(checked);
-                      setSelectedStaffsOrGroups([]);
                       setDataTask((prev) => ({
                         ...prev,
                         task_staffs: [],
@@ -578,16 +587,15 @@ const ModalProjectTaskDetailUpdate = ({
 
             {/* List of selected users or groups */}
             <div className="flex flex-wrap mb-4">
-              {selectedStaffsOrGroups.map((staff, idx) => {
+              {dataTask?.task_staffs?.map((staff, idx) => {
                 return (
                   <Tag
                     key={staff.key}
                     closable
                     onClose={() => {
-                      const newTags = selectedStaffsOrGroups.filter(
+                      const newTags = dataTask?.task_staffs?.filter(
                         (tag) => tag.key !== staff.key
                       );
-                      setSelectedStaffsOrGroups(newTags);
                       setDataTask((prev) => ({
                         ...prev,
                         task_staffs: newTags.map((tag) => tag.value),
@@ -599,19 +607,21 @@ const ModalProjectTaskDetailUpdate = ({
                       // Group Tag
                       <div className="flex items-center space-x-2">
                         <p className="truncate">
-                          <strong>{staff?.children}</strong>
+                          <strong>{staff?.name}</strong>
                         </p>
                       </div>
                     ) : (
                       // User Tag
                       <div className="flex items-center space-x-2">
                         <img
-                          src={generateStaticAssetUrl(staff?.image)}
-                          alt={staff?.children}
+                          src={generateStaticAssetUrl(
+                            staff?.profile_image?.link
+                          )}
+                          alt={staff?.name}
                           className="w-6 h-6 bg-cover object-cover rounded-full"
                         />
                         <p className="truncate">
-                          <strong>{staff?.children}</strong> - {staff?.position}
+                          <strong>{staff?.name}</strong> - {staff?.position}
                         </p>
                       </div>
                     )}
@@ -647,7 +657,9 @@ const ModalProjectTaskDetailUpdate = ({
         <Spin spinning={loadingSave}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={() => setCurrentState("detail")}
+              onClick={() => {
+                setCurrentState("detail");
+              }}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal

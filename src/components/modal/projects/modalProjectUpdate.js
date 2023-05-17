@@ -65,8 +65,6 @@ const ModalProjectUpdate = ({
 
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
-  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
-  const [selectedProposedBys, setSelectedProposedBys] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. Get project detail from parent
@@ -86,8 +84,6 @@ const ModalProjectUpdate = ({
         proposed_bys: updatedProposedBys,
         project_staffs: updatedProjectStaffs,
       });
-      // setSelectedProposedBys(updatedProposedBys);
-      // setSelectedStaffsOrGroups(updatedProjectStaffs);
     }
   }, [dataProject, visible]);
 
@@ -152,7 +148,7 @@ const ModalProjectUpdate = ({
       return;
     }
 
-    // map proposed_bys and project_staffs to ids
+    // map proposed_bys and project_staffs into ids
     const proposedBysId = dataUpdateProject?.proposed_bys?.map((staff) =>
       Number(staff.key)
     );
@@ -345,7 +341,6 @@ const ModalProjectUpdate = ({
                 ...prev,
                 proposed_bys: option,
               }));
-              // setSelectedProposedBys(option);
             }}
             optionFilterProp="children"
             // bordered={false}
@@ -370,7 +365,7 @@ const ModalProjectUpdate = ({
         <div>
           <p className="mb-2">Status</p>
           <div className="flex space-x-2 items-center">
-            <p
+            {/* <p
               style={{
                 backgroundColor: dataUpdateProject?.status?.color
                   ? dataUpdateProject?.status?.color + "20"
@@ -380,7 +375,7 @@ const ModalProjectUpdate = ({
               className="rounded-md px-4 py-2"
             >
               {dataUpdateProject?.status?.name ?? "-"}
-            </p>
+            </p> */}
             <Select
               allowClear
               value={dataUpdateProject.status_id}
@@ -394,9 +389,14 @@ const ModalProjectUpdate = ({
               }}
               optionFilterProp="children"
               bordered={false}
-              size="small"
-              className="mig-caption--bold text-secondary100 bg-transparent 
-                hover:opacity-75 dontShow"
+              className="mig-caption--bold bg-transparent hover:opacity-75 
+              rounded-md px-2 py-1 "
+              style={{
+                backgroundColor: dataUpdateProject?.status?.color
+                  ? dataUpdateProject?.status?.color + "20"
+                  : "#E6E6E6",
+                color: dataUpdateProject?.status?.color ?? "#808080",
+              }}
             >
               {dataStatusList?.map((item) => (
                 <Select.Option
@@ -483,7 +483,6 @@ const ModalProjectUpdate = ({
               }
               style={{ width: `100%` }}
               onChange={(value, option) => {
-                // setSelectedStaffsOrGroups(option);
                 setDataUpdateProject((prev) => ({
                   ...prev,
                   project_staffs: option,
@@ -517,7 +516,6 @@ const ModalProjectUpdate = ({
               checked={isSwitchGroup}
               onChange={(checked) => {
                 setIsSwitchGroup(checked);
-                // setSelectedStaffsOrGroups([]);
                 setDataUpdateProject((prev) => ({
                   ...prev,
                   project_staffs: [],
@@ -529,7 +527,7 @@ const ModalProjectUpdate = ({
         </div>
 
         {/* List of selected users or groups */}
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap md:col-span-2">
           {dataUpdateProject?.project_staffs?.map((staff, idx) => {
             return (
               <Tag
@@ -539,13 +537,12 @@ const ModalProjectUpdate = ({
                   const newTags = dataUpdateProject?.project_staffs?.filter(
                     (tag) => tag.key !== staff.key
                   );
-                  // setSelectedStaffsOrGroups(newTags);
                   setDataUpdateProject((prev) => ({
                     ...prev,
                     project_staffs: newTags.map((tag) => tag.value),
                   }));
                 }}
-                className="flex items-center p-2 w-max mb-2"
+                className="flex items-center p-2 mb-2"
               >
                 {isSwitchGroup ? (
                   // Group Tag

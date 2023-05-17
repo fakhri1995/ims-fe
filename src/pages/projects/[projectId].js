@@ -904,24 +904,22 @@ const ProjectDetailIndex = ({
               >
                 <div className="grid gap-2 lg:gap-6">
                   {/* Search by keyword (kata kunci) */}
-                  <div className="">
-                    <Input
-                      defaultValue={queryParams.keyword}
-                      style={{ width: `100%` }}
-                      placeholder="Kata Kunci.."
-                      allowClear
-                      onChange={(e) => {
-                        if (!e.target.value) {
-                          setQueryParams({
-                            keyword: undefined,
-                          });
-                        }
-                        setSearchingFilterLogs(e.target.value);
-                      }}
-                      onKeyPress={onKeyPressHandler}
-                      disabled={!isAllowedToGetLogs}
-                    />
-                  </div>
+                  <Input
+                    defaultValue={queryParams.keyword}
+                    style={{ width: `100%` }}
+                    placeholder="Kata Kunci.."
+                    allowClear
+                    onChange={(e) => {
+                      if (!e.target.value) {
+                        setQueryParams({
+                          keyword: undefined,
+                        });
+                      }
+                      setSearchingFilterLogs(e.target.value);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetLogs}
+                  />
 
                   <Table
                     rowKey={(record) => record.id}
