@@ -65,8 +65,7 @@ const ModalProjectUpdate = ({
 
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
-  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
-  const [selectedProposedBys, setSelectedProposedBys] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   // 2. USE EFFECT
   // 2.1. Get project detail from parent
@@ -86,12 +85,10 @@ const ModalProjectUpdate = ({
         proposed_bys: updatedProposedBys,
         project_staffs: updatedProjectStaffs,
       });
-      // setSelectedProposedBys(updatedProposedBys);
-      // setSelectedStaffsOrGroups(updatedProjectStaffs);
     }
   }, [dataProject, visible]);
 
-  // 2.2. Get users or groups for task staff options
+  // 2.2. Get users or groups for project staff options
   useEffect(() => {
     if (!visible) {
       return;
@@ -146,13 +143,19 @@ const ModalProjectUpdate = ({
   }, [isAllowedToGetGroups, isAllowedToGetUsers, isSwitchGroup, visible]);
 
   // 3. HANDLER
+  const clearData = () => {
+    setDataUpdateProject(dataProject);
+    setSelectedGroups([]);
+    setIsEditTitle(false);
+  };
+
   const handleUpdateProject = () => {
     if (!isAllowedToUpdateProject) {
       permissionWarningNotification("Mengubah", "Proyek");
       return;
     }
 
-    // map proposed_bys and project_staffs to ids
+    // map proposed_bys and project_staffs into ids
     const proposedBysId = dataUpdateProject?.proposed_bys?.map((staff) =>
       Number(staff.key)
     );
@@ -225,6 +228,7 @@ const ModalProjectUpdate = ({
           <div className="flex items-center space-x-2 w-2/3">
             <Input
               value={dataUpdateProject.name}
+              placeholder="Masukkan nama proyek..."
               onChange={(e) =>
                 setDataUpdateProject((prev) => ({
                   ...prev,
@@ -236,6 +240,7 @@ const ModalProjectUpdate = ({
               onClick={() => {
                 setIsEditTitle(false);
               }}
+              disabled={!dataUpdateProject?.name}
               className="bg-transparent"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
@@ -255,13 +260,17 @@ const ModalProjectUpdate = ({
       visible={visible}
       onCancel={() => {
         onvisible(false);
+        clearData();
       }}
       maskClosable={false}
       footer={
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={() => onvisible(false)}
+              onClick={() => {
+                onvisible(false);
+                clearData();
+              }}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
@@ -271,8 +280,8 @@ const ModalProjectUpdate = ({
               onClick={handleUpdateProject}
               disabled={
                 !isAllowedToUpdateProject ||
-                !dataProject.name ||
-                !dataProject.proposed_bys?.length
+                !dataUpdateProject.name ||
+                !dataUpdateProject.proposed_bys?.length
               }
             >
               <p>Simpan</p>
@@ -299,7 +308,11 @@ const ModalProjectUpdate = ({
                   }}
                 >
                   {dataUpdateProject?.proposed_bys?.map((staff) => (
-                    <Tooltip key={staff.id} title={staff?.name} placement="top">
+                    <Tooltip
+                      key={staff?.key}
+                      title={staff?.name}
+                      placement="top"
+                    >
                       <Avatar
                         src={generateStaticAssetUrl(
                           staff?.profile_image?.link ??
@@ -345,7 +358,6 @@ const ModalProjectUpdate = ({
                 ...prev,
                 proposed_bys: option,
               }));
-              // setSelectedProposedBys(option);
             }}
             optionFilterProp="children"
             // bordered={false}
@@ -370,7 +382,7 @@ const ModalProjectUpdate = ({
         <div>
           <p className="mb-2">Status</p>
           <div className="flex space-x-2 items-center">
-            <p
+            {/* <p
               style={{
                 backgroundColor: dataUpdateProject?.status?.color
                   ? dataUpdateProject?.status?.color + "20"
@@ -380,7 +392,7 @@ const ModalProjectUpdate = ({
               className="rounded-md px-4 py-2"
             >
               {dataUpdateProject?.status?.name ?? "-"}
-            </p>
+            </p> */}
             <Select
               allowClear
               value={dataUpdateProject.status_id}
@@ -394,9 +406,14 @@ const ModalProjectUpdate = ({
               }}
               optionFilterProp="children"
               bordered={false}
-              size="small"
-              className="mig-caption--bold text-secondary100 bg-transparent 
-                hover:opacity-75 dontShow"
+              className="mig-caption--bold bg-transparent hover:opacity-75 
+              rounded-md px-2 py-1 "
+              style={{
+                backgroundColor: dataUpdateProject?.status?.color
+                  ? dataUpdateProject?.status?.color + "20"
+                  : "#E6E6E6",
+                color: dataUpdateProject?.status?.color ?? "#808080",
+              }}
             >
               {dataStatusList?.map((item) => (
                 <Select.Option
@@ -476,17 +493,44 @@ const ModalProjectUpdate = ({
               showSearch
               mode="multiple"
               className="dontShow"
-              value={dataUpdateProject.project_staffs}
+              value={
+                isSwitchGroup
+                  ? selectedGroups
+                  : dataUpdateProject.project_staffs
+              }
               disabled={!isAllowedToGetUsers}
               placeholder={
                 isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
               }
               style={{ width: `100%` }}
               onChange={(value, option) => {
-                // setSelectedStaffsOrGroups(option);
+                const getStaffsFromGroups = () => {
+                  let staffs = dataUpdateProject?.project_staffs || [];
+                  for (let group of option) {
+                    for (let user of group?.users) {
+                      if (
+                        !staffs?.map((staff) => staff.name)?.includes(user.name)
+                      ) {
+                        let userWithKey = { ...user, key: user?.id };
+                        staffs.push(userWithKey);
+                      }
+                    }
+                  }
+
+                  return staffs;
+                };
+
+                if (isSwitchGroup) {
+                  setSelectedGroups(option);
+                }
+
+                let newProjectStaffs = isSwitchGroup
+                  ? getStaffsFromGroups()
+                  : option;
+
                 setDataUpdateProject((prev) => ({
                   ...prev,
-                  project_staffs: option,
+                  project_staffs: newProjectStaffs,
                 }));
               }}
               optionFilterProp="children"
@@ -502,6 +546,7 @@ const ModalProjectUpdate = ({
                     key={item?.id}
                     value={item.id}
                     position={item?.position}
+                    users={item?.users}
                     name={item?.name}
                     profile_image={item?.profile_image}
                   >
@@ -517,11 +562,6 @@ const ModalProjectUpdate = ({
               checked={isSwitchGroup}
               onChange={(checked) => {
                 setIsSwitchGroup(checked);
-                // setSelectedStaffsOrGroups([]);
-                setDataUpdateProject((prev) => ({
-                  ...prev,
-                  project_staffs: [],
-                }));
               }}
             />
             <p>Group</p>
@@ -529,7 +569,7 @@ const ModalProjectUpdate = ({
         </div>
 
         {/* List of selected users or groups */}
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap md:col-span-2">
           {dataUpdateProject?.project_staffs?.map((staff, idx) => {
             return (
               <Tag
@@ -539,34 +579,26 @@ const ModalProjectUpdate = ({
                   const newTags = dataUpdateProject?.project_staffs?.filter(
                     (tag) => tag.key !== staff.key
                   );
-                  // setSelectedStaffsOrGroups(newTags);
                   setDataUpdateProject((prev) => ({
                     ...prev,
-                    project_staffs: newTags.map((tag) => tag.value),
+                    project_staffs: newTags.map((tag) => tag),
                   }));
                 }}
-                className="flex items-center p-2 w-max mb-2"
+                className="flex items-center p-2 mb-2"
               >
-                {isSwitchGroup ? (
-                  // Group Tag
-                  <div className="flex items-center space-x-2">
-                    <p className="truncate">
-                      <strong>{staff?.name}</strong>
-                    </p>
-                  </div>
-                ) : (
-                  // User Tag
-                  <div className="flex items-center space-x-2">
-                    <img
-                      src={generateStaticAssetUrl(staff?.profile_image?.link)}
-                      alt={staff?.name}
-                      className="w-6 h-6 bg-cover object-cover rounded-full"
-                    />
-                    <p className="truncate">
-                      <strong>{staff?.name}</strong> - {staff?.position}
-                    </p>
-                  </div>
-                )}
+                <div className="flex items-center space-x-2">
+                  <img
+                    src={generateStaticAssetUrl(
+                      staff?.profile_image?.link ??
+                        "staging/Users/default_user.png"
+                    )}
+                    alt={staff?.name}
+                    className="w-6 h-6 bg-cover object-cover rounded-full"
+                  />
+                  <p className="truncate">
+                    <strong>{staff?.name}</strong> - {staff?.position}
+                  </p>
+                </div>
               </Tag>
             );
           })}
