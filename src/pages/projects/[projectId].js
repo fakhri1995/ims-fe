@@ -397,12 +397,15 @@ const ProjectDetailIndex = ({
     });
 
     setLoadingProjectLog(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -447,12 +450,15 @@ const ProjectDetailIndex = ({
     });
 
     setLoadingProjectNotes(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -498,9 +504,17 @@ const ProjectDetailIndex = ({
 
   // String of project staffs
   const lastIndexStaff = dataProject?.project_staffs?.length - 1;
-  let staffsString = dataProject?.project_staffs
-    ?.map((staff, index) => (index !== lastIndexStaff ? staff.name : null))
-    ?.join(", ");
+  let staffsString =
+    dataProject?.project_staffs?.length > 3
+      ? dataProject?.project_staffs
+          ?.slice(0, 3)
+          ?.map((staff) => staff.name)
+          ?.join(", ")
+      : dataProject?.project_staffs
+          ?.map((staff, index) =>
+            index !== lastIndexStaff ? staff.name : null
+          )
+          ?.join(", ");
 
   const pageBreadcrumbValue = useMemo(
     () => [
@@ -697,10 +711,10 @@ const ProjectDetailIndex = ({
                     <p className="text-mono30 font-bold mb-2">Staff Proyek:</p>
                     <div className="flex items-center space-x-2">
                       {dataProject?.project_staffs?.length > 1 ? (
-                        <div className="">
+                        <div>
                           <Avatar.Group
                             size={30}
-                            maxCount={5}
+                            maxCount={3}
                             className="cursor-help"
                             maxStyle={{
                               color: "#f56a00",
@@ -723,16 +737,28 @@ const ProjectDetailIndex = ({
                               </Tooltip>
                             ))}
                           </Avatar.Group>
-                          <p className="text-notice">
-                            <strong>{staffsString}</strong> dan{" "}
-                            <strong>
-                              {
-                                dataProject?.project_staffs?.[lastIndexStaff]
-                                  ?.name
-                              }
-                            </strong>{" "}
-                            merupakan staff proyek ini.
-                          </p>
+                          {dataProject?.project_staffs?.length > 3 ? (
+                            <p className="text-secondary100">
+                              <strong>{staffsString}, </strong>
+                              dan{" "}
+                              <strong>
+                                {dataProject?.project_staffs?.length - 3}{" "}
+                                lainnya{" "}
+                              </strong>
+                              merupakan staff proyek ini.
+                            </p>
+                          ) : (
+                            <p className="text-secondary100">
+                              <strong>{staffsString}</strong> dan{" "}
+                              <strong>
+                                {
+                                  dataProject?.project_staffs?.[lastIndexStaff]
+                                    ?.name
+                                }
+                              </strong>{" "}
+                              merupakan staff proyek ini.
+                            </p>
+                          )}
                         </div>
                       ) : dataProject?.project_staffs?.length > 0 ? (
                         <div className="flex space-x-2 items-center">
@@ -822,57 +848,47 @@ const ProjectDetailIndex = ({
                   <Table
                     rowKey={(record) => record.id}
                     showHeader={false}
-                    dataSource={dataTasks}
-                    loading={loadingTasks}
+                    dataSource={dataProjectLogs}
+                    loading={loadingProjectLog}
                     pagination={{
                       current: queryParams.page,
                       pageSize: queryParams.rows,
-                      // total: total,
+                      total: dataRawProjectLogs.total,
                       showSizeChanger: true,
                     }}
                     columns={[
                       {
-                        title: "Task",
-                        dataIndex: "name",
-                        key: "name",
-                        render: (_, task) => {
-                          const currentStatus = dataStatusList.find(
-                            (status) => status.id === task.status_id
-                          );
-
-                          const currentProject = dataProjectList.find(
-                            (project) => project.id === task.project_id
-                          );
+                        title: "Logs",
+                        dataIndex: "id",
+                        key: "id",
+                        render: (_, log) => {
                           return (
-                            <div key={task.id} className="">
+                            <div key={log?.id} className="">
                               <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center space-x-2">
                                   <img
                                     src={generateStaticAssetUrl(
-                                      task?.task_staffs?.[0]?.profile_image
-                                        ?.link ??
+                                      log?.causer?.profile_image?.link ??
                                         "staging/Users/default_user.png"
                                     )}
                                     alt={"profile image"}
                                     className="w-8 h-8 bg-cover object-cover rounded-full"
                                   />
                                   <p className="truncate">
-                                    <strong>
-                                      {task?.task_staffs?.[0]?.name}
-                                    </strong>{" "}
-                                    - {task?.task_staffs?.[0]?.position}
+                                    <strong>{log?.causer?.name}</strong> -{" "}
+                                    {log?.causer?.roles?.[0]?.name}
                                   </p>
                                 </div>
                                 <p className="text-right">
                                   {momentFormatDate(
-                                    task?.start_date,
+                                    log?.created_at,
                                     "-",
                                     "D MMM YYYY, HH:mm",
                                     true
                                   )}
                                 </p>
                               </div>
-                              <p>{dataProjectLogs?.description ?? "-"}</p>
+                              <p>{log?.description ?? "-"}</p>
                             </div>
                           );
                         },
@@ -904,79 +920,67 @@ const ProjectDetailIndex = ({
               >
                 <div className="grid gap-2 lg:gap-6">
                   {/* Search by keyword (kata kunci) */}
-                  <div className="">
-                    <Input
-                      defaultValue={queryParams.keyword}
-                      style={{ width: `100%` }}
-                      placeholder="Kata Kunci.."
-                      allowClear
-                      onChange={(e) => {
-                        if (!e.target.value) {
-                          setQueryParams({
-                            keyword: undefined,
-                          });
-                        }
-                        setSearchingFilterLogs(e.target.value);
-                      }}
-                      onKeyPress={onKeyPressHandler}
-                      disabled={!isAllowedToGetLogs}
-                    />
-                  </div>
+                  <Input
+                    defaultValue={queryParams.keyword}
+                    style={{ width: `100%` }}
+                    placeholder="Kata Kunci.."
+                    allowClear
+                    onChange={(e) => {
+                      if (!e.target.value) {
+                        setQueryParams({
+                          keyword: undefined,
+                        });
+                      }
+                      setSearchingFilterLogs(e.target.value);
+                    }}
+                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToGetLogs}
+                  />
 
                   <Table
                     rowKey={(record) => record.id}
                     showHeader={false}
-                    dataSource={dataTasks}
-                    loading={loadingTasks}
+                    dataSource={dataProjectNotes}
+                    loading={loadingProjectNotes}
                     pagination={{
                       current: queryParams.page,
                       pageSize: queryParams.rows,
-                      // total: total,
+                      total: dataRawProjectNotes.total,
                       showSizeChanger: true,
                     }}
                     columns={[
                       {
-                        title: "Task",
-                        dataIndex: "name",
-                        key: "name",
-                        render: (_, task) => {
-                          const currentStatus = dataStatusList.find(
-                            (status) => status.id === task.status_id
-                          );
-
-                          const currentProject = dataProjectList.find(
-                            (project) => project.id === task.project_id
-                          );
+                        title: "Notes",
+                        dataIndex: "id",
+                        key: "id",
+                        render: (_, note) => {
                           return (
-                            <div key={task.id} className="">
+                            <div key={note?.id} className="">
                               <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center space-x-2">
                                   <img
                                     src={generateStaticAssetUrl(
-                                      task?.task_staffs?.[0]?.profile_image
-                                        ?.link ??
+                                      note?.causer?.profile_image?.link ??
                                         "staging/Users/default_user.png"
                                     )}
                                     alt={"profile image"}
                                     className="w-8 h-8 bg-cover object-cover rounded-full"
                                   />
                                   <p className="truncate">
-                                    <strong>
-                                      {task?.task_staffs?.[0]?.name}
-                                    </strong>{" "}
-                                    - {task?.task_staffs?.[0]?.position}
+                                    <strong>{note?.causer?.name}</strong> -{" "}
+                                    {note?.causer?.roles?.[0]?.name}
                                   </p>
                                 </div>
                                 <p className="text-right">
                                   {momentFormatDate(
-                                    task?.start_date,
+                                    note?.created_at,
                                     "-",
                                     "D MMM YYYY, HH:mm",
                                     true
                                   )}
                                 </p>
                               </div>
-                              <p>{dataProjectLogs?.description ?? "-"}</p>
+                              <p>{note?.description ?? "-"}</p>
                             </div>
                           );
                         },

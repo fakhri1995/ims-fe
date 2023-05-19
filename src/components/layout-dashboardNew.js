@@ -175,7 +175,7 @@ function LayoutDashboard({
                   className={st.breadcrumbClients}
                 >
                   {isUseNewBreadcrumbStrategy &&
-                    fixedBreadcrumbValues.map((breadcrumbItem) => {
+                    fixedBreadcrumbValues.map((breadcrumbItem, idx) => {
                       const isEmptyHrefValue =
                         breadcrumbItem.hrefValue === undefined ||
                         breadcrumbItem.hrefValue === "";
@@ -213,7 +213,7 @@ function LayoutDashboard({
                       }
 
                       return (
-                        <Breadcrumb.Item key={breadcrumbItem.name}>
+                        <Breadcrumb.Item key={idx}>
                           {breadcrumbContent}
                         </Breadcrumb.Item>
                       );

@@ -52,7 +52,7 @@ const ModalProjectCreate = ({
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
 
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-  const [selectedStaffsOrGroups, setSelectedStaffsOrGroups] = useState([]);
+  const [selectedGroups, setSelectedGroups] = useState([]);
 
   // 2 USE EFFECT
   // 2.1. Get users or groups for task staff options
@@ -60,12 +60,13 @@ const ModalProjectCreate = ({
     if (!visible) {
       return;
     }
+
     if (isSwitchGroup) {
       if (!isAllowedToGetGroups) {
         permissionWarningNotification("Mendapatkan", "Daftar Group");
         return;
       }
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroups`, {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`, {
         method: `GET`,
         headers: {
           Authorization: JSON.parse(initProps),
@@ -104,7 +105,7 @@ const ModalProjectCreate = ({
           })
         );
     }
-  }, [isAllowedToGetGroups, isAllowedToGetUsers, isSwitchGroup]);
+  }, [isAllowedToGetGroups, isAllowedToGetUsers, isSwitchGroup, visible]);
 
   // 3. HANDLER
   const clearData = () => {
@@ -115,7 +116,13 @@ const ModalProjectCreate = ({
       project_staffs: [],
       description: "",
     });
+    setSelectedGroups([]);
     form.resetFields();
+  };
+
+  const handleClose = () => {
+    onvisible(false);
+    clearData();
   };
 
   const handleAddProject = () => {
@@ -124,6 +131,13 @@ const ModalProjectCreate = ({
       return;
     }
 
+    const payload = {
+      ...dataProject,
+      project_staffs: dataProject?.project_staffs?.map((staff) =>
+        Number(staff.key)
+      ),
+    };
+
     setLoading(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
       method: `POST`,
@@ -131,20 +145,17 @@ const ModalProjectCreate = ({
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(dataProject),
+      body: JSON.stringify(payload),
     })
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          onvisible(false);
+          handleClose();
           notification.success({
             message: response.message,
             duration: 3,
           });
           setRefresh((prev) => prev + 1);
-          setTimeout(() => {
-            clearData();
-          }, 500);
         } else {
           notification.error({
             message: response.message,
@@ -198,7 +209,7 @@ const ModalProjectCreate = ({
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={() => onvisible(false)}
+              onClick={handleClose}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
@@ -301,17 +312,43 @@ const ModalProjectCreate = ({
                   showSearch
                   mode="multiple"
                   className="dontShow"
-                  value={dataProject.project_staffs}
+                  value={
+                    isSwitchGroup ? selectedGroups : dataProject?.project_staffs
+                  }
                   disabled={!isAllowedToGetUsers}
                   placeholder={
                     isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                   }
                   style={{ width: `100%` }}
                   onChange={(value, option) => {
-                    setSelectedStaffsOrGroups(option);
+                    const getStaffsFromGroups = () => {
+                      let staffs = dataProject?.project_staffs || [];
+                      for (let group of option) {
+                        for (let user of group?.users) {
+                          if (
+                            !staffs
+                              ?.map((staff) => staff.name)
+                              ?.includes(user.name)
+                          ) {
+                            let userWithKey = { ...user, key: user?.id };
+                            staffs.push(userWithKey);
+                          }
+                        }
+                      }
+                      return staffs;
+                    };
+
+                    if (isSwitchGroup) {
+                      setSelectedGroups(option);
+                    }
+
+                    let newProjectStaffs = isSwitchGroup
+                      ? getStaffsFromGroups()
+                      : option;
+
                     setDataProject((prev) => ({
                       ...prev,
-                      project_staffs: value,
+                      project_staffs: newProjectStaffs,
                     }));
                   }}
                   optionFilterProp="children"
@@ -327,7 +364,9 @@ const ModalProjectCreate = ({
                         key={item?.id}
                         value={item.id}
                         position={item?.position}
-                        image={generateStaticAssetUrl(item.profile_image?.link)}
+                        users={item?.users}
+                        name={item?.name}
+                        profile_image={item?.profile_image}
                       >
                         {item?.name}
                       </Select.Option>
@@ -341,55 +380,43 @@ const ModalProjectCreate = ({
                   checked={isSwitchGroup}
                   onChange={(checked) => {
                     setIsSwitchGroup(checked);
-                    setSelectedStaffsOrGroups([]);
-                    setDataProject((prev) => ({
-                      ...prev,
-                      project_staffs: [],
-                    }));
                   }}
                 />
                 <p>Group</p>
               </div>
             </div>
+
             {/* List of selected users or groups */}
             <div className="flex flex-wrap mb-4">
-              {selectedStaffsOrGroups.map((staff, idx) => {
+              {dataProject?.project_staffs?.map((staff, idx) => {
                 return (
                   <Tag
                     key={staff.key}
                     closable
                     onClose={() => {
-                      const newTags = selectedStaffsOrGroups.filter(
+                      const newTags = dataProject?.project_staffs?.filter(
                         (tag) => tag.key !== staff.key
                       );
-                      setSelectedStaffsOrGroups(newTags);
                       setDataProject((prev) => ({
                         ...prev,
-                        project_staffs: newTags.map((tag) => tag.value),
+                        project_staffs: newTags.map((tag) => tag),
                       }));
                     }}
                     className="flex items-center p-2 w-max mb-2"
                   >
-                    {isSwitchGroup ? (
-                      // Group Tag
-                      <div className="flex items-center space-x-2">
-                        <p className="truncate">
-                          <strong>{staff?.children}</strong>
-                        </p>
-                      </div>
-                    ) : (
-                      // User Tag
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src={generateStaticAssetUrl(staff?.image)}
-                          alt={staff?.children}
-                          className="w-6 h-6 bg-cover object-cover rounded-full"
-                        />
-                        <p className="truncate">
-                          <strong>{staff?.children}</strong> - {staff?.position}
-                        </p>
-                      </div>
-                    )}
+                    <div className="flex items-center space-x-2">
+                      <img
+                        src={generateStaticAssetUrl(
+                          staff?.profile_image?.link ??
+                            "staging/Users/default_user.png"
+                        )}
+                        alt={staff?.name}
+                        className="w-6 h-6 bg-cover object-cover rounded-full"
+                      />
+                      <p className="truncate">
+                        <strong>{staff?.name}</strong> - {staff?.position}
+                      </p>
+                    </div>
                   </Tag>
                 );
               })}

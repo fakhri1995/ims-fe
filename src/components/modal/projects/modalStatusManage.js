@@ -1,4 +1,8 @@
-import { DeleteOutlined, HolderOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  HolderOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import { DndContext } from "@dnd-kit/core";
 import {
   restrictToParentElement,
@@ -161,18 +165,13 @@ const ModalStatusManage = ({
       .finally(() => setLoadingSave(false));
   };
 
-  const handleUpdateStatus = () => {
+  const handleUpdateStatus = (statusData) => {
     if (!isAllowedToEditStatus) {
       permissionWarningNotification("Mengubah", "Status");
       return;
     }
 
-    const payload = {
-      ...dataStatus,
-      after_id: dataStatusList[dataStatusList.length - 1].id,
-    };
-
-    if (dataStatus?.id) {
+    if (statusData?.id) {
       setLoadingSave(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
         method: `PUT`,
@@ -180,7 +179,7 @@ const ModalStatusManage = ({
           Authorization: JSON.parse(initProps),
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(statusData),
       })
         .then((res) => res.json())
         .then((response) => {
@@ -272,8 +271,61 @@ const ModalStatusManage = ({
         color: currentStatus?.color,
         after_id: prevId,
       });
-      handleUpdateStatus();
+      handleUpdateStatus({
+        id: active.id,
+        name: currentStatus?.name,
+        color: currentStatus?.color,
+        after_id: prevId,
+      });
     }
+  };
+
+  // Sortable component
+  const SortableItem = ({ id, idx, statusColor, statusName, onClickEdit }) => {
+    const { attributes, listeners, setNodeRef, transform, transition } =
+      useSortable({ id });
+
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
+
+    return (
+      <li ref={setNodeRef} style={style}>
+        <div className="flex justify-between items-center border border-mono90 py-3 px-4 rounded-md">
+          <div className="flex items-center space-x-3">
+            <div
+              className={`h-6 w-6 rounded-full`}
+              style={{ backgroundColor: `${statusColor}` }}
+            ></div>
+            <p className="text-sm font-bold text-mono30">{statusName}</p>
+            {idx === 0 ? (
+              <p className="mig-caption text-mono80">(Prioritas Tinggi)</p>
+            ) : idx === dataStatusList.length - 1 ? (
+              <p className="mig-caption text-mono80">(Prioritas Rendah)</p>
+            ) : (
+              <></>
+            )}
+            <p></p>
+          </div>
+          <div className="flex space-x-2 items-center">
+            <button
+              onClick={onClickEdit}
+              className="border-none shadow-none hover:opacity-70 bg-transparent"
+            >
+              <EditSquareIconSvg size={24} color={"#CCCCCC"} />
+            </button>
+            <button
+              {...listeners}
+              {...attributes}
+              className="bg-transparent -mt-1"
+            >
+              <HolderOutlined className="text-lg text-mono50 cursor-move" />
+            </button>
+          </div>
+        </div>
+      </li>
+    );
   };
 
   // Switch modal header, body, and footer according to current state
@@ -282,7 +334,18 @@ const ModalStatusManage = ({
   let footer = null;
   switch (currentState) {
     case "manage":
-      header = <p>Kelola Status</p>;
+      header = (
+        <div>
+          <h4 className="mb-2 mig-heading--4">Kelola Status</h4>{" "}
+          <div className="flex items-center space-x-2 text-secondary100">
+            <InfoCircleOutlined color="#00589F" size={16} />
+            <p className="mig-caption">
+              Urutkan prioritas status dengan cara melakukan "drag and drop"
+              pada card status
+            </p>
+          </div>
+        </div>
+      );
       body = (
         <div className="flex flex-col space-y-6">
           <DndContext
@@ -290,10 +353,11 @@ const ModalStatusManage = ({
             modifiers={[restrictToVerticalAxis, restrictToParentElement]}
           >
             <SortableContext items={dataStatusList.map((i) => i.id)}>
-              {dataStatusList.map((status) => (
+              {dataStatusList.map((status, idx) => (
                 <SortableItem
                   key={status?.id}
                   id={status.id}
+                  idx={idx}
                   statusColor={status?.color}
                   statusName={status?.name}
                   onClickEdit={(e) => {
@@ -502,7 +566,10 @@ const ModalStatusManage = ({
             <ButtonSys
               type={"primary"}
               onClick={() => {
-                handleUpdateStatus();
+                handleUpdateStatus({
+                  ...dataStatus,
+                  after_id: dataStatusList[dataStatus?.display_order - 2]?.id,
+                });
                 setCurrentState("manage");
                 form.resetFields();
               }}
@@ -550,44 +617,5 @@ const ModalStatusManage = ({
     </Modal>
   );
 };
-
-function SortableItem({ id, statusColor, statusName, onClickEdit }) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return (
-    <li ref={setNodeRef} style={style}>
-      <div className="flex justify-between items-center border border-mono90 py-3 px-4 rounded-md">
-        <div className="flex items-center space-x-3">
-          <div
-            className={`h-6 w-6 rounded-full`}
-            style={{ backgroundColor: `${statusColor}` }}
-          ></div>
-          <p className="text-sm font-bold text-mono30">{statusName}</p>
-        </div>
-        <div className="flex space-x-2 items-center">
-          <button
-            onClick={onClickEdit}
-            className="border-none shadow-none hover:opacity-70 bg-transparent"
-          >
-            <EditSquareIconSvg size={24} color={"#CCCCCC"} />
-          </button>
-          <button
-            {...listeners}
-            {...attributes}
-            className="bg-transparent -mt-1"
-          >
-            <HolderOutlined className="text-lg text-mono50 cursor-move" />
-          </button>
-        </div>
-      </div>
-    </li>
-  );
-}
 
 export default ModalStatusManage;

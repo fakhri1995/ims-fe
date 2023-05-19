@@ -322,12 +322,15 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
 
     setLoadingMyTaskList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?rows=4`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?rows=4&user_id=${dataProfile?.data?.id}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
