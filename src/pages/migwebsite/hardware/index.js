@@ -2108,7 +2108,7 @@ function Hardware({}) {
                 {dataHardwareSummary.length > 0 && (
                   <div
                     className={
-                      "w-[400px] py-4 pl-4 pr-[17px] ml-5 fixed flex flex-col"
+                      "w-[400px] py-4 pl-4 pr-[17px] ml-5 sticky top-20 flex flex-col"
                     }
                     // style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                   >

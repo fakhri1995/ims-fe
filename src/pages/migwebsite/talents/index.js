@@ -1979,7 +1979,7 @@ function Talents({}) {
                 {dataTalents.length > 0 && (
                   <div
                     className={
-                      "w-[400px] fixed py-4 pl-4 pr-[17px] ml-5 flex flex-col"
+                      "w-[400px] sticky top-20 py-4 pl-4 pr-[17px] ml-5 flex flex-col"
                     }
                     // style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                   >
