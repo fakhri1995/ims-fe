@@ -1,4 +1,5 @@
 import {
+  Avatar,
   DatePicker,
   Form,
   Modal,
@@ -6,6 +7,7 @@ import {
   Spin,
   Switch,
   Tag,
+  Tooltip,
   notification,
 } from "antd";
 import parse from "html-react-parser";
@@ -294,6 +296,20 @@ const ModalProjectTaskDetailUpdate = ({
     "link",
   ];
 
+  // String of task staffs
+  const lastIndexStaff = dataTask?.task_staffs?.length - 1;
+  let staffsString =
+    dataTask?.task_staffs?.length > 3
+      ? dataTask?.task_staffs
+          ?.slice(0, 3)
+          ?.map((staff) => staff.name)
+          ?.join(", ")
+      : dataTask?.task_staffs
+          ?.map((staff, index) =>
+            index !== lastIndexStaff ? staff.name : null
+          )
+          ?.join(", ");
+
   // Switch modal body and footer according to current state
   let body, footer;
   switch (currentState) {
@@ -329,25 +345,70 @@ const ModalProjectTaskDetailUpdate = ({
             </div>
             <div className="flex flex-col space-y-2 md:col-span-2">
               <p className="mig-caption--bold">Staff Task:</p>
-              <div className="flex">
-                {dataTask?.task_staffs?.length > 0 ? (
-                  dataTask?.task_staffs?.map((staff) => (
-                    <div
-                      key={staff.key}
-                      className="flex space-x-2 items-center p-2"
+              <div className="flex items-center space-x-2">
+                {dataTask?.task_staffs?.length > 1 ? (
+                  <div className="">
+                    <Avatar.Group
+                      size={30}
+                      maxCount={3}
+                      className="cursor-help"
+                      maxStyle={{
+                        color: "#f56a00",
+                        backgroundColor: "#fde3cf",
+                      }}
                     >
-                      <img
-                        src={generateStaticAssetUrl(staff?.profile_image?.link)}
-                        alt={staff?.profile_image?.description}
-                        className="w-8 h-8 bg-cover object-cover rounded-md"
-                      />
-                      <p>
-                        <strong>{staff?.name}</strong> - {staff?.position}
+                      {dataTask?.task_staffs?.map((staff) => (
+                        <Tooltip
+                          key={staff.id}
+                          title={staff?.name}
+                          placement="top"
+                        >
+                          <Avatar
+                            src={generateStaticAssetUrl(
+                              staff?.profile_image?.link ??
+                                "staging/Users/default_user.png"
+                            )}
+                            size={30}
+                          />
+                        </Tooltip>
+                      ))}
+                    </Avatar.Group>
+                    {dataTask?.task_staffs?.length > 3 ? (
+                      <p className="text-secondary100">
+                        <strong>{staffsString}, </strong>
+                        dan{" "}
+                        <strong>
+                          {dataTask?.task_staffs?.length - 3} lainnya{" "}
+                        </strong>
+                        merupakan staff task ini.
                       </p>
-                    </div>
-                  ))
+                    ) : (
+                      <p className="text-secondary100">
+                        <strong>{staffsString}</strong> dan{" "}
+                        <strong>
+                          {dataTask?.task_staffs?.[lastIndexStaff]?.name}
+                        </strong>{" "}
+                        merupakan staff task ini.
+                      </p>
+                    )}
+                  </div>
+                ) : dataTask?.task_staffs?.length > 0 ? (
+                  <div className="flex space-x-2 items-center">
+                    <img
+                      src={generateStaticAssetUrl(
+                        dataTask?.task_staffs?.[0]?.profile_image?.link ??
+                          "staging/Users/default_user.png"
+                      )}
+                      alt={"Profile image"}
+                      className="w-8 h-8 bg-cover object-cover rounded-full"
+                    />
+
+                    <p className={`mig-caption--medium text-mono50`}>
+                      {dataTask?.task_staffs?.[0]?.name}
+                    </p>
+                  </div>
                 ) : (
-                  <p>-</p>
+                  <div>-</div>
                 )}
               </div>
             </div>
