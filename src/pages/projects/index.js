@@ -80,6 +80,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
   const isAllowedToUpdateTask = hasPermission(PROJECT_TASK_UPDATE);
   const isAllowedToGetTasks = hasPermission(PROJECT_TASKS_GET);
+  const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
   const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
@@ -754,6 +755,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalDetailTask}
           isAllowedToGetTask={isAllowedToGetTask}
           isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
