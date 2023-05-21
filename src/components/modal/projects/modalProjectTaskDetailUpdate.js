@@ -26,6 +26,7 @@ import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { EditIconSvg, EditSquareIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
+import ModalStaffList from "./modalStaffList";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -72,6 +73,7 @@ const ModalProjectTaskDetailUpdate = ({
   const [loadingSave, setLoadingSave] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+  const [modalStaffs, setModalStaffs] = useState(false);
 
   // Option data
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
@@ -395,7 +397,7 @@ const ModalProjectTaskDetailUpdate = ({
               <p className="mig-caption--bold">Staff Task:</p>
               <div className="flex items-center space-x-2">
                 {dataTask?.task_staffs?.length > 1 ? (
-                  <div className="">
+                  <div onClick={() => setModalStaffs(true)}>
                     <Avatar.Group
                       size={30}
                       maxCount={3}
@@ -843,6 +845,13 @@ const ModalProjectTaskDetailUpdate = ({
       loadingSave={loadingSave}
     >
       {body}
+
+      <ModalStaffList
+        visible={modalStaffs}
+        onvisible={setModalStaffs}
+        dataStaffs={dataTask?.task_staffs}
+        taskName={dataTask?.name}
+      />
     </Modal>
   );
 };
