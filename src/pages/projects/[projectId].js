@@ -1,4 +1,4 @@
-import { UpOutlined } from "@ant-design/icons";
+import { PlusOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Collapse,
@@ -9,6 +9,7 @@ import {
   Tooltip,
   notification,
 } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import parse from "html-react-parser";
 import moment from "moment";
 import {
@@ -66,6 +67,7 @@ import ModalProjectCreate from "../../components/modal/projects/modalProjectCrea
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalProjectUpdate from "../../components/modal/projects/modalProjectUpdate";
+import ModalStaffList from "../../components/modal/projects/modalStaffList";
 import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
 import { TableCustomProjectList } from "../../components/table/tableCustom";
 import {
@@ -215,12 +217,14 @@ const ProjectDetailIndex = ({
   const [dataProjectNotes, setDataProjectNotes] = useState([]);
   const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
   const [searchingFilterNotes, setSearchingFilterNotes] = useState(undefined);
+  const [isNoteInput, setIsNoteInput] = useState(false);
+  const [dataInputNote, setDataInputNote] = useState("");
 
   // 2.6. Modal
   const [modalUpdateProject, setModalUpdateProject] = useState(false);
+  const [modalStaffs, setModalStaffs] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
-  const [modalAddNote, setModalAddNote] = useState(false);
 
   const [dataProjectList, setDataProjectList] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(0);
@@ -503,6 +507,48 @@ const ProjectDetailIndex = ({
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterTasks, "Enter");
 
+  const handleAddNote = (notes) => {
+    if (!isAllowedToAddNote) {
+      permissionWarningNotification("Menambah", "Catatan");
+      return;
+    }
+
+    setLoadingProjectNotes(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${projectId}&notes=${notes}`,
+      {
+        method: `POST`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setDataInputNote("");
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambah catatan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingProjectNotes(false));
+  };
+
   // String of project staffs
   const lastIndexStaff = dataProject?.project_staffs?.length - 1;
   let staffsString =
@@ -712,7 +758,7 @@ const ProjectDetailIndex = ({
                     <p className="text-mono30 font-bold mb-2">Staff Proyek:</p>
                     <div className="flex items-center space-x-2">
                       {dataProject?.project_staffs?.length > 1 ? (
-                        <div>
+                        <div onClick={() => setModalStaffs(true)}>
                           <Avatar.Group
                             size={30}
                             maxCount={3}
@@ -981,13 +1027,53 @@ const ProjectDetailIndex = ({
                                   )}
                                 </p>
                               </div>
-                              <p>{note?.description ?? "-"}</p>
+                              <p>{note?.notes ?? "-"}</p>
                             </div>
                           );
                         },
                       },
                     ]}
                   />
+
+                  {isNoteInput ? (
+                    <div className="space-y-2">
+                      <TextArea
+                        size="large"
+                        value={dataInputNote}
+                        onChange={(e) => setDataInputNote(e.target.value)}
+                      ></TextArea>
+                      <div className="text-right">
+                        <button
+                          onClick={() => {
+                            setIsNoteInput(false);
+                            setDataInputNote("");
+                          }}
+                          className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
+                        >
+                          Batal
+                        </button>
+                        <ButtonSys
+                          type={"primary"}
+                          onClick={() => handleAddNote(dataInputNote)}
+                          disabled={!isAllowedToAddNote}
+                        >
+                          Simpan
+                        </ButtonSys>
+                      </div>
+                    </div>
+                  ) : (
+                    <ButtonSys
+                      type={"default"}
+                      size={"large"}
+                      fullWidth={true}
+                      onClick={() => setIsNoteInput(true)}
+                    >
+                      <div className="flex space-x-2 items-center ">
+                        <PlusOutlined />
+                        <p className="mig-caption--bold ">Tambah Catatan</p>
+                      </div>
+                    </ButtonSys>
+                  )}
                 </div>
               </Collapse.Panel>
             </Collapse>
@@ -1165,6 +1251,15 @@ const ProjectDetailIndex = ({
           setRefresh={setRefresh}
           dataProject={dataProject}
           dataStatusList={dataStatusList}
+        />
+      </AccessControl>
+
+      <AccessControl hasPermission={PROJECT_GET}>
+        <ModalStaffList
+          visible={modalStaffs}
+          onvisible={setModalStaffs}
+          dataStaffs={dataProject?.project_staffs}
+          taskName={dataProject?.name}
         />
       </AccessControl>
 
