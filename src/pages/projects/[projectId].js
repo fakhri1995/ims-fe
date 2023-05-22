@@ -2,7 +2,6 @@ import { PlusOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Collapse,
-  DatePicker,
   Input,
   Select,
   Table,
@@ -11,7 +10,6 @@ import {
 } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import parse from "html-react-parser";
-import moment from "moment";
 import {
   ArrayParam,
   NumberParam,
@@ -31,7 +29,6 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   PROJECTS_GET,
-  PROJECT_ADD,
   PROJECT_DELETE,
   PROJECT_GET,
   PROJECT_LOGS_GET,
@@ -55,23 +52,18 @@ import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
 import { ChartDoughnut } from "../../components/chart/chartCustom";
 import {
-  AdjusmentsHorizontalIconSvg,
   ClipboardListIconSvg,
   EditSquareIconSvg,
-  OneUserIconSvg,
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
 import st from "../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../components/layout-dashboardNew";
-import ModalProjectCreate from "../../components/modal/projects/modalProjectCreate";
 import ModalProjectNote from "../../components/modal/projects/modalProjectNote";
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalProjectUpdate from "../../components/modal/projects/modalProjectUpdate";
 import ModalStaffList from "../../components/modal/projects/modalStaffList";
-import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
-import { TableCustomProjectList } from "../../components/table/tableCustom";
 import {
   createKeyPressHandler,
   generateStaticAssetUrl,
@@ -116,11 +108,9 @@ const ProjectDetailIndex = ({
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    rows: withDefault(NumberParam, 6),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "end_date"),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    from: withDefault(StringParam, undefined),
-    to: withDefault(StringParam, undefined),
     status_ids: withDefault(ArrayParam, undefined),
     keyword: withDefault(StringParam, undefined),
   });
@@ -174,9 +164,8 @@ const ProjectDetailIndex = ({
 
   // filter search & selected options
   const [searchingFilterTasks, setSearchingFilterTasks] = useState(undefined);
-  const [selectedFromDate, setSelectedFromDate] = useState("");
-  const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [selectedSortType, setSelectedSortType] = useState(undefined);
 
   // table data
   const [loadingTasks, setLoadingTasks] = useState(true);
@@ -207,13 +196,17 @@ const ProjectDetailIndex = ({
   const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
   const [dataProjectLogs, setDataProjectLogs] = useState([]);
   const [loadingProjectLog, setLoadingProjectLog] = useState(false);
-  const [searchingFilterLogs, setSearchingFilterLogs] = useState(undefined);
+  const [searchingFilterLogs, setSearchingFilterLogs] = useState("");
+  const [pageProjectLogs, setPageProjectLogs] = useState(1);
 
   // 2.5. Project Notes
   const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
   const [dataProjectNotes, setDataProjectNotes] = useState([]);
   const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
-  const [searchingFilterNotes, setSearchingFilterNotes] = useState(undefined);
+
+  const [searchingFilterNotes, setSearchingFilterNotes] = useState("");
+  const [pageProjectNotes, setPageProjectNotes] = useState(1);
+
   const [isNoteInput, setIsNoteInput] = useState(false);
   const [dataInputNote, setDataInputNote] = useState("");
   const [dataCurrentNote, setDataCurrentNote] = useState("");
@@ -348,12 +341,15 @@ const ProjectDetailIndex = ({
     });
 
     setLoadingTasks(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -378,14 +374,13 @@ const ProjectDetailIndex = ({
   }, [
     isAllowedToGetTasks,
     refresh,
+    projectId,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
     queryParams.keyword,
     queryParams.status_ids,
-    queryParams.from,
-    queryParams.to,
   ]);
 
   // 3.5. Get Project Logs
@@ -396,50 +391,44 @@ const ProjectDetailIndex = ({
       return;
     }
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
     setLoadingProjectLog(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawProjectLogs(res2.data);
-          setDataProjectLogs(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}&keyword=${searchingFilterLogs}&page=${pageProjectLogs}&rows=5`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawProjectLogs(res2.data);
+            setDataProjectLogs(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingProjectLog(false);
         });
-      })
-      .finally(() => {
-        setLoadingProjectLog(false);
-      });
-  }, [
-    isAllowedToGetLogs,
-    refresh,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.keyword,
-  ]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 1000);
+
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetLogs, refresh, searchingFilterLogs, pageProjectLogs]);
 
   // 3.6. Get Project Notes
   useEffect(() => {
@@ -449,57 +438,51 @@ const ProjectDetailIndex = ({
       return;
     }
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
     setLoadingProjectNotes(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawProjectNotes(res2.data);
-          setDataProjectNotes(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}&keyword=${searchingFilterNotes}&page=${pageProjectNotes}&rows=5`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawProjectNotes(res2.data);
+            setDataProjectNotes(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingProjectNotes(false);
         });
-      })
-      .finally(() => {
-        setLoadingProjectNotes(false);
-      });
-  }, [
-    isAllowedToGetNotes,
-    refresh,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.keyword,
-  ]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 1000);
+
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetNotes, refresh, searchingFilterNotes, pageProjectNotes]);
 
   // 4. Event
   const onFilterTasks = () => {
     setQueryParams({
       keyword: searchingFilterTasks,
-      from: selectedFromDate,
-      to: selectedToDate,
+      sort_by: "end_date",
+      sort_type: selectedSortType,
       status_ids: selectedStatus,
     });
   };
@@ -652,7 +635,7 @@ const ProjectDetailIndex = ({
 
         <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-6">
           {/* Detail, Log, Catatan Proyek */}
-          <div className="lg:w-2/6 flex flex-col gap-4 lg:gap-6">
+          <div className="lg:w-5/12 xl:w-2/6 flex flex-col gap-4 lg:gap-6">
             {/* Detail */}
             <Collapse
               className="shadow-md rounded-md bg-white"
@@ -876,19 +859,16 @@ const ProjectDetailIndex = ({
                   {/* Search by keyword (kata kunci) */}
                   <div className="">
                     <Input
-                      defaultValue={queryParams.keyword}
+                      defaultValue={searchingFilterLogs}
                       style={{ width: `100%` }}
                       placeholder="Kata Kunci.."
                       allowClear
                       onChange={(e) => {
                         if (!e.target.value) {
-                          setQueryParams({
-                            keyword: undefined,
-                          });
+                          setSearchingFilterLogs("");
                         }
                         setSearchingFilterLogs(e.target.value);
                       }}
-                      onKeyPress={onKeyPressHandler}
                       disabled={!isAllowedToGetLogs}
                     />
                   </div>
@@ -899,10 +879,12 @@ const ProjectDetailIndex = ({
                     dataSource={dataProjectLogs}
                     loading={loadingProjectLog}
                     pagination={{
-                      current: queryParams.page,
-                      pageSize: queryParams.rows,
-                      total: dataRawProjectLogs.total,
-                      showSizeChanger: true,
+                      current: pageProjectLogs,
+                      pageSize: 5,
+                      total: dataRawProjectLogs?.total,
+                    }}
+                    onChange={(pagination) => {
+                      setPageProjectLogs(pagination.current);
                     }}
                     columns={[
                       {
@@ -969,20 +951,17 @@ const ProjectDetailIndex = ({
                 <div className="grid gap-2 lg:gap-6">
                   {/* Search by keyword (kata kunci) */}
                   <Input
-                    defaultValue={queryParams.keyword}
+                    defaultValue={searchingFilterNotes}
                     style={{ width: `100%` }}
                     placeholder="Kata Kunci.."
                     allowClear
                     onChange={(e) => {
                       if (!e.target.value) {
-                        setQueryParams({
-                          keyword: undefined,
-                        });
+                        setSearchingFilterNotes("");
                       }
-                      setSearchingFilterLogs(e.target.value);
+                      setSearchingFilterNotes(e.target.value);
                     }}
-                    onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetLogs}
+                    disabled={!isAllowedToGetNotes}
                   />
 
                   <Table
@@ -991,10 +970,12 @@ const ProjectDetailIndex = ({
                     dataSource={dataProjectNotes}
                     loading={loadingProjectNotes}
                     pagination={{
-                      current: queryParams.page,
-                      pageSize: queryParams.rows,
-                      total: dataRawProjectNotes.total,
-                      showSizeChanger: true,
+                      current: pageProjectNotes,
+                      pageSize: 5,
+                      total: dataRawProjectNotes?.total,
+                    }}
+                    onChange={(pagination) => {
+                      setPageProjectNotes(pagination.current);
                     }}
                     columns={[
                       {
@@ -1029,7 +1010,11 @@ const ProjectDetailIndex = ({
                                   )}
                                 </p>
                               </div>
-                              <p>{note?.notes ?? "-"}</p>
+                              <p className="">
+                                {note?.notes?.length > 80
+                                  ? note?.notes.slice(0, 80) + "..."
+                                  : note?.notes ?? "-"}
+                              </p>
                             </div>
                           );
                         },
@@ -1090,7 +1075,7 @@ const ProjectDetailIndex = ({
           </div>
 
           {/* Task Proyek */}
-          <div className="lg:w-4/6">
+          <div className="lg:w-7/12 xl:w-4/6">
             <div className=" shadow-md rounded-md bg-white">
               <div
                 className="flex flex-row justify-between items-center 
@@ -1125,38 +1110,34 @@ const ProjectDetailIndex = ({
                           keyword: undefined,
                         });
                       }
-                      setSearchingFilterProjects(e.target.value);
+                      setSearchingFilterTasks(e.target.value);
                     }}
                     onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetProjects}
+                    disabled={!isAllowedToGetTasks}
                   />
                 </div>
 
-                {/* Filter by date */}
+                {/* Sort by date */}
                 <div className="md:w-5/12">
-                  <DatePicker.RangePicker
+                  <Select
                     allowClear
-                    allowEmpty
-                    showTime={{
-                      format: "HH:mm",
-                    }}
-                    value={
-                      selectedFromDate === ""
-                        ? [null, null]
-                        : [moment(queryParams.from), moment(queryParams.to)]
-                    }
-                    placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
-                    disabled={!isAllowedToGetProjects}
+                    defaultValue={queryParams.sort_type}
+                    disabled={!isAllowedToGetTasks}
+                    placeholder="Urutkan Deadline"
                     style={{ width: `100%` }}
-                    onChange={(dates, datestrings) => {
-                      setQueryParams({
-                        from: datestrings[0],
-                        to: datestrings[1],
-                      });
-                      setSelectedFromDate(datestrings[0]);
-                      setSelectedToDate(datestrings[1]);
+                    onChange={(value) => {
+                      setQueryParams({ sort_type: value });
+                      setSelectedSortType(value);
                     }}
-                  />
+                    optionFilterProp="children"
+                  >
+                    <Select.Option key={0} value={"asc"}>
+                      Terdekat
+                    </Select.Option>
+                    <Select.Option key={1} value={"desc"}>
+                      Terjauh
+                    </Select.Option>
+                  </Select>
                 </div>
 
                 {/* Filter by statuses (dropdown) */}
@@ -1166,7 +1147,7 @@ const ProjectDetailIndex = ({
                     showSearch
                     mode="multiple"
                     defaultValue={queryParams.status_ids}
-                    disabled={!isAllowedToGetProjects}
+                    disabled={!isAllowedToGetTasks}
                     placeholder="Semua Status"
                     style={{ width: `100%` }}
                     onChange={(value) => {
@@ -1210,8 +1191,24 @@ const ProjectDetailIndex = ({
                 pagination={{
                   current: queryParams.page,
                   pageSize: queryParams.rows,
-                  // total: total,
+                  total: dataRawTasks?.total,
                   showSizeChanger: true,
+                }}
+                onChange={(pagination, filters, sorter, extra) => {
+                  const sortTypePayload =
+                    sorter.order === "ascend"
+                      ? "asc"
+                      : sorter.order === "descend"
+                      ? "desc"
+                      : undefined;
+
+                  setQueryParams({
+                    sort_type: sortTypePayload,
+                    sort_by:
+                      sortTypePayload === undefined ? undefined : sorter.field,
+                    page: pagination.current,
+                    rows: pagination.pageSize,
+                  });
                 }}
                 columns={[
                   {
@@ -1284,6 +1281,7 @@ const ProjectDetailIndex = ({
           isAllowedToGetProject={isAllowedToGetProject}
           setRefresh={setRefresh}
           dataProjectList={dataProjectList}
+          defaultProject={dataProject}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>
