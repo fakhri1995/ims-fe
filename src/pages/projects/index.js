@@ -80,6 +80,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
   const isAllowedToUpdateTask = hasPermission(PROJECT_TASK_UPDATE);
   const isAllowedToGetTasks = hasPermission(PROJECT_TASKS_GET);
+  const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
   const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
@@ -178,9 +179,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. My Task List
+  const [dataRawMyTaskList, setDataRawMyTaskList] = useState({});
   const [dataMyTaskList, setDataMyTaskList] = useState([]);
   const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
   const [dataProjectList, setDataProjectList] = useState([]);
+  const [pageMyTaskList, setPageMyTaskList] = useState(1);
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
@@ -199,12 +202,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    const payload = QueryString.stringify(queryParams, {
+    const params = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
     });
 
     setLoadingProjects(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${payload}`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}`, {
       method: `GET`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -323,7 +326,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingMyTaskList(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?rows=4&user_id=${dataProfile?.data?.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=4&page=${pageMyTaskList}`,
       {
         method: `GET`,
         headers: {
@@ -334,6 +337,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
+          setDataRawMyTaskList(res2.data);
           setDataMyTaskList(res2.data.data);
         } else {
           notification.error({
@@ -351,7 +355,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingMyTaskList(false);
       });
-  }, [isAllowedToGetTasks, refresh]);
+  }, [isAllowedToGetTasks, refresh, pageMyTaskList]);
 
   // 4. Event
   const onFilterProjects = () => {
@@ -679,8 +683,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               showHeader={false}
               dataSource={dataMyTaskList}
               loading={loadingMyTaskList}
-              rowClassName={() => {
-                return "back";
+              pagination={{
+                current: pageMyTaskList,
+                pageSize: 4,
+                total: dataRawMyTaskList?.total,
+              }}
+              onChange={(pagination) => {
+                setPageMyTaskList(pagination.current);
               }}
               columns={[
                 {
@@ -754,6 +763,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           onvisible={setModalDetailTask}
           isAllowedToGetTask={isAllowedToGetTask}
           isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}

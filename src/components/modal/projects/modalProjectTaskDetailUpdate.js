@@ -1,3 +1,4 @@
+import { DeleteOutlined } from "@ant-design/icons";
 import {
   Avatar,
   DatePicker,
@@ -24,6 +25,8 @@ import { permissionWarningNotification } from "lib/helper";
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { EditIconSvg, EditSquareIconSvg } from "../../icon";
+import { ModalHapus2 } from "../modalCustom";
+import ModalStaffList from "./modalStaffList";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -34,6 +37,7 @@ const ModalProjectTaskDetailUpdate = ({
   onvisible,
   isAllowedToGetTask,
   isAllowedToUpdateTask,
+  isAllowedToDeleteTask,
   isAllowedToGetProjects,
   isAllowedToGetProject,
   isAllowedToGetStatuses,
@@ -67,6 +71,9 @@ const ModalProjectTaskDetailUpdate = ({
 
   const [loadingDataTask, setLoadingDataTask] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+  const [modalStaffs, setModalStaffs] = useState(false);
 
   // Option data
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
@@ -227,6 +234,7 @@ const ModalProjectTaskDetailUpdate = ({
 
   const handleClose = () => {
     onvisible(false);
+    setModalDelete(false);
     setCurrentState("detail");
     clearData();
   };
@@ -276,6 +284,48 @@ const ModalProjectTaskDetailUpdate = ({
         });
       })
       .finally(() => setLoadingSave(false));
+  };
+
+  const handleDeleteTask = () => {
+    if (!isAllowedToDeleteTask) {
+      permissionWarningNotification("Menghapus", "Task");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProjectTask?id=${taskId}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          handleClose();
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus task. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
   };
 
   // Text Editor Config
@@ -347,7 +397,7 @@ const ModalProjectTaskDetailUpdate = ({
               <p className="mig-caption--bold">Staff Task:</p>
               <div className="flex items-center space-x-2">
                 {dataTask?.task_staffs?.length > 1 ? (
-                  <div className="">
+                  <div onClick={() => setModalStaffs(true)}>
                     <Avatar.Group
                       size={30}
                       maxCount={3}
@@ -747,9 +797,47 @@ const ModalProjectTaskDetailUpdate = ({
       break;
   }
 
-  return (
+  return modalDelete ? (
+    <ModalHapus2
+      title={`Perhatian`}
+      visible={modalDelete}
+      onvisible={setModalDelete}
+      onOk={handleDeleteTask}
+      onCancel={() => {
+        setModalDelete(false);
+      }}
+      itemName={"task"}
+      loading={loadingDelete}
+    >
+      <p className="mb-4">
+        Apakah Anda yakin ingin menghapus task <strong>{dataTask?.name}</strong>
+        ?
+      </p>
+    </ModalHapus2>
+  ) : (
     <Modal
-      title={<p className="mig-heading--4">{dataTask.name}</p>}
+      title={
+        currentState === "detail" ? (
+          <div className="flex items-center justify-between mr-5">
+            <p className="mig-heading--4">{dataTask.name}</p>
+            <ButtonSys
+              type={"default"}
+              color={"danger"}
+              onClick={() => {
+                setModalDelete(true);
+              }}
+              disabled={!isAllowedToDeleteTask}
+            >
+              <div className="flex space-x-2 items-center">
+                <DeleteOutlined />
+                <p>Hapus Task</p>
+              </div>
+            </ButtonSys>
+          </div>
+        ) : (
+          <p className="mig-heading--4">{dataTask.name}</p>
+        )
+      }
       visible={visible}
       onCancel={handleClose}
       maskClosable={false}
@@ -757,6 +845,13 @@ const ModalProjectTaskDetailUpdate = ({
       loadingSave={loadingSave}
     >
       {body}
+
+      <ModalStaffList
+        visible={modalStaffs}
+        onvisible={setModalStaffs}
+        dataStaffs={dataTask?.task_staffs}
+        taskName={dataTask?.name}
+      />
     </Modal>
   );
 };
