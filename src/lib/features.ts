@@ -346,6 +346,7 @@ export const PROJECT_TASK_DELETE = "PROJECT_TASK_DELETE";
 /** Project Notes and Logs */
 export const PROJECT_NOTES_GET = "PROJECT_NOTES_GET";
 export const PROJECT_NOTE_ADD = "PROJECT_NOTE_ADD";
+export const PROJECT_NOTE_DELETE = "PROJECT_NOTE_DELETE";
 export const PROJECT_LOGS_GET = "PROJECT_LOGS_GET";
 
 /**

@@ -5,10 +5,6 @@ import "react-quill/dist/quill.snow.css";
 import { generateStaticAssetUrl } from "../../../lib/helper";
 
 const ModalStaffList = ({ visible, onvisible, dataStaffs, taskName }) => {
-  // 1. USE STATE
-
-  // 3. HANDLER
-
   return (
     <Modal
       title={

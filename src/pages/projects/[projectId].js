@@ -37,6 +37,7 @@ import {
   PROJECT_LOGS_GET,
   PROJECT_NOTES_GET,
   PROJECT_NOTE_ADD,
+  PROJECT_NOTE_DELETE,
   PROJECT_STATUSES_GET,
   PROJECT_STATUS_ADD,
   PROJECT_STATUS_DELETE,
@@ -64,6 +65,7 @@ import {
 import st from "../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../components/layout-dashboardNew";
 import ModalProjectCreate from "../../components/modal/projects/modalProjectCreate";
+import ModalProjectNote from "../../components/modal/projects/modalProjectNote";
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalProjectUpdate from "../../components/modal/projects/modalProjectUpdate";
@@ -96,7 +98,6 @@ const ProjectDetailIndex = ({
 
   const isAllowedToGetProjects = hasPermission(PROJECTS_GET);
   const isAllowedToGetProject = hasPermission(PROJECT_GET);
-  const isAllowedToAddProject = hasPermission(PROJECT_ADD);
   const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
   const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
 
@@ -107,13 +108,9 @@ const ProjectDetailIndex = ({
   const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
-  const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
-  const isAllowedToAddStatus = hasPermission(PROJECT_STATUS_ADD);
-  const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
-  const isAllowedToDeleteStatus = hasPermission(PROJECT_STATUS_DELETE);
-
   const isAllowedToGetNotes = hasPermission(PROJECT_NOTES_GET);
   const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
+  const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
 
   const isAllowedToGetLogs = hasPermission(PROJECT_LOGS_GET);
 
@@ -219,12 +216,14 @@ const ProjectDetailIndex = ({
   const [searchingFilterNotes, setSearchingFilterNotes] = useState(undefined);
   const [isNoteInput, setIsNoteInput] = useState(false);
   const [dataInputNote, setDataInputNote] = useState("");
+  const [dataCurrentNote, setDataCurrentNote] = useState("");
 
   // 2.6. Modal
   const [modalUpdateProject, setModalUpdateProject] = useState(false);
   const [modalStaffs, setModalStaffs] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
+  const [modalDetailNote, setModalDetailNote] = useState(false);
 
   const [dataProjectList, setDataProjectList] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(0);
@@ -513,15 +512,17 @@ const ProjectDetailIndex = ({
       return;
     }
 
+    const payload = { notes: notes };
     setLoadingProjectNotes(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${projectId}&notes=${notes}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${projectId}`,
       {
         method: `POST`,
         headers: {
           Authorization: JSON.parse(initProps),
           "Content-Type": "application/json",
         },
+        body: JSON.stringify(payload),
       }
     )
       .then((res) => res.json())
@@ -1000,9 +1001,10 @@ const ProjectDetailIndex = ({
                         title: "Notes",
                         dataIndex: "id",
                         key: "id",
+
                         render: (_, note) => {
                           return (
-                            <div key={note?.id} className="">
+                            <div key={note?.id} className="cursor-pointer">
                               <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center space-x-2">
                                   <img
@@ -1033,6 +1035,14 @@ const ProjectDetailIndex = ({
                         },
                       },
                     ]}
+                    onRow={(record, rowIndex) => {
+                      return {
+                        onClick: () => {
+                          setDataCurrentNote(record);
+                          setModalDetailNote(true);
+                        },
+                      };
+                    }}
                   />
 
                   {isNoteInput ? (
@@ -1295,6 +1305,16 @@ const ProjectDetailIndex = ({
       </AccessControl>
 
       {/* Modal Notes */}
+      <AccessControl hasPermission={PROJECT_NOTES_GET}>
+        <ModalProjectNote
+          initProps={initProps}
+          visible={modalDetailNote}
+          onvisible={setModalDetailNote}
+          dataNote={dataCurrentNote}
+          isAllowedToDeleteNote={isAllowedToDeleteNote}
+          setRefresh={setRefresh}
+        />
+      </AccessControl>
     </LayoutDashboard>
   );
 };
