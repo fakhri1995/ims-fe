@@ -240,6 +240,7 @@ const ProjectDetailIndex = ({
   // 2.3. Project Detail
   const [dataProject, setDataProject] = useState({});
   const [loadingProject, setLoadingProject] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState({});
 
   // 2.4. Project Logs
   const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
@@ -271,7 +272,15 @@ const ProjectDetailIndex = ({
   const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
-  // 3.1. Get Project
+  // 3.1. Get current status object
+  useEffect(() => {
+    const status = dataStatusList.find(
+      (status) => status.id === dataProject.status_id
+    );
+    setCurrentStatus(status);
+  }, [dataStatusList, dataProject.status_id]);
+
+  // 3.2. Get Project
   useEffect(() => {
     if (!isAllowedToGetProject) {
       permissionWarningNotification("Mendapatkan", "Data Proyek");
@@ -308,7 +317,7 @@ const ProjectDetailIndex = ({
       });
   }, [isAllowedToGetProject, refresh]);
 
-  // 3.2. Get project list
+  // 3.3. Get project list
   useEffect(() => {
     if (!isAllowedToGetProjects) {
       permissionWarningNotification("Mendapatkan", "Daftar Proyek");
@@ -340,7 +349,7 @@ const ProjectDetailIndex = ({
       });
   }, [isAllowedToGetProjects, refresh]);
 
-  // 3.3. Get Project Status List
+  // 3.4. Get Project Status List
   useEffect(() => {
     if (!isAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
@@ -377,7 +386,7 @@ const ProjectDetailIndex = ({
       });
   }, [isAllowedToGetStatuses, refresh]);
 
-  // 3.4. Get Task List
+  // 3.5. Get Task List
   useEffect(() => {
     if (!isAllowedToGetTasks) {
       permissionWarningNotification("Mendapatkan", "Daftar Task Proyek");
@@ -432,7 +441,7 @@ const ProjectDetailIndex = ({
     queryParams.status_ids,
   ]);
 
-  // 3.5. Get Project Logs
+  // 3.6. Get Project Logs
   useEffect(() => {
     if (!isAllowedToGetLogs) {
       permissionWarningNotification("Mendapatkan", "Log Aktivitas Proyek");
@@ -479,7 +488,7 @@ const ProjectDetailIndex = ({
     return () => clearTimeout(timer);
   }, [isAllowedToGetLogs, refresh, searchingFilterLogs, pageProjectLogs]);
 
-  // 3.6. Get Project Notes
+  // 3.7. Get Project Notes
   useEffect(() => {
     if (!isAllowedToGetNotes) {
       permissionWarningNotification("Mendapatkan", "Catatan Proyek");
@@ -526,7 +535,7 @@ const ProjectDetailIndex = ({
     return () => clearTimeout(timer);
   }, [isAllowedToGetNotes, refresh, searchingFilterNotes, pageProjectNotes]);
 
-  // 3.7. Get Data Chart Status Task
+  // 3.8. Get Data Chart Status Task
   // TODO: uncomment if API is done
   // useEffect(() => {
   //   if (!isAllowedToGetTaskStatusCount) {
@@ -554,7 +563,7 @@ const ProjectDetailIndex = ({
   //     .finally(() => setLoadingChart(false));
   // }, [isAllowedToGetTaskStatusCount]);
 
-  // 3.8. Get Data Chart Deadline Task
+  // 3.9. Get Data Chart Deadline Task
   // TODO: uncomment if API is done
   // useEffect(() => {
   //   if (!isAllowedToGetTaskDeadlineCount) {
@@ -636,6 +645,52 @@ const ProjectDetailIndex = ({
         });
       })
       .finally(() => setLoadingProjectNotes(false));
+  };
+
+  const handleUpdateStatus = () => {
+    if (!isAllowedToUpdateProject) {
+      permissionWarningNotification("Mengubah", "Status Proyek");
+      return;
+    }
+
+    const payload = {
+      ...dataProject,
+      project_staffs: dataProject.project_staffs?.map((staff) =>
+        Number(staff.key)
+      ),
+    };
+
+    setLoadingProject(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
+      method: `PUT`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah status proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingProject(false));
   };
 
   // String of project staffs
@@ -993,64 +1048,108 @@ const ProjectDetailIndex = ({
                   </div>
                 }
               >
-                <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
-                  <div>
-                    <p className="text-mono30 font-bold mb-2">Diajukan oleh:</p>
+                <Spin spinning={loadingProject}>
+                  <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
                     <div>
-                      {dataProject?.proposed_bys?.length > 1 ? (
-                        <div className="flex items-center">
-                          <Avatar.Group
-                            size={30}
-                            maxCount={5}
-                            className="cursor-help"
-                            maxStyle={{
-                              color: "#f56a00",
-                              backgroundColor: "#fde3cf",
-                            }}
-                          >
-                            {dataProject?.proposed_bys?.map((staff) => (
-                              <Tooltip
-                                key={staff.id}
-                                title={staff?.name}
-                                placement="top"
-                              >
-                                <Avatar
-                                  src={generateStaticAssetUrl(
-                                    staff?.profile_image?.link ??
-                                      "staging/Users/default_user.png"
-                                  )}
-                                  className=""
-                                  size={30}
-                                />
-                              </Tooltip>
-                            ))}
-                          </Avatar.Group>
-                        </div>
-                      ) : dataProject?.proposed_bys?.length > 0 ? (
-                        <div className="flex items-center space-x-2">
-                          <img
-                            src={generateStaticAssetUrl(
-                              dataProject?.proposed_bys?.[0]?.profile_image
-                                ?.link ?? "staging/Users/default_user.png"
-                            )}
-                            alt={
-                              dataProject?.proposed_bys?.[0]?.profile_image
-                                ?.description
-                            }
-                            className="w-8 h-8 bg-cover object-cover rounded-full"
-                          />
-                          <p className={`mig-caption--medium text-mono50`}>
-                            {dataProject?.proposed_bys?.[0]?.name}
-                          </p>
-                        </div>
-                      ) : (
-                        <div>-</div>
-                      )}
+                      <p className="text-mono30 font-bold mb-2">
+                        Diajukan oleh:
+                      </p>
+                      <div>
+                        {dataProject?.proposed_bys?.length > 1 ? (
+                          <div className="flex items-center">
+                            <Avatar.Group
+                              size={30}
+                              maxCount={5}
+                              className="cursor-help"
+                              maxStyle={{
+                                color: "#f56a00",
+                                backgroundColor: "#fde3cf",
+                              }}
+                            >
+                              {dataProject?.proposed_bys?.map((staff) => (
+                                <Tooltip
+                                  key={staff.id}
+                                  title={staff?.name}
+                                  placement="top"
+                                >
+                                  <Avatar
+                                    src={generateStaticAssetUrl(
+                                      staff?.profile_image?.link ??
+                                        "staging/Users/default_user.png"
+                                    )}
+                                    className=""
+                                    size={30}
+                                  />
+                                </Tooltip>
+                              ))}
+                            </Avatar.Group>
+                          </div>
+                        ) : dataProject?.proposed_bys?.length > 0 ? (
+                          <div className="flex items-center space-x-2">
+                            <img
+                              src={generateStaticAssetUrl(
+                                dataProject?.proposed_bys?.[0]?.profile_image
+                                  ?.link ?? "staging/Users/default_user.png"
+                              )}
+                              alt={
+                                dataProject?.proposed_bys?.[0]?.profile_image
+                                  ?.description
+                              }
+                              className="w-8 h-8 bg-cover object-cover rounded-full"
+                            />
+                            <p className={`mig-caption--medium text-mono50`}>
+                              {dataProject?.proposed_bys?.[0]?.name}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>-</div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <p className="mig-caption--bold mb-2">Status:</p>
-                    <p
+                    <div>
+                      <p className="mig-caption--bold mb-2">Status:</p>
+                      <div>
+                        <Select
+                          allowClear
+                          value={dataProject.status_id}
+                          disabled={!isAllowedToGetStatuses}
+                          placeholder="Ubah Status"
+                          onChange={(value) => {
+                            setDataProject((prev) => ({
+                              ...prev,
+                              status_id: value,
+                            }));
+                            // TODO: uncomment if API is ready
+                            // handleUpdateStatus()
+                          }}
+                          optionFilterProp="children"
+                          bordered={false}
+                          className="mig-caption--bold bg-transparent hover:opacity-75 
+                        rounded-md px-2 py-1 "
+                          style={{
+                            backgroundColor: currentStatus?.color
+                              ? currentStatus?.color + "20"
+                              : "#E6E6E6",
+                            color: currentStatus?.color ?? "#808080",
+                          }}
+                        >
+                          {dataStatusList.map((item) => (
+                            <Select.Option
+                              key={item?.id}
+                              value={item?.id}
+                              style={{
+                                backgroundColor:
+                                  (item?.color ?? "#E6E6E6") + "20",
+                                color: item?.color ?? "#808080",
+                              }}
+                              className="rounded-md px-4 py-2 m-2"
+                            >
+                              {item?.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </div>
+                      {/* <p
                       className="px-4 py-2 rounded-md w-max"
                       style={{
                         backgroundColor: dataProject?.status?.color
@@ -1060,117 +1159,121 @@ const ProjectDetailIndex = ({
                       }}
                     >
                       {dataProject?.status?.name ?? "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mig-caption--bold mb-2">Tanggal Dimulai:</p>
-                    <p className="text-mono50">
-                      {momentFormatDate(dataProject?.start_date, "-")}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mig-caption--bold mb-2">
-                      Ekspektasi Tanggal Selesai:
-                    </p>
-                    <p className="text-mono50">
-                      {momentFormatDate(dataProject?.end_date, "-")}
-                    </p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <p className="text-mono30 font-bold mb-2">Staff Proyek:</p>
-                    <div className="flex items-center space-x-2">
-                      {dataProject?.project_staffs?.length > 1 ? (
-                        <div onClick={() => setModalStaffs(true)}>
-                          <Avatar.Group
-                            size={30}
-                            maxCount={3}
-                            className="cursor-help"
-                            maxStyle={{
-                              color: "#f56a00",
-                              backgroundColor: "#fde3cf",
-                            }}
-                          >
-                            {dataProject?.project_staffs?.map((staff) => (
-                              <Tooltip
-                                key={staff.id}
-                                title={staff?.name}
-                                placement="top"
-                              >
-                                <Avatar
-                                  src={generateStaticAssetUrl(
-                                    staff?.profile_image?.link ??
-                                      "staging/Users/default_user.png"
-                                  )}
-                                  size={30}
-                                />
-                              </Tooltip>
-                            ))}
-                          </Avatar.Group>
-                          {dataProject?.project_staffs?.length > 3 ? (
-                            <p className="text-secondary100">
-                              <strong>{staffsString}, </strong>
-                              dan{" "}
-                              <strong>
-                                {dataProject?.project_staffs?.length - 3}{" "}
-                                lainnya{" "}
-                              </strong>
-                              merupakan staff proyek ini.
-                            </p>
-                          ) : (
-                            <p className="text-secondary100">
-                              <strong>{staffsString}</strong> dan{" "}
-                              <strong>
-                                {
-                                  dataProject?.project_staffs?.[lastIndexStaff]
-                                    ?.name
-                                }
-                              </strong>{" "}
-                              merupakan staff proyek ini.
-                            </p>
-                          )}
-                        </div>
-                      ) : dataProject?.project_staffs?.length > 0 ? (
-                        <div className="flex space-x-2 items-center">
-                          <img
-                            src={generateStaticAssetUrl(
-                              dataProject?.project_staffs?.[0]?.profile_image
-                                ?.link ?? "staging/Users/default_user.png"
+                    </p> */}
+                    </div>
+                    <div>
+                      <p className="mig-caption--bold mb-2">Tanggal Dimulai:</p>
+                      <p className="text-mono50">
+                        {momentFormatDate(dataProject?.start_date, "-")}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="mig-caption--bold mb-2">
+                        Ekspektasi Tanggal Selesai:
+                      </p>
+                      <p className="text-mono50">
+                        {momentFormatDate(dataProject?.end_date, "-")}
+                      </p>
+                    </div>
+                    <div className="md:col-span-2">
+                      <p className="text-mono30 font-bold mb-2">
+                        Staff Proyek:
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        {dataProject?.project_staffs?.length > 1 ? (
+                          <div onClick={() => setModalStaffs(true)}>
+                            <Avatar.Group
+                              size={30}
+                              maxCount={3}
+                              className="cursor-help"
+                              maxStyle={{
+                                color: "#f56a00",
+                                backgroundColor: "#fde3cf",
+                              }}
+                            >
+                              {dataProject?.project_staffs?.map((staff) => (
+                                <Tooltip
+                                  key={staff.id}
+                                  title={staff?.name}
+                                  placement="top"
+                                >
+                                  <Avatar
+                                    src={generateStaticAssetUrl(
+                                      staff?.profile_image?.link ??
+                                        "staging/Users/default_user.png"
+                                    )}
+                                    size={30}
+                                  />
+                                </Tooltip>
+                              ))}
+                            </Avatar.Group>
+                            {dataProject?.project_staffs?.length > 3 ? (
+                              <p className="text-secondary100">
+                                <strong>{staffsString}, </strong>
+                                dan{" "}
+                                <strong>
+                                  {dataProject?.project_staffs?.length - 3}{" "}
+                                  lainnya{" "}
+                                </strong>
+                                merupakan staff proyek ini.
+                              </p>
+                            ) : (
+                              <p className="text-secondary100">
+                                <strong>{staffsString}</strong> dan{" "}
+                                <strong>
+                                  {
+                                    dataProject?.project_staffs?.[
+                                      lastIndexStaff
+                                    ]?.name
+                                  }
+                                </strong>{" "}
+                                merupakan staff proyek ini.
+                              </p>
                             )}
-                            alt={"Profile image"}
-                            className="w-8 h-8 bg-cover object-cover rounded-full"
-                          />
+                          </div>
+                        ) : dataProject?.project_staffs?.length > 0 ? (
+                          <div className="flex space-x-2 items-center">
+                            <img
+                              src={generateStaticAssetUrl(
+                                dataProject?.project_staffs?.[0]?.profile_image
+                                  ?.link ?? "staging/Users/default_user.png"
+                              )}
+                              alt={"Profile image"}
+                              className="w-8 h-8 bg-cover object-cover rounded-full"
+                            />
 
-                          <p className={`mig-caption--medium text-mono50`}>
-                            {dataProject?.project_staffs?.[0]?.name}
-                          </p>
+                            <p className={`mig-caption--medium text-mono50`}>
+                              {dataProject?.project_staffs?.[0]?.name}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>-</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
+                      <p className="text-mono30 font-bold mb-2">Deskripsi:</p>
+                      <p className="text-mono50">
+                        {dataProject?.description
+                          ? parse(dataProject?.description)
+                          : "-"}
+                      </p>
+                    </div>
+                    <div className="md:col-span-2">
+                      <ButtonSys
+                        type={"primary"}
+                        fullWidth={true}
+                        size={"large"}
+                        onClick={() => setModalUpdateProject(true)}
+                      >
+                        <div className="flex space-x-2 items-center ">
+                          <EditSquareIconSvg size={24} color={"#ffffff"} />
+                          <p>Edit Detail Proyek</p>
                         </div>
-                      ) : (
-                        <div>-</div>
-                      )}
+                      </ButtonSys>
                     </div>
                   </div>
-                  <div className="md:col-span-2">
-                    <p className="text-mono30 font-bold mb-2">Deskripsi:</p>
-                    <p className="text-mono50">
-                      {dataProject?.description
-                        ? parse(dataProject?.description)
-                        : "-"}
-                    </p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <ButtonSys
-                      type={"primary"}
-                      fullWidth={true}
-                      size={"large"}
-                      onClick={() => setModalUpdateProject(true)}
-                    >
-                      <div className="flex space-x-2 items-center ">
-                        <EditSquareIconSvg size={24} color={"#ffffff"} />
-                        <p>Edit Detail Proyek</p>
-                      </div>
-                    </ButtonSys>
-                  </div>
-                </div>
+                </Spin>
               </Collapse.Panel>
             </Collapse>
 

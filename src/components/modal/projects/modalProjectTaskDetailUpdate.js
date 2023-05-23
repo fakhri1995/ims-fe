@@ -239,6 +239,53 @@ const ModalProjectTaskDetailUpdate = ({
     clearData();
   };
 
+  const handleUpdateStatus = () => {
+    if (!isAllowedToUpdateTask) {
+      permissionWarningNotification("Mengubah", "Status Task");
+      return;
+    }
+
+    const payload = {
+      ...dataTaskUpdate,
+      task_staffs: dataTaskUpdate.task_staffs?.map((staff) =>
+        Number(staff.key)
+      ),
+    };
+
+    setLoadingSave(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTaskStatus`, {
+      method: `PUT`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          handleClose();
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah status task. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingSave(false));
+  };
+
   const handleUpdateTask = () => {
     if (!isAllowedToUpdateTask) {
       permissionWarningNotification("Mengubah", "Task");
@@ -373,7 +420,47 @@ const ModalProjectTaskDetailUpdate = ({
             </div>
             <div className="flex flex-col space-y-2 md:col-span-2">
               <p className="mig-caption--bold">Status:</p>
-              <p
+              <div>
+                <Select
+                  allowClear
+                  value={dataTaskUpdate.status_id}
+                  disabled={!isAllowedToGetStatuses}
+                  placeholder="Ubah Status"
+                  onChange={(value) => {
+                    setDataTaskUpdate((prev) => ({
+                      ...prev,
+                      status_id: value,
+                    }));
+                    // TODO: uncomment if API is ready
+                    // handleUpdateStatus()
+                  }}
+                  optionFilterProp="children"
+                  bordered={false}
+                  className="mig-caption--bold bg-transparent hover:opacity-75 
+                rounded-md px-2 py-1 "
+                  style={{
+                    backgroundColor: currentStatus?.color
+                      ? currentStatus?.color + "20"
+                      : "#E6E6E6",
+                    color: currentStatus?.color ?? "#808080",
+                  }}
+                >
+                  {dataStatusList.map((item) => (
+                    <Select.Option
+                      key={item?.id}
+                      value={item?.id}
+                      style={{
+                        backgroundColor: (item?.color ?? "#E6E6E6") + "20",
+                        color: item?.color ?? "#808080",
+                      }}
+                      className="rounded-md px-4 py-2 m-2"
+                    >
+                      {item?.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+              {/* <p
                 className="px-4 py-2 rounded-md w-max"
                 style={{
                   backgroundColor: currentStatus?.color
@@ -383,7 +470,7 @@ const ModalProjectTaskDetailUpdate = ({
                 }}
               >
                 {currentStatus?.name ?? "-"}
-              </p>
+              </p> */}
             </div>
             <div className="flex flex-col space-y-2">
               <p className="mig-caption--bold">Tanggal Dimulai:</p>
@@ -522,17 +609,7 @@ const ModalProjectTaskDetailUpdate = ({
 
           <div className="flex flex-col space-y-2 md:col-span-2 mb-4 md:mb-6">
             <p>Status</p>
-            <div className="flex space-x-2 items-center">
-              {/* <p
-                style={{
-                  backgroundColor: currentStatus?.color
-                    ? currentStatus?.color + "20"
-                    : "#E6E6E6",
-                  color: currentStatus?.color ?? "#808080",
-                }}
-                className="rounded-md px-4 py-2">
-                {currentStatus?.name ?? "-"}
-              </p> */}
+            <div>
               <Select
                 allowClear
                 value={dataTaskUpdate.status_id}
