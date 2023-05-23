@@ -1,5 +1,13 @@
 import { UpOutlined } from "@ant-design/icons";
-import { Collapse, DatePicker, Input, Select, Table, notification } from "antd";
+import {
+  Collapse,
+  DatePicker,
+  Input,
+  Select,
+  Spin,
+  Table,
+  notification,
+} from "antd";
 import moment from "moment";
 import {
   ArrayParam,
@@ -13,6 +21,7 @@ import QueryString from "qs";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
+import { Line } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -41,6 +50,7 @@ import TaskCard from "../../components/cards/project/TaskCard";
 import { ChartDoughnut } from "../../components/chart/chartCustom";
 import {
   AdjusmentsHorizontalIconSvg,
+  CalendartimeIconSvg,
   ClipboardListIconSvg,
   PlusIconSvg,
   SearchIconSvg,
@@ -52,12 +62,33 @@ import ModalProjectTaskCreate from "../../components/modal/projects/modalProject
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
 import { TableCustomProjectList } from "../../components/table/tableCustom";
+import { H1, H2 } from "../../components/typography";
 import {
   createKeyPressHandler,
   momentFormatDate,
   permissionWarningNotification,
 } from "../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
 import httpcookie from "cookie";
+
+Chart.register(
+  ArcElement,
+  Tooltip,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
 
 const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 1. Init
@@ -87,6 +118,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToAddStatus = hasPermission(PROJECT_STATUS_ADD);
   const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
   const isAllowedToDeleteStatus = hasPermission(PROJECT_STATUS_DELETE);
+
+  // TODO: change constant below
+  const isAllowedToGetProjectStatusCount = true;
+  const isAllowedToGetProjectDeadlineCount = true;
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -144,6 +179,28 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       project_status_count: 4,
     },
   ]);
+  const [dateFilter, setDateFilter] = useState(false);
+  const [dateState, setDateState] = useState({
+    from: "",
+    to: "",
+  });
+  const [dataProjectDeadline, setDataProjectDeadline] = useState({
+    deadline: {
+      today_deadline: 0,
+      tomorrow_deadline: 0,
+      first_range_deadline: 0,
+      second_range_deadline: 0,
+      third_range_deadline: 0,
+    },
+    date: {
+      first_start_date: "",
+      first_end_date: "",
+      second_start_date: "",
+      second_end_date: "",
+      third_start_date: "",
+      third_end_date: "",
+    },
+  });
 
   // 2.2. Table Projects List
   // filter data
@@ -357,6 +414,59 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   }, [isAllowedToGetTasks, refresh, pageMyTaskList]);
 
+  // 3.5. Get Data Chart Status Proyek
+  // TODO: uncomment if API is done
+  // useEffect(() => {
+  //   if (!isAllowedToGetProjectStatusCount) {
+  //     setLoadingChart(false);
+  //     return;
+  //   }
+
+  //   setLoadingChart(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatusCount`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setProjectStatusCount(res2.data); // "Status Proyek" chart's data source
+  //     })
+  //     .catch((err) =>
+  //       notification.error({
+  //         message: "Gagal mendapatkan data statistik status proyek",
+  //         duration: 3,
+  //       })
+  //     )
+  //     .finally(() => setLoadingChart(false));
+  // }, [isAllowedToGetProjectStatusCount]);
+
+  // 3.6. Get Data Chart Deadline Proyek
+  // TODO: uncomment if API is done
+  // useEffect(() => {
+  //   if (!isAllowedToGetProjectDeadlineCount) {
+  //     setLoadingChart(false);
+  //     return;
+  //   }
+
+  //   setLoadingChart(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectDeadlines`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setDataProjectDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
+  //     }).catch((err) => notification.error({
+  //       message: "Gagal mendapatkan data statistik deadline proyek",
+  //       duration: 3,
+  //     }))
+  //     .finally(() => setLoadingChart(false));
+  // }, [isAllowedToGetProjectDeadlineCount]);
+
   // 4. Event
   const onFilterProjects = () => {
     setQueryParams({
@@ -450,9 +560,11 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
       sorter: isAllowedToGetProjects
         ? (a, b) => {
-            const dataStatusListIds = dataStatusList.map((status) => status.id);
-            const indexA = dataStatusListIds.indexOf(a.status?.id);
-            const indexB = dataStatusListIds.indexOf(b.status?.id);
+            const dataStatusListIds = dataStatusList?.map(
+              (status) => status.id
+            );
+            const indexA = dataStatusListIds?.indexOf(a.status?.id);
+            const indexB = dataStatusListIds?.indexOf(b.status?.id);
             return indexA - indexB;
           }
         : false,
@@ -533,7 +645,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 .includes(input.toLowerCase())
             }
           >
-            {dataStatusList.map((status) => (
+            {dataStatusList?.map((status) => (
               <Select.Option key={status.id} value={status.id}>
                 {status.name}
               </Select.Option>
@@ -599,26 +711,253 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </div>
               }
             >
-              {/* CHART STATUS PROYEK */}
               {loadingChart ? (
-                <Spin />
+                <div className="text-center">
+                  <Spin />
+                </div>
               ) : (
-                <div className="grid md:grid-cols-3 gap-2 lg:gap-6">
-                  <ChartDoughnut
-                    title={"Status Proyek"}
-                    dataChart={projectStatusCount}
-                    objName={"project_status"}
-                    value={"project_status_count"}
-                    customLegend={
-                      <div className="text-md flex justify-between items-center mt-4">
-                        <p className="text-mono30 font-semibold">
-                          Total Proyek Saya
-                        </p>
-                        <p className="text-primary100 font-bold">20</p>
+                <div className="grid grid-cols-6 xl:grid-cols-12 gap-6 py-3 px-2">
+                  {/* CARD STATUS PROYEK */}
+                  <div className="col-span-6 md:col-span-4 xl:col-span-6">
+                    <ChartDoughnut
+                      title={"Status Proyek"}
+                      dataChart={projectStatusCount}
+                      objName={"project_status"}
+                      value={"project_status_count"}
+                      customLegend={
+                        <div className="text-md flex justify-between items-center mt-4">
+                          <p className="text-mono30 font-semibold">
+                            Total Proyek Saya
+                          </p>
+                          <p className="text-primary100 font-bold">20</p>
+                        </div>
+                      }
+                    />
+                  </div>
+
+                  {/* CARD DEADLINE PROYEK BULAN INI */}
+                  <div className="grid order-last xl:order-none col-span-6 xl:col-span-6 shadow-md rounded-md p-5 bg-white">
+                    <div className="flex items-center space-x-2 justify-between mb-4">
+                      <h4 className="mig-heading--4 text-mono30">
+                        Deadline Proyek Bulan Ini
+                      </h4>
+                      <div className="flex items-center text-right">
+                        <div
+                          className=" cursor-pointer"
+                          onClick={() => {
+                            if (!isAllowedToGetProjectDeadlineCount) {
+                              permissionWarningNotification(
+                                "Mendapatkan",
+                                "Informasi Deadline Proyek"
+                              );
+                              return;
+                            }
+                            setDateFilter((prev) => !prev);
+                          }}
+                        >
+                          <CalendartimeIconSvg color={`#4D4D4D`} size={24} />
+                        </div>
+                        <DatePicker.RangePicker
+                          value={
+                            dateState.from === ""
+                              ? ["", ""]
+                              : [moment(dateState.from), moment(dateState.to)]
+                          }
+                          allowEmpty
+                          style={{
+                            visibility: `hidden`,
+                            width: `0`,
+                            padding: `0`,
+                          }}
+                          className="datepickerStatus"
+                          open={dateFilter}
+                          onChange={(dates, datestrings) => {
+                            setDateFilter((prev) => !prev);
+                            setLoadingChart(true);
+                            fetch(
+                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=${datestrings[0]}&to=${datestrings[1]}`,
+                              {
+                                method: `GET`,
+                                headers: {
+                                  Authorization: JSON.parse(initProps),
+                                },
+                              }
+                            )
+                              .then((res) => res.json())
+                              .then((res2) => {
+                                if (res2.success) {
+                                  setDateState({
+                                    from: datestrings[0],
+                                    to: datestrings[1],
+                                  });
+                                  setDataProjectDeadline(res2.data);
+                                  setLoadingChart(false);
+                                } else {
+                                  notification["error"]({
+                                    message: res2.message,
+                                    duration: 3,
+                                  });
+                                  setLoadingChart(false);
+                                }
+                              });
+                          }}
+                          renderExtraFooter={() => (
+                            <div className=" flex items-center">
+                              <p
+                                className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
+                                onClick={() => {
+                                  setDateFilter((prev) => !prev);
+                                  setLoadingChart(true);
+                                  fetch(
+                                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=&to=`,
+                                    {
+                                      method: `GET`,
+                                      headers: {
+                                        Authorization: JSON.parse(initProps),
+                                      },
+                                    }
+                                  )
+                                    .then((res) => res.json())
+                                    .then((res2) => {
+                                      if (res2.success) {
+                                        setDateState({ from: "", to: "" });
+                                        setDataProjectDeadline(res2.data);
+                                        setLoadingChart(false);
+                                      } else {
+                                        notification["error"]({
+                                          message: res2.message,
+                                          duration: 3,
+                                        });
+                                        setLoadingChart(false);
+                                      }
+                                    });
+                                }}
+                              >
+                                Reset
+                              </p>
+                            </div>
+                          )}
+                        />
                       </div>
-                    }
-                  />
-                  <div className="grid md:col-span-2 grid-cols-2 gap-2 lg:gap-6">
+                    </div>
+
+                    {/* CHART */}
+                    {loadingChart ? (
+                      <Spin />
+                    ) : (
+                      <div className="">
+                        <div className="flex justify-center mb-4 w-max">
+                          <Line
+                            data={{
+                              labels: [
+                                `${moment(
+                                  dataProjectDeadline.date.first_start_date
+                                )
+                                  .locale("id")
+                                  .format("Do MMM")}-${moment(
+                                  dataProjectDeadline.date.first_end_date
+                                )
+                                  .locale("id")
+                                  .format("Do MMM")}`,
+                                `${moment(
+                                  dataProjectDeadline.date.second_start_date
+                                )
+                                  .locale("id")
+                                  .format("Do MMM")}-${moment(
+                                  dataProjectDeadline.date.second_end_date
+                                )
+                                  .locale("id")
+                                  .format("Do MMM")}`,
+                                `${moment(
+                                  dataProjectDeadline.date.third_start_date
+                                )
+                                  .locale("id")
+                                  .format("Do MMM")}-${moment(
+                                  dataProjectDeadline.date.third_end_date
+                                )
+                                  .locale("id")
+                                  .format("Do MMM")}`,
+                              ],
+                              datasets: [
+                                {
+                                  data: [
+                                    dataProjectDeadline.deadline
+                                      .first_range_deadline,
+                                    dataProjectDeadline.deadline
+                                      .second_range_deadline,
+                                    dataProjectDeadline.deadline
+                                      .third_range_deadline,
+                                  ],
+                                  borderColor: "#35763B",
+                                  tension: 0.5,
+                                  fill: false,
+                                },
+                              ],
+                            }}
+                            options={{
+                              title: {
+                                display: false,
+                              },
+                              legend: {
+                                display: false,
+                              },
+                              maintainAspectRatio: false,
+                              scales: {
+                                x: {
+                                  grid: {
+                                    display: false,
+                                  },
+                                },
+                                y: {
+                                  grid: {
+                                    display: false,
+                                  },
+                                },
+                              },
+                            }}
+                          />
+                        </div>
+                        <div className="flex flex-row justify-between items-center space-x-2 mb-1 ">
+                          <h5 className="mig-caption--medium text-mono30">
+                            Proyek yang berakhir bulan ini
+                          </h5>
+                          <h5 className="font-bold text-mono30 text-right">
+                            {dataProjectDeadline.deadline.today_deadline}
+                          </h5>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* LEGEND STATUS PROYEK */}
+                  <div className="flex flex-wrap col-span-6 md:col-span-2 xl:col-span-12 gap-4 xl:justify-between">
+                    {projectStatusCount?.map((status, idx) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center space-x-5"
+                      >
+                        <div className="flex">
+                          <div
+                            className="w-1 mr-2"
+                            style={{
+                              backgroundColor: `${
+                                dataColorBar[
+                                  idx + (1 % dataColorBar.length) - 1
+                                ]
+                              }`,
+                            }}
+                          ></div>
+                          <p className="mig-caption--medium text-mono30 whitespace-nowrap">
+                            {status.project_status || "-"}
+                          </p>
+                        </div>
+                        <p className="font-bold text-right text-mono30">
+                          {status.project_status_count}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                  {/* <div className="grid md:col-span-2 grid-cols-2 gap-2 lg:gap-6">
                     {projectStatusCount.map((status, idx) => (
                       <div
                         key={status.project_status}
@@ -638,7 +977,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         </div>
                       </div>
                     ))}
-                  </div>
+                  </div> */}
                 </div>
               )}
             </Collapse.Panel>
