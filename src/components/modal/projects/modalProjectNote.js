@@ -71,6 +71,7 @@ const ModalProjectNote = ({
       onOk={handleDeleteNote}
       onCancel={() => {
         setModalDelete(false);
+        onvisible(false);
       }}
       itemName={"catatan"}
       loading={loadingDelete}

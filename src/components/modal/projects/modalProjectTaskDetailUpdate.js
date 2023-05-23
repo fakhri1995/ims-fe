@@ -805,6 +805,7 @@ const ModalProjectTaskDetailUpdate = ({
       onOk={handleDeleteTask}
       onCancel={() => {
         setModalDelete(false);
+        onvisible(false);
       }}
       itemName={"task"}
       loading={loadingDelete}

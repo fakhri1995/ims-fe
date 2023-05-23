@@ -489,12 +489,6 @@ const EmployeeContractForm = ({
       <Form.Item
         label="Nama Kontrak"
         name={"contract_name"}
-        rules={[
-          {
-            required: true,
-            message: "Nama kontrak wajib diisi",
-          },
-        ]}
         className="col-span-2"
       >
         <div>

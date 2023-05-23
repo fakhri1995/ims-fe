@@ -196,8 +196,7 @@ const EmployeeContractAddIndex = ({
   // 2.3. Disable "Simpan" button if any required field is empty
   useEffect(() => {
     let requiredContractField = Boolean(
-      dataContract.contract_name &&
-        dataContract.role_id &&
+      dataContract.role_id &&
         dataContract.contract_status_id &&
         dataContract.contract_file &&
         dataContract.pkwt_reference &&

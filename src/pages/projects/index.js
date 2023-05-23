@@ -387,7 +387,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Nama",
       dataIndex: "name",
       sorter: isAllowedToGetProjects
-        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        ? (a, b) => a.name?.toLowerCase().localeCompare(b.name?.toLowerCase())
         : false,
     },
     {
@@ -411,6 +411,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
         };
       },
+      sorter: isAllowedToGetProjects
+        ? (a, b) => a.start_date.localeCompare(b.start_date)
+        : false,
     },
     {
       title: "Ekspektasi Selesai",
@@ -420,14 +423,15 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
         };
       },
+      sorter: isAllowedToGetProjects
+        ? (a, b) => a.end_date.localeCompare(b.end_date)
+        : false,
+      // defaultSortOrder: "ascend",
     },
     {
       title: "Status",
       dataIndex: "status",
       render: (status, record, index) => {
-        // const currentStatus = dataStatusList.find(
-        //   (status) => status.id === text
-        // );
         return {
           children: (
             <p
@@ -444,6 +448,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
+      sorter: isAllowedToGetProjects
+        ? (a, b) => {
+            const dataStatusListIds = dataStatusList.map((status) => status.id);
+            const indexA = dataStatusListIds.indexOf(a.status?.id);
+            const indexB = dataStatusListIds.indexOf(b.status?.id);
+            return indexA - indexB;
+          }
+        : false,
     },
   ];
 
