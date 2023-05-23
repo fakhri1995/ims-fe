@@ -152,8 +152,7 @@ const EmployeeContractEditIndex = ({
     }
 
     let requiredContractField = Boolean(
-      dataContract.contract_name &&
-        dataContract.role_id &&
+      dataContract.role_id &&
         dataContract.contract_status_id &&
         dataContract.contract_file &&
         dataContract.pkwt_reference &&

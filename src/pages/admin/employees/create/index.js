@@ -255,7 +255,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       { data: dataEmployee.birth_date, name: "Tanggal Lahir" },
       { data: dataEmployee.gender, name: "Jenis Kelamin" },
 
-      { data: dataContract.contract_name, name: "Nama Kontrak" },
       { data: dataContract.role_id, name: "Posisi Kontrak" },
       { data: dataContract.contract_status_id, name: "Status Kontrak" },
       { data: dataContract.contract_file, name: "Dokumen Kontrak" },
