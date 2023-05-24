@@ -241,6 +241,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
   const [dataProjectList, setDataProjectList] = useState([]);
   const [pageMyTaskList, setPageMyTaskList] = useState(1);
+  const [rowsMyTaskList, setRowsMyTaskList] = useState(4);
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
@@ -383,7 +384,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingMyTaskList(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=4&page=${pageMyTaskList}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}`,
       {
         method: `GET`,
         headers: {
@@ -412,7 +413,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingMyTaskList(false);
       });
-  }, [isAllowedToGetTasks, refresh, pageMyTaskList]);
+  }, [isAllowedToGetTasks, refresh, pageMyTaskList, rowsMyTaskList]);
 
   // 3.5. Get Data Chart Status Proyek
   // TODO: uncomment if API is done
@@ -466,6 +467,23 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   //     }))
   //     .finally(() => setLoadingChart(false));
   // }, [isAllowedToGetProjectDeadlineCount]);
+
+  // 3.7. Update number of rows in task table based on the device width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 820) {
+        setRowsMyTaskList(3); // Set smaller page size for smaller devices
+      } else {
+        setRowsMyTaskList(4); // Set default page size for larger devices
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // 4. Event
   const onFilterProjects = () => {
@@ -689,10 +707,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       fixedBreadcrumbValues={pageBreadcrumbValue}
     >
       <div
-        className="grid grid-cols-1 md:grid-cols-6 gap-6 px-4 md:px-5"
+        className="grid grid-cols-1 lg:grid-cols-6 gap-6 px-4 md:px-5"
         id="mainWrapper"
       >
-        <div className="flex flex-col md:col-span-4 gap-6">
+        <div className="flex flex-col lg:col-span-4 gap-6">
           {/* Statistik Proyek */}
           <Collapse
             className="shadow-md rounded-md bg-white"
@@ -984,10 +1002,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           </Collapse>
 
           {/* Table Semua Proyek */}
-          <div className="hidden md:block">{TableProjectSection}</div>
+          <div className="hidden lg:block">{TableProjectSection}</div>
         </div>
 
-        <div className="grid grid-cols-2 md:flex flex-col md:col-span-2 gap-6">
+        <div className="grid grid-cols-2 lg:flex flex-col lg:col-span-2 gap-6">
           {/* Tambah Proyek Baru */}
           <div className="">
             <button
@@ -1036,7 +1054,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               loading={loadingMyTaskList}
               pagination={{
                 current: pageMyTaskList,
-                pageSize: 4,
+                pageSize: rowsMyTaskList,
                 total: dataRawMyTaskList?.total,
               }}
               onChange={(pagination) => {
@@ -1080,7 +1098,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         </div>
 
         {/* Table Semua Proyek (in mobile layout)*/}
-        <div className="block md:hidden">{TableProjectSection}</div>
+        <div className="block lg:hidden">{TableProjectSection}</div>
       </div>
 
       {/* Modal Project */}
@@ -1122,6 +1140,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           dataProjectList={dataProjectList}
+          isOutsideProject={true}
         />
       </AccessControl>
 

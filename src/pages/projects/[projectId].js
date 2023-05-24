@@ -591,6 +591,23 @@ const ProjectDetailIndex = ({
   //     .finally(() => setLoadingChart(false));
   // }, [isAllowedToGetTaskDeadlineCount]);
 
+  // 3.10. Update number of rows in task table based on the device width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 820) {
+        setQueryParams({ rows: 3 }); // Set smaller page size for smaller devices
+      } else {
+        setQueryParams({ rows: 6 }); // Set default page size for larger devices
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
   // 4. Event
   const onFilterTasks = () => {
     setQueryParams({
@@ -849,6 +866,7 @@ const ProjectDetailIndex = ({
                         >
                           <CalendartimeIconSvg color={`#4D4D4D`} size={24} />
                         </div>
+
                         <DatePicker.RangePicker
                           value={
                             dateState.from === ""
@@ -1185,26 +1203,27 @@ const ProjectDetailIndex = ({
                             <Avatar.Group
                               size={30}
                               maxCount={3}
-                              className="cursor-help"
+                              className="cursor-pointer"
                               maxStyle={{
                                 color: "#f56a00",
                                 backgroundColor: "#fde3cf",
                               }}
                             >
                               {dataProject?.project_staffs?.map((staff) => (
-                                <Tooltip
+                                // <Tooltip
+                                //   key={staff.id}
+                                //   title={staff?.name}
+                                //   placement="top"
+                                // >
+                                <Avatar
                                   key={staff.id}
-                                  title={staff?.name}
-                                  placement="top"
-                                >
-                                  <Avatar
-                                    src={generateStaticAssetUrl(
-                                      staff?.profile_image?.link ??
-                                        "staging/Users/default_user.png"
-                                    )}
-                                    size={30}
-                                  />
-                                </Tooltip>
+                                  src={generateStaticAssetUrl(
+                                    staff?.profile_image?.link ??
+                                      "staging/Users/default_user.png"
+                                  )}
+                                  size={30}
+                                />
+                                // </Tooltip>
                               ))}
                             </Avatar.Group>
                             {dataProject?.project_staffs?.length > 3 ? (
@@ -1253,11 +1272,11 @@ const ProjectDetailIndex = ({
                     </div>
                     <div className="md:col-span-2">
                       <p className="text-mono30 font-bold mb-2">Deskripsi:</p>
-                      <p className="text-mono50">
+                      <div className="text-mono50">
                         {dataProject?.description
                           ? parse(dataProject?.description)
                           : "-"}
-                      </p>
+                      </div>
                     </div>
                     <div className="md:col-span-2">
                       <ButtonSys
