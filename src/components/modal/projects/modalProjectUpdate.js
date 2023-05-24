@@ -309,7 +309,7 @@ const ModalProjectUpdate = ({
                 >
                   {dataUpdateProject?.proposed_bys?.map((staff) => (
                     <Tooltip
-                      key={staff?.key}
+                      key={staff?.key || staff?.id}
                       title={staff?.name}
                       placement="top"
                     >
@@ -573,7 +573,7 @@ const ModalProjectUpdate = ({
           {dataUpdateProject?.project_staffs?.map((staff, idx) => {
             return (
               <Tag
-                key={staff.key}
+                key={staff?.id || staff?.key}
                 closable
                 onClose={() => {
                   const newTags = dataUpdateProject?.project_staffs?.filter(
