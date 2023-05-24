@@ -500,6 +500,47 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
+  const handleGetProjectDeadlineCount = (fromDate = "", toDate = "") => {
+    if (!isAllowedToGetProjectDeadlineCount) {
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=${fromDate}&to=${toDate}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDateState({
+            from: fromDate,
+            to: toDate,
+          });
+          setDataProjectDeadline(res2.data);
+          setLoadingChart(false);
+        } else {
+          notification["error"]({
+            message: `Gagal mendapatkan data statistik deadline proyek. ${res2?.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) =>
+        notification["error"]({
+          message: `Gagal mendapatkan data statistik deadline proyek. ${err?.message}`,
+          duration: 3,
+        })
+      )
+      .finally(() => setLoadingChart(false));
+  };
+
   // "Semua Proyek" Table columns
   const columnProjects = [
     {
@@ -683,17 +724,16 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         </ButtonSys>
       </div>
       {/* End: Filter table */}
-      <div>
-        <TableCustomProjectList
-          rt={rt}
-          dataSource={dataProjects}
-          columns={columnProjects}
-          loading={loadingProjects}
-          total={dataRawProjects?.total}
-          queryParams={queryParams}
-          setQueryParams={setQueryParams}
-        />
-      </div>
+
+      <TableCustomProjectList
+        rt={rt}
+        dataSource={dataProjects}
+        columns={columnProjects}
+        loading={loadingProjects}
+        total={dataRawProjects?.total}
+        queryParams={queryParams}
+        setQueryParams={setQueryParams}
+      />
     </div>
   );
 
@@ -777,9 +817,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         </div>
                         <DatePicker.RangePicker
                           value={
-                            dateState.from === ""
-                              ? ["", ""]
-                              : [moment(dateState.from), moment(dateState.to)]
+                            moment(dateState.from).isValid()
+                              ? [moment(dateState.from), moment(dateState.to)]
+                              : [null, null]
                           }
                           allowEmpty
                           style={{
@@ -791,33 +831,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           open={dateFilter}
                           onChange={(dates, datestrings) => {
                             setDateFilter((prev) => !prev);
-                            setLoadingChart(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=${datestrings[0]}&to=${datestrings[1]}`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                if (res2.success) {
-                                  setDateState({
-                                    from: datestrings[0],
-                                    to: datestrings[1],
-                                  });
-                                  setDataProjectDeadline(res2.data);
-                                  setLoadingChart(false);
-                                } else {
-                                  notification["error"]({
-                                    message: res2.message,
-                                    duration: 3,
-                                  });
-                                  setLoadingChart(false);
-                                }
-                              });
+                            handleGetProjectDeadlineCount(
+                              datestrings[0],
+                              datestrings[1]
+                            );
                           }}
                           renderExtraFooter={() => (
                             <div className=" flex items-center">
@@ -825,30 +842,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
                                 onClick={() => {
                                   setDateFilter((prev) => !prev);
-                                  setLoadingChart(true);
-                                  fetch(
-                                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=&to=`,
-                                    {
-                                      method: `GET`,
-                                      headers: {
-                                        Authorization: JSON.parse(initProps),
-                                      },
-                                    }
-                                  )
-                                    .then((res) => res.json())
-                                    .then((res2) => {
-                                      if (res2.success) {
-                                        setDateState({ from: "", to: "" });
-                                        setDataProjectDeadline(res2.data);
-                                        setLoadingChart(false);
-                                      } else {
-                                        notification["error"]({
-                                          message: res2.message,
-                                          duration: 3,
-                                        });
-                                        setLoadingChart(false);
-                                      }
-                                    });
+                                  handleGetProjectDeadlineCount();
                                 }}
                               >
                                 Reset
@@ -863,38 +857,77 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                     {loadingChart ? (
                       <Spin />
                     ) : (
-                      <div className="">
+                      <div>
                         <div className="flex justify-center mb-4 w-max">
                           <Line
                             data={{
                               labels: [
-                                `${moment(
-                                  dataProjectDeadline.date.first_start_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}-${moment(
-                                  dataProjectDeadline.date.first_end_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}`,
-                                `${moment(
-                                  dataProjectDeadline.date.second_start_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}-${moment(
-                                  dataProjectDeadline.date.second_end_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}`,
-                                `${moment(
-                                  dataProjectDeadline.date.third_start_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}-${moment(
-                                  dataProjectDeadline.date.third_end_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}`,
+                                `${
+                                  moment(
+                                    dataProjectDeadline.date.first_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataProjectDeadline.date
+                                          .first_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataProjectDeadline.date.first_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataProjectDeadline.date.first_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                                `${
+                                  moment(
+                                    dataProjectDeadline.date.second_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataProjectDeadline.date
+                                          .second_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataProjectDeadline.date.second_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataProjectDeadline.date.second_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                                `${
+                                  moment(
+                                    dataProjectDeadline.date.third_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataProjectDeadline.date
+                                          .third_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataProjectDeadline.date.third_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataProjectDeadline.date.third_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
                               ],
                               datasets: [
                                 {

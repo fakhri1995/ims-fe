@@ -40,10 +40,6 @@ import {
   PROJECT_NOTE_ADD,
   PROJECT_NOTE_DELETE,
   PROJECT_STATUSES_GET,
-  PROJECT_STATUS_ADD,
-  PROJECT_STATUS_DELETE,
-  PROJECT_STATUS_GET,
-  PROJECT_STATUS_UPDATE,
   PROJECT_TASKS_GET,
   PROJECT_TASK_ADD,
   PROJECT_TASK_DELETE,
@@ -710,6 +706,47 @@ const ProjectDetailIndex = ({
       .finally(() => setLoadingProject(false));
   };
 
+  const handleGetTaskDeadlineCount = (fromDate = "", toDate = "") => {
+    if (!isAllowedToGetTaskDeadlineCount) {
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${fromDate}&to=${toDate}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDateState({
+            from: fromDate,
+            to: toDate,
+          });
+          setDataTaskDeadline(res2.data);
+          setLoadingChart(false);
+        } else {
+          notification["error"]({
+            message: res2.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) =>
+        notification["error"]({
+          message: err?.message,
+          duration: 3,
+        })
+      )
+      .finally(() => setLoadingChart(false));
+  };
+
   // String of project staffs
   const lastIndexStaff = dataProject?.project_staffs?.length - 1;
   let staffsString =
@@ -869,9 +906,9 @@ const ProjectDetailIndex = ({
 
                         <DatePicker.RangePicker
                           value={
-                            dateState.from === ""
-                              ? ["", ""]
-                              : [moment(dateState.from), moment(dateState.to)]
+                            moment(dateState.from).isValid()
+                              ? [moment(dateState.from), moment(dateState.to)]
+                              : [null, null]
                           }
                           allowEmpty
                           style={{
@@ -883,33 +920,10 @@ const ProjectDetailIndex = ({
                           open={dateFilter}
                           onChange={(dates, datestrings) => {
                             setDateFilter((prev) => !prev);
-                            setLoadingChart(true);
-                            fetch(
-                              `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${datestrings[0]}&to=${datestrings[1]}`,
-                              {
-                                method: `GET`,
-                                headers: {
-                                  Authorization: JSON.parse(initProps),
-                                },
-                              }
-                            )
-                              .then((res) => res.json())
-                              .then((res2) => {
-                                if (res2.success) {
-                                  setDateState({
-                                    from: datestrings[0],
-                                    to: datestrings[1],
-                                  });
-                                  setDataTaskDeadline(res2.data);
-                                  setLoadingChart(false);
-                                } else {
-                                  notification["error"]({
-                                    message: res2.message,
-                                    duration: 3,
-                                  });
-                                  setLoadingChart(false);
-                                }
-                              });
+                            handleGetTaskDeadlineCount(
+                              datestrings[0],
+                              datestrings[1]
+                            );
                           }}
                           renderExtraFooter={() => (
                             <div className=" flex items-center">
@@ -917,30 +931,7 @@ const ProjectDetailIndex = ({
                                 className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
                                 onClick={() => {
                                   setDateFilter((prev) => !prev);
-                                  setLoadingChart(true);
-                                  fetch(
-                                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=&to=`,
-                                    {
-                                      method: `GET`,
-                                      headers: {
-                                        Authorization: JSON.parse(initProps),
-                                      },
-                                    }
-                                  )
-                                    .then((res) => res.json())
-                                    .then((res2) => {
-                                      if (res2.success) {
-                                        setDateState({ from: "", to: "" });
-                                        setDataTaskDeadline(res2.data);
-                                        setLoadingChart(false);
-                                      } else {
-                                        notification["error"]({
-                                          message: res2.message,
-                                          duration: 3,
-                                        });
-                                        setLoadingChart(false);
-                                      }
-                                    });
+                                  handleGetTaskDeadlineCount();
                                 }}
                               >
                                 Reset
@@ -960,33 +951,69 @@ const ProjectDetailIndex = ({
                           <Line
                             data={{
                               labels: [
-                                `${moment(
-                                  dataTaskDeadline.date.first_start_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}-${moment(
-                                  dataTaskDeadline.date.first_end_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}`,
-                                `${moment(
-                                  dataTaskDeadline.date.second_start_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}-${moment(
-                                  dataTaskDeadline.date.second_end_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}`,
-                                `${moment(
-                                  dataTaskDeadline.date.third_start_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}-${moment(
-                                  dataTaskDeadline.date.third_end_date
-                                )
-                                  .locale("id")
-                                  .format("Do MMM")}`,
+                                `${
+                                  moment(
+                                    dataTaskDeadline.date.first_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.first_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataTaskDeadline.date.first_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.first_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                                `${
+                                  moment(
+                                    dataTaskDeadline.date.second_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.second_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataTaskDeadline.date.second_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.second_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                                `${
+                                  moment(
+                                    dataTaskDeadline.date.third_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.third_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataTaskDeadline.date.third_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.third_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
                               ],
                               datasets: [
                                 {
