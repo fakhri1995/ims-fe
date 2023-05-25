@@ -1,14 +1,16 @@
-import { UpOutlined } from "@ant-design/icons";
+import { PlusOutlined, UpOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Collapse,
   DatePicker,
   Input,
   Select,
+  Spin,
   Table,
   Tooltip,
   notification,
 } from "antd";
+import TextArea from "antd/lib/input/TextArea";
 import parse from "html-react-parser";
 import moment from "moment";
 import {
@@ -23,6 +25,7 @@ import QueryString from "qs";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
+import { Doughnut, Line } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
 
@@ -30,17 +33,13 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   PROJECTS_GET,
-  PROJECT_ADD,
   PROJECT_DELETE,
   PROJECT_GET,
   PROJECT_LOGS_GET,
   PROJECT_NOTES_GET,
   PROJECT_NOTE_ADD,
+  PROJECT_NOTE_DELETE,
   PROJECT_STATUSES_GET,
-  PROJECT_STATUS_ADD,
-  PROJECT_STATUS_DELETE,
-  PROJECT_STATUS_GET,
-  PROJECT_STATUS_UPDATE,
   PROJECT_TASKS_GET,
   PROJECT_TASK_ADD,
   PROJECT_TASK_DELETE,
@@ -53,28 +52,45 @@ import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
 import { ChartDoughnut } from "../../components/chart/chartCustom";
 import {
-  AdjusmentsHorizontalIconSvg,
+  CalendartimeIconSvg,
   ClipboardListIconSvg,
   EditSquareIconSvg,
-  OneUserIconSvg,
   PlusIconSvg,
   SearchIconSvg,
 } from "../../components/icon";
 import st from "../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../components/layout-dashboardNew";
-import ModalProjectCreate from "../../components/modal/projects/modalProjectCreate";
+import ModalProjectNote from "../../components/modal/projects/modalProjectNote";
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalProjectUpdate from "../../components/modal/projects/modalProjectUpdate";
-import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
-import { TableCustomProjectList } from "../../components/table/tableCustom";
+import ModalStaffList from "../../components/modal/projects/modalStaffList";
 import {
   createKeyPressHandler,
   generateStaticAssetUrl,
   momentFormatDate,
   permissionWarningNotification,
 } from "../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  TooltipChart,
+} from "chart.js";
 import httpcookie from "cookie";
+
+Chart.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
 
 const ProjectDetailIndex = ({
   dataProfile,
@@ -94,7 +110,6 @@ const ProjectDetailIndex = ({
 
   const isAllowedToGetProjects = hasPermission(PROJECTS_GET);
   const isAllowedToGetProject = hasPermission(PROJECT_GET);
-  const isAllowedToAddProject = hasPermission(PROJECT_ADD);
   const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
   const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
 
@@ -102,25 +117,23 @@ const ProjectDetailIndex = ({
   const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
   const isAllowedToUpdateTask = hasPermission(PROJECT_TASK_UPDATE);
   const isAllowedToGetTasks = hasPermission(PROJECT_TASKS_GET);
+  const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
-  const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
-  const isAllowedToAddStatus = hasPermission(PROJECT_STATUS_ADD);
-  const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
-  const isAllowedToDeleteStatus = hasPermission(PROJECT_STATUS_DELETE);
-
   const isAllowedToGetNotes = hasPermission(PROJECT_NOTES_GET);
   const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
+  const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
 
   const isAllowedToGetLogs = hasPermission(PROJECT_LOGS_GET);
+  // TODO: change constant below
+  const isAllowedToGetTaskStatusCount = true;
+  const isAllowedToGetTaskDeadlineCount = true;
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 10),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    rows: withDefault(NumberParam, 6),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "end_date"),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    from: withDefault(StringParam, undefined),
-    to: withDefault(StringParam, undefined),
     status_ids: withDefault(ArrayParam, undefined),
     keyword: withDefault(StringParam, undefined),
   });
@@ -140,7 +153,7 @@ const ProjectDetailIndex = ({
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
-  const [projectStatusCount, setProjectStatusCount] = useState([
+  const [taskStatusCount, setTaskStatusCount] = useState([
     {
       project_status: "Open",
       project_status_count: 24,
@@ -166,6 +179,28 @@ const ProjectDetailIndex = ({
       project_status_count: 4,
     },
   ]);
+  const [dateFilter, setDateFilter] = useState(false);
+  const [dateState, setDateState] = useState({
+    from: "",
+    to: "",
+  });
+  const [dataTaskDeadline, setDataTaskDeadline] = useState({
+    deadline: {
+      today_deadline: 0,
+      tomorrow_deadline: 0,
+      first_range_deadline: 0,
+      second_range_deadline: 0,
+      third_range_deadline: 0,
+    },
+    date: {
+      first_start_date: "",
+      first_end_date: "",
+      second_start_date: "",
+      second_end_date: "",
+      third_start_date: "",
+      third_end_date: "",
+    },
+  });
 
   // 2.2. Table Task List
   // filter data
@@ -174,9 +209,8 @@ const ProjectDetailIndex = ({
 
   // filter search & selected options
   const [searchingFilterTasks, setSearchingFilterTasks] = useState(undefined);
-  const [selectedFromDate, setSelectedFromDate] = useState("");
-  const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
+  const [selectedSortType, setSelectedSortType] = useState(undefined);
 
   // table data
   const [loadingTasks, setLoadingTasks] = useState(true);
@@ -202,30 +236,47 @@ const ProjectDetailIndex = ({
   // 2.3. Project Detail
   const [dataProject, setDataProject] = useState({});
   const [loadingProject, setLoadingProject] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState({});
 
   // 2.4. Project Logs
   const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
   const [dataProjectLogs, setDataProjectLogs] = useState([]);
   const [loadingProjectLog, setLoadingProjectLog] = useState(false);
-  const [searchingFilterLogs, setSearchingFilterLogs] = useState(undefined);
+  const [searchingFilterLogs, setSearchingFilterLogs] = useState("");
+  const [pageProjectLogs, setPageProjectLogs] = useState(1);
 
   // 2.5. Project Notes
   const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
   const [dataProjectNotes, setDataProjectNotes] = useState([]);
   const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
-  const [searchingFilterNotes, setSearchingFilterNotes] = useState(undefined);
+
+  const [searchingFilterNotes, setSearchingFilterNotes] = useState("");
+  const [pageProjectNotes, setPageProjectNotes] = useState(1);
+
+  const [isNoteInput, setIsNoteInput] = useState(false);
+  const [dataInputNote, setDataInputNote] = useState("");
+  const [dataCurrentNote, setDataCurrentNote] = useState("");
 
   // 2.6. Modal
   const [modalUpdateProject, setModalUpdateProject] = useState(false);
+  const [modalStaffs, setModalStaffs] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
-  const [modalAddNote, setModalAddNote] = useState(false);
+  const [modalDetailNote, setModalDetailNote] = useState(false);
 
   const [dataProjectList, setDataProjectList] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
-  // 3.1. Get Project
+  // 3.1. Get current status object
+  useEffect(() => {
+    const status = dataStatusList.find(
+      (status) => status.id === dataProject.status_id
+    );
+    setCurrentStatus(status);
+  }, [dataStatusList, dataProject.status_id]);
+
+  // 3.2. Get Project
   useEffect(() => {
     if (!isAllowedToGetProject) {
       permissionWarningNotification("Mendapatkan", "Data Proyek");
@@ -262,7 +313,7 @@ const ProjectDetailIndex = ({
       });
   }, [isAllowedToGetProject, refresh]);
 
-  // 3.2. Get project list
+  // 3.3. Get project list
   useEffect(() => {
     if (!isAllowedToGetProjects) {
       permissionWarningNotification("Mendapatkan", "Daftar Proyek");
@@ -294,7 +345,7 @@ const ProjectDetailIndex = ({
       });
   }, [isAllowedToGetProjects, refresh]);
 
-  // 3.3. Get Project Status List
+  // 3.4. Get Project Status List
   useEffect(() => {
     if (!isAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Daftar Status Proyek");
@@ -331,7 +382,7 @@ const ProjectDetailIndex = ({
       });
   }, [isAllowedToGetStatuses, refresh]);
 
-  // 3.4. Get Task List
+  // 3.5. Get Task List
   useEffect(() => {
     if (!isAllowedToGetTasks) {
       permissionWarningNotification("Mendapatkan", "Daftar Task Proyek");
@@ -344,12 +395,15 @@ const ProjectDetailIndex = ({
     });
 
     setLoadingTasks(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
@@ -374,17 +428,16 @@ const ProjectDetailIndex = ({
   }, [
     isAllowedToGetTasks,
     refresh,
+    projectId,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
     queryParams.keyword,
     queryParams.status_ids,
-    queryParams.from,
-    queryParams.to,
   ]);
 
-  // 3.5. Get Project Logs
+  // 3.6. Get Project Logs
   useEffect(() => {
     if (!isAllowedToGetLogs) {
       permissionWarningNotification("Mendapatkan", "Log Aktivitas Proyek");
@@ -392,52 +445,46 @@ const ProjectDetailIndex = ({
       return;
     }
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
     setLoadingProjectLog(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawProjectLogs(res2.data);
-          setDataProjectLogs(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}&keyword=${searchingFilterLogs}&page=${pageProjectLogs}&rows=5`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawProjectLogs(res2.data);
+            setDataProjectLogs(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingProjectLog(false);
         });
-      })
-      .finally(() => {
-        setLoadingProjectLog(false);
-      });
-  }, [
-    isAllowedToGetLogs,
-    refresh,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.keyword,
-  ]);
+    };
 
-  // 3.6. Get Project Notes
+    const timer = setTimeout(() => fetchData(), 1000);
+
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetLogs, refresh, searchingFilterLogs, pageProjectLogs]);
+
+  // 3.7. Get Project Notes
   useEffect(() => {
     if (!isAllowedToGetNotes) {
       permissionWarningNotification("Mendapatkan", "Catatan Proyek");
@@ -445,13 +492,229 @@ const ProjectDetailIndex = ({
       return;
     }
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
+    setLoadingProjectNotes(true);
+    const fetchData = async () => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}&keyword=${searchingFilterNotes}&page=${pageProjectNotes}&rows=5`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawProjectNotes(res2.data);
+            setDataProjectNotes(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingProjectNotes(false);
+        });
+    };
 
+    const timer = setTimeout(() => fetchData(), 1000);
+
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetNotes, refresh, searchingFilterNotes, pageProjectNotes]);
+
+  // 3.8. Get Data Chart Status Task
+  // TODO: uncomment if API is done
+  // useEffect(() => {
+  //   if (!isAllowedToGetTaskStatusCount) {
+  //     setLoadingChart(false);
+  //     return;
+  //   }
+
+  //   setLoadingChart(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskStatusCount`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setTaskStatusCount(res2.data); // "Status Task" chart's data source
+  //     })
+  //     .catch((err) =>
+  //       notification.error({
+  //         message: "Gagal mendapatkan data statistik status task",
+  //         duration: 3,
+  //       })
+  //     )
+  //     .finally(() => setLoadingChart(false));
+  // }, [isAllowedToGetTaskStatusCount]);
+
+  // 3.9. Get Data Chart Deadline Task
+  // TODO: uncomment if API is done
+  // useEffect(() => {
+  //   if (!isAllowedToGetTaskDeadlineCount) {
+  //     setLoadingChart(false);
+  //     return;
+  //   }
+
+  //   setLoadingChart(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskDeadlines`, {
+  //     method: `GET`,
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res2) => {
+  //       setDataTaskDeadline(res2.data); // "Deadline Task Bulan Ini" chart's data source
+  //     })
+  //     .catch((err) =>
+  //       notification.error({
+  //         message: "Gagal mendapatkan data statistik deadline task",
+  //         duration: 3,
+  //       })
+  //     )
+  //     .finally(() => setLoadingChart(false));
+  // }, [isAllowedToGetTaskDeadlineCount]);
+
+  // 3.10. Update number of rows in task table based on the device width
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= 820) {
+        setQueryParams({ rows: 3 }); // Set smaller page size for smaller devices
+      } else {
+        setQueryParams({ rows: 6 }); // Set default page size for larger devices
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  // 4. Event
+  const onFilterTasks = () => {
+    setQueryParams({
+      keyword: searchingFilterTasks,
+      sort_by: "end_date",
+      sort_type: selectedSortType,
+      status_ids: selectedStatus,
+    });
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(onFilterTasks, "Enter");
+
+  const handleAddNote = (notes) => {
+    if (!isAllowedToAddNote) {
+      permissionWarningNotification("Menambah", "Catatan");
+      return;
+    }
+
+    const payload = { notes: notes };
     setLoadingProjectNotes(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${projectId}`,
+      {
+        method: `POST`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setDataInputNote("");
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambah catatan. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingProjectNotes(false));
+  };
+
+  const handleUpdateStatus = () => {
+    if (!isAllowedToUpdateProject) {
+      permissionWarningNotification("Mengubah", "Status Proyek");
+      return;
+    }
+
+    const payload = {
+      ...dataProject,
+      project_staffs: dataProject.project_staffs?.map((staff) =>
+        Number(staff.key)
+      ),
+    };
+
+    setLoadingProject(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
+      method: `PUT`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah status proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingProject(false));
+  };
+
+  const handleGetTaskDeadlineCount = (fromDate = "", toDate = "") => {
+    if (!isAllowedToGetTaskDeadlineCount) {
+      setLoadingChart(false);
+      return;
+    }
+
+    setLoadingChart(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineTasks?from=${fromDate}&to=${toDate}`,
       {
         method: `GET`,
         headers: {
@@ -462,45 +725,27 @@ const ProjectDetailIndex = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          setDataRawProjectNotes(res2.data);
-          setDataProjectNotes(res2.data.data);
+          setDateState({
+            from: fromDate,
+            to: toDate,
+          });
+          setDataTaskDeadline(res2.data);
+          setLoadingChart(false);
         } else {
-          notification.error({
-            message: `${res2.message}`,
+          notification["error"]({
+            message: res2.message,
             duration: 3,
           });
         }
       })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
+      .catch((err) =>
+        notification["error"]({
+          message: err?.message,
           duration: 3,
-        });
-      })
-      .finally(() => {
-        setLoadingProjectNotes(false);
-      });
-  }, [
-    isAllowedToGetNotes,
-    refresh,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.keyword,
-  ]);
-
-  // 4. Event
-  const onFilterTasks = () => {
-    setQueryParams({
-      keyword: searchingFilterTasks,
-      from: selectedFromDate,
-      to: selectedToDate,
-      status_ids: selectedStatus,
-    });
+        })
+      )
+      .finally(() => setLoadingChart(false));
   };
-
-  const { onKeyPressHandler } = createKeyPressHandler(onFilterTasks, "Enter");
 
   // String of project staffs
   const lastIndexStaff = dataProject?.project_staffs?.length - 1;
@@ -556,45 +801,269 @@ const ProjectDetailIndex = ({
                 </div>
               }
             >
-              {/* CHART STATUS PROYEK */}
               {loadingChart ? (
-                <Spin />
+                <div className="text-center">
+                  <Spin />
+                </div>
               ) : (
-                <div className="grid md:grid-cols-3 gap-2 lg:gap-6">
-                  <ChartDoughnut
-                    title={"Status Proyek"}
-                    dataChart={projectStatusCount}
-                    objName={"project_status"}
-                    value={"project_status_count"}
-                    customLegend={
-                      <div className="text-md flex justify-between items-center mt-4">
-                        <p className="text-mono30 font-semibold">
-                          Total Proyek Saya
-                        </p>
-                        <p className="text-primary100 font-bold">20</p>
-                      </div>
-                    }
-                  />
-                  <div className="grid md:col-span-2 grid-cols-2 gap-2 lg:gap-6">
-                    {projectStatusCount.map((status, idx) => (
-                      <div
-                        key={status.project_status}
-                        className="grid grid-cols-4 items-center shadow-md rounded-md bg-white p-5 text-left"
-                      >
-                        <ClipboardListIconSvg
-                          size={36}
-                          color={
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                          }
-                        />
-                        <div className="flex flex-col text-right col-span-3">
-                          <p className="text-lg font-bold text-mono30">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-3 px-2">
+                  {/* CHART STATUS PROYEK */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 shadow-md rounded-md bg-white p-5">
+                    <div className="grid grid-cols-1">
+                      <h4 className="mig-heading--4 mb-4">Status Proyek</h4>
+                      <Doughnut
+                        data={{
+                          labels: taskStatusCount?.map(
+                            (doc) => doc?.project_status
+                          ),
+                          datasets: [
+                            {
+                              data: taskStatusCount?.map(
+                                (doc) => doc?.project_status_count
+                              ),
+                              backgroundColor: taskStatusCount?.map(
+                                (doc, idx) =>
+                                  dataColorBar[
+                                    idx + (1 % dataColorBar.length) - 1
+                                  ]
+                              ),
+                              borderColor: taskStatusCount?.map(
+                                (doc, idx) =>
+                                  dataColorBar[
+                                    idx + (1 % dataColorBar.length) - 1
+                                  ]
+                              ),
+                              borderWidth: 1,
+                            },
+                          ],
+                        }}
+                        options={{
+                          title: {
+                            display: false,
+                          },
+                          legend: {
+                            display: false,
+                          },
+                          maintainAspectRatio: true,
+                          cutout: 60,
+                          spacing: 10,
+                        }}
+                      />
+                    </div>
+
+                    {/* LEGEND STATUS PROYEK */}
+                    <div className="grid gap-4">
+                      {taskStatusCount?.map((status, idx) => (
+                        <div
+                          key={idx}
+                          className="flex justify-between items-center space-x-5"
+                        >
+                          <div className="flex">
+                            <div
+                              className="w-1 mr-2"
+                              style={{
+                                backgroundColor: `${
+                                  dataColorBar[
+                                    idx + (1 % dataColorBar.length) - 1
+                                  ]
+                                }`,
+                              }}
+                            ></div>
+                            <p className="mig-caption--medium text-mono30 whitespace-nowrap">
+                              {status.project_status || "-"}
+                            </p>
+                          </div>
+                          <p className="font-bold text-right text-mono30">
                             {status.project_status_count}
                           </p>
-                          <p className="text-mono50">{status.project_status}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* CHART DEADLINE TASK BULAN INI */}
+                  <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
+                    <div className="flex items-center space-x-2 justify-between mb-4">
+                      <h4 className="mig-heading--4 text-mono30">
+                        Deadline Task Bulan Ini
+                      </h4>
+                      <div className="flex items-center text-right">
+                        <div
+                          className=" cursor-pointer"
+                          onClick={() => {
+                            if (!isAllowedToGetTaskDeadlineCount) {
+                              permissionWarningNotification(
+                                "Mendapatkan",
+                                "Informasi Deadline Task"
+                              );
+                              return;
+                            }
+                            setDateFilter((prev) => !prev);
+                          }}
+                        >
+                          <CalendartimeIconSvg color={`#4D4D4D`} size={24} />
+                        </div>
+
+                        <DatePicker.RangePicker
+                          value={
+                            moment(dateState.from).isValid()
+                              ? [moment(dateState.from), moment(dateState.to)]
+                              : [null, null]
+                          }
+                          allowEmpty
+                          style={{
+                            visibility: `hidden`,
+                            width: `0`,
+                            padding: `0`,
+                          }}
+                          className="datepickerStatus"
+                          open={dateFilter}
+                          onChange={(dates, datestrings) => {
+                            setDateFilter((prev) => !prev);
+                            handleGetTaskDeadlineCount(
+                              datestrings[0],
+                              datestrings[1]
+                            );
+                          }}
+                          renderExtraFooter={() => (
+                            <div className=" flex items-center">
+                              <p
+                                className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
+                                onClick={() => {
+                                  setDateFilter((prev) => !prev);
+                                  handleGetTaskDeadlineCount();
+                                }}
+                              >
+                                Reset
+                              </p>
+                            </div>
+                          )}
+                        />
+                      </div>
+                    </div>
+
+                    {/* CHART */}
+                    {loadingChart ? (
+                      <Spin />
+                    ) : (
+                      <div className="">
+                        <div className="flex justify-center mb-4 w-max">
+                          <Line
+                            data={{
+                              labels: [
+                                `${
+                                  moment(
+                                    dataTaskDeadline.date.first_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.first_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataTaskDeadline.date.first_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.first_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                                `${
+                                  moment(
+                                    dataTaskDeadline.date.second_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.second_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataTaskDeadline.date.second_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.second_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                                `${
+                                  moment(
+                                    dataTaskDeadline.date.third_start_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.third_start_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }-${
+                                  moment(
+                                    dataTaskDeadline.date.third_end_date
+                                  ).isValid()
+                                    ? moment(
+                                        dataTaskDeadline.date.third_end_date
+                                      )
+                                        .locale("id")
+                                        .format("Do MMM")
+                                    : ""
+                                }`,
+                              ],
+                              datasets: [
+                                {
+                                  data: [
+                                    dataTaskDeadline.deadline
+                                      .first_range_deadline,
+                                    dataTaskDeadline.deadline
+                                      .second_range_deadline,
+                                    dataTaskDeadline.deadline
+                                      .third_range_deadline,
+                                  ],
+                                  borderColor: "#35763B",
+                                  tension: 0.5,
+                                  fill: false,
+                                },
+                              ],
+                            }}
+                            options={{
+                              title: {
+                                display: false,
+                              },
+                              legend: {
+                                display: false,
+                              },
+                              maintainAspectRatio: false,
+                              scales: {
+                                x: {
+                                  grid: {
+                                    display: false,
+                                  },
+                                },
+                                y: {
+                                  grid: {
+                                    display: false,
+                                  },
+                                },
+                              },
+                            }}
+                          />
+                        </div>
+                        <div className="flex flex-row justify-between items-center space-x-2 mb-1 ">
+                          <h5 className="mig-caption--medium text-mono30">
+                            Task yang berakhir bulan ini
+                          </h5>
+                          <h5 className="font-bold text-mono30 text-right">
+                            {dataTaskDeadline.deadline.today_deadline}
+                          </h5>
                         </div>
                       </div>
-                    ))}
+                    )}
                   </div>
                 </div>
               )}
@@ -604,7 +1073,7 @@ const ProjectDetailIndex = ({
 
         <div className="flex flex-col-reverse lg:flex-row gap-4 lg:gap-6">
           {/* Detail, Log, Catatan Proyek */}
-          <div className="lg:w-2/6 flex flex-col gap-4 lg:gap-6">
+          <div className="lg:w-5/12 xl:w-2/6 flex flex-col gap-4 lg:gap-6">
             {/* Detail */}
             <Collapse
               className="shadow-md rounded-md bg-white"
@@ -624,64 +1093,108 @@ const ProjectDetailIndex = ({
                   </div>
                 }
               >
-                <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
-                  <div>
-                    <p className="text-mono30 font-bold mb-2">Diajukan oleh:</p>
+                <Spin spinning={loadingProject}>
+                  <div className="grid md:grid-cols-2 gap-4 lg:gap-6">
                     <div>
-                      {dataProject?.proposed_bys?.length > 1 ? (
-                        <div className="flex items-center">
-                          <Avatar.Group
-                            size={30}
-                            maxCount={5}
-                            className="cursor-help"
-                            maxStyle={{
-                              color: "#f56a00",
-                              backgroundColor: "#fde3cf",
-                            }}
-                          >
-                            {dataProject?.proposed_bys?.map((staff) => (
-                              <Tooltip
-                                key={staff.id}
-                                title={staff?.name}
-                                placement="top"
-                              >
-                                <Avatar
-                                  src={generateStaticAssetUrl(
-                                    staff?.profile_image?.link ??
-                                      "staging/Users/default_user.png"
-                                  )}
-                                  className=""
-                                  size={30}
-                                />
-                              </Tooltip>
-                            ))}
-                          </Avatar.Group>
-                        </div>
-                      ) : dataProject?.proposed_bys?.length > 0 ? (
-                        <div className="flex items-center space-x-2">
-                          <img
-                            src={generateStaticAssetUrl(
-                              dataProject?.proposed_bys?.[0]?.profile_image
-                                ?.link ?? "staging/Users/default_user.png"
-                            )}
-                            alt={
-                              dataProject?.proposed_bys?.[0]?.profile_image
-                                ?.description
-                            }
-                            className="w-8 h-8 bg-cover object-cover rounded-full"
-                          />
-                          <p className={`mig-caption--medium text-mono50`}>
-                            {dataProject?.proposed_bys?.[0]?.name}
-                          </p>
-                        </div>
-                      ) : (
-                        <div>-</div>
-                      )}
+                      <p className="text-mono30 font-bold mb-2">
+                        Diajukan oleh:
+                      </p>
+                      <div>
+                        {dataProject?.proposed_bys?.length > 1 ? (
+                          <div className="flex items-center">
+                            <Avatar.Group
+                              size={30}
+                              maxCount={5}
+                              className="cursor-help"
+                              maxStyle={{
+                                color: "#f56a00",
+                                backgroundColor: "#fde3cf",
+                              }}
+                            >
+                              {dataProject?.proposed_bys?.map((staff) => (
+                                <Tooltip
+                                  key={staff.id}
+                                  title={staff?.name}
+                                  placement="top"
+                                >
+                                  <Avatar
+                                    src={generateStaticAssetUrl(
+                                      staff?.profile_image?.link ??
+                                        "staging/Users/default_user.png"
+                                    )}
+                                    className=""
+                                    size={30}
+                                  />
+                                </Tooltip>
+                              ))}
+                            </Avatar.Group>
+                          </div>
+                        ) : dataProject?.proposed_bys?.length > 0 ? (
+                          <div className="flex items-center space-x-2">
+                            <img
+                              src={generateStaticAssetUrl(
+                                dataProject?.proposed_bys?.[0]?.profile_image
+                                  ?.link ?? "staging/Users/default_user.png"
+                              )}
+                              alt={
+                                dataProject?.proposed_bys?.[0]?.profile_image
+                                  ?.description
+                              }
+                              className="w-8 h-8 bg-cover object-cover rounded-full"
+                            />
+                            <p className={`mig-caption--medium text-mono50`}>
+                              {dataProject?.proposed_bys?.[0]?.name}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>-</div>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                  <div>
-                    <p className="mig-caption--bold mb-2">Status:</p>
-                    <p
+                    <div>
+                      <p className="mig-caption--bold mb-2">Status:</p>
+                      <div>
+                        <Select
+                          allowClear
+                          value={dataProject.status_id}
+                          disabled={!isAllowedToGetStatuses}
+                          placeholder="Ubah Status"
+                          onChange={(value) => {
+                            setDataProject((prev) => ({
+                              ...prev,
+                              status_id: value,
+                            }));
+                            // TODO: uncomment if API is ready
+                            // handleUpdateStatus()
+                          }}
+                          optionFilterProp="children"
+                          bordered={false}
+                          className="mig-caption--bold bg-transparent hover:opacity-75 
+                        rounded-md px-2 py-1 "
+                          style={{
+                            backgroundColor: currentStatus?.color
+                              ? currentStatus?.color + "20"
+                              : "#E6E6E6",
+                            color: currentStatus?.color ?? "#808080",
+                          }}
+                        >
+                          {dataStatusList.map((item) => (
+                            <Select.Option
+                              key={item?.id}
+                              value={item?.id}
+                              style={{
+                                backgroundColor:
+                                  (item?.color ?? "#E6E6E6") + "20",
+                                color: item?.color ?? "#808080",
+                              }}
+                              className="rounded-md px-4 py-2 m-2"
+                            >
+                              {item?.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </div>
+                      {/* <p
                       className="px-4 py-2 rounded-md w-max"
                       style={{
                         backgroundColor: dataProject?.status?.color
@@ -691,117 +1204,122 @@ const ProjectDetailIndex = ({
                       }}
                     >
                       {dataProject?.status?.name ?? "-"}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mig-caption--bold mb-2">Tanggal Dimulai:</p>
-                    <p className="text-mono50">
-                      {momentFormatDate(dataProject?.start_date, "-")}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mig-caption--bold mb-2">
-                      Ekspektasi Tanggal Selesai:
-                    </p>
-                    <p className="text-mono50">
-                      {momentFormatDate(dataProject?.end_date, "-")}
-                    </p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <p className="text-mono30 font-bold mb-2">Staff Proyek:</p>
-                    <div className="flex items-center space-x-2">
-                      {dataProject?.project_staffs?.length > 1 ? (
-                        <div>
-                          <Avatar.Group
-                            size={30}
-                            maxCount={3}
-                            className="cursor-help"
-                            maxStyle={{
-                              color: "#f56a00",
-                              backgroundColor: "#fde3cf",
-                            }}
-                          >
-                            {dataProject?.project_staffs?.map((staff) => (
-                              <Tooltip
-                                key={staff.id}
-                                title={staff?.name}
-                                placement="top"
-                              >
+                    </p> */}
+                    </div>
+                    <div>
+                      <p className="mig-caption--bold mb-2">Tanggal Dimulai:</p>
+                      <p className="text-mono50">
+                        {momentFormatDate(dataProject?.start_date, "-")}
+                      </p>
+                    </div>
+                    <div>
+                      <p className="mig-caption--bold mb-2">
+                        Ekspektasi Tanggal Selesai:
+                      </p>
+                      <p className="text-mono50">
+                        {momentFormatDate(dataProject?.end_date, "-")}
+                      </p>
+                    </div>
+                    <div className="md:col-span-2">
+                      <p className="text-mono30 font-bold mb-2">
+                        Staff Proyek:
+                      </p>
+                      <div className="flex items-center space-x-2">
+                        {dataProject?.project_staffs?.length > 1 ? (
+                          <div onClick={() => setModalStaffs(true)}>
+                            <Avatar.Group
+                              size={30}
+                              maxCount={3}
+                              className="cursor-pointer"
+                              maxStyle={{
+                                color: "#f56a00",
+                                backgroundColor: "#fde3cf",
+                              }}
+                            >
+                              {dataProject?.project_staffs?.map((staff) => (
+                                // <Tooltip
+                                //   key={staff.id}
+                                //   title={staff?.name}
+                                //   placement="top"
+                                // >
                                 <Avatar
+                                  key={staff.id}
                                   src={generateStaticAssetUrl(
                                     staff?.profile_image?.link ??
                                       "staging/Users/default_user.png"
                                   )}
                                   size={30}
                                 />
-                              </Tooltip>
-                            ))}
-                          </Avatar.Group>
-                          {dataProject?.project_staffs?.length > 3 ? (
-                            <p className="text-secondary100">
-                              <strong>{staffsString}, </strong>
-                              dan{" "}
-                              <strong>
-                                {dataProject?.project_staffs?.length - 3}{" "}
-                                lainnya{" "}
-                              </strong>
-                              merupakan staff proyek ini.
-                            </p>
-                          ) : (
-                            <p className="text-secondary100">
-                              <strong>{staffsString}</strong> dan{" "}
-                              <strong>
-                                {
-                                  dataProject?.project_staffs?.[lastIndexStaff]
-                                    ?.name
-                                }
-                              </strong>{" "}
-                              merupakan staff proyek ini.
-                            </p>
-                          )}
-                        </div>
-                      ) : dataProject?.project_staffs?.length > 0 ? (
-                        <div className="flex space-x-2 items-center">
-                          <img
-                            src={generateStaticAssetUrl(
-                              dataProject?.project_staffs?.[0]?.profile_image
-                                ?.link ?? "staging/Users/default_user.png"
+                                // </Tooltip>
+                              ))}
+                            </Avatar.Group>
+                            {dataProject?.project_staffs?.length > 3 ? (
+                              <p className="text-secondary100">
+                                <strong>{staffsString}, </strong>
+                                dan{" "}
+                                <strong>
+                                  {dataProject?.project_staffs?.length - 3}{" "}
+                                  lainnya{" "}
+                                </strong>
+                                merupakan staff proyek ini.
+                              </p>
+                            ) : (
+                              <p className="text-secondary100">
+                                <strong>{staffsString}</strong> dan{" "}
+                                <strong>
+                                  {
+                                    dataProject?.project_staffs?.[
+                                      lastIndexStaff
+                                    ]?.name
+                                  }
+                                </strong>{" "}
+                                merupakan staff proyek ini.
+                              </p>
                             )}
-                            alt={"Profile image"}
-                            className="w-8 h-8 bg-cover object-cover rounded-full"
-                          />
+                          </div>
+                        ) : dataProject?.project_staffs?.length > 0 ? (
+                          <div className="flex space-x-2 items-center">
+                            <img
+                              src={generateStaticAssetUrl(
+                                dataProject?.project_staffs?.[0]?.profile_image
+                                  ?.link ?? "staging/Users/default_user.png"
+                              )}
+                              alt={"Profile image"}
+                              className="w-8 h-8 bg-cover object-cover rounded-full"
+                            />
 
-                          <p className={`mig-caption--medium text-mono50`}>
-                            {dataProject?.project_staffs?.[0]?.name}
-                          </p>
+                            <p className={`mig-caption--medium text-mono50`}>
+                              {dataProject?.project_staffs?.[0]?.name}
+                            </p>
+                          </div>
+                        ) : (
+                          <div>-</div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
+                      <p className="text-mono30 font-bold mb-2">Deskripsi:</p>
+                      <div className="text-mono50">
+                        {dataProject?.description
+                          ? parse(dataProject?.description)
+                          : "-"}
+                      </div>
+                    </div>
+                    <div className="md:col-span-2">
+                      <ButtonSys
+                        type={"primary"}
+                        fullWidth={true}
+                        size={"large"}
+                        onClick={() => setModalUpdateProject(true)}
+                      >
+                        <div className="flex space-x-2 items-center ">
+                          <EditSquareIconSvg size={24} color={"#ffffff"} />
+                          <p>Edit Detail Proyek</p>
                         </div>
-                      ) : (
-                        <div>-</div>
-                      )}
+                      </ButtonSys>
                     </div>
                   </div>
-                  <div className="md:col-span-2">
-                    <p className="text-mono30 font-bold mb-2">Deskripsi:</p>
-                    <p className="text-mono50">
-                      {dataProject?.description
-                        ? parse(dataProject?.description)
-                        : "-"}
-                    </p>
-                  </div>
-                  <div className="md:col-span-2">
-                    <ButtonSys
-                      type={"primary"}
-                      fullWidth={true}
-                      size={"large"}
-                      onClick={() => setModalUpdateProject(true)}
-                    >
-                      <div className="flex space-x-2 items-center ">
-                        <EditSquareIconSvg size={24} color={"#ffffff"} />
-                        <p>Edit Detail Proyek</p>
-                      </div>
-                    </ButtonSys>
-                  </div>
-                </div>
+                </Spin>
               </Collapse.Panel>
             </Collapse>
 
@@ -828,19 +1346,16 @@ const ProjectDetailIndex = ({
                   {/* Search by keyword (kata kunci) */}
                   <div className="">
                     <Input
-                      defaultValue={queryParams.keyword}
+                      defaultValue={searchingFilterLogs}
                       style={{ width: `100%` }}
                       placeholder="Kata Kunci.."
                       allowClear
                       onChange={(e) => {
                         if (!e.target.value) {
-                          setQueryParams({
-                            keyword: undefined,
-                          });
+                          setSearchingFilterLogs("");
                         }
                         setSearchingFilterLogs(e.target.value);
                       }}
-                      onKeyPress={onKeyPressHandler}
                       disabled={!isAllowedToGetLogs}
                     />
                   </div>
@@ -851,10 +1366,12 @@ const ProjectDetailIndex = ({
                     dataSource={dataProjectLogs}
                     loading={loadingProjectLog}
                     pagination={{
-                      current: queryParams.page,
-                      pageSize: queryParams.rows,
-                      total: dataRawProjectLogs.total,
-                      showSizeChanger: true,
+                      current: pageProjectLogs,
+                      pageSize: 5,
+                      total: dataRawProjectLogs?.total,
+                    }}
+                    onChange={(pagination) => {
+                      setPageProjectLogs(pagination.current);
                     }}
                     columns={[
                       {
@@ -921,20 +1438,17 @@ const ProjectDetailIndex = ({
                 <div className="grid gap-2 lg:gap-6">
                   {/* Search by keyword (kata kunci) */}
                   <Input
-                    defaultValue={queryParams.keyword}
+                    defaultValue={searchingFilterNotes}
                     style={{ width: `100%` }}
                     placeholder="Kata Kunci.."
                     allowClear
                     onChange={(e) => {
                       if (!e.target.value) {
-                        setQueryParams({
-                          keyword: undefined,
-                        });
+                        setSearchingFilterNotes("");
                       }
-                      setSearchingFilterLogs(e.target.value);
+                      setSearchingFilterNotes(e.target.value);
                     }}
-                    onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetLogs}
+                    disabled={!isAllowedToGetNotes}
                   />
 
                   <Table
@@ -943,19 +1457,22 @@ const ProjectDetailIndex = ({
                     dataSource={dataProjectNotes}
                     loading={loadingProjectNotes}
                     pagination={{
-                      current: queryParams.page,
-                      pageSize: queryParams.rows,
-                      total: dataRawProjectNotes.total,
-                      showSizeChanger: true,
+                      current: pageProjectNotes,
+                      pageSize: 5,
+                      total: dataRawProjectNotes?.total,
+                    }}
+                    onChange={(pagination) => {
+                      setPageProjectNotes(pagination.current);
                     }}
                     columns={[
                       {
                         title: "Notes",
                         dataIndex: "id",
                         key: "id",
+
                         render: (_, note) => {
                           return (
-                            <div key={note?.id} className="">
+                            <div key={note?.id} className="cursor-pointer">
                               <div className="flex justify-between items-center mb-2">
                                 <div className="flex items-center space-x-2">
                                   <img
@@ -980,20 +1497,72 @@ const ProjectDetailIndex = ({
                                   )}
                                 </p>
                               </div>
-                              <p>{note?.description ?? "-"}</p>
+                              <p className="">
+                                {note?.notes?.length > 280
+                                  ? note?.notes.slice(0, 280) + "..."
+                                  : note?.notes ?? "-"}
+                              </p>
                             </div>
                           );
                         },
                       },
                     ]}
+                    onRow={(record, rowIndex) => {
+                      return {
+                        onClick: () => {
+                          setDataCurrentNote(record);
+                          setModalDetailNote(true);
+                        },
+                      };
+                    }}
                   />
+
+                  {isNoteInput ? (
+                    <div className="space-y-2">
+                      <TextArea
+                        size="large"
+                        value={dataInputNote}
+                        onChange={(e) => setDataInputNote(e.target.value)}
+                      ></TextArea>
+                      <div className="text-right">
+                        <button
+                          onClick={() => {
+                            setIsNoteInput(false);
+                            setDataInputNote("");
+                          }}
+                          className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
+                        >
+                          Batal
+                        </button>
+                        <ButtonSys
+                          type={"primary"}
+                          onClick={() => handleAddNote(dataInputNote)}
+                          disabled={!isAllowedToAddNote}
+                        >
+                          Simpan
+                        </ButtonSys>
+                      </div>
+                    </div>
+                  ) : (
+                    <ButtonSys
+                      type={"default"}
+                      size={"large"}
+                      fullWidth={true}
+                      onClick={() => setIsNoteInput(true)}
+                    >
+                      <div className="flex space-x-2 items-center ">
+                        <PlusOutlined />
+                        <p className="mig-caption--bold ">Tambah Catatan</p>
+                      </div>
+                    </ButtonSys>
+                  )}
                 </div>
               </Collapse.Panel>
             </Collapse>
           </div>
 
           {/* Task Proyek */}
-          <div className="lg:w-4/6">
+          <div className="lg:w-7/12 xl:w-4/6">
             <div className=" shadow-md rounded-md bg-white">
               <div
                 className="flex flex-row justify-between items-center 
@@ -1028,38 +1597,34 @@ const ProjectDetailIndex = ({
                           keyword: undefined,
                         });
                       }
-                      setSearchingFilterProjects(e.target.value);
+                      setSearchingFilterTasks(e.target.value);
                     }}
                     onKeyPress={onKeyPressHandler}
-                    disabled={!isAllowedToGetProjects}
+                    disabled={!isAllowedToGetTasks}
                   />
                 </div>
 
-                {/* Filter by date */}
+                {/* Sort by date */}
                 <div className="md:w-5/12">
-                  <DatePicker.RangePicker
+                  <Select
                     allowClear
-                    allowEmpty
-                    showTime={{
-                      format: "HH:mm",
-                    }}
-                    value={
-                      selectedFromDate === ""
-                        ? [null, null]
-                        : [moment(queryParams.from), moment(queryParams.to)]
-                    }
-                    placeholder={["Tanggal Mulai", "Tanggal Selesai"]}
-                    disabled={!isAllowedToGetProjects}
+                    defaultValue={queryParams.sort_type}
+                    disabled={!isAllowedToGetTasks}
+                    placeholder="Urutkan Deadline"
                     style={{ width: `100%` }}
-                    onChange={(dates, datestrings) => {
-                      setQueryParams({
-                        from: datestrings[0],
-                        to: datestrings[1],
-                      });
-                      setSelectedFromDate(datestrings[0]);
-                      setSelectedToDate(datestrings[1]);
+                    onChange={(value) => {
+                      setQueryParams({ sort_type: value });
+                      setSelectedSortType(value);
                     }}
-                  />
+                    optionFilterProp="children"
+                  >
+                    <Select.Option key={0} value={"asc"}>
+                      Terdekat
+                    </Select.Option>
+                    <Select.Option key={1} value={"desc"}>
+                      Terjauh
+                    </Select.Option>
+                  </Select>
                 </div>
 
                 {/* Filter by statuses (dropdown) */}
@@ -1069,7 +1634,7 @@ const ProjectDetailIndex = ({
                     showSearch
                     mode="multiple"
                     defaultValue={queryParams.status_ids}
-                    disabled={!isAllowedToGetProjects}
+                    disabled={!isAllowedToGetTasks}
                     placeholder="Semua Status"
                     style={{ width: `100%` }}
                     onChange={(value) => {
@@ -1113,8 +1678,24 @@ const ProjectDetailIndex = ({
                 pagination={{
                   current: queryParams.page,
                   pageSize: queryParams.rows,
-                  // total: total,
+                  total: dataRawTasks?.total,
                   showSizeChanger: true,
+                }}
+                onChange={(pagination, filters, sorter, extra) => {
+                  const sortTypePayload =
+                    sorter.order === "ascend"
+                      ? "asc"
+                      : sorter.order === "descend"
+                      ? "desc"
+                      : undefined;
+
+                  setQueryParams({
+                    sort_type: sortTypePayload,
+                    sort_by:
+                      sortTypePayload === undefined ? undefined : sorter.field,
+                    page: pagination.current,
+                    rows: pagination.pageSize,
+                  });
                 }}
                 columns={[
                   {
@@ -1167,6 +1748,15 @@ const ProjectDetailIndex = ({
         />
       </AccessControl>
 
+      <AccessControl hasPermission={PROJECT_GET}>
+        <ModalStaffList
+          visible={modalStaffs}
+          onvisible={setModalStaffs}
+          dataStaffs={dataProject?.project_staffs}
+          taskName={dataProject?.name}
+        />
+      </AccessControl>
+
       {/* Modal Task */}
       <AccessControl hasPermission={PROJECT_TASK_ADD}>
         <ModalProjectTaskCreate
@@ -1178,6 +1768,7 @@ const ProjectDetailIndex = ({
           isAllowedToGetProject={isAllowedToGetProject}
           setRefresh={setRefresh}
           dataProjectList={dataProjectList}
+          defaultProject={dataProject}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>
@@ -1187,6 +1778,7 @@ const ProjectDetailIndex = ({
           onvisible={setModalDetailTask}
           isAllowedToGetTask={isAllowedToGetTask}
           isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
@@ -1198,6 +1790,16 @@ const ProjectDetailIndex = ({
       </AccessControl>
 
       {/* Modal Notes */}
+      <AccessControl hasPermission={PROJECT_NOTES_GET}>
+        <ModalProjectNote
+          initProps={initProps}
+          visible={modalDetailNote}
+          onvisible={setModalDetailNote}
+          dataNote={dataCurrentNote}
+          isAllowedToDeleteNote={isAllowedToDeleteNote}
+          setRefresh={setRefresh}
+        />
+      </AccessControl>
     </LayoutDashboard>
   );
 };

@@ -309,7 +309,7 @@ const ModalProjectUpdate = ({
                 >
                   {dataUpdateProject?.proposed_bys?.map((staff) => (
                     <Tooltip
-                      key={staff?.key}
+                      key={staff?.key || staff?.id}
                       title={staff?.name}
                       placement="top"
                     >
@@ -444,9 +444,9 @@ const ModalProjectUpdate = ({
               format: "HH:mm",
             }}
             value={
-              dataUpdateProject.start_date === ""
-                ? null
-                : moment(dataUpdateProject.start_date)
+              moment(dataUpdateProject.start_date).isValid()
+                ? moment(dataUpdateProject.start_date)
+                : null
             }
             placeholder={"Pilih Tanggal Mulai"}
             style={{ width: `100%` }}
@@ -469,9 +469,9 @@ const ModalProjectUpdate = ({
               format: "HH:mm",
             }}
             value={
-              dataUpdateProject.end_date === ""
-                ? null
-                : moment(dataUpdateProject.end_date)
+              moment(dataUpdateProject.end_date).isValid()
+                ? moment(dataUpdateProject.end_date)
+                : null
             }
             placeholder={"Pilih Tanggal Selesai"}
             style={{ width: `100%` }}
@@ -573,7 +573,7 @@ const ModalProjectUpdate = ({
           {dataUpdateProject?.project_staffs?.map((staff, idx) => {
             return (
               <Tag
-                key={staff.key}
+                key={staff?.id || staff?.key}
                 closable
                 onClose={() => {
                   const newTags = dataUpdateProject?.project_staffs?.filter(

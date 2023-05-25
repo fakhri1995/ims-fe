@@ -1,4 +1,3 @@
-import { useQuery } from "@chakra-ui/react";
 import {
   DatePicker,
   Form,
@@ -36,6 +35,7 @@ const ModalProjectTaskCreate = ({
   isAllowedToGetProjects,
   setRefresh,
   dataProjectList,
+  defaultProject,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -60,7 +60,12 @@ const ModalProjectTaskCreate = ({
   const [selectedGroups, setSelectedGroups] = useState([]);
 
   // 2. USE EFFECT
-  // 2.1. Get users or groups for task staff options
+  // 2.1. Set default project if used in project detail page
+  useEffect(() => {
+    setDataTask((prev) => ({ ...prev, project_id: defaultProject?.id }));
+  }, [defaultProject]);
+
+  // 2.2. Get users or groups for task staff options
   useEffect(() => {
     if (!visible) {
       return;
@@ -270,7 +275,7 @@ const ModalProjectTaskCreate = ({
           <Select
             allowClear
             showSearch
-            value={dataTask.project_id}
+            defaultValue={dataTask.project_id}
             disabled={!isAllowedToGetProjects}
             placeholder="Pilih Proyek"
             style={{ width: `100%` }}

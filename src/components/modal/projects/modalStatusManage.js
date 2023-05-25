@@ -71,7 +71,7 @@ const ModalStatusManage = ({
       return;
     }
 
-    if (editStatusId) {
+    if (editStatusId && visible) {
       setLoadingStatus(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatus?id=${editStatusId}`,
@@ -103,7 +103,7 @@ const ModalStatusManage = ({
           setLoadingStatus(false);
         });
     }
-  }, [isAllowedToGetStatus, editStatusId]);
+  }, [isAllowedToGetStatus, editStatusId, visible]);
 
   // 3. HANDLER
   const clearData = () => {
@@ -595,6 +595,7 @@ const ModalStatusManage = ({
       onOk={handleDeleteStatus}
       onCancel={() => {
         setModalDelete(false);
+        handleClose();
       }}
       itemName={"status"}
       loading={loadingDelete}
