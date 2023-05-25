@@ -435,7 +435,7 @@ function LandingPage({ dataBlog }) {
                 <div class="slide ">
                   <img
                     className={
-                      "mx-[21px] h-[50px] max-w-[200px] filter grayscale opacity-80"
+                      "mx-[21px] h-[50px] max-w-[268px] filter grayscale opacity-80"
                     }
                     src={data1}
                   />
@@ -458,7 +458,7 @@ function LandingPage({ dataBlog }) {
         </div>
         {/* ---------- */}
         {/* Phone View */}
-        <div className={"block lg:hidden pt-5"}>
+        <div className={"block lg:hidden pt-2.5"}>
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
