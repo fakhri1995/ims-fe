@@ -1,4 +1,8 @@
-import { UpOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretUpOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import {
   Collapse,
   DatePicker,
@@ -202,7 +206,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   });
 
-  // 2.2. Table Projects List
+  // 2.2. Table Projects List (Semua Proyek)
   // filter data
   const [loadingStatusList, setLoadingStatusList] = useState(false);
   const [dataStatusList, setDataStatusList] = useState([]);
@@ -235,13 +239,15 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
-  // 2.3. My Task List
+  // 2.3. My Task List (Task Saya)
   const [dataRawMyTaskList, setDataRawMyTaskList] = useState({});
   const [dataMyTaskList, setDataMyTaskList] = useState([]);
   const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
   const [dataProjectList, setDataProjectList] = useState([]);
   const [pageMyTaskList, setPageMyTaskList] = useState(1);
   const [rowsMyTaskList, setRowsMyTaskList] = useState(4);
+  const [sortColumn, setSortColumn] = useState(null);
+  const [sortOrder, setSortOrder] = useState(null);
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
@@ -384,7 +390,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingMyTaskList(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}&sort_by=end_date&sort_type=asc`,
       {
         method: `GET`,
         headers: {
@@ -630,6 +636,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
+  // Table Semua Proyek
   const TableProjectSection = (
     <div className="shadow-md rounded-md bg-white p-4 mb-6">
       <h4 className="mig-heading--4 mb-6">Semua Proyek</h4>
@@ -736,6 +743,22 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       />
     </div>
   );
+
+  // Sorting table Task Saya
+  const handleSort = (columnKey) => {
+    if (columnKey === sortColumn) {
+      setSortOrder(
+        sortOrder === ""
+          ? "ascend"
+          : sortOrder === "ascend"
+          ? "descend"
+          : sortOrder === "descend" && ""
+      );
+    } else {
+      setSortColumn(columnKey);
+      setSortOrder("ascend");
+    }
+  };
 
   return (
     <LayoutDashboard
@@ -1063,26 +1086,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Task Saya */}
           <div className="col-span-2 flex flex-col shadow-md rounded-md bg-white mb-2 xl:mb-6">
-            <div
-              className="flex flex-col xl:flex-row xl:justify-between xl:items-center 
-              space-y-2 xl:space-y-0 mb-4 xl:mb-6 p-4 pb-0"
-            >
-              <h4 className="mig-heading--4 ">Task Saya</h4>
-              <ButtonSys type={"primary"} onClick={() => setModalAddTask(true)}>
-                <div className="flex items-center space-x-2">
-                  <PlusIconSvg size={16} color={"#ffffff"} />
-                  <p>Tambah Task Saya</p>
-                </div>
-              </ButtonSys>
-            </div>
-
             {/* <div
               className="flex overflow-x-auto md:overflow-hidden md:flex-col 
               pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6"> */}
             <Table
               rowKey={(record) => record.id}
-              className="p-2"
-              showHeader={false}
+              className="tableProjectTask p-2"
               dataSource={dataMyTaskList}
               loading={loadingMyTaskList}
               pagination={{
@@ -1095,7 +1104,49 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
               }}
               columns={[
                 {
-                  title: "Task",
+                  title: () => (
+                    <div
+                      onClick={() => handleSort("status_id")}
+                      className="flex flex-col xl:flex-row xl:justify-between xl:items-center 
+                      xl:space-x-2 space-y-2 xl:space-y-0 "
+                    >
+                      <div className="flex space-x-3 items-center">
+                        <h4 className="mig-heading--4 ">Task Saya</h4>
+                        <span className="flex flex-col -space-y-1">
+                          <CaretUpOutlined
+                            classname={`mr-1`}
+                            style={{
+                              color:
+                                sortOrder === "ascend"
+                                  ? "#1890ff"
+                                  : "#00000060",
+                            }}
+                          />
+                          <CaretDownOutlined
+                            classname="mr-1"
+                            style={{
+                              color:
+                                sortOrder === "descend"
+                                  ? "#1890ff"
+                                  : "#00000060",
+                            }}
+                          />
+                        </span>
+                      </div>
+                      <ButtonSys
+                        type={"primary"}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setModalAddTask(true);
+                        }}
+                      >
+                        <div className="flex items-center space-x-2">
+                          <PlusIconSvg size={16} color={"#ffffff"} />
+                          <p>Tambah Task Saya</p>
+                        </div>
+                      </ButtonSys>
+                    </div>
+                  ),
                   dataIndex: "name",
                   key: "name",
                   render: (_, task) => {
@@ -1123,6 +1174,17 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                       </div>
                     );
                   },
+                  sorter: isAllowedToGetTasks
+                    ? (a, b) => {
+                        const dataStatusListIds = dataStatusList?.map(
+                          (status) => status.id
+                        );
+                        const indexA = dataStatusListIds?.indexOf(a.status_id);
+                        const indexB = dataStatusListIds?.indexOf(b.status_id);
+                        return indexA - indexB;
+                      }
+                    : false,
+                  sortOrder: sortColumn === "status_id" ? sortOrder : null,
                 },
               ]}
             />
