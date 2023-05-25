@@ -3275,7 +3275,7 @@ function Talents({}) {
         <div>
           <section
             className={
-              "section2talents py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt:4 lg:mt-12"
+              "section2talents py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt-4 lg:mt-12"
             }
           >
             <div className={"hidden lg:flex justify-between container mx-auto"}>
@@ -3493,7 +3493,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section2talentsnew py-4 lg:pt-0 lg:pb-16 lg:px-[120px] px-4 mx-auto mt:4"
+              "section2talentsnew py-4 lg:pt-0 lg:pb-16 lg:px-[120px] px-4 mx-auto mt-4"
             }
           >
             <h3
