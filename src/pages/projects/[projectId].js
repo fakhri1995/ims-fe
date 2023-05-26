@@ -151,6 +151,10 @@ const ProjectDetailIndex = ({
   ];
 
   // 2. useState
+  const [refresh, setRefresh] = useState(-1); // use for all data except project notes & tasks
+  const [refreshNotes, setRefreshNotes] = useState(-1);
+  const [refreshTasks, setRefreshTasks] = useState(-1);
+
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
   const [taskStatusCount, setTaskStatusCount] = useState([
@@ -230,8 +234,6 @@ const ProjectDetailIndex = ({
     total: null,
   });
 
-  const [refresh, setRefresh] = useState(-1);
-  const [refreshNotes, setRefreshNotes] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. Project Detail
@@ -428,7 +430,7 @@ const ProjectDetailIndex = ({
       });
   }, [
     isAllowedToGetTasks,
-    refresh,
+    refreshTasks,
     projectId,
     queryParams.page,
     queryParams.rows,
@@ -483,7 +485,13 @@ const ProjectDetailIndex = ({
     const timer = setTimeout(() => fetchData(), 1000);
 
     return () => clearTimeout(timer);
-  }, [isAllowedToGetLogs, refresh, searchingFilterLogs, pageProjectLogs]);
+  }, [
+    isAllowedToGetLogs,
+    refresh,
+    refreshTasks,
+    searchingFilterLogs,
+    pageProjectLogs,
+  ]);
 
   // 3.7. Get Project Notes
   useEffect(() => {
@@ -1770,7 +1778,7 @@ const ProjectDetailIndex = ({
           isAllowedToAddTask={isAllowedToAddTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
-          setRefresh={setRefresh}
+          setRefreshTasks={setRefreshTasks}
           dataProjectList={dataProjectList}
           defaultProject={dataProject}
         />
@@ -1786,7 +1794,7 @@ const ProjectDetailIndex = ({
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefresh={setRefresh}
+          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           dataProjectList={dataProjectList}

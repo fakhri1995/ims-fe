@@ -59,7 +59,7 @@ const TaskCard = ({
           </p>
         </div>
         <div className="flex flex-col justify-between">
-          {moment(toDate).isValid() && (
+          {moment(toDate).isValid() ? (
             <div
               className={`flex flex-col space-y-1 text-right ${
                 isPastDeadline ? "text-warning" : "text-mono50"
@@ -70,6 +70,8 @@ const TaskCard = ({
                 {momentFormatDate(toDate, "-", "ddd, D MMMM YYYY")}
               </p>
             </div>
+          ) : (
+            <div />
           )}
           {taskStaffs?.length > 1 ? (
             <div className="flex items-center justify-end">

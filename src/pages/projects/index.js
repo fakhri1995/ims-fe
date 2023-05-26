@@ -237,17 +237,17 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   const [refresh, setRefresh] = useState(-1);
-  const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. My Task List (Task Saya)
+  const [refreshTasks, setRefreshTasks] = useState(-1);
   const [dataRawMyTaskList, setDataRawMyTaskList] = useState({});
   const [dataMyTaskList, setDataMyTaskList] = useState([]);
   const [loadingMyTaskList, setLoadingMyTaskList] = useState(false);
   const [dataProjectList, setDataProjectList] = useState([]);
   const [pageMyTaskList, setPageMyTaskList] = useState(1);
   const [rowsMyTaskList, setRowsMyTaskList] = useState(4);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortOrder, setSortOrder] = useState(null);
+  const [sortColumn, setSortColumn] = useState("deadline");
+  const [sortOrder, setSortOrder] = useState("asc");
 
   // 2.4. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
@@ -390,7 +390,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingMyTaskList(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}&sort_by=end_date&sort_type=asc`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks?user_id=${dataProfile?.data?.id}&rows=${rowsMyTaskList}&page=${pageMyTaskList}&sort_by=${sortColumn}&sort_type=${sortOrder}`,
       {
         method: `GET`,
         headers: {
@@ -419,7 +419,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingMyTaskList(false);
       });
-  }, [isAllowedToGetTasks, refresh, pageMyTaskList, rowsMyTaskList]);
+  }, [isAllowedToGetTasks, refreshTasks, pageMyTaskList, rowsMyTaskList]);
 
   // 3.5. Get Data Chart Status Proyek
   // TODO: uncomment if API is done
@@ -601,7 +601,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       sorter: isAllowedToGetProjects
         ? (a, b) => a.end_date.localeCompare(b.end_date)
         : false,
-      // defaultSortOrder: "ascend",
     },
     {
       title: "Status",
@@ -745,18 +744,19 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // Sorting table Task Saya
-  const handleSort = (columnKey) => {
-    if (columnKey === sortColumn) {
-      setSortOrder(
-        sortOrder === ""
-          ? "ascend"
-          : sortOrder === "ascend"
-          ? "descend"
-          : sortOrder === "descend" && ""
-      );
-    } else {
-      setSortColumn(columnKey);
-      setSortOrder("ascend");
+  const handleSortTasks = () => {
+    if (sortColumn === "deadline") {
+      setSortColumn("status");
+      setSortOrder("asc");
+    }
+
+    if (sortColumn === "status") {
+      if (sortOrder === "asc") {
+        setSortOrder("desc");
+      } else {
+        setSortColumn("deadline");
+        setSortOrder("asc");
+      }
     }
   };
 
@@ -1099,14 +1099,22 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 pageSize: rowsMyTaskList,
                 total: dataRawMyTaskList?.total,
               }}
-              onChange={(pagination) => {
+              onChange={(pagination, filters, sorter) => {
+                const sortTypePayload =
+                  sorter.order === "ascend"
+                    ? "asc"
+                    : sorter.order === "descend"
+                    ? "desc"
+                    : "asc";
+
                 setPageMyTaskList(pagination.current);
+                setSortOrder(sortTypePayload);
               }}
               columns={[
                 {
                   title: () => (
                     <div
-                      onClick={() => handleSort("status_id")}
+                      onClick={handleSortTasks}
                       className="flex flex-col xl:flex-row xl:justify-between xl:items-center 
                       xl:space-x-2 space-y-2 xl:space-y-0 "
                     >
@@ -1117,7 +1125,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             classname={`mr-1`}
                             style={{
                               color:
-                                sortOrder === "ascend"
+                                sortColumn === "status" && sortOrder === "asc"
                                   ? "#1890ff"
                                   : "#00000060",
                             }}
@@ -1126,7 +1134,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             classname="mr-1"
                             style={{
                               color:
-                                sortOrder === "descend"
+                                sortColumn === "status" && sortOrder === "desc"
                                   ? "#1890ff"
                                   : "#00000060",
                             }}
@@ -1184,7 +1192,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         return indexA - indexB;
                       }
                     : false,
-                  sortOrder: sortColumn === "status_id" ? sortOrder : null,
+                  // sortOrder: sortColumn === "status" ? sortOrder : null,
                 },
               ]}
             />
@@ -1216,7 +1224,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToAddTask={isAllowedToAddTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
-          setRefresh={setRefresh}
+          setRefreshTasks={setRefreshTasks}
           dataProjectList={dataProjectList}
         />
       </AccessControl>
@@ -1231,7 +1239,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefresh={setRefresh}
+          setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           dataProjectList={dataProjectList}

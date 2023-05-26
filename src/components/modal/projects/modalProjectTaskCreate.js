@@ -33,7 +33,7 @@ const ModalProjectTaskCreate = ({
   isAllowedToGetProject,
   isAllowedToAddTask,
   isAllowedToGetProjects,
-  setRefresh,
+  setRefreshTasks,
   dataProjectList,
   defaultProject,
 }) => {
@@ -198,7 +198,7 @@ const ModalProjectTaskCreate = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          setRefreshTasks((prev) => prev + 1);
         } else {
           notification.error({
             message: response.message,
