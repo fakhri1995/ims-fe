@@ -13,7 +13,7 @@ const ModalProjectNote = ({
   onvisible,
   dataNote,
   isAllowedToDeleteNote,
-  setRefresh,
+  setRefreshNotes,
 }) => {
   // 1. USE STATE
   const [modalDelete, setModalDelete] = useState(false);
@@ -46,7 +46,7 @@ const ModalProjectNote = ({
             message: res2?.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          setRefreshNotes((prev) => prev + 1);
         } else {
           notification.error({
             message: `Gagal menghapus catatan proyek.`,

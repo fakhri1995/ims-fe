@@ -42,7 +42,7 @@ const ModalProjectTaskDetailUpdate = ({
   isAllowedToGetProjects,
   isAllowedToGetProject,
   isAllowedToGetStatuses,
-  setRefresh,
+  setRefreshTasks,
   taskId,
   dataStatusList,
   dataProjectList,
@@ -242,21 +242,19 @@ const ModalProjectTaskDetailUpdate = ({
     clearData();
   };
 
-  const handleUpdateStatus = () => {
+  const handleUpdateTaskStatus = (statusId) => {
     if (!isAllowedToUpdateTask) {
       permissionWarningNotification("Mengubah", "Status Task");
       return;
     }
 
     const payload = {
-      ...dataTaskUpdate,
-      task_staffs: dataTaskUpdate.task_staffs?.map((staff) =>
-        Number(staff.key)
-      ),
+      id: dataTaskUpdate?.id,
+      status_id: statusId,
     };
 
     setLoadingSave(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTaskStatus`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTask_status`, {
       method: `PUT`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -272,7 +270,7 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          setRefreshTasks((prev) => prev + 1);
         } else {
           notification.error({
             message: response.message,
@@ -319,7 +317,7 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          setRefreshTasks((prev) => prev + 1);
         } else {
           notification.error({
             message: response.message,
@@ -361,7 +359,7 @@ const ModalProjectTaskDetailUpdate = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          setRefreshTasks((prev) => prev + 1);
         } else {
           notification.error({
             message: response.message,
@@ -449,8 +447,7 @@ const ModalProjectTaskDetailUpdate = ({
                       ...prev,
                       status_id: value,
                     }));
-                    // TODO: uncomment if API is ready
-                    // handleUpdateStatus()
+                    handleUpdateTaskStatus(value);
                   }}
                   optionFilterProp="children"
                   bordered={false}
