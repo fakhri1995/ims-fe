@@ -1975,11 +1975,11 @@ function Talents({}) {
               </div>
             )}
             {formActive == "third" ? (
-              <div className={""}>
+              <div className={"w-[48%] pr-[130px]"}>
                 {dataTalents.length > 0 && (
                   <div
                     className={
-                      "w-[400px] sticky top-20 py-4 pl-4 pr-[17px] ml-5 flex flex-col"
+                      "w-full sticky top-20 pb-4 pl-4 pr-[17px] ml-5 flex flex-col"
                     }
                     // style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                   >
@@ -2005,7 +2005,7 @@ function Talents({}) {
                         >
                           <div className={"flex flex-row"}>
                             <button
-                              className={"bg-transparent text-left"}
+                              className={"bg-transparent w-[90%] text-left"}
                               onClick={() => handleEdit(index)}
                             >
                               <div className={"w-full"}>
@@ -3527,7 +3527,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[400px]"
                 }
               >
                 <img
@@ -3547,7 +3547,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[400px]"
                 }
               >
                 <img
@@ -3571,7 +3571,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[400px]"
                 }
               >
                 <img
@@ -3591,7 +3591,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[500px]"
+                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[400px]"
                 }
               >
                 <img
