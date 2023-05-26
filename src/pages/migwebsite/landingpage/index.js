@@ -435,7 +435,7 @@ function LandingPage({ dataBlog }) {
                 <div class="slide ">
                   <img
                     className={
-                      "mx-[21px] h-[50px] max-w-[268px] filter grayscale opacity-80"
+                      "mx-[21px] h-[50px] max-h-[45px] filter grayscale opacity-80"
                     }
                     src={data1}
                   />
