@@ -242,21 +242,19 @@ const ModalProjectTaskDetailUpdate = ({
     clearData();
   };
 
-  const handleUpdateStatus = () => {
+  const handleUpdateStatus = (statusId) => {
     if (!isAllowedToUpdateTask) {
       permissionWarningNotification("Mengubah", "Status Task");
       return;
     }
 
     const payload = {
-      ...dataTaskUpdate,
-      task_staffs: dataTaskUpdate.task_staffs?.map((staff) =>
-        Number(staff.key)
-      ),
+      id: dataTaskUpdate?.id,
+      status_id: statusId,
     };
 
     setLoadingSave(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTaskStatus`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTask_status`, {
       method: `PUT`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -449,8 +447,7 @@ const ModalProjectTaskDetailUpdate = ({
                       ...prev,
                       status_id: value,
                     }));
-                    // TODO: uncomment if API is ready
-                    // handleUpdateStatus()
+                    handleUpdateStatus(value);
                   }}
                   optionFilterProp="children"
                   bordered={false}

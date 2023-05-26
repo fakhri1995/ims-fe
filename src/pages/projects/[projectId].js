@@ -132,9 +132,9 @@ const ProjectDetailIndex = ({
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 6),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "end_date"),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "deadline"),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    status_ids: withDefault(ArrayParam, undefined),
+    status_ids: withDefault(StringParam, undefined),
     keyword: withDefault(StringParam, undefined),
   });
 
@@ -231,6 +231,7 @@ const ProjectDetailIndex = ({
   });
 
   const [refresh, setRefresh] = useState(-1);
+  const [refreshNotes, setRefreshNotes] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
 
   // 2.3. Project Detail
@@ -529,7 +530,12 @@ const ProjectDetailIndex = ({
     const timer = setTimeout(() => fetchData(), 1000);
 
     return () => clearTimeout(timer);
-  }, [isAllowedToGetNotes, refresh, searchingFilterNotes, pageProjectNotes]);
+  }, [
+    isAllowedToGetNotes,
+    refreshNotes,
+    searchingFilterNotes,
+    pageProjectNotes,
+  ]);
 
   // 3.8. Get Data Chart Status Task
   // TODO: uncomment if API is done
@@ -608,7 +614,7 @@ const ProjectDetailIndex = ({
   const onFilterTasks = () => {
     setQueryParams({
       keyword: searchingFilterTasks,
-      sort_by: "end_date",
+      sort_by: "deadline",
       sort_type: selectedSortType,
       status_ids: selectedStatus,
     });
@@ -643,7 +649,7 @@ const ProjectDetailIndex = ({
             duration: 3,
           });
           setDataInputNote("");
-          setRefresh((prev) => prev + 1);
+          setRefreshNotes((prev) => prev + 1);
         } else {
           notification.error({
             message: response.message,
@@ -660,21 +666,19 @@ const ProjectDetailIndex = ({
       .finally(() => setLoadingProjectNotes(false));
   };
 
-  const handleUpdateStatus = () => {
+  const handleUpdateProjectStatus = (statusId) => {
     if (!isAllowedToUpdateProject) {
       permissionWarningNotification("Mengubah", "Status Proyek");
       return;
     }
 
     const payload = {
-      ...dataProject,
-      project_staffs: dataProject.project_staffs?.map((staff) =>
-        Number(staff.key)
-      ),
+      id: dataProject?.id,
+      status_id: statusId,
     };
 
     setLoadingProject(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectStatus`, {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProject_status`, {
       method: `PUT`,
       headers: {
         Authorization: JSON.parse(initProps),
@@ -1164,8 +1168,7 @@ const ProjectDetailIndex = ({
                               ...prev,
                               status_id: value,
                             }));
-                            // TODO: uncomment if API is ready
-                            // handleUpdateStatus()
+                            handleUpdateProjectStatus(value);
                           }}
                           optionFilterProp="children"
                           bordered={false}
@@ -1613,7 +1616,7 @@ const ProjectDetailIndex = ({
                     placeholder="Urutkan Deadline"
                     style={{ width: `100%` }}
                     onChange={(value) => {
-                      setQueryParams({ sort_type: value });
+                      setQueryParams({ sort_by: "deadline", sort_type: value });
                       setSelectedSortType(value);
                     }}
                     optionFilterProp="children"
@@ -1638,8 +1641,9 @@ const ProjectDetailIndex = ({
                     placeholder="Semua Status"
                     style={{ width: `100%` }}
                     onChange={(value) => {
-                      setQueryParams({ status_ids: value });
-                      setSelectedStatus(value);
+                      const stringStatusIds = value.toString();
+                      setQueryParams({ status_ids: stringStatusIds });
+                      setSelectedStatus(stringStatusIds);
                     }}
                     optionFilterProp="children"
                     filterOption={(input, option) =>
@@ -1797,7 +1801,7 @@ const ProjectDetailIndex = ({
           onvisible={setModalDetailNote}
           dataNote={dataCurrentNote}
           isAllowedToDeleteNote={isAllowedToDeleteNote}
-          setRefresh={setRefresh}
+          setRefreshNotes={setRefreshNotes}
         />
       </AccessControl>
     </LayoutDashboard>

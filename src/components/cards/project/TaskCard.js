@@ -85,7 +85,10 @@ const TaskCard = ({
                 {taskStaffs.map((staff) => (
                   <Tooltip key={staff.id} title={staff?.name} placement="top">
                     <Avatar
-                      src={generateStaticAssetUrl(staff?.profile_image?.link)}
+                      src={generateStaticAssetUrl(
+                        staff?.profile_image?.link ??
+                          "staging/Users/default_user.png"
+                      )}
                       className=""
                       size={24}
                     />
@@ -105,7 +108,8 @@ const TaskCard = ({
               {taskStaffs?.[0]?.profile_image?.link ? (
                 <img
                   src={generateStaticAssetUrl(
-                    taskStaffs?.[0]?.profile_image?.link
+                    taskStaffs?.[0]?.profile_image?.link ??
+                      "staging/Users/default_user.png"
                   )}
                   alt={taskStaffs?.[0]?.profile_image?.description}
                   className="w-6 h-6 bg-cover object-cover rounded-full"
