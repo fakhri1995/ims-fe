@@ -301,6 +301,10 @@ ol {
   color: #35763b;
 }
 
+.tableProjectTask .ant-table-column-sorter {
+  display: none;
+}
+
 .slick-dots li button:before {
   color: green !important;
 }
