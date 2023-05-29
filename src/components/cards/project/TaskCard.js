@@ -7,6 +7,7 @@ import { InfoCircleIconSvg, OneUserIconSvg, UserIconSvg } from "../../icon";
 
 const TaskCard = ({
   title,
+  taskId,
   projectName,
   toDate,
   statusName,
@@ -32,13 +33,13 @@ const TaskCard = ({
           </p>
         </div>
       )}
-      <div className="grid grid-cols-2 space-x-2 ">
-        <div className="flex flex-col justify-between space-y-4">
+      <div className="grid grid-cols-6 gap-2 ">
+        <div className="col-span-4 flex flex-col justify-between space-y-4">
           <div className="space-y-1">
             <h4
               className={`mig-heading--4 ${isPastDeadline && "text-warning"}`}
             >
-              {title}
+              {title} · {taskId}
             </h4>
             <h5
               className={`mig-heading--5 ${
@@ -58,7 +59,7 @@ const TaskCard = ({
             {statusName ?? "-"}
           </p>
         </div>
-        <div className="flex flex-col justify-between">
+        <div className="col-span-2 flex flex-col justify-between">
           {moment(toDate).isValid() ? (
             <div
               className={`flex flex-col space-y-1 text-right ${

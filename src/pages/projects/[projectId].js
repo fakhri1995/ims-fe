@@ -1715,21 +1715,18 @@ const ProjectDetailIndex = ({
                     dataIndex: "name",
                     key: "name",
                     render: (_, task) => {
-                      const currentStatus = dataStatusList.find(
-                        (status) => status.id === task.status_id
-                      );
-
                       const currentProject = dataProjectList.find(
                         (project) => project.id === task.project_id
                       );
                       return (
                         <div key={task.id} className="flex-none rounded-md ">
                           <TaskCard
-                            title={task.name}
+                            title={task?.name}
+                            taskId={task?.ticket_number}
                             projectName={currentProject?.name}
                             toDate={task.end_date}
-                            statusName={currentStatus?.name}
-                            statusColor={currentStatus?.color}
+                            statusName={task?.status?.name}
+                            statusColor={task?.status?.color}
                             taskStaffs={task.task_staffs}
                             onClick={() => {
                               setCurrentTaskId(task.id);
