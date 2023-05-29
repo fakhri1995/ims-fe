@@ -134,7 +134,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     from: withDefault(StringParam, undefined),
     to: withDefault(StringParam, undefined),
-    status_ids: withDefault(ArrayParam, undefined),
+    status_ids: withDefault(StringParam, undefined),
     keyword: withDefault(StringParam, undefined),
   });
 
@@ -249,7 +249,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [sortColumn, setSortColumn] = useState("deadline");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  // 2.4. Modal
+  // 2.4. Manage Status
+  const [refreshStatuses, setRefreshStatuses] = useState(-1);
+
+  // 2.5. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
@@ -378,7 +381,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingStatusList(false);
       });
-  }, [isAllowedToGetStatuses, refresh]);
+  }, [isAllowedToGetStatuses, refresh, refreshStatuses]);
 
   // 3.4. Get My Task List
   useEffect(() => {
@@ -419,7 +422,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingMyTaskList(false);
       });
-  }, [isAllowedToGetTasks, refreshTasks, pageMyTaskList, rowsMyTaskList]);
+  }, [
+    isAllowedToGetTasks,
+    refreshTasks,
+    pageMyTaskList,
+    rowsMyTaskList,
+    sortColumn,
+    sortOrder,
+  ]);
 
   // 3.5. Get Data Chart Status Proyek
   // TODO: uncomment if API is done
@@ -583,7 +593,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
-          children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
+          children: <>{momentFormatDate(text, "-", "DD MMM YYYY")}</>,
         };
       },
       sorter: isAllowedToGetProjects
@@ -595,7 +605,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "end_date",
       render: (text, record, index) => {
         return {
-          children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
+          children: <>{momentFormatDate(text, "-", "DD MMM YYYY")}</>,
         };
       },
       sorter: isAllowedToGetProjects
@@ -667,9 +677,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           <DatePicker.RangePicker
             allowClear
             allowEmpty
-            showTime={{
-              format: "HH:mm",
-            }}
             value={
               selectedFromDate === ""
                 ? [null, null]
@@ -700,8 +707,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             placeholder="Semua Status"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ status_ids: value });
-              setSelectedStatus(value);
+              const stringStatusIds = value.toString();
+              setQueryParams({ status_ids: stringStatusIds });
+              setSelectedStatus(stringStatusIds);
             }}
             optionFilterProp="children"
             filterOption={(input, option) =>
@@ -1158,21 +1166,18 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                   dataIndex: "name",
                   key: "name",
                   render: (_, task) => {
-                    const currentStatus = dataStatusList.find(
-                      (status) => status.id === task.status_id
-                    );
-
                     const currentProject = dataProjectList.find(
                       (project) => project.id === task.project_id
                     );
                     return (
                       <div key={task.id} className="flex-none rounded-md ">
                         <TaskCard
-                          title={task.name}
+                          title={task?.name}
+                          taskId={task?.ticket_number}
                           projectName={currentProject?.name}
-                          toDate={task.end_date}
-                          statusName={currentStatus?.name}
-                          statusColor={currentStatus?.color}
+                          toDate={task?.end_date}
+                          statusName={task?.status?.name}
+                          statusColor={task?.status?.color}
                           taskStaffs={task.task_staffs}
                           onClick={() => {
                             setCurrentTaskId(task.id);
@@ -1258,6 +1263,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetStatus={isAllowedToGetStatus}
           isAllowedToDeleteStatus={isAllowedToDeleteStatus}
           setRefresh={setRefresh}
+          setRefreshStatuses={setRefreshStatuses}
           currentStatusList={dataStatusList}
         />
       </AccessControl>
