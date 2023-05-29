@@ -52,7 +52,6 @@ const ModalProjectTaskCreate = ({
     task_staffs: [],
     description: "",
   });
-  console.log({ dataTask });
 
   const [loading, setLoading] = useState(false);
   const [isDetailOn, setIsDetailOn] = useState(false);
@@ -157,7 +156,6 @@ const ModalProjectTaskCreate = ({
             message: "Gagal mendapatkan daftar staff proyek",
             duration: 3,
           });
-          console.log(err);
         });
     }
   }, [
