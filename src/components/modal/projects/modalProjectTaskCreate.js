@@ -12,6 +12,7 @@ import {
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
+import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -41,7 +42,7 @@ const ModalProjectTaskCreate = ({
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
-
+  const searchTimeoutRef = useRef(null);
   // 1. USE STATE
   const [dataTask, setDataTask] = useState({
     name: "",
@@ -51,10 +52,12 @@ const ModalProjectTaskCreate = ({
     task_staffs: [],
     description: "",
   });
+  console.log({ dataTask });
 
   const [loading, setLoading] = useState(false);
   const [isDetailOn, setIsDetailOn] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
+  const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
 
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
@@ -71,8 +74,62 @@ const ModalProjectTaskCreate = ({
       return;
     }
 
-    // If task has a project, then staff options will follow project's staff
-    if (dataTask.project_id) {
+    const getStaffOptionsFromAgents = () => {
+      setIsStaffsFromAgents(true);
+      if (isSwitchGroup) {
+        if (!isAllowedToGetGroups) {
+          permissionWarningNotification("Mendapatkan", "Daftar Group");
+          return;
+        }
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(initProps),
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((res2) => {
+            setDataStaffsOrGroups(res2.data);
+          })
+          .catch((err) =>
+            notification.error({
+              message: "Gagal mendapatkan daftar grup",
+              duration: 3,
+            })
+          );
+      } else {
+        if (!isAllowedToGetUsers) {
+          permissionWarningNotification("Mendapatkan", "Daftar User");
+          return;
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        })
+          .then((res) => res.json())
+          .then((res2) => {
+            setDataStaffsOrGroups(res2.data);
+          })
+          .catch((err) =>
+            notification.error({
+              message: "Gagal mendapatkan daftar user",
+              duration: 3,
+            })
+          );
+      }
+    };
+
+    // If task doesn't have a project, then staff options will be taken from users (agent) or groups
+    if (!dataTask.project_id) {
+      getStaffOptionsFromAgents();
+    } else {
+      // If task has a project, then staff options will follow project's staff
       if (!isAllowedToGetProject) {
         permissionWarningNotification("Mendapatkan", "Detail Proyek");
         return;
@@ -88,61 +145,20 @@ const ModalProjectTaskCreate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          setDataStaffsOrGroups(res2.data?.project_staffs);
+          if (res2.data?.project_staffs?.length > 0) {
+            setDataStaffsOrGroups(res2.data?.project_staffs);
+          } else {
+            // if project has no staff, then staff options will be taken from users (agent) or group
+            getStaffOptionsFromAgents();
+          }
         })
-        .catch((err) =>
+        .catch((err) => {
           notification.error({
             message: "Gagal mendapatkan daftar staff proyek",
             duration: 3,
-          })
-        );
-      return;
-    }
-
-    // If task doesn't have a project, then staff options will be taken from users (agent) or groups
-    if (isSwitchGroup) {
-      if (!isAllowedToGetGroups) {
-        permissionWarningNotification("Mendapatkan", "Daftar Group");
-        return;
-      }
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataStaffsOrGroups(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar grup",
-            duration: 3,
-          })
-        );
-    } else {
-      if (!isAllowedToGetUsers) {
-        permissionWarningNotification("Mendapatkan", "Daftar User");
-        return;
-      }
-
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataStaffsOrGroups(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar user",
-            duration: 3,
-          })
-        );
+          });
+          console.log(err);
+        });
     }
   }, [
     isAllowedToGetGroups,
@@ -155,6 +171,7 @@ const ModalProjectTaskCreate = ({
   // 3. HANDLER
   const clearData = () => {
     setDataTask({
+      ...dataTask,
       name: "",
       start_date: "",
       end_date: "",
@@ -168,6 +185,41 @@ const ModalProjectTaskCreate = ({
   const handleClose = () => {
     onvisible(false);
     clearData();
+  };
+
+  const onSearchUsers = (searchKey, setData) => {
+    if (!isAllowedToGetUsers) {
+      permissionWarningNotification("Mendapatkan", "Daftar User");
+      return;
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    setLoading(true);
+    searchTimeoutRef.current = setTimeout(() => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${searchKey}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setData(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoading(false));
+    }, 500);
   };
 
   const handleAddTask = () => {
@@ -399,6 +451,11 @@ const ModalProjectTaskCreate = ({
                     isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                   }
                   style={{ width: `100%` }}
+                  onSearch={(value) =>
+                    isStaffsFromAgents &&
+                    !isSwitchGroup &&
+                    onSearchUsers(value, setDataStaffsOrGroups)
+                  }
                   onChange={(value, option) => {
                     const getStaffsFromGroups = () => {
                       let staffs = dataTask?.task_staffs;

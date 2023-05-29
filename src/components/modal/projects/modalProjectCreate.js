@@ -11,8 +11,10 @@ import {
 } from "antd";
 import moment from "moment";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -37,6 +39,8 @@ const ModalProjectCreate = ({
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
+  const rt = useRouter();
+  const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
   const [dataProject, setDataProject] = useState({
@@ -125,6 +129,41 @@ const ModalProjectCreate = ({
     clearData();
   };
 
+  const onSearchUsers = (searchKey, setData) => {
+    if (!isAllowedToGetUsers) {
+      permissionWarningNotification("Mendapatkan", "Daftar User");
+      return;
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    setLoading(true);
+    searchTimeoutRef.current = setTimeout(() => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${searchKey}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setData(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoading(false));
+    }, 500);
+  };
+
   const handleAddProject = () => {
     if (!isAllowedToAddProject) {
       permissionWarningNotification("Menambah", "Proyek");
@@ -155,7 +194,7 @@ const ModalProjectCreate = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          rt.push(`projects/${response?.data?.id}`);
         } else {
           notification.error({
             message: response.message,
@@ -264,9 +303,6 @@ const ModalProjectCreate = ({
               <DatePicker
                 allowClear
                 allowEmpty
-                showTime={{
-                  format: "HH:mm",
-                }}
                 value={
                   dataProject.start_date === ""
                     ? null
@@ -286,9 +322,6 @@ const ModalProjectCreate = ({
               <DatePicker
                 allowClear
                 allowEmpty
-                showTime={{
-                  format: "HH:mm",
-                }}
                 value={
                   dataProject.end_date === ""
                     ? null
@@ -320,6 +353,10 @@ const ModalProjectCreate = ({
                     isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                   }
                   style={{ width: `100%` }}
+                  onSearch={(value) =>
+                    !isSwitchGroup &&
+                    onSearchUsers(value, setDataStaffsOrGroups)
+                  }
                   onChange={(value, option) => {
                     const getStaffsFromGroups = () => {
                       let staffs = dataProject?.project_staffs || [];
