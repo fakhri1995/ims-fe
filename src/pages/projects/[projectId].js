@@ -126,7 +126,6 @@ const ProjectDetailIndex = ({
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "deadline"),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     status_ids: withDefault(StringParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -202,7 +201,7 @@ const ProjectDetailIndex = ({
   const [dataStatusList, setDataStatusList] = useState([]);
 
   // filter search & selected options
-  const [searchingFilterTasks, setSearchingFilterTasks] = useState(undefined);
+  const [searchingFilterTasks, setSearchingFilterTasks] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
   const [selectedSortType, setSelectedSortType] = useState(undefined);
 
@@ -367,46 +366,51 @@ const ProjectDetailIndex = ({
       addQueryPrefix: true,
     });
 
-    setLoadingTasks(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawTasks(res2.data);
-          setDataTasks(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingTasks(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}&keyword=${searchingFilterTasks}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawTasks(res2.data);
+            setDataTasks(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingTasks(false);
         });
-      })
-      .finally(() => {
-        setLoadingTasks(false);
-      });
+    };
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetTasks,
     refreshTasks,
     projectId,
+    searchingFilterTasks,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
-    queryParams.keyword,
     queryParams.status_ids,
   ]);
 
@@ -486,7 +490,6 @@ const ProjectDetailIndex = ({
   // 4. Event
   const onFilterTasks = () => {
     setQueryParams({
-      keyword: searchingFilterTasks,
       sort_by: "deadline",
       sort_type: selectedSortType,
       status_ids: selectedStatus,
@@ -1198,19 +1201,13 @@ const ProjectDetailIndex = ({
                 {/* Search by keyword (kata kunci) */}
                 <div className="md:w-3/12">
                   <Input
-                    defaultValue={queryParams.keyword}
+                    defaultValue={searchingFilterTasks}
                     style={{ width: `100%` }}
                     placeholder="Kata Kunci.."
                     allowClear
                     onChange={(e) => {
-                      if (!e.target.value) {
-                        setQueryParams({
-                          keyword: undefined,
-                        });
-                      }
                       setSearchingFilterTasks(e.target.value);
                     }}
-                    onKeyPress={onKeyPressHandler}
                     disabled={!isAllowedToGetTasks}
                   />
                 </div>

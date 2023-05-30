@@ -62,8 +62,8 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
       return;
     }
 
-    setLoadingProjectNotes(true);
     const fetchData = async () => {
+      setLoadingProjectNotes(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}&keyword=${searchingFilterNotes}&page=${pageProjectNotes}&rows=5`,
         {

@@ -54,8 +54,8 @@ const LogsSection = ({
       return;
     }
 
-    setLoadingProjectLog(true);
     const fetchData = async () => {
+      setLoadingProjectLog(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}&keyword=${searchingFilterLogs}&page=${pageProjectLogs}&rows=5`,
         {

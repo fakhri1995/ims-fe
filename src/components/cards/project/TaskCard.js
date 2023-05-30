@@ -39,7 +39,7 @@ const TaskCard = ({
             <h4
               className={`mig-heading--4 ${isPastDeadline && "text-warning"}`}
             >
-              {title} · {taskId}
+              {title} ({taskId})
             </h4>
             <h5
               className={`mig-heading--5 ${

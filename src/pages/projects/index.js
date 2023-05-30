@@ -135,7 +135,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     from: withDefault(StringParam, undefined),
     to: withDefault(StringParam, undefined),
     status_ids: withDefault(StringParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -212,8 +211,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataStatusList, setDataStatusList] = useState([]);
 
   // filter search & selected options
-  const [searchingFilterProjects, setSearchingFilterProjects] =
-    useState(undefined);
+  const [searchingFilterProjects, setSearchingFilterProjects] = useState("");
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
@@ -273,42 +271,50 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       addQueryPrefix: true,
     });
 
-    setLoadingProjects(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawProjects(res2.data);
-          setDataProjects(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingProjects(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}&keyword=${searchingFilterProjects}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawProjects(res2.data);
+            setDataProjects(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingProjects(false);
         });
-      })
-      .finally(() => {
-        setLoadingProjects(false);
-      });
+    };
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetProjects,
     refresh,
+    searchingFilterProjects,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
-    queryParams.keyword,
     queryParams.status_ids,
     queryParams.from,
     queryParams.to,
@@ -504,7 +510,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4. Event
   const onFilterProjects = () => {
     setQueryParams({
-      keyword: searchingFilterProjects,
       from: selectedFromDate,
       to: selectedToDate,
       status_ids: selectedStatus,
@@ -555,6 +560,45 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
       )
       .finally(() => setLoadingChart(false));
+  };
+
+  const handleAddTask = () => {
+    if (!isAllowedToAddTask) {
+      permissionWarningNotification("Menambah", "Task");
+      return;
+    }
+
+    setLoadingMyTaskList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefreshTasks((prev) => prev + 1);
+          setModalAddTask(true);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan task baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingMyTaskList(false));
   };
 
   // "Semua Proyek" Table columns
@@ -655,19 +699,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         {/* Search by keyword (kata kunci) */}
         <div className="md:w-3/12">
           <Input
-            defaultValue={queryParams.keyword}
+            defaultValue={searchingFilterProjects}
             style={{ width: `100%` }}
             placeholder="Kata Kunci.."
             allowClear
             onChange={(e) => {
-              if (!e.target.value) {
-                setQueryParams({
-                  keyword: undefined,
-                });
-              }
               setSearchingFilterProjects(e.target.value);
             }}
-            onKeyPress={onKeyPressHandler}
             disabled={!isAllowedToGetProjects}
           />
         </div>
@@ -1153,6 +1191,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         type={"primary"}
                         onClick={(e) => {
                           e.stopPropagation();
+                          // TODO: uncomment if API is done
+                          // handleAddTask();
                           setModalAddTask(true);
                         }}
                       >
