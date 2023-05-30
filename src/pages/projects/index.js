@@ -134,8 +134,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     from: withDefault(StringParam, undefined),
     to: withDefault(StringParam, undefined),
-    status_ids: withDefault(ArrayParam, undefined),
-    keyword: withDefault(StringParam, undefined),
+    status_ids: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -212,8 +211,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataStatusList, setDataStatusList] = useState([]);
 
   // filter search & selected options
-  const [searchingFilterProjects, setSearchingFilterProjects] =
-    useState(undefined);
+  const [searchingFilterProjects, setSearchingFilterProjects] = useState("");
   const [selectedFromDate, setSelectedFromDate] = useState("");
   const [selectedToDate, setSelectedToDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
@@ -249,7 +247,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [sortColumn, setSortColumn] = useState("deadline");
   const [sortOrder, setSortOrder] = useState("asc");
 
-  // 2.4. Modal
+  // 2.4. Manage Status
+  const [refreshStatuses, setRefreshStatuses] = useState(-1);
+
+  // 2.5. Modal
   const [modalAddProject, setModalAddProject] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
@@ -270,42 +271,50 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       addQueryPrefix: true,
     });
 
-    setLoadingProjects(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawProjects(res2.data);
-          setDataProjects(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingProjects(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjects${params}&keyword=${searchingFilterProjects}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawProjects(res2.data);
+            setDataProjects(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingProjects(false);
         });
-      })
-      .finally(() => {
-        setLoadingProjects(false);
-      });
+    };
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetProjects,
     refresh,
+    searchingFilterProjects,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
-    queryParams.keyword,
     queryParams.status_ids,
     queryParams.from,
     queryParams.to,
@@ -378,7 +387,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingStatusList(false);
       });
-  }, [isAllowedToGetStatuses, refresh]);
+  }, [isAllowedToGetStatuses, refresh, refreshStatuses]);
 
   // 3.4. Get My Task List
   useEffect(() => {
@@ -419,7 +428,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => {
         setLoadingMyTaskList(false);
       });
-  }, [isAllowedToGetTasks, refreshTasks, pageMyTaskList, rowsMyTaskList]);
+  }, [
+    isAllowedToGetTasks,
+    refreshTasks,
+    pageMyTaskList,
+    rowsMyTaskList,
+    sortColumn,
+    sortOrder,
+  ]);
 
   // 3.5. Get Data Chart Status Proyek
   // TODO: uncomment if API is done
@@ -494,7 +510,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4. Event
   const onFilterProjects = () => {
     setQueryParams({
-      keyword: searchingFilterProjects,
       from: selectedFromDate,
       to: selectedToDate,
       status_ids: selectedStatus,
@@ -547,6 +562,45 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => setLoadingChart(false));
   };
 
+  const handleAddTask = () => {
+    if (!isAllowedToAddTask) {
+      permissionWarningNotification("Menambah", "Task");
+      return;
+    }
+
+    setLoadingMyTaskList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+          setRefreshTasks((prev) => prev + 1);
+          setModalAddTask(true);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan task baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingMyTaskList(false));
+  };
+
   // "Semua Proyek" Table columns
   const columnProjects = [
     {
@@ -583,7 +637,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "start_date",
       render: (text, record, index) => {
         return {
-          children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
+          children: <>{momentFormatDate(text, "-", "DD MMM YYYY")}</>,
         };
       },
       sorter: isAllowedToGetProjects
@@ -595,7 +649,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "end_date",
       render: (text, record, index) => {
         return {
-          children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
+          children: <>{momentFormatDate(text, "-", "DD MMM YYYY")}</>,
         };
       },
       sorter: isAllowedToGetProjects
@@ -645,19 +699,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         {/* Search by keyword (kata kunci) */}
         <div className="md:w-3/12">
           <Input
-            defaultValue={queryParams.keyword}
+            defaultValue={searchingFilterProjects}
             style={{ width: `100%` }}
             placeholder="Kata Kunci.."
             allowClear
             onChange={(e) => {
-              if (!e.target.value) {
-                setQueryParams({
-                  keyword: undefined,
-                });
-              }
               setSearchingFilterProjects(e.target.value);
             }}
-            onKeyPress={onKeyPressHandler}
             disabled={!isAllowedToGetProjects}
           />
         </div>
@@ -667,9 +715,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           <DatePicker.RangePicker
             allowClear
             allowEmpty
-            showTime={{
-              format: "HH:mm",
-            }}
             value={
               selectedFromDate === ""
                 ? [null, null]
@@ -700,8 +745,9 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             placeholder="Semua Status"
             style={{ width: `100%` }}
             onChange={(value) => {
-              setQueryParams({ status_ids: value });
-              setSelectedStatus(value);
+              const stringStatusIds = value.toString();
+              setQueryParams({ status_ids: stringStatusIds });
+              setSelectedStatus(stringStatusIds);
             }}
             optionFilterProp="children"
             filterOption={(input, option) =>
@@ -1145,6 +1191,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         type={"primary"}
                         onClick={(e) => {
                           e.stopPropagation();
+                          // TODO: uncomment if API is done
+                          // handleAddTask();
                           setModalAddTask(true);
                         }}
                       >
@@ -1158,21 +1206,18 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                   dataIndex: "name",
                   key: "name",
                   render: (_, task) => {
-                    const currentStatus = dataStatusList.find(
-                      (status) => status.id === task.status_id
-                    );
-
                     const currentProject = dataProjectList.find(
                       (project) => project.id === task.project_id
                     );
                     return (
                       <div key={task.id} className="flex-none rounded-md ">
                         <TaskCard
-                          title={task.name}
+                          title={task?.name}
+                          taskId={task?.ticket_number}
                           projectName={currentProject?.name}
-                          toDate={task.end_date}
-                          statusName={currentStatus?.name}
-                          statusColor={currentStatus?.color}
+                          toDate={task?.end_date}
+                          statusName={task?.status?.name}
+                          statusColor={task?.status?.color}
                           taskStaffs={task.task_staffs}
                           onClick={() => {
                             setCurrentTaskId(task.id);
@@ -1258,6 +1303,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetStatus={isAllowedToGetStatus}
           isAllowedToDeleteStatus={isAllowedToDeleteStatus}
           setRefresh={setRefresh}
+          setRefreshStatuses={setRefreshStatuses}
           currentStatusList={dataStatusList}
         />
       </AccessControl>

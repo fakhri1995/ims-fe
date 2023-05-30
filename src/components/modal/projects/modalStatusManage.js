@@ -35,6 +35,7 @@ const ModalStatusManage = ({
   isAllowedToGetStatus,
   isAllowedToDeleteStatus,
   setRefresh,
+  setRefreshStatuses,
   currentStatusList,
 }) => {
   const [form] = Form.useForm();
@@ -129,7 +130,7 @@ const ModalStatusManage = ({
 
     const payload = {
       ...dataStatus,
-      after_id: dataStatusList[dataStatusList.length - 1].id,
+      after_id: dataStatusList[dataStatusList.length - 1]?.id,
     };
 
     setLoadingSave(true);
@@ -148,7 +149,7 @@ const ModalStatusManage = ({
             message: response.message,
             duration: 3,
           });
-          setRefresh((prev) => prev + 1);
+          setRefreshStatuses((prev) => prev + 1);
         } else {
           notification.error({
             message: response.message,
@@ -249,7 +250,7 @@ const ModalStatusManage = ({
       overIndex = 0;
     let updatedDataStatusList = [];
 
-    if (active.id !== over?.id) {
+    if (active?.id !== over?.id) {
       // Display reordered status list
       setDataStatusList((prev) => {
         activeIndex = prev.findIndex((i) => i.id === active.id);
@@ -261,12 +262,12 @@ const ModalStatusManage = ({
       // Update a status after_id when reordered
       let prevIndex = overIndex - 1; // see status above the reordered status
       // if the reordered status moved to the first order, then set after_id as 0
-      let prevId = prevIndex < 0 ? 0 : updatedDataStatusList[prevIndex].id;
-      let currentStatus = dataStatusList.find(
+      let prevId = prevIndex < 0 ? 0 : updatedDataStatusList[prevIndex]?.id;
+      let currentStatus = dataStatusList?.find(
         (status) => status.id === active.id
       );
       setDataStatus({
-        id: active.id,
+        id: active?.id,
         name: currentStatus?.name,
         color: currentStatus?.color,
         after_id: prevId,
