@@ -15,6 +15,7 @@ import {
 import moment from "moment";
 import dynamic from "next/dynamic";
 import React, { useEffect, useState } from "react";
+import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -46,6 +47,7 @@ const ModalProjectUpdate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
   const [dataUpdateProject, setDataUpdateProject] = useState({
@@ -147,6 +149,41 @@ const ModalProjectUpdate = ({
     setDataUpdateProject(dataProject);
     setSelectedGroups([]);
     setIsEditTitle(false);
+  };
+
+  const onSearchUsers = (searchKey, setData) => {
+    if (!isAllowedToGetUsers) {
+      permissionWarningNotification("Mendapatkan", "Daftar User");
+      return;
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    setLoading(true);
+    searchTimeoutRef.current = setTimeout(() => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${searchKey}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setData(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoading(false));
+    }, 500);
   };
 
   const handleUpdateProject = () => {
@@ -359,6 +396,9 @@ const ModalProjectUpdate = ({
                 proposed_bys: option,
               }));
             }}
+            onSearch={(value) => {
+              onSearchUsers(value, setDataStaffs);
+            }}
             optionFilterProp="children"
             // bordered={false}
             // size="small"
@@ -440,9 +480,6 @@ const ModalProjectUpdate = ({
           <DatePicker
             allowClear
             allowEmpty
-            showTime={{
-              format: "HH:mm",
-            }}
             value={
               moment(dataUpdateProject.start_date).isValid()
                 ? moment(dataUpdateProject.start_date)
@@ -465,9 +502,6 @@ const ModalProjectUpdate = ({
           <DatePicker
             allowClear
             allowEmpty
-            showTime={{
-              format: "HH:mm",
-            }}
             value={
               moment(dataUpdateProject.end_date).isValid()
                 ? moment(dataUpdateProject.end_date)
@@ -503,6 +537,9 @@ const ModalProjectUpdate = ({
                 isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
               }
               style={{ width: `100%` }}
+              onSearch={(value) =>
+                !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
+              }
               onChange={(value, option) => {
                 const getStaffsFromGroups = () => {
                   let staffs = dataUpdateProject?.project_staffs || [];
@@ -567,6 +604,9 @@ const ModalProjectUpdate = ({
             <p>Group</p>
           </div>
         </div>
+
+        {/* {console.log({ dataStaffs })}
+        {console.log({ dataStaffsOrGroups })} */}
 
         {/* List of selected users or groups */}
         <div className="flex flex-wrap md:col-span-2">
