@@ -44,7 +44,6 @@ import {
 
 import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
-import { ChartDoughnut } from "../../components/chart/chartCustom";
 import {
   CalendartimeIconSvg,
   ClipboardListIconSvg,
@@ -643,7 +642,7 @@ const ProjectDetailIndex = ({
                 </div>
               ) : (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-3 px-2">
-                  {/* CHART STATUS PROYEK */}
+                  {/* CHART STATUS TASK */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 shadow-md rounded-md bg-white p-5">
                     <div className="grid grid-cols-1">
                       <h4 className="mig-heading--4 mb-4">Status Proyek</h4>
@@ -783,7 +782,7 @@ const ProjectDetailIndex = ({
                       <Spin />
                     ) : (
                       <div className="">
-                        <div className="flex justify-center mb-4 w-max">
+                        <div className="grid grid-cols-1 mb-4">
                           <Line
                             data={{
                               labels: [
@@ -940,7 +939,7 @@ const ProjectDetailIndex = ({
                           <div className="flex items-center">
                             <Avatar.Group
                               size={30}
-                              maxCount={5}
+                              maxCount={3}
                               className="cursor-help"
                               maxStyle={{
                                 color: "#f56a00",
@@ -1373,7 +1372,6 @@ const ProjectDetailIndex = ({
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
-          dataProjectList={dataProjectList}
           defaultProject={dataProject}
         />
       </AccessControl>
@@ -1391,7 +1389,6 @@ const ProjectDetailIndex = ({
           setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
-          dataProjectList={dataProjectList}
         />
       </AccessControl>
     </LayoutDashboard>

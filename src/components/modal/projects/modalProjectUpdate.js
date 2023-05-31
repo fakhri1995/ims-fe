@@ -240,6 +240,20 @@ const ModalProjectUpdate = ({
       .finally(() => setLoading(false));
   };
 
+  // Used in staff field (diajukan oleh & staff proyek)
+  const getUpdatedStaffs = (currentStaffList, option) => {
+    let staffs = currentStaffList || [];
+    for (let user of option) {
+      if (
+        user?.key &&
+        !staffs?.map((staff) => Number(staff.key))?.includes(Number(user.key))
+      ) {
+        staffs.push(user);
+      }
+    }
+    return staffs;
+  };
+
   // Text Editor Config
   const modules = {
     toolbar: [
@@ -257,7 +271,8 @@ const ModalProjectUpdate = ({
     "indent",
     "link",
   ];
-
+  console.log("diajukan oleh", dataUpdateProject.proposed_bys);
+  console.log("staff", dataUpdateProject.project_staffs);
   return (
     <Modal
       title={
@@ -391,17 +406,24 @@ const ModalProjectUpdate = ({
             value={dataUpdateProject?.proposed_bys}
             placeholder="Tambahkan Pengaju"
             onChange={(value, option) => {
+              const updatedProposedBys = getUpdatedStaffs(
+                dataUpdateProject?.proposed_bys,
+                option
+              );
               setDataUpdateProject((prev) => ({
                 ...prev,
-                proposed_bys: option,
+                proposed_bys: updatedProposedBys,
               }));
             }}
             onSearch={(value) => {
               onSearchUsers(value, setDataStaffs);
             }}
             optionFilterProp="children"
-            // bordered={false}
-            // size="small"
+            filterOption={(input, option) =>
+              (option?.children ?? "")
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
             className="mig-caption--bold text-secondary100 bg-transparent 
             hover:opacity-75 w-full mt-2 "
           >
@@ -422,17 +444,6 @@ const ModalProjectUpdate = ({
         <div>
           <p className="mb-2">Status</p>
           <div className="flex space-x-2 items-center">
-            {/* <p
-              style={{
-                backgroundColor: dataUpdateProject?.status?.color
-                  ? dataUpdateProject?.status?.color + "20"
-                  : "#E6E6E6",
-                color: dataUpdateProject?.status?.color ?? "#808080",
-              }}
-              className="rounded-md px-4 py-2"
-            >
-              {dataUpdateProject?.status?.name ?? "-"}
-            </p> */}
             <Select
               allowClear
               value={dataUpdateProject.status_id}
@@ -563,7 +574,7 @@ const ModalProjectUpdate = ({
 
                 let newProjectStaffs = isSwitchGroup
                   ? getStaffsFromGroups()
-                  : option;
+                  : getUpdatedStaffs(dataUpdateProject?.project_staffs, option);
 
                 setDataUpdateProject((prev) => ({
                   ...prev,
@@ -604,9 +615,6 @@ const ModalProjectUpdate = ({
             <p>Group</p>
           </div>
         </div>
-
-        {/* {console.log({ dataStaffs })}
-        {console.log({ dataStaffsOrGroups })} */}
 
         {/* List of selected users or groups */}
         <div className="flex flex-wrap md:col-span-2">
