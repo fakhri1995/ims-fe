@@ -506,7 +506,7 @@ const ModalProjectTaskDetailUpdate = ({
               <p className="mig-caption--bold">Proyek:</p>
               <p>{dataTask.project?.name ?? "-"}</p>
             </div>
-            {isOutsideProject && (
+            {isOutsideProject && dataTask.project_id && (
               <button
                 onClick={() => rt.push(`projects/${dataTask?.project_id}`)}
                 className="flex justify-end items-start bg-transparent "
