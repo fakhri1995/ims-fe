@@ -16,6 +16,7 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
@@ -55,11 +56,14 @@ const ModalProjectTaskDetailUpdate = ({
 
   const [form] = Form.useForm();
   const rt = useRouter();
+  const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
   // Current state: detail, edit
   const [currentState, setCurrentState] = useState("detail");
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
+  const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
+
   const [dataTask, setDataTask] = useState({
     id: 0,
     name: "",
@@ -108,13 +112,7 @@ const ModalProjectTaskDetailUpdate = ({
         .then((res) => res.json())
         .then((res2) => {
           if (res2.success) {
-            let updatedTaskStaffs = res2.data?.task_staffs?.map((staff) => ({
-              ...staff,
-              key: staff.id,
-            }));
-
-            setDataTask({ ...res2.data });
-            setDataTaskUpdate({ ...res2.data, task_staffs: updatedTaskStaffs });
+            setDataTask(res2.data);
           } else {
             notification.error({
               message: `${res2.message}`,
@@ -134,20 +132,84 @@ const ModalProjectTaskDetailUpdate = ({
     }
   }, [isAllowedToGetTask, taskId, visible]);
 
+  useEffect(() => {
+    if (currentState === "edit") {
+      let updatedTaskStaffs = dataTask?.task_staffs?.map((staff) => ({
+        ...staff,
+        key: staff.id,
+      }));
+      setDataTaskUpdate({ ...dataTask, task_staffs: updatedTaskStaffs });
+    }
+  }, [currentState]);
+
   // 2.2. Get users or groups for task staff options
   useEffect(() => {
     if (!visible || currentState !== "edit") {
       return;
     }
 
-    // If task has a project, then staff options will follow project's staff
-    if (dataTaskUpdate.project_id) {
+    const getStaffOptionsFromAgents = () => {
+      setIsStaffsFromAgents(true);
+      if (isSwitchGroup) {
+        if (!isAllowedToGetGroups) {
+          permissionWarningNotification("Mendapatkan", "Daftar Group");
+          return;
+        }
+        fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`,
+          {
+            method: `GET`,
+            headers: {
+              Authorization: JSON.parse(initProps),
+            },
+          }
+        )
+          .then((res) => res.json())
+          .then((res2) => {
+            setDataStaffsOrGroups(res2.data);
+          })
+          .catch((err) =>
+            notification.error({
+              message: "Gagal mendapatkan daftar grup",
+              duration: 3,
+            })
+          );
+      } else {
+        if (!isAllowedToGetUsers) {
+          permissionWarningNotification("Mendapatkan", "Daftar User");
+          return;
+        }
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        })
+          .then((res) => res.json())
+          .then((res2) => {
+            setDataStaffsOrGroups(res2.data);
+          })
+          .catch((err) =>
+            notification.error({
+              message: "Gagal mendapatkan daftar user",
+              duration: 3,
+            })
+          );
+      }
+    };
+
+    // If task doesn't have a project, then staff options will be taken from users (agent) or groups
+    if (!dataTask.project_id) {
+      getStaffOptionsFromAgents();
+    } else {
+      // If task has a project, then staff options will follow project's staff
       if (!isAllowedToGetProject) {
         permissionWarningNotification("Mendapatkan", "Detail Proyek");
         return;
       }
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProject?id=${dataTaskUpdate.project_id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProject?id=${dataTask.project_id}`,
         {
           method: `GET`,
           headers: {
@@ -157,61 +219,19 @@ const ModalProjectTaskDetailUpdate = ({
       )
         .then((res) => res.json())
         .then((res2) => {
-          setDataStaffsOrGroups(res2.data?.project_staffs);
+          if (res2.data?.project_staffs?.length > 0) {
+            setDataStaffsOrGroups(res2.data?.project_staffs);
+          } else {
+            // if project has no staff, then staff options will be taken from users (agent) or group
+            getStaffOptionsFromAgents();
+          }
         })
-        .catch((err) =>
+        .catch((err) => {
           notification.error({
             message: "Gagal mendapatkan daftar staff proyek",
             duration: 3,
-          })
-        );
-      return;
-    }
-
-    // If task doesn't have a project, then staff options will be taken from users (agent) or groups
-    if (isSwitchGroup) {
-      if (!isAllowedToGetGroups) {
-        permissionWarningNotification("Mendapatkan", "Daftar Group");
-        return;
-      }
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataStaffsOrGroups(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar grup",
-            duration: 3,
-          })
-        );
-    } else {
-      if (!isAllowedToGetUsers) {
-        permissionWarningNotification("Mendapatkan", "Daftar User");
-        return;
-      }
-
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataStaffsOrGroups(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar user",
-            duration: 3,
-          })
-        );
+          });
+        });
     }
   }, [
     isAllowedToGetGroups,
@@ -219,6 +239,7 @@ const ModalProjectTaskDetailUpdate = ({
     isSwitchGroup,
     dataTaskUpdate.project_id,
     currentState,
+    visible,
   ]);
 
   // 2.3. Get current status object
@@ -240,6 +261,41 @@ const ModalProjectTaskDetailUpdate = ({
     setModalDelete(false);
     setCurrentState("detail");
     clearData();
+  };
+
+  const onSearchUsers = (searchKey, setData) => {
+    if (!isAllowedToGetUsers) {
+      permissionWarningNotification("Mendapatkan", "Daftar User");
+      return;
+    }
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    setLoadingSave(true);
+    searchTimeoutRef.current = setTimeout(() => {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${searchKey}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setData(res2.data);
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan daftar user",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoadingSave(false));
+    }, 500);
   };
 
   const handleUpdateTaskStatus = (statusId) => {
@@ -478,11 +534,23 @@ const ModalProjectTaskDetailUpdate = ({
             </div>
             <div className="flex flex-col space-y-2">
               <p className="mig-caption--bold">Tanggal Dimulai:</p>
-              <p>{momentFormatDate(dataTask.start_date, "-")}</p>
+              <p>
+                {momentFormatDate(
+                  dataTask.start_date,
+                  "-",
+                  "DD MMMM YYYY, HH:mm"
+                )}
+              </p>
             </div>
             <div className="flex flex-col space-y-2">
               <p className="mig-caption--bold">Ekspektasi Tanggal Selesai:</p>
-              <p>{momentFormatDate(dataTask.end_date, "-")}</p>
+              <p>
+                {momentFormatDate(
+                  dataTask.end_date,
+                  "-",
+                  "DD MMMM YYYY, HH:mm"
+                )}
+              </p>
             </div>
             <div className="flex flex-col space-y-2 md:col-span-2">
               <p className="mig-caption--bold">Staff Task:</p>
@@ -705,7 +773,7 @@ const ModalProjectTaskDetailUpdate = ({
               </>
             </Form.Item>
           </div>
-
+          {/* {console.log(dataTaskUpdate.task_staffs)} */}
           <div className="md:col-span-2">
             <div className="flex flex-col md:flex-row">
               <div className="w-full mb-2">
@@ -723,6 +791,11 @@ const ModalProjectTaskDetailUpdate = ({
                     isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
                   }
                   style={{ width: `100%` }}
+                  onSearch={(value) =>
+                    isStaffsFromAgents &&
+                    !isSwitchGroup &&
+                    onSearchUsers(value, setDataStaffsOrGroups)
+                  }
                   onChange={(value, option) => {
                     const getStaffsFromGroups = () => {
                       let staffs = dataTaskUpdate?.task_staffs || [];
@@ -900,7 +973,9 @@ const ModalProjectTaskDetailUpdate = ({
       title={
         currentState === "detail" ? (
           <div className="flex items-center justify-between mr-5">
-            <p className="mig-heading--4">{dataTask.name}</p>
+            <p className="mig-heading--4">
+              {dataTask.name} ({dataTask.ticket_number})
+            </p>
             <ButtonSys
               type={"default"}
               color={"danger"}
@@ -916,7 +991,9 @@ const ModalProjectTaskDetailUpdate = ({
             </ButtonSys>
           </div>
         ) : (
-          <p className="mig-heading--4">{dataTask.name}</p>
+          <p className="mig-heading--4">
+            {dataTask.name} ({dataTask.ticket_number})
+          </p>
         )
       }
       visible={visible}

@@ -135,14 +135,13 @@ const ExperienceBlock = ({
                 {moment(exp.end_date).format("MMM YYYY")}
               </strong>
             </p>
-            <p className="text-mono50">{parse(exp.description)}</p>
+            <div className="text-mono50">{parse(exp.description)}</div>
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start">
               {isAllowedToUpdateCandidate && (
                 <button
                   onClick={(event) => {
-                    // console.log(edu.id)
                     setIsUpdate(true);
                     setDataUpdateExp(exp);
                   }}
@@ -155,7 +154,6 @@ const ExperienceBlock = ({
               {isAllowedToDeleteSection && (
                 <button
                   onClick={() => {
-                    // console.log(exp.id);
                     setDataUpdateExp(exp);
                     setModalDelete(true);
                   }}

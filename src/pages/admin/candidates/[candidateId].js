@@ -1033,6 +1033,7 @@ Font.register({
   fonts: [
     {
       src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfMZhrib2Bg-4.ttf",
+      fontWeight: 400,
     },
     {
       src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
@@ -1046,7 +1047,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#ffffff",
     paddingTop: 30,
     paddingBottom: 88,
-    fontFamily: "Inter",
     color: "#4D4D4D",
   },
 
@@ -1127,7 +1127,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: `#808080`,
     fontSize: 10,
-    // marginBottom: 2,
   },
 
   skillTag: {

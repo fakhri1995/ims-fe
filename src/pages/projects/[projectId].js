@@ -1,4 +1,4 @@
-import { PlusOutlined, UpOutlined } from "@ant-design/icons";
+import { UpOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Collapse,
@@ -10,11 +10,9 @@ import {
   Tooltip,
   notification,
 } from "antd";
-import TextArea from "antd/lib/input/TextArea";
 import parse from "html-react-parser";
 import moment from "moment";
 import {
-  ArrayParam,
   NumberParam,
   StringParam,
   useQueryParams,
@@ -35,10 +33,6 @@ import {
   PROJECTS_GET,
   PROJECT_DELETE,
   PROJECT_GET,
-  PROJECT_LOGS_GET,
-  PROJECT_NOTES_GET,
-  PROJECT_NOTE_ADD,
-  PROJECT_NOTE_DELETE,
   PROJECT_STATUSES_GET,
   PROJECT_TASKS_GET,
   PROJECT_TASK_ADD,
@@ -60,11 +54,12 @@ import {
 } from "../../components/icon";
 import st from "../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../components/layout-dashboardNew";
-import ModalProjectNote from "../../components/modal/projects/modalProjectNote";
 import ModalProjectTaskCreate from "../../components/modal/projects/modalProjectTaskCreate";
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalProjectUpdate from "../../components/modal/projects/modalProjectUpdate";
 import ModalStaffList from "../../components/modal/projects/modalStaffList";
+import LogsSection from "../../components/screen/project/LogsSection";
+import NotesSection from "../../components/screen/project/NotesSection";
 import {
   createKeyPressHandler,
   generateStaticAssetUrl,
@@ -120,11 +115,7 @@ const ProjectDetailIndex = ({
   const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
-  const isAllowedToGetNotes = hasPermission(PROJECT_NOTES_GET);
-  const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
-  const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
 
-  const isAllowedToGetLogs = hasPermission(PROJECT_LOGS_GET);
   // TODO: change constant below
   const isAllowedToGetTaskStatusCount = true;
   const isAllowedToGetTaskDeadlineCount = true;
@@ -135,7 +126,6 @@ const ProjectDetailIndex = ({
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "deadline"),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     status_ids: withDefault(StringParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -152,7 +142,6 @@ const ProjectDetailIndex = ({
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1); // use for all data except project notes & tasks
-  const [refreshNotes, setRefreshNotes] = useState(-1);
   const [refreshTasks, setRefreshTasks] = useState(-1);
 
   // 2.1. Charts
@@ -212,7 +201,7 @@ const ProjectDetailIndex = ({
   const [dataStatusList, setDataStatusList] = useState([]);
 
   // filter search & selected options
-  const [searchingFilterTasks, setSearchingFilterTasks] = useState(undefined);
+  const [searchingFilterTasks, setSearchingFilterTasks] = useState("");
   const [selectedStatus, setSelectedStatus] = useState(undefined);
   const [selectedSortType, setSelectedSortType] = useState(undefined);
 
@@ -241,31 +230,11 @@ const ProjectDetailIndex = ({
   const [loadingProject, setLoadingProject] = useState(false);
   const [currentStatus, setCurrentStatus] = useState({});
 
-  // 2.4. Project Logs
-  const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
-  const [dataProjectLogs, setDataProjectLogs] = useState([]);
-  const [loadingProjectLog, setLoadingProjectLog] = useState(false);
-  const [searchingFilterLogs, setSearchingFilterLogs] = useState("");
-  const [pageProjectLogs, setPageProjectLogs] = useState(1);
-
-  // 2.5. Project Notes
-  const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
-  const [dataProjectNotes, setDataProjectNotes] = useState([]);
-  const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
-
-  const [searchingFilterNotes, setSearchingFilterNotes] = useState("");
-  const [pageProjectNotes, setPageProjectNotes] = useState(1);
-
-  const [isNoteInput, setIsNoteInput] = useState(false);
-  const [dataInputNote, setDataInputNote] = useState("");
-  const [dataCurrentNote, setDataCurrentNote] = useState("");
-
-  // 2.6. Modal
+  // 2.4. Modal
   const [modalUpdateProject, setModalUpdateProject] = useState(false);
   const [modalStaffs, setModalStaffs] = useState(false);
   const [modalAddTask, setModalAddTask] = useState(false);
   const [modalDetailTask, setModalDetailTask] = useState(false);
-  const [modalDetailNote, setModalDetailNote] = useState(false);
 
   const [dataProjectList, setDataProjectList] = useState([]);
   const [currentTaskId, setCurrentTaskId] = useState(0);
@@ -397,155 +366,55 @@ const ProjectDetailIndex = ({
       addQueryPrefix: true,
     });
 
-    setLoadingTasks(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawTasks(res2.data);
-          setDataTasks(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingTasks(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}&project_id=${projectId}&keyword=${searchingFilterTasks}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawTasks(res2.data);
+            setDataTasks(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingTasks(false);
         });
-      })
-      .finally(() => {
-        setLoadingTasks(false);
-      });
+    };
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetTasks,
     refreshTasks,
     projectId,
+    searchingFilterTasks,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
-    queryParams.keyword,
     queryParams.status_ids,
   ]);
 
-  // 3.6. Get Project Logs
-  useEffect(() => {
-    if (!isAllowedToGetLogs) {
-      permissionWarningNotification("Mendapatkan", "Log Aktivitas Proyek");
-      setLoadingProjectLog(false);
-      return;
-    }
-
-    setLoadingProjectLog(true);
-    const fetchData = async () => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${projectId}&keyword=${searchingFilterLogs}&page=${pageProjectLogs}&rows=5`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjectLogs(res2.data);
-            setDataProjectLogs(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjectLog(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 1000);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetLogs,
-    refresh,
-    refreshTasks,
-    searchingFilterLogs,
-    pageProjectLogs,
-  ]);
-
-  // 3.7. Get Project Notes
-  useEffect(() => {
-    if (!isAllowedToGetNotes) {
-      permissionWarningNotification("Mendapatkan", "Catatan Proyek");
-      setLoadingProjectNotes(false);
-      return;
-    }
-
-    setLoadingProjectNotes(true);
-    const fetchData = async () => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${projectId}&keyword=${searchingFilterNotes}&page=${pageProjectNotes}&rows=5`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjectNotes(res2.data);
-            setDataProjectNotes(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjectNotes(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 1000);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetNotes,
-    refreshNotes,
-    searchingFilterNotes,
-    pageProjectNotes,
-  ]);
-
-  // 3.8. Get Data Chart Status Task
+  // 3.6. Get Data Chart Status Task
   // TODO: uncomment if API is done
   // useEffect(() => {
   //   if (!isAllowedToGetTaskStatusCount) {
@@ -573,7 +442,7 @@ const ProjectDetailIndex = ({
   //     .finally(() => setLoadingChart(false));
   // }, [isAllowedToGetTaskStatusCount]);
 
-  // 3.9. Get Data Chart Deadline Task
+  // 3.7. Get Data Chart Deadline Task
   // TODO: uncomment if API is done
   // useEffect(() => {
   //   if (!isAllowedToGetTaskDeadlineCount) {
@@ -601,7 +470,7 @@ const ProjectDetailIndex = ({
   //     .finally(() => setLoadingChart(false));
   // }, [isAllowedToGetTaskDeadlineCount]);
 
-  // 3.10. Update number of rows in task table based on the device width
+  // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth <= 820) {
@@ -621,7 +490,6 @@ const ProjectDetailIndex = ({
   // 4. Event
   const onFilterTasks = () => {
     setQueryParams({
-      keyword: searchingFilterTasks,
       sort_by: "deadline",
       sort_type: selectedSortType,
       status_ids: selectedStatus,
@@ -629,50 +497,6 @@ const ProjectDetailIndex = ({
   };
 
   const { onKeyPressHandler } = createKeyPressHandler(onFilterTasks, "Enter");
-
-  const handleAddNote = (notes) => {
-    if (!isAllowedToAddNote) {
-      permissionWarningNotification("Menambah", "Catatan");
-      return;
-    }
-
-    const payload = { notes: notes };
-    setLoadingProjectNotes(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${projectId}`,
-      {
-        method: `POST`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    )
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-          setDataInputNote("");
-          setRefreshNotes((prev) => prev + 1);
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menambah catatan. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingProjectNotes(false));
-  };
 
   const handleUpdateProjectStatus = (statusId) => {
     if (!isAllowedToUpdateProject) {
@@ -759,7 +583,7 @@ const ProjectDetailIndex = ({
       .finally(() => setLoadingChart(false));
   };
 
-  // String of project staffs
+  // String of project staffs for project detail
   const lastIndexStaff = dataProject?.project_staffs?.length - 1;
   let staffsString =
     dataProject?.project_staffs?.length > 3
@@ -1335,241 +1159,20 @@ const ProjectDetailIndex = ({
             </Collapse>
 
             {/* Log */}
-            <Collapse
-              className="shadow-md rounded-md bg-white"
-              bordered={false}
-              ghost={true}
-              defaultActiveKey={1}
-              expandIconPosition="right"
-              expandIcon={({ isActive }) => (
-                <UpOutlined rotate={isActive ? 180 : 0} />
-              )}
-            >
-              <Collapse.Panel
-                key={1}
-                header={
-                  <div className="mig-heading--4 flex space-x-2 items-center">
-                    <p>Log Aktivitas Proyek {dataProject?.name}</p>
-                  </div>
-                }
-              >
-                <div className="grid gap-2 lg:gap-6">
-                  {/* Search by keyword (kata kunci) */}
-                  <div className="">
-                    <Input
-                      defaultValue={searchingFilterLogs}
-                      style={{ width: `100%` }}
-                      placeholder="Kata Kunci.."
-                      allowClear
-                      onChange={(e) => {
-                        if (!e.target.value) {
-                          setSearchingFilterLogs("");
-                        }
-                        setSearchingFilterLogs(e.target.value);
-                      }}
-                      disabled={!isAllowedToGetLogs}
-                    />
-                  </div>
-
-                  <Table
-                    rowKey={(record) => record.id}
-                    showHeader={false}
-                    dataSource={dataProjectLogs}
-                    loading={loadingProjectLog}
-                    pagination={{
-                      current: pageProjectLogs,
-                      pageSize: 5,
-                      total: dataRawProjectLogs?.total,
-                    }}
-                    onChange={(pagination) => {
-                      setPageProjectLogs(pagination.current);
-                    }}
-                    columns={[
-                      {
-                        title: "Logs",
-                        dataIndex: "id",
-                        key: "id",
-                        render: (_, log) => {
-                          return (
-                            <div key={log?.id} className="">
-                              <div className="flex justify-between items-center mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <img
-                                    src={generateStaticAssetUrl(
-                                      log?.causer?.profile_image?.link ??
-                                        "staging/Users/default_user.png"
-                                    )}
-                                    alt={"profile image"}
-                                    className="w-8 h-8 bg-cover object-cover rounded-full"
-                                  />
-                                  <p className="truncate">
-                                    <strong>{log?.causer?.name}</strong> -{" "}
-                                    {log?.causer?.roles?.[0]?.name}
-                                  </p>
-                                </div>
-                                <p className="text-right">
-                                  {momentFormatDate(
-                                    log?.created_at,
-                                    "-",
-                                    "D MMM YYYY, HH:mm",
-                                    true
-                                  )}
-                                </p>
-                              </div>
-                              <p>{log?.description ?? "-"}</p>
-                            </div>
-                          );
-                        },
-                      },
-                    ]}
-                  />
-                </div>
-              </Collapse.Panel>
-            </Collapse>
+            <LogsSection
+              initProps={initProps}
+              projectId={projectId}
+              projectName={dataProject?.name}
+              refresh={refresh}
+              refreshTasks={refreshTasks}
+            />
 
             {/* Catatan */}
-            <Collapse
-              className="shadow-md rounded-md bg-white"
-              bordered={false}
-              ghost={true}
-              defaultActiveKey={1}
-              expandIconPosition="right"
-              expandIcon={({ isActive }) => (
-                <UpOutlined rotate={isActive ? 180 : 0} />
-              )}
-            >
-              <Collapse.Panel
-                key={1}
-                header={
-                  <div className="mig-heading--4 flex space-x-2 items-center">
-                    <p>Catatan Proyek {dataProject?.name}</p>
-                  </div>
-                }
-              >
-                <div className="grid gap-2 lg:gap-6">
-                  {/* Search by keyword (kata kunci) */}
-                  <Input
-                    defaultValue={searchingFilterNotes}
-                    style={{ width: `100%` }}
-                    placeholder="Kata Kunci.."
-                    allowClear
-                    onChange={(e) => {
-                      if (!e.target.value) {
-                        setSearchingFilterNotes("");
-                      }
-                      setSearchingFilterNotes(e.target.value);
-                    }}
-                    disabled={!isAllowedToGetNotes}
-                  />
-
-                  <Table
-                    rowKey={(record) => record.id}
-                    showHeader={false}
-                    dataSource={dataProjectNotes}
-                    loading={loadingProjectNotes}
-                    pagination={{
-                      current: pageProjectNotes,
-                      pageSize: 5,
-                      total: dataRawProjectNotes?.total,
-                    }}
-                    onChange={(pagination) => {
-                      setPageProjectNotes(pagination.current);
-                    }}
-                    columns={[
-                      {
-                        title: "Notes",
-                        dataIndex: "id",
-                        key: "id",
-
-                        render: (_, note) => {
-                          return (
-                            <div key={note?.id} className="cursor-pointer">
-                              <div className="flex justify-between items-center mb-2">
-                                <div className="flex items-center space-x-2">
-                                  <img
-                                    src={generateStaticAssetUrl(
-                                      note?.causer?.profile_image?.link ??
-                                        "staging/Users/default_user.png"
-                                    )}
-                                    alt={"profile image"}
-                                    className="w-8 h-8 bg-cover object-cover rounded-full"
-                                  />
-                                  <p className="truncate">
-                                    <strong>{note?.causer?.name}</strong> -{" "}
-                                    {note?.causer?.roles?.[0]?.name}
-                                  </p>
-                                </div>
-                                <p className="text-right">
-                                  {momentFormatDate(
-                                    note?.created_at,
-                                    "-",
-                                    "D MMM YYYY, HH:mm",
-                                    true
-                                  )}
-                                </p>
-                              </div>
-                              <p className="">
-                                {note?.notes?.length > 280
-                                  ? note?.notes.slice(0, 280) + "..."
-                                  : note?.notes ?? "-"}
-                              </p>
-                            </div>
-                          );
-                        },
-                      },
-                    ]}
-                    onRow={(record, rowIndex) => {
-                      return {
-                        onClick: () => {
-                          setDataCurrentNote(record);
-                          setModalDetailNote(true);
-                        },
-                      };
-                    }}
-                  />
-
-                  {isNoteInput ? (
-                    <div className="space-y-2">
-                      <TextArea
-                        size="large"
-                        value={dataInputNote}
-                        onChange={(e) => setDataInputNote(e.target.value)}
-                      ></TextArea>
-                      <div className="text-right">
-                        <button
-                          onClick={() => {
-                            setIsNoteInput(false);
-                            setDataInputNote("");
-                          }}
-                          className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
-                        >
-                          Batal
-                        </button>
-                        <ButtonSys
-                          type={"primary"}
-                          onClick={() => handleAddNote(dataInputNote)}
-                          disabled={!isAllowedToAddNote}
-                        >
-                          Simpan
-                        </ButtonSys>
-                      </div>
-                    </div>
-                  ) : (
-                    <ButtonSys
-                      type={"default"}
-                      size={"large"}
-                      fullWidth={true}
-                      onClick={() => setIsNoteInput(true)}
-                    >
-                      <div className="flex space-x-2 items-center ">
-                        <PlusOutlined />
-                        <p className="mig-caption--bold ">Tambah Catatan</p>
-                      </div>
-                    </ButtonSys>
-                  )}
-                </div>
-              </Collapse.Panel>
-            </Collapse>
+            <NotesSection
+              initProps={initProps}
+              projectId={projectId}
+              projectName={dataProject?.name}
+            />
           </div>
 
           {/* Task Proyek */}
@@ -1598,19 +1201,13 @@ const ProjectDetailIndex = ({
                 {/* Search by keyword (kata kunci) */}
                 <div className="md:w-3/12">
                   <Input
-                    defaultValue={queryParams.keyword}
+                    defaultValue={searchingFilterTasks}
                     style={{ width: `100%` }}
                     placeholder="Kata Kunci.."
                     allowClear
                     onChange={(e) => {
-                      if (!e.target.value) {
-                        setQueryParams({
-                          keyword: undefined,
-                        });
-                      }
                       setSearchingFilterTasks(e.target.value);
                     }}
-                    onKeyPress={onKeyPressHandler}
                     disabled={!isAllowedToGetTasks}
                   />
                 </div>
@@ -1715,21 +1312,18 @@ const ProjectDetailIndex = ({
                     dataIndex: "name",
                     key: "name",
                     render: (_, task) => {
-                      const currentStatus = dataStatusList.find(
-                        (status) => status.id === task.status_id
-                      );
-
                       const currentProject = dataProjectList.find(
                         (project) => project.id === task.project_id
                       );
                       return (
                         <div key={task.id} className="flex-none rounded-md ">
                           <TaskCard
-                            title={task.name}
+                            title={task?.name}
+                            taskId={task?.ticket_number}
                             projectName={currentProject?.name}
                             toDate={task.end_date}
-                            statusName={currentStatus?.name}
-                            statusColor={currentStatus?.color}
+                            statusName={task?.status?.name}
+                            statusColor={task?.status?.color}
                             taskStaffs={task.task_staffs}
                             onClick={() => {
                               setCurrentTaskId(task.id);
@@ -1798,18 +1392,6 @@ const ProjectDetailIndex = ({
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
           dataProjectList={dataProjectList}
-        />
-      </AccessControl>
-
-      {/* Modal Notes */}
-      <AccessControl hasPermission={PROJECT_NOTES_GET}>
-        <ModalProjectNote
-          initProps={initProps}
-          visible={modalDetailNote}
-          onvisible={setModalDetailNote}
-          dataNote={dataCurrentNote}
-          isAllowedToDeleteNote={isAllowedToDeleteNote}
-          setRefreshNotes={setRefreshNotes}
         />
       </AccessControl>
     </LayoutDashboard>
