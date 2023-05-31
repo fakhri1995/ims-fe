@@ -927,7 +927,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <Spin />
                     ) : (
                       <div>
-                        <div className="flex justify-center mb-4 w-max">
+                        <div className="grid grid-cols-1 mb-4">
                           <Line
                             data={{
                               labels: [
@@ -1270,7 +1270,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
-          dataProjectList={dataProjectList}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>
@@ -1287,7 +1286,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           setRefreshTasks={setRefreshTasks}
           taskId={currentTaskId}
           dataStatusList={dataStatusList}
-          dataProjectList={dataProjectList}
           isOutsideProject={true}
         />
       </AccessControl>
