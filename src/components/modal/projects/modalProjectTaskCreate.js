@@ -35,7 +35,6 @@ const ModalProjectTaskCreate = ({
   isAllowedToAddTask,
   isAllowedToGetProjects,
   setRefreshTasks,
-  dataProjectList,
   defaultProject,
 }) => {
   const { hasPermission } = useAccessControl();
@@ -43,6 +42,7 @@ const ModalProjectTaskCreate = ({
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
   const searchTimeoutRef = useRef(null);
+
   // 1. USE STATE
   const [dataTask, setDataTask] = useState({
     name: "",
@@ -58,6 +58,7 @@ const ModalProjectTaskCreate = ({
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
 
+  const [dataProjectList, setDataProjectList] = useState([]);
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
 
@@ -67,7 +68,39 @@ const ModalProjectTaskCreate = ({
     setDataTask((prev) => ({ ...prev, project_id: defaultProject?.id }));
   }, [defaultProject]);
 
-  // 2.2. Get users or groups for task staff options
+  // 2.2. Get project list
+  useEffect(() => {
+    if (!isAllowedToGetProjects) {
+      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataProjectList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetProjects]);
+
+  // 2.3. Get users or groups for task staff options
   useEffect(() => {
     if (!visible) {
       return;

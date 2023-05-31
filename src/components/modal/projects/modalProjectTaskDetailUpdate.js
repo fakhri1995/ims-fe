@@ -46,7 +46,6 @@ const ModalProjectTaskDetailUpdate = ({
   setRefreshTasks,
   taskId,
   dataStatusList,
-  dataProjectList,
   isOutsideProject,
 }) => {
   const { hasPermission } = useAccessControl();
@@ -83,6 +82,7 @@ const ModalProjectTaskDetailUpdate = ({
   const [modalStaffs, setModalStaffs] = useState(false);
 
   // Option data
+  const [dataProjectList, setDataProjectList] = useState([]);
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
 
   // Selected data
@@ -133,16 +133,48 @@ const ModalProjectTaskDetailUpdate = ({
   }, [isAllowedToGetTask, taskId, visible]);
 
   useEffect(() => {
-    if (currentState === "edit") {
+    if (visible) {
       let updatedTaskStaffs = dataTask?.task_staffs?.map((staff) => ({
         ...staff,
-        key: staff.id,
+        key: Number(staff.id),
       }));
       setDataTaskUpdate({ ...dataTask, task_staffs: updatedTaskStaffs });
     }
-  }, [currentState]);
+  }, [dataTask, currentState]);
 
-  // 2.2. Get users or groups for task staff options
+  // 2.2. Get project list
+  useEffect(() => {
+    if (!isAllowedToGetProjects) {
+      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataProjectList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetProjects]);
+
+  // 2.3. Get users or groups for task staff options
   useEffect(() => {
     if (!visible || currentState !== "edit") {
       return;
@@ -239,7 +271,6 @@ const ModalProjectTaskDetailUpdate = ({
     isSwitchGroup,
     dataTaskUpdate.project_id,
     currentState,
-    visible,
   ]);
 
   // 2.3. Get current status object
@@ -478,7 +509,6 @@ const ModalProjectTaskDetailUpdate = ({
             {isOutsideProject && (
               <button
                 onClick={() => rt.push(`projects/${dataTask?.project_id}`)}
-                // href={`projects/${dataTask?.project_id}`}
                 className="flex justify-end items-start bg-transparent "
                 type="button"
               >
@@ -773,7 +803,6 @@ const ModalProjectTaskDetailUpdate = ({
               </>
             </Form.Item>
           </div>
-          {/* {console.log(dataTaskUpdate.task_staffs)} */}
           <div className="md:col-span-2">
             <div className="flex flex-col md:flex-row">
               <div className="w-full mb-2">
@@ -797,21 +826,42 @@ const ModalProjectTaskDetailUpdate = ({
                     onSearchUsers(value, setDataStaffsOrGroups)
                   }
                   onChange={(value, option) => {
+                    // use when group switch is on
                     const getStaffsFromGroups = () => {
                       let staffs = dataTaskUpdate?.task_staffs || [];
                       for (let group of option) {
                         for (let user of group?.users) {
                           if (
                             !staffs
-                              ?.map((staff) => staff.name)
-                              ?.includes(user.name)
+                              ?.map((staff) => staff.key)
+                              ?.includes(user.id)
                           ) {
-                            let userWithKey = { ...user, key: user?.id };
+                            let userWithKey = {
+                              ...user,
+                              key: Number(user?.id),
+                            };
                             staffs.push(userWithKey);
                           }
                         }
                       }
 
+                      return staffs;
+                    };
+
+                    // use when group switch is off
+                    const getUpdatedStaffs = () => {
+                      // cannot use "option" directly because the dropdown options are dynamic
+                      let staffs = dataTaskUpdate?.task_staffs || [];
+                      for (let user of option) {
+                        if (
+                          user?.key &&
+                          !staffs
+                            ?.map((staff) => Number(staff.key))
+                            ?.includes(Number(user.key))
+                        ) {
+                          staffs.push(user);
+                        }
+                      }
                       return staffs;
                     };
 
@@ -821,7 +871,7 @@ const ModalProjectTaskDetailUpdate = ({
 
                     let newTaskStaffs = isSwitchGroup
                       ? getStaffsFromGroups()
-                      : option;
+                      : getUpdatedStaffs();
 
                     setDataTaskUpdate((prev) => ({
                       ...prev,
@@ -837,8 +887,8 @@ const ModalProjectTaskDetailUpdate = ({
                 >
                   {dataStaffsOrGroups.map((item) => (
                     <Select.Option
-                      key={item?.id}
-                      value={item?.id}
+                      key={Number(item?.id)}
+                      value={Number(item?.id)}
                       position={item?.position}
                       users={item?.users}
                       name={item?.name}
@@ -851,7 +901,7 @@ const ModalProjectTaskDetailUpdate = ({
               </div>
 
               {/* If task doesn't have a project, then show group switch */}
-              {!dataTaskUpdate.project_id && (
+              {(!dataTaskUpdate.project_id || isStaffsFromAgents) && (
                 <div className="flex space-x-2 items-center absolute right-6">
                   <p>Staff</p>
                   <Switch
