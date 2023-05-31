@@ -982,6 +982,7 @@ const TableCustomCandidate = ({
 
   return (
     <Table
+      rowKey={(record) => record.id}
       className="tableCandidate"
       dataSource={dataSource}
       columns={columns}

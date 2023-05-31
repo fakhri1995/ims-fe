@@ -296,6 +296,10 @@ function LandingPage({ dataBlog }) {
       {/* <section className={'container mx-auto'}> */}
       <Head>
         <title>{t.landingpagemetatitle}</title>
+        <meta
+          name="google-site-verification"
+          content="2qK-7aoQVjWo7T2_OWW2UzFz5VvE3hwsXNB1-T6znSA"
+        />
         <meta name="description" content={t.landingpagemetadescription} />
         <meta
           name="keywords"
@@ -431,7 +435,7 @@ function LandingPage({ dataBlog }) {
                 <div class="slide ">
                   <img
                     className={
-                      "mx-[21px] h-[50px] w-auto filter grayscale opacity-80"
+                      "mx-[30px] max-h-[45px] filter grayscale opacity-80"
                     }
                     src={data1}
                   />
@@ -454,7 +458,7 @@ function LandingPage({ dataBlog }) {
         </div>
         {/* ---------- */}
         {/* Phone View */}
-        <div className={"block lg:hidden pt-5"}>
+        <div className={"block lg:hidden pt-2.5"}>
           <div className={"flex-col center"}>
             <div className={"text-center"}>
               <p className={"text-2xl font-gilroysemibold"}>
@@ -562,7 +566,7 @@ function LandingPage({ dataBlog }) {
                 <div class="slide ">
                   <img
                     className={
-                      "mx-[21px] h-[50px] w-auto filter grayscale opacity-80"
+                      "mx-[21px] h-[50px] max-w-[100px] filter grayscale opacity-80"
                     }
                     src={data1}
                   />

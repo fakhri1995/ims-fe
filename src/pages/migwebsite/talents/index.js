@@ -1975,118 +1975,146 @@ function Talents({}) {
               </div>
             )}
             {formActive == "third" ? (
-              <div>
+              <div className={"w-[48%] pr-[130px]"}>
                 {dataTalents.length > 0 && (
                   <div
-                    className={"w-[400px] py-4 pl-4 pr-[17px] ml-5 "}
-                    style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
+                    className={
+                      "w-full sticky top-20 pb-4 pl-4 pr-[17px] ml-5 flex flex-col"
+                    }
+                    // style={{ boxShadow: "0px 0px 15px rgba(0, 0, 0, 0.15)" }}
                   >
                     <p
-                      className={"font-gilroybold text-primarygreen text-base"}
+                      style={{ lineHeight: "36px" }}
+                      className={
+                        "text-primarygreen text-2xl font-gilroybold mb-4"
+                      }
                     >
                       {t.talentrequestsummary}
                     </p>
-                    <div className={"mt-3 border border-dividermig"} />
-                    {dataTalents.map((data, index) => (
-                      <div className={"mt-4   hover:bg-greenTrans5 w-full"}>
-                        <div className={"flex flex-row"}>
-                          <button
-                            className={"bg-transparent text-left"}
-                            onClick={() => handleEdit(index)}
-                          >
-                            <div className={"w-[90%]"}>
-                              <p
-                                className={
-                                  "text-blackmig font-gilroysemibold text-sm "
-                                }
-                              >
-                                {data.kindOfTalent}
-                              </p>
-                              <p
-                                className={
-                                  "text-blackmig font-gilroyregular text-sm"
-                                }
-                              >
-                                {data.levelEmployee +
-                                  " - level, " +
-                                  data.manyTalent +
-                                  " talent, " +
-                                  data.urgently +
-                                  ", " +
-                                  data.timeUsed +
-                                  " duration"}
-                              </p>
-                              <div className={"flex"}>
-                                <p
-                                  className={
-                                    "text-blackmig text-xs font-gilroysemibold"
-                                  }
-                                >
-                                  {t.roleorskills}
-                                </p>
-                                <div className="flex flex-row ml-2">
-                                  {data.product.map(
-                                    (data_product, index_product) => (
-                                      <p className={"text-xs text-blackmig"}>
-                                        {data_product}{" "}
-                                        {index_product ==
-                                        data.product.length - 1
-                                          ? " "
-                                          : ", "}
-                                      </p>
-                                    )
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </button>
-                          <div
-                            className={"w-[10%] flex justify-end self-center"}
-                          >
-                            <button
-                              className={"bg-transparent"}
-                              onClick={() =>
-                                handleDeleteTalents(data.kindOfTalent, index)
-                              }
-                            >
-                              <img
-                                src="image/trash.png"
-                                className={"w-6 h-6"}
-                              />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                    <button
-                      onClick={handleSubmitTalents}
+                    {/* <div className={"mt-3 border border-dividermig"} /> */}
+                    <div
                       className={
-                        "mt-8 py-2 pl-4 bg-primarygreen pr-[9.3px] rounded"
+                        "h-[389px] overflow-scroll [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']"
                       }
                     >
-                      <div className={"flex flex-row justify-between"}>
-                        <p
-                          className={
-                            "text-white text-[18px] font-gilroysemibold"
-                          }
-                        >
-                          {t.submitrequest}
-                        </p>
+                      {dataTalents.map((data, index) => (
                         <div
                           className={
-                            "w-[30px] h-[30px] ml-4 bg-white rounded-[100px] items-center self-center"
+                            "mt-4 bg-bgjoinmig hover:bg-greenTrans5 w-full p-2 rounded-[4px]"
                           }
                         >
+                          <div className={"flex flex-row"}>
+                            <button
+                              className={"bg-transparent w-[90%] text-left"}
+                              onClick={() => handleEdit(index)}
+                            >
+                              <div className={"w-full"}>
+                                <p
+                                  className={
+                                    "text-accentblue font-gilroysemibold text-base "
+                                  }
+                                >
+                                  {data.kindOfTalent}
+                                </p>
+                                <p
+                                  className={
+                                    "text-blackmig font-gilroyregular text-sm mt-[3px]"
+                                  }
+                                >
+                                  {data.levelEmployee +
+                                    " - level, " +
+                                    data.manyTalent +
+                                    " talent, " +
+                                    data.urgently +
+                                    ", " +
+                                    data.timeUsed +
+                                    " months duration"}
+                                </p>
+                                <div className={"flex"}>
+                                  <p
+                                    className={
+                                      "text-blackmig text-xs font-gilroysemibold mt-[3px]"
+                                    }
+                                  >
+                                    {t.roleorskills}
+                                  </p>
+                                  <div className="flex flex-row ml-2 mt-[3px]">
+                                    {data.product.map(
+                                      (data_product, index_product) => (
+                                        <p
+                                          className={
+                                            "text-xs text-blackmig font-gilroyregular"
+                                          }
+                                        >
+                                          {data_product}{" "}
+                                          {index_product ==
+                                          data.product.length - 1
+                                            ? " "
+                                            : ", "}
+                                        </p>
+                                      )
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </button>
+                            <div className={"w-[10%] flex justify-end"}>
+                              <button
+                                className={"bg-transparent"}
+                                onClick={() =>
+                                  handleDeleteTalents(data.kindOfTalent, index)
+                                }
+                              >
+                                <img
+                                  src="image/trash.png"
+                                  className={"w-6 h-6"}
+                                />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div
+                      className={"flex flex-row justify-between mt-8 items-end"}
+                    >
+                      <p
+                        className={
+                          "text-base text-blackmig font-gilroysemibold self-center"
+                        }
+                      >
+                        Total Talents : {dataTalents.length}
+                      </p>
+                      <button
+                        onClick={handleSubmitTalents}
+                        className={
+                          "py-2 pl-4 bg-primarygreen pr-[9.3px] rounded"
+                        }
+                      >
+                        <div className={"flex flex-row justify-between"}>
                           <p
                             className={
-                              "text-primarygreen text-[18px] font-gilroysemibold"
+                              "text-white text-[18px] font-gilroysemibold"
                             }
                           >
-                            {dataTalents.length}
+                            {t.submitrequest}
                           </p>
+                          <div
+                            className={
+                              "w-[22px] h-[22px] ml-4 bg-white rounded-[100px] self-center"
+                            }
+                          >
+                            <p
+                              className={
+                                "text-primarygreen text-[14px] font-gilroysemibold self-center"
+                              }
+                            >
+                              {dataTalents.length}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                    </div>
                   </div>
                 )}
               </div>
@@ -3247,7 +3275,7 @@ function Talents({}) {
         <div>
           <section
             className={
-              "section2talents py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt:4 lg:mt-12"
+              "section2talents py-4 lg:py-16 lg:px-[120px] px-4 mx-auto mt-4 lg:mt-12"
             }
           >
             <div className={"hidden lg:flex justify-between container mx-auto"}>
@@ -3465,7 +3493,7 @@ function Talents({}) {
           </section>
           <section
             className={
-              "section2talentsnew py-4 lg:pt-0 lg:pb-16 lg:px-[120px] px-4 mx-auto mt:4"
+              "section2talentsnew py-4 lg:pt-0 lg:pb-16 lg:px-[120px] px-4 mx-auto mt-4"
             }
           >
             <h3
@@ -3479,25 +3507,27 @@ function Talents({}) {
             <p
               style={{ lineHeight: "150%" }}
               className={
-                "text-base lg:text-base text-blackmig text-center mt-16 "
+                "text-base lg:text-base text-blackmig text-center mt-8"
               }
             >
               {t.section2talentsubtitle}
             </p>
-            <div className={"mt-5"}>
+            <div className={"mt-4"}>
               <p
                 style={{ lineHeight: "150%" }}
-                className={"text-blackmig text-xl lg:text-2xl text-center"}
+                className={
+                  "text-blackmig text-xl lg:text-base font-gilroyregular text-center"
+                }
               >
                 {t.section2talentsubtitle2}:
               </p>
             </div>
             <div
-              className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
+              className={"mt-7 lg:mt-6 lg:flex lg:flex-row lg:justify-center"}
             >
               <div
                 className={
-                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[400px]"
                 }
               >
                 <img
@@ -3517,7 +3547,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[400px]"
                 }
               >
                 <img
@@ -3537,11 +3567,11 @@ function Talents({}) {
               </div>
             </div>
             <div
-              className={"mt-7 lg:mt-12 lg:flex lg:flex-row lg:justify-center"}
+              className={"mt-7 lg:mt-6 lg:flex lg:flex-row lg:justify-center"}
             >
               <div
                 className={
-                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[400px]"
                 }
               >
                 <img
@@ -3561,7 +3591,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[500px]"
+                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[400px]"
                 }
               >
                 <img

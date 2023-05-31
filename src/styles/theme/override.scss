@@ -517,19 +517,20 @@ ol {
 /*  IMPORTANT CODE BELOW */
 
 .slide-track {
-  width: calc(150px * 20);
+  width: calc(216px * 20);
   display: flex;
   animation: scroll 20s linear infinite;
   justify-content: space-between;
 }
 
 .slide {
-  width: auto;
+  // width: 268px;
+  // width: auto;
   height: 50px;
   display: grid;
   place-items: center;
-  margin-left: 21px;
-  margin-right: 21px;
+  margin-left: 30px;
+  margin-right: 30px;
   transition: 0.5s;
   cursor: pointer;
 }
@@ -539,7 +540,7 @@ ol {
     transform: translateX(0px);
   }
   100% {
-    transform: translateX(calc(-150px * 10));
+    transform: translateX(calc(-216px * 10));
   }
 }
 
@@ -548,7 +549,7 @@ ol {
     transform: translateX(0px);
   }
   100% {
-    transform: translateX(calc(-150px * 5));
+    transform: translateX(calc(-216px * 5));
   }
 }
 
