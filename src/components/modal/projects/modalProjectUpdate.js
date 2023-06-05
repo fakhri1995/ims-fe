@@ -271,8 +271,7 @@ const ModalProjectUpdate = ({
     "indent",
     "link",
   ];
-  console.log("diajukan oleh", dataUpdateProject.proposed_bys);
-  console.log("staff", dataUpdateProject.project_staffs);
+
   return (
     <Modal
       title={

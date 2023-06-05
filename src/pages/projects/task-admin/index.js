@@ -3,6 +3,7 @@ import {
   Collapse,
   DatePicker,
   Input,
+  Progress,
   Select,
   Spin,
   Table,
@@ -37,6 +38,8 @@ import {
   PROJECT_STATUS_DELETE,
   PROJECT_STATUS_GET,
   PROJECT_STATUS_UPDATE,
+  PROJECT_TASKS_COUNT_GET,
+  PROJECT_TASKS_DEADLINE_GET,
   PROJECT_TASKS_GET,
   PROJECT_TASK_ADD,
   PROJECT_TASK_DELETE,
@@ -52,6 +55,7 @@ import {
   ClipboardListIconSvg,
   PlusIconSvg,
   SearchIconSvg,
+  UserIconSvg,
 } from "../../../components/icon";
 import st from "../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../components/layout-dashboardNew";
@@ -61,6 +65,7 @@ import {
   TableCustomProjectList,
   TableCustomTaskList,
 } from "../../../components/table/tableCustom";
+import { H1, H2, Label, Text } from "../../../components/typography";
 import {
   createKeyPressHandler,
   momentFormatDate,
@@ -109,11 +114,13 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
 
   const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
-  const isAllowedToGetStatus = hasPermission(PROJECT_STATUS_GET);
 
-  // TODO: change constant below
-  const isAllowedToGetTaskStatusCount = true;
-  const isAllowedToGetTaskDeadlineCount = true;
+  const isAllowedToGetTaskStatusCount = hasPermission(PROJECT_TASKS_COUNT_GET);
+  const isAllowedToGetTaskDeadlineCount = hasPermission(
+    PROJECT_TASKS_DEADLINE_GET
+  );
+  // TODO: change constant
+  const isAllowedToGetStaffCount = true;
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -142,32 +149,8 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
-  const [taskStatusCount, setTaskStatusCount] = useState([
-    {
-      task_status: "Open",
-      task_status_count: 24,
-    },
-    {
-      task_status: "On Progress",
-      task_status_count: 10,
-    },
-    {
-      task_status: "Overdue",
-      task_status_count: 4,
-    },
-    {
-      task_status: "Closed",
-      task_status_count: 24,
-    },
-    {
-      task_status: "On Hold",
-      task_status_count: 10,
-    },
-    {
-      task_status: "Canceled",
-      task_status_count: 4,
-    },
-  ]);
+  const [taskStatusCount, setTaskStatusCount] = useState([]);
+  const [taskTotal, setTaskTotal] = useState(0);
 
   const [dataTaskDeadline, setDataTaskDeadline] = useState({
     deadline: {
@@ -190,6 +173,12 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dateState, setDateState] = useState({
     from: "",
     to: "",
+  });
+
+  const [staffCount, setStaffCount] = useState({
+    total_staff: 20,
+    total_staff_without_task: 5,
+    percentage: 60,
   });
 
   // 2.2. Table Projects List (Semua Proyek)
@@ -325,57 +314,91 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [isAllowedToGetStatuses]);
 
   // 3.4. Get Data Chart Status Task
-  // TODO: uncomment if API is done
-  // useEffect(() => {
-  //   if (!isAllowedToGetTaskStatusCount) {
-  //     setLoadingChart(false);
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!isAllowedToGetTaskStatusCount) {
+      setLoadingChart(false);
+      return;
+    }
 
-  //   setLoadingChart(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatusCount`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setTaskStatusCount(res2.data); // "Status Proyek" chart's data source
-  //     })
-  //     .catch((err) =>
-  //       notification.error({
-  //         message: "Gagal mendapatkan data statistik status proyek",
-  //         duration: 3,
-  //       })
-  //     )
-  //     .finally(() => setLoadingChart(false));
-  // }, [isAllowedToGetTaskStatusCount]);
+    setLoadingChart(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setTaskStatusCount(res2.data?.status); // "Status Task" chart's data source
+        setTaskTotal(res2.data?.total);
+      })
+      .catch((err) =>
+        notification.error({
+          message: "Gagal mendapatkan data statistik status task",
+          duration: 3,
+        })
+      )
+      .finally(() => setLoadingChart(false));
+  }, [isAllowedToGetTaskStatusCount]);
 
   // 3.5. Get Data Chart Deadline Task
+  useEffect(() => {
+    if (!isAllowedToGetTaskDeadlineCount) {
+      setLoadingChart(false);
+      return;
+    }
+
+    if (!dateState.from || !dateState.to) {
+      setLoadingChart(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksDeadline`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataTaskDeadline(res2.data); // "Deadline Task Bulan Ini" chart's data source
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan data statistik deadline task",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoadingChart(false));
+    }
+  }, [isAllowedToGetTaskDeadlineCount, dateState]);
+
+  // 3.6. Get Data Chart Staff
   // TODO: uncomment if API is done
   // useEffect(() => {
-  //   if (!isAllowedToGetTaskDeadlineCount) {
+  //   if (!isAllowedToGetStaffCount) {
   //     setLoadingChart(false);
   //     return;
   //   }
 
-  //   setLoadingChart(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectDeadlines`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setDataTaskDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
-  //     }).catch((err) => notification.error({
-  //       message: "Gagal mendapatkan data statistik deadline proyek",
-  //       duration: 3,
-  //     }))
-  //     .finally(() => setLoadingChart(false));
-  // }, [isAllowedToGetTaskDeadlineCount]);
+  //   if (!dateState.from || !dateState.to) {
+  //     setLoadingChart(true);
+  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStaffCount`, {
+  //       method: `GET`,
+  //       headers: {
+  //         Authorization: JSON.parse(initProps),
+  //       },
+  //     })
+  //       .then((res) => res.json())
+  //       .then((res2) => {
+  //         setStaffCount(res2.data); // "Staff" chart's data source
+  //       })
+  //       .catch((err) =>
+  //         notification.error({
+  //           message: "Gagal mendapatkan data statistik jumlah staff",
+  //           duration: 3,
+  //         })
+  //       )
+  //       .finally(() => setLoadingChart(false));
+  //   }
+  // }, [isAllowedToGetStaffCount]);
 
   // 4. Event
   const onFilterTasks = () => {
@@ -394,7 +417,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingChart(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=${fromDate}&to=${toDate}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasksDeadline?from=${fromDate}&to=${toDate}`,
       {
         method: `GET`,
         headers: {
@@ -413,14 +436,14 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           setLoadingChart(false);
         } else {
           notification["error"]({
-            message: `Gagal mendapatkan data statistik deadline proyek. ${res2?.message}`,
+            message: `Gagal mendapatkan data statistik deadline task. ${res2?.message}`,
             duration: 3,
           });
         }
       })
       .catch((err) =>
         notification["error"]({
-          message: `Gagal mendapatkan data statistik deadline proyek. ${err?.message}`,
+          message: `Gagal mendapatkan data statistik deadline task. ${err?.message}`,
           duration: 3,
         })
       )
@@ -614,32 +637,25 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 py-3 px-2">
-                {/* CHART STATUS TASK */}
-                <div className="grid grid-cols-1 gap-6 shadow-md rounded-md bg-white p-5">
+                {/* CARD STATUS TASK */}
+                <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
                   <h4 className="mig-heading--4 ">Status Task</h4>
+                  {/* CHART STATUS TASK */}
                   <div className="flex flex-col items-center">
-                    <div className="w-1/2">
+                    <div className="w-1/2 space-y-4">
                       <Doughnut
                         data={{
-                          labels: taskStatusCount?.map(
-                            (doc) => doc?.task_status
-                          ),
+                          labels: taskStatusCount?.map((doc) => doc?.name),
                           datasets: [
                             {
                               data: taskStatusCount?.map(
-                                (doc) => doc?.task_status_count
+                                (doc) => doc?.project_tasks_count
                               ),
                               backgroundColor: taskStatusCount?.map(
-                                (doc, idx) =>
-                                  dataColorBar[
-                                    idx + (1 % dataColorBar.length) - 1
-                                  ]
+                                (doc, idx) => doc?.color
                               ),
                               borderColor: taskStatusCount?.map(
-                                (doc, idx) =>
-                                  dataColorBar[
-                                    idx + (1 % dataColorBar.length) - 1
-                                  ]
+                                (doc, idx) => doc?.color
                               ),
                               borderWidth: 1,
                             },
@@ -658,18 +674,18 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                         }}
                       />
 
-                      <span className="text-center mt-2">
+                      <div className="text-center">
                         <h4 className="mig-heading--4 text-primary100">
-                          2.320
+                          {taskTotal}
                         </h4>
                         <p className="mig-caption--medium text-mono50">
-                          Total Proyek
+                          Total Task
                         </p>
-                      </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* LEGEND STATUS PROYEK */}
+                  {/* LEGEND STATUS TASK */}
                   <div className="grid grid-cols-2 gap-x-6 gap-y-2">
                     {taskStatusCount?.map((status, idx) => (
                       <div
@@ -680,28 +696,24 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                           <div
                             className="w-1 mr-2"
                             style={{
-                              backgroundColor: `${
-                                dataColorBar[
-                                  idx + (1 % dataColorBar.length) - 1
-                                ]
-                              }`,
+                              backgroundColor: status?.color,
                             }}
                           ></div>
                           <p className="mig-caption--medium text-mono30 whitespace-nowrap">
-                            {status.task_status || "-"}
+                            {status?.name || "-"}
                           </p>
                         </div>
                         <p className="font-bold text-right text-mono30">
-                          {status.task_status_count}
+                          {status?.project_tasks_count || 0}
                         </p>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                {/* CHART DEADLINE TASK */}
-                <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
-                  <div className="flex items-center space-x-2 justify-between mb-4">
+                {/* CARD DEADLINE TASK */}
+                <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5 gap-6">
+                  <div className="flex items-center space-x-2 justify-between ">
                     <h4 className="mig-heading--4 text-mono30">
                       Deadline Task Bulan Ini
                     </h4>
@@ -749,7 +761,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                               className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
                               onClick={() => {
                                 setDateFilter((prev) => !prev);
-                                handleGetTaskDeadlineCount();
+                                setDateState({ from: "", to: "" });
                               }}
                             >
                               Reset
@@ -760,12 +772,12 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </div>
                   </div>
 
-                  {/* CHART */}
+                  {/* CHART DEADLINE TASK*/}
                   {loadingChart ? (
                     <Spin />
                   ) : (
                     <div className="">
-                      <div className="grid grid-cols-1 mb-4">
+                      <div className="grid grid-cols-1 mb-6 h-60">
                         <Line
                           data={{
                             labels: [
@@ -860,6 +872,12 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 },
                               },
                               y: {
+                                suggestedMin: 0,
+                                ticks: {
+                                  callback: (value) => {
+                                    return Number.isInteger(value) ? value : "";
+                                  },
+                                },
                                 grid: {
                                   display: false,
                                 },
@@ -868,30 +886,126 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                           }}
                         />
                       </div>
-                      <div className="flex justify-between items-center space-x-5">
-                        <div className="flex">
-                          <div
-                            className="w-1 mr-2"
-                            style={{
-                              backgroundColor: `${
-                                dataColorBar[0 + (1 % dataColorBar.length) - 1]
-                              }`,
-                            }}
-                          ></div>
-                          <p className="mig-caption--medium text-mono30 whitespace-nowrap">
-                            Berakhir hari ini
+                      {/* LEGEND DEADLINE TASK */}
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center space-x-5">
+                          <div className="flex">
+                            <div
+                              className="w-1 mr-2"
+                              style={{
+                                backgroundColor: `${dataColorBar[0]}`,
+                              }}
+                            ></div>
+                            <p className="mig-caption--medium text-mono30 whitespace-nowrap">
+                              Berakhir hari ini
+                            </p>
+                          </div>
+                          <p className="font-bold text-right text-mono30">
+                            {dataTaskDeadline.deadline.today_deadline}
                           </p>
                         </div>
-                        <p className="font-bold text-right text-mono30">
-                          {dataTaskDeadline.deadline.today_deadline}
-                        </p>
+                        <div className="flex justify-between items-center space-x-5">
+                          <div className="flex">
+                            <div
+                              className="w-1 mr-2"
+                              style={{
+                                backgroundColor: `${dataColorBar[4]}`,
+                              }}
+                            ></div>
+                            <p className="mig-caption--medium text-mono30 whitespace-nowrap">
+                              Berakhir besok
+                            </p>
+                          </div>
+                          <p className="font-bold text-right text-mono30">
+                            {dataTaskDeadline.deadline.tomorrow_deadline}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   )}
                 </div>
 
-                {/* CHART STAFF */}
-                <div className="grid grid-cols-1 gap-8 shadow-md rounded-md bg-white p-5"></div>
+                {/* CARD STAFF */}
+                <div className="grid grid-cols-1 gap-6 shadow-md rounded-md bg-white p-5">
+                  <h4 className="mig-heading--4 ">Staff</h4>
+
+                  {loadingChart ? (
+                    <>
+                      <Spin />
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-center mb-3 h-40">
+                        <Progress
+                          type="dashboard"
+                          percent={staffCount.percentage}
+                          strokeColor={"#35763B"}
+                          strokeWidth={8}
+                          width={170}
+                          format={(percent) => (
+                            <div className=" flex flex-col items-center">
+                              <div>
+                                <p className="font-bold text-3xl">{percent}%</p>
+                              </div>
+                            </div>
+                          )}
+                        />
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <div className="flex items-center">
+                          <div className="mb-1 mr-1">
+                            <UserIconSvg />
+                          </div>
+                          <div>
+                            <H2>
+                              {staffCount.total_staff_without_task} /{" "}
+                              {staffCount.total_staff}
+                            </H2>
+                          </div>
+                        </div>
+                        <div>
+                          <p className="mig-caption--medium text-mono50">
+                            Staff tidak memiliki task
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="flex justify-between items-center space-x-5 mb-2">
+                          <div className="flex">
+                            <div
+                              className="w-1 mr-2"
+                              style={{
+                                backgroundColor: `${dataColorBar[0]}`,
+                              }}
+                            ></div>
+                            <p className="mig-caption--medium text-mono30 whitespace-nowrap">
+                              Total Staff
+                            </p>
+                          </div>
+                          <p className="font-bold text-right text-mono30">
+                            {staffCount.total_staff}
+                          </p>
+                        </div>
+                        <div className="flex justify-between items-center space-x-5 mb-2">
+                          <div className="flex">
+                            <div
+                              className="w-1 mr-2"
+                              style={{
+                                backgroundColor: `${dataColorBar[4]}`,
+                              }}
+                            ></div>
+                            <p className="mig-caption--medium text-mono30 whitespace-nowrap">
+                              Staff tidak memiliki task
+                            </p>
+                          </div>
+                          <p className="font-bold text-right text-mono30">
+                            {staffCount.total_staff_without_task}
+                          </p>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             )}
           </Collapse.Panel>
