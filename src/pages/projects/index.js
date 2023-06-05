@@ -25,13 +25,15 @@ import QueryString from "qs";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
-import { Line } from "react-chartjs-2";
+import { Doughnut, Line } from "react-chartjs-2";
 
 import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  PROJECTS_COUNT_GET,
+  PROJECTS_DEADLINE_GET,
   PROJECTS_GET,
   PROJECT_ADD,
   PROJECT_DELETE,
@@ -123,9 +125,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToEditStatus = hasPermission(PROJECT_STATUS_UPDATE);
   const isAllowedToDeleteStatus = hasPermission(PROJECT_STATUS_DELETE);
 
-  // TODO: change constant below
-  const isAllowedToGetProjectStatusCount = true;
-  const isAllowedToGetProjectDeadlineCount = true;
+  const isAllowedToGetProjectStatusCount = hasPermission(PROJECTS_COUNT_GET);
+  const isAllowedToGetProjectDeadlineCount = hasPermission(
+    PROJECTS_DEADLINE_GET
+  );
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -144,66 +147,17 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
     []
   );
 
-  const dataColorBar = [
-    "#2F80ED",
-    "#BF4A40",
-    "#ED962F",
-    "#DDB44A",
-    "#6AAA70",
-    "#808080",
-  ];
-
   // 2. useState
   // 2.1. Charts
   const [loadingChart, setLoadingChart] = useState(false);
-  const [projectStatusCount, setProjectStatusCount] = useState([
-    {
-      project_status: "Open",
-      project_status_count: 24,
-    },
-    {
-      project_status: "On Progress",
-      project_status_count: 10,
-    },
-    {
-      project_status: "Overdue",
-      project_status_count: 4,
-    },
-    {
-      project_status: "Closed",
-      project_status_count: 24,
-    },
-    {
-      project_status: "On Hold",
-      project_status_count: 10,
-    },
-    {
-      project_status: "Canceled",
-      project_status_count: 4,
-    },
-  ]);
+  const [projectStatusCount, setProjectStatusCount] = useState([]);
+  const [projectTotalCount, setProjectTotalCount] = useState(0);
   const [dateFilter, setDateFilter] = useState(false);
   const [dateState, setDateState] = useState({
     from: "",
     to: "",
   });
-  const [dataProjectDeadline, setDataProjectDeadline] = useState({
-    deadline: {
-      today_deadline: 0,
-      tomorrow_deadline: 0,
-      first_range_deadline: 0,
-      second_range_deadline: 0,
-      third_range_deadline: 0,
-    },
-    date: {
-      first_start_date: "",
-      first_end_date: "",
-      second_start_date: "",
-      second_end_date: "",
-      third_start_date: "",
-      third_end_date: "",
-    },
-  });
+  const [dataProjectDeadline, setDataProjectDeadline] = useState([]);
 
   // 2.2. Table Projects List (Semua Proyek)
   // filter data
@@ -438,57 +392,61 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   ]);
 
   // 3.5. Get Data Chart Status Proyek
-  // TODO: uncomment if API is done
-  // useEffect(() => {
-  //   if (!isAllowedToGetProjectStatusCount) {
-  //     setLoadingChart(false);
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!isAllowedToGetProjectStatusCount) {
+      setLoadingChart(false);
+      return;
+    }
 
-  //   setLoadingChart(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatusCount`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setProjectStatusCount(res2.data); // "Status Proyek" chart's data source
-  //     })
-  //     .catch((err) =>
-  //       notification.error({
-  //         message: "Gagal mendapatkan data statistik status proyek",
-  //         duration: 3,
-  //       })
-  //     )
-  //     .finally(() => setLoadingChart(false));
-  // }, [isAllowedToGetProjectStatusCount]);
+    setLoadingChart(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsCount`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setProjectStatusCount(res2.data?.status); // "Status Proyek" chart's data source
+        setProjectTotalCount(res2.data?.total);
+      })
+      .catch((err) =>
+        notification.error({
+          message: "Gagal mendapatkan data statistik status proyek",
+          duration: 3,
+        })
+      )
+      .finally(() => setLoadingChart(false));
+  }, [isAllowedToGetProjectStatusCount]);
 
   // 3.6. Get Data Chart Deadline Proyek
-  // TODO: uncomment if API is done
-  // useEffect(() => {
-  //   if (!isAllowedToGetProjectDeadlineCount) {
-  //     setLoadingChart(false);
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!isAllowedToGetProjectDeadlineCount) {
+      setLoadingChart(false);
+      return;
+    }
 
-  //   setLoadingChart(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectDeadlines`, {
-  //     method: `GET`,
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res2) => {
-  //       setDataProjectDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
-  //     }).catch((err) => notification.error({
-  //       message: "Gagal mendapatkan data statistik deadline proyek",
-  //       duration: 3,
-  //     }))
-  //     .finally(() => setLoadingChart(false));
-  // }, [isAllowedToGetProjectDeadlineCount]);
+    if (!dateState.from || !dateState.to) {
+      setLoadingChart(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setDataProjectDeadline(res2.data); // "Deadline Proyek Bulan Ini" chart's data source
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan data statistik deadline proyek",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoadingChart(false));
+    }
+  }, [isAllowedToGetProjectDeadlineCount, dateState]);
 
   // 3.7. Update number of rows in task table based on the device width
   useEffect(() => {
@@ -529,7 +487,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
     setLoadingChart(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getDeadlineProjects?from=${fromDate}&to=${toDate}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsDeadline?from=${fromDate}&to=${toDate}`,
       {
         method: `GET`,
         headers: {
@@ -846,20 +804,49 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <div className="grid grid-cols-6 xl:grid-cols-12 gap-6 py-3 px-2">
                   {/* CARD STATUS PROYEK */}
                   <div className="col-span-6 md:col-span-4 xl:col-span-6">
-                    <ChartDoughnut
-                      title={"Status Proyek"}
-                      dataChart={projectStatusCount}
-                      objName={"project_status"}
-                      value={"project_status_count"}
-                      customLegend={
-                        <div className="text-md flex justify-between items-center mt-4">
-                          <p className="text-mono30 font-semibold">
-                            Total Proyek Saya
-                          </p>
-                          <p className="text-primary100 font-bold">20</p>
-                        </div>
-                      }
-                    />
+                    <div className="grid grid-cols-1 shadow-md rounded-md bg-white p-5">
+                      <h4 className="mig-heading--4 mb-4">Status Proyek</h4>
+                      <div className="w-9/12 xl:w-7/12 flex mx-auto">
+                        <Doughnut
+                          data={{
+                            labels: projectStatusCount?.map((doc) => doc?.name),
+                            datasets: [
+                              {
+                                data: projectStatusCount?.map(
+                                  (doc) => doc?.projects_count
+                                ),
+                                backgroundColor: projectStatusCount?.map(
+                                  (doc, idx) => doc?.color
+                                ),
+                                borderColor: projectStatusCount?.map(
+                                  (doc, idx) => doc?.color
+                                ),
+                                borderWidth: 1,
+                              },
+                            ],
+                          }}
+                          options={{
+                            title: {
+                              display: false,
+                            },
+                            legend: {
+                              display: false,
+                            },
+                            maintainAspectRatio: true,
+                            cutout: 60,
+                            spacing: 10,
+                          }}
+                        />
+                      </div>
+                      <div className="text-md flex justify-between items-center mt-4">
+                        <p className="text-mono30 font-semibold">
+                          Total Proyek Saya
+                        </p>
+                        <p className="text-primary100 font-bold">
+                          {projectTotalCount}
+                        </p>
+                      </div>
+                    </div>
                   </div>
 
                   {/* CARD DEADLINE PROYEK BULAN INI */}
@@ -891,6 +878,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                               : [null, null]
                           }
                           allowEmpty
+                          picker="month"
                           style={{
                             visibility: `hidden`,
                             width: `0`,
@@ -911,7 +899,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                                 className=" mb-0 text-primary100 hover:text-primary75 cursor-pointer"
                                 onClick={() => {
                                   setDateFilter((prev) => !prev);
-                                  handleGetProjectDeadlineCount();
+                                  setDateState({ from: "", to: "" });
                                 }}
                               >
                                 Reset
@@ -930,84 +918,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <div className="grid grid-cols-1 mb-4">
                           <Line
                             data={{
-                              labels: [
-                                `${
-                                  moment(
-                                    dataProjectDeadline.date.first_start_date
-                                  ).isValid()
-                                    ? moment(
-                                        dataProjectDeadline.date
-                                          .first_start_date
-                                      )
-                                        .locale("id")
-                                        .format("Do MMM")
-                                    : ""
-                                }-${
-                                  moment(
-                                    dataProjectDeadline.date.first_end_date
-                                  ).isValid()
-                                    ? moment(
-                                        dataProjectDeadline.date.first_end_date
-                                      )
-                                        .locale("id")
-                                        .format("Do MMM")
-                                    : ""
-                                }`,
-                                `${
-                                  moment(
-                                    dataProjectDeadline.date.second_start_date
-                                  ).isValid()
-                                    ? moment(
-                                        dataProjectDeadline.date
-                                          .second_start_date
-                                      )
-                                        .locale("id")
-                                        .format("Do MMM")
-                                    : ""
-                                }-${
-                                  moment(
-                                    dataProjectDeadline.date.second_end_date
-                                  ).isValid()
-                                    ? moment(
-                                        dataProjectDeadline.date.second_end_date
-                                      )
-                                        .locale("id")
-                                        .format("Do MMM")
-                                    : ""
-                                }`,
-                                `${
-                                  moment(
-                                    dataProjectDeadline.date.third_start_date
-                                  ).isValid()
-                                    ? moment(
-                                        dataProjectDeadline.date
-                                          .third_start_date
-                                      )
-                                        .locale("id")
-                                        .format("Do MMM")
-                                    : ""
-                                }-${
-                                  moment(
-                                    dataProjectDeadline.date.third_end_date
-                                  ).isValid()
-                                    ? moment(
-                                        dataProjectDeadline.date.third_end_date
-                                      )
-                                        .locale("id")
-                                        .format("Do MMM")
-                                    : ""
-                                }`,
-                              ],
+                              labels: dataProjectDeadline.map(
+                                (deadline) => deadline?.year_month_str
+                              ),
                               datasets: [
                                 {
-                                  data: [
-                                    dataProjectDeadline.deadline
-                                      .first_range_deadline,
-                                    dataProjectDeadline.deadline
-                                      .second_range_deadline,
-                                    dataProjectDeadline.deadline
-                                      .third_range_deadline,
-                                  ],
+                                  data: dataProjectDeadline.map(
+                                    (deadline) => deadline?.total
+                                  ),
                                   borderColor: "#35763B",
                                   tension: 0.5,
                                   fill: false,
@@ -1029,8 +947,16 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                                   },
                                 },
                                 y: {
+                                  suggestedMin: 0,
+                                  ticks: {
+                                    callback: (value) => {
+                                      return Number.isInteger(value)
+                                        ? value
+                                        : "";
+                                    },
+                                  },
                                   grid: {
-                                    display: false,
+                                    display: true,
                                   },
                                 },
                               },
@@ -1042,7 +968,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             Proyek yang berakhir bulan ini
                           </h5>
                           <h5 className="font-bold text-mono30 text-right">
-                            {dataProjectDeadline.deadline.today_deadline}
+                            {
+                              dataProjectDeadline?.find((project) => {
+                                const today = new Date();
+                                const todayMonth = today.getMonth(); // today's month in number, start from 0
+                                return project.month === todayMonth + 1;
+                              })?.total
+                            }
                           </h5>
                         </div>
                       </div>
@@ -1060,19 +992,15 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           <div
                             className="w-1 mr-2"
                             style={{
-                              backgroundColor: `${
-                                dataColorBar[
-                                  idx + (1 % dataColorBar.length) - 1
-                                ]
-                              }`,
+                              backgroundColor: `${status?.color}`,
                             }}
                           ></div>
                           <p className="mig-caption--medium text-mono30 whitespace-nowrap">
-                            {status.project_status || "-"}
+                            {status.name || "-"}
                           </p>
                         </div>
                         <p className="font-bold text-right text-mono30">
-                          {status.project_status_count}
+                          {status.projects_count}
                         </p>
                       </div>
                     ))}
@@ -1113,6 +1041,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             <button
               onClick={() => setModalAddProject(true)}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
+              disabled={!isAllowedToAddProject}
             >
               <PlusIconSvg color={"#ffffff"} size={32} />
               <p className="font-bold text-sm">Tambah Proyek Baru</p>
@@ -1124,6 +1053,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             <button
               onClick={() => setModalManageStatus(true)}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
+              disabled={!isAllowedToGetStatuses}
             >
               <AdjusmentsHorizontalIconSvg color={"#ffffff"} size={32} />
               <p className="font-bold text-sm">Kelola Status Task & Proyek</p>
@@ -1168,7 +1098,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <h4 className="mig-heading--4 ">Task Saya</h4>
                         <span className="flex flex-col -space-y-1">
                           <CaretUpOutlined
-                            classname={`mr-1`}
+                            className="mr-1"
                             style={{
                               color:
                                 sortColumn === "status" && sortOrder === "asc"
@@ -1177,7 +1107,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             }}
                           />
                           <CaretDownOutlined
-                            classname="mr-1"
+                            className="mr-1"
                             style={{
                               color:
                                 sortColumn === "status" && sortOrder === "desc"
@@ -1195,6 +1125,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           // handleAddTask();
                           setModalAddTask(true);
                         }}
+                        disabled={!isAllowedToAddTask}
                       >
                         <div className="flex items-center space-x-2">
                           <PlusIconSvg size={16} color={"#ffffff"} />
@@ -1270,6 +1201,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
+          isAddMyTask={true}
+          dataProfile={dataProfile}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>

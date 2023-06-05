@@ -508,9 +508,10 @@ const ModalProjectTaskDetailUpdate = ({
             </div>
             {isOutsideProject && dataTask.project_id && (
               <button
-                onClick={() => rt.push(`projects/${dataTask?.project_id}`)}
+                onClick={() => rt.push(`/projects/${dataTask?.project_id}`)}
                 className="flex justify-end items-start bg-transparent "
                 type="button"
+                disabled={!isAllowedToGetProject}
               >
                 <div className="flex space-x-2 items-center">
                   <ExternalLinkIconSvg color={"#35763B"} size={16} />
@@ -597,7 +598,6 @@ const ModalProjectTaskDetailUpdate = ({
                       }}
                     >
                       {dataTask?.task_staffs?.map((staff) => (
-                        // <Tooltip title={staff?.name} placement="top">
                         <Avatar
                           key={staff.id}
                           src={generateStaticAssetUrl(
@@ -606,7 +606,6 @@ const ModalProjectTaskDetailUpdate = ({
                           )}
                           size={30}
                         />
-                        // </Tooltip>
                       ))}
                     </Avatar.Group>
                     {dataTask?.task_staffs?.length > 3 ? (
@@ -808,7 +807,6 @@ const ModalProjectTaskDetailUpdate = ({
               <div className="w-full mb-2">
                 <p className="mb-2">Staff Task</p>
                 <Select
-                  allowClear
                   showSearch
                   mode="multiple"
                   className="dontShow"
