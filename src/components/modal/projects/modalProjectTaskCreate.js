@@ -36,6 +36,8 @@ const ModalProjectTaskCreate = ({
   isAllowedToGetProjects,
   setRefreshTasks,
   defaultProject,
+  isAddMyTask,
+  dataProfile,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -198,6 +200,20 @@ const ModalProjectTaskCreate = ({
     dataTask.project_id,
     visible,
   ]);
+
+  // 2.4. Auto fill task staff with self user id (in Tambah Task Saya)
+  useEffect(() => {
+    if (visible && isAddMyTask) {
+      const selfUserObj = {
+        key: Number(dataProfile?.data?.id),
+        id: Number(dataProfile?.data?.id),
+        name: dataProfile?.data?.name,
+        position: dataProfile?.data?.position,
+        profile_image: dataProfile?.data?.profile_image,
+      };
+      setDataTask((prev) => ({ ...prev, task_staffs: [selfUserObj] }));
+    }
+  }, [visible]);
 
   // 3. HANDLER
   const clearData = () => {
