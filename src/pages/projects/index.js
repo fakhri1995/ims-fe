@@ -1041,6 +1041,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             <button
               onClick={() => setModalAddProject(true)}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
+              disabled={!isAllowedToAddProject}
             >
               <PlusIconSvg color={"#ffffff"} size={32} />
               <p className="font-bold text-sm">Tambah Proyek Baru</p>
@@ -1052,6 +1053,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             <button
               onClick={() => setModalManageStatus(true)}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-mono50 disabled:bg-gray-200 hover:bg-opacity-75 overflow-hidden"
+              disabled={!isAllowedToGetStatuses}
             >
               <AdjusmentsHorizontalIconSvg color={"#ffffff"} size={32} />
               <p className="font-bold text-sm">Kelola Status Task & Proyek</p>
@@ -1096,7 +1098,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <h4 className="mig-heading--4 ">Task Saya</h4>
                         <span className="flex flex-col -space-y-1">
                           <CaretUpOutlined
-                            classname={`mr-1`}
+                            className="mr-1"
                             style={{
                               color:
                                 sortColumn === "status" && sortOrder === "asc"
@@ -1105,7 +1107,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                             }}
                           />
                           <CaretDownOutlined
-                            classname="mr-1"
+                            className="mr-1"
                             style={{
                               color:
                                 sortColumn === "status" && sortOrder === "desc"
@@ -1123,6 +1125,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           // handleAddTask();
                           setModalAddTask(true);
                         }}
+                        disabled={!isAllowedToAddTask}
                       >
                         <div className="flex items-center space-x-2">
                           <PlusIconSvg size={16} color={"#ffffff"} />

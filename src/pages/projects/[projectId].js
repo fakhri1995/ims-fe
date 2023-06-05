@@ -422,7 +422,7 @@ const ProjectDetailIndex = ({
         })
       )
       .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetTaskStatusCount, projectId]);
+  }, [isAllowedToGetTaskStatusCount, projectId, refreshTasks]);
 
   // 3.7. Get Data Chart Deadline Task
   useEffect(() => {
@@ -452,7 +452,7 @@ const ProjectDetailIndex = ({
         })
       )
       .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetTaskDeadlineCount]);
+  }, [isAllowedToGetTaskDeadlineCount, refreshTasks]);
 
   // 3.8. Update number of rows in task table based on the device width
   useEffect(() => {

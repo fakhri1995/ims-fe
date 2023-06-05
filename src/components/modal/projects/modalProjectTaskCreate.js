@@ -488,7 +488,6 @@ const ModalProjectTaskCreate = ({
               <div className="w-full mb-2">
                 <p className="mb-2">Staff Task</p>
                 <Select
-                  allowClear
                   showSearch
                   mode="multiple"
                   className="dontShow"
