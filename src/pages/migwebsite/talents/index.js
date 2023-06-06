@@ -478,6 +478,7 @@ function Talents({}) {
         company_email: dataPeople.company_email,
         phone_number: dataPeople.phone_number,
         many_people: valuePurpose,
+        type_project: valueKindProject,
         kind_form: "talent",
         meeting_schedule:
           moment(valueDate).format("YYYY-MM-DD") + " " + valueMeetingTime,
@@ -3506,9 +3507,7 @@ function Talents({}) {
             </h3>
             <p
               style={{ lineHeight: "150%" }}
-              className={
-                "text-base lg:text-base text-blackmig text-center mt-8"
-              }
+              className={"text-base lg:text-xl text-blackmig text-center mt-8"}
             >
               {t.section2talentsubtitle}
             </p>
@@ -3527,7 +3526,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[400px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3537,9 +3536,7 @@ function Talents({}) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className={
-                      "text-base text-blackmig font-gilroyregular ml-4"
-                    }
+                    className={"text-xl text-blackmig font-gilroyregular ml-4"}
                   >
                     {t.section2talentpoint1}
                   </p>
@@ -3547,7 +3544,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[400px]"
+                  "flex flex-row mt-7 lg:mt-0 lg:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3557,9 +3554,7 @@ function Talents({}) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className={
-                      "text-base text-blackmig font-gilroyregular ml-4"
-                    }
+                    className={"text-xl text-blackmig font-gilroyregular ml-4"}
                   >
                     {t.section2talentpoint2}
                   </p>
@@ -3571,7 +3566,7 @@ function Talents({}) {
             >
               <div
                 className={
-                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[400px]"
+                  "flex flex-row lg:mx-[25px] items-center w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3581,9 +3576,7 @@ function Talents({}) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className={
-                      "text-base text-blackmig font-gilroyregular ml-4"
-                    }
+                    className={"text-xl text-blackmig font-gilroyregular ml-4"}
                   >
                     {t.section2talentpoint3}
                   </p>
@@ -3591,7 +3584,7 @@ function Talents({}) {
               </div>
               <div
                 className={
-                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[400px]"
+                  "flex flex-row mt-7 items-center lg:mt-0 lg:mx-[25px] w-full lg:w-[500px]"
                 }
               >
                 <img
@@ -3601,9 +3594,7 @@ function Talents({}) {
                 <div>
                   <p
                     style={{ lineHeight: "150%" }}
-                    className={
-                      "text-base text-blackmig font-gilroyregular ml-4"
-                    }
+                    className={"text-xl text-blackmig font-gilroyregular ml-4"}
                   >
                     {t.section2talentpoint4}
                   </p>
@@ -4684,13 +4675,13 @@ function Talents({}) {
                   <div className={"ml-[14px] text-blackmig text-xl"}>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className={"font-gilroysemibold"}
+                      className={"font-gilroysemibold text-xl"}
                     >
                       {t.talentpoint3}
                     </p>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className={"font-gilroyregular"}
+                      className={"font-gilroyregular text-xl"}
                     >
                       {t.talentsubpoint3}
                     </p>
@@ -4704,13 +4695,13 @@ function Talents({}) {
                   <div className={"ml-[14px] text-blackmig text-xl"}>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className={"font-gilroysemibold"}
+                      className={"font-gilroysemibold text-xl"}
                     >
                       {t.talentpoint4}
                     </p>
                     <p
                       style={{ lineHeight: "150%" }}
-                      className={"font-gilroyregular"}
+                      className={"font-gilroyregular text-xl"}
                     >
                       {t.talentsubpoint4}
                     </p>
