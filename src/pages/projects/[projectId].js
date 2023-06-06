@@ -567,6 +567,46 @@ const ProjectDetailIndex = ({
       .finally(() => setLoadingChart(false));
   };
 
+  const handleAddTask = () => {
+    if (!isAllowedToAddTask) {
+      permissionWarningNotification("Menambah", "Task");
+      return;
+    }
+
+    const payload = {
+      project_id: projectId,
+    };
+
+    setLoadingTasks(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setCurrentTaskId(response.data?.id);
+          setModalAddTask(true);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan task baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingTasks(false));
+  };
+
   // String of project staffs for project detail
   const lastIndexStaff = dataProject?.project_staffs?.length - 1;
   let staffsString =
@@ -761,20 +801,20 @@ const ProjectDetailIndex = ({
                               labels: [
                                 `${
                                   moment(
-                                    dataTaskDeadline.date.first_start_date
+                                    dataTaskDeadline?.date.first_start_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline.date.first_start_date
+                                        dataTaskDeadline?.date.first_start_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
                                     : ""
                                 }-${
                                   moment(
-                                    dataTaskDeadline.date.first_end_date
+                                    dataTaskDeadline?.date.first_end_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline.date.first_end_date
+                                        dataTaskDeadline?.date.first_end_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
@@ -782,20 +822,20 @@ const ProjectDetailIndex = ({
                                 }`,
                                 `${
                                   moment(
-                                    dataTaskDeadline.date.second_start_date
+                                    dataTaskDeadline?.date.second_start_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline.date.second_start_date
+                                        dataTaskDeadline?.date.second_start_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
                                     : ""
                                 }-${
                                   moment(
-                                    dataTaskDeadline.date.second_end_date
+                                    dataTaskDeadline?.date.second_end_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline.date.second_end_date
+                                        dataTaskDeadline?.date.second_end_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
@@ -803,20 +843,20 @@ const ProjectDetailIndex = ({
                                 }`,
                                 `${
                                   moment(
-                                    dataTaskDeadline.date.third_start_date
+                                    dataTaskDeadline?.date.third_start_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline.date.third_start_date
+                                        dataTaskDeadline?.date.third_start_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
                                     : ""
                                 }-${
                                   moment(
-                                    dataTaskDeadline.date.third_end_date
+                                    dataTaskDeadline?.date.third_end_date
                                   ).isValid()
                                     ? moment(
-                                        dataTaskDeadline.date.third_end_date
+                                        dataTaskDeadline?.date.third_end_date
                                       )
                                         .locale("id")
                                         .format("Do MMM")
@@ -826,11 +866,11 @@ const ProjectDetailIndex = ({
                               datasets: [
                                 {
                                   data: [
-                                    dataTaskDeadline.deadline
+                                    dataTaskDeadline?.deadline
                                       .first_range_deadline,
-                                    dataTaskDeadline.deadline
+                                    dataTaskDeadline?.deadline
                                       .second_range_deadline,
-                                    dataTaskDeadline.deadline
+                                    dataTaskDeadline?.deadline
                                       .third_range_deadline,
                                   ],
                                   borderColor: "#35763B",
@@ -884,7 +924,7 @@ const ProjectDetailIndex = ({
                               </p>
                             </div>
                             <p className="font-bold text-right text-mono30">
-                              {dataTaskDeadline.deadline.today_deadline}
+                              {dataTaskDeadline?.deadline.today_deadline}
                             </p>
                           </div>
                           <div className="flex justify-between items-center space-x-5">
@@ -900,7 +940,7 @@ const ProjectDetailIndex = ({
                               </p>
                             </div>
                             <p className="font-bold text-right text-mono30">
-                              {dataTaskDeadline.deadline.tomorrow_deadline}
+                              {dataTaskDeadline?.deadline.tomorrow_deadline}
                             </p>
                           </div>
                         </div>
@@ -1152,6 +1192,7 @@ const ProjectDetailIndex = ({
                         fullWidth={true}
                         size={"large"}
                         onClick={() => setModalUpdateProject(true)}
+                        disabled={!isAllowedToUpdateProject}
                       >
                         <div className="flex space-x-2 items-center ">
                           <EditSquareIconSvg size={24} color={"#ffffff"} />
@@ -1193,7 +1234,8 @@ const ProjectDetailIndex = ({
                 </h4>
                 <ButtonSys
                   type={"primary"}
-                  onClick={() => setModalAddTask(true)}
+                  onClick={handleAddTask}
+                  disabled={!isAllowedToAddTask}
                 >
                   <div className="flex items-center space-x-2">
                     <PlusIconSvg size={16} color={"#ffffff"} />
@@ -1318,7 +1360,7 @@ const ProjectDetailIndex = ({
                     dataIndex: "name",
                     key: "name",
                     render: (_, task) => {
-                      const currentProject = dataProjectList.find(
+                      const currentProject = dataProjectList?.find(
                         (project) => project.id === task.project_id
                       );
                       return (
@@ -1354,6 +1396,7 @@ const ProjectDetailIndex = ({
           visible={modalUpdateProject}
           onvisible={setModalUpdateProject}
           isAllowedToUpdateProject={isAllowedToUpdateProject}
+          isAllowedToDeleteProject={isAllowedToDeleteProject}
           setRefresh={setRefresh}
           dataProject={dataProject}
           dataStatusList={dataStatusList}
@@ -1375,11 +1418,13 @@ const ProjectDetailIndex = ({
           initProps={initProps}
           visible={modalAddTask}
           onvisible={setModalAddTask}
-          isAllowedToAddTask={isAllowedToAddTask}
+          isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
           defaultProject={dataProject}
+          taskId={currentTaskId}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>

@@ -32,12 +32,14 @@ const ModalProjectTaskCreate = ({
   visible,
   onvisible,
   isAllowedToGetProject,
-  isAllowedToAddTask,
+  isAllowedToUpdateTask,
   isAllowedToGetProjects,
+  isAllowedToDeleteTask,
   setRefreshTasks,
   defaultProject,
   isAddMyTask,
   dataProfile,
+  taskId,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -269,20 +271,21 @@ const ModalProjectTaskCreate = ({
     }, 500);
   };
 
-  const handleAddTask = () => {
-    if (!isAllowedToAddTask) {
-      permissionWarningNotification("Menambah", "Task");
+  const handleUpdateTask = () => {
+    if (!isAllowedToUpdateTask) {
+      permissionWarningNotification("Mengubah", "Task");
       return;
     }
 
     const payload = {
       ...dataTask,
+      id: taskId,
       task_staffs: dataTask?.task_staffs?.map((staff) => Number(staff.key)),
     };
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectTask`, {
-      method: `POST`,
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProjectTask`, {
+      method: `PUT`,
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
@@ -307,7 +310,48 @@ const ModalProjectTaskCreate = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambahkan task baru. ${err.response}`,
+          message: `Gagal mengubah task. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleDeleteTask = () => {
+    if (!isAllowedToDeleteTask) {
+      permissionWarningNotification("Menghapus", "Task");
+      return;
+    }
+
+    setLoading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProjectTask?id=${taskId}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          handleClose();
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus task. ${err.response}`,
           duration: 3,
         });
       })
@@ -336,7 +380,7 @@ const ModalProjectTaskCreate = ({
     <Modal
       title={
         <div className="flex flex-col space-y-2 ">
-          <p>Tambah Task Baru</p>
+          <p>Tambah Task Baru ({taskId})</p>
           <p className="text-warning text-[12px] italic">
             * Field ini harus diisi
           </p>
@@ -352,15 +396,15 @@ const ModalProjectTaskCreate = ({
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={() => onvisible(false)}
+              onClick={handleDeleteTask}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={handleAddTask}
-              disabled={!isAllowedToAddTask || !dataTask.name}
+              onClick={handleUpdateTask}
+              disabled={!isAllowedToUpdateTask || !dataTask.name}
             >
               <p>Tambah Task</p>
             </ButtonSys>
