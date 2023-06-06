@@ -1,4 +1,4 @@
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Button,
@@ -14,6 +14,7 @@ import {
 } from "antd";
 import moment from "moment";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
@@ -25,12 +26,8 @@ import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import {
-  CheckIconSvg,
-  EditIconSvg,
-  EditSquareIconSvg,
-  XIconSvg,
-} from "../../icon";
+import { CheckIconSvg, EditSquareIconSvg } from "../../icon";
+import { ModalHapus2 } from "../modalCustom";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -40,6 +37,7 @@ const ModalProjectUpdate = ({
   visible,
   onvisible,
   isAllowedToUpdateProject,
+  isAllowedToDeleteProject,
   setRefresh,
   dataProject,
   dataStatusList,
@@ -47,6 +45,8 @@ const ModalProjectUpdate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+
+  const rt = useRouter();
   const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
@@ -69,15 +69,17 @@ const ModalProjectUpdate = ({
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
 
+  const [modalDelete, setModalDelete] = useState(false);
+
   // 2. USE EFFECT
   // 2.1. Get project detail from parent
   useEffect(() => {
     if (visible) {
-      let updatedProposedBys = dataProject?.proposed_bys.map((staff) => ({
+      let updatedProposedBys = dataProject?.proposed_bys?.map((staff) => ({
         ...staff,
         key: staff.id,
       }));
-      let updatedProjectStaffs = dataProject?.project_staffs.map((staff) => ({
+      let updatedProjectStaffs = dataProject?.project_staffs?.map((staff) => ({
         ...staff,
         key: staff.id,
       }));
@@ -240,6 +242,48 @@ const ModalProjectUpdate = ({
       .finally(() => setLoading(false));
   };
 
+  const handleDeleteProject = () => {
+    if (!isAllowedToDeleteProject) {
+      permissionWarningNotification("Menghapus", "Proyek");
+      return;
+    }
+
+    setLoading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProject?id=${dataProject?.id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          onvisible(false);
+          rt.push("/projects");
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
   // Used in staff field (diajukan oleh & staff proyek)
   const getUpdatedStaffs = (currentStaffList, option) => {
     let staffs = currentStaffList || [];
@@ -272,7 +316,25 @@ const ModalProjectUpdate = ({
     "link",
   ];
 
-  return (
+  return modalDelete ? (
+    <ModalHapus2
+      title={`Perhatian`}
+      visible={modalDelete}
+      onvisible={setModalDelete}
+      onOk={handleDeleteProject}
+      onCancel={() => {
+        setModalDelete(false);
+        onvisible(false);
+      }}
+      itemName={"proyek"}
+      loading={loading}
+    >
+      <p className="mb-4">
+        Apakah Anda yakin ingin menghapus proyek{" "}
+        <strong>{dataProject?.name}</strong>?
+      </p>
+    </ModalHapus2>
+  ) : (
     <Modal
       title={
         isEditTitle ? (
@@ -317,6 +379,16 @@ const ModalProjectUpdate = ({
       footer={
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
+            <ButtonSys
+              type={"primary"}
+              color={"danger"}
+              onClick={() => {
+                setModalDelete(true);
+              }}
+              disabled={!isAllowedToDeleteProject || !dataProject?.id}
+            >
+              <p>Hapus</p>
+            </ButtonSys>
             <button
               onClick={() => {
                 onvisible(false);
@@ -351,6 +423,7 @@ const ModalProjectUpdate = ({
             mode="multiple"
             value={dataUpdateProject?.proposed_bys}
             placeholder="Tambahkan Pengaju"
+            disabled={!isAllowedToGetUsers}
             onChange={(value, option) => {
               const updatedProposedBys = getUpdatedStaffs(
                 dataUpdateProject?.proposed_bys,
@@ -398,7 +471,7 @@ const ModalProjectUpdate = ({
                     );
                     setDataUpdateProject((prev) => ({
                       ...prev,
-                      proposed_bys: newTags.map((tag) => tag),
+                      proposed_bys: newTags?.map((tag) => tag),
                     }));
                   }}
                   className="flex items-center p-2 mb-2"
@@ -573,7 +646,7 @@ const ModalProjectUpdate = ({
                     .includes(input.toLowerCase())
                 }
               >
-                {dataStaffsOrGroups.map((item) => {
+                {dataStaffsOrGroups?.map((item) => {
                   return (
                     <Select.Option
                       key={item?.id}
@@ -614,7 +687,7 @@ const ModalProjectUpdate = ({
                     );
                     setDataUpdateProject((prev) => ({
                       ...prev,
-                      project_staffs: newTags.map((tag) => tag),
+                      project_staffs: newTags?.map((tag) => tag),
                     }));
                   }}
                   className="flex items-center p-2 mb-2"
