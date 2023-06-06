@@ -35,14 +35,16 @@ const ModalProjectTaskCreate = ({
   isAllowedToAddTask,
   isAllowedToGetProjects,
   setRefreshTasks,
-  dataProjectList,
   defaultProject,
+  isAddMyTask,
+  dataProfile,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
   const [form] = Form.useForm();
   const searchTimeoutRef = useRef(null);
+
   // 1. USE STATE
   const [dataTask, setDataTask] = useState({
     name: "",
@@ -58,6 +60,7 @@ const ModalProjectTaskCreate = ({
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
 
+  const [dataProjectList, setDataProjectList] = useState([]);
   const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
   const [selectedGroups, setSelectedGroups] = useState([]);
 
@@ -67,7 +70,39 @@ const ModalProjectTaskCreate = ({
     setDataTask((prev) => ({ ...prev, project_id: defaultProject?.id }));
   }, [defaultProject]);
 
-  // 2.2. Get users or groups for task staff options
+  // 2.2. Get project list
+  useEffect(() => {
+    if (!isAllowedToGetProjects) {
+      permissionWarningNotification("Mendapatkan", "Daftar Proyek");
+      return;
+    }
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectsList`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataProjectList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      });
+  }, [isAllowedToGetProjects]);
+
+  // 2.3. Get users or groups for task staff options
   useEffect(() => {
     if (!visible) {
       return;
@@ -165,6 +200,20 @@ const ModalProjectTaskCreate = ({
     dataTask.project_id,
     visible,
   ]);
+
+  // 2.4. Auto fill task staff with self user id (in Tambah Task Saya)
+  useEffect(() => {
+    if (visible && isAddMyTask) {
+      const selfUserObj = {
+        key: Number(dataProfile?.data?.id),
+        id: Number(dataProfile?.data?.id),
+        name: dataProfile?.data?.name,
+        position: dataProfile?.data?.position,
+        profile_image: dataProfile?.data?.profile_image,
+      };
+      setDataTask((prev) => ({ ...prev, task_staffs: [selfUserObj] }));
+    }
+  }, [visible]);
 
   // 3. HANDLER
   const clearData = () => {
@@ -439,7 +488,6 @@ const ModalProjectTaskCreate = ({
               <div className="w-full mb-2">
                 <p className="mb-2">Staff Task</p>
                 <Select
-                  allowClear
                   showSearch
                   mode="multiple"
                   className="dontShow"

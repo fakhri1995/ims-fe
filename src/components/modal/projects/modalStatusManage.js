@@ -313,6 +313,7 @@ const ModalStatusManage = ({
             <button
               onClick={onClickEdit}
               className="border-none shadow-none hover:opacity-70 bg-transparent"
+              disabled={!isAllowedToEditStatus}
             >
               <EditSquareIconSvg size={24} color={"#CCCCCC"} />
             </button>
@@ -375,9 +376,12 @@ const ModalStatusManage = ({
         <ButtonSys
           type={"dashed"}
           onClick={() => {
-            clearData();
-            setCurrentState("add");
+            if (isAllowedToAddStatus) {
+              clearData();
+              setCurrentState("add");
+            }
           }}
+          disabled={!isAllowedToAddStatus}
         >
           <div className="flex space-x-2 items-center">
             <PlusIconSvg color={"#35763B"} size={24} />

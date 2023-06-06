@@ -240,6 +240,20 @@ const ModalProjectUpdate = ({
       .finally(() => setLoading(false));
   };
 
+  // Used in staff field (diajukan oleh & staff proyek)
+  const getUpdatedStaffs = (currentStaffList, option) => {
+    let staffs = currentStaffList || [];
+    for (let user of option) {
+      if (
+        user?.key &&
+        !staffs?.map((staff) => Number(staff.key))?.includes(Number(user.key))
+      ) {
+        staffs.push(user);
+      }
+    }
+    return staffs;
+  };
+
   // Text Editor Config
   const modules = {
     toolbar: [
@@ -332,78 +346,32 @@ const ModalProjectUpdate = ({
         {/* Diajukan oleh */}
         <div>
           <p className="mb-2">Diajukan oleh</p>
-          <div>
-            {dataUpdateProject?.proposed_bys?.length > 1 ? (
-              <div className="flex items-center">
-                <Avatar.Group
-                  size={30}
-                  maxCount={5}
-                  className="cursor-help"
-                  maxStyle={{
-                    color: "#f56a00",
-                    backgroundColor: "#fde3cf",
-                  }}
-                >
-                  {dataUpdateProject?.proposed_bys?.map((staff) => (
-                    <Tooltip
-                      key={staff?.key || staff?.id}
-                      title={staff?.name}
-                      placement="top"
-                    >
-                      <Avatar
-                        src={generateStaticAssetUrl(
-                          staff?.profile_image?.link ??
-                            "staging/Users/default_user.png"
-                        )}
-                        className=""
-                        size={30}
-                      />
-                    </Tooltip>
-                  ))}
-                </Avatar.Group>
-              </div>
-            ) : dataUpdateProject?.proposed_bys?.length > 0 ? (
-              <div className="flex items-center space-x-2">
-                <img
-                  src={generateStaticAssetUrl(
-                    dataUpdateProject?.proposed_bys?.[0]?.profile_image?.link ??
-                      "staging/Users/default_user.png"
-                  )}
-                  alt={
-                    dataUpdateProject?.proposed_bys?.[0]?.profile_image
-                      ?.description
-                  }
-                  className="w-8 h-8 bg-cover object-cover rounded-full"
-                />
-                <p className={`mig-caption--medium text-mono50`}>
-                  {dataUpdateProject?.proposed_bys?.[0]?.name}
-                </p>
-              </div>
-            ) : (
-              <div>-</div>
-            )}
-          </div>
-
           <Select
-            allowClear
             showSearch
             mode="multiple"
             value={dataUpdateProject?.proposed_bys}
             placeholder="Tambahkan Pengaju"
             onChange={(value, option) => {
+              const updatedProposedBys = getUpdatedStaffs(
+                dataUpdateProject?.proposed_bys,
+                option
+              );
               setDataUpdateProject((prev) => ({
                 ...prev,
-                proposed_bys: option,
+                proposed_bys: updatedProposedBys,
               }));
             }}
             onSearch={(value) => {
               onSearchUsers(value, setDataStaffs);
             }}
             optionFilterProp="children"
-            // bordered={false}
-            // size="small"
+            filterOption={(input, option) =>
+              (option?.children ?? "")
+                .toLowerCase()
+                .includes(input.toLowerCase())
+            }
             className="mig-caption--bold text-secondary100 bg-transparent 
-            hover:opacity-75 w-full mt-2 "
+            hover:opacity-75 w-full dontShow mb-2"
           >
             {dataStaffs?.map((item) => (
               <Select.Option
@@ -416,23 +384,46 @@ const ModalProjectUpdate = ({
               </Select.Option>
             ))}
           </Select>
+
+          {/* List of selected users */}
+          <div className="flex flex-wrap w-full">
+            {dataUpdateProject?.proposed_bys?.map((staff, idx) => {
+              return (
+                <Tag
+                  key={staff?.id || staff?.key}
+                  closable
+                  onClose={() => {
+                    const newTags = dataUpdateProject?.proposed_bys?.filter(
+                      (tag) => tag.key !== staff.key
+                    );
+                    setDataUpdateProject((prev) => ({
+                      ...prev,
+                      proposed_bys: newTags.map((tag) => tag),
+                    }));
+                  }}
+                  className="flex items-center p-2 mb-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={generateStaticAssetUrl(
+                        staff?.profile_image?.link ??
+                          "staging/Users/default_user.png"
+                      )}
+                      alt={staff?.name}
+                      className="w-6 h-6 bg-cover object-cover rounded-full"
+                    />
+                    <p className="truncate font-bold">{staff?.name}</p>
+                  </div>
+                </Tag>
+              );
+            })}
+          </div>
         </div>
 
         {/* Status */}
         <div>
           <p className="mb-2">Status</p>
           <div className="flex space-x-2 items-center">
-            {/* <p
-              style={{
-                backgroundColor: dataUpdateProject?.status?.color
-                  ? dataUpdateProject?.status?.color + "20"
-                  : "#E6E6E6",
-                color: dataUpdateProject?.status?.color ?? "#808080",
-              }}
-              className="rounded-md px-4 py-2"
-            >
-              {dataUpdateProject?.status?.name ?? "-"}
-            </p> */}
             <Select
               allowClear
               value={dataUpdateProject.status_id}
@@ -519,133 +510,135 @@ const ModalProjectUpdate = ({
         </div>
 
         {/* Staff Proyek */}
-        <div className="flex flex-col md:flex-row md:col-span-2">
-          <div className="w-full">
-            <p className="mb-2">Staff Proyek</p>
-            <Select
-              allowClear
-              showSearch
-              mode="multiple"
-              className="dontShow"
-              value={
-                isSwitchGroup
-                  ? selectedGroups
-                  : dataUpdateProject.project_staffs
-              }
-              disabled={!isAllowedToGetUsers}
-              placeholder={
-                isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
-              }
-              style={{ width: `100%` }}
-              onSearch={(value) =>
-                !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
-              }
-              onChange={(value, option) => {
-                const getStaffsFromGroups = () => {
-                  let staffs = dataUpdateProject?.project_staffs || [];
-                  for (let group of option) {
-                    for (let user of group?.users) {
-                      if (
-                        !staffs?.map((staff) => staff.name)?.includes(user.name)
-                      ) {
-                        let userWithKey = { ...user, key: user?.id };
-                        staffs.push(userWithKey);
+        <div className="grid grid-cols-1 md:col-span-2 gap-2">
+          <div className="flex flex-col md:flex-row ">
+            <div className="w-full">
+              <p className="mb-2">Staff Proyek</p>
+              <Select
+                showSearch
+                mode="multiple"
+                className="dontShow"
+                value={
+                  isSwitchGroup
+                    ? selectedGroups
+                    : dataUpdateProject.project_staffs
+                }
+                disabled={!isAllowedToGetUsers}
+                placeholder={
+                  isSwitchGroup ? "Cari Nama Grup..." : "Cari Nama Staff..."
+                }
+                style={{ width: `100%` }}
+                onSearch={(value) =>
+                  !isSwitchGroup && onSearchUsers(value, setDataStaffsOrGroups)
+                }
+                onChange={(value, option) => {
+                  const getStaffsFromGroups = () => {
+                    let staffs = dataUpdateProject?.project_staffs || [];
+                    for (let group of option) {
+                      for (let user of group?.users) {
+                        if (
+                          !staffs
+                            ?.map((staff) => staff.name)
+                            ?.includes(user.name)
+                        ) {
+                          let userWithKey = { ...user, key: user?.id };
+                          staffs.push(userWithKey);
+                        }
                       }
                     }
+
+                    return staffs;
+                  };
+
+                  if (isSwitchGroup) {
+                    setSelectedGroups(option);
                   }
 
-                  return staffs;
-                };
+                  let newProjectStaffs = isSwitchGroup
+                    ? getStaffsFromGroups()
+                    : getUpdatedStaffs(
+                        dataUpdateProject?.project_staffs,
+                        option
+                      );
 
-                if (isSwitchGroup) {
-                  setSelectedGroups(option);
-                }
-
-                let newProjectStaffs = isSwitchGroup
-                  ? getStaffsFromGroups()
-                  : option;
-
-                setDataUpdateProject((prev) => ({
-                  ...prev,
-                  project_staffs: newProjectStaffs,
-                }));
-              }}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                (option?.children ?? "")
-                  .toLowerCase()
-                  .includes(input.toLowerCase())
-              }
-            >
-              {dataStaffsOrGroups.map((item) => {
-                return (
-                  <Select.Option
-                    key={item?.id}
-                    value={item.id}
-                    position={item?.position}
-                    users={item?.users}
-                    name={item?.name}
-                    profile_image={item?.profile_image}
-                  >
-                    {item?.name}
-                  </Select.Option>
-                );
-              })}
-            </Select>
-          </div>
-          <div className="flex space-x-2 items-center absolute right-6">
-            <p>Staff</p>
-            <Switch
-              checked={isSwitchGroup}
-              onChange={(checked) => {
-                setIsSwitchGroup(checked);
-              }}
-            />
-            <p>Group</p>
-          </div>
-        </div>
-
-        {/* {console.log({ dataStaffs })}
-        {console.log({ dataStaffsOrGroups })} */}
-
-        {/* List of selected users or groups */}
-        <div className="flex flex-wrap md:col-span-2">
-          {dataUpdateProject?.project_staffs?.map((staff, idx) => {
-            return (
-              <Tag
-                key={staff?.id || staff?.key}
-                closable
-                onClose={() => {
-                  const newTags = dataUpdateProject?.project_staffs?.filter(
-                    (tag) => tag.key !== staff.key
-                  );
                   setDataUpdateProject((prev) => ({
                     ...prev,
-                    project_staffs: newTags.map((tag) => tag),
+                    project_staffs: newProjectStaffs,
                   }));
                 }}
-                className="flex items-center p-2 mb-2"
+                optionFilterProp="children"
+                filterOption={(input, option) =>
+                  (option?.children ?? "")
+                    .toLowerCase()
+                    .includes(input.toLowerCase())
+                }
               >
-                <div className="flex items-center space-x-2">
-                  <img
-                    src={generateStaticAssetUrl(
-                      staff?.profile_image?.link ??
-                        "staging/Users/default_user.png"
-                    )}
-                    alt={staff?.name}
-                    className="w-6 h-6 bg-cover object-cover rounded-full"
-                  />
-                  <p className="truncate">
-                    <strong>{staff?.name}</strong> - {staff?.position}
-                  </p>
-                </div>
-              </Tag>
-            );
-          })}
+                {dataStaffsOrGroups.map((item) => {
+                  return (
+                    <Select.Option
+                      key={item?.id}
+                      value={item.id}
+                      position={item?.position}
+                      users={item?.users}
+                      name={item?.name}
+                      profile_image={item?.profile_image}
+                    >
+                      {item?.name}
+                    </Select.Option>
+                  );
+                })}
+              </Select>
+            </div>
+            <div className="flex space-x-2 items-center absolute right-6">
+              <p>Staff</p>
+              <Switch
+                checked={isSwitchGroup}
+                onChange={(checked) => {
+                  setIsSwitchGroup(checked);
+                }}
+              />
+              <p>Group</p>
+            </div>
+          </div>
+
+          {/* List of selected users or groups */}
+          <div className="flex flex-wrap ">
+            {dataUpdateProject?.project_staffs?.map((staff, idx) => {
+              return (
+                <Tag
+                  key={staff?.id || staff?.key}
+                  closable
+                  onClose={() => {
+                    const newTags = dataUpdateProject?.project_staffs?.filter(
+                      (tag) => tag.key !== staff.key
+                    );
+                    setDataUpdateProject((prev) => ({
+                      ...prev,
+                      project_staffs: newTags.map((tag) => tag),
+                    }));
+                  }}
+                  className="flex items-center p-2 mb-2"
+                >
+                  <div className="flex items-center space-x-2">
+                    <img
+                      src={generateStaticAssetUrl(
+                        staff?.profile_image?.link ??
+                          "staging/Users/default_user.png"
+                      )}
+                      alt={staff?.name}
+                      className="w-6 h-6 bg-cover object-cover rounded-full"
+                    />
+                    <p className="truncate">
+                      <strong>{staff?.name}</strong> - {staff?.position}
+                    </p>
+                  </div>
+                </Tag>
+              );
+            })}
+          </div>
         </div>
 
         {/* Deskripsi Proyek */}
-
         <div className="md:col-span-2">
           <p className="mb-2">Deskripsi Proyek</p>
           <ReactQuill

@@ -33,7 +33,6 @@ const ModalProjectCreate = ({
   visible,
   onvisible,
   isAllowedToAddProject,
-  setRefresh,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -341,7 +340,6 @@ const ModalProjectCreate = ({
               <div className="w-full mb-2">
                 <p className="mb-2">Staff Proyek</p>
                 <Select
-                  allowClear
                   showSearch
                   mode="multiple"
                   className="dontShow"

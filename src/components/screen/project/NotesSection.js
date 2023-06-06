@@ -279,7 +279,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
                   <ButtonSys
                     type={"primary"}
                     onClick={() => handleAddNote(dataInputNote)}
-                    disabled={!isAllowedToAddNote}
+                    disabled={!isAllowedToAddNote || !dataInputNote.length}
                   >
                     Simpan
                   </ButtonSys>
@@ -291,6 +291,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
                 size={"large"}
                 fullWidth={true}
                 onClick={() => setIsNoteInput(true)}
+                disabled={!isAllowedToAddNote}
               >
                 <div className="flex space-x-2 items-center ">
                   <PlusOutlined />

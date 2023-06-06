@@ -199,7 +199,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Proyek: Proyek & Tugas, Admin Tugas */}
-      {/* {hasPermission(SIDEBAR_PROJECT) && (
+      {hasPermission(SIDEBAR_PROJECT) && (
         <SubMenu
           title="Proyek"
           key="project"
@@ -216,7 +216,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )} */}
+      )}
 
       {/* Attendance: Form Aktivitas, Admin Attendance, My Attendance */}
       {hasPermission(SIDEBAR_ATTENDANCE) && (
