@@ -72,6 +72,10 @@ module.exports = {
         transp45:"rgba(24, 142, 77, 0.45)",
         bgtable:"#F9F9F9",
         bgadvantagecard:"#E9FFE8",
+        outofstock:"rgba(191, 74, 64, 0.1)",
+        statusactive:"rgba(53, 118, 59, 0.1)",
+        statusarchived:"rgba(221, 180, 74, 0.1)",
+        buttondeleteproduct:"#FF4D4F",
       },
       borderColor: {
         primary: "#1890ff",
