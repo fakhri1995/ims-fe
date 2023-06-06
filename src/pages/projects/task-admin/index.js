@@ -30,22 +30,16 @@ import { useAccessControl } from "contexts/access-control";
 
 import {
   PROJECTS_GET,
-  PROJECT_ADD,
-  PROJECT_DELETE,
   PROJECT_GET,
   PROJECT_STATUSES_GET,
-  PROJECT_STATUS_ADD,
-  PROJECT_STATUS_DELETE,
-  PROJECT_STATUS_GET,
-  PROJECT_STATUS_UPDATE,
   PROJECT_TASKS_COUNT_GET,
   PROJECT_TASKS_DEADLINE_GET,
   PROJECT_TASKS_GET,
   PROJECT_TASK_ADD,
   PROJECT_TASK_DELETE,
   PROJECT_TASK_GET,
+  PROJECT_TASK_STAFF_COUNT_GET,
   PROJECT_TASK_UPDATE,
-  PROJECT_UPDATE,
 } from "lib/features";
 
 import ButtonSys from "../../../components/button";
@@ -119,8 +113,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetTaskDeadlineCount = hasPermission(
     PROJECT_TASKS_DEADLINE_GET
   );
-  // TODO: change constant
-  const isAllowedToGetStaffCount = true;
+  const isAllowedToGetStaffCount = hasPermission(PROJECT_TASK_STAFF_COUNT_GET);
 
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -176,9 +169,9 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   const [staffCount, setStaffCount] = useState({
-    total_staff: 20,
-    total_staff_without_task: 5,
-    percentage: 60,
+    total_staff: 0,
+    total_staff_without_task: 0,
+    percentage: 0,
   });
 
   // 2.2. Table Projects List (Semua Proyek)
@@ -209,7 +202,10 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
     total: null,
   });
 
-  const [refresh, setRefresh] = useState(-1);
+  const [sortTable, setSortTable] = useState({
+    sort_by: undefined,
+    sort_type: undefined,
+  });
 
   // 2.3. Modal
   const [modalAddTask, setModalAddTask] = useState(false);
@@ -339,7 +335,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
         })
       )
       .finally(() => setLoadingChart(false));
-  }, [isAllowedToGetTaskStatusCount]);
+  }, [isAllowedToGetTaskStatusCount, refreshTasks]);
 
   // 3.5. Get Data Chart Deadline Task
   useEffect(() => {
@@ -368,41 +364,42 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
         )
         .finally(() => setLoadingChart(false));
     }
-  }, [isAllowedToGetTaskDeadlineCount, dateState]);
+  }, [isAllowedToGetTaskDeadlineCount, dateState, refreshTasks]);
 
   // 3.6. Get Data Chart Staff
-  // TODO: uncomment if API is done
-  // useEffect(() => {
-  //   if (!isAllowedToGetStaffCount) {
-  //     setLoadingChart(false);
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!isAllowedToGetStaffCount) {
+      setLoadingChart(false);
+      return;
+    }
 
-  //   if (!dateState.from || !dateState.to) {
-  //     setLoadingChart(true);
-  //     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStaffCount`, {
-  //       method: `GET`,
-  //       headers: {
-  //         Authorization: JSON.parse(initProps),
-  //       },
-  //     })
-  //       .then((res) => res.json())
-  //       .then((res2) => {
-  //         setStaffCount(res2.data); // "Staff" chart's data source
-  //       })
-  //       .catch((err) =>
-  //         notification.error({
-  //           message: "Gagal mendapatkan data statistik jumlah staff",
-  //           duration: 3,
-  //         })
-  //       )
-  //       .finally(() => setLoadingChart(false));
-  //   }
-  // }, [isAllowedToGetStaffCount]);
+    if (!dateState.from || !dateState.to) {
+      setLoadingChart(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTaskStaffCount`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setStaffCount(res2.data); // "Staff" chart's data source
+        })
+        .catch((err) =>
+          notification.error({
+            message: "Gagal mendapatkan data statistik jumlah staff",
+            duration: 3,
+          })
+        )
+        .finally(() => setLoadingChart(false));
+    }
+  }, [isAllowedToGetStaffCount, refreshTasks]);
 
   // 4. Event
   const onFilterTasks = () => {
     setQueryParams({
+      sort_by: sortTable.sort_by,
+      sort_type: sortTable.sort_type,
       status_ids: selectedStatus,
     });
   };
@@ -467,11 +464,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-          setRefreshTasks((prev) => prev + 1);
+          setCurrentTaskId(response.data?.id);
           setModalAddTask(true);
         } else {
           notification.error({
@@ -516,9 +509,15 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Nama Task",
-      dataIndex: "name",
+      dataIndex: "task_name",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.name || "-"}</>,
+        };
+      },
+
       sorter: isAllowedToGetTasks
-        ? (a, b) => a.name?.toLowerCase().localeCompare(b.name?.toLowerCase())
+        ? (a, b) => a?.name?.toLowerCase() - b?.name?.toLowerCase()
         : false,
     },
     {
@@ -539,7 +538,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: isAllowedToGetTasks
-        ? (a, b) => a.start_date.localeCompare(b.start_date)
+        ? (a, b) => a?.start_date - b?.start_date
         : false,
     },
     {
@@ -550,9 +549,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{momentFormatDate(text, "-", "DD MMM YYYY, HH:mm")}</>,
         };
       },
-      sorter: isAllowedToGetTasks
-        ? (a, b) => a.end_date.localeCompare(b.end_date)
-        : false,
+      sorter: isAllowedToGetTasks ? (a, b) => a?.end_date - b?.end_date : false,
     },
     {
       title: "Staff",
@@ -1017,7 +1014,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
             <h4 className="mig-heading--4 ">Task</h4>
             <ButtonSys
               type={`primary`}
-              onClick={() => setModalAddTask(true)}
+              onClick={handleAddTask}
               disabled={!isAllowedToAddTask}
             >
               <div className="flex flex-row space-x-2.5 w-full items-center">
@@ -1057,8 +1054,13 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                       sort_by: undefined,
                       sort_type: undefined,
                     });
+                    setSortTable({
+                      sort_by: undefined,
+                      sort_type: undefined,
+                    });
                   } else {
                     setQueryParams({ sort_by: "end_date", sort_type: value });
+                    setSortTable({ sort_by: "end_date", sort_type: value });
                   }
                 }}
                 optionFilterProp="children"
@@ -1124,6 +1126,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
             queryParams={queryParams}
             setQueryParams={setQueryParams}
             onOpenModal={onOpenModalTask}
+            sortTable={sortTable}
           />
         </div>
       </div>
@@ -1134,10 +1137,12 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
           initProps={initProps}
           visible={modalAddTask}
           onvisible={setModalAddTask}
-          isAllowedToAddTask={isAllowedToAddTask}
+          isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
+          taskId={currentTaskId}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>
