@@ -6,8 +6,6 @@ import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
 
-import { AccessControl } from "components/features/AccessControl";
-
 import { useAccessControl } from "contexts/access-control";
 
 import { EMPLOYEE_CONTRACT_GET, EMPLOYEE_CONTRACT_UPDATE } from "lib/features";
@@ -90,8 +88,6 @@ const EmployeeContractEditIndex = ({
     ],
   });
 
-  const [refresh, setRefresh] = useState(-1);
-
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
@@ -101,49 +97,7 @@ const EmployeeContractEditIndex = ({
   const [disablePublish, setDisablePublish] = useState(true);
 
   // 2. USE EFFECT
-  // 2.1 Get employee contract detail
-  useEffect(() => {
-    if (!isAllowedToGetEmployeeContract) {
-      permissionWarningNotification("Mendapatkan", "Detail Kontrak Karyawan");
-      setpraloading(false);
-      return;
-    }
-    if (contractId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${contractId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataContract(response2.data);
-            if (prevpath === "inactivate") {
-              setDataContract({ ...response2.data, is_employee_active: 0 });
-            }
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetEmployeeContract, contractId, refresh]);
-
-  // 2.2. Disable "Simpan" button if any required field is empty
+  // 2.1. Disable "Simpan" button if any required field is empty
   useEffect(() => {
     // resign date field is required if page comes from "Nonaktifkan Karyawan" button
     let isNotResign = true;
@@ -181,6 +135,7 @@ const EmployeeContractEditIndex = ({
 
     // Setup form data to be sent in API
     let payloadFormData;
+
     if (dataContract?.salaries?.length > 0) {
       // Mapping salaries list to required format in API updateEmployeeContract form-data
       let benefitObjectList = dataContract?.salaries?.map((benefit, idx) => {
@@ -293,7 +248,7 @@ const EmployeeContractEditIndex = ({
           setDataContract={setDataContract}
           prevpath={prevpath}
           employeeId={employeeId}
-          contractId={dataContract?.id}
+          contractId={contractId}
         />
       </div>
     </LayoutDashboard>

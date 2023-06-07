@@ -302,6 +302,11 @@ const EmployeeContractForm = ({
                 ...requiredData,
                 is_employee_active: 1,
               });
+            } else if (prevpath === "inactivate") {
+              setDataContract({
+                ...requiredData,
+                is_employee_active: 0,
+              });
             } else {
               setDataContract(requiredData);
             }
@@ -442,7 +447,6 @@ const EmployeeContractForm = ({
     // }
   }, []);
 
-  // console.log({ dataContract });
   return (
     <Form
       layout="vertical"
@@ -1016,12 +1020,12 @@ const EmployeeContractForm = ({
         <ButtonSys
           type={"dashed"}
           onClick={() => {
-            // clearDataUpdate();
-            setModalSalaryVar(true);
+            isAllowedToGetSalaryColumns && setModalSalaryVar(true);
           }}
+          disabled={!isAllowedToGetSalaryColumns}
         >
           <p className="text-primary100 hover:text-primary75">
-            + Tambah Variable Gaji
+            + Tambah Variabel Gaji
           </p>
         </ButtonSys>
       </div>
@@ -1036,7 +1040,6 @@ const EmployeeContractForm = ({
           isAllowedToGetSalaryColumns={isAllowedToGetSalaryColumns}
           isAllowedToAddSalaryColumn={isAllowedToAddSalaryColumn}
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
-          isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
           refresh={refresh}
           setRefresh={setRefresh}
