@@ -648,9 +648,12 @@ const InventoryForm = ({
           <ButtonSys
             type={"dashed"}
             onClick={async () => {
-              await handleSaveInventory(inventoryList[idx]);
-              handleAddNewDevice();
+              if (isAllowedToAddEmployeeInventoryDevice) {
+                await handleSaveInventory(inventoryList[idx]);
+                handleAddNewDevice();
+              }
             }}
+            disabled={!isAllowedToAddEmployeeInventoryDevice}
           >
             <Spin spinning={loadingAdd}>
               <p className="text-primary100 hover:text-primary75">

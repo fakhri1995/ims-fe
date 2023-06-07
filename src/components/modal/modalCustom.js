@@ -1,4 +1,8 @@
-import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -825,7 +829,7 @@ const ModalHapus2 = ({
                 disabled={disabled}
               >
                 <div className="flex flex-row space-x-2">
-                  <TrashIconSvg size={16} color={`white`} />
+                  <DeleteOutlined />
                   {okButtonText ? (
                     <p>{okButtonText}</p>
                   ) : (

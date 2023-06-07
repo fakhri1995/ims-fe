@@ -17,6 +17,7 @@ import { useCallback } from "react";
 import { useAccessControl } from "contexts/access-control";
 
 import { beforeUploadFileMaxSize } from "../../../../../lib/helper";
+import { maritalStatusList } from "../../detail/profile";
 
 const EmployeeProfileForm = ({
   initProps,
@@ -476,24 +477,7 @@ const EmployeeProfileForm = ({
             value={dataEmployee.marital_status}
             onChange={(value) => onChangeSelect(value, "marital_status")}
             placeholder="Pilih status kawin"
-            options={[
-              {
-                value: 0,
-                label: "Belum kawin",
-              },
-              {
-                value: 1,
-                label: "Kawin",
-              },
-              {
-                value: 2,
-                label: "Cerai hidup",
-              },
-              {
-                value: 3,
-                label: "Cerai mati",
-              },
-            ]}
+            options={maritalStatusList}
           />
         </>
       </Form.Item>
