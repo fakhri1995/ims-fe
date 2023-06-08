@@ -175,7 +175,7 @@ const ModalProjectCreate = ({
       ...dataProject,
       id: currentProject?.id,
       proposed_bys: currentProject?.proposed_bys?.map((staff) =>
-        Number(staff.key)
+        Number(staff.id)
       ),
       project_staffs: dataProject?.project_staffs?.map((staff) =>
         Number(staff.key)

@@ -70,7 +70,7 @@ const ModalProjectTaskCreate = ({
   // 2.1. Set default project if used in project detail page
   useEffect(() => {
     setDataTask((prev) => ({ ...prev, project_id: defaultProject?.id }));
-  }, [defaultProject]);
+  }, [visible, defaultProject]);
 
   // 2.2. Get project list
   useEffect(() => {
@@ -205,7 +205,7 @@ const ModalProjectTaskCreate = ({
 
   // 2.4. Auto fill task staff with self user id (in Tambah Task Saya)
   useEffect(() => {
-    if (visible && isAddMyTask) {
+    if (visible && isAddMyTask && !dataTask?.project_id) {
       const selfUserObj = {
         key: Number(dataProfile?.data?.id),
         id: Number(dataProfile?.data?.id),

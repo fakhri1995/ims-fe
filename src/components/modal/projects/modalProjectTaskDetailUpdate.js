@@ -3,6 +3,7 @@ import {
   Avatar,
   DatePicker,
   Form,
+  Input,
   Modal,
   Select,
   Spin,
@@ -26,7 +27,11 @@ import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { EditSquareIconSvg, ExternalLinkIconSvg } from "../../icon";
+import {
+  CheckIconSvg,
+  EditSquareIconSvg,
+  ExternalLinkIconSvg,
+} from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
 import ModalStaffList from "./modalStaffList";
 
@@ -62,6 +67,7 @@ const ModalProjectTaskDetailUpdate = ({
   const [currentState, setCurrentState] = useState("detail");
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [isStaffsFromAgents, setIsStaffsFromAgents] = useState(false);
+  const [isEditTitle, setIsEditTitle] = useState(false);
 
   const [dataTask, setDataTask] = useState({
     id: 0,
@@ -496,9 +502,29 @@ const ModalProjectTaskDetailUpdate = ({
           ?.join(", ");
 
   // Switch modal body and footer according to current state
-  let body, footer;
+  let title, body, footer;
   switch (currentState) {
     case "detail":
+      title = (
+        <div className="flex items-center justify-between mr-5">
+          <p className="mig-heading--4">
+            {dataTask.name} ({dataTask.ticket_number})
+          </p>
+          <ButtonSys
+            type={"default"}
+            color={"danger"}
+            onClick={() => {
+              setModalDelete(true);
+            }}
+            disabled={!isAllowedToDeleteTask}
+          >
+            <div className="flex space-x-2 items-center">
+              <DeleteOutlined />
+              <p>Hapus Task</p>
+            </div>
+          </ButtonSys>
+        </div>
+      );
       body = (
         <Spin spinning={loadingDataTask}>
           <div className="grid md:grid-cols-2 gap-4 md:gap-6">
@@ -676,6 +702,41 @@ const ModalProjectTaskDetailUpdate = ({
       break;
 
     case "edit":
+      title = isEditTitle ? (
+        <div className="flex items-center space-x-2 w-2/3">
+          <Input
+            value={dataTaskUpdate.name}
+            placeholder="Masukkan nama task..."
+            onChange={(e) =>
+              setDataTaskUpdate((prev) => ({
+                ...prev,
+                name: e.target.value,
+              }))
+            }
+          ></Input>
+          <button
+            onClick={() => {
+              setIsEditTitle(false);
+            }}
+            disabled={!dataTaskUpdate?.name}
+            className="bg-transparent"
+          >
+            <CheckIconSvg size={24} color={"#35763B"} />
+          </button>
+        </div>
+      ) : (
+        <button
+          className="flex space-x-2 items-center bg-transparent hover:opacity-75"
+          type="button"
+          onClick={() => setIsEditTitle(true)}
+        >
+          <EditSquareIconSvg color={"#4D4D4D"} size={24} />
+          <p className="mig-heading--4">
+            {dataTaskUpdate?.name} ({dataTask?.ticket_number})
+          </p>
+        </button>
+      );
+
       body = (
         <Form
           layout="vertical"
@@ -1018,32 +1079,7 @@ const ModalProjectTaskDetailUpdate = ({
     </ModalHapus2>
   ) : (
     <Modal
-      title={
-        currentState === "detail" ? (
-          <div className="flex items-center justify-between mr-5">
-            <p className="mig-heading--4">
-              {dataTask.name} ({dataTask.ticket_number})
-            </p>
-            <ButtonSys
-              type={"default"}
-              color={"danger"}
-              onClick={() => {
-                setModalDelete(true);
-              }}
-              disabled={!isAllowedToDeleteTask}
-            >
-              <div className="flex space-x-2 items-center">
-                <DeleteOutlined />
-                <p>Hapus Task</p>
-              </div>
-            </ButtonSys>
-          </div>
-        ) : (
-          <p className="mig-heading--4">
-            {dataTask.name} ({dataTask.ticket_number})
-          </p>
-        )
-      }
+      title={title}
       visible={visible}
       onCancel={handleClose}
       maskClosable={false}
