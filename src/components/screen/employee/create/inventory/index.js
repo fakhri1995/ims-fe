@@ -6,11 +6,7 @@ import { useEffect } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  EMPLOYEE_INVENTORIES_GET,
-  EMPLOYEE_INVENTORY_ADD,
-  EMPLOYEE_INVENTORY_DELETE,
-} from "lib/features";
+import { EMPLOYEE_INVENTORIES_GET, EMPLOYEE_INVENTORY_ADD } from "lib/features";
 
 import {
   beforeUploadFileMaxSize,
@@ -43,7 +39,6 @@ const EmployeeInventoryForm = ({
     EMPLOYEE_INVENTORIES_GET
   );
   const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
-  const isAllowedToDeleteInventory = hasPermission(EMPLOYEE_INVENTORY_DELETE);
 
   // 1. USE STATE
   const [isOwn, setIsOwn] = useState(false);
@@ -180,9 +175,14 @@ const EmployeeInventoryForm = ({
         <ButtonSys
           type={"dashed"}
           onClick={async () => {
-            await handleSaveInventory(inventoryList[inventoryList.length - 1]);
-            handleAddNewInventory();
+            if (isAllowedToAddEmployeeInventory) {
+              await handleSaveInventory(
+                inventoryList[inventoryList.length - 1]
+              );
+              handleAddNewInventory();
+            }
           }}
+          disabled={!isAllowedToAddEmployeeInventory}
         >
           <p className="text-primary100 hover:text-primary75">
             + Tambah Inventaris

@@ -27,9 +27,9 @@ import {
   EMPLOYEE_PAYSLIPS_GET,
   EMPLOYEE_PAYSLIP_ADD,
   EMPLOYEE_PAYSLIP_DOWNLOAD,
-  EMPLOYEE_PAYSLIP_GET,
   EMPLOYEE_PAYSLIP_RAISE,
   EMPLOYEE_PAYSLIP_STATUS_COUNT_GET,
+  EMPLOYEE_PAYSLIP_UPDATE,
   EMPLOYEE_SALARY_COLUMNS_GET,
   EMPLOYEE_SALARY_COLUMN_ADD,
   EMPLOYEE_SALARY_COLUMN_DELETE,
@@ -89,7 +89,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     return null;
   }
   const isAllowedToGetPayslips = hasPermission(EMPLOYEE_PAYSLIPS_GET);
-  const isAllowedToGetPayslip = hasPermission(EMPLOYEE_PAYSLIP_GET);
+  const isAllowedToUpdatePayslip = hasPermission(EMPLOYEE_PAYSLIP_UPDATE);
+
   const isAllowedToAddPayslip = hasPermission(EMPLOYEE_PAYSLIP_ADD);
   const isAllowedToPostPayslips = hasPermission(EMPLOYEES_PAYSLIPS_POST);
   const isAllowedToRaisePayslip = hasPermission(EMPLOYEE_PAYSLIP_RAISE);
@@ -662,8 +663,8 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                   </ButtonSys>
                 ) : (
                   <ButtonSys
-                    type={isAllowedToGetPayslip ? "default" : "primary"}
-                    disabled={!isAllowedToGetPayslip}
+                    type={"default"}
+                    disabled={!isAllowedToUpdatePayslip}
                     onClick={(event) => {
                       event.stopPropagation();
                       rt.push(
@@ -729,7 +730,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
               <ButtonSys
                 type={"default"}
                 onClick={() => setModalSalaryVar(true)}
-                // disabled
+                disabled={!isAllowedToGetSalaryColumns}
               >
                 <div className="flex space-x-2 items-center">
                   <SettingOutlined />
@@ -742,7 +743,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <ButtonSys
                   type={"primary"}
                   onClick={handleRaisePayslip}
-                  disabled={!isAllowedToAddPayslip}
+                  disabled={!isAllowedToRaisePayslip}
                 >
                   <div className="flex space-x-2 items-center">
                     <CirclePlusIconSvg size={16} color="#FFFFFF" />
@@ -751,7 +752,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
                 </ButtonSys>
               ) : (
                 <ButtonSys
-                  type={isAllowedToPostPayslips ? "primary" : "default"}
+                  type={"primary"}
                   onClick={() => setModalPost(true)}
                   disabled={!isAllowedToPostPayslips}
                 >
