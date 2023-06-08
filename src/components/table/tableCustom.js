@@ -1953,13 +1953,13 @@ const TableCustomProjectList = ({
 };
 
 const TableCustomTaskList = ({
-  rt,
   dataSource,
   columns,
   loading,
   total,
   queryParams,
   setQueryParams,
+  sortTable,
   onOpenModal,
 }) => {
   const [rowstate, setrowstate] = useState(0);
@@ -1985,8 +1985,10 @@ const TableCustomTaskList = ({
             : undefined;
 
         setQueryParams({
-          sort_type: sortTypePayload,
-          sort_by: sortTypePayload === undefined ? undefined : sorter.field,
+          sort_type: sortTable.sort_type || sortTypePayload,
+          sort_by:
+            sortTable.sort_by ||
+            (sortTypePayload === undefined ? undefined : sorter.field),
           page: pagination.current,
           rows: pagination.pageSize,
         });
