@@ -579,7 +579,14 @@ ol {
       transform: translateX(calc(-80px * 5));
     }
   }
+
+  .ant-picker-dropdown-range .ant-picker-panels {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
 }
+
 .ant-upload-list:hover {
   pointer-events: none;
 }

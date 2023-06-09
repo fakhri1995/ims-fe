@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
-import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { momentFormatDate } from "../../../../lib/helper";
@@ -35,9 +34,8 @@ const ExperienceBlock = ({
   modules,
   formats,
 }) => {
-  const calendarRef = useRef(null);
-
   const [isUpdate, setIsUpdate] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   useEffect(() => {
     if (isAdd === true) {
@@ -97,13 +95,14 @@ const ExperienceBlock = ({
 
           <RangePicker
             allowEmpty
-            ref={calendarRef}
             value={[
               dataUpdateExp.start_date
                 ? moment(dataUpdateExp.start_date)
                 : null,
               dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
             ]}
+            open={calendarOpen}
+            onOpenChange={setCalendarOpen}
             onCalendarChange={(value, datestring) => {
               let startDate = datestring[0];
               let endDate = datestring[1];
@@ -123,7 +122,7 @@ const ExperienceBlock = ({
                       ...prev,
                       end_date: null,
                     }));
-                    calendarRef.current && calendarRef.current.blur();
+                    setCalendarOpen(false);
                   }}
                 >
                   Present
