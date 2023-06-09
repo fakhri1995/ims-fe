@@ -200,6 +200,14 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
               onChange={(pagination) => {
                 setPageProjectNotes(pagination.current);
               }}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: () => {
+                    setDataCurrentNote(record);
+                    setModalDetailNote(true);
+                  },
+                };
+              }}
               columns={[
                 {
                   title: "Notes",
@@ -208,7 +216,10 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
 
                   render: (_, note) => {
                     return (
-                      <div key={note?.id} className="cursor-pointer">
+                      <div
+                        key={note?.id}
+                        className="cursor-pointer grid grid-cols-1"
+                      >
                         <div className="flex justify-between items-center mb-2">
                           <div className="flex items-center space-x-2">
                             <img
@@ -233,7 +244,7 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
                             )}
                           </p>
                         </div>
-                        <p className="">
+                        <p>
                           {note?.notes?.length > 280
                             ? note?.notes.slice(0, 280) + "..."
                             : note?.notes ?? "-"}
@@ -243,14 +254,6 @@ const NotesSection = ({ initProps, projectId, projectName }) => {
                   },
                 },
               ]}
-              onRow={(record, rowIndex) => {
-                return {
-                  onClick: () => {
-                    setDataCurrentNote(record);
-                    setModalDetailNote(true);
-                  },
-                };
-              }}
             />
 
             {isNoteInput ? (
