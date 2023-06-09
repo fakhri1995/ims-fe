@@ -117,6 +117,7 @@ module.exports = {
         advantagecard:"#E9FFE8",
         advantage:"#C3FDC0",
         pageActive:"#eaeaea",
+        inputkategori:"#E6E6E6"
       },
       textColor: {
         primary: "#1890ff",
