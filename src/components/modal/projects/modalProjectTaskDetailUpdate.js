@@ -506,23 +506,25 @@ const ModalProjectTaskDetailUpdate = ({
   switch (currentState) {
     case "detail":
       title = (
-        <div className="flex items-center justify-between mr-5">
-          <p className="mig-heading--4">
+        <div className="grid grid-cols-6 items-center space-x-2 mr-5">
+          <p className="mig-heading--4 col-span-4">
             {dataTask.name} ({dataTask.ticket_number})
           </p>
-          <ButtonSys
-            type={"default"}
-            color={"danger"}
-            onClick={() => {
-              setModalDelete(true);
-            }}
-            disabled={!isAllowedToDeleteTask}
-          >
-            <div className="flex space-x-2 items-center">
-              <DeleteOutlined />
-              <p>Hapus Task</p>
-            </div>
-          </ButtonSys>
+          <div className="col-span-2">
+            <ButtonSys
+              type={"default"}
+              color={"danger"}
+              onClick={() => {
+                setModalDelete(true);
+              }}
+              disabled={!isAllowedToDeleteTask}
+            >
+              <div className="flex space-x-2 items-center whitespace-nowrap">
+                <DeleteOutlined />
+                <p>Hapus Task</p>
+              </div>
+            </ButtonSys>
+          </div>
         </div>
       );
       body = (
@@ -726,12 +728,14 @@ const ModalProjectTaskDetailUpdate = ({
         </div>
       ) : (
         <button
-          className="flex space-x-2 items-center bg-transparent hover:opacity-75"
+          className="grid grid-cols-12 text-left space-x-2 pr-8 items-center bg-transparent hover:opacity-75"
           type="button"
           onClick={() => setIsEditTitle(true)}
         >
-          <EditSquareIconSvg color={"#4D4D4D"} size={24} />
-          <p className="mig-heading--4">
+          <div className="text-left">
+            <EditSquareIconSvg color={"#4D4D4D"} size={24} />
+          </div>
+          <p className="mig-heading--4 col-span-11">
             {dataTaskUpdate?.name} ({dataTask?.ticket_number})
           </p>
         </button>
