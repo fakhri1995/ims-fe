@@ -280,8 +280,8 @@ const BasicInfoCard = ({
         </div>
 
         <div
-          className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 
-          items-end md:items-center"
+          className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-6 
+          items-end lg:items-center"
         >
           {!isGuest && (
             <ButtonSys

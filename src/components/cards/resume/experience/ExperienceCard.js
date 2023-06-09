@@ -13,7 +13,6 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
 import { useState } from "react";
-import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -46,10 +45,9 @@ const ExperienceCard = ({
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
 }) => {
-  const calendarRef = useRef(null);
-
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const [dataUpdateExp, setDataUpdateExp] = useState({
     id: null,
@@ -164,13 +162,14 @@ const ExperienceCard = ({
 
           <RangePicker
             allowEmpty
-            ref={calendarRef}
             value={[
               dataUpdateExp.start_date
                 ? moment(dataUpdateExp.start_date)
                 : null,
               dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
             ]}
+            open={calendarOpen}
+            onOpenChange={setCalendarOpen}
             onCalendarChange={(value, datestring) => {
               let startDate = datestring[0];
               let endDate = datestring[1];
@@ -185,12 +184,12 @@ const ExperienceCard = ({
                 <button
                   type="button"
                   className="mb-0 bg-transparent text-primary100 hover:text-primary75 cursor-pointer"
-                  onClick={() => {
+                  onClick={(e) => {
                     setDataUpdateExp((prev) => ({
                       ...prev,
                       end_date: null,
                     }));
-                    calendarRef.current && calendarRef.current.blur();
+                    setCalendarOpen(false);
                   }}
                 >
                   Present
@@ -204,7 +203,7 @@ const ExperienceCard = ({
             value={dataUpdateExp.description}
             modules={modules}
             formats={formats}
-            className="h-32 pb-4"
+            className="h-32 pb-10"
             onChange={(value) => {
               setDataUpdateExp((prev) => ({
                 ...prev,
