@@ -38,6 +38,7 @@ import {
   EMPLOYEE_STATUSES_COUNT_GET,
   EMPLOYEE_UPDATE,
   RECRUITMENT_ROLES_LIST_GET,
+  RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
@@ -91,7 +92,9 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
   const isAllowedToGetRoleList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
-  const isAllowedToGetRoleTypeList = hasPermission(RECRUITMENT_ROLES_LIST_GET);
+  const isAllowedToGetRoleTypeList = hasPermission(
+    RECRUITMENT_ROLE_TYPES_LIST_GET
+  );
 
   const isAllowedToGetPlacementCount = hasPermission(
     EMPLOYEE_PLACEMENTS_COUNT_GET

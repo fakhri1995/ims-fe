@@ -210,6 +210,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [modalDetailTask, setModalDetailTask] = useState(false);
   const [modalManageStatus, setModalManageStatus] = useState(false);
 
+  const [currentProject, setCurrentProject] = useState({});
   const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
@@ -520,6 +521,41 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .finally(() => setLoadingChart(false));
   };
 
+  const handleAddProject = () => {
+    if (!isAllowedToAddProject) {
+      permissionWarningNotification("Menambah", "Proyek");
+      return;
+    }
+
+    setLoadingProjects(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setCurrentProject(response.data);
+          setModalAddProject(true);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan proyek baru. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingProjects(false));
+  };
+
   const handleAddTask = () => {
     if (!isAllowedToAddTask) {
       permissionWarningNotification("Menambah", "Task");
@@ -537,11 +573,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-          setRefreshTasks((prev) => prev + 1);
+          setCurrentTaskId(response.data?.id);
           setModalAddTask(true);
         } else {
           notification.error({
@@ -574,7 +606,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Nama",
       dataIndex: "name",
       sorter: isAllowedToGetProjects
-        ? (a, b) => a.name?.toLowerCase().localeCompare(b.name?.toLowerCase())
+        ? (a, b) => a.name?.toLowerCase()?.localeCompare(b.name?.toLowerCase())
         : false,
     },
     {
@@ -599,7 +631,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: isAllowedToGetProjects
-        ? (a, b) => a.start_date.localeCompare(b.start_date)
+        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
         : false,
     },
     {
@@ -611,7 +643,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: isAllowedToGetProjects
-        ? (a, b) => a.end_date.localeCompare(b.end_date)
+        ? (a, b) => a?.end_date?.localeCompare(b?.end_date)
         : false,
     },
     {
@@ -639,8 +671,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             const dataStatusListIds = dataStatusList?.map(
               (status) => status.id
             );
-            const indexA = dataStatusListIds?.indexOf(a.status?.id);
-            const indexB = dataStatusListIds?.indexOf(b.status?.id);
+            const indexA = dataStatusListIds?.indexOf(a?.status?.id);
+            const indexB = dataStatusListIds?.indexOf(b?.status?.id);
             return indexA - indexB;
           }
         : false,
@@ -918,12 +950,12 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         <div className="grid grid-cols-1 mb-4">
                           <Line
                             data={{
-                              labels: dataProjectDeadline.map(
+                              labels: dataProjectDeadline?.map(
                                 (deadline) => deadline?.year_month_str
                               ),
                               datasets: [
                                 {
-                                  data: dataProjectDeadline.map(
+                                  data: dataProjectDeadline?.map(
                                     (deadline) => deadline?.total
                                   ),
                                   borderColor: "#35763B",
@@ -1005,27 +1037,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                       </div>
                     ))}
                   </div>
-                  {/* <div className="grid md:col-span-2 grid-cols-2 gap-2 lg:gap-6">
-                    {projectStatusCount.map((status, idx) => (
-                      <div
-                        key={status.project_status}
-                        className="grid grid-cols-4 items-center shadow-md rounded-md bg-white p-5 text-left"
-                      >
-                        <ClipboardListIconSvg
-                          size={36}
-                          color={
-                            dataColorBar[idx + (1 % dataColorBar.length) - 1]
-                          }
-                        />
-                        <div className="flex flex-col text-right col-span-3">
-                          <p className="text-lg font-bold text-mono30">
-                            {status.project_status_count}
-                          </p>
-                          <p className="text-mono50">{status.project_status}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div> */}
                 </div>
               )}
             </Collapse.Panel>
@@ -1039,7 +1050,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           {/* Tambah Proyek Baru */}
           <div className="">
             <button
-              onClick={() => setModalAddProject(true)}
+              onClick={handleAddProject}
               className="mig-platform--p-0 px-4 py-2 w-full flex space-x-2 items-center text-white bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
               disabled={!isAllowedToAddProject}
             >
@@ -1121,9 +1132,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         type={"primary"}
                         onClick={(e) => {
                           e.stopPropagation();
-                          // TODO: uncomment if API is done
-                          // handleAddTask();
-                          setModalAddTask(true);
+                          handleAddTask();
                         }}
                         disabled={!isAllowedToAddTask}
                       >
@@ -1186,8 +1195,10 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           initProps={initProps}
           visible={modalAddProject}
           onvisible={setModalAddProject}
-          isAllowedToAddProject={isAllowedToAddProject}
+          isAllowedToUpdateProject={isAllowedToUpdateProject}
+          isAllowedToDeleteProject={isAllowedToDeleteProject}
           setRefresh={setRefresh}
+          currentProject={currentProject}
         />
       </AccessControl>
 
@@ -1197,12 +1208,14 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           initProps={initProps}
           visible={modalAddTask}
           onvisible={setModalAddTask}
-          isAllowedToAddTask={isAllowedToAddTask}
+          isAllowedToUpdateTask={isAllowedToUpdateTask}
+          isAllowedToDeleteTask={isAllowedToDeleteTask}
           isAllowedToGetProjects={isAllowedToGetProjects}
           isAllowedToGetProject={isAllowedToGetProject}
           setRefreshTasks={setRefreshTasks}
           isAddMyTask={true}
           dataProfile={dataProfile}
+          taskId={currentTaskId}
         />
       </AccessControl>
       <AccessControl hasPermission={PROJECT_TASK_GET}>

@@ -1,4 +1,8 @@
-import { EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { Tabs, notification } from "antd";
 import { useRouter } from "next/router";
 import React from "react";
@@ -118,7 +122,7 @@ const EmployeeDetailIndex = ({
   const [refresh, setRefresh] = useState(-1);
 
   // 1.2. Delete
-  const [modalDelete, setModalDelete] = useState(false);
+  const [modalInactivate, setModalInactivate] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // 1.3. Add Contract
@@ -359,13 +363,13 @@ const EmployeeDetailIndex = ({
               </div>
               {Number(dataEmployee?.contracts[0]?.is_employee_active) ? (
                 <ButtonSys
-                  type={!isAllowedToDeleteEmployee ? "primary" : "default"}
+                  type={"default"}
                   color={"danger"}
-                  onClick={() => setModalDelete(true)}
-                  disabled={!isAllowedToDeleteEmployee}
+                  onClick={() => setModalInactivate(true)}
+                  disabled={!isAllowedToUpdateEmployeeContract}
                 >
                   <div className="flex flex-row whitespace-nowrap">
-                    <TrashIconSvg color={"#BF4A40"} size={16} />
+                    <DeleteOutlined />
                     <p className="ml-2">Nonaktifkan Karyawan</p>
                   </div>
                 </ButtonSys>
@@ -462,18 +466,18 @@ const EmployeeDetailIndex = ({
       </div>
 
       {/* Modal Delete Employee */}
-      <AccessControl hasPermission={EMPLOYEE_DELETE}>
+      <AccessControl hasPermission={EMPLOYEE_CONTRACT_UPDATE}>
         <ModalHapus2
           title={`Peringatan`}
-          visible={modalDelete}
-          onvisible={setModalDelete}
+          visible={modalInactivate}
+          onvisible={setModalInactivate}
           onOk={() =>
             rt.push(
               `${employeeId}/editContract?id=${dataEmployee?.contracts[0]?.id}&prevpath=inactivate`
             )
           }
           onCancel={() => {
-            setModalDelete(false);
+            setModalInactivate(false);
           }}
           loading={loadingDelete}
           okButtonText={"Ya, saya yakin"}

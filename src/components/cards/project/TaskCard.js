@@ -16,7 +16,7 @@ const TaskCard = ({
   onClick,
 }) => {
   const currentDate = new Date();
-  const deadline = new Date(toDate);
+  const deadline = new Date(toDate ?? "0000-00-00 00:00:00");
   const isPastDeadline = currentDate > deadline;
 
   return (

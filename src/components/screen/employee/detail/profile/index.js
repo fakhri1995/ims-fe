@@ -4,6 +4,25 @@ import { useAccessControl } from "contexts/access-control";
 
 import { momentFormatDate } from "../../../../../lib/helper";
 
+export const maritalStatusList = [
+  {
+    value: 1,
+    label: "Belum kawin",
+  },
+  {
+    value: 2,
+    label: "Kawin",
+  },
+  {
+    value: 3,
+    label: "Cerai hidup",
+  },
+  {
+    value: 4,
+    label: "Cerai mati",
+  },
+];
+
 const EmployeeProfileDetail = ({ dataEmployee }) => {
   /**
    * Dependencies
@@ -15,25 +34,6 @@ const EmployeeProfileDetail = ({ dataEmployee }) => {
   if (isAccessControlPending) {
     return null;
   }
-
-  const maritalStatusList = [
-    {
-      value: 0,
-      label: "Belum kawin",
-    },
-    {
-      value: 1,
-      label: "Kawin",
-    },
-    {
-      value: 2,
-      label: "Cerai hidup",
-    },
-    {
-      value: 3,
-      label: "Cerai mati",
-    },
-  ];
 
   // Mapping marital status ID to label
   const mappingMaritalStatus = () =>

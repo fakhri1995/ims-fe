@@ -47,6 +47,7 @@ const ExperienceCard = ({
 }) => {
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
+  const [calendarOpen, setCalendarOpen] = useState(false);
 
   const [dataUpdateExp, setDataUpdateExp] = useState({
     id: null,
@@ -88,7 +89,7 @@ const ExperienceCard = ({
     "link",
   ];
 
-  // console.log(dataUpdateExp)
+  // console.log({ dataUpdateExp });
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <h4 className="mig-heading--4">Experience</h4>
@@ -160,13 +161,16 @@ const ExperienceCard = ({
           />
 
           <RangePicker
+            allowEmpty
             value={[
               dataUpdateExp.start_date
                 ? moment(dataUpdateExp.start_date)
                 : null,
               dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
             ]}
-            onChange={(value, datestring) => {
+            open={calendarOpen}
+            onOpenChange={setCalendarOpen}
+            onCalendarChange={(value, datestring) => {
               let startDate = datestring[0];
               let endDate = datestring[1];
               setDataUpdateExp((prev) => ({
@@ -175,6 +179,23 @@ const ExperienceCard = ({
                 end_date: endDate,
               }));
             }}
+            renderExtraFooter={() => (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="mb-0 bg-transparent text-primary100 hover:text-primary75 cursor-pointer"
+                  onClick={(e) => {
+                    setDataUpdateExp((prev) => ({
+                      ...prev,
+                      end_date: null,
+                    }));
+                    setCalendarOpen(false);
+                  }}
+                >
+                  Present
+                </button>
+              </div>
+            )}
           />
           <ReactQuill
             placeholder="Job description..."
@@ -182,7 +203,7 @@ const ExperienceCard = ({
             value={dataUpdateExp.description}
             modules={modules}
             formats={formats}
-            className="h-32 pb-4"
+            className="h-32 pb-10"
             onChange={(value) => {
               setDataUpdateExp((prev) => ({
                 ...prev,

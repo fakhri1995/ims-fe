@@ -32,7 +32,9 @@ const ModalProjectCreate = ({
   initProps,
   visible,
   onvisible,
-  isAllowedToAddProject,
+  isAllowedToUpdateProject,
+  isAllowedToDeleteProject,
+  currentProject,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
@@ -163,22 +165,26 @@ const ModalProjectCreate = ({
     }, 500);
   };
 
-  const handleAddProject = () => {
-    if (!isAllowedToAddProject) {
-      permissionWarningNotification("Menambah", "Proyek");
+  const handleUpdateProject = () => {
+    if (!isAllowedToUpdateProject) {
+      permissionWarningNotification("Mengubah", "Proyek");
       return;
     }
 
     const payload = {
       ...dataProject,
+      id: currentProject?.id,
+      proposed_bys: currentProject?.proposed_bys?.map((staff) =>
+        Number(staff.id)
+      ),
       project_staffs: dataProject?.project_staffs?.map((staff) =>
         Number(staff.key)
       ),
     };
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addProject`, {
-      method: `POST`,
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProject`, {
+      method: `PUT`,
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
@@ -193,7 +199,7 @@ const ModalProjectCreate = ({
             message: response.message,
             duration: 3,
           });
-          rt.push(`projects/${response?.data?.id}`);
+          rt.push(`projects/${currentProject?.id}`);
         } else {
           notification.error({
             message: response.message,
@@ -203,7 +209,48 @@ const ModalProjectCreate = ({
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambahkan proyek baru. ${err.response}`,
+          message: `Gagal mengubah proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoading(false));
+  };
+
+  const handleDeleteProject = () => {
+    if (!isAllowedToDeleteProject) {
+      permissionWarningNotification("Menghapus", "Proyek");
+      return;
+    }
+
+    setLoading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProject?id=${currentProject?.id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          handleClose();
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus proyek. ${err.response}`,
           duration: 3,
         });
       })
@@ -231,7 +278,7 @@ const ModalProjectCreate = ({
     <Modal
       title={
         <div className="flex flex-col space-y-2 ">
-          <p>Tambah Proyek Baru</p>
+          <p>Tambah Proyek Baru ({currentProject?.id})</p>
           <p className="text-warning text-[12px] italic">
             * Field ini harus diisi
           </p>
@@ -247,15 +294,15 @@ const ModalProjectCreate = ({
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={handleClose}
+              onClick={handleDeleteProject}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={handleAddProject}
-              disabled={!isAllowedToAddProject || !dataProject.name}
+              onClick={handleUpdateProject}
+              disabled={!isAllowedToUpdateProject || !dataProject.name}
             >
               <p>Tambah Proyek</p>
             </ButtonSys>

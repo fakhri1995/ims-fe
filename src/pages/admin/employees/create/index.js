@@ -11,6 +11,7 @@ import {
   EMPLOYEE_CONTRACT_ADD,
   EMPLOYEE_CONTRACT_GET,
   EMPLOYEE_CONTRACT_UPDATE,
+  EMPLOYEE_DELETE,
   EMPLOYEE_DEVICES_GET,
   EMPLOYEE_DEVICE_ADD,
   EMPLOYEE_GET,
@@ -54,6 +55,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
+  const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
   const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToAddEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_ADD);
   const isAllowedToUpdateEmployeeContract = hasPermission(
@@ -574,6 +576,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   const handleCancelAddEmployee = () => {
+    if (!isAllowedToDeleteEmployee) {
+      permissionWarningNotification("Menyimpan", "Inventaris Karyawan");
+      return;
+    }
+
     let requiredDraftField = dataEmployee.name || dataEmployee.nip;
 
     if (!requiredDraftField) {
@@ -649,6 +656,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   type={"default"}
                   color={"danger"}
                   className="flex flex-row"
+                  disabled={!isAllowedToDeleteEmployee}
                   onClick={() => {
                     handleCancelAddEmployee();
                   }}
