@@ -3,6 +3,7 @@ import type { UploadProps } from "antd/es/upload/interface";
 import type { RcFile } from "antd/lib/upload";
 import { format } from "date-fns";
 import moment from "moment";
+import { ReactNode } from "react";
 
 moment.locale("id");
 
@@ -267,7 +268,7 @@ export const isValidDate = (dateValue: any) => {
  */
 export const momentFormatDate = (
   dateValue: string,
-  emptyValue: string = "-",
+  emptyValue: string | ReactNode = "-",
   dateFormat: string = "DD MMMM YYYY",
   isRelativeTime?: boolean
 ) => {

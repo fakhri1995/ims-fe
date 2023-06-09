@@ -41,7 +41,10 @@ import ProjectCard from "../../../components/cards/resume/project/ProjectCard";
 import TrainingCard from "../../../components/cards/resume/training/TrainingCard";
 import LayoutDashboard from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import { permissionWarningNotification } from "../../../lib/helper";
+import {
+  momentFormatDate,
+  permissionWarningNotification,
+} from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
@@ -624,7 +627,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 <Text
                   style={{
                     fontFamily: "Helvetica-Bold",
-                    fontWeight: "bold",
+                    fontWeight: 700,
                     fontSize: 10,
                     color: "#808080",
                   }}
@@ -649,7 +652,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             style={{
               fontSize: 26,
               fontFamily: "Inter",
-              fontWeight: "bold",
+              fontWeight: 700,
               color: `#4D4D4D`,
               borderBottomWidth: 1,
               borderColor: `1px solid #4D4D4D`,
@@ -705,8 +708,9 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                   >
                     <Text>{exp.company} ·&nbsp;</Text>
                     <Text style={styles.textYear}>
-                      {moment(exp.start_date).format("MMM YYYY")} -&nbsp;
-                      {moment(exp.end_date).format("MMM YYYY")}
+                      {momentFormatDate(exp.start_date, "-", "MMM YYYY")}{" "}
+                      -&nbsp;
+                      {momentFormatDate(exp.end_date, "present", "MMM YYYY")}
                     </Text>
                   </View>
                   <Html
@@ -1009,7 +1013,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
               style={{
                 fontSize: 6,
                 fontFamily: "Inter",
-                fontWeight: "bold",
+                fontWeight: 700,
                 letterSpacing: 1,
                 marginRight: 5,
               }}
@@ -1037,7 +1041,17 @@ Font.register({
     },
     {
       src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
-      fontWeight: "bold",
+      fontWeight: 700,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
+      fontStyle: "italic",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
+      fontStyle: "italic",
+      fontWeight: 700,
     },
   ],
 });
@@ -1069,7 +1083,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     fontSize: 12,
     fontFamily: "Inter",
-    fontWeight: "bold",
+    fontWeight: 700,
     letterSpacing: 1.5,
     color: `#35763B`,
     paddingBottom: 10,
@@ -1100,7 +1114,7 @@ const styles = StyleSheet.create({
 
   title: {
     fontFamily: "Inter",
-    fontWeight: "bold",
+    fontWeight: 700,
     fontSize: 10,
     color: `#4D4D4D`,
     paddingBottom: 4,
@@ -1118,13 +1132,13 @@ const styles = StyleSheet.create({
     color: `#35763B`,
     fontSize: 10,
     fontFamily: "Inter",
-    fontWeight: "bold",
+    fontWeight: 700,
     width: 40,
   },
 
   textYear: {
     fontFamily: "Inter",
-    fontWeight: "bold",
+    fontWeight: 700,
     color: `#808080`,
     fontSize: 10,
   },

@@ -6,8 +6,10 @@ import dynamic from "next/dynamic";
 import React from "react";
 import { useEffect } from "react";
 import { useState } from "react";
+import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
+import { momentFormatDate } from "../../../../lib/helper";
 import {
   CheckIconSvg,
   EditIconSvg,
@@ -33,6 +35,8 @@ const ExperienceBlock = ({
   modules,
   formats,
 }) => {
+  const calendarRef = useRef(null);
+
   const [isUpdate, setIsUpdate] = useState(false);
 
   useEffect(() => {
@@ -40,8 +44,6 @@ const ExperienceBlock = ({
       setIsUpdate(false);
     }
   }, [isAdd]);
-
-  // console.log(dataUpdateExp)
 
   return (
     <Timeline.Item color="#35763B">
@@ -94,13 +96,15 @@ const ExperienceBlock = ({
           />
 
           <RangePicker
+            allowEmpty
+            ref={calendarRef}
             value={[
               dataUpdateExp.start_date
                 ? moment(dataUpdateExp.start_date)
                 : null,
               dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
             ]}
-            onChange={(value, datestring) => {
+            onCalendarChange={(value, datestring) => {
               let startDate = datestring[0];
               let endDate = datestring[1];
               setDataUpdateExp((prev) => ({
@@ -109,6 +113,23 @@ const ExperienceBlock = ({
                 end_date: endDate,
               }));
             }}
+            renderExtraFooter={() => (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="mb-0 bg-transparent text-primary100 hover:text-primary75 cursor-pointer"
+                  onClick={() => {
+                    setDataUpdateExp((prev) => ({
+                      ...prev,
+                      end_date: null,
+                    }));
+                    calendarRef.current && calendarRef.current.blur();
+                  }}
+                >
+                  Present
+                </button>
+              </div>
+            )}
           />
           <ReactQuill
             theme="snow"
@@ -131,8 +152,8 @@ const ExperienceBlock = ({
             <p className="text-mono50 mb-1">
               {exp.company} ·&nbsp;
               <strong>
-                {moment(exp.start_date).format("MMM YYYY")} -&nbsp;
-                {moment(exp.end_date).format("MMM YYYY")}
+                {momentFormatDate(exp.start_date, "-", "MMM YYYY")} -&nbsp;
+                {momentFormatDate(exp.end_date, <em>present</em>, "MMM YYYY")}
               </strong>
             </p>
             <div className="text-mono50">{parse(exp.description)}</div>
