@@ -11,7 +11,7 @@ import {
 import { SortableContext, arrayMove } from "@dnd-kit/sortable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Form, Input, Modal, Spin, notification } from "antd";
+import { Form, Input, Modal, Spin, Switch, Tooltip, notification } from "antd";
 import React, { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 
@@ -50,6 +50,7 @@ const ModalStatusManage = ({
     name: "",
     color: "",
     after_id: 0,
+    is_active: 0,
   });
   const [loadingStatus, setLoadingStatus] = useState(false);
 
@@ -72,7 +73,7 @@ const ModalStatusManage = ({
       return;
     }
 
-    if (editStatusId && visible) {
+    if (editStatusId && currentState === "edit") {
       setLoadingStatus(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectStatus?id=${editStatusId}`,
@@ -104,7 +105,7 @@ const ModalStatusManage = ({
           setLoadingStatus(false);
         });
     }
-  }, [isAllowedToGetStatus, editStatusId, visible]);
+  }, [isAllowedToGetStatus, editStatusId, currentState]);
 
   // 3. HANDLER
   const clearData = () => {
@@ -260,7 +261,7 @@ const ModalStatusManage = ({
       });
 
       // Update a status after_id when reordered
-      let prevIndex = overIndex - 1; // see status above the reordered status
+      let prevIndex = overIndex - 1; // get status above the reordered status
       // if the reordered status moved to the first order, then set after_id as 0
       let prevId = prevIndex < 0 ? 0 : updatedDataStatusList[prevIndex]?.id;
       let currentStatus = dataStatusList?.find(
@@ -276,13 +277,21 @@ const ModalStatusManage = ({
         id: active.id,
         name: currentStatus?.name,
         color: currentStatus?.color,
+        is_active: currentStatus?.is_active,
         after_id: prevId,
       });
     }
   };
 
   // Sortable component
-  const SortableItem = ({ id, idx, statusColor, statusName, onClickEdit }) => {
+  const SortableItem = ({
+    id,
+    idx,
+    statusColor,
+    statusName,
+    isActive,
+    onClickEdit,
+  }) => {
     const { attributes, listeners, setNodeRef, transform, transition } =
       useSortable({ id });
 
@@ -300,6 +309,14 @@ const ModalStatusManage = ({
               style={{ backgroundColor: `${statusColor}` }}
             ></div>
             <p className="text-sm font-bold text-mono30">{statusName}</p>
+
+            <div
+              className={`text-white rounded-md mig-caption--bold px-2 py-[2px] ${
+                isActive ? "bg-primary100" : "bg-mono50"
+              }`}
+            >
+              {isActive ? "Aktif" : "Nonaktif"}
+            </div>
             {idx === 0 ? (
               <p className="mig-caption text-mono80">(Prioritas Tinggi)</p>
             ) : idx === dataStatusList.length - 1 ? (
@@ -307,7 +324,6 @@ const ModalStatusManage = ({
             ) : (
               <></>
             )}
-            <p></p>
           </div>
           <div className="flex space-x-2 items-center">
             <button
@@ -362,6 +378,7 @@ const ModalStatusManage = ({
                   idx={idx}
                   statusColor={status?.color}
                   statusName={status?.name}
+                  isActive={status?.is_active}
                   onClickEdit={(e) => {
                     setEditStatusId(status?.id);
                     setCurrentState("edit");
@@ -427,28 +444,68 @@ const ModalStatusManage = ({
               }
             />
           </Form.Item>
-          <Form.Item
-            label="Warna"
-            name={"color"}
-            rules={[
-              {
-                required: true,
-                message: "Warna status wajib diisi",
-              },
-            ]}
-          >
-            <Input
+          <div className="grid grid-cols-3 space-x-4">
+            <Form.Item
+              label="Warna"
               name={"color"}
-              type="color"
-              value={dataStatus?.color}
-              onChange={(e) =>
-                setDataStatus((prev) => ({
-                  ...prev,
-                  color: e.target.value,
-                }))
-              }
-            />
-          </Form.Item>
+              rules={[
+                {
+                  required: true,
+                  message: "Warna status wajib diisi",
+                },
+              ]}
+              className="col-span-2"
+            >
+              <Input
+                name={"color"}
+                type="color"
+                value={dataStatus?.color}
+                onChange={(e) =>
+                  setDataStatus((prev) => ({
+                    ...prev,
+                    color: e.target.value,
+                  }))
+                }
+              />
+            </Form.Item>
+            <div className="">
+              <div className="flex items-center space-x-2 mb-3">
+                <p className="">Konfigurasi Status </p>
+                <Tooltip
+                  title={
+                    <div className="flex flex-col space-y-2 items-start p-2 text-mono30">
+                      <div className="flex space-x-2 items-center">
+                        <InfoCircleOutlined color="#4D4D4D" size={16} />
+                        <p className="font-bold">Konfigurasi Status</p>
+                      </div>
+                      <p className="ml-5">
+                        Aktif menandakan proyek atau tugas sedang dalam
+                        pengerjaan dan belum selesai
+                      </p>
+                    </div>
+                  }
+                  color="#FFFFFF"
+                  placement="bottomLeft"
+                >
+                  <div className="cursor-help -mt-2">
+                    <InfoCircleOutlined color="#4D4D4D" size={16} />
+                  </div>
+                </Tooltip>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={dataStatus?.is_active}
+                  onChange={(checked) =>
+                    setDataStatus((prev) => ({
+                      ...prev,
+                      is_active: +checked,
+                    }))
+                  }
+                />
+                {dataStatus?.is_active ? <p>Aktif</p> : <p>Nonaktif</p>}
+              </div>
+            </div>
+          </div>
         </Form>
       );
       footer = (
@@ -532,30 +589,70 @@ const ModalStatusManage = ({
                 />
               </>
             </Form.Item>
-            <Form.Item
-              label="Warna"
-              name={"color"}
-              rules={[
-                {
-                  required: true,
-                  message: "Warna status wajib diisi",
-                },
-              ]}
-            >
-              <>
-                <Input
-                  name={"color"}
-                  type="color"
-                  value={dataStatus?.color}
-                  onChange={(e) =>
-                    setDataStatus((prev) => ({
-                      ...prev,
-                      color: e.target.value,
-                    }))
-                  }
-                />
-              </>
-            </Form.Item>
+            <div className="grid grid-cols-3 space-x-4">
+              <Form.Item
+                label="Warna"
+                name={"color"}
+                rules={[
+                  {
+                    required: true,
+                    message: "Warna status wajib diisi",
+                  },
+                ]}
+                className="col-span-2"
+              >
+                <>
+                  <Input
+                    name={"color"}
+                    type="color"
+                    value={dataStatus?.color}
+                    onChange={(e) =>
+                      setDataStatus((prev) => ({
+                        ...prev,
+                        color: e.target.value,
+                      }))
+                    }
+                  />
+                </>
+              </Form.Item>
+              <div className="">
+                <div className="flex items-center space-x-2 mb-3">
+                  <p className="">Konfigurasi Status </p>
+                  <Tooltip
+                    title={
+                      <div className="flex flex-col space-y-2 items-start p-2 text-mono30">
+                        <div className="flex space-x-2 items-center">
+                          <InfoCircleOutlined color="#4D4D4D" size={16} />
+                          <p className="font-bold">Konfigurasi Status</p>
+                        </div>
+                        <p className="ml-5">
+                          Aktif menandakan proyek atau tugas sedang dalam
+                          pengerjaan dan belum selesai
+                        </p>
+                      </div>
+                    }
+                    color="#FFFFFF"
+                    placement="bottomLeft"
+                  >
+                    <div className="cursor-help -mt-2">
+                      <InfoCircleOutlined color="#4D4D4D" size={16} />
+                    </div>
+                  </Tooltip>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    checked={dataStatus?.is_active}
+                    onChange={(checked) =>
+                      setDataStatus((prev) => ({
+                        ...prev,
+                        is_active: +checked,
+                      }))
+                    }
+                  />
+                  {dataStatus?.is_active ? <p>Aktif</p> : <p>Nonaktif</p>}
+                </div>
+              </div>
+            </div>
           </Form>
         </Spin>
       );
@@ -571,9 +668,12 @@ const ModalStatusManage = ({
             <ButtonSys
               type={"primary"}
               onClick={() => {
+                let currentStatusIdx = dataStatusList?.findIndex(
+                  (status) => status.id === dataStatus?.id
+                );
                 handleUpdateStatus({
                   ...dataStatus,
-                  after_id: dataStatusList[dataStatus?.display_order - 2]?.id,
+                  after_id: dataStatusList[currentStatusIdx - 1]?.id,
                 });
                 setCurrentState("manage");
                 form.resetFields();
