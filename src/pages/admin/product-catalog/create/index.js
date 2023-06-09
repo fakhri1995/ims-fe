@@ -57,6 +57,7 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import {
+  InfoCircleIconSvg,
   LuarPeriodeIconSvg,
   PakaiInternalIconSvg,
   PakaiSewaIconSvg,
@@ -68,7 +69,7 @@ import Layout from "../../../../components/layout-dashboard2";
 import st from "../../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
 
-const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
+const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   /**
    * Dependencies
    */
@@ -80,7 +81,7 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   }
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 2);
-  pathArr[pathArr.length - 1] = "Detail Product";
+  pathArr[pathArr.length - 1] = "Tambah Produk";
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -90,6 +91,7 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     name: withDefault(StringParam, undefined),
     sku: withDefault(StringParam, undefined),
   });
+  const [switchValue, setSwitchValue] = useState(false);
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
     message: "",
@@ -718,6 +720,10 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     setdisplayentiredata(dataDummy);
     setdisplaydata(dataDummy.data.data);
   }, []);
+
+  const changeSwitchValue = () => {
+    setSwitchValue(!switchValue);
+  };
   return (
     <Layout
       st={st}
@@ -736,206 +742,155 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
               <div className="flex items-center">
                 <div className="flex">
                   <h3 className="font-semibold py-2 text-2xl mb-0 mr-6">
-                    Macbook Pro M1
+                    Form Tambah Produk
                   </h3>
-                  <Switch
-                    className={" h-[24px] self-center"}
-                    checkedChildren={"ACTIVE"}
-                    unCheckedChildren={"ARCHIVED"}
-                  />
                 </div>
               </div>
               <div className="flex space-x-2 items-center">
                 <div
                   style={{ marginRight: `8px` }}
-                  className={"bg-open py-2 px-6 rounded-sm flex justify-center"}
+                  className={
+                    "bg-white py-2 px-6 rounded-sm flex justify-center border border-mono80"
+                  }
                   // disabled={!isAllowedToAddNotes}
                   // onClick={() => {
                   //   setmodalnotes(true);
                   // }}
                 >
-                  <p className={"text-white text-xs"}>Ubah</p>
+                  <p className={"text-mono30 text-xs"}>Batal</p>
                 </div>
                 <div
-                  className={
-                    "bg-buttondeleteproduct py-2 px-6 rounded-sm flex justify-center"
-                  }
+                  className={"bg-open py-2 px-6 rounded-sm flex justify-center"}
                   // disabled={!isAllowedToDeleteItem}
                   // onClick={() => {
                   //   setmodaldelete(true);
                   // }}
                 >
-                  <p className={"text-white text-xs"}>Hapus</p>
+                  <p className={"text-white text-xs"}>Tambah</p>
                 </div>
               </div>
             </div>
-            <div className={"mt-12 flex pr-[21px] pl-[35px]"}>
-              <div className={"w-3/12 pr-8 rounded-[5px]"}>
-                <div
-                  className={"bg-white py-6 px-4"}
-                  style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
-                >
-                  <p className={"text-base font-semibold text-mono30"}>
-                    List Produk
-                  </p>
-                  <div className={"mt-4"}>
-                    <Input
-                      style={{ width: `100%` }}
-                      className={"rounded-[5px] px-4 py-2"}
-                      // defaultValue={queryParams.name}
-                      placeholder="Cari Produk di sini.."
-                      // onChange={onChangeSearch}
-                      allowClear
-                      // onKeyPress={onKeyPressHandler}
-                    ></Input>
+            <div
+              className={"bg-white py-6 px-4 mt-12"}
+              style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
+            >
+              <div className={"flex space-x-6"}>
+                <div className={"w-1/2"}>
+                  <div className={"flex"}>
+                    <p className={"mr-2 text-mono30 text-xs"}>ID Produk</p>
+                    <InfoCircleIconSvg color={"#808080"} size={16} />
                   </div>
-                  <div className={"mt-6 flex"}>
-                    <div className={"w-1/2 p-3"}>
-                      <p className={"text-mono30 text-sm font-semibold"}>
-                        Id Produk
-                      </p>
+                  <Input
+                    className={"mt-4 h-[52px]"}
+                    placeholder="Masukkan ID Produk"
+                  />
+                </div>
+                <div className={"w-1/2"}>
+                  <p className={"text-mono30 text-xs"}>Kategori Produk</p>
+                  <Select
+                    size="large"
+                    className={"w-full mt-4"}
+                    showSearch
+                    placeholder="Pilih Kategori"
+                    optionFilterProp="children"
+                    // onChange={onChange}
+                    // onSearch={onSearch}
+                    filterOption={(input, option) =>
+                      (option?.label ?? "")
+                        .toLowerCase()
+                        .includes(input.toLowerCase())
+                    }
+                    options={[
+                      {
+                        value: "PC",
+                        label: "PC",
+                      },
+                      {
+                        value: "Laptop",
+                        label: "Laptop",
+                      },
+                    ]}
+                  />
+                </div>
+              </div>
+              <div className={"mt-6"}>
+                <p className={"text-mono30 text-xs"}>Nama Produk *</p>
+                <Input
+                  className={"mt-4 h-[52px]"}
+                  placeholder="Masukkan Nama Produk"
+                />
+              </div>
+              <div className={"flex mt-6 space-x-6"}>
+                <div className={"w-1/2"}>
+                  <p className={"mr-2 text-mono30 text-xs"}>Deskripsi</p>
+                  <Input
+                    className={"mt-4 h-[52px]"}
+                    placeholder="Masukkan Deskripsi Produk"
+                  />
+                </div>
+                <div className={"w-1/2"}>
+                  <p className={"text-mono30 text-xs"}>Harga</p>
+                  <Input
+                    className={"mt-4 h-[52px]"}
+                    placeholder="Masukkan Kategori Produk"
+                  />
+                </div>
+              </div>
+              <div className={"mt-6 flex"}>
+                <Switch checked={switchValue} onChange={changeSwitchValue} />
+                <p className={"ml-4 text-mono30 text-xs self-center"}>
+                  Hubungkan produk dengan item
+                </p>
+              </div>
+              {switchValue && (
+                <div>
+                  <div className={"flex mt-6 space-x-6"}>
+                    <div className={"w-1/2"}>
+                      <p className={"mr-2 text-mono30 text-xs"}>Jenis Relasi</p>
+                      <Select
+                        size={"large"}
+                        className={"w-full mt-4"}
+                        options={[
+                          {
+                            value: "Aset",
+                            label: "Aset",
+                          },
+                        ]}
+                      />
                     </div>
-                    <div className={"w-1/2 p-3"}>
-                      <p className={"text-mono30 text-sm font-semibold"}>
-                        Nama Produk
-                      </p>
+                    <div className={"w-1/2"}>
+                      <p className={"text-mono30 text-xs"}>Pilih Model</p>
+                      <Select
+                        size="large"
+                        className={"w-full mt-4"}
+                        options={[
+                          {
+                            value: "PC",
+                            label: "PC",
+                          },
+                          {
+                            value: "Laptop",
+                            label: "Laptop",
+                          },
+                        ]}
+                      />
                     </div>
                   </div>
 
-                  {dataListProduct.map((data) => (
+                  <div className={"mt-6 w-1/2 mr-6"}>
                     <div className={"flex"}>
-                      <div className={"w-1/2 p-3"}>
-                        <p className={"text-mono30 text-sm font-regular"}>
-                          {data.id}
-                        </p>
-                      </div>
-                      <div className={"w-1/2 p-3"}>
-                        <p className={"text-mono30 text-sm font-regular"}>
-                          {data.value}
-                        </p>
-                      </div>
+                      <p className={"mr-2 text-mono30 text-xs"}>Jumlah Item</p>
+                      <InfoCircleIconSvg color={"#808080"} size={16} />
                     </div>
-                  ))}
-                </div>
-              </div>
-              <div className={"w-9/12"}>
-                <div
-                  className={"p-6 bg-white rounded-[5px]"}
-                  style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
-                >
-                  <p className={"text-base text-mono30 font-semibold"}>
-                    Detail Produk
-                  </p>
-                  <div className={"flex mt-6"}>
-                    <div className={"w-1/2 flex flex-col"}>
-                      <p className={"text-xs text-mono30 font-semibold"}>
-                        Product ID
-                      </p>
-                      <p className={"mt-2 text-sm text-mono30"}>76253</p>
-                    </div>
-                    <div className={"w-1/2 flex flex-col"}>
-                      <p className={"text-xs text-mono30 font-semibold"}>
-                        Kategori Produk
-                      </p>
-                      <p className={"mt-2 text-sm text-mono30"}>
-                        Desktop / Apple / MacBook
-                      </p>
-                    </div>
-                  </div>
-                  <div className={"flex mt-6"}>
-                    <div className={"w-1/2 flex flex-col"}>
-                      <p className={"text-xs text-mono30 font-semibold"}>
-                        Jenis Produk
-                      </p>
-                      <p className={"mt-2 text-sm text-mono30"}>Jasa</p>
-                    </div>
-                    <div className={"w-1/2 flex flex-col"}>
-                      <p className={"text-xs text-mono30 font-semibold"}>
-                        Harga Produk
-                      </p>
-                      <p className={"mt-2 text-sm text-mono30"}>
-                        Rp. 5.000.000 / bulan
-                      </p>
-                    </div>
-                  </div>
-                  <div className={"mt-6 flex flex-col"}>
-                    <p className={"text-xs text-mono30 font-semibold"}>
-                      Deskripsi
-                    </p>
-                    <p className={"mt-2 text-sm text-mono30"}>
-                      Desktop merupakan jedis hardware yang digunakan untuk
-                      bekerja di kantor
-                    </p>
+                    <Input
+                      className={"mt-4 h-[52px]"}
+                      defaultValue={2}
+                      value={2}
+                      disabled
+                    />
                   </div>
                 </div>
-                <div
-                  className={"px-5 py-4 bg-white rounded-[5px] mt-8"}
-                  style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
-                >
-                  <p className={"text-base text-mono30 font-semibold"}>
-                    List Item
-                  </p>
-                  <div className="flex mt-6">
-                    <div className=" w-11/12 mr-4 grid grid-cols-6">
-                      <div className="col-span-6">
-                        <Input
-                          style={{ width: `100%`, marginRight: `0.5rem` }}
-                          placeholder="MIG ID"
-                          allowClear
-                        ></Input>
-                      </div>
-                    </div>
-                    <div className="w-1/12 flex bg-primary100 justify-center items-center rounded-[5px] px-6 py-2">
-                      <SearchOutlined style={{ color: "#FFFFFF" }} />
-                      <p className={"ml-2 text-white text-xs"}>Cari</p>
-                    </div>
-                  </div>
-                </div>
-                <Table
-                  className="tableTypeTask"
-                  pagination={{
-                    simple: true,
-                    current: queryParams.page,
-                    pageSize: queryParams.rows,
-                    total: displayentiredata.data.total,
-                  }}
-                  scroll={{ x: 200 }}
-                  dataSource={displaydata}
-                  columns={columnsTable}
-                  // loading={praloading}
-                  onRow={(record, rowIndex) => {
-                    return {
-                      onMouseOver: (event) => {
-                        setrowstate(record.id);
-                      },
-                      onClick: (event) => {
-                        rt.push(`/admin/product-catalog/detail/${record.id}`);
-                      },
-                    };
-                  }}
-                  rowClassName={(record, idx) => {
-                    return record.id === rowstate ? `cursor-pointer` : ``;
-                  }}
-                  onChange={(pagination, _, sorter) => {
-                    const sortTypePayload =
-                      sorter.order === "ascend"
-                        ? "asc"
-                        : sorter.order === "descend"
-                        ? "desc"
-                        : undefined;
-
-                    setQueryParams({
-                      sort_type: sortTypePayload,
-                      sort_by:
-                        sortTypePayload === undefined
-                          ? undefined
-                          : sorter.field,
-                      page: pagination.current,
-                      rows: pagination.pageSize,
-                    });
-                  }}
-                ></Table>
-              </div>
+              )}
             </div>
           </Sticky>
         </div>
@@ -1194,7 +1149,6 @@ const _activityLogMapFn = (logs, maindata) => {
 
 export async function getServerSideProps({ req, res, params }) {
   var initProps = {};
-  const itemid = params.productCatalogId;
   if (!req.headers.cookie) {
     return {
       redirect: {
@@ -1235,9 +1189,8 @@ export async function getServerSideProps({ req, res, params }) {
       initProps,
       dataProfile,
       sidemenu: "3",
-      itemid,
     },
   };
 }
 
-export default ProductCatalogDetail;
+export default ProductCreate;

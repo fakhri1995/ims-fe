@@ -3515,7 +3515,7 @@ function Talents({}) {
               <p
                 style={{ lineHeight: "150%" }}
                 className={
-                  "text-blackmig text-xl lg:text-base font-gilroyregular text-center"
+                  "text-blackmig text-xl font-gilroyregular text-center"
                 }
               >
                 {t.section2talentsubtitle2}:
