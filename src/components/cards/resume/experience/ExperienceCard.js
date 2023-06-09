@@ -13,6 +13,7 @@ import moment from "moment";
 import dynamic from "next/dynamic";
 import React from "react";
 import { useState } from "react";
+import { useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -45,6 +46,8 @@ const ExperienceCard = ({
   isAllowedToUpdateCandidate,
   isAllowedToDeleteSection,
 }) => {
+  const calendarRef = useRef(null);
+
   const [isAdd, setIsAdd] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
 
@@ -88,7 +91,7 @@ const ExperienceCard = ({
     "link",
   ];
 
-  // console.log(dataUpdateExp)
+  // console.log({ dataUpdateExp });
   return (
     <div className="shadow-lg rounded-md bg-white p-5">
       <h4 className="mig-heading--4">Experience</h4>
@@ -160,13 +163,15 @@ const ExperienceCard = ({
           />
 
           <RangePicker
+            allowEmpty
+            ref={calendarRef}
             value={[
               dataUpdateExp.start_date
                 ? moment(dataUpdateExp.start_date)
                 : null,
               dataUpdateExp.end_date ? moment(dataUpdateExp.end_date) : null,
             ]}
-            onChange={(value, datestring) => {
+            onCalendarChange={(value, datestring) => {
               let startDate = datestring[0];
               let endDate = datestring[1];
               setDataUpdateExp((prev) => ({
@@ -175,6 +180,23 @@ const ExperienceCard = ({
                 end_date: endDate,
               }));
             }}
+            renderExtraFooter={() => (
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  className="mb-0 bg-transparent text-primary100 hover:text-primary75 cursor-pointer"
+                  onClick={() => {
+                    setDataUpdateExp((prev) => ({
+                      ...prev,
+                      end_date: null,
+                    }));
+                    calendarRef.current && calendarRef.current.blur();
+                  }}
+                >
+                  Present
+                </button>
+              </div>
+            )}
           />
           <ReactQuill
             placeholder="Job description..."
