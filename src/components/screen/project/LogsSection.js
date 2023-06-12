@@ -16,8 +16,7 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "../../../lib/helper";
-import ButtonSys from "../../button";
-import ModalProjectNote from "../../modal/projects/modalProjectNote";
+import ModalProjectLog from "../../modal/projects/modalProjectLog";
 
 const LogsSection = ({
   initProps,
@@ -38,10 +37,13 @@ const LogsSection = ({
   const isAllowedToGetLogs = hasPermission(PROJECT_LOGS_GET);
 
   // 2. useState
-
   const [dataRawProjectLogs, setDataRawProjectLogs] = useState({});
   const [dataProjectLogs, setDataProjectLogs] = useState([]);
   const [loadingProjectLog, setLoadingProjectLog] = useState(false);
+  const [dataCurrentLog, setDataCurrentLog] = useState({});
+  const [modalDetailLog, setModalDetailLog] = useState(false);
+
+  // pagination & filter
   const [searchingFilterLogs, setSearchingFilterLogs] = useState("");
   const [pageProjectLogs, setPageProjectLogs] = useState(1);
 
@@ -150,6 +152,14 @@ const LogsSection = ({
               onChange={(pagination) => {
                 setPageProjectLogs(pagination.current);
               }}
+              onRow={(record, rowIndex) => {
+                return {
+                  onClick: () => {
+                    setDataCurrentLog(record);
+                    setModalDetailLog(true);
+                  },
+                };
+              }}
               columns={[
                 {
                   title: "Logs",
@@ -157,7 +167,10 @@ const LogsSection = ({
                   key: "id",
                   render: (_, log) => {
                     return (
-                      <div key={log?.id} className="">
+                      <div
+                        key={log?.id}
+                        className="grid grid-cols-1 cursor-pointer"
+                      >
                         <div className="flex justify-between items-center mb-2">
                           <div className="flex items-center space-x-2">
                             <img
@@ -182,7 +195,11 @@ const LogsSection = ({
                             )}
                           </p>
                         </div>
-                        <p>{log?.description ?? "-"}</p>
+                        <p>
+                          {log?.description?.length > 140
+                            ? log?.description?.slice(0, 140) + "..."
+                            : log?.description}
+                        </p>
                       </div>
                     );
                   },
@@ -192,6 +209,15 @@ const LogsSection = ({
           </div>
         </Collapse.Panel>
       </Collapse>
+
+      {/* Modal Notes */}
+      <AccessControl hasPermission={PROJECT_LOGS_GET}>
+        <ModalProjectLog
+          visible={modalDetailLog}
+          onvisible={setModalDetailLog}
+          dataLog={dataCurrentLog}
+        />
+      </AccessControl>
     </section>
   );
 };
