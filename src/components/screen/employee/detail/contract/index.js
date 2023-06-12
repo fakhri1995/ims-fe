@@ -10,6 +10,7 @@ import {
   Upload,
   notification,
 } from "antd";
+import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
 import { useState } from "react";
@@ -237,180 +238,201 @@ const EmployeeContractDetail = ({
               </div>
             }
           >
-            <div className="grid grid-cols-1 md:grid-cols-2">
-              <h5 className="mig-heading--5 md:col-span-2 mb-2">
-                INFORMASI UMUM
-              </h5>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Posisi</p>
-                <p>{dataContract.role?.name || "-"}</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Status Kontrak
-                </p>
-                <p>{dataContract.contract_status?.name || "-"}</p>
-              </div>
-              <div className="space-y-1 md:col-span-2 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Dokumen Kontrak
-                </p>
-                {dataContract.contract_file?.link ? (
-                  <div className="flex space-x-2 items-center">
-                    <FileTextIconSvg size={48} color={"black"} />
-                    <a
-                      href={generateStaticAssetUrl(
-                        dataContract.contract_file?.link
-                      )}
-                      target="_blank"
-                      className="text-secondary100"
-                    >
-                      {getFileName(dataContract.contract_file?.link)}
-                    </a>
+            <div>
+              {/* INFORMASI UMUM */}
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+                <h5 className="mig-heading--5 md:col-span-2">INFORMASI UMUM</h5>
+                <div className="space-y-1">
+                  <p className="mig-caption--medium text-mono80">Posisi</p>
+                  <p>{dataContract.role?.name || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="mig-caption--medium text-mono80">
+                    Status Kontrak
+                  </p>
+                  <p>{dataContract.contract_status?.name || "-"}</p>
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Dokumen Kontrak
+                  </p>
+                  {dataContract.contract_file?.link ? (
+                    <div className="flex space-x-2 items-center">
+                      <FileTextIconSvg size={48} color={"black"} />
+                      <a
+                        href={generateStaticAssetUrl(
+                          dataContract.contract_file?.link
+                        )}
+                        target="_blank"
+                        className="text-secondary100"
+                      >
+                        {getFileName(dataContract.contract_file?.link)}
+                      </a>
+                    </div>
+                  ) : (
+                    "-"
+                  )}
+                </div>
+                <div className="space-y-1 md:col-span-2">
+                  <p className="mig-caption--medium text-mono80">
+                    Referensi PKWT
+                  </p>
+                  <p>{dataContract.pkwt_reference || "-"}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="mig-caption--medium text-mono80">
+                    Awal Kontrak
+                  </p>
+                  <p>{momentFormatDate(dataContract.contract_start_at, "-")}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="mig-caption--medium text-mono80">
+                    Akhir Kontrak
+                  </p>
+                  <p>{momentFormatDate(dataContract.contract_end_at, "-")}</p>
+                </div>
+                <div className="space-y-1">
+                  <p className="mig-caption--medium text-mono80">Penempatan</p>
+                  <p>{dataContract.placement || "-"}</p>
+                </div>
+                {dataContract.new_office && (
+                  <div className="space-y-1">
+                    <p className="mig-caption--medium text-mono80">
+                      Kantor Baru
+                    </p>
+                    <p>{dataContract.new_office}</p>
                   </div>
-                ) : (
-                  "-"
                 )}
-              </div>
-              <div className="space-y-1 md:col-span-2 mb-2">
-                <p className="mig-caption--medium text-mono80">
-                  Referensi PKWT
-                </p>
-                <p>{dataContract.pkwt_reference || "-"}</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Awal Kontrak</p>
-                <p>{momentFormatDate(dataContract.contract_start_at, "-")}</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Akhir Kontrak</p>
-                <p>{momentFormatDate(dataContract.contract_end_at, "-")}</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Penempatan</p>
-                <p>{dataContract.placement || "-"}</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Kantor Baru</p>
-                <p>{dataContract.new_office || "-"}</p>
-              </div>
-              <div className="space-y-1 mb-2">
-                <p className="mig-caption--medium text-mono80">Cuti Tahunan</p>
-                <p>{dataContract.annual_leave || "-"} hari</p>
-              </div>
-              <div className="space-y-1 mb-3">
-                <p className="mig-caption--medium text-mono80">
-                  Tanggal Resign
-                </p>
-                <p>{momentFormatDate(dataContract.resign_at, "-")}</p>
-              </div>
-              {/* TODO: change benefit data */}
-              <div className="mb-3">
-                <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
-                <div className="space-y-2">
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      Gaji Pokok
-                    </p>
-                    <p>
-                      Rp
-                      {Number(dataContract?.gaji_pokok).toLocaleString("id-ID")}
-                    </p>
-                  </div>
-                  {dataContract?.salaries
-                    ?.filter((variable) => variable?.column?.type === 1)
-                    ?.map((variable) => (
-                      <div
-                        key={variable?.id}
-                        className="space-y-1 md:col-span-2"
-                      >
-                        <p className="mig-caption--medium text-mono80">
-                          {variable?.column?.name}
-                        </p>
-                        <p>
-                          {" "}
-                          Rp{Number(variable?.value).toLocaleString("id-ID")}
-                        </p>
-                      </div>
-                    ))}
+                <div className="space-y-1">
+                  <p className="mig-caption--medium text-mono80">
+                    Cuti Tahunan
+                  </p>
+                  <p>{dataContract.annual_leave || "-"} hari</p>
                 </div>
-              </div>
-              <div className="mb-3">
-                <p className="mig-heading--5 mb-2">BENEFIT PENGURANGAN</p>
-                <div className="space-y-2">
-                  <div className="space-y-1 md:col-span-2">
+                {moment(dataContract.resign_at).isValid() && (
+                  <div className="space-y-1">
                     <p className="mig-caption--medium text-mono80">
-                      BPJS KS (5% Perusahaan)
+                      Tanggal Resign
                     </p>
-                    <p>
-                      Rp{Number(dataContract?.bpjs_ks).toLocaleString("id-ID")}
-                    </p>
+                    <p>{momentFormatDate(dataContract.resign_at, "-")}</p>
                   </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      BPKS TK-JHT (5,7% Perusahaan)
-                    </p>
-                    <p>
-                      Rp
-                      {Number(dataContract?.bpjs_tk_jht).toLocaleString(
-                        "id-ID"
-                      )}
-                    </p>
+                )}
+              </section>
+
+              {/* BENEFIT */}
+              <section className="grid grid-cols-1 md:grid-cols-2">
+                <div className="mb-3">
+                  <p className="mig-heading--5 mb-2">BENEFIT PENERIMAAN</p>
+                  <div className="space-y-2">
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">
+                        Gaji Pokok
+                      </p>
+                      <p>
+                        Rp
+                        {Number(dataContract?.gaji_pokok).toLocaleString(
+                          "id-ID"
+                        )}
+                      </p>
+                    </div>
+                    {dataContract?.salaries
+                      ?.filter((variable) => variable?.column?.type === 1)
+                      ?.map((variable) => (
+                        <div
+                          key={variable?.id}
+                          className="space-y-1 md:col-span-2"
+                        >
+                          <p className="mig-caption--medium text-mono80">
+                            {variable?.column?.name}
+                          </p>
+                          <p>
+                            {" "}
+                            Rp{Number(variable?.value).toLocaleString("id-ID")}
+                          </p>
+                        </div>
+                      ))}
                   </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      BPKS TK-JKK (0,24% Perusahaan)
-                    </p>
-                    <p>
-                      Rp
-                      {Number(dataContract?.bpjs_tk_jkk).toLocaleString(
-                        "id-ID"
-                      )}
-                    </p>
-                  </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      BPKS TK-JKM (0,3% Perusahaan)
-                    </p>
-                    <p>
-                      Rp
-                      {Number(dataContract?.bpjs_tk_jkm).toLocaleString(
-                        "id-ID"
-                      )}
-                    </p>
-                  </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="mig-caption--medium text-mono80">
-                      BPKS TK-JP (3% Perusahaan)
-                    </p>
-                    <p>
-                      Rp
-                      {Number(dataContract?.bpjs_tk_jp).toLocaleString("id-ID")}
-                    </p>
-                  </div>
-                  <div className="space-y-1 md:col-span-2">
-                    <p className="mig-caption--medium text-mono80">PPh 21</p>
-                    <p>
-                      Rp{Number(dataContract?.pph21).toLocaleString("id-ID")}
-                    </p>
-                  </div>
-                  {dataContract?.salaries
-                    ?.filter((variable) => variable?.column?.type === 2)
-                    ?.map((variable) => (
-                      <div
-                        key={variable?.id}
-                        className="space-y-1 md:col-span-2"
-                      >
-                        <p className="mig-caption--medium text-mono80">
-                          {variable?.column?.name}
-                        </p>
-                        <p>
-                          Rp{Number(variable?.value).toLocaleString("id-ID")}
-                        </p>
-                      </div>
-                    ))}
                 </div>
-              </div>
+                <div className="mb-3">
+                  <p className="mig-heading--5 mb-2">BENEFIT PENGURANGAN</p>
+                  <div className="space-y-2">
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">
+                        BPJS KS (5% Perusahaan)
+                      </p>
+                      <p>
+                        Rp
+                        {Number(dataContract?.bpjs_ks).toLocaleString("id-ID")}
+                      </p>
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">
+                        BPKS TK-JHT (5,7% Perusahaan)
+                      </p>
+                      <p>
+                        Rp
+                        {Number(dataContract?.bpjs_tk_jht).toLocaleString(
+                          "id-ID"
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">
+                        BPKS TK-JKK (0,24% Perusahaan)
+                      </p>
+                      <p>
+                        Rp
+                        {Number(dataContract?.bpjs_tk_jkk).toLocaleString(
+                          "id-ID"
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">
+                        BPKS TK-JKM (0,3% Perusahaan)
+                      </p>
+                      <p>
+                        Rp
+                        {Number(dataContract?.bpjs_tk_jkm).toLocaleString(
+                          "id-ID"
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">
+                        BPKS TK-JP (3% Perusahaan)
+                      </p>
+                      <p>
+                        Rp
+                        {Number(dataContract?.bpjs_tk_jp).toLocaleString(
+                          "id-ID"
+                        )}
+                      </p>
+                    </div>
+                    <div className="space-y-1 md:col-span-2">
+                      <p className="mig-caption--medium text-mono80">PPh 21</p>
+                      <p>
+                        Rp{Number(dataContract?.pph21).toLocaleString("id-ID")}
+                      </p>
+                    </div>
+                    {dataContract?.salaries
+                      ?.filter((variable) => variable?.column?.type === 2)
+                      ?.map((variable) => (
+                        <div
+                          key={variable?.id}
+                          className="space-y-1 md:col-span-2"
+                        >
+                          <p className="mig-caption--medium text-mono80">
+                            {variable?.column?.name}
+                          </p>
+                          <p>
+                            Rp{Number(variable?.value).toLocaleString("id-ID")}
+                          </p>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </section>
             </div>
           </Collapse.Panel>
         ))}
