@@ -57,6 +57,9 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import {
+  AlertCircleIconSvg,
+  AlertIconSvg,
+  DeleteTablerIconSvg,
   LuarPeriodeIconSvg,
   PakaiInternalIconSvg,
   PakaiSewaIconSvg,
@@ -713,6 +716,7 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     },
   ];
   const [rowstate, setrowstate] = useState(0);
+  const [showModalDelete, setShowModalDelete] = useState(false);
 
   useEffect(() => {
     setdisplayentiredata(dataDummy);
@@ -745,10 +749,59 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                   />
                 </div>
               </div>
+              <Modal
+                title=""
+                open={showModalDelete}
+                width={680}
+                footer={null}
+                onCancel={() => setShowModalDelete(false)}
+              >
+                <div className={"p-6"}>
+                  <div className={"flex justify-between"}>
+                    <p className={"text-2xl text-mono30 font-semibold"}>
+                      Peringatan!
+                    </p>
+                    <AlertCircleIconSvg />
+                  </div>
+                  <div className={"mt-6"}>
+                    <p className={"text-sm text-mono30"}>
+                      Apakah Anda yakin ingin menghapus produk{" "}
+                      <span className={"font-semibold"}>
+                        MacBook Pro 2022 M1
+                      </span>
+                      ? Sebanyak 2 produk sedang dalam status{" "}
+                      <span className={"font-semibold"}>Active</span>
+                    </p>
+                  </div>
+                  <div className={"mt-14 flex justify-between"}>
+                    <div
+                      className={
+                        "border border-primary100 py-2 px-6 cursor-pointer rounded-[5px]"
+                      }
+                    >
+                      <p className={"text-xs text-mono30"}>Batalkan</p>
+                    </div>
+                    <div
+                      className={
+                        "bg-state1 py-2 px-6 cursor-pointer rounded-[5px]"
+                      }
+                    >
+                      <div className={"flex"}>
+                        <DeleteTablerIconSvg />
+                        <p className={"ml-2 text-white text-xs self-center"}>
+                          Ya, saya yakin dan hapus produk
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Modal>
               <div className="flex space-x-2 items-center">
                 <div
                   style={{ marginRight: `8px` }}
-                  className={"bg-open py-2 px-6 rounded-sm flex justify-center"}
+                  className={
+                    "bg-open py-2 px-6 rounded-sm flex justify-center cursor-pointer"
+                  }
                   // disabled={!isAllowedToAddNotes}
                   // onClick={() => {
                   //   setmodalnotes(true);
@@ -757,8 +810,9 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                   <p className={"text-white text-xs"}>Ubah</p>
                 </div>
                 <div
+                  onClick={() => setShowModalDelete(true)}
                   className={
-                    "bg-buttondeleteproduct py-2 px-6 rounded-sm flex justify-center"
+                    "bg-buttondeleteproduct py-2 px-6 rounded-sm flex justify-center cursor-pointer"
                   }
                   // disabled={!isAllowedToDeleteItem}
                   // onClick={() => {

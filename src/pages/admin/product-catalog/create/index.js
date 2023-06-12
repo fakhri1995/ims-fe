@@ -750,7 +750,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                 <div
                   style={{ marginRight: `8px` }}
                   className={
-                    "bg-white py-2 px-6 rounded-sm flex justify-center border border-mono80"
+                    "bg-white py-2 px-6 rounded-sm flex justify-center border border-mono80 cursor-pointer"
                   }
                   // disabled={!isAllowedToAddNotes}
                   // onClick={() => {
@@ -760,7 +760,9 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                   <p className={"text-mono30 text-xs"}>Batal</p>
                 </div>
                 <div
-                  className={"bg-open py-2 px-6 rounded-sm flex justify-center"}
+                  className={
+                    "bg-open py-2 px-6 rounded-sm flex justify-center cursor-pointer"
+                  }
                   // disabled={!isAllowedToDeleteItem}
                   // onClick={() => {
                   //   setmodaldelete(true);
