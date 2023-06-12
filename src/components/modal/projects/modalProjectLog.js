@@ -27,7 +27,7 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
       // add new value to table list
       if (dataLogNew) {
         Object.entries(dataLogNew)?.forEach((newData, idx) => {
-          dataTable[idx].newValue = newData[1];
+          dataTable[idx].newValue = newData[1]?.toString();
         });
       } else {
         dataTable.forEach((logData, idx) => {
@@ -38,7 +38,7 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
       // add old value to table list
       if (dataLogOld) {
         Object.entries(dataLogOld)?.forEach((oldData, idx) => {
-          dataTable[idx].oldValue = oldData[1];
+          dataTable[idx].oldValue = oldData[1]?.toString();
         });
       } else {
         dataTable.forEach((logData, idx) => {
@@ -48,7 +48,7 @@ const ModalProjectLog = ({ visible, onvisible, dataLog }) => {
     }
 
     dataTable?.forEach((data, idx) => {
-      if (data.newValue?.toString() == data.oldValue?.toString()) {
+      if (data.newValue == data.oldValue) {
         dataTable.splice(idx, 1);
       }
     });
