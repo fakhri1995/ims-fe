@@ -109,7 +109,6 @@ const EmployeeContractEditIndex = ({
       dataContract.role_id &&
         dataContract.contract_status_id &&
         dataContract.contract_file &&
-        dataContract.pkwt_reference &&
         dataContract.contract_start_at &&
         dataContract.contract_end_at &&
         dataContract.placement &&

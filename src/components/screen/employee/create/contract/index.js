@@ -607,12 +607,6 @@ const EmployeeContractForm = ({
       <Form.Item
         label="Referensi PKWT"
         name={"pkwt_reference"}
-        rules={[
-          {
-            required: true,
-            message: "Referensi PKWT wajib diisi",
-          },
-        ]}
         className="col-span-2"
       >
         <div>

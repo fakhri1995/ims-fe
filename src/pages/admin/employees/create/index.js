@@ -247,7 +247,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     const requiredProfileAndContractFields = [
       { data: dataEmployee.name, name: "Nama Karyawan" },
-      { data: dataEmployee.nip, name: "NIP Karyawan" },
       { data: dataEmployee.nik, name: "NIK Karyawan" },
       { data: dataEmployee.alias, name: "Alias Karyawan" },
       { data: dataEmployee.email_office, name: "Email Kantor" },
@@ -260,7 +259,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       { data: dataContract.role_id, name: "Posisi Kontrak" },
       { data: dataContract.contract_status_id, name: "Status Kontrak" },
       { data: dataContract.contract_file, name: "Dokumen Kontrak" },
-      { data: dataContract.pkwt_reference, name: "Referensi PKWT" },
       { data: dataContract.contract_start_at, name: "Awal Kontrak" },
       { data: dataContract.contract_end_at, name: "Akhir Kontrak" },
       { data: dataContract.placement, name: "Penempatan Kontrak" },

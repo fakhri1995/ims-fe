@@ -224,10 +224,6 @@ const EmployeeProfileForm = ({
         name={"nip"}
         rules={[
           {
-            required: true,
-            message: "NIP karyawan wajib diisi",
-          },
-          {
             pattern: /[0-9]+/,
             message: "NIP hanya boleh diisi dengan angka",
           },

@@ -138,7 +138,6 @@ const EmployeeProfileEditIndex = ({
   useEffect(() => {
     let requiredProfileField = Boolean(
       dataEmployee.name &&
-        dataEmployee.nip &&
         dataEmployee.nik &&
         dataEmployee.alias &&
         dataEmployee.email_office &&
