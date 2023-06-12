@@ -343,35 +343,15 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
       {/* Product */}
-      {hasPermission(SIDEBAR_ASSET) && (
+      {/* {hasPermission(SIDEBAR_ASSET) && (
         <SubMenu title="Katalog" key="12" icon={<KatalogIconSvg />}>
           {hasPermission(SIDEBAR_ASSET_TYPE) && (
             <Menu.Item key="81">
               <Link href="/admin/product-catalog">Product</Link>
             </Menu.Item>
           )}
-          {/* {hasPermission(SIDEBAR_ASSET_MODEL) && (
-            <Menu.Item key="82">
-              <Link href="/admin/models">Models</Link>
-            </Menu.Item>
-          )}
-          {hasPermission(SIDEBAR_ASSET_VENDOR) && (
-            <Menu.Item key="83">
-              <Link href="/admin/vendors">Vendors</Link>
-            </Menu.Item>
-          )}
-          {hasPermission(SIDEBAR_ASSET_MANUFACTURER) && (
-            <Menu.Item key="84">
-              <Link href="/admin/manufacturers">Manufacturers</Link>
-            </Menu.Item>
-          )}
-          {hasPermission(SIDEBAR_ASSET_RELATIONSHIP_TYPE) && (
-            <Menu.Item key="85">
-              <Link href="/admin/relationships">Relationship Type</Link>
-            </Menu.Item>
-          )} */}
         </SubMenu>
-      )}
+      )} */}
       {/* CMS: Career. Messages */}
       {hasPermission(SIDEBAR_CMS) && (
         <SubMenu
