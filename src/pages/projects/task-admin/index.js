@@ -745,6 +745,7 @@ const TaskAdminIndex = ({ dataProfile, sidemenu, initProps }) => {
                         }}
                         className="datepickerStatus"
                         open={dateFilter}
+                        onOpenChange={setDateFilter}
                         onChange={(dates, datestrings) => {
                           setDateFilter((prev) => !prev);
                           handleGetTaskDeadlineCount(
