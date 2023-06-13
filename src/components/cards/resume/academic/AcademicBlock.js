@@ -114,12 +114,12 @@ const AcademicBlock = ({
       ) : (
         <div className="flex justify-between">
           <div className="flex flex-col">
-            <p className="text-primary100 font-bold mb-1">{edu.university}</p>
+            <p className="text-primary100 font-bold mb-1">{edu?.university}</p>
             <p className="text-mono50 mb-1">
-              {edu.major} ·&nbsp;
-              <strong>{edu.graduation_year?.slice(0, 4)}</strong>
+              {edu?.major} ·&nbsp;
+              <strong>{edu?.graduation_year?.slice(0, 4)}</strong>
             </p>
-            <p className="text-mono50">GPA {edu.gpa}</p>
+            {edu?.gpa && <p className="text-mono50">GPA {edu?.gpa}</p>}
           </div>
           {!isAdd && (
             <div className="flex flex-row space-x-2 items-start">
@@ -130,7 +130,7 @@ const AcademicBlock = ({
                     setDataUpdateEdu(edu);
                   }}
                   className="bg-transparent"
-                  value={edu.id}
+                  value={edu?.id}
                 >
                   <EditIconSvg size={18} color="#4D4D4D" />
                 </button>
