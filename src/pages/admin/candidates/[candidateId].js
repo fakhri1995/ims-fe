@@ -786,7 +786,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                           : "-"}
                       </Text>
                     </View>
-                    <Text style={styles.desc}>GPA {edu.gpa}</Text>
+                    {edu?.gpa && <Text style={styles.desc}>GPA {edu.gpa}</Text>}
                   </View>
                 </View>
               ))}
