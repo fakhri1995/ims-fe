@@ -256,22 +256,23 @@ const EmployeeContractDetail = ({
                   <p className="mig-caption--medium text-mono80">
                     Dokumen Kontrak
                   </p>
-                  {dataContract.contract_file?.link ? (
-                    <div className="flex space-x-2 items-center">
-                      <FileTextIconSvg size={48} color={"black"} />
-                      <a
-                        href={generateStaticAssetUrl(
-                          dataContract.contract_file?.link
-                        )}
-                        target="_blank"
-                        className="text-secondary100"
-                      >
-                        {getFileName(dataContract.contract_file?.link)}
-                      </a>
-                    </div>
-                  ) : (
-                    "-"
-                  )}
+                  {dataContract?.contract_files?.length
+                    ? dataContract.contract_files?.map((file) => (
+                        <div
+                          key={file?.id}
+                          className="flex space-x-2 items-center"
+                        >
+                          <FileTextIconSvg size={48} color={"black"} />
+                          <a
+                            href={generateStaticAssetUrl(file?.link)}
+                            target="_blank"
+                            className="text-secondary100"
+                          >
+                            {getFileName(file?.link)}
+                          </a>
+                        </div>
+                      ))
+                    : "-"}
                 </div>
                 <div className="space-y-1 md:col-span-2">
                   <p className="mig-caption--medium text-mono80">

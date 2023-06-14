@@ -187,15 +187,15 @@ const KatalogIconSvg = () => {
   const katalogIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-tag"
+      className="icon icon-tabler icon-tabler-tag"
       width="20"
       height="20"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#808080"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <circle cx="8.5" cy="8.5" r="1" fill="currentColor" />
@@ -208,15 +208,15 @@ const PakaiInternalIconSvg = ({ size }) => {
   const pakaiinternalIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-building"
+      className="icon icon-tabler icon-tabler-building"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#00589F"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M3 21l18 0" />
@@ -236,15 +236,15 @@ const PakaiSewaIconSvg = ({ size }) => {
   const pakaisewaIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-user-check"
+      className="icon icon-tabler icon-tabler-user-check"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#00589F"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" />
@@ -258,15 +258,15 @@ const TersediaIconSvg = ({ size }) => {
   const tersediaIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-check"
+      className="icon icon-tabler icon-tabler-check"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#00589F"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M5 12l5 5l10 -10" />
@@ -676,15 +676,15 @@ const ReplacementIconSvg = ({ size, color }) => {
   const replacementIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-refresh"
+      className="icon icon-tabler icon-tabler-refresh"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#00589F"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M20 11a8.1 8.1 0 0 0 -15.5 -2m-.5 -4v4h4" />
@@ -698,15 +698,15 @@ const PeriodeIconSvg = ({ size, color }) => {
   const periodeIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-clock"
+      className="icon icon-tabler icon-tabler-clock"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#35763B"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
@@ -720,15 +720,15 @@ const LuarPeriodeIconSvg = ({ size, color }) => {
   const luarperiodeIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-clock-exclamation"
+      className="icon icon-tabler icon-tabler-clock-exclamation"
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#DDB44A"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M20.986 12.502a9 9 0 1 0 -5.973 7.98" />
@@ -743,15 +743,15 @@ const EditTablerIconSvg = ({ size, color }) => {
   const edittablerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-edit"
+      className="icon icon-tabler icon-tabler-edit"
       width="16"
       height="16"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#FFFFFF"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M7 7h-1a2 2 0 0 0 -2 2v9a2 2 0 0 0 2 2h9a2 2 0 0 0 2 -2v-1" />
@@ -765,15 +765,15 @@ const DeleteTablerIconSvg = ({ size, color }) => {
   const deletetablerIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-trash"
+      className="icon icon-tabler icon-tabler-trash"
       width="16"
       height="16"
       viewBox="0 0 24 24"
-      stroke-width="1.5"
+      strokeWidth="1.5"
       stroke="#FFFFFF"
       fill="none"
-      stroke-linecap="round"
-      stroke-linejoin="round"
+      strokeLinecap="round"
+      strokeLinejoin="round"
     >
       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
       <path d="M4 7l16 0" />
@@ -2578,6 +2578,27 @@ const EditSquareIconSvg = ({ size, color }) => {
   return <Icon component={editSquareIconSvg}></Icon>;
 };
 
+const PaperclipIconSvg = ({ size, color }) => {
+  const paperclipIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-paperclip"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" />
+    </svg>
+  );
+  return <Icon component={paperclipIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -2685,4 +2706,5 @@ export {
   LuarPeriodeIconSvg,
   EditTablerIconSvg,
   DeleteTablerIconSvg,
+  PaperclipIconSvg,
 };

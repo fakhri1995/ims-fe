@@ -39,7 +39,6 @@ const EmployeeContractEditIndex = ({
     return null;
   }
 
-  const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
   );
@@ -60,13 +59,12 @@ const EmployeeContractEditIndex = ({
 
   // 1. STATE
   // 1.1. display
-  const [praloading, setpraloading] = useState(true);
   const [dataContract, setDataContract] = useState({
     id: null,
     employee_id: null,
     is_employee_active: 0,
     contract_name: "",
-    contract_file: null,
+    contract_files: [],
     contract_status_id: null,
     role_id: null,
     employee_status: false,
@@ -86,14 +84,13 @@ const EmployeeContractEditIndex = ({
         column: [],
       },
     ],
+    removed_file_ids: [],
   });
 
   // 1.2 Update
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
   // 1.3. Delete
-  const [modalDelete, setModalDelete] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
   const [disablePublish, setDisablePublish] = useState(true);
 
   // 2. USE EFFECT
@@ -108,7 +105,7 @@ const EmployeeContractEditIndex = ({
     let requiredContractField = Boolean(
       dataContract.role_id &&
         dataContract.contract_status_id &&
-        dataContract.contract_file &&
+        dataContract.contract_files &&
         dataContract.contract_start_at &&
         dataContract.contract_end_at &&
         dataContract.placement &&
@@ -124,24 +121,49 @@ const EmployeeContractEditIndex = ({
     }
   }, [dataContract, prevpath]);
 
+  // 2.2. Cleanup effect
+  useEffect(() => {
+    return () => {
+      setDataContract({});
+    };
+  }, []);
+
   // 3. Event
   // 3.1. Save Employee Contract
-  const handleSaveContract = () => {
+  const handleSaveContract = (contractData) => {
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
       return;
     }
 
-    // Setup form data to be sent in API
-    let payloadFormData;
+    /** Setup form data to be sent in API */
+    let payload = contractData;
 
-    if (dataContract?.salaries?.length > 0) {
-      // Mapping salaries list to required format in API updateEmployeeContract form-data
-      let benefitObjectList = dataContract?.salaries?.map((benefit, idx) => {
+    // Mapping file list to required format in API updateEmployeeContract form-data
+    if (contractData?.contract_files?.length) {
+      let fileObjectList = contractData?.contract_files?.map(
+        (file, idx) => file?.originFileObj
+      );
+
+      fileObjectList?.forEach((file, idx) => {
+        payload[`contract_files[${idx}]`] = file;
+      });
+    }
+
+    // Mapping removed file list to required format
+    if (contractData?.removed_file_ids?.length) {
+      contractData?.removed_file_ids?.forEach((removedFileId, idx) => {
+        payload[`contract_file_delete_ids[${idx}]`] = removedFileId;
+      });
+    }
+
+    // Mapping salaries list to required format
+    if (contractData?.salaries?.length > 0) {
+      let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
         let obj = {};
         obj[`salaries[${idx}][employee_salary_column_id]`] =
-          benefit.employee_salary_column_id;
-        obj[`salaries[${idx}][value]`] = benefit.value;
+          benefit?.employee_salary_column_id;
+        obj[`salaries[${idx}][value]`] = benefit?.value;
         obj[`salaries[${idx}][is_amount_for_bpjs]`] =
           benefit?.is_amount_for_bpjs;
         return obj;
@@ -152,16 +174,14 @@ const EmployeeContractEditIndex = ({
         Object.assign(allBenefitObject, benefitObject);
       }
 
-      const payload = {
-        ...dataContract,
+      payload = {
+        ...payload,
         ...allBenefitObject,
       };
-
-      // convert object to form data
-      payloadFormData = objectToFormData(payload);
-    } else {
-      payloadFormData = objectToFormData(dataContract);
     }
+
+    // convert object to form data
+    const payloadFormData = objectToFormData(payload);
 
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
@@ -174,7 +194,6 @@ const EmployeeContractEditIndex = ({
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
-          rt.push(`/admin/employees/${employeeId}?tab=2`);
           setTimeout(() => {
             if (prevpath === "inactivate") {
               notification.success({
@@ -206,6 +225,8 @@ const EmployeeContractEditIndex = ({
       });
   };
 
+  // console.log({ dataContract });
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -231,7 +252,10 @@ const EmployeeContractEditIndex = ({
             </ButtonSys>
             <ButtonSys
               type={"primary"}
-              onClick={handleSaveContract}
+              onClick={() => {
+                handleSaveContract(dataContract);
+                rt.push(`/admin/employees/${employeeId}?tab=2`);
+              }}
               disabled={!isAllowedToUpdateEmployeeContract || disablePublish}
             >
               <div className="flex flex-row space-x-2">

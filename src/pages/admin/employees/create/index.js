@@ -56,21 +56,13 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToGetEmployee = hasPermission(EMPLOYEE_GET);
   const isAllowedToUpdateEmployee = hasPermission(EMPLOYEE_UPDATE);
   const isAllowedToDeleteEmployee = hasPermission(EMPLOYEE_DELETE);
-  const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToAddEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_ADD);
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
   );
-  const isAllowedToGetEmployeeInventories = hasPermission(
-    EMPLOYEE_INVENTORIES_GET
-  );
-  const isAllowedToAddEmployeeInventory = hasPermission(EMPLOYEE_INVENTORY_ADD);
   const isAllowedToUpdateEmployeeInventory = hasPermission(
     EMPLOYEE_INVENTORY_UPDATE
   );
-
-  const isAllowedToGetEmployeeDevices = hasPermission(EMPLOYEE_DEVICES_GET);
-  const isAllowedToAddEmployeeDevice = hasPermission(EMPLOYEE_DEVICE_ADD);
 
   // INIT
   const rt = useRouter();
@@ -126,6 +118,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     contract: {},
     contracts: [],
     inventories: [],
+    join_at: "",
   });
 
   const [dataContract, setDataContract] = useState({
@@ -133,7 +126,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     employee_id: employeeId,
     is_employee_active: 0,
     contract_name: "",
-    contract_file: null,
+    contract_files: [],
     contract_status_id: null,
     role_id: null,
     pkwt_reference: "",
@@ -258,7 +251,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
       { data: dataContract.role_id, name: "Posisi Kontrak" },
       { data: dataContract.contract_status_id, name: "Status Kontrak" },
-      { data: dataContract.contract_file, name: "Dokumen Kontrak" },
+      { data: dataContract.contract_files, name: "Dokumen Kontrak" },
       { data: dataContract.contract_start_at, name: "Awal Kontrak" },
       { data: dataContract.contract_end_at, name: "Akhir Kontrak" },
       { data: dataContract.placement, name: "Penempatan Kontrak" },
@@ -267,7 +260,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     ];
 
     const requiredInventoriesFields = [];
-    inventoryList.forEach((inventory, idx) => {
+    inventoryList?.forEach((inventory, idx) => {
       // array to be included in required fields
       let inventoryField = [
         { data: inventory.id_number, name: `ID Inventaris ${idx + 1}` },
@@ -423,11 +416,30 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
+    // Setup data to be sent in API
     if (contractData) {
-      // Setup form data to be sent in API
-      let payloadFormData;
+      let payload = contractData;
+
+      // Mapping file list to required format in API updateEmployeeContract form-data
+      if (contractData?.contract_files?.length) {
+        let fileObjectList = contractData?.contract_files?.map(
+          (file, idx) => file?.originFileObj
+        );
+
+        fileObjectList?.forEach((file, idx) => {
+          payload[`contract_files[${idx}]`] = file;
+        });
+      }
+
+      // Mapping removed file list to required format
+      if (contractData?.removed_file_ids?.length) {
+        contractData?.removed_file_ids?.forEach((removedFileId, idx) => {
+          payload[`contract_file_delete_ids[${idx}]`] = removedFileId;
+        });
+      }
+
+      // Mapping salaries list to required format
       if (contractData?.salaries?.length > 0) {
-        // Mapping salaries list to required format in API updateEmployeeContract form-data
         let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
           let obj = {};
           obj[`salaries[${idx}][employee_salary_column_id]`] =
@@ -443,16 +455,14 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           Object.assign(allBenefitObject, benefitObject);
         }
 
-        const payload = {
-          ...contractData,
+        payload = {
+          ...payload,
           ...allBenefitObject,
         };
-
-        // convert object to form data
-        payloadFormData = objectToFormData(payload);
-      } else {
-        payloadFormData = objectToFormData(contractData);
       }
+
+      // convert object to form data
+      const payloadFormData = objectToFormData(payload);
 
       setLoadingUpdate(true);
       fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
@@ -464,10 +474,12 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((response) => response.json())
         .then((response2) => {
-          // setRefresh((prev) => prev + 1);
           if (response2.success) {
             setShowSuccessIcon(true);
-            setTimeout(() => setShowSuccessIcon(false), 1000);
+            setTimeout(() => {
+              setShowSuccessIcon(false);
+              // setRefreshContract((prev) => prev + 1);
+            }, 1000);
           } else {
             notification.error({
               message: `Gagal menyimpan draft karyawan. ${response2.message}`,
@@ -782,6 +794,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 debouncedApiCall={debouncedSaveContract}
                 employeeId={employeeId}
                 contractId={dataEmployee?.contract?.id}
+                currentTab={currentTab}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
