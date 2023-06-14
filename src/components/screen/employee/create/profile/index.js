@@ -158,14 +158,6 @@ const EmployeeProfileForm = ({
       ...prev,
       id_card_photo: null,
     }));
-
-    // use for auto save in "Tambah Karyawan"
-    // if (debouncedApiCall) {
-    //   debouncedApiCall({
-    //     ...dataEmployee,
-    //     id_card_photo: null,
-    //   });
-    // }
   }, []);
 
   // console.log({ dataEmployee });
@@ -238,6 +230,37 @@ const EmployeeProfileForm = ({
             placeholder="Masukkan NIP"
           />
         </div>
+      </Form.Item>
+      <Form.Item
+        label="Tanggal Bergabung MIG"
+        name={"join_at"}
+        className="col-span-2"
+      >
+        <>
+          <DatePicker
+            name="join_at"
+            placeholder="Pilih tanggal bergabung"
+            className="w-full"
+            value={
+              moment(dataEmployee.join_at ?? "").isValid()
+                ? moment(dataEmployee.join_at)
+                : null
+            }
+            onChange={(value, datestring) => {
+              setDataEmployee((prev) => ({
+                ...prev,
+                join_at: datestring,
+              }));
+
+              if (debouncedApiCall) {
+                debouncedApiCall({
+                  ...dataEmployee,
+                  join_at: datestring,
+                });
+              }
+            }}
+          />
+        </>
       </Form.Item>
       <Form.Item
         label="NIK"

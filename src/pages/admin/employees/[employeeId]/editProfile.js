@@ -86,6 +86,7 @@ const EmployeeProfileEditIndex = ({
     is_posted: 0,
     contracts: [],
     inventories: [],
+    join_at: "",
   });
 
   const [refresh, setRefresh] = useState(-1);

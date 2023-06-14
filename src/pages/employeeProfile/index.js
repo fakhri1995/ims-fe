@@ -87,6 +87,7 @@ const EmployeeViewProfileIndex = ({ initProps, dataProfile, employeeId }) => {
     contracts: [],
     inventories: [],
     id_card_photo: {},
+    join_at: "",
   });
 
   const [refresh, setRefresh] = useState(-1);

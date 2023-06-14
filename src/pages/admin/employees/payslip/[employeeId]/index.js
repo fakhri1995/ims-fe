@@ -105,6 +105,7 @@ const EmployeePayslipDetailIndex = ({
     nip: "",
     phone_number: "",
     email_office: "",
+    join_at: "",
     is_posted: 0,
     contracts: [],
     inventories: [],
