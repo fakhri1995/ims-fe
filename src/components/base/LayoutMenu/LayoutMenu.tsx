@@ -199,7 +199,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Proyek: Proyek & Tugas, Admin Tugas */}
-      {hasPermission(SIDEBAR_PROJECT) && (
+      {/* {hasPermission(SIDEBAR_PROJECT) && (
         <SubMenu
           title="Proyek"
           key="project"
@@ -216,7 +216,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )}
+      )} */}
 
       {/* Attendance: Form Aktivitas, Admin Attendance, My Attendance */}
       {hasPermission(SIDEBAR_ATTENDANCE) && (
@@ -343,7 +343,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
         </SubMenu>
       )}
       {/* Product */}
-      {hasPermission(SIDEBAR_ASSET) && (
+      {/* {hasPermission(SIDEBAR_ASSET) && (
         <SubMenu title="Katalog" key="12" icon={<KatalogIconSvg />}>
           {hasPermission(SIDEBAR_ASSET_TYPE) && (
             <Menu.Item key="81">
@@ -351,7 +351,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )}
+      )} */}
       {/* CMS: Career. Messages */}
       {hasPermission(SIDEBAR_CMS) && (
         <SubMenu
