@@ -26,6 +26,7 @@ import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
+import { MAX_FILE_UPLOAD_COUNT } from "lib/constants";
 import {
   COMPANY_CLIENTS_GET,
   COMPANY_CLIENT_ADD,
@@ -39,11 +40,14 @@ import {
   RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
 
+import RemoveIcon from "assets/vectors/icon-remove.svg";
+
 import {
   beforeUploadFileMaxSize,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
+import { PaperclipIconSvg, XIconSvg } from "../../../../icon";
 import {
   ModalAddCompany,
   ModalAddRole,
@@ -59,6 +63,7 @@ const EmployeeContractForm = ({
   prevpath,
   contractId,
   employeeId,
+  currentTab,
 }) => {
   /**
    * Dependencies
@@ -109,6 +114,7 @@ const EmployeeContractForm = ({
 
   const [fileList, setFileList] = useState([]);
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
+  const [removedFileIds, setRemovedFileIds] = useState([]);
 
   // Modal salary variable
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
@@ -274,8 +280,7 @@ const EmployeeContractForm = ({
       return;
     }
 
-    // if (currentTab == "2") {
-    if (contractId) {
+    if (contractId || currentTab == "2") {
       setPraLoading(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${contractId}`,
@@ -297,6 +302,8 @@ const EmployeeContractForm = ({
               gaji_pokok: resData.gaji_pokok ?? 0,
               salaries: resData.salaries || null,
             };
+
+            // Set contract active status based on previous path
             if (prevpath === "add") {
               setDataContract({
                 ...requiredData,
@@ -310,7 +317,20 @@ const EmployeeContractForm = ({
             } else {
               setDataContract(requiredData);
             }
-            // insert default selected BPJS multiplier to state
+
+            // clear removed file list
+            setRemovedFileIds([]);
+
+            // Display contract file when available
+            if (resData?.contract_files?.length) {
+              const fileNames = resData?.contract_files?.map((file) => ({
+                id: file?.id,
+                name: file?.link?.split("/")[2],
+              }));
+              setFileList(fileNames);
+            }
+
+            // Insert default selected BPJS multiplier to state
             const defaultSelectedMultipliers = resData?.salaries?.filter(
               (variable) => variable?.is_amount_for_bpjs
             );
@@ -333,17 +353,7 @@ const EmployeeContractForm = ({
         });
     }
     // }
-  }, [isAllowedToGetEmployeeContract, contractId, refresh]);
-
-  // 3.5. Display contract file when available
-  useEffect(() => {
-    if (dataContract?.contract_file?.link) {
-      const currentFileName = dataContract?.contract_file?.link?.split("/")[2];
-      setFileList([{ name: currentFileName }]);
-    } else {
-      setFileList([]);
-    }
-  }, [dataContract?.contract_file]);
+  }, [isAllowedToGetEmployeeContract, contractId, refresh, currentTab]);
 
   // 4. HANDLER
   // 4.1. Handle input change and auto save in "Tambah Karyawan"
@@ -392,15 +402,15 @@ const EmployeeContractForm = ({
   };
 
   // 4.2. Handle upload file
-  const beforeUploadDocument = useCallback((uploadedFile) => {
+  const beforeUploadDocument = useCallback((file, fileList) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
-      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+      checkMaxFileSizeFilter(file, fileList) === Upload.LIST_IGNORE;
     const allowedFileTypes = "application/pdf";
 
-    if (uploadedFile.type !== allowedFileTypes) {
+    if (file.type !== allowedFileTypes) {
       notification.error({
-        message: "File harus memilki format .pdf",
+        message: "File harus memiliki format .pdf",
       });
       return Upload.LIST_IGNORE;
     }
@@ -409,44 +419,32 @@ const EmployeeContractForm = ({
       return Upload.LIST_IGNORE;
     }
 
-    setDataContract((prev) => ({
-      ...prev,
-      contract_file: uploadedFile,
-    }));
-
-    // use for auto save in "Tambah Karyawan"
-    // if (debouncedApiCall) {
-    //   debouncedApiCall({
-    //     ...dataContract,
-    //     contract_file: uploadedFile,
-    //   });
-    // }
+    return file;
   }, []);
 
-  const onUploadChange = useCallback(({ file }) => {
-    setUploadDocumentLoading(file.status === "uploading");
+  const onUploadChange = useCallback(
+    ({ file: currentFile, fileList: currentFileList }) => {
+      setUploadDocumentLoading(currentFile?.status === "uploading");
 
-    if (file.status !== "removed") {
-      setFileList([file]);
-    }
-  }, []);
+      setFileList(currentFileList);
+      setDataContract((prev) => ({
+        ...prev,
+        contract_files: currentFileList,
+      }));
 
-  const onUploadRemove = useCallback(() => {
-    setFileList([]);
-    setDataContract((prev) => ({
-      ...prev,
-      contract_file: null,
-    }));
+      if (currentFile?.status === "removed") {
+        setRemovedFileIds((prev) => [...prev, currentFile?.id || 0]);
+        setDataContract((prev) => ({
+          ...prev,
+          removed_file_ids: [...removedFileIds, currentFile?.id || 0],
+        }));
+      }
+    },
+    []
+  );
 
-    // use for auto save in "Tambah Karyawan"
-    // if (debouncedApiCall) {
-    //   debouncedApiCall({
-    //     ...dataContract,
-    //     contract_file: null,
-    //   });
-    // }
-  }, []);
-
+  // console.log({ fileList });
+  // console.log({ dataContract });
   return (
     <Form
       layout="vertical"
@@ -584,19 +582,20 @@ const EmployeeContractForm = ({
           <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
           <Upload
             accept=".pdf"
-            listType="text"
-            maxCount={1}
+            listType="picture"
+            maxCount={MAX_FILE_UPLOAD_COUNT}
             beforeUpload={beforeUploadDocument}
             onChange={onUploadChange}
-            onRemove={onUploadRemove}
             disabled={uploadDocumentLoading}
             fileList={fileList}
+            iconRender={() => <PaperclipIconSvg />}
           >
             <Button
               className="btn-sm btn font-semibold px-6 border
               text-primary100 hover:bg-primary75 border-primary100 
               hover:border-primary75 hover:text-white bg-white space-x-2
               focus:border-primary75 focus:text-primary100"
+              disabled={uploadDocumentLoading || fileList?.length == 5}
             >
               <UploadOutlined />
               <p>Unggah File</p>
@@ -607,12 +606,6 @@ const EmployeeContractForm = ({
       <Form.Item
         label="Referensi PKWT"
         name={"pkwt_reference"}
-        rules={[
-          {
-            required: true,
-            message: "Referensi PKWT wajib diisi",
-          },
-        ]}
         className="col-span-2"
       >
         <div>

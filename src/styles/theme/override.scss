@@ -350,6 +350,10 @@ ol {
   color: #35763b;
 }
 
+.ant-upload-list-picture .ant-upload-list-item-thumbnail {
+  height: initial;
+}
+
 /**
  * NOTE: this is a little bit tricky. We can not customize ant's Modal.confirm footer programmatically.
  *

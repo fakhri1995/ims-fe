@@ -46,7 +46,6 @@ const EmployeeContractAddIndex = ({
     return null;
   }
 
-  const isAllowedToGetEmployeeContract = hasPermission(EMPLOYEE_CONTRACT_GET);
   const isAllowedToGetEmployeeContracts = hasPermission(EMPLOYEE_CONTRACTS_GET);
   const isAllowedToUpdateEmployeeContract = hasPermission(
     EMPLOYEE_CONTRACT_UPDATE
@@ -76,7 +75,7 @@ const EmployeeContractAddIndex = ({
     employee_id: null,
     is_employee_active: 1,
     contract_name: "",
-    contract_file: null,
+    contract_files: [],
     contract_status_id: null,
     role_id: null,
     employee_status: false,
@@ -96,6 +95,7 @@ const EmployeeContractAddIndex = ({
         column: [],
       },
     ],
+    removed_file_ids: [],
   });
 
   const [refresh, setRefresh] = useState(-1);
@@ -110,49 +110,7 @@ const EmployeeContractAddIndex = ({
   const [loadingDelete, setLoadingDelete] = useState(false);
 
   // 2. USE EFFECT
-  // 2.1 Get employee contract detail
-  useEffect(() => {
-    if (!isAllowedToGetEmployeeContract) {
-      permissionWarningNotification("Mendapatkan", "Detail Kontrak Karyawan");
-      setpraloading(false);
-      return;
-    }
-    if (contractId) {
-      setpraloading(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${contractId}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            setDataContract({
-              ...response2.data,
-              is_employee_active: 1,
-            });
-          } else {
-            notification.error({
-              message: `${response2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => setpraloading(false));
-    }
-  }, [isAllowedToGetEmployeeContract, contractId, refresh]);
-
-  // 2.2. Get employee contracts (use for getting previous active contract name)
+  // 2.1. Get employee contracts (use for getting previous active contract name)
   useEffect(() => {
     if (!isAllowedToGetEmployeeContracts) {
       permissionWarningNotification("Mendapatkan", "Daftar Kontrak Karyawan");
@@ -191,15 +149,14 @@ const EmployeeContractAddIndex = ({
         })
         .finally(() => setpraloading(false));
     }
-  }, [isAllowedToGetEmployeeContracts, employeeId, refresh]);
+  }, [isAllowedToGetEmployeeContracts, employeeId]);
 
-  // 2.3. Disable "Simpan" button if any required field is empty
+  // 2.2. Disable "Simpan" button if any required field is empty
   useEffect(() => {
     let requiredContractField = Boolean(
       dataContract.role_id &&
         dataContract.contract_status_id &&
-        dataContract.contract_file &&
-        dataContract.pkwt_reference &&
+        dataContract.contract_files &&
         dataContract.contract_start_at &&
         dataContract.contract_end_at &&
         dataContract.placement &&
@@ -214,23 +171,49 @@ const EmployeeContractAddIndex = ({
     }
   }, [dataContract]);
 
+  // 2.3. Cleanup effect
+  useEffect(() => {
+    return () => {
+      setDataContract({});
+    };
+  }, []);
+
   // 3. Event
   // Save Employee Contract
-  const handleSaveContract = () => {
+  const handleSaveContract = (contractData) => {
     if (!isAllowedToUpdateEmployeeContract) {
       permissionWarningNotification("Menyimpan", "Kontrak Karyawan");
       return;
     }
 
-    // Setup form data to be sent in API
-    let payloadFormData;
-    if (dataContract?.salaries?.length > 0) {
-      // Mapping salaries list to required format in API updateEmployeeContract form-data
-      let benefitObjectList = dataContract?.salaries?.map((benefit, idx) => {
+    /** Setup form data to be sent in API */
+    let payload = contractData;
+
+    // Mapping file list to required format in API updateEmployeeContract form-data
+    if (contractData?.contract_files?.length) {
+      let fileObjectList = contractData?.contract_files?.map(
+        (file, idx) => file?.originFileObj
+      );
+
+      fileObjectList?.forEach((file, idx) => {
+        payload[`contract_files[${idx}]`] = file;
+      });
+    }
+
+    // Mapping removed file list to required format
+    if (contractData?.removed_file_ids?.length) {
+      contractData?.removed_file_ids?.forEach((removedFileId, idx) => {
+        payload[`contract_file_delete_ids[${idx}]`] = removedFileId;
+      });
+    }
+
+    // Mapping salaries list to required format
+    if (contractData?.salaries?.length > 0) {
+      let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
         let obj = {};
         obj[`salaries[${idx}][employee_salary_column_id]`] =
-          benefit.employee_salary_column_id;
-        obj[`salaries[${idx}][value]`] = benefit.value;
+          benefit?.employee_salary_column_id;
+        obj[`salaries[${idx}][value]`] = benefit?.value;
         obj[`salaries[${idx}][is_amount_for_bpjs]`] =
           benefit?.is_amount_for_bpjs;
         return obj;
@@ -241,16 +224,14 @@ const EmployeeContractAddIndex = ({
         Object.assign(allBenefitObject, benefitObject);
       }
 
-      const payload = {
-        ...dataContract,
+      payload = {
+        ...payload,
         ...allBenefitObject,
       };
-
-      // convert object to form data
-      payloadFormData = objectToFormData(payload);
-    } else {
-      payloadFormData = objectToFormData(dataContract);
     }
+
+    // convert object to form data
+    const payloadFormData = objectToFormData(payload);
 
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
@@ -263,12 +244,10 @@ const EmployeeContractAddIndex = ({
       .then((response) => response.json())
       .then((response2) => {
         if (response2.success) {
-          setModalUpdate(false);
           notification.success({
             message: `Kontrak karyawan berhasil ditambahkan.`,
             duration: 3,
           });
-          rt.push(`/admin/employees/${employeeId}?tab=2`);
         } else {
           notification.error({
             message: `Gagal menyimpan kontrak karyawan. ${response2.message}`,
@@ -311,10 +290,6 @@ const EmployeeContractAddIndex = ({
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          // notification.success({
-          //   message: res2.message,
-          //   duration: 3,
-          // });
           rt.back();
         } else {
           notification.error({
@@ -376,7 +351,7 @@ const EmployeeContractAddIndex = ({
           dataContract={dataContract}
           setDataContract={setDataContract}
           employeeId={employeeId}
-          contractId={dataContract?.id}
+          contractId={contractId}
           prevpath={"add"}
         />
       </div>
@@ -387,7 +362,11 @@ const EmployeeContractAddIndex = ({
           title={`Konfirmasi Penambahan Kontrak`}
           visible={modalUpdate}
           onvisible={setModalUpdate}
-          onOk={handleSaveContract}
+          onOk={() => {
+            handleSaveContract(dataContract);
+            setModalUpdate(false);
+            rt.push(`/admin/employees/${employeeId}?tab=2`);
+          }}
           onCancel={() => {
             setModalUpdate(false);
           }}

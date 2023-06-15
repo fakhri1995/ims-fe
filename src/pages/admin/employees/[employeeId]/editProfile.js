@@ -86,6 +86,7 @@ const EmployeeProfileEditIndex = ({
     is_posted: 0,
     contracts: [],
     inventories: [],
+    join_at: "",
   });
 
   const [refresh, setRefresh] = useState(-1);
@@ -138,7 +139,6 @@ const EmployeeProfileEditIndex = ({
   useEffect(() => {
     let requiredProfileField = Boolean(
       dataEmployee.name &&
-        dataEmployee.nip &&
         dataEmployee.nik &&
         dataEmployee.alias &&
         dataEmployee.email_office &&

@@ -735,7 +735,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
             placeholder="Semua Status"
             style={{ width: `100%` }}
             onChange={(value) => {
-              const stringStatusIds = value.toString();
+              const stringStatusIds = value?.toString();
               setQueryParams({ status_ids: stringStatusIds });
               setSelectedStatus(stringStatusIds);
             }}
