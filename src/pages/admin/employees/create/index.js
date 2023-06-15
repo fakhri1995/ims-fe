@@ -256,7 +256,10 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       { data: dataContract.contract_end_at, name: "Akhir Kontrak" },
       { data: dataContract.placement, name: "Penempatan Kontrak" },
       { data: dataContract.gaji_pokok, name: "Gaji Pokok" },
-      { data: dataContract.pph21, name: "PPh 21" },
+      {
+        data: Number(dataContract.pph21 !== null ? dataContract.pph21 : true),
+        name: "PPh 21",
+      },
     ];
 
     const requiredInventoriesFields = [];

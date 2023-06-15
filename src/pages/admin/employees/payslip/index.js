@@ -48,10 +48,8 @@ import {
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import {
-  ModalManageSalaryVar,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
+import { ModalUbah } from "../../../../components/modal/modalCustom";
+import ModalSalaryVarManage from "../../../../components/modal/payslips/modalSalaryVarManage";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
 import {
   createKeyPressHandler,
@@ -890,7 +888,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
       {/* Modal Kelola Variabel Gaji */}
       <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
-        <ModalManageSalaryVar
+        <ModalSalaryVarManage
           initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
