@@ -1370,12 +1370,11 @@ const ProjectDetailIndex = ({
                             title={task?.name}
                             taskId={task?.ticket_number}
                             projectName={currentProject?.name}
-                            toDate={task.end_date}
-                            statusName={task?.status?.name}
-                            statusColor={task?.status?.color}
-                            taskStaffs={task.task_staffs}
+                            toDate={task?.end_date}
+                            status={task?.status}
+                            taskStaffs={task?.task_staffs}
                             onClick={() => {
-                              setCurrentTaskId(task.id);
+                              setCurrentTaskId(task?.id);
                               setModalDetailTask(true);
                             }}
                           />

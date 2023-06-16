@@ -10,14 +10,13 @@ const TaskCard = ({
   taskId,
   projectName,
   toDate,
-  statusName,
-  statusColor,
+  status,
   taskStaffs,
   onClick,
 }) => {
   const currentDate = new Date();
   const deadline = new Date(toDate ?? "0000-00-00 00:00:00");
-  const isPastDeadline = currentDate > deadline;
+  const isPastDeadline = Boolean(currentDate > deadline && status?.is_active);
 
   return (
     <div
@@ -52,11 +51,11 @@ const TaskCard = ({
           <p
             className={`rounded-md p-1 text-center`}
             style={{
-              backgroundColor: statusColor ? statusColor + "20" : "#E6E6E6",
-              color: statusColor ?? "#808080",
+              backgroundColor: status?.color ? status?.color + "20" : "#E6E6E6",
+              color: status?.color ?? "#808080",
             }}
           >
-            {statusName ?? "-"}
+            {status?.name ?? "-"}
           </p>
         </div>
         <div className="col-span-2 flex flex-col justify-between">

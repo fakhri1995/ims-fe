@@ -1157,8 +1157,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           taskId={task?.ticket_number}
                           projectName={currentProject?.name}
                           toDate={task?.end_date}
-                          statusName={task?.status?.name}
-                          statusColor={task?.status?.color}
+                          status={task?.status}
                           taskStaffs={task.task_staffs}
                           onClick={() => {
                             setCurrentTaskId(task.id);
