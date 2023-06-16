@@ -135,14 +135,6 @@ const EmployeeProfileForm = ({
       ...prev,
       id_card_photo: uploadedFile,
     }));
-
-    // use for auto save in "Tambah Karyawan"
-    // if (debouncedApiCall) {
-    //   debouncedApiCall({
-    //     ...dataEmployee,
-    //     id_card_photo: uploadedFile,
-    //   });
-    // }
   }, []);
 
   const onUploadChange = useCallback(({ file }) => {

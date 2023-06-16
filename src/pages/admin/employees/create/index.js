@@ -256,7 +256,10 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       { data: dataContract.contract_end_at, name: "Akhir Kontrak" },
       { data: dataContract.placement, name: "Penempatan Kontrak" },
       { data: dataContract.gaji_pokok, name: "Gaji Pokok" },
-      { data: dataContract.pph21, name: "PPh 21" },
+      {
+        data: Number(dataContract.pph21 !== null ? dataContract.pph21 : true),
+        name: "PPh 21",
+      },
     ];
 
     const requiredInventoriesFields = [];
@@ -634,7 +637,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
-  // console.log({ dataContract });
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -771,7 +773,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             activeKey={currentTab}
             onTabClick={(key) => setCurrentTab(key)}
             onChange={(key) => {
-              // add employee contract if it has no contract yet
+              // add employee contract if there's no contract yet
               handleAutoSaveOnTabChange();
               key == "2" &&
                 dataEmployee.contracts?.length === 0 &&

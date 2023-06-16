@@ -6,6 +6,7 @@ import convertTerbilang from "terbilang-ts";
 import { useAccessControl } from "contexts/access-control";
 
 import { momentFormatDate } from "../../../lib/helper";
+import { defaultSalaryVar } from "../../modal/payslips/modalSalaryVarAdd";
 import DrawerCore from "../drawerCore";
 
 const DrawerPayslipDetail = ({
@@ -35,6 +36,7 @@ const DrawerPayslipDetail = ({
     total_gross_penerimaan: 0,
     total_gross_pengurangan: 0,
     total_hari_kerja: 0,
+    show_all_benefits: false,
   });
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [detailReceive, setDetailReceive] = useState([]);
@@ -65,58 +67,42 @@ const DrawerPayslipDetail = ({
           if (response2.success) {
             const payslipDetail = response2.data;
 
-            // Seperate receive and reduction benefit
-            const receiveBenefits = payslipDetail?.salaries
+            const defaultReductionBenefits = defaultSalaryVar
+              ?.filter((v) => payslipDetail[v.attrName] !== null)
+              ?.map((v) => ({
+                key: v.attrName,
+                column: { name: v.title },
+                value: payslipDetail[v.attrName],
+              }));
+
+            // Add value to receivement benefit
+            const receiveBenefits = [
+              {
+                key: "Gaji Pokok",
+                column: { name: "Gaji Pokok" },
+                value: payslipDetail?.gaji_pokok,
+              },
+            ];
+
+            if (payslipDetail?.show_all_benefit) {
+              receiveBenefits = receiveBenefits.concat(
+                defaultReductionBenefits
+              );
+            }
+            const additionalReceiveBenefits = payslipDetail?.salaries
               ?.filter((benefit) => benefit?.column?.type === 1)
               ?.map((v) => ({ ...v, key: v.column?.name }));
-            const reductionBenefits = payslipDetail?.salaries
+
+            receiveBenefits = receiveBenefits.concat(additionalReceiveBenefits);
+
+            // Add value to reduction benefit
+            const additionalReductionBenefits = payslipDetail?.salaries
               ?.filter((benefit) => benefit?.column?.type === 2)
               ?.map((v) => ({ ...v, key: v.column?.name }));
 
-            // Merge "Gaji Pokok" to receive benefit
-            receiveBenefits.unshift({
-              key: "Gaji Pokok",
-              column: { name: "Gaji Pokok" },
-              value: payslipDetail?.gaji_pokok,
-            });
-
-            // Merge "PPh 21" to reduction benefit
-            reductionBenefits.unshift({
-              key: "PPh 21",
-              column: { name: "PPh 21" },
-              value: payslipDetail?.pph21,
-            });
-
-            // Merge bpjs to reduction benefit
-            const bpjs_list = [
-              {
-                name: "BPJS TK-JP",
-                value: payslipDetail?.bpjs_tk_jp,
-              },
-              {
-                name: "BPJS TK-JKM",
-                value: payslipDetail?.bpjs_tk_jkm,
-              },
-              {
-                name: "BPJS TK-JKK",
-                value: payslipDetail?.bpjs_tk_jkk,
-              },
-              {
-                name: "BPJS TK-JHT",
-                value: payslipDetail?.bpjs_tk_jht,
-              },
-              {
-                name: "BPJS KS",
-                value: payslipDetail?.bpjs_ks,
-              },
-            ];
-            for (let v of bpjs_list) {
-              reductionBenefits.unshift({
-                key: v.name,
-                column: { name: v.name },
-                value: v.value,
-              });
-            }
+            const reductionBenefits = defaultReductionBenefits.concat(
+              additionalReductionBenefits
+            );
 
             setDetailPayslip(payslipDetail);
             setDetailReceive(receiveBenefits);

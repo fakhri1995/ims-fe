@@ -11,6 +11,7 @@ const CustomCurrencyInput = ({
   value,
   dataColumn,
   payslipId,
+  setVarFields,
 }) => {
   // Auto update benefit variable if value change automatically in a disabled field (currently only used in BPJS field)
   useEffect(() => {
@@ -61,6 +62,15 @@ const CustomCurrencyInput = ({
           ...prev,
           salaries: temp,
         }));
+
+        // Use for auto update receivVarFields/reductionVarFields in payslip form
+        if (setVarFields) {
+          setVarFields(
+            dataForm?.salaries?.filter(
+              (variable) => variable.column?.type == dataColumn?.type
+            )
+          );
+        }
       }}
       renderText={(value) => <p>{value}</p>}
     />

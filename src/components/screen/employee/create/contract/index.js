@@ -48,11 +48,10 @@ import {
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
 import { PaperclipIconSvg, XIconSvg } from "../../../../icon";
-import {
-  ModalAddCompany,
-  ModalAddRole,
-  ModalAddSalaryVar,
-} from "../../../../modal/modalCustom";
+import { ModalAddCompany, ModalAddRole } from "../../../../modal/modalCustom";
+import ModalSalaryVarAdd, {
+  defaultSalaryVar,
+} from "../../../../modal/payslips/modalSalaryVarAdd";
 import CustomCurrencyInput from "../../CustomCurrencyInput";
 
 const EmployeeContractForm = ({
@@ -142,8 +141,8 @@ const EmployeeContractForm = ({
   const countBPJSValue = (percent) => {
     // Get penerimaan field value which selected as multiplier
     const selectedMultiplierValues = dataContract.salaries
-      .filter((benefit) => benefit.is_amount_for_bpjs === 1)
-      .map((b) => b.value);
+      ?.filter((benefit) => benefit.is_amount_for_bpjs === 1)
+      ?.map((b) => b.value);
 
     // Sum with gaji pokok, then calculate final result
     const totalMultiplier =
@@ -401,7 +400,7 @@ const EmployeeContractForm = ({
     }
   };
 
-  // 4.2. Handle upload file
+  // 4.2. Handle before upload file
   const beforeUploadDocument = useCallback((file, fileList) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
@@ -422,8 +421,16 @@ const EmployeeContractForm = ({
     return file;
   }, []);
 
+  // 4.3. Handle upload file
   const onUploadChange = useCallback(
     ({ file: currentFile, fileList: currentFileList }) => {
+      if (currentFileList.length > MAX_FILE_UPLOAD_COUNT) {
+        notification.warning({
+          message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
+        });
+        return;
+      }
+
       setUploadDocumentLoading(currentFile?.status === "uploading");
 
       setFileList(currentFileList);
@@ -583,7 +590,6 @@ const EmployeeContractForm = ({
           <Upload
             accept=".pdf"
             listType="picture"
-            maxCount={MAX_FILE_UPLOAD_COUNT}
             beforeUpload={beforeUploadDocument}
             onChange={onUploadChange}
             disabled={uploadDocumentLoading}
@@ -595,7 +601,7 @@ const EmployeeContractForm = ({
               text-primary100 hover:bg-primary75 border-primary100 
               hover:border-primary75 hover:text-white bg-white space-x-2
               focus:border-primary75 focus:text-primary100"
-              disabled={uploadDocumentLoading || fileList?.length == 5}
+              disabled={uploadDocumentLoading}
             >
               <UploadOutlined />
               <p>Unggah File</p>
@@ -795,9 +801,70 @@ const EmployeeContractForm = ({
           </div>
         </Form.Item>
 
+        {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
+              if toggle is checked in Modal Tambah Variabel Gaji */}
+        {dataContract?.show_all_benefit && (
+          <>
+            {defaultSalaryVar
+              ?.filter(
+                (v) =>
+                  dataContract[v.attrName] !== null && v.attrName !== "pph21"
+              )
+              ?.map((item) => (
+                <Form.Item
+                  key={item.attrName}
+                  label={item.title}
+                  name={item.attrName}
+                  rules={[
+                    {
+                      required: true,
+                    },
+                  ]}
+                >
+                  <div>
+                    <CustomCurrencyInput
+                      fieldLabel={item.attrName}
+                      fieldName={item.attrName}
+                      setDataForm={setDataContract}
+                      value={countBPJSValue(item.percent)}
+                      disabled
+                    />
+                  </div>
+                </Form.Item>
+              ))}
+
+            {dataContract?.pph21 !== null && (
+              <Form.Item
+                label="PPh 21"
+                name={"pph21"}
+                rules={[
+                  {
+                    required: true,
+                    message: "PPh 21 wajib diisi",
+                  },
+                ]}
+              >
+                <>
+                  <CurrencyFormat
+                    customInput={Input}
+                    placeholder={"Masukkan PPh 21"}
+                    value={Number(dataContract?.pph21 || 0)}
+                    thousandSeparator={"."}
+                    decimalSeparator={","}
+                    prefix={"Rp"}
+                    allowNegative={false}
+                    disabled={true}
+                    renderText={(value) => <p>{value}</p>}
+                  />
+                </>
+              </Form.Item>
+            )}
+          </>
+        )}
+
         {dataContract?.salaries
           ?.filter((variable) => variable?.column?.type === 1)
-          .map((variable) => (
+          ?.map((variable) => (
             <Form.Item
               key={variable.employee_salary_column_id}
               label={variable?.column?.name}
@@ -824,17 +891,6 @@ const EmployeeContractForm = ({
                   dataColumn={variable.column}
                   payslipId={dataContract?.id}
                 />
-                {/* {!variable.required && (
-                    <Button
-                      icon={<TrashIconSvg color={"#CCCCCC"} size={22} />}
-                      className="border-0 hover:opacity-60"
-                      onClick={() => {
-                        const temp = [...receiveVarFields];
-                        temp.splice(idx, 1);
-                        setReceiveVarFields(temp);
-                      }}
-                    />
-                  )} */}
               </div>
             </Form.Item>
           ))}
@@ -842,141 +898,73 @@ const EmployeeContractForm = ({
 
       <div className="flex flex-col space-y-3 mt-5 md:mt-0">
         <p className="mig-heading--5">BENEFIT PENGURANGAN</p>
-        <Form.Item
-          label="BPJS KS (5% Perusahaan)"
-          name={"bpjs_ks"}
-          rules={[
-            {
-              required: true,
-              message: "BPJS KS wajib diisi",
-            },
-          ]}
-        >
-          <div>
-            <CustomCurrencyInput
-              fieldLabel={`bpjs ks`}
-              fieldName={"bpjs_ks"}
-              setDataForm={setDataContract}
-              value={countBPJSValue(5)}
-              disabled
-            />
-          </div>
-        </Form.Item>
-        <Form.Item
-          label="BPJS TK-JHT (5,7% Perusahaan)"
-          name={"bpjs_tk_jht"}
-          rules={[
-            {
-              required: true,
-              message: "BPJS TK-JHT wajib diisi",
-            },
-          ]}
-        >
-          <div>
-            <CustomCurrencyInput
-              fieldLabel={`bpjs tk jht`}
-              fieldName={"bpjs_tk_jht"}
-              setDataForm={setDataContract}
-              value={countBPJSValue(5.7)}
-              disabled
-            />
-          </div>
-        </Form.Item>
-        <Form.Item
-          label="BPJS TK-JKK (0,24% Perusahaan)"
-          name={"bpjs_tk_jkk"}
-          rules={[
-            {
-              required: true,
-              message: "BPJS TK-JKK wajib diisi",
-            },
-          ]}
-        >
-          <div>
-            <CustomCurrencyInput
-              fieldLabel={`bpjs tk jkk`}
-              fieldName={"bpjs_tk_jkk"}
-              setDataForm={setDataContract}
-              value={countBPJSValue(0.24)}
-              disabled
-            />
-          </div>
-        </Form.Item>
-        <Form.Item
-          label="BPJS TK-JKM (0,3% Perusahaan)"
-          name={"bpjs_tk_jkm"}
-          rules={[
-            {
-              required: true,
-              message: "BPJS TK-JKM wajib diisi",
-            },
-          ]}
-        >
-          <div>
-            <CustomCurrencyInput
-              fieldLabel={`bpjs tk jkm`}
-              fieldName={"bpjs_tk_jkm"}
-              setDataForm={setDataContract}
-              value={countBPJSValue(0.3)}
-              disabled
-            />
-          </div>
-        </Form.Item>
-        <Form.Item
-          label="BPJS TK-JP (3% Perusahaan)"
-          name={"bpjs_tk_jp"}
-          rules={[
-            {
-              required: true,
-              message: "BPJS TK-JP wajib diisi",
-            },
-          ]}
-        >
-          <div>
-            <CustomCurrencyInput
-              fieldLabel={`bpjs tk jp`}
-              fieldName={"bpjs_tk_jp"}
-              setDataForm={setDataContract}
-              value={countBPJSValue(3)}
-              disabled
-            />
-          </div>
-        </Form.Item>
 
-        <Form.Item
-          label="PPh 21"
-          name={"pph21"}
-          rules={[
-            {
-              required: true,
-              message: "PPh 21 wajib diisi",
-            },
-          ]}
-        >
-          <>
-            <CurrencyFormat
-              customInput={Input}
-              placeholder={"Masukkan PPh 21"}
-              value={Number(dataContract?.pph21 || 0)}
-              thousandSeparator={"."}
-              decimalSeparator={","}
-              prefix={"Rp"}
-              allowNegative={false}
-              onValueChange={(values) => {
-                const { formattedValue, value, floatValue } = values;
-                setDataContract((prev) => ({
-                  ...prev,
-                  pph21: floatValue || 0,
-                }));
-              }}
-              renderText={(value) => <p>{value}</p>}
-            />
-          </>
-        </Form.Item>
+        {/* Default "Pengurangan" salary variable field (BPJS) */}
+        {defaultSalaryVar
+          ?.filter(
+            (v) => dataContract[v.attrName] !== null && v.attrName !== "pph21"
+          )
+          ?.map((item) => (
+            <Form.Item
+              key={item.attrName}
+              label={item.title}
+              name={item.attrName}
+              rules={[
+                {
+                  required: true,
+                },
+              ]}
+            >
+              <div>
+                <CustomCurrencyInput
+                  fieldLabel={item.attrName}
+                  fieldName={item.attrName}
+                  setDataForm={setDataContract}
+                  value={countBPJSValue(item.percent)}
+                  disabled
+                />
+              </div>
+            </Form.Item>
+          ))}
+
+        {/* Pph 21 field */}
+        {dataContract?.pph21 !== null && (
+          <Form.Item
+            label="PPh 21"
+            name={"pph21"}
+            rules={[
+              {
+                required: true,
+                message: "PPh 21 wajib diisi",
+              },
+            ]}
+          >
+            <>
+              <CurrencyFormat
+                customInput={Input}
+                placeholder={"Masukkan PPh 21"}
+                value={Number(dataContract?.pph21 || 0)}
+                thousandSeparator={"."}
+                decimalSeparator={","}
+                prefix={"Rp"}
+                allowNegative={false}
+                onValueChange={(values) => {
+                  const { formattedValue, value, floatValue } = values;
+                  setDataContract((prev) => ({
+                    ...prev,
+                    pph21: Number(floatValue) || 0,
+                  }));
+                }}
+                renderText={(value) => <p>{value}</p>}
+              />
+            </>
+          </Form.Item>
+        )}
+
         {/* Variable list identical to the list in "Tambah Variabel Gaji" modal */}
         {dataContract?.salaries
           ?.filter((variable) => variable?.column?.type === 2)
-          .map((variable) => {
+          ?.map((variable) => {
             return (
               <Form.Item
                 key={variable.employee_salary_column_id}
@@ -1025,7 +1013,7 @@ const EmployeeContractForm = ({
 
       {/* Modal Add Salary Variable */}
       <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
-        <ModalAddSalaryVar
+        <ModalSalaryVarAdd
           initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
