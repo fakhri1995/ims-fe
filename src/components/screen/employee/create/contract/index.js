@@ -119,8 +119,6 @@ const EmployeeContractForm = ({
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
   const [selectedMultipliers, setSelectedMultipliers] = useState([]);
-  // todo: change to dataContract.show_all_varible if ready
-  const [showCompensation, setShowCompensation] = useState(false);
 
   //Modal add position role
   const [modalAddRole, setModalAddRole] = useState(false);
@@ -402,7 +400,7 @@ const EmployeeContractForm = ({
     }
   };
 
-  // 4.2. Handle upload file
+  // 4.2. Handle before upload file
   const beforeUploadDocument = useCallback((file, fileList) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
@@ -423,8 +421,16 @@ const EmployeeContractForm = ({
     return file;
   }, []);
 
+  // 4.3. Handle upload file
   const onUploadChange = useCallback(
     ({ file: currentFile, fileList: currentFileList }) => {
+      if (currentFileList.length > MAX_FILE_UPLOAD_COUNT) {
+        notification.warning({
+          message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
+        });
+        return;
+      }
+
       setUploadDocumentLoading(currentFile?.status === "uploading");
 
       setFileList(currentFileList);
@@ -584,7 +590,6 @@ const EmployeeContractForm = ({
           <Upload
             accept=".pdf"
             listType="picture"
-            maxCount={MAX_FILE_UPLOAD_COUNT}
             beforeUpload={beforeUploadDocument}
             onChange={onUploadChange}
             disabled={uploadDocumentLoading}
@@ -596,7 +601,7 @@ const EmployeeContractForm = ({
               text-primary100 hover:bg-primary75 border-primary100 
               hover:border-primary75 hover:text-white bg-white space-x-2
               focus:border-primary75 focus:text-primary100"
-              disabled={uploadDocumentLoading || fileList?.length == 5}
+              disabled={uploadDocumentLoading}
             >
               <UploadOutlined />
               <p>Unggah File</p>
@@ -798,7 +803,7 @@ const EmployeeContractForm = ({
 
         {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
               if toggle is checked in Modal Tambah Variabel Gaji */}
-        {showCompensation && (
+        {dataContract?.show_all_benefit && (
           <>
             {defaultSalaryVar
               ?.filter(
@@ -1024,8 +1029,6 @@ const EmployeeContractForm = ({
           payslipId={dataContract?.id}
           dataPayslip={dataContract}
           setDataPayslip={setDataContract}
-          showCompensation={showCompensation}
-          setShowCompensation={setShowCompensation}
         />
       </AccessControl>
 
