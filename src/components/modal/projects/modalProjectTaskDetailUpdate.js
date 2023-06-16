@@ -9,7 +9,6 @@ import {
   Spin,
   Switch,
   Tag,
-  Tooltip,
   notification,
 } from "antd";
 import parse from "html-react-parser";

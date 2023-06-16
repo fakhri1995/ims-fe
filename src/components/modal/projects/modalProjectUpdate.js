@@ -1,7 +1,4 @@
-import { CheckOutlined, DeleteOutlined } from "@ant-design/icons";
 import {
-  Avatar,
-  Button,
   DatePicker,
   Input,
   Modal,
@@ -9,7 +6,6 @@ import {
   Spin,
   Switch,
   Tag,
-  Tooltip,
   notification,
 } from "antd";
 import moment from "moment";

@@ -18,12 +18,7 @@ import "react-quill/dist/quill.snow.css";
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../button";
-import {
-  EditIconSvg,
-  EditSquareIconSvg,
-  LeftIconSvg,
-  PlusIconSvg,
-} from "../../icon";
+import { EditSquareIconSvg, LeftIconSvg, PlusIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
 
 const ModalStatusManage = ({
@@ -283,7 +278,7 @@ const ModalStatusManage = ({
     }
   };
 
-  // Sortable component
+  // Sortable component (status card)
   const SortableItem = ({
     id,
     idx,

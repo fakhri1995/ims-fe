@@ -53,7 +53,6 @@ import {
 
 import ButtonSys from "../../components/button";
 import TaskCard from "../../components/cards/project/TaskCard";
-import { ChartDoughnut } from "../../components/chart/chartCustom";
 import {
   AdjusmentsHorizontalIconSvg,
   CalendartimeIconSvg,
@@ -68,7 +67,6 @@ import ModalProjectTaskCreate from "../../components/modal/projects/modalProject
 import ModalProjectTaskDetailUpdate from "../../components/modal/projects/modalProjectTaskDetailUpdate";
 import ModalStatusManage from "../../components/modal/projects/modalStatusManage";
 import { TableCustomProjectList } from "../../components/table/tableCustom";
-import { H1, H2 } from "../../components/typography";
 import {
   createKeyPressHandler,
   momentFormatDate,
@@ -1074,9 +1072,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
 
           {/* Task Saya */}
           <div className="col-span-2 flex flex-col shadow-md rounded-md bg-white mb-2 xl:mb-6">
-            {/* <div
-              className="flex overflow-x-auto md:overflow-hidden md:flex-col 
-              pb-6 space-x-4 md:space-x-0 md:space-y-4 xl:space-y-6"> */}
             <Table
               rowKey={(record) => record.id}
               className="tableProjectTask p-2"
@@ -1177,7 +1172,6 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                         return indexA - indexB;
                       }
                     : false,
-                  // sortOrder: sortColumn === "status" ? sortOrder : null,
                 },
               ]}
             />
