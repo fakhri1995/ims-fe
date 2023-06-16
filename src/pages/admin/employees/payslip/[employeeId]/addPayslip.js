@@ -686,7 +686,7 @@ const EmployeePayslipAddIndex = ({
 
               {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
               if toggle is checked in Modal Tambah Variabel Gaji */}
-              {dataPayslip?.show_all_benefit && (
+              {Boolean(dataPayslip?.show_all_benefit) && (
                 <>
                   {defaultSalaryVar
                     ?.filter(
@@ -738,13 +738,6 @@ const EmployeePayslipAddIndex = ({
                           prefix={"Rp"}
                           allowNegative={false}
                           disabled={true}
-                          // onValueChange={(values) => {
-                          //   const { formattedValue, value, floatValue } = values;
-                          //   setDataPayslip((prev) => ({
-                          //     ...prev,
-                          //     pph21: Number(floatValue) || 0,
-                          //   }));
-                          // }}
                           renderText={(value) => <p>{value}</p>}
                         />
                       </>

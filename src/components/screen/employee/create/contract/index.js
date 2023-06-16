@@ -803,7 +803,7 @@ const EmployeeContractForm = ({
 
         {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
               if toggle is checked in Modal Tambah Variabel Gaji */}
-        {dataContract?.show_all_benefit && (
+        {Boolean(dataContract?.show_all_benefit) && (
           <>
             {defaultSalaryVar
               ?.filter(

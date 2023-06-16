@@ -131,7 +131,7 @@ const ModalSalaryVarAdd = ({
 
   /**
    * If form already has payslip Id, then checked variable in modal &
-   * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip)
+   * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip or getEmployeeContract)
    * */
   useEffect(() => {
     if (payslipId) {
@@ -312,7 +312,7 @@ const ModalSalaryVarAdd = ({
                 </Tag>
               </div>
 
-              {dataPayslip?.show_all_benefit &&
+              {Boolean(dataPayslip?.show_all_benefit) &&
                 defaultSalaryVar
                   .filter((v) => dataPayslip[v.attrName] !== null)
                   ?.map((item) => (
