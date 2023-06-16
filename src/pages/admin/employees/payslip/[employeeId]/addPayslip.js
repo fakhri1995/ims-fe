@@ -131,6 +131,7 @@ const EmployeePayslipAddIndex = ({
         column: [],
       },
     ],
+    show_all_benefit: false,
   });
 
   // Display selected variable list as fields in form
@@ -154,9 +155,6 @@ const EmployeePayslipAddIndex = ({
   const [modalSalaryVar, setModalSalaryVar] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false);
   const [selectedMultipliers, setSelectedMultipliers] = useState([]);
-
-  // todo: change to dataPayslip.show_all_varible if ready
-  const [showCompensation, setShowCompensation] = useState(false);
 
   // 2. HELPER FUNCTION
   // Format string variable name. e.g. "tunjangan_transport"
@@ -302,7 +300,7 @@ const EmployeePayslipAddIndex = ({
     let receiveBenefitValues = receiveBenefits.map((benefit) => benefit.value);
 
     // if BPJS/Pph shown in Penerimaan, sum the value to Total Gross Penerimaan
-    if (showCompensation) {
+    if (dataPayslip?.show_all_benefit) {
       let defaultReductionBenefitValues = defaultSalaryVar
         ?.filter((v) => dataPayslip[v.attrName] !== null)
         ?.map((v) => dataPayslip[v.attrName]);
@@ -318,7 +316,11 @@ const EmployeePayslipAddIndex = ({
       ...prev,
       total_gross_penerimaan: newTotalGrossPenerimaan,
     }));
-  }, [receiveVarFields, dataPayslip?.gaji_pokok, showCompensation]);
+  }, [
+    receiveVarFields,
+    dataPayslip?.gaji_pokok,
+    dataPayslip?.show_all_benefit,
+  ]);
 
   // total gross pengurangan
   useEffect(() => {
@@ -691,7 +693,7 @@ const EmployeePayslipAddIndex = ({
 
               {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
               if toggle is checked in Modal Tambah Variabel Gaji */}
-              {showCompensation && (
+              {dataPayslip?.show_all_benefit && (
                 <>
                   {defaultSalaryVar
                     ?.filter(
@@ -993,8 +995,6 @@ const EmployeePayslipAddIndex = ({
           payslipId={payslipId}
           dataPayslip={dataPayslip}
           setDataPayslip={setDataPayslip}
-          showCompensation={showCompensation}
-          setShowCompensation={setShowCompensation}
         />
       </AccessControl>
 

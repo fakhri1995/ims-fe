@@ -637,7 +637,6 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
-  // console.log({ dataContract });
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -774,7 +773,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             activeKey={currentTab}
             onTabClick={(key) => setCurrentTab(key)}
             onChange={(key) => {
-              // add employee contract if it has no contract yet
+              // add employee contract if there's no contract yet
               handleAutoSaveOnTabChange();
               key == "2" &&
                 dataEmployee.contracts?.length === 0 &&

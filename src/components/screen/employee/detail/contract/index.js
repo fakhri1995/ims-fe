@@ -37,6 +37,7 @@ import {
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import { ModalHapus2 } from "../../../../modal/modalCustom";
+import { defaultSalaryVar } from "../../../../modal/payslips/modalSalaryVarAdd";
 
 const EmployeeContractDetail = ({
   employeeId,
@@ -336,6 +337,31 @@ const EmployeeContractDetail = ({
                         )}
                       </p>
                     </div>
+
+                    {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
+                    if toggle is checked in Modal Tambah Variabel Gaji */}
+                    {dataContract?.show_all_benefit &&
+                      defaultSalaryVar
+                        ?.filter((v) => dataContract[v.attrName] !== null)
+                        ?.map((item) => (
+                          <div
+                            key={item.attrName}
+                            className="space-y-1 md:col-span-2"
+                          >
+                            <p className="mig-caption--medium text-mono80">
+                              {item.title}
+                            </p>
+                            <p>
+                              Rp
+                              {dataContract[item.attrName] !== null
+                                ? Number(
+                                    dataContract[item.attrName]
+                                  ).toLocaleString("id-ID")
+                                : "-"}
+                            </p>
+                          </div>
+                        ))}
+
                     {dataContract?.salaries
                       ?.filter((variable) => variable?.column?.type === 1)
                       ?.map((variable) => (
@@ -357,65 +383,28 @@ const EmployeeContractDetail = ({
                 <div className="mb-3">
                   <p className="mig-heading--5 mb-2">BENEFIT PENGURANGAN</p>
                   <div className="space-y-2">
-                    <div className="space-y-1 md:col-span-2">
-                      <p className="mig-caption--medium text-mono80">
-                        BPJS KS (5% Perusahaan)
-                      </p>
-                      <p>
-                        Rp
-                        {Number(dataContract?.bpjs_ks).toLocaleString("id-ID")}
-                      </p>
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <p className="mig-caption--medium text-mono80">
-                        BPKS TK-JHT (5,7% Perusahaan)
-                      </p>
-                      <p>
-                        Rp
-                        {Number(dataContract?.bpjs_tk_jht).toLocaleString(
-                          "id-ID"
-                        )}
-                      </p>
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <p className="mig-caption--medium text-mono80">
-                        BPKS TK-JKK (0,24% Perusahaan)
-                      </p>
-                      <p>
-                        Rp
-                        {Number(dataContract?.bpjs_tk_jkk).toLocaleString(
-                          "id-ID"
-                        )}
-                      </p>
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <p className="mig-caption--medium text-mono80">
-                        BPKS TK-JKM (0,3% Perusahaan)
-                      </p>
-                      <p>
-                        Rp
-                        {Number(dataContract?.bpjs_tk_jkm).toLocaleString(
-                          "id-ID"
-                        )}
-                      </p>
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <p className="mig-caption--medium text-mono80">
-                        BPKS TK-JP (3% Perusahaan)
-                      </p>
-                      <p>
-                        Rp
-                        {Number(dataContract?.bpjs_tk_jp).toLocaleString(
-                          "id-ID"
-                        )}
-                      </p>
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <p className="mig-caption--medium text-mono80">PPh 21</p>
-                      <p>
-                        Rp{Number(dataContract?.pph21).toLocaleString("id-ID")}
-                      </p>
-                    </div>
+                    {/* Default "Pengurangan" salary variable field (BPJS, Pph 21) */}
+                    {defaultSalaryVar
+                      ?.filter((v) => dataContract[v.attrName] !== null)
+                      ?.map((item) => (
+                        <div
+                          key={item.attrName}
+                          className="space-y-1 md:col-span-2"
+                        >
+                          <p className="mig-caption--medium text-mono80">
+                            {item.title}
+                          </p>
+                          <p>
+                            Rp
+                            {dataContract[item.attrName] !== null
+                              ? Number(
+                                  dataContract[item.attrName]
+                                ).toLocaleString("id-ID")
+                              : "-"}
+                          </p>
+                        </div>
+                      ))}
+
                     {dataContract?.salaries
                       ?.filter((variable) => variable?.column?.type === 2)
                       ?.map((variable) => (

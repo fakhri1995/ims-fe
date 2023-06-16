@@ -84,8 +84,7 @@ const DrawerPayslipDetail = ({
               },
             ];
 
-            // TODO: change to payslipDetail.show_all_benefits
-            if (true) {
+            if (payslipDetail?.show_all_benefit) {
               receiveBenefits = receiveBenefits.concat(
                 defaultReductionBenefits
               );

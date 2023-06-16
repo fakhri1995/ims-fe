@@ -65,8 +65,6 @@ const ModalSalaryVarAdd = ({
   payslipId,
   dataPayslip,
   setDataPayslip,
-  showCompensation,
-  setShowCompensation,
 }) => {
   // 1. Use State
   const [praLoading, setPraLoading] = useState(false);
@@ -293,8 +291,10 @@ const ModalSalaryVarAdd = ({
     >
       <Spin spinning={praLoading}>
         <Switch
-          checked={showCompensation}
-          onChange={(checked) => setShowCompensation(checked)}
+          checked={dataPayslip?.show_all_benefit}
+          onChange={(checked) =>
+            setDataPayslip((prev) => ({ ...prev, show_all_benefit: checked }))
+          }
           className="mb-3"
         ></Switch>
         <div className="grid grid-cols-2 gap-x-8">
@@ -312,7 +312,7 @@ const ModalSalaryVarAdd = ({
                 </Tag>
               </div>
 
-              {showCompensation &&
+              {dataPayslip?.show_all_benefit &&
                 defaultSalaryVar
                   .filter((v) => dataPayslip[v.attrName] !== null)
                   ?.map((item) => (

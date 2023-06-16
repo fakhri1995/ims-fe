@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { permissionWarningNotification } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { CircleCheckIconSvg, SquarePlusIconSvg, XIconSvg } from "../../icon";
+import { defaultSalaryVar } from "./modalSalaryVarAdd";
 
 const ModalSalaryVarManage = ({
   initProps,
@@ -29,7 +30,6 @@ const ModalSalaryVarManage = ({
 }) => {
   const [praLoading, setPraLoading] = useState(false);
   const [refresh, setRefresh] = useState(-1);
-  const [dataVariables, setDataVariables] = useState([]);
 
   const [isInputReceiveVar, setInputReceiveVar] = useState(false);
   const [isInputReductionVar, setInputReductionVar] = useState(false);
@@ -40,8 +40,6 @@ const ModalSalaryVarManage = ({
     required: false,
     is_amount_for_bpjs: false,
   });
-  const [inputField, setInputField] = useState("");
-  const [varType, setVarType] = useState(0);
   const [receiveVarOptions, setReceiveVarOptions] = useState([]);
   const [reductionVarOptions, setReductionVarOptions] = useState([]);
 
@@ -74,16 +72,6 @@ const ModalSalaryVarManage = ({
 
             setReceiveVarOptions(receiveVariables);
             setReductionVarOptions(reductionVariables);
-
-            // let newReceiveVarArr = receiveVariables.map((receiveVar) => {
-            //   return {
-            //     label: receiveVar.name,
-            //     value: receiveVar.id,
-            //     disabled: receiveVar.required,
-            //   };
-            // });
-
-            // setDataVariables(dataVar);
           } else {
             notification.error({
               message: `${response2.message}`,
@@ -383,24 +371,15 @@ const ModalSalaryVarManage = ({
         <div className="">
           <h5 className="mig-heading--5 mb-2">PENGURANGAN</h5>
           <div className="flex flex-col space-y-2 space-x-0 mb-2">
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS KS (5% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JHT (5,7% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JKK (0,24% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JKM (0,3% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              BPJS TK-JP (3% Perusahaan)
-            </Checkbox>
-            <Checkbox defaultChecked={true} disabled={true}>
-              PPh 21
-            </Checkbox>
+            {defaultSalaryVar?.map((item) => (
+              <Checkbox
+                key={item.attrName}
+                defaultChecked={true}
+                disabled={true}
+              >
+                {item.title}
+              </Checkbox>
+            ))}
 
             {reductionVarOptions?.map((option, idx) => (
               <div
