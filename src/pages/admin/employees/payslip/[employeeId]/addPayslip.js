@@ -283,15 +283,6 @@ const EmployeePayslipAddIndex = ({
   }, [dataPayslip]);
 
   // 3.3. Auto update total gross penerimaan, total gross pengurangan & take home pay
-  useEffect(() => {
-    setReceiveVarFields(
-      dataPayslip?.salaries?.filter((variable) => variable.column?.type === 1)
-    );
-    setReductionVarFields(
-      dataPayslip?.salaries?.filter((variable) => variable.column?.type === 2)
-    );
-  }, [...dataPayslip.salaries]);
-
   // total gross penerimaan
   useEffect(() => {
     const receiveBenefits = dataPayslip?.salaries?.filter(
@@ -309,6 +300,7 @@ const EmployeePayslipAddIndex = ({
         defaultReductionBenefitValues
       );
     }
+
     let newTotalGrossPenerimaan =
       (dataPayslip?.gaji_pokok ?? 0) + sumValues(receiveBenefitValues);
 
@@ -653,6 +645,7 @@ const EmployeePayslipAddIndex = ({
                     message: "Gaji pokok wajib diisi",
                   },
                 ]}
+                className="mb-2"
               >
                 <div>
                   <CurrencyFormat
@@ -782,6 +775,7 @@ const EmployeePayslipAddIndex = ({
                         value={variable.value}
                         dataColumn={variable.column}
                         payslipId={payslipId}
+                        setVarFields={setReceiveVarFields}
                       />
                     </div>
                   </Form.Item>
@@ -878,6 +872,7 @@ const EmployeePayslipAddIndex = ({
                           value={variable?.value}
                           dataColumn={variable.column}
                           payslipId={payslipId}
+                          setVarFields={setReductionVarFields}
                         />
                       </div>
                     </Form.Item>
