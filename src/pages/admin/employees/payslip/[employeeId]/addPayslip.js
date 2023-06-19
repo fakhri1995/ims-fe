@@ -131,7 +131,7 @@ const EmployeePayslipAddIndex = ({
         column: [],
       },
     ],
-    show_all_benefit: false,
+    show_all_benefit: 0,
   });
 
   // Display selected variable list as fields in form
@@ -686,7 +686,7 @@ const EmployeePayslipAddIndex = ({
 
               {/* Show copy of default "Pengurangan" salary variable field (BPJS, Pph21) 
               if toggle is checked in Modal Tambah Variabel Gaji */}
-              {dataPayslip?.show_all_benefit && (
+              {Boolean(dataPayslip?.show_all_benefit) && (
                 <>
                   {defaultSalaryVar
                     ?.filter(
@@ -738,13 +738,6 @@ const EmployeePayslipAddIndex = ({
                           prefix={"Rp"}
                           allowNegative={false}
                           disabled={true}
-                          // onValueChange={(values) => {
-                          //   const { formattedValue, value, floatValue } = values;
-                          //   setDataPayslip((prev) => ({
-                          //     ...prev,
-                          //     pph21: Number(floatValue) || 0,
-                          //   }));
-                          // }}
                           renderText={(value) => <p>{value}</p>}
                         />
                       </>
@@ -883,12 +876,11 @@ const EmployeePayslipAddIndex = ({
               <ButtonSys
                 type={"dashed"}
                 onClick={() => {
-                  // clearDataUpdate();
                   setModalSalaryVar(true);
                 }}
               >
                 <p className="text-primary100 hover:text-primary75">
-                  + Tambah Variable Gaji
+                  + Tambah Variabel Gaji
                 </p>
               </ButtonSys>
             </div>

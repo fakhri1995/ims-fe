@@ -131,7 +131,7 @@ const ModalSalaryVarAdd = ({
 
   /**
    * If form already has payslip Id, then checked variable in modal &
-   * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip)
+   * penerimaan/pengurangan fields come from dataPayslip (API getEmployeePayslip or getEmployeeContract)
    * */
   useEffect(() => {
     if (payslipId) {
@@ -293,7 +293,10 @@ const ModalSalaryVarAdd = ({
         <Switch
           checked={dataPayslip?.show_all_benefit}
           onChange={(checked) =>
-            setDataPayslip((prev) => ({ ...prev, show_all_benefit: checked }))
+            setDataPayslip((prev) => ({
+              ...prev,
+              show_all_benefit: Number(checked),
+            }))
           }
           className="mb-3"
         ></Switch>
@@ -312,7 +315,7 @@ const ModalSalaryVarAdd = ({
                 </Tag>
               </div>
 
-              {dataPayslip?.show_all_benefit &&
+              {Boolean(dataPayslip?.show_all_benefit) &&
                 defaultSalaryVar
                   .filter((v) => dataPayslip[v.attrName] !== null)
                   ?.map((item) => (
