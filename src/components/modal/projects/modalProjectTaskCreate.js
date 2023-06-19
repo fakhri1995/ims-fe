@@ -22,7 +22,7 @@ import { permissionWarningNotification } from "lib/helper";
 
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { InfoCircleIconSvg, XIconSvg } from "../../icon";
+import { InfoCircleIconSvg } from "../../icon";
 
 // Quill library for text editor has to be imported dynamically
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
@@ -387,10 +387,7 @@ const ModalProjectTaskCreate = ({
         </div>
       }
       visible={visible}
-      onCancel={() => {
-        clearData();
-        onvisible(false);
-      }}
+      onCancel={handleDeleteTask}
       maskClosable={false}
       footer={
         <Spin spinning={loading}>
