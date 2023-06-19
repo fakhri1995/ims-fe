@@ -153,6 +153,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     bpjs_tk_jkk: "",
     bpjs_tk_jkm: "",
     bpjs_tk_jp: "",
+    removed_file_ids: [],
   });
 
   const [inventoryList, setInventoryList] = useState([]);

@@ -358,6 +358,14 @@ const EmployeeContractForm = ({
     // }
   }, [isAllowedToGetEmployeeContract, contractId, refresh, currentTab]);
 
+  // 3.5. Update data contract when delete icon in file upload is clicked
+  useEffect(() => {
+    setDataContract((prev) => ({
+      ...prev,
+      removed_file_ids: removedFileIds,
+    }));
+  }, [removedFileIds]);
+
   // 4. HANDLER
   // 4.1. Handle input change and auto save in "Tambah Karyawan"
   const onChangeInput = (e) => {
@@ -439,20 +447,18 @@ const EmployeeContractForm = ({
       }
 
       if (currentFile?.status === "removed") {
-        setDataContract((prev) => ({
-          ...prev,
-          removed_file_ids: [...removedFileIds, currentFile?.id || 0],
-        }));
         setRemovedFileIds((prev) => [...prev, currentFile?.id || 0]);
       }
 
       setUploadDocumentLoading(currentFile?.status === "uploading");
-
       setFileList(currentFileList);
-      setDataContract((prev) => ({
-        ...prev,
-        contract_files: currentFileList,
-      }));
+
+      if (currentFile?.status === "done") {
+        setDataContract((prev) => ({
+          ...prev,
+          contract_files: currentFileList,
+        }));
+      }
     },
     []
   );
