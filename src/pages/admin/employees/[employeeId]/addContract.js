@@ -351,8 +351,9 @@ const EmployeeContractAddIndex = ({
           dataContract={dataContract}
           setDataContract={setDataContract}
           employeeId={employeeId}
-          contractId={contractId}
+          contractId={Number(contractId)}
           prevpath={"add"}
+          currentTab={2}
         />
       </div>
 

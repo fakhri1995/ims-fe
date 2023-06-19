@@ -795,8 +795,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setDataContract={setDataContract}
                 debouncedApiCall={debouncedSaveContract}
                 employeeId={employeeId}
-                contractId={dataEmployee?.contract?.id}
+                contractId={dataContract?.id || dataEmployee?.contract?.id}
                 currentTab={currentTab}
+                prevpath={prevpath}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
