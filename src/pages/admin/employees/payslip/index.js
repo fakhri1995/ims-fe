@@ -898,7 +898,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
           isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
-          // disabled
         />
       </AccessControl>
       <AccessControl hasPermission={EMPLOYEES_PAYSLIPS_POST}>

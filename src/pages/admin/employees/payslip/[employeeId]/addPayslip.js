@@ -131,7 +131,7 @@ const EmployeePayslipAddIndex = ({
         column: [],
       },
     ],
-    show_all_benefit: false,
+    show_all_benefit: 0,
   });
 
   // Display selected variable list as fields in form
@@ -876,12 +876,11 @@ const EmployeePayslipAddIndex = ({
               <ButtonSys
                 type={"dashed"}
                 onClick={() => {
-                  // clearDataUpdate();
                   setModalSalaryVar(true);
                 }}
               >
                 <p className="text-primary100 hover:text-primary75">
-                  + Tambah Variable Gaji
+                  + Tambah Variabel Gaji
                 </p>
               </ButtonSys>
             </div>

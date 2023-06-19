@@ -293,7 +293,10 @@ const ModalSalaryVarAdd = ({
         <Switch
           checked={dataPayslip?.show_all_benefit}
           onChange={(checked) =>
-            setDataPayslip((prev) => ({ ...prev, show_all_benefit: checked }))
+            setDataPayslip((prev) => ({
+              ...prev,
+              show_all_benefit: Number(checked),
+            }))
           }
           className="mb-3"
         ></Switch>
