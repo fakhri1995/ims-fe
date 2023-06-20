@@ -37,7 +37,7 @@ const ButtonSys = ({
       const file = e.target.files[0];
 
       const fileSizeInMb = Number.parseFloat(
-        (file.size / 1024 / 1024).toFixed(2)
+        (file?.size / 1024 / 1024).toFixed(2)
       );
 
       if (fileSizeInMb > inputFileMaxSize) {
@@ -198,8 +198,10 @@ const ButtonSys = ({
         <label onClick={onClick} className={defaultButtonClassName}>
           <input
             type="file"
+            ref={inputRef}
             style={{ display: `none` }}
             name="urlgambarProduct"
+            accept={inputAccept}
             onChange={onInputChange}
           />
           {children}

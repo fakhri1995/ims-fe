@@ -1,4 +1,8 @@
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  LoadingOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
 import {
   Button,
   Checkbox,
@@ -44,10 +48,18 @@ import RemoveIcon from "assets/vectors/icon-remove.svg";
 
 import {
   beforeUploadFileMaxSize,
+  generateStaticAssetUrl,
+  getBase64,
+  getFileName,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import { PaperclipIconSvg, XIconSvg } from "../../../../icon";
+import {
+  CloudUploadIconSvg,
+  PaperclipIconSvg,
+  TrashIconSvg,
+  XIconSvg,
+} from "../../../../icon";
 import { ModalAddCompany, ModalAddRole } from "../../../../modal/modalCustom";
 import ModalSalaryVarAdd, {
   defaultSalaryVar,
@@ -111,7 +123,6 @@ const EmployeeContractForm = ({
   const [loadingRoleTypeList, setLoadingRoleTypeList] = useState(false);
   const [dataRoleTypeList, setDataRoleTypeList] = useState([]);
 
-  const [fileList, setFileList] = useState([]);
   const [uploadDocumentLoading, setUploadDocumentLoading] = useState(false);
   const [removedFileIds, setRemovedFileIds] = useState([]);
 
@@ -324,15 +335,6 @@ const EmployeeContractForm = ({
             // clear removed file list
             setRemovedFileIds([]);
 
-            // Display contract file when available
-            if (resData?.contract_files?.length) {
-              const fileNames = resData?.contract_files?.map((file) => ({
-                id: file?.id,
-                name: file?.link?.split("/")[2],
-              }));
-              setFileList(fileNames);
-            }
-
             // Insert default selected BPJS multiplier to state
             const defaultSelectedMultipliers = resData?.salaries?.filter(
               (variable) => variable?.is_amount_for_bpjs
@@ -434,35 +436,28 @@ const EmployeeContractForm = ({
   }, []);
 
   // 4.3. Handle upload file
-  const onUploadChange = useCallback(
-    ({ file: currentFile, fileList: currentFileList }) => {
-      if (
-        currentFileList.length > MAX_FILE_UPLOAD_COUNT &&
-        currentFile?.status !== "removed"
-      ) {
-        notification.warning({
-          message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
-        });
-        return;
-      }
+  const onUploadChange = async (e) => {
+    if (dataContract?.contract_files?.length === MAX_FILE_UPLOAD_COUNT) {
+      notification.warning({
+        message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
+      });
+      return;
+    }
 
-      if (currentFile?.status === "removed") {
-        setRemovedFileIds((prev) => [...prev, currentFile?.id || 0]);
-      }
+    setUploadDocumentLoading(true);
 
-      setUploadDocumentLoading(currentFile?.status === "uploading");
-      setFileList(currentFileList);
+    const blobFile = e.target.files[0];
+    const newFiles = [...dataContract.contract_files, blobFile];
 
-      setDataContract((prev) => ({
-        ...prev,
-        contract_files: currentFileList,
-      }));
-    },
-    []
-  );
+    setDataContract({
+      ...dataContract,
+      contract_files: newFiles,
+    });
+
+    setUploadDocumentLoading(false);
+  };
 
   // console.log({ removedFileIds });
-  // console.log({ fileList });
   // console.log({ dataContract });
   return (
     <Form
@@ -599,28 +594,60 @@ const EmployeeContractForm = ({
       >
         <div className="relative">
           <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
-          <Upload
-            accept=".pdf"
-            listType="picture"
-            beforeUpload={beforeUploadDocument}
-            onChange={onUploadChange}
+          <ButtonSys
+            type={`defaultInput`}
+            onChangeGambar={onUploadChange}
+            inputAccept=".pdf"
             disabled={uploadDocumentLoading}
-            fileList={fileList}
-            iconRender={() => <PaperclipIconSvg />}
           >
-            <Button
-              className="btn-sm btn font-semibold px-6 border
-              text-primary100 hover:bg-primary75 border-primary100 
-              hover:border-primary75 hover:text-white bg-white space-x-2
-              focus:border-primary75 focus:text-primary100"
-              disabled={uploadDocumentLoading}
-            >
-              <UploadOutlined />
-              <p>Unggah File</p>
-            </Button>
-          </Upload>
+            {uploadDocumentLoading ? (
+              <LoadingOutlined style={{ marginRight: `0.5rem` }} />
+            ) : (
+              <div className="mr-2">
+                <UploadOutlined />
+              </div>
+            )}
+            Unggah File
+          </ButtonSys>
         </div>
       </Form.Item>
+      <div className="grid grid-cols-1 col-span-2 items-center space-y-2 mb-4">
+        {dataContract?.contract_files?.map((doc, idx) => (
+          <div
+            key={idx}
+            className="grid grid-cols-12 gap-2 items-center p-2 border border-[#d9d9d9]"
+          >
+            <PaperclipIconSvg />
+            {doc?.link ? (
+              <a
+                className="col-span-10"
+                href={generateStaticAssetUrl(doc?.link)}
+                target="_blank"
+              >
+                {getFileName(doc?.link)}
+              </a>
+            ) : (
+              <p className="col-span-10">{doc?.name}</p>
+            )}
+            <div
+              className="text-right cursor-pointer  "
+              onClick={() => {
+                var tempFiles = [...dataContract?.contract_files];
+                tempFiles.splice(idx, 1);
+
+                setDataContract((prev) => ({
+                  ...prev,
+                  contract_files: tempFiles,
+                }));
+
+                setRemovedFileIds((prev) => [...prev, doc?.id || 0]);
+              }}
+            >
+              <DeleteOutlined className="text-[#00000045] hover:text-[#00000080] m-2 p-2" />
+            </div>
+          </div>
+        ))}
+      </div>
       <Form.Item
         label="Referensi PKWT"
         name={"pkwt_reference"}
