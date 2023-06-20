@@ -453,12 +453,10 @@ const EmployeeContractForm = ({
       setUploadDocumentLoading(currentFile?.status === "uploading");
       setFileList(currentFileList);
 
-      if (currentFile?.status === "done") {
-        setDataContract((prev) => ({
-          ...prev,
-          contract_files: currentFileList,
-        }));
-      }
+      setDataContract((prev) => ({
+        ...prev,
+        contract_files: currentFileList,
+      }));
     },
     []
   );
