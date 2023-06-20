@@ -279,7 +279,11 @@ const EmployeeContractForm = ({
       return;
     }
 
-    if (contractId || currentTab == "2") {
+    if (currentTab != 2) {
+      return;
+    }
+
+    if (contractId) {
       setPraLoading(true);
       fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeeContract?id=${contractId}`,
@@ -303,7 +307,7 @@ const EmployeeContractForm = ({
             };
 
             // Set contract active status based on previous path
-            if (prevpath === "add") {
+            if (prevpath === "add" || prevpath === "agent") {
               setDataContract({
                 ...requiredData,
                 is_employee_active: 1,
@@ -353,6 +357,14 @@ const EmployeeContractForm = ({
     }
     // }
   }, [isAllowedToGetEmployeeContract, contractId, refresh, currentTab]);
+
+  // 3.5. Update data contract when delete icon in file upload is clicked
+  useEffect(() => {
+    setDataContract((prev) => ({
+      ...prev,
+      removed_file_ids: removedFileIds,
+    }));
+  }, [removedFileIds]);
 
   // 4. HANDLER
   // 4.1. Handle input change and auto save in "Tambah Karyawan"
@@ -424,32 +436,32 @@ const EmployeeContractForm = ({
   // 4.3. Handle upload file
   const onUploadChange = useCallback(
     ({ file: currentFile, fileList: currentFileList }) => {
-      if (currentFileList.length > MAX_FILE_UPLOAD_COUNT) {
+      if (
+        currentFileList.length > MAX_FILE_UPLOAD_COUNT &&
+        currentFile?.status !== "removed"
+      ) {
         notification.warning({
           message: `Jumlah unggahan sudah mencapai batas maksimum yaitu ${MAX_FILE_UPLOAD_COUNT} file.`,
         });
         return;
       }
 
-      setUploadDocumentLoading(currentFile?.status === "uploading");
+      if (currentFile?.status === "removed") {
+        setRemovedFileIds((prev) => [...prev, currentFile?.id || 0]);
+      }
 
+      setUploadDocumentLoading(currentFile?.status === "uploading");
       setFileList(currentFileList);
+
       setDataContract((prev) => ({
         ...prev,
         contract_files: currentFileList,
       }));
-
-      if (currentFile?.status === "removed") {
-        setRemovedFileIds((prev) => [...prev, currentFile?.id || 0]);
-        setDataContract((prev) => ({
-          ...prev,
-          removed_file_ids: [...removedFileIds, currentFile?.id || 0],
-        }));
-      }
     },
     []
   );
 
+  // console.log({ removedFileIds });
   // console.log({ fileList });
   // console.log({ dataContract });
   return (

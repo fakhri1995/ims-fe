@@ -272,6 +272,7 @@ const EmployeeContractEditIndex = ({
           prevpath={prevpath}
           employeeId={employeeId}
           contractId={contractId}
+          currentTab={2}
         />
       </div>
     </LayoutDashboard>

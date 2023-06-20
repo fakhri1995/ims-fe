@@ -153,6 +153,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     bpjs_tk_jkk: "",
     bpjs_tk_jkm: "",
     bpjs_tk_jp: "",
+    removed_file_ids: [],
   });
 
   const [inventoryList, setInventoryList] = useState([]);
@@ -795,8 +796,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 setDataContract={setDataContract}
                 debouncedApiCall={debouncedSaveContract}
                 employeeId={employeeId}
-                contractId={dataEmployee?.contract?.id}
+                contractId={dataContract?.id || dataEmployee?.contract?.id}
                 currentTab={currentTab}
+                prevpath={prevpath}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
