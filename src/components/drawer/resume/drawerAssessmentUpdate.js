@@ -200,12 +200,25 @@ const DrawerAssessmentUpdate = ({
             *Informasi ini harus diisi
           </p>
 
-          <InputRequired
-            name="name"
-            defaultValue={datadisplay.name}
-            onChangeInput={onChangeInput}
-            label="Nama Form"
-          ></InputRequired>
+          <div className="flex flex-col mb-5">
+            <div className="flex mb-1">
+              <Label>Nama Form</Label>
+              <span className="name"></span>
+              <style jsx>
+                {`
+                    .name::before{
+                        content: '*';
+                        color: red;
+                    }
+                `}
+              </style>
+            </div>
+            <Input
+              name="name"
+              defaultValue={datadisplay.name}
+              onChange={onChangeInput}
+            ></Input>
+          </div>
 
           <div className="flex flex-col mb-5">
             <div className="flex mb-1">

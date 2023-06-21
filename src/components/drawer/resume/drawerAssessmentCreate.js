@@ -1,14 +1,8 @@
 import { Input, Spin, notification } from "antd";
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-
-import { useAccessControl } from "contexts/access-control";
-
-import { ASSESSMENT_ADD } from "lib/features";
 
 import ButtonSys from "../../button";
 import { TrashIconSvg } from "../../icon";
-import { InputRequired } from "../../input";
 import { Label } from "../../typography";
 import DrawerCore from "../drawerCore";
 
