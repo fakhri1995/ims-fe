@@ -49,7 +49,7 @@ import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomEmployeeList } from "../../../components/table/tableCustom";
-import { createKeyPressHandler } from "../../../lib/helper";
+import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -111,7 +111,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     placements: withDefault(StringParam, undefined),
     contract_status_ids: withDefault(NumberParam, undefined),
     is_employee_active: withDefault(NumberParam, 1),
-    keyword: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -144,8 +143,7 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [dataContractStatusList, setDataContractStatusList] = useState([]);
 
   // filter search & selected options
-  const [searchingFilterEmployees, setSearchingFilterEmployees] =
-    useState(undefined);
+  const [searchingFilterEmployees, setSearchingFilterEmployees] = useState("");
   const [selectedPlacement, setSelectedPlacement] = useState(undefined);
   const [selectedRoleId, setSelectedRoleId] = useState(undefined);
   const [selectedContractStatusId, setSelectedContractStatusId] =
@@ -192,42 +190,50 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       addQueryPrefix: true,
     });
 
-    setLoadingEmployees(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawEmployees(res2.data);
-          setDataEmployees(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingEmployees(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployees${payload}&keyword=${searchingFilterEmployees}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawEmployees(res2.data);
+            setDataEmployees(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingEmployees(false);
         });
-      })
-      .finally(() => {
-        setLoadingEmployees(false);
-      });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetEmployees,
     refresh,
+    searchingFilterEmployees,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
-    queryParams.keyword,
     queryParams.role_ids,
     queryParams.placements,
     queryParams.contract_status_ids,
@@ -586,7 +592,6 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const onFilterEmployees = () => {
     setQueryParams({
-      keyword: searchingFilterEmployees,
       role_ids: selectedRoleId,
       placements: selectedPlacement,
       contract_status_ids: selectedContractStatusId,
@@ -648,6 +653,15 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
+      title: "Tanggal Bergabung",
+      dataIndex: "join_at",
+      render: (text, record, index) => {
+        return {
+          children: <>{momentFormatDate(text || null, "-", "DD MMM YYYY")}</>,
+        };
+      },
+    },
+    {
       title: "Nama",
       dataIndex: "name",
       sorter: isAllowedToGetEmployees
@@ -657,57 +671,68 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "NIP",
       dataIndex: "nip",
-    },
-    {
-      title: "Penempatan",
-      dataIndex: "placement",
       render: (text, record, index) => {
         return {
-          children: <>{record.contract?.placement || "-"}</>,
+          children: <>{text || "-"}</>,
         };
       },
     },
     {
-      title: "Status Kontrak",
-      dataIndex: "contract_status",
+      title: "Penempatan",
+      dataIndex: ["contract", "placement"],
       render: (text, record, index) => {
         return {
-          children: <>{record.contract?.contract_status?.name || "-"}</>,
+          children: <>{text || "-"}</>,
         };
       },
     },
     {
       title: "Posisi",
-      dataIndex: "position",
+      dataIndex: ["contract", "role", "name"],
       render: (text, record, index) => {
         return {
-          children: <>{record.contract?.role?.name || "-"}</>,
+          children: <>{text || "-"}</>,
+        };
+      },
+    },
+    {
+      title: "Status Kontrak",
+      dataIndex: ["contract", "contract_status", "name"],
+      render: (text, record, index) => {
+        return {
+          children: <>{text || "-"}</>,
         };
       },
     },
     {
       title: "No. Telepon",
       dataIndex: "phone_number",
+      render: (text) => {
+        return {
+          children: <>{text || "-"}</>,
+        };
+      },
     },
     {
       title: "Sisa Hari Kerja",
-      dataIndex: "days_left",
+      dataIndex: "contract_end_countdown",
       render: (text, record, index) => {
         return {
           children: (
-            <>
-              {moment(record?.contract?.contract_end_at).isValid() ? (
-                record.contract?.contract_end_countdown <= 30 ? (
-                  <p className="text-warning">
-                    {record.contract?.contract_end_countdown} hari
-                  </p>
-                ) : (
-                  <p>{record.contract?.contract_end_countdown} hari</p>
-                )
-              ) : (
-                <p>- hari</p>
-              )}
-            </>
+            <p
+              className={
+                record?.contract?.contract_end_countdown <= 60
+                  ? "text-warning"
+                  : "text-black"
+              }
+            >
+              {!record?.contract?.contract_end_countdown
+                ? "-"
+                : record?.contract?.contract_end_countdown < 0
+                ? 0
+                : record?.contract?.contract_end_countdown}{" "}
+              hari
+            </p>
           ),
         };
       },
@@ -905,19 +930,13 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Search by keyword (kata kunci) */}
             <div className="md:w-4/12">
               <Input
-                defaultValue={queryParams.keyword}
+                defaultValue={searchingFilterEmployees}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (!e.target.value) {
-                    setQueryParams({
-                      keyword: undefined,
-                    });
-                  }
                   setSearchingFilterEmployees(e.target.value);
                 }}
-                onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetEmployees}
               />
             </div>
@@ -986,18 +1005,20 @@ const EmployeeListIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Filter by contract status (dropdown) */}
             <div className="md:w-2/12">
               <Select
-                defaultValue={queryParams.contract_status_ids}
                 allowClear
                 name={`status`}
+                defaultValue={queryParams.contract_status_ids}
                 disabled={!isAllowedToGetRoleTypeList}
                 placeholder="Semua Status Kontrak"
                 style={{ width: `100%` }}
                 onChange={(value) => {
-                  setQueryParams({ contract_status_ids: value });
+                  const stringStatusIds = value?.toString();
+                  setQueryParams({ contract_status_ids: stringStatusIds });
                   setSelectedContractStatusId(value);
                 }}
+                optionFilterProp="children"
               >
-                {dataContractStatusList.map((status) => (
+                {dataContractStatusList?.map((status) => (
                   <Select.Option key={status.id} value={status.id}>
                     <p>{status.name}</p>
                   </Select.Option>

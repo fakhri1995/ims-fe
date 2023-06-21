@@ -285,10 +285,7 @@ const ModalProjectCreate = ({
         </div>
       }
       visible={visible}
-      onCancel={() => {
-        clearData();
-        onvisible(false);
-      }}
+      onCancel={handleDeleteProject}
       maskClosable={false}
       footer={
         <Spin spinning={loading}>

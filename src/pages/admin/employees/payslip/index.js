@@ -48,10 +48,8 @@ import {
 } from "../../../../components/icon";
 import Layout from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import {
-  ModalManageSalaryVar,
-  ModalUbah,
-} from "../../../../components/modal/modalCustom";
+import { ModalUbah } from "../../../../components/modal/modalCustom";
+import ModalSalaryVarManage from "../../../../components/modal/payslips/modalSalaryVarManage";
 import { TableCustomPayslipList } from "../../../../components/table/tableCustom";
 import {
   createKeyPressHandler,
@@ -134,7 +132,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     role_ids: withDefault(NumberParam, undefined),
     placements: withDefault(StringParam, undefined),
     is_posted: withDefault(NumberParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   // 2. useState
@@ -167,8 +164,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
   ];
 
   // filter search & selected options
-  const [searchingFilterPayslips, setSearchingFilterPayslips] =
-    useState(undefined);
+  const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
   const [selectedPlacement, setSelectedPlacement] = useState(undefined);
   const [selectedRoleId, setSelectedRoleId] = useState(undefined);
   const [selectedPayslipStatusId, setSelectedPayslipStatusId] =
@@ -219,40 +215,48 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
     const payload = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
     });
-    setLoadingPayslips(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeesPayslip${payload}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawPayslips(res2.data);
-          setDataPayslips(res2.data.data);
-        } else {
+
+    const fetchData = async () => {
+      setLoadingPayslips(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeesPayslip${payload}&keyword=${searchingFilterPayslips}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawPayslips(res2.data);
+            setDataPayslips(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+        })
+        .finally(() => {
+          setLoadingPayslips(false);
         });
-      })
-      .finally(() => {
-        setLoadingPayslips(false);
-      });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetPayslips,
     refresh,
+    searchingFilterPayslips,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -532,7 +536,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const onFilterPayslips = () => {
     setQueryParams({
-      keyword: searchingFilterPayslips,
       role_ids: selectedRoleId,
       placements: selectedPlacement,
       is_posted: selectedPayslipStatusId,
@@ -770,18 +773,13 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
             {/* Search by keyword (kata kunci) */}
             <div className="md:w-4/12">
               <Input
-                defaultValue={queryParams.keyword}
+                defaultValue={searchingFilterPayslips}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (!e.target.value) {
-                    setQueryParams({ keyword: undefined });
-                  }
-
                   setSearchingFilterPayslips(e.target.value);
                 }}
-                onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetPayslips}
               />
             </div>
@@ -890,7 +888,7 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
       </div>
       {/* Modal Kelola Variabel Gaji */}
       <AccessControl hasPermission={EMPLOYEE_SALARY_COLUMN_ADD}>
-        <ModalManageSalaryVar
+        <ModalSalaryVarManage
           initProps={initProps}
           visible={modalSalaryVar}
           onvisible={setModalSalaryVar}
@@ -900,7 +898,6 @@ const PayslipIndex = ({ dataProfile, sidemenu, initProps }) => {
           isAllowedToDeleteSalaryColumn={isAllowedToDeleteSalaryColumn}
           isAllowedToUpdateSalaryColumn={isAllowedToUpdateSalaryColumn}
           onOk={() => setModalSalaryVar(false)}
-          // disabled
         />
       </AccessControl>
       <AccessControl hasPermission={EMPLOYEES_PAYSLIPS_POST}>

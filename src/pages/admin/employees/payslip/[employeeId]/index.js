@@ -41,6 +41,7 @@ import {
 } from "../../../../../components/icon";
 import LayoutDashboard from "../../../../../components/layout-dashboard";
 import st from "../../../../../components/layout-dashboard.module.css";
+import EmployeeProfileSummary from "../../../../../components/screen/employee/detail/summary";
 import { TableCustomPayslipEmployeeList } from "../../../../../components/table/tableCustom";
 import {
   generateStaticAssetUrl,
@@ -93,7 +94,6 @@ const EmployeePayslipDetailIndex = ({
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ "desc"),
     employee_id: withDefault(NumberParam, employeeId),
     is_posted: withDefault(NumberParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   // 1. STATE
@@ -105,6 +105,7 @@ const EmployeePayslipDetailIndex = ({
     nip: "",
     phone_number: "",
     email_office: "",
+    join_at: "",
     is_posted: 0,
     contracts: [],
     inventories: [],
@@ -124,8 +125,7 @@ const EmployeePayslipDetailIndex = ({
   ];
 
   // filter search & selected options
-  const [searchingFilterPayslips, setSearchingFilterPayslips] =
-    useState(undefined);
+  const [searchingFilterPayslips, setSearchingFilterPayslips] = useState("");
   const [selectedPayslipStatusId, setSelectedPayslipStatusId] =
     useState(undefined);
 
@@ -220,52 +220,57 @@ const EmployeePayslipDetailIndex = ({
     const payload = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
     });
-    setpraloading(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips${payload}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((response) => response.json())
-      .then((response2) => {
-        if (response2.success) {
-          setDataRawPayslips(response2.data);
-          setDataPayslips(response2.data.data);
-        } else {
+
+    const fetchData = async () => {
+      setpraloading(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getEmployeePayslips${payload}&keyword=${searchingFilterPayslips}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            setDataRawPayslips(response2.data);
+            setDataPayslips(response2.data.data);
+          } else {
+            notification.error({
+              message: `${response2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${response2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setpraloading(false));
+        })
+        .finally(() => setpraloading(false));
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
     // }
   }, [
     isAllowedToGetPayslips,
     refresh,
+    searchingFilterPayslips,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
     queryParams.employee_id,
-    queryParams.keyword,
     queryParams.is_posted,
   ]);
 
   // 3. Event
   const onFilterPayslips = () => {
     setQueryParams({
-      keyword: searchingFilterPayslips,
       is_posted: selectedPayslipStatusId,
     });
   };
@@ -445,31 +450,21 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {
-                record.is_posted ? (
-                  <p
-                    className="bg-primary100 bg-opacity-10 text-primary100 
+              {record.is_posted ? (
+                <p
+                  className="bg-primary100 bg-opacity-10 text-primary100 
                   py-1 px-4 rounded-md text-center"
-                  >
-                    Diterbitkan
-                  </p>
-                ) : (
-                  <p
-                    className="bg-state2 bg-opacity-10 text-state2 
+                >
+                  Diterbitkan
+                </p>
+              ) : (
+                <p
+                  className="bg-state2 bg-opacity-10 text-state2 
                     py-1 px-7 rounded-md text-center"
-                  >
-                    Draft
-                  </p>
-                )
-
-                // : record.id === null ? (
-                //   <p
-                //     className="bg-mono30 bg-opacity-10 text-mono30
-                //       py-1 px-7 rounded-md text-center">
-                //     Kosong
-                //   </p>
-                // )
-              }
+                >
+                  Draft
+                </p>
+              )}
             </>
           ),
         };
@@ -482,61 +477,45 @@ const EmployeePayslipDetailIndex = ({
         return {
           children: (
             <>
-              {
-                record.is_posted ? (
-                  <div className="flex flex-row space-x-2 items-center">
-                    <ButtonSys
-                      type={isAllowedToGetPayslip ? "default" : "primary"}
-                      disabled={!isAllowedToGetPayslip}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        setPayslipId(record.id);
-                        setDrawerDetail(true);
-                      }}
-                    >
-                      <EyeOutlined />
-                    </ButtonSys>
-                    <ButtonSys
-                      type={"default"}
-                      disabled={!isAllowedToGetPayslip || loadingDownload}
-                      onClick={(event) => {
-                        event.stopPropagation();
-                        handleDownloadPayslip(record);
-                      }}
-                    >
-                      <DownloadOutlined />
-                    </ButtonSys>
-                  </div>
-                ) : (
+              {record.is_posted ? (
+                <div className="flex flex-row space-x-2 items-center">
                   <ButtonSys
-                    type={isAllowedToUpdatePayslip ? "default" : "primary"}
-                    disabled={!isAllowedToUpdatePayslip}
+                    type={isAllowedToGetPayslip ? "default" : "primary"}
+                    disabled={!isAllowedToGetPayslip}
                     onClick={(event) => {
                       event.stopPropagation();
-                      rt.push(`${employeeId}/addPayslip?id=${record.id}`);
+                      setPayslipId(record.id);
+                      setDrawerDetail(true);
                     }}
                   >
-                    <div className="flex flex-row space-x-2 items-center">
-                      <EditOutlined />
-                      <p className="whitespace-nowrap">Edit Draft</p>
-                    </div>
+                    <EyeOutlined />
                   </ButtonSys>
-                )
-                // : record.id === null ? (
-                //   <ButtonSys
-                //     type={isAllowedToAddPayslip ? "default" : "primary"}
-                //     disabled={!isAllowedToAddPayslip}
-                //     onClick={(event) => {
-                //       event.stopPropagation();
-                //       onAddPayslipButtonClicked();
-                //     }}>
-                //     <div className="flex flex-row space-x-2 items-center">
-                //       <FileAddOutlined />
-                //       <p className="whitespace-nowrap">Buat Slip Gaji</p>
-                //     </div>
-                //   </ButtonSys>
-                // )
-              }
+                  <ButtonSys
+                    type={"default"}
+                    disabled={!isAllowedToGetPayslip || loadingDownload}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleDownloadPayslip(record);
+                    }}
+                  >
+                    <DownloadOutlined />
+                  </ButtonSys>
+                </div>
+              ) : (
+                <ButtonSys
+                  type={isAllowedToUpdatePayslip ? "default" : "primary"}
+                  disabled={!isAllowedToUpdatePayslip}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    rt.push(`${employeeId}/addPayslip?id=${record.id}`);
+                  }}
+                >
+                  <div className="flex flex-row space-x-2 items-center">
+                    <EditOutlined />
+                    <p className="whitespace-nowrap">Edit Draft</p>
+                  </div>
+                </ButtonSys>
+              )}
             </>
           ),
         };
@@ -638,41 +617,7 @@ const EmployeePayslipDetailIndex = ({
             </div>
 
             {/* Profile summary */}
-            <div className="shadow-lg rounded-md bg-white py-4 px-3 md:px-6 divide-y-2 md:h-full">
-              <h4 className="mig-heading--4 mb-3">Ringkasan Profil</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
-                <div className="flex flex-col space-y-1">
-                  <p className="mig-caption--medium text-mono80">Nama</p>
-                  <p>{dataEmployee?.name || "-"}</p>
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <p className="mig-caption--medium text-mono80">NIP</p>
-                  <p>{dataEmployee?.nip || "-"}</p>
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <p className="mig-caption--medium text-mono80">Posisi</p>
-                  <p>{dataEmployee?.contracts[0]?.role?.name || "-"}</p>
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <p className="mig-caption--medium text-mono80">
-                    Status Kontrak
-                  </p>
-                  <p>
-                    {dataEmployee?.contracts[0]?.contract_status?.name || "-"}
-                  </p>
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <p className="mig-caption--medium text-mono80">E-mail</p>
-                  <p>{dataEmployee?.email_office || "-"}</p>
-                </div>
-                <div className="flex flex-col space-y-1">
-                  <p className="mig-caption--medium text-mono80">
-                    Nomor Telepon
-                  </p>
-                  <p>{dataEmployee?.phone_number || "-"}</p>
-                </div>
-              </div>
-            </div>
+            <EmployeeProfileSummary dataEmployee={dataEmployee} />
           </div>
         </div>
         {/* Table Daftar Slip Gaji */}
@@ -684,17 +629,13 @@ const EmployeePayslipDetailIndex = ({
             {/* Search by keyword (kata kunci) */}
             <div className="w-7/12">
               <Input
-                defaultValue={queryParams.keyword}
+                defaultValue={searchingFilterPayslips}
                 style={{ width: `100%` }}
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (!e.target.value) {
-                    setQueryParams({ keyword: undefined });
-                  }
                   setSearchingFilterPayslips(e.target.value);
                 }}
-                onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetPayslips}
               />
             </div>

@@ -18,12 +18,7 @@ import "react-quill/dist/quill.snow.css";
 import { permissionWarningNotification } from "lib/helper";
 
 import ButtonSys from "../../button";
-import {
-  EditIconSvg,
-  EditSquareIconSvg,
-  LeftIconSvg,
-  PlusIconSvg,
-} from "../../icon";
+import { EditSquareIconSvg, LeftIconSvg, PlusIconSvg } from "../../icon";
 import { ModalHapus2 } from "../modalCustom";
 
 const ModalStatusManage = ({
@@ -283,7 +278,7 @@ const ModalStatusManage = ({
     }
   };
 
-  // Sortable component
+  // Sortable component (status card)
   const SortableItem = ({
     id,
     idx,
@@ -311,19 +306,22 @@ const ModalStatusManage = ({
             <p className="text-sm font-bold text-mono30">{statusName}</p>
 
             <div
-              className={`text-white rounded-md mig-caption--bold px-2 py-[2px] ${
+              className={`text-white rounded-md text-xs font-bold px-2 py-[2px] ${
                 isActive ? "bg-primary100" : "bg-mono50"
               }`}
             >
               {isActive ? "Aktif" : "Nonaktif"}
             </div>
-            {idx === 0 ? (
-              <p className="mig-caption text-mono80">(Prioritas Tinggi)</p>
-            ) : idx === dataStatusList.length - 1 ? (
-              <p className="mig-caption text-mono80">(Prioritas Rendah)</p>
-            ) : (
-              <></>
-            )}
+
+            <p className="mig-caption text-mono80">
+              {idx === 0 ? (
+                "(Prioritas Tinggi)"
+              ) : idx === dataStatusList.length - 1 ? (
+                "(Prioritas Rendah)"
+              ) : (
+                <></>
+              )}
+            </p>
           </div>
           <div className="flex space-x-2 items-center">
             <button
