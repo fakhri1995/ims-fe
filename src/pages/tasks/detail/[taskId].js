@@ -1518,7 +1518,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                 //     ? "/image/staffTask.png"
                                 //     : docusers.profile_image
                                 // }
-                                className=" object-contain"
+                                className="w-10 h-10 bg-cover object-cover rounded-full"
                                 alt=""
                               />
                             </div>
@@ -1663,7 +1663,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                   //     ? "/image/staffTask.png"
                                   //     : docusers.profile_image
                                   // }
-                                  className=" object-contain"
+                                  className="w-10 h-10 bg-cover object-cover rounded-full"
                                   alt=""
                                 />
                               </div>
@@ -1795,7 +1795,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                           //     : doctaskuser.profile_image
                                           // }
                                           alt=""
-                                          className=" object-contain"
+                                          className="w-6 h-6 bg-cover object-cover rounded-full"
                                         />
                                       </div>
                                       <p className="mb-0 text-primary100 mr-1">
@@ -1870,7 +1870,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                   //     ? "/image/staffTask.png"
                                                   //     : `${doc.profile_image}`
                                                   // }
-                                                  className=" object-contain w-10 h-10"
+                                                  className="w-10 h-10 bg-cover object-cover rounded-full"
                                                   alt=""
                                                 />
                                               </div>
@@ -1984,7 +1984,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                                                 //     ? "/image/staffTask.png"
                                                 //     : `${doc.profile_image}`
                                                 // }
-                                                className=" object-contain w-10 h-10"
+                                                className="w-10 h-10 bg-cover object-cover rounded-full"
                                                 alt=""
                                               />
                                             </div>
@@ -3188,7 +3188,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                           <p className="mb-0 text-onhold">Lanjutkan Task</p>
                         </>
                       ) : displaytask.created_by !== dataProfile.data.id ? (
-                        <>
+                        <div className="flex items-center">
                           <div className="mr-1">
                             {displaytask.status === 1 && (
                               <ClockIconSvg size={25} color={`#BF4A40`} />
@@ -3217,7 +3217,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                           >
                             Request On Hold
                           </p>
-                        </>
+                        </div>
                       ) : (
                         <>
                           <div className="mr-1">
@@ -3372,7 +3372,7 @@ const TaskDetail = ({ initProps, dataProfile, sidemenu, taskid }) => {
                       //     ? `/image/staffTask.png`
                       //     : displaytask.creator.profile_image
                       // }
-                      className=" object-contain"
+                      className="w-8 h-8 bg-cover object-cover rounded-full"
                       alt=""
                     />
                   </div>
