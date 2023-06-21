@@ -5,16 +5,12 @@ import {
 } from "@ant-design/icons";
 import {
   Button,
-  Checkbox,
   DatePicker,
   Form,
   Input,
   InputNumber,
-  Modal,
   Select,
-  Spin,
   Switch,
-  Tabs,
   Upload,
   notification,
 } from "antd";
@@ -44,22 +40,14 @@ import {
   RECRUITMENT_ROLE_TYPES_LIST_GET,
 } from "lib/features";
 
-import RemoveIcon from "assets/vectors/icon-remove.svg";
-
 import {
   beforeUploadFileMaxSize,
   generateStaticAssetUrl,
-  getBase64,
   getFileName,
   permissionWarningNotification,
 } from "../../../../../lib/helper";
 import ButtonSys from "../../../../button";
-import {
-  CloudUploadIconSvg,
-  PaperclipIconSvg,
-  TrashIconSvg,
-  XIconSvg,
-} from "../../../../icon";
+import { PaperclipIconSvg } from "../../../../icon";
 import { ModalAddCompany, ModalAddRole } from "../../../../modal/modalCustom";
 import ModalSalaryVarAdd, {
   defaultSalaryVar,
