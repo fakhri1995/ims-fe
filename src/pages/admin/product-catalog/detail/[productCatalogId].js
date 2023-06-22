@@ -743,9 +743,9 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     Macbook Pro M1
                   </h3>
                   <Switch
-                    className={" h-[24px] self-center"}
-                    checkedChildren={"ACTIVE"}
-                    unCheckedChildren={"ARCHIVED"}
+                    className={"self-center"}
+                    // checkedChildren={"ACTIVE"}
+                    // unCheckedChildren={"ARCHIVED"}
                   />
                 </div>
               </div>
