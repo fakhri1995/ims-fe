@@ -164,8 +164,6 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
   useEffect(() => {
     if (!isAllowedToGetAgentList) {
       setpraloading(false);
-      setdatarawloading(false);
-
       permissionWarningNotification("Mendapatkan", "Daftar Agent");
       return;
     }
@@ -174,56 +172,62 @@ function Agents({ initProps, dataProfile, dataListAgent, sidemenu }) {
       addQueryPrefix: true,
     });
 
-    setpraloading(true);
-    setdatarawloading(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentList${queryPayload}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setrawdata(res2.data);
-        var dataDD = [];
-        if (!res2) {
-          dataDD = [];
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-          rt.push("/dashboard/admin");
-        } else {
-          dataDD = res2.data.data.map((doc, idx) => {
-            return {
-              nomor: idx + 1,
-              id: doc.id,
-              profile_image: generateStaticAssetUrl(doc.profile_image?.link),
-              // profile_image:
-              //   doc.profile_image === "-" || doc.profile_image === ""
-              //     ? `/default-users.jpeg`
-              //     : doc.profile_image,
-              name: doc.name,
-              email: doc.email,
-              phone_number: doc.phone_number,
-              company_name: doc.company_name,
-              is_enabled: doc.is_enabled,
-              company_id: doc.company_id,
-              position: doc.position,
-            };
-          });
+    const fetchData = async () => {
+      setpraloading(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAgentList${queryPayload}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+            "Content-Type": "application/json",
+          },
         }
-        setdataagents(dataDD);
-        setpraloading(false);
-        setdatarawloading(false);
-      });
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setrawdata(res2.data);
+          var dataDD = [];
+          if (!res2) {
+            dataDD = [];
+            notification["error"]({
+              message: res2.message.errorInfo.status_detail,
+              duration: 3,
+            });
+            rt.push("/dashboard/admin");
+          } else {
+            dataDD = res2.data.data.map((doc, idx) => {
+              return {
+                nomor: idx + 1,
+                id: doc.id,
+                profile_image: generateStaticAssetUrl(doc.profile_image?.link),
+                // profile_image:
+                //   doc.profile_image === "-" || doc.profile_image === ""
+                //     ? `/default-users.jpeg`
+                //     : doc.profile_image,
+                name: doc.name,
+                email: doc.email,
+                phone_number: doc.phone_number,
+                company_name: doc.company_name,
+                is_enabled: doc.is_enabled,
+                company_id: doc.company_id,
+                position: doc.position,
+              };
+            });
+          }
+          setdataagents(dataDD);
+          setpraloading(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetAgentList,
     triggerRefetchAgentList,
+    queryParams.name,
+    queryParams.company_id,
+    queryParams.is_enabled,
     queryParams.page,
     queryParams.rows,
   ]);

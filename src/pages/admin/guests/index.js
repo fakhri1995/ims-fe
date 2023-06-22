@@ -147,11 +147,6 @@ function Guests({ initProps, dataProfile, sidemenu }) {
       name: e.target.value === "" ? undefined : e.target.value,
     });
   };
-  // const onChangeAsalLokasi = (value) => {
-  //   setQueryParams({
-  //     company_id: value,
-  //   });
-  // };
   const onChangeStatus = (value) => {
     setQueryParams({
       is_enabled: value === undefined ? undefined : Number(Boolean(value)),
@@ -167,8 +162,6 @@ function Guests({ initProps, dataProfile, sidemenu }) {
   useEffect(() => {
     if (!isAllowedToGetGuestList) {
       setpraloading(false);
-      setdatarawloading(false);
-
       permissionWarningNotification("Mendapatkan", "Daftar Guest");
       return;
     }
@@ -177,53 +170,58 @@ function Guests({ initProps, dataProfile, sidemenu }) {
       addQueryPrefix: true,
     });
 
-    setpraloading(true);
-    setdatarawloading(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getGuestList${queryPayload}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setrawdata(res2.data);
-        var dataDD = [];
-        if (!res2) {
-          dataDD = [];
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-          rt.push("/dashboard/admin");
-        } else {
-          dataDD = res2.data.data.map((doc, idx) => {
-            return {
-              nomor: idx + 1,
-              id: doc.id,
-              profile_image: generateStaticAssetUrl(doc.profile_image?.link),
-              // profile_image:
-              //   doc.profile_image === "-" || doc.profile_image === ""
-              //     ? `/default-users.jpeg`
-              //     : doc.profile_image,
-              name: doc.name,
-              email: doc.email,
-              is_enabled: doc.is_enabled,
-              roles: doc.roles,
-            };
-          });
+    const fetchData = async () => {
+      setpraloading(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getGuestList${queryPayload}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+            "Content-Type": "application/json",
+          },
         }
-        setdataguests(dataDD);
-        setpraloading(false);
-        setdatarawloading(false);
-      });
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setrawdata(res2.data);
+          var dataDD = [];
+          if (!res2) {
+            dataDD = [];
+            notification["error"]({
+              message: res2.message.errorInfo.status_detail,
+              duration: 3,
+            });
+            rt.push("/dashboard/admin");
+          } else {
+            dataDD = res2.data.data.map((doc, idx) => {
+              return {
+                nomor: idx + 1,
+                id: doc.id,
+                profile_image: generateStaticAssetUrl(doc.profile_image?.link),
+                // profile_image:
+                //   doc.profile_image === "-" || doc.profile_image === ""
+                //     ? `/default-users.jpeg`
+                //     : doc.profile_image,
+                name: doc.name,
+                email: doc.email,
+                is_enabled: doc.is_enabled,
+                roles: doc.roles,
+              };
+            });
+          }
+          setdataguests(dataDD);
+          setpraloading(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetGuestList,
     triggerRefetchGuestList,
+    queryParams.name,
+    queryParams.is_enabled,
     queryParams.page,
     queryParams.rows,
   ]);
@@ -324,6 +322,7 @@ function Guests({ initProps, dataProfile, sidemenu }) {
                 dataSource={dataguests}
                 columns={columnsDD}
                 loading={praloading}
+                rowKey={(record) => record.id}
                 onRow={(record, rowIndex) => {
                   return {
                     onMouseOver: (event) => {
