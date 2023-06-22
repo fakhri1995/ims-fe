@@ -346,7 +346,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       {hasPermission(SIDEBAR_ASSET) && (
         <SubMenu title="Katalog" key="12" icon={<KatalogIconSvg />}>
           {hasPermission(SIDEBAR_ASSET_TYPE) && (
-            <Menu.Item key="81">
+            <Menu.Item key="113">
               <Link href="/admin/product-catalog">Product</Link>
             </Menu.Item>
           )}
