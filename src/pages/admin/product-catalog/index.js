@@ -47,7 +47,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   const isAllowedToSeeModels = hasPermission(MODELS_GET);
   const isAllowedToSeeAssets = hasPermission(ASSETS_GET);
   const isAllowedToAddModel = hasPermission(MODEL_ADD);
-
+  const [searchingFilterProducts, setSearchingFilterProducts] = useState("");
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -93,11 +93,15 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   //3.Define
   const columnsTable = [
     {
-      title: "Nama",
-      dataIndex: ["name", "count"],
+      title: "ID Produk",
+      dataIndex: "id",
+    },
+    {
+      title: "Nama Produk",
+      dataIndex: ["name", "model_inventory"],
       sorter: (a, b) => a.name.length - b.name.length,
       render: (text, row) =>
-        row["count"] == 0 ? (
+        row["model_inventory"].inventories_count == 0 ? (
           <div className={"flex"}>
             <p className={"text-[14px] text-warning"}>{row["name"]}</p>
             <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
@@ -111,25 +115,47 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
         ),
     },
     {
-      title: "SKU",
-      dataIndex: "sku",
-      render: (skuValue) => (!!skuValue ? skuValue : "-"),
-      sorter: true,
+      title: "Kategori Produk",
+      dataIndex: "category",
+      render: (category) => (
+        <div>
+          <p>{category.name}</p>
+        </div>
+      ),
     },
     {
-      title: "Asset Type",
-      dataIndex: "asset_name",
+      title: "Relasi Item",
+      dataIndex: "model_inventory",
+      render: (model_inventory) => (
+        <div>
+          <p>{model_inventory.name}</p>
+        </div>
+      ),
+    },
+    {
+      title: "Harga",
+      dataIndex: "price",
+      sorter: (a, b) => a.price - b.price,
+      render: (price) => (
+        <div>
+          <p>Rp {price}</p>
+        </div>
+      ),
     },
     {
       title: "Jumlah Item",
-      dataIndex: "count",
-      sorter: (a, b) => a.count - b.count,
+      dataIndex: "model_inventory",
+      render: (model_inventory) => (
+        <div>
+          <p>{model_inventory.inventories_count}</p>
+        </div>
+      ),
     },
     {
       title: "Status",
-      dataIndex: "count",
-      render: (count) =>
-        count <= 0 ? (
+      dataIndex: "model_inventory",
+      render: (model_inventory) =>
+        model_inventory.inventories_count <= 0 ? (
           <div
             className={
               "bg-statusarchived py-1 px-4 rounded-[5px] flex justify-center"
@@ -291,12 +317,15 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     });
 
     setpraloading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventories${payload}&keyword=${searchingFilterProducts}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
       .then((res) => res.json())
       .then((res2) => {
         console.log("datanya model ", res2.data.data);
@@ -306,6 +335,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, [
     isAllowedToSeeModels,
+    searchingFilterProducts.length > 2,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -346,7 +376,9 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               style={{ width: `100%`, marginLeft: "-10px", height: "40px" }}
               defaultValue={queryParams.name}
               placeholder="Cari Kategori.."
-              onChange={onChangeSearch}
+              onChange={(e) => {
+                onChangeSearch(e);
+              }}
               allowClear
               onKeyPress={onKeyPressHandler}
             ></Input>
@@ -480,7 +512,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               </p>
             </div>
             <div className={"flex"}>
-              <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center mr-6">
+              <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center mr-6 cursor-pointer">
                 <div className={"bg-open py-2 px-6 rounded-sm"}>
                   <div
                     onClick={() => setModalKategori(true)}
@@ -490,7 +522,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                   </div>
                 </div>
               </div>
-              <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center">
+              <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center cursor-pointer">
                 <div className={"bg-primary100 py-2 px-6 rounded-sm"}>
                   <Link href={"/admin/product-catalog/create"}>
                     <p className={"text-white text-xs"}>Tambah Produk</p>
@@ -505,16 +537,18 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="col-span-4 mr-2">
                   <Input
                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                    defaultValue={queryParams.name}
+                    defaultValue={searchingFilterProducts}
                     placeholder="Cari produk dengan kata kunci"
-                    onChange={onChangeSearch}
+                    onChange={(e) => {
+                      setSearchingFilterProducts(e.target.value);
+                    }}
                     allowClear
-                    onKeyPress={onKeyPressHandler}
+                    disabled={!isAllowedToSeeModels}
                   ></Input>
                 </div>
                 <div className="col-span-1 mr-2">
                   <Select
-                    placeholder="Katalog Produk"
+                    placeholder="Kategori Produk"
                     style={{ width: `100%`, marginRight: `0.5rem` }}
                     // onChange={onChangeStatus}
                     allowClear
@@ -552,7 +586,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
           <Table
             className="tableTypeTask"
             pagination={{
-              simple: true,
+              showSizeChanger: true,
               current: queryParams.page,
               pageSize: queryParams.rows,
               total: displayentiredata.data.total,

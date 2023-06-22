@@ -1076,17 +1076,6 @@ const ProjectDetailIndex = ({
                           ))}
                         </Select>
                       </div>
-                      {/* <p
-                      className="px-4 py-2 rounded-md w-max"
-                      style={{
-                        backgroundColor: dataProject?.status?.color
-                          ? dataProject?.status?.color + "20"
-                          : "#E6E6E6",
-                        color: dataProject?.status?.color ?? "#808080",
-                      }}
-                    >
-                      {dataProject?.status?.name ?? "-"}
-                    </p> */}
                     </div>
                     <div>
                       <p className="mig-caption--bold mb-2">Tanggal Dimulai:</p>
@@ -1119,11 +1108,6 @@ const ProjectDetailIndex = ({
                               }}
                             >
                               {dataProject?.project_staffs?.map((staff) => (
-                                // <Tooltip
-                                //   key={staff.id}
-                                //   title={staff?.name}
-                                //   placement="top"
-                                // >
                                 <Avatar
                                   key={staff.id}
                                   src={generateStaticAssetUrl(
@@ -1132,7 +1116,6 @@ const ProjectDetailIndex = ({
                                   )}
                                   size={30}
                                 />
-                                // </Tooltip>
                               ))}
                             </Avatar.Group>
                             {dataProject?.project_staffs?.length > 3 ? (
@@ -1370,12 +1353,11 @@ const ProjectDetailIndex = ({
                             title={task?.name}
                             taskId={task?.ticket_number}
                             projectName={currentProject?.name}
-                            toDate={task.end_date}
-                            statusName={task?.status?.name}
-                            statusColor={task?.status?.color}
-                            taskStaffs={task.task_staffs}
+                            toDate={task?.end_date}
+                            status={task?.status}
+                            taskStaffs={task?.task_staffs}
                             onClick={() => {
-                              setCurrentTaskId(task.id);
+                              setCurrentTaskId(task?.id);
                               setModalDetailTask(true);
                             }}
                           />

@@ -57,11 +57,13 @@ import {
 import { permissionWarningNotification } from "lib/helper";
 
 import {
+  AlertCircleIconSvg,
   InfoCircleIconSvg,
   LuarPeriodeIconSvg,
   PakaiInternalIconSvg,
   PakaiSewaIconSvg,
   PeriodeIconSvg,
+  PlusIconSvg,
   ReplacementIconSvg,
   TersediaIconSvg,
 } from "../../../../components/icon";
@@ -715,6 +717,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     },
   ];
   const [rowstate, setrowstate] = useState(0);
+  const [modalTambahProduk, setModalTambahProduk] = useState(false);
 
   useEffect(() => {
     setdisplayentiredata(dataDummy);
@@ -746,6 +749,48 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                   </h3>
                 </div>
               </div>
+              <Modal
+                title=""
+                open={modalTambahProduk}
+                width={680}
+                footer={null}
+                onCancel={() => setModalTambahProduk(false)}
+              >
+                <div className={"p-6"}>
+                  <div className={"flex justify-between"}>
+                    <p className={"text-2xl text-mono30 font-semibold"}>
+                      Peringatan!
+                    </p>
+                    {/* <AlertCircleIconSvg /> */}
+                  </div>
+                  <div className={"mt-6"}>
+                    <p className={"text-sm text-mono30"}>
+                      Apakah Anda yakin ingin menambah data produk ?
+                    </p>
+                  </div>
+                  <div className={"mt-14 flex justify-between"}>
+                    <div
+                      className={
+                        "border border-primary100 py-2 px-6 cursor-pointer rounded-[5px]"
+                      }
+                    >
+                      <p className={"text-xs text-mono30"}>Batalkan</p>
+                    </div>
+                    <div
+                      className={
+                        "bg-state1 py-2 px-6 cursor-pointer rounded-[5px]"
+                      }
+                    >
+                      <div className={"flex"}>
+                        <PlusIconSvg size={16} color={"white"} />
+                        <p className={"ml-2 text-white text-xs self-center"}>
+                          Ya, saya yakin menambah data produk
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Modal>
               <div className="flex space-x-2 items-center">
                 <div
                   style={{ marginRight: `8px` }}
@@ -764,9 +809,9 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                     "bg-open py-2 px-6 rounded-sm flex justify-center cursor-pointer"
                   }
                   // disabled={!isAllowedToDeleteItem}
-                  // onClick={() => {
-                  //   setmodaldelete(true);
-                  // }}
+                  onClick={() => {
+                    setModalTambahProduk(true);
+                  }}
                 >
                   <p className={"text-white text-xs"}>Tambah</p>
                 </div>
@@ -788,31 +833,32 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                   />
                 </div>
                 <div className={"w-1/2"}>
-                  <p className={"text-mono30 text-xs"}>Kategori Produk</p>
-                  <Select
-                    size="large"
-                    className={"w-full mt-4"}
-                    showSearch
-                    placeholder="Pilih Kategori"
-                    optionFilterProp="children"
-                    // onChange={onChange}
-                    // onSearch={onSearch}
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
-                    options={[
-                      {
-                        value: "PC",
-                        label: "PC",
-                      },
-                      {
-                        value: "Laptop",
-                        label: "Laptop",
-                      },
-                    ]}
-                  />
+                  <p className={"text-mono30 text-xs mb-4"}>Kategori Produk</p>
+                  <div className={"example"}>
+                    <Select
+                      className={"w-full"}
+                      showSearch
+                      placeholder="Pilih Kategori"
+                      optionFilterProp="children"
+                      // onChange={onChange}
+                      // onSearch={onSearch}
+                      filterOption={(input, option) =>
+                        (option?.label ?? "")
+                          .toLowerCase()
+                          .includes(input.toLowerCase())
+                      }
+                      options={[
+                        {
+                          value: "PC",
+                          label: "PC",
+                        },
+                        {
+                          value: "Laptop",
+                          label: "Laptop",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </div>
               <div className={"mt-6"}>
