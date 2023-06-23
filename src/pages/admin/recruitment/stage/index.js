@@ -77,7 +77,6 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [loadingStageList, setLoadingStageList] = useState(false);
 
   const [dataStages, setDataStages] = useState([]);
-  const [dataStageList, setDataStageList] = useState([]);
   const [dataRawStages, setDataRawStages] = useState({
     current_page: "",
     data: [],
@@ -133,47 +132,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 3. UseEffect
-  // 3.1. Get Stages List
-  useEffect(() => {
-    if (!isAllowedToGetStagesList) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Recruitment Stage List"
-      );
-      setLoadingStageList(false);
-      return;
-    }
-
-    setLoadingStageList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStagesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStageList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingStageList(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingStageList(false);
-      });
-  }, [isAllowedToGetStagesList, refresh]);
-
-  // 3.2. Get Stages
+  // 3.1. Get Stages
   useEffect(() => {
     if (!isAllowedToGetStages) {
       permissionWarningNotification("Mendapatkan", "Daftar Stage");
@@ -181,37 +140,42 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingStages(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?rows=10`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawStages(res2.data);
-          setDataStages(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingStages(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStages?keyword=${searchingFilterStages}&rows=${rowsStages}&page=${pageStages}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawStages(res2.data);
+            setDataStages(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingStages(false);
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-        setLoadingStages(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+          setLoadingStages(false);
         });
-        setLoadingStages(false);
-      });
-  }, [isAllowedToGetStages, refresh]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetStages, refresh, searchingFilterStages]);
 
   // 4. Event
   const onFilterStage = () => {
@@ -423,7 +387,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Stage ({dataStageList.length})
+                Semua Stage ({dataRawStages?.total})
               </h4>
 
               <ButtonSys
@@ -450,11 +414,7 @@ const StageManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterStages("");
-                    } else {
-                      setSearchingFilterStages(e.target.value);
-                    }
+                    setSearchingFilterStages(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetStages}

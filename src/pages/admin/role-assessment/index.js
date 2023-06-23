@@ -202,6 +202,12 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
       });
   }, [isAllowedToGetRoleAssessmentList, refresh]);
 
+  // 3.3. Auto fetch on search
+  useEffect(() => {
+    const timer = setTimeout(() => onFilterRoleAssessment(), 500);
+    return () => clearTimeout(timer);
+  }, [searchingFilterRoleAssessment]);
+
   // 4. Event
   const onFilterRoleAssessment = () => {
     setLoadingRoleAssessment(true);

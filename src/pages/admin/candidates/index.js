@@ -81,7 +81,6 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     assessment_ids: withDefault(NumberParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -113,7 +112,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // Filter
   const [selectedRoleId, setSelectedRoleId] = useState(undefined);
-  const [searchingFilterResume, setSearchingFilterResume] = useState(undefined);
+  const [searchingFilterResume, setSearchingFilterResume] = useState("");
   const [loadingRoleList, setLoadingRoleList] = useState(false);
   const [roleList, setRoleList] = useState([]);
 
@@ -210,39 +209,48 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
       addQueryPrefix: true,
     });
 
-    setLoadingResumeList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawResume(res2.data);
-          setDataTable(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingResumeList(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getResumes${payload}&keyword=${searchingFilterResume}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawResume(res2.data);
+            setDataTable(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoadingResumeList(false));
+        })
+        .finally(() => setLoadingResumeList(false));
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetResumeList,
+    searchingFilterResume,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
     queryParams.sort_type,
-    queryParams.keyword,
     queryParams.assessment_ids,
   ]);
 
@@ -303,7 +311,6 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const onFilterResume = () => {
     setQueryParams({
-      keyword: searchingFilterResume,
       assessment_ids: selectedRoleId,
     });
   };
@@ -454,16 +461,11 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
             <div className="mt-5 flex flex-col">
               <div className="flex flex-row w-full mb-5 space-x-4">
                 <Input
-                  defaultValue={queryParams.keyword}
+                  defaultValue={searchingFilterResume}
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (!e.target.value) {
-                      setQueryParams({
-                        keyword: undefined,
-                      });
-                    }
                     setSearchingFilterResume(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}

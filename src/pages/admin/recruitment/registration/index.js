@@ -89,7 +89,6 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [loadingRegistrationList, setLoadingRegistrationList] = useState(false);
 
   const [dataRegistrations, setDataRegistrations] = useState([]);
-  const [dataRegistrationList, setDataRegistrationList] = useState([]);
   const [dataRawRegistrations, setDataRawRegistrations] = useState({
     current_page: "",
     data: [],
@@ -146,50 +145,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [drawread, setdrawread] = useState(false);
 
   // 3. UseEffect
-  // 3.1. Get Registrations List
-  useEffect(() => {
-    if (!isAllowedToGetRegistrationsList) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Recruitment Registration List"
-      );
-      setLoadingRegistrationList(false);
-      return;
-    }
-
-    setLoadingRegistrationList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftarsList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRegistrationList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingRegistrationList(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingRegistrationList(false);
-      });
-  }, [isAllowedToGetRegistrationsList, refresh]);
-
-  // 3.2. Get Registrations
+  // 3.1. Get Registrations
   useEffect(() => {
     if (!isAllowedToGetRegistrations) {
       permissionWarningNotification(
@@ -200,37 +156,42 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingRegistrations(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?rows=10`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawRegistrations(res2.data);
-          setDataRegistrations(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingRegistrations(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentJalurDaftars?keyword=${searchingFilterRegistrations}&rows=${rowsRegistrations}&page=${pageRegistrations}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawRegistrations(res2.data);
+            setDataRegistrations(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingRegistrations(false);
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-        setLoadingRegistrations(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+          setLoadingRegistrations(false);
         });
-        setLoadingRegistrations(false);
-      });
-  }, [isAllowedToGetRegistrations, refresh]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetRegistrations, refresh, searchingFilterRegistrations]);
 
   // 4. Event
   const onFilterRegistration = () => {
@@ -432,7 +393,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Jalur Daftar ({dataRegistrationList.length})
+                Semua Jalur Daftar ({dataRawRegistrations?.total})
               </h4>
 
               <ButtonSys
@@ -461,11 +422,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterRegistrations("");
-                    } else {
-                      setSearchingFilterRegistrations(e.target.value);
-                    }
+                    setSearchingFilterRegistrations(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetRegistrations}
