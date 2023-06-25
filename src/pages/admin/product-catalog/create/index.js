@@ -9,6 +9,7 @@ import {
 import {
   Button,
   Empty,
+  Form,
   Input,
   Modal,
   Popover,
@@ -31,6 +32,7 @@ import {
 } from "next-query-params";
 // import Link from "next/link";
 import { useRouter } from "next/router";
+import QueryString from "qs";
 import { useEffect, useState } from "react";
 import Sticky from "wil-react-sticky";
 
@@ -78,6 +80,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   const rt = useRouter();
   var activeTab = "overview";
   const { active } = rt.query;
+  const { id: productId, prevpath } = rt.query;
   if (active) {
     activeTab = active;
   }
@@ -93,7 +96,18 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     name: withDefault(StringParam, undefined),
     sku: withDefault(StringParam, undefined),
   });
+  const [instanceForm] = Form.useForm();
   const [switchValue, setSwitchValue] = useState(false);
+  const [dataCategories, setDataCategories] = useState([]);
+  const [dataModels, setDataModels] = useState([]);
+  const [categoryChoose, setCategoryChoose] = useState(null);
+  const [productName, setProductName] = useState(null);
+  const [description, setDescription] = useState(null);
+  const [price, setPrice] = useState("0");
+  const [perPrice, setPerPrice] = useState(null);
+  const [relationItem, setRelationItem] = useState(false);
+  const [relation, setRelation] = useState(null);
+  const [modelChoose, setModelChoose] = useState(null);
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
     message: "",
@@ -718,7 +732,8 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   ];
   const [rowstate, setrowstate] = useState(0);
   const [modalTambahProduk, setModalTambahProduk] = useState(false);
-
+  const [modelId, setModelId] = useState(null);
+  const [countItem, setCountItem] = useState("");
   useEffect(() => {
     setdisplayentiredata(dataDummy);
     setdisplaydata(dataDummy.data.data);
@@ -727,6 +742,193 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   const changeSwitchValue = () => {
     setSwitchValue(!switchValue);
   };
+
+  const changeModel = (value) => {
+    setModelId(value);
+    let dataModel = dataModels.filter((x) => x.id === value);
+    setCountItem(dataModel[0].count);
+  };
+
+  useEffect(() => {
+    console.log("product id bro ", productId);
+    if (productId) {
+      getDetailProduct();
+    }
+    getCategories();
+    getModels();
+  }, []);
+
+  const getDetailProduct = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventory?id=${productId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("data detail ", res2.data);
+        if (res2.success) {
+          setProductName(res2.data.name);
+          instanceForm.setFieldsValue({
+            productName: res2.data.name,
+          });
+          setCategoryChoose(res2.data.category_id);
+          setDescription(res2.data.description);
+          setPrice(res2.data.price);
+          setPerPrice(res2.data.price_option_id);
+          if (res2.data.model_id != null) {
+            setSwitchValue(true);
+            setModelId(res2.data.model_id);
+            setCountItem(res2.data.model_inventory.inventories_count);
+          }
+          //  setDataDetail(res2.data)
+          //  setdisplaydata(res2.data.model_inventory)
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingTasks(false);
+      });
+  };
+
+  const getCategories = () => {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventoryCategories${payload}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("datanya apis ", res2);
+        console.log("datanya categories ", res2.data);
+        setDataCategories(res2.data);
+      });
+  };
+
+  const getModels = () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getModels`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setDataModels(res2.data.data);
+      });
+  };
+
+  const onChangeNameProduct = (e) => {
+    console.log("value ", e.target.value);
+    setProductName(e.target.value);
+  };
+
+  const handleCreateProduct = () => {
+    setModalTambahProduk(true);
+  };
+
+  const handleCreatePostProduct = () => {
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProductInventory`;
+    let method = "";
+    if (productId) {
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProductInventory`;
+      method = "PUT";
+    } else {
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProductInventory`;
+      method = "POST";
+    }
+    let payload = "";
+    if (switchValue) {
+      payload = {
+        id: productId ? productId : null,
+        name: productName,
+        description: description,
+        price: Number(price),
+        price_option_id: perPrice,
+        category_id: categoryChoose,
+        is_active: 1,
+        model_id: modelId,
+      };
+    } else {
+      payload = {
+        id: productId ? productId : null,
+        name: productName,
+        description: description,
+        price: Number(price),
+        price_option_id: perPrice,
+        category_id: categoryChoose,
+        is_active: 1,
+      };
+    }
+
+    fetch(url, {
+      method: method,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        console.log("response add inventory ", response2);
+        if (response2.success) {
+          notification.success({
+            message: productId
+              ? "Update Product Success!"
+              : "Add Product Success!",
+            duration: 3,
+          });
+          // handleAddUpdateCategory(response2)
+          setTimeout(() => {
+            setModalTambahProduk(false);
+            if (productId) {
+              rt.push(`/admin/product-catalog/detail/${productId}`);
+            } else {
+              rt.push(`/admin/product-catalog/detail/${response2.id}`);
+            }
+          }, 500);
+        } else {
+          notification.error({
+            message: productId
+              ? `Update Product Failed!`
+              : `Add Product Failed!`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: productId
+            ? `Update Category Failed!`
+            : `Add Category Failed!`,
+          duration: 3,
+        });
+        // setLoadingAdd(false);
+      });
+  };
+
   return (
     <Layout
       st={st}
@@ -781,7 +983,10 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                         "bg-state1 py-2 px-6 cursor-pointer rounded-[5px]"
                       }
                     >
-                      <div className={"flex"}>
+                      <div
+                        className={"flex cursor-pointer"}
+                        onClick={() => handleCreatePostProduct()}
+                      >
                         <PlusIconSvg size={16} color={"white"} />
                         <p className={"ml-2 text-white text-xs self-center"}>
                           Ya, saya yakin menambah data produk
@@ -794,6 +999,9 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
               <div className="flex space-x-2 items-center">
                 <div
                   style={{ marginRight: `8px` }}
+                  onClick={() => {
+                    rt.push(`/admin/product-catalog`);
+                  }}
                   className={
                     "bg-white py-2 px-6 rounded-sm flex justify-center border border-mono80 cursor-pointer"
                   }
@@ -809,137 +1017,212 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                     "bg-open py-2 px-6 rounded-sm flex justify-center cursor-pointer"
                   }
                   // disabled={!isAllowedToDeleteItem}
-                  onClick={() => {
-                    setModalTambahProduk(true);
-                  }}
+                  onClick={instanceForm.submit}
                 >
                   <p className={"text-white text-xs"}>Tambah</p>
                 </div>
               </div>
             </div>
-            <div
-              className={"bg-white py-6 px-4 mt-12"}
-              style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
+            <Form
+              layout="vertical"
+              className="createAgentsForm"
+              onFinish={handleCreateProduct}
+              form={instanceForm}
             >
-              <div className={"flex space-x-6"}>
-                <div className={"w-1/2"}>
-                  <div className={"flex"}>
-                    <p className={"mr-2 text-mono30 text-xs"}>ID Produk</p>
-                    <InfoCircleIconSvg color={"#808080"} size={16} />
-                  </div>
-                  <Input
-                    className={"mt-4 h-[52px]"}
-                    placeholder="Masukkan ID Produk"
-                  />
-                </div>
-                <div className={"w-1/2"}>
-                  <p className={"text-mono30 text-xs mb-4"}>Kategori Produk</p>
-                  <div className={"example"}>
-                    <Select
-                      className={"w-full"}
-                      showSearch
-                      placeholder="Pilih Kategori"
-                      optionFilterProp="children"
-                      // onChange={onChange}
-                      // onSearch={onSearch}
-                      filterOption={(input, option) =>
-                        (option?.label ?? "")
-                          .toLowerCase()
-                          .includes(input.toLowerCase())
-                      }
-                      options={[
-                        {
-                          value: "PC",
-                          label: "PC",
-                        },
-                        {
-                          value: "Laptop",
-                          label: "Laptop",
-                        },
-                      ]}
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className={"mt-6"}>
-                <p className={"text-mono30 text-xs"}>Nama Produk *</p>
-                <Input
-                  className={"mt-4 h-[52px]"}
-                  placeholder="Masukkan Nama Produk"
-                />
-              </div>
-              <div className={"flex mt-6 space-x-6"}>
-                <div className={"w-1/2"}>
-                  <p className={"mr-2 text-mono30 text-xs"}>Deskripsi</p>
-                  <Input
-                    className={"mt-4 h-[52px]"}
-                    placeholder="Masukkan Deskripsi Produk"
-                  />
-                </div>
-                <div className={"w-1/2"}>
-                  <p className={"text-mono30 text-xs"}>Harga</p>
-                  <Input
-                    className={"mt-4 h-[52px]"}
-                    placeholder="Masukkan Kategori Produk"
-                  />
-                </div>
-              </div>
-              <div className={"mt-6 flex"}>
-                <Switch checked={switchValue} onChange={changeSwitchValue} />
-                <p className={"ml-4 text-mono30 text-xs self-center"}>
-                  Hubungkan produk dengan item
-                </p>
-              </div>
-              {switchValue && (
-                <div>
-                  <div className={"flex mt-6 space-x-6"}>
-                    <div className={"w-1/2"}>
-                      <p className={"mr-2 text-mono30 text-xs"}>Jenis Relasi</p>
-                      <Select
-                        size={"large"}
-                        className={"w-full mt-4"}
-                        options={[
-                          {
-                            value: "Aset",
-                            label: "Aset",
-                          },
-                        ]}
-                      />
-                    </div>
-                    <div className={"w-1/2"}>
-                      <p className={"text-mono30 text-xs"}>Pilih Model</p>
-                      <Select
-                        size="large"
-                        className={"w-full mt-4"}
-                        options={[
-                          {
-                            value: "PC",
-                            label: "PC",
-                          },
-                          {
-                            value: "Laptop",
-                            label: "Laptop",
-                          },
-                        ]}
-                      />
-                    </div>
-                  </div>
-
-                  <div className={"mt-6 w-1/2 mr-6"}>
+              <div
+                className={"bg-white py-6 px-4 mt-12"}
+                style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
+              >
+                <div className={"flex space-x-6"}>
+                  <div className={"w-1/2"}>
                     <div className={"flex"}>
-                      <p className={"mr-2 text-mono30 text-xs"}>Jumlah Item</p>
+                      <p className={"mr-2 text-mono30 text-xs"}>ID Produk</p>
                       <InfoCircleIconSvg color={"#808080"} size={16} />
                     </div>
                     <Input
+                      value={"1111"}
+                      disabled={true}
                       className={"mt-4 h-[52px]"}
-                      defaultValue={2}
-                      value={2}
-                      disabled
+                      placeholder="Masukkan ID Produk"
                     />
                   </div>
+                  <div className={"w-1/2"}>
+                    <p className={"text-mono30 text-xs mb-4"}>
+                      Kategori Produk
+                    </p>
+                    <div className={"example"}>
+                      <Select
+                        className={"w-full"}
+                        showSearch
+                        value={categoryChoose}
+                        placeholder="Pilih Kategori"
+                        optionFilterProp="children"
+                        onChange={(value) => {
+                          console.log("on change kategori bos ", value);
+                          setCategoryChoose(value);
+                        }}
+                        filterOption={(input, option) =>
+                          (option?.label ?? "")
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
+                        }
+                      >
+                        {dataCategories?.map((kategori) => (
+                          <Select.Option key={kategori.id} value={kategori.id}>
+                            {kategori.name}
+                          </Select.Option>
+                        ))}
+                      </Select>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </div>
+                <div className={"mt-6"}>
+                  {/* <p className={"text-mono30 text-xs"}>Nama Produk *</p> */}
+                  <Form.Item
+                    className={"text-mono30 text-xs"}
+                    label={<p className={"text-mono30 text-xs"}>Nama Produk</p>}
+                    required
+                    initialValue={productName}
+                    name="productName"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Nama Produk wajib diisi",
+                      },
+                    ]}
+                  >
+                    <Input
+                      className={"mt-4 h-[52px]"}
+                      value={productName}
+                      onChange={onChangeNameProduct}
+                      placeholder="Masukkan Nama Produk"
+                    />
+                  </Form.Item>
+                </div>
+                <div className={"flex mt-6 space-x-6"}>
+                  <div className={"w-1/2"}>
+                    <p className={"mr-2 text-mono30 text-xs"}>Deskripsi</p>
+                    <Input.TextArea
+                      className={"mt-4 h-[52px]"}
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Masukkan Deskripsi Produk"
+                    />
+                  </div>
+                  <div className={"w-1/2 flex"}>
+                    <div className={"w-2/3"}>
+                      <p className={"text-mono30 text-xs"}>Harga</p>
+                      <Input
+                        prefix={"Rp "}
+                        onChange={(e) => setPrice(e.target.value)}
+                        className={"mt-4 h-[52px]"}
+                        value={price}
+                        placeholder="Masukkan Harga Produk"
+                      />
+                    </div>
+                    <div className={"w-1/3 ml-4 example"}>
+                      <p className={"text-mono30 text-xs"}></p>
+                      <Select
+                        size="large"
+                        className={"w-full mt-8"}
+                        value={perPrice}
+                        onChange={(value) => setPerPrice(value)}
+                        options={[
+                          {
+                            value: 1,
+                            label: "Per Jam",
+                          },
+                          {
+                            value: 2,
+                            label: "Per Hari",
+                          },
+                          {
+                            value: 3,
+                            label: "Per Bulan",
+                          },
+                          {
+                            value: 4,
+                            label: "Per Tahun",
+                          },
+                        ]}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className={"mt-6 flex"}>
+                  <Switch checked={switchValue} onChange={changeSwitchValue} />
+                  <p className={"ml-4 text-mono30 text-xs self-center"}>
+                    Hubungkan produk dengan item
+                  </p>
+                </div>
+                {switchValue && (
+                  <div>
+                    <div className={"flex mt-6 space-x-6"}>
+                      <div className={"w-1/2"}>
+                        <p className={"mr-2 text-mono30 text-xs"}>
+                          Jenis Relasi
+                        </p>
+                        <Select
+                          size={"large"}
+                          value={"Aset"}
+                          onChange={(value) => {
+                            console.log("on change relasi bos ", value);
+                            setRelation(value);
+                          }}
+                          className={"w-full mt-4"}
+                          options={[
+                            {
+                              value: "Aset",
+                              label: "Aset",
+                            },
+                          ]}
+                        />
+                      </div>
+                      <div className={"w-1/2"}>
+                        <p className={"text-mono30 text-xs"}>Pilih Model</p>
+                        <Select
+                          size="large"
+                          value={modelId}
+                          onChange={(value) => changeModel(value)}
+                          className={"w-full mt-4"}
+                          // options={[
+                          //   {
+                          //     value: "PC",
+                          //     label: "PC",
+                          //   },
+                          //   {
+                          //     value: "Laptop",
+                          //     label: "Laptop",
+                          //   },
+                          // ]}
+                        >
+                          {dataModels?.map((model) => (
+                            <Select.Option key={model.id} value={model.id}>
+                              {model.name}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div className={"mt-6 w-1/2 pr-4"}>
+                      <div className={"flex"}>
+                        <p className={"mr-2 text-mono30 text-xs"}>
+                          Jumlah Item
+                        </p>
+                        <InfoCircleIconSvg color={"#808080"} size={16} />
+                      </div>
+                      <Input
+                        className={"mt-4 h-[52px]"}
+                        defaultValue={countItem}
+                        value={countItem}
+                        disabled
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Form>
           </Sticky>
         </div>
       </div>
