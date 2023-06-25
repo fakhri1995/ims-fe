@@ -7,21 +7,19 @@ import {
   UpOutlined,
 } from "@ant-design/icons";
 import {
-  Button,
-  Empty,
+  Avatar,
+  Collapse,
+  DatePicker,
   Input,
   Modal,
-  Popover,
   Select,
   Spin,
   Switch,
   Table,
-  Tabs,
-  Timeline,
   Tooltip,
-  TreeSelect,
   notification,
 } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
 import {
   NumberParam,
@@ -29,32 +27,30 @@ import {
   useQueryParams,
   withDefault,
 } from "next-query-params";
-// import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import QueryString from "qs";
+import React, { useState } from "react";
+import { useEffect } from "react";
 import Sticky from "wil-react-sticky";
+
+import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  ASSETS_GET,
-  INVENTORY_DELETE,
-  INVENTORY_GET, // <Activity>
-  INVENTORY_LOG_GET, // <Relationship>
-  INVENTORY_NOTES_ADD,
-  INVENTORY_PARTS_ADD, // <ItemDetail>
-  INVENTORY_PART_REMOVE,
-  INVENTORY_PART_REPLACE,
-  INVENTORY_STATUS_CONDITION,
-  INVENTORY_STATUS_USAGE, // <Overview>
-  INVENTORY_UPDATE,
-  MODELS_GET,
-  RELATIONSHIPS_GET, // <KonfigurasiPart>
-  RELATIONSHIP_INVENTORY_ADD,
-  RELATIONSHIP_INVENTORY_DELETE,
-  RELATIONSHIP_INVENTORY_GET,
+  PROJECTS_GET,
+  PROJECT_DELETE,
+  PROJECT_GET,
+  PROJECT_STATUSES_GET,
+  PROJECT_TASKS_COUNT_GET,
+  PROJECT_TASKS_DEADLINE_GET,
+  PROJECT_TASKS_GET,
+  PROJECT_TASK_ADD,
+  PROJECT_TASK_DELETE,
+  PROJECT_TASK_GET,
+  PROJECT_TASK_UPDATE,
+  PROJECT_UPDATE,
 } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
 
 import {
   AlertCircleIconSvg,
@@ -67,14 +63,69 @@ import {
   ReplacementIconSvg,
   TersediaIconSvg,
 } from "../../../../components/icon";
-import Layout from "../../../../components/layout-dashboard2";
 import st from "../../../../components/layout-dashboard.module.css";
+import LayoutDashboard from "../../../../components/layout-dashboardNew";
+import {
+  createKeyPressHandler,
+  generateStaticAssetUrl,
+  momentFormatDate,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  TooltipChart,
+} from "chart.js";
 import httpcookie from "cookie";
 
-const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
+Chart.register(
+  ArcElement,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
+
+const ProductCatalogDetail = ({
+  dataProfile,
+  sidemenu,
+  initProps,
+  productCatalogId,
+}) => {
+  // 1. Init
   /**
    * Dependencies
    */
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+  if (isAccessControlPending) {
+    return null;
+  }
+
+  const isAllowedToGetProjects = hasPermission(PROJECTS_GET);
+  const isAllowedToGetProject = hasPermission(PROJECT_GET);
+  const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
+  const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
+
+  const isAllowedToAddTask = hasPermission(PROJECT_TASK_ADD);
+  const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
+  const isAllowedToUpdateTask = hasPermission(PROJECT_TASK_UPDATE);
+  const isAllowedToGetTasks = hasPermission(PROJECT_TASKS_GET);
+  const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
+
+  const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
+
+  const isAllowedToGetTaskStatusCount = hasPermission(PROJECT_TASKS_COUNT_GET);
+  const isAllowedToGetTaskDeadlineCount = hasPermission(
+    PROJECT_TASKS_DEADLINE_GET
+  );
+
   const rt = useRouter();
   var activeTab = "overview";
   const { active } = rt.query;
@@ -84,6 +135,7 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   var pathArr = rt.pathname.split("/").slice(1);
   pathArr.splice(2, 2);
   pathArr[pathArr.length - 1] = "Detail Product";
+  const [dataDetail, setDataDetail] = useState(null);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 10),
@@ -93,6 +145,7 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     name: withDefault(StringParam, undefined),
     sku: withDefault(StringParam, undefined),
   });
+  const [praloading, setpraloading] = useState(true);
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
     message: "",
@@ -321,14 +374,50 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     },
     status: 200,
   });
+  const [searchingFilterProducts, setSearchingFilterProducts] = useState("");
   const [displaydata, setdisplaydata] = useState([]);
+  const [displayentiredataproduk, setdisplayentiredataproduk] = useState({
+    success: false,
+    message: "",
+    data: {
+      current_page: 0,
+      data: [],
+      first_page_url: "",
+      from: 0,
+      last_page: 0,
+      last_page_url: "",
+      next_page_url: null,
+      path: "",
+      per_page: "",
+      prev_page_url: "",
+      to: 0,
+      total: 0,
+    },
+  });
+  const [displaydataproduk, setdisplaydataproduk] = useState([]);
+  const columnsTableProduk = [
+    {
+      title: "ID Produk",
+      dataIndex: "id",
+    },
+    {
+      title: "Nama Produk",
+      dataIndex: "name",
+      sorter: (a, b) => a.name.length - b.name.length,
+      render: (name) => (
+        <div>
+          <p className={"text-[14px] text-warning"}>{name}</p>
+        </div>
+      ),
+    },
+  ];
   const columnsTable = [
     {
       title: "Nama",
-      dataIndex: ["name", "count"],
+      dataIndex: ["name", "inventories_count"],
       sorter: (a, b) => a.name.length - b.name.length,
       render: (text, row) =>
-        row["count"] == 0 ? (
+        row["inventories_count"] == 0 ? (
           <div className={"flex"}>
             <p className={"text-[14px] text-warning"}>{row["name"]}</p>
             <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
@@ -353,8 +442,8 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     },
     {
       title: "Jumlah Item",
-      dataIndex: "count",
-      sorter: (a, b) => a.count - b.count,
+      dataIndex: "inventories_count",
+      sorter: (a, b) => a.inventories_count - b.inventories_count,
     },
     {
       title: "Status",
@@ -718,17 +807,176 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [rowstate, setrowstate] = useState(0);
   const [showModalDelete, setShowModalDelete] = useState(false);
 
+  // 3.5. Get Task List
   useEffect(() => {
-    setdisplayentiredata(dataDummy);
-    setdisplaydata(dataDummy.data.data);
-  }, []);
+    if (!isAllowedToGetTasks) {
+      permissionWarningNotification("Mendapatkan", "Daftar Product");
+      return;
+    }
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventory?id=${productCatalogId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("data detail ", res2.data.model_inventory);
+        if (res2.success) {
+          setDataDetail(res2.data);
+          //  setdisplaydata(res2.data.model_inventory)
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingTasks(false);
+      });
+  }, [isAllowedToGetTasks, productCatalogId]);
+
+  useEffect(() => {
+    if (!isAllowedToAddTask) {
+      return;
+    }
+
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    setpraloading(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventories${payload}&keyword=${searchingFilterProducts}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        setdisplayentiredataproduk(res2);
+        setdisplaydataproduk(res2.data.data);
+
+        setpraloading(false);
+      });
+  }, [
+    isAllowedToAddTask,
+    searchingFilterProducts.length > 2,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.name,
+    queryParams.asset_id,
+    queryParams.sku,
+  ]);
+
+  const handleDeleteProduct = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProductInventory?id=${productCatalogId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: response2.message,
+            duration: 3,
+          });
+          setShowModalDelete(false);
+          rt.push(`/admin/product-catalog/`);
+        } else {
+          notification.error({
+            message: `Gagal menghapus Kategori. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus Kategori. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingDelete(false);
+      });
+  };
+
+  const handleSwitchProduct = () => {
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProductInventory`;
+    let method = "PUT";
+    let payload = {
+      id: productCatalogId,
+      name: dataDetail.name,
+      description: dataDetail.description,
+      price: dataDetail.price,
+      price_option_id: dataDetail.price_option_id,
+      category_id: dataDetail.category_id,
+      is_active: dataDetail.is_active == 1 ? 0 : 1,
+    };
+    fetch(url, {
+      method: method,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        console.log("response add inventory ", response2);
+        if (response2.success) {
+          notification.success({
+            message: "Update Product Success!",
+            duration: 3,
+          });
+          setDataDetail({
+            ...dataDetail,
+            is_active: dataDetail.is_active == 1 ? false : true,
+          });
+        } else {
+          notification.error({
+            message: `Update Product Failed!`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Update Product Failed!`,
+          duration: 3,
+        });
+        // setLoadingAdd(false);
+      });
+  };
+
   return (
-    <Layout
-      st={st}
+    <LayoutDashboard
+      dataProfile={dataProfile}
       sidemenu={sidemenu}
       tok={initProps}
+      st={st}
       pathArr={pathArr}
-      dataProfile={dataProfile}
     >
       <div
         className="w-full h-auto grid grid-cols-1 md:grid-cols-4"
@@ -740,10 +988,18 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
               <div className="flex items-center">
                 <div className="flex">
                   <h3 className="font-semibold py-2 text-2xl mb-0 mr-6">
-                    Macbook Pro M1
+                    {dataDetail?.name}
                   </h3>
                   <Switch
+                    checked={
+                      dataDetail
+                        ? dataDetail.is_active == 1
+                          ? true
+                          : false
+                        : false
+                    }
                     className={"self-center"}
+                    onChange={() => handleSwitchProduct()}
                     // checkedChildren={"ACTIVE"}
                     // unCheckedChildren={"ARCHIVED"}
                   />
@@ -767,21 +1023,25 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     <p className={"text-sm text-mono30"}>
                       Apakah Anda yakin ingin menghapus produk{" "}
                       <span className={"font-semibold"}>
-                        MacBook Pro 2022 M1
+                        {dataDetail?.name}
                       </span>
-                      ? Sebanyak 2 produk sedang dalam status{" "}
+                      ? sedang dalam status{" "}
                       <span className={"font-semibold"}>Active</span>
                     </p>
                   </div>
-                  <div className={"mt-14 flex justify-between"}>
+                  <div
+                    className={"mt-14 flex justify-between cursor-pointer "}
+                    onClick={() => setShowModalDelete(false)}
+                  >
                     <div
                       className={
-                        "border border-primary100 py-2 px-6 cursor-pointer rounded-[5px]"
+                        "border border-primary100 py-2 px-6 rounded-[5px]"
                       }
                     >
                       <p className={"text-xs text-mono30"}>Batalkan</p>
                     </div>
                     <div
+                      onClick={() => handleDeleteProduct()}
                       className={
                         "bg-state1 py-2 px-6 cursor-pointer rounded-[5px]"
                       }
@@ -799,6 +1059,11 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
               <div className="flex space-x-2 items-center">
                 <div
                   style={{ marginRight: `8px` }}
+                  onClick={() =>
+                    rt.push(
+                      `/admin/product-catalog/create?id=${productCatalogId}`
+                    )
+                  }
                   className={
                     "bg-open py-2 px-6 rounded-sm flex justify-center cursor-pointer"
                   }
@@ -839,14 +1104,18 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                       // defaultValue={queryParams.name}
                       placeholder="Cari Produk di sini.."
                       // onChange={onChangeSearch}
+                      defaultValue={searchingFilterProducts}
+                      onChange={(e) => {
+                        setSearchingFilterProducts(e.target.value);
+                      }}
                       allowClear
                       // onKeyPress={onKeyPressHandler}
                     ></Input>
                   </div>
-                  <div className={"mt-6 flex"}>
+                  {/* <div className={"mt-6 flex"}>
                     <div className={"w-1/2 p-3"}>
                       <p className={"text-mono30 text-sm font-semibold"}>
-                        Id Produk
+                        Produk ID
                       </p>
                     </div>
                     <div className={"w-1/2 p-3"}>
@@ -869,7 +1138,51 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                         </p>
                       </div>
                     </div>
-                  ))}
+                  ))} */}
+                  <Table
+                    className="tableTypeTask mt-6"
+                    pagination={{
+                      showSizeChanger: true,
+                      current: queryParams.page,
+                      pageSize: queryParams.rows,
+                      total: displayentiredataproduk.data.total,
+                    }}
+                    scroll={{ x: 200 }}
+                    dataSource={displaydataproduk}
+                    columns={columnsTableProduk}
+                    loading={praloading}
+                    onRow={(record, rowIndex) => {
+                      return {
+                        onMouseOver: (event) => {
+                          setrowstate(record.id);
+                        },
+                        onClick: (event) => {
+                          rt.push(`/admin/product-catalog/detail/${record.id}`);
+                        },
+                      };
+                    }}
+                    rowClassName={(record, idx) => {
+                      return record.id === rowstate ? `cursor-pointer` : ``;
+                    }}
+                    onChange={(pagination, _, sorter) => {
+                      const sortTypePayload =
+                        sorter.order === "ascend"
+                          ? "asc"
+                          : sorter.order === "descend"
+                          ? "desc"
+                          : undefined;
+
+                      setQueryParams({
+                        sort_type: sortTypePayload,
+                        sort_by:
+                          sortTypePayload === undefined
+                            ? undefined
+                            : sorter.field,
+                        page: pagination.current,
+                        rows: pagination.pageSize,
+                      });
+                    }}
+                  ></Table>
                 </div>
               </div>
               <div className={"w-9/12"}>
@@ -885,14 +1198,16 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                       <p className={"text-xs text-mono30 font-semibold"}>
                         Product ID
                       </p>
-                      <p className={"mt-2 text-sm text-mono30"}>76253</p>
+                      <p className={"mt-2 text-sm text-mono30"}>
+                        {dataDetail?.id}
+                      </p>
                     </div>
                     <div className={"w-1/2 flex flex-col"}>
                       <p className={"text-xs text-mono30 font-semibold"}>
                         Kategori Produk
                       </p>
                       <p className={"mt-2 text-sm text-mono30"}>
-                        Desktop / Apple / MacBook
+                        {dataDetail?.category?.name}
                       </p>
                     </div>
                   </div>
@@ -901,14 +1216,14 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                       <p className={"text-xs text-mono30 font-semibold"}>
                         Jenis Produk
                       </p>
-                      <p className={"mt-2 text-sm text-mono30"}>Jasa</p>
+                      <p className={"mt-2 text-sm text-mono30"}>Aset</p>
                     </div>
                     <div className={"w-1/2 flex flex-col"}>
                       <p className={"text-xs text-mono30 font-semibold"}>
                         Harga Produk
                       </p>
                       <p className={"mt-2 text-sm text-mono30"}>
-                        Rp. 5.000.000 / bulan
+                        Rp {dataDetail?.price}
                       </p>
                     </div>
                   </div>
@@ -917,8 +1232,11 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                       Deskripsi
                     </p>
                     <p className={"mt-2 text-sm text-mono30"}>
-                      Desktop merupakan jedis hardware yang digunakan untuk
-                      bekerja di kantor
+                      {dataDetail
+                        ? dataDetail.description
+                          ? dataDetail.description
+                          : "-"
+                        : "-"}
                     </p>
                   </div>
                 </div>
@@ -945,6 +1263,7 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                     </div>
                   </div>
                 </div>
+                {console.log("isi data tabel ", displaydata)}
                 <Table
                   className="tableTypeTask"
                   pagination={{
@@ -994,261 +1313,13 @@ const ProductCatalogDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           </Sticky>
         </div>
       </div>
-    </Layout>
+    </LayoutDashboard>
   );
 };
 
-/**
- * Custom Array.map() function to map the data from GET `/getActivityInventoryLogs?id=:number`
- *  into timeline component's content.
- *
- * @param {*} doclogs
- * @param {*} idxlogs
- * @returns {object}
- */
-const _activityLogMapFn = (logs, maindata) => {
-  const result = [];
-
-  logs.forEach((doclogs) => {
-    const datenew = moment(doclogs.date).locale("id").format("LLL");
-    var descnew = "";
-
-    const desckondisiOld = doclogs.properties
-      ? doclogs.properties.old
-        ? doclogs.properties.old.status_condition === 1
-          ? "Good"
-          : doclogs.properties.old.status_condition === 2
-          ? "Grey"
-          : doclogs.properties.old.status_condition === 3
-          ? "Bad"
-          : null
-        : null
-      : null;
-
-    const desckondisiBaru = doclogs.properties
-      ? doclogs.properties.attributes
-        ? doclogs.properties.attributes.status_condition === 1
-          ? "Good"
-          : doclogs.properties.attributes.status_condition === 2
-          ? "Grey"
-          : doclogs.properties.attributes.status_condition === 3
-          ? "Bad"
-          : null
-        : null
-      : null;
-
-    const descusageOld = doclogs.properties
-      ? doclogs.properties.old
-        ? doclogs.properties.old.status_usage === 1
-          ? "In Used"
-          : doclogs.properties.old.status_usage === 2
-          ? "In Stock"
-          : doclogs.properties.old.status_usage === 3
-          ? "Replacement"
-          : null
-        : null
-      : null;
-
-    const descusageBaru = doclogs.properties
-      ? doclogs.properties.attributes
-        ? doclogs.properties.attributes.status_usage === 1
-          ? "In Used"
-          : doclogs.properties.attributes.status_usage === 2
-          ? "In Stock"
-          : doclogs.properties.attributes.status_usage === 3
-          ? "Replacement"
-          : null
-        : null
-      : null;
-
-    const desc1 = doclogs.description.split(" ");
-
-    if (desc1[0] === "Created") {
-      if (desc1[2] === "Relationship") {
-        desc1[0] === "Created"
-          ? (descnew =
-              descnew +
-              `Penambahan Relationship "${doclogs.properties.attributes.relationship}"`)
-          : null;
-        desc1[0] === "Deleted"
-          ? (descnew =
-              descnew +
-              `Penghapusan Relationship "${doclogs.properties.old.relationship}"`)
-          : null;
-      } else if (desc1[1] === "Association") {
-        descnew = descnew + `Association Baru: ${doclogs.properties}`;
-      } else if (doclogs.properties.attributes?.list_parts) {
-        descnew =
-          descnew +
-          `Inisialisasi Pembuatan Item Part "${maindata.inventory_parts
-            .filter((docfil) =>
-              doclogs.properties.attributes?.list_parts.includes(docfil.id)
-            )
-            .map((docmap) => docmap.inventory_name)
-            .join(", ")}"`;
-      } else {
-        descnew =
-          descnew +
-          `Penambahan Item ke Induk "${doclogs.properties.attributes?.parent_id?.mig_id}"`;
-
-        // descnew =
-        //   descnew +
-        //   `Pembuatan Item Baru bernama "${doclogs.properties.attributes?.inventory_name}"`;
-      }
-    }
-
-    desc1[0] === "Notes" ? (descnew = descnew + `Penambahan Notes`) : null;
-
-    if (desc1[0] === "Updated") {
-      if ("attributes" in doclogs.properties && "old" in doclogs.properties) {
-        const old = doclogs.properties.old;
-        const attributes = doclogs.properties.attributes;
-        for (const [key, _] of Object.entries(attributes)) {
-          let descnew = "";
-
-          if (key === "status_condition") {
-            descnew =
-              descnew +
-              `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`;
-          } else if (key === "status_usage") {
-            descnew =
-              descnew +
-              `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`;
-          } else if (key === "inventory_name") {
-            descnew =
-              descnew +
-              `Pengubahan Nama Item dari "${old.inventory_name}" ke "${attributes.inventory_name}"`;
-          } else if (key === "serial_number") {
-            descnew =
-              descnew +
-              `Pengubahan Serial Number Item dari "${old.serial_number}" ke "${attributes.serial_number}"`;
-          } else if (key === "location") {
-            descnew =
-              descnew +
-              `Pengubahan Location Item dari "${
-                old.location_id === null ? "-" : old.location_name
-              }" ke "${attributes.location_name}"`;
-          } else if (key === "vendor_id") {
-            descnew =
-              descnew +
-              `Pengubahan Vendor Item dari "${
-                old.vendor_id === null ? "-" : old.vendor_name
-              }" ke "${attributes.vendor_name}"`;
-          } else if (key === "manufacturer_id") {
-            descnew =
-              descnew +
-              `Pengubahan Manufacturer Item dari "${
-                old.manufacturer_id === null ? "-" : old.manufacturer_name
-              }" ke "${attributes.manufacturer_name}"`;
-          } else if (key === "deskripsi") {
-            descnew = descnew + `Pengubahan Deskripsi Item`;
-          } else if (key === "owned_by") {
-            descnew =
-              descnew +
-              `Pengubahan Owner Item dari "${
-                old.owned_by === null ? "-" : old.owner_name
-              }" ke "${attributes.owner_name}"`;
-          } else if (
-            key === "list_parts" &&
-            attributes.list_parts?.length > old.list_parts?.length
-          ) {
-            const listpartsnew = attributes.list_parts?.filter(
-              (docfil) =>
-                old.list_parts?.map((part) => part.id).includes(docfil.id) ===
-                false
-            );
-            descnew =
-              descnew +
-              `Penambahan Item "${listpartsnew
-                ?.map((part) => part.mig_id)
-                .join(", ")}" menjadi Item Part`;
-          } else if (
-            key === "list_parts" &&
-            attributes.list_parts?.length < old.list_parts?.length
-          ) {
-            const listpartsold = old.list_parts?.filter(
-              (docfil) =>
-                attributes.list_parts
-                  ?.map((part) => part.id)
-                  .includes(docfil.id) === false
-            );
-            descnew =
-              descnew +
-              `Pengeluaran Item Part "${listpartsold
-                ?.map((part) => part.mig_id)
-                .join(", ")}"`;
-          } else if (
-            key === "list_parts" &&
-            attributes.list_parts?.length === old.list_parts?.length
-          ) {
-            const listpartsnew = attributes.list_parts?.filter(
-              (docfil) =>
-                old.list_parts?.map((part) => part.id).includes(docfil.id) ===
-                false
-            );
-            const listpartsold = old.list_parts?.filter(
-              (docfil) =>
-                attributes.list_parts
-                  ?.map((part) => part.id)
-                  .includes(docfil.id) === false
-            );
-            descnew =
-              descnew +
-              `Pergantian Item Part "${listpartsold
-                ?.map((part) => part.mig_id)
-                .join(", ")}" menjadi "${listpartsnew
-                ?.map((part) => part.mig_id)
-                .join(", ")}"`;
-          } else {
-            continue;
-          }
-
-          const producing = {
-            ...doclogs,
-            date: datenew,
-            description: descnew,
-          };
-          result.push(producing);
-        }
-
-        return;
-      }
-    }
-
-    if (desc1[0] === "Deleted") {
-      if (desc1[2] === "Relationship") {
-        desc1[0] === "Created"
-          ? (descnew =
-              descnew +
-              `Penambahan Relationship "${doclogs.properties.attributes.relationship}"`)
-          : null;
-        desc1[0] === "Deleted"
-          ? (descnew =
-              descnew +
-              `Penghapusan Relationship "${doclogs.properties.old.relationship}"`)
-          : null;
-      } else if (desc1[1] === "Association") {
-        descnew = descnew + `Association Dihapus: ${doclogs.properties}`;
-      } else {
-        descnew =
-          descnew +
-          `Pengeluaran Item dari Induk "${doclogs.properties?.old?.parent_id?.mig_id}"`;
-      }
-    }
-
-    result.push({
-      ...doclogs,
-      date: datenew,
-      description: descnew,
-    });
-  });
-
-  return result;
-};
-
 export async function getServerSideProps({ req, res, params }) {
-  var initProps = {};
-  const itemid = params.productCatalogId;
+  const productCatalogId = params.productCatalogId;
+  let initProps = {};
   if (!req.headers.cookie) {
     return {
       redirect: {
@@ -1257,6 +1328,7 @@ export async function getServerSideProps({ req, res, params }) {
       },
     };
   }
+
   const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
   if (!cookiesJSON1.token) {
     return {
@@ -1270,7 +1342,7 @@ export async function getServerSideProps({ req, res, params }) {
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
-      method: `GET`,
+      method: "GET",
       headers: {
         Authorization: JSON.parse(initProps),
       },
@@ -1279,17 +1351,12 @@ export async function getServerSideProps({ req, res, params }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
-  // if (![107, 108, 109, 110, 111, 112, 132].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-  //     res.writeHead(302, { Location: '/dashboard/admin' })
-  //     res.end()
-  // }
-
   return {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "3",
-      itemid,
+      sidemenu: "113",
+      productCatalogId,
     },
   };
 }

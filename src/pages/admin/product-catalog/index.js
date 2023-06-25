@@ -6,7 +6,7 @@ import {
   EditOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Button, Input, Modal, Select, Table } from "antd";
+import { Button, Input, Modal, Select, Table, notification } from "antd";
 import {
   NumberParam,
   StringParam,
@@ -24,6 +24,7 @@ import { ASSETS_GET, MODELS_GET, MODEL_ADD } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import {
+  AlertCircleIconSvg,
   DeleteTablerIconSvg,
   EditIconSvg,
   EditTablerIconSvg,
@@ -56,13 +57,17 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     asset_id: withDefault(NumberParam, undefined),
     name: withDefault(StringParam, undefined),
     sku: withDefault(StringParam, undefined),
+    category_id: withDefault(StringParam, undefined),
+    keyword: withDefault(StringParam, undefined),
+    is_active: withDefault(NumberParam, 1),
   });
   const [modalKategori, setModalKategori] = useState(false);
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
   const [idKategori, setIdKategori] = useState(null);
+  const [isActive, setIsActive] = useState(null);
   const [namaKategori, setNamaKategori] = useState(null);
-
+  const [showModalDelete, setShowModalDelete] = useState(false);
   //2.useState
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
@@ -83,13 +88,17 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
   });
   const [displaydata, setdisplaydata] = useState([]);
+  const [displayCategories, setDisplayCategories] = useState([]);
   const [assetdata, setassetdata] = useState([]);
   const [namavalue, setnamavalue] = useState(null);
   const [skuSearchValue, setSkuSearchValue] = useState(null);
   const [namaasset, setnamaasset] = useState(null);
   const [rowstate, setrowstate] = useState(0);
   const [praloading, setpraloading] = useState(true);
+  const [categoryName, setCategoryName] = useState("");
+  const [categoryId, setCategoryId] = useState(null);
   const [showFormKategori, setShowFormKategori] = useState(false);
+  const [statusSearch, setStatusSearch] = useState(false);
   //3.Define
   const columnsTable = [
     {
@@ -174,24 +183,26 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
         ),
     },
   ];
-  const editKategori = (nama) => {
-    console.log("edit kategori ");
-    setNamaKategori(nama);
+  const editKategori = (id, nama) => {
+    console.log("edit kategori ", id);
+    console.log("edit aktegori 2 ", nama);
+    setShowFormKategori(true);
+    setCategoryId(id);
+    setCategoryName(nama);
   };
 
   const columnsTable2 = [
     {
       title: "No",
       dataIndex: "index",
-      render: (value, item, index) =>
-        (displayentiredata.data.current_page - 1) * 10 + index + 1,
+      render: (value, item, index) => index + 1,
     },
     {
       title: "Kategori Produk",
-      dataIndex: ["name", "count"],
+      dataIndex: ["name", "products_count"],
       sorter: (a, b) => a.name.length - b.name.length,
       render: (text, row) =>
-        row["count"] == 0 ? (
+        row["products_count"] == 0 ? (
           <div className={"flex"}>
             <p className={"text-[14px] text-warning"}>{row["name"]}</p>
             <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
@@ -206,23 +217,24 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Jumlah Produk",
-      dataIndex: "count",
-      sorter: (a, b) => a.count - b.count,
+      dataIndex: "products_count",
+      sorter: (a, b) => a.products_count - b.products_count,
     },
     {
       title: "Action",
-      dataIndex: "name",
-      render: (name) => (
+      dataIndex: ["name", "id"],
+      render: (text, row) => (
         <div className={"flex"}>
           <div
             className={
               "bg-secondary100 rounded-[5px] px-2 py-1 flex justify-center items-center mr-2.5 cursor-pointer"
             }
-            onClick={() => editKategori(name)}
+            onClick={() => editKategori(row["id"], row["name"])}
           >
             <EditTablerIconSvg size={16} color="white" />
           </div>
           <div
+            onClick={() => deleteKategori(row["id"], row["name"])}
             className={
               "bg-warning rounded-[5px] px-2 py-1 flex justify-center items-center"
             }
@@ -233,6 +245,53 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       ),
     },
   ];
+  const deleteKategori = (id, nama) => {
+    console.log("delete kategori ");
+    setShowModalDelete(true);
+    setCategoryId(id);
+  };
+  const handleCancelDelete = () => {
+    setShowModalDelete(false);
+    handleClearCategory();
+  };
+
+  const handleDeleteCategory = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProductInventoryCategory?id=${categoryId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: response2.message,
+            duration: 3,
+          });
+          getCategories();
+          handleCancelDelete();
+        } else {
+          notification.error({
+            message: `Gagal menghapus Kategori. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus Kategori. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingDelete(false);
+      });
+  };
 
   //3.onChange
   const onChangeSearch = (e) => {
@@ -332,10 +391,11 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
         setdisplayentiredata(res2);
         setdisplaydata(res2.data.data);
         setpraloading(false);
+        setStatusSearch(false);
       });
   }, [
     isAllowedToSeeModels,
-    searchingFilterProducts.length > 2,
+    searchingFilterProducts,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -343,11 +403,126 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.name,
     queryParams.asset_id,
     queryParams.sku,
+    statusSearch == true,
   ]);
 
-  const onChangeInputKategori = (nama) => {
-    setNamaKategori(nama);
+  useEffect(() => {
+    getCategories();
+  }, []);
+
+  const getCategories = () => {
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventoryCategories${payload}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("datanya apis ", res2);
+        console.log("datanya categories ", res2.data);
+        setDisplayCategories(res2.data);
+      });
   };
+  const onChangeInputKategori = (nama) => {
+    setCategoryName(nama.target.value);
+    console.log("on change kategori ", nama);
+  };
+
+  const handleClearCategory = () => {
+    setCategoryId(null);
+    setCategoryName(null);
+  };
+
+  const handleAddUpdateCategory = (response) => {
+    getCategories();
+    handleClearCategory();
+  };
+
+  const handleAddCategory = () => {
+    let payload = {};
+    let url = "";
+    let method = "";
+    if (categoryId != null) {
+      payload = {
+        id: categoryId,
+        name: categoryName,
+      };
+      method = "PUT";
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProductInventoryCategory`;
+    } else {
+      payload = {
+        name: categoryName,
+      };
+      method = "POST";
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProductInventoryCategory`;
+    }
+
+    categoryName &&
+      fetch(url, {
+        method: method,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          console.log("response add category ", response2);
+          if (response2.success) {
+            notification.success({
+              message: categoryId
+                ? "Update Category Success!"
+                : "Add Category Success!",
+              duration: 3,
+            });
+            handleAddUpdateCategory(response2);
+          } else {
+            notification.error({
+              message: categoryId
+                ? `Update Category Failed!`
+                : `Add Category Failed!`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: categoryId
+              ? `Update Category Failed!`
+              : `Add Category Failed!`,
+            duration: 3,
+          });
+          // setLoadingAdd(false);
+        });
+  };
+
+  const addCategory = () => {
+    setShowFormKategori(true);
+    handleClearCategory();
+  };
+
+  const onChangeKategoriProduk = (value) => {
+    console.log("value ", value);
+    setIdKategori(value);
+    setQueryParams({
+      category_id: value != 0 ? value : undefined,
+    });
+  };
+  const onChangeStatus = (value) => {
+    setIsActive(value);
+    setQueryParams({
+      is_active: value,
+    });
+  };
+
   return (
     <Layout
       tok={initProps}
@@ -371,6 +546,51 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
         onCancel={() => setModalKategori(false)}
       >
         <div className={"flex"}>
+          <Modal
+            title=""
+            open={showModalDelete}
+            width={680}
+            footer={null}
+            onCancel={() => setShowModalDelete(false)}
+          >
+            <div className={"p-6"}>
+              <div className={"flex justify-between"}>
+                <p className={"text-2xl text-mono30 font-semibold"}>
+                  Peringatan!
+                </p>
+                <AlertCircleIconSvg />
+              </div>
+              <div className={"mt-6"}>
+                <p className={"text-sm text-mono30"}>
+                  Apakah Anda yakin ingin menghapus kategori{" "}
+                  <span className={"font-semibold"}>{categoryName}</span>?
+                </p>
+              </div>
+              <div className={"mt-14 flex justify-between"}>
+                <div
+                  onClick={() => handleCancelDelete()}
+                  className={
+                    "border border-primary100 py-2 px-6 cursor-pointer rounded-[5px]"
+                  }
+                >
+                  <p className={"text-xs text-mono30"}>Batalkan</p>
+                </div>
+                <div
+                  className={"bg-state1 py-2 px-6 cursor-pointer rounded-[5px]"}
+                >
+                  <div
+                    className={"flex cursor-pointer"}
+                    onClick={() => handleDeleteCategory()}
+                  >
+                    <DeleteTablerIconSvg />
+                    <p className={"ml-2 text-white text-xs self-center"}>
+                      Ya, saya yakin dan hapus kategori
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Modal>
           <div className={showFormKategori ? "w-1/2 mr-4" : "w-3/4 mr-4"}>
             <Input
               style={{ width: `100%`, marginLeft: "-10px", height: "40px" }}
@@ -386,10 +606,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
           {showFormKategori == false && (
             <div className={"w-1/4"}>
               <div className={"bg-primary100 py-2 px-4 rounded-[5px]"}>
-                <div
-                  className={"cursor-pointer"}
-                  onClick={() => setShowFormKategori(true)}
-                >
+                <div className={"cursor-pointer"} onClick={() => addCategory()}>
                   <div className={"flex justify-center items-center"}>
                     <PlusIconSvg size={24} color={"white"} />
                     <p className={"text-white text-xs ml-[15px]"}>
@@ -405,14 +622,14 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
           <div className={showFormKategori ? "w-1/2" : "w-full"}>
             <Table
               className="tableTypeTask mt-6"
-              pagination={{
-                simple: true,
-                current: queryParams.page,
-                pageSize: queryParams.rows,
-                total: displayentiredata.data.total,
-              }}
+              // pagination={{
+              //   simple: true,
+              //   current: queryParams.page,
+              //   pageSize: queryParams.rows,
+              //   total: displayentiredata.data.total,
+              // }}
               scroll={{ x: 200 }}
-              dataSource={displaydata}
+              dataSource={displayCategories}
               columns={columnsTable2}
               loading={praloading}
               onRow={(record, rowIndex) => {
@@ -469,11 +686,9 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                   backgroundColor: "#F4FAF5",
                   borderColor: "#E6E6E6",
                 }}
-                // defaultValue={queryParams.name}
+                defaultValue={categoryName}
                 placeholder="Masukan Nama Kategori"
-                // defaultValue={namaKategori}
-                value={namaKategori}
-                // onChange={onChangeSearch}
+                value={categoryName}
                 allowClear
                 // onKeyPress={onKeyPressHandler}
               />
@@ -486,7 +701,12 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                 >
                   <p className={"text-white text-xs"}>Batal</p>
                 </div>
-                <div className={"bg-primary100 py-2 px-4 rounded-[5px]"}>
+                <div
+                  onClick={() => handleAddCategory()}
+                  className={
+                    "bg-primary100 py-2 px-4 rounded-[5px] cursor-pointer"
+                  }
+                >
                   <p className={"text-white text-xs"}>Tambah</p>
                 </div>
               </div>
@@ -549,27 +769,40 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="col-span-1 mr-2">
                   <Select
                     placeholder="Kategori Produk"
+                    value={idKategori}
                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                    // onChange={onChangeStatus}
+                    onChange={(value) => onChangeKategoriProduk(value)}
                     allowClear
                   >
-                    <Select.Option value={true}>Active</Select.Option>
-                    <Select.Option value={false}>Archived</Select.Option>
+                    <Select.Option key={0} value={0}>
+                      All Category
+                    </Select.Option>
+                    {displayCategories?.map((kategori) => (
+                      <Select.Option key={kategori.id} value={kategori.id}>
+                        {kategori.name}
+                      </Select.Option>
+                    ))}
                   </Select>
                 </div>
                 <div className="col-span-1 mr-2">
                   <Select
+                    value={isActive}
                     placeholder="Status"
                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                    // onChange={onChangeStatus}
+                    onChange={(value) => {
+                      onChangeStatus(value);
+                    }}
                     allowClear
                   >
-                    <Select.Option value={true}>Active</Select.Option>
-                    <Select.Option value={false}>Archived</Select.Option>
+                    <Select.Option value={1}>Active</Select.Option>
+                    <Select.Option value={0}>Archived</Select.Option>
                   </Select>
                 </div>
               </div>
-              <div className="w-1/12 flex bg-primary100 justify-center items-center rounded-[5px] px-6 py-2">
+              <div
+                onClick={() => setStatusSearch(true)}
+                className="w-1/12 flex bg-primary100 cursor-pointer justify-center items-center rounded-[5px] px-6 py-2"
+              >
                 {/* <Button
                   type="primary"
                   style={{ width: `100%` }}
