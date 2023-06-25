@@ -112,8 +112,8 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [pageRoleAssessment, setPageRoleAssessment] = useState(1);
   const [rowsRoleAssessment, setRowsRoleAssessment] = useState(10);
   const [sortingRoleAssessment, setSortingRoleAssessment] = useState({
-    sort_by: "name",
-    sort_type: "desc",
+    sort_by: "",
+    sort_type: "",
   });
   const [searchingFilterRoleAssessment, setSearchingFilterRoleAssessment] =
     useState("");
@@ -457,11 +457,7 @@ const RoleAssessmentIndex = ({ initProps, dataProfile, sidemenu }) => {
                 placeholder="Kata Kunci.."
                 allowClear
                 onChange={(e) => {
-                  if (e.target.value === "") {
-                    setSearchingFilterRoleAssessment("");
-                  } else {
-                    setSearchingFilterRoleAssessment(e.target.value);
-                  }
+                  setSearchingFilterRoleAssessment(e.target.value);
                 }}
                 onKeyPress={onKeyPressHandler}
                 disabled={!isAllowedToGetRoleAssessmentList}
