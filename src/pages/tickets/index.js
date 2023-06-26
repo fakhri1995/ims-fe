@@ -879,14 +879,14 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
 
             {/* Start: Search criteria */}
             <div className="mb-4 grid grid-cols-2 lg:flex gap-2 lg:justify-between">
-              {/* Search by keyword (kata kunci) */}
+              {/* Search by keyword (nomor tiket) */}
               <div className="lg:w-2/12">
                 <Input
                   value={
                     searcingfiltertickets === "" ? null : searcingfiltertickets
                   }
                   style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
+                  placeholder="Masukkan Nomor Tiket..."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
