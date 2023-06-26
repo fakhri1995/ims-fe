@@ -98,7 +98,6 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
     useState(false);
 
   const [dataEmailTemplates, setDataEmailTemplates] = useState([]);
-  const [dataEmailTemplateList, setDataEmailTemplateList] = useState([]);
   const [dataRawEmailTemplates, setDataRawEmailTemplates] = useState({
     current_page: "",
     data: [],
@@ -155,47 +154,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 3. UseEffect
-  // 3.1. Get Email Templates List
-  useEffect(() => {
-    if (!isAllowedToGetEmailTemplatesList) {
-      permissionWarningNotification("Mendapatkan", "Data Email Template List");
-      setLoadingEmailTemplateList(false);
-      return;
-    }
-
-    setLoadingEmailTemplateList(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentEmailTemplatesList`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataEmailTemplateList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingEmailTemplateList(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingEmailTemplateList(false);
-      });
-  }, [isAllowedToGetEmailTemplatesList, refresh]);
-
-  // 3.2. Get Stages
+  // 3.1. Get Stages
   useEffect(() => {
     if (!isAllowedToGetEmailTemplates) {
       permissionWarningNotification("Mendapatkan", "Daftar Email Template");
@@ -203,37 +162,42 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingEmailTemplates(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentEmailTemplates?rows=10`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawEmailTemplates(res2.data);
-          setDataEmailTemplates(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingEmailTemplates(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentEmailTemplates?keyword=${searchingFilterEmailTemplates}&rows=${rowsEmailTemplates}&page=${pageEmailTemplates}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawEmailTemplates(res2.data);
+            setDataEmailTemplates(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingEmailTemplates(false);
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-        setLoadingEmailTemplates(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+          setLoadingEmailTemplates(false);
         });
-        setLoadingEmailTemplates(false);
-      });
-  }, [isAllowedToGetEmailTemplates, refresh]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetEmailTemplates, refresh, searchingFilterEmailTemplates]);
 
   // 4. Event
   const onFilterEmailTemplate = () => {
@@ -422,7 +386,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Template Email ({dataEmailTemplateList.length})
+                Semua Template Email ({dataRawEmailTemplates?.total})
               </h4>
 
               <ButtonSys
@@ -451,11 +415,7 @@ const EmailTemplateManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterEmailTemplates("");
-                    } else {
-                      setSearchingFilterEmailTemplates(e.target.value);
-                    }
+                    setSearchingFilterEmailTemplates(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetEmailTemplates}

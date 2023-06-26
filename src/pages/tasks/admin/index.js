@@ -595,25 +595,36 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    setloadingtasks(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatarawtask(res2.data); // table-related data source
-        setdatatasks(res2.data.data); // table main data source
-        setloadingtasks(false);
-      });
+    const fetchData = async () => {
+      setloadingtasks(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTasks?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setdatarawtask(res2.data); // table-related data source
+          setdatatasks(res2.data.data); // table main data source
+          setloadingtasks(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     loadingcreate,
     isAllowedToGetTaskList,
+    searchstate,
+    tasktypefilterstate,
+    fromdatefilterstate,
+    todatefilterstate,
+    lokasifilterstate,
+    statusfilterstate,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -1800,7 +1811,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <H1>Semua Task</H1>
               </div>
               <div className="grid grid-cols-3 xl:flex xl:flex-row items-center mb-4 gap-2">
-                <div>
+                <div className="xl:w-2/12">
                   <Input
                     value={searchstate}
                     style={{ width: `100%` }}
@@ -1817,7 +1828,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onKeyPress={onKeyPressHandler}
                   />
                 </div>
-                <div>
+                <div className="xl:w-2/12">
                   <Select
                     value={
                       tasktypefilterstate === "" ? null : tasktypefilterstate
@@ -1868,11 +1879,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     ))}
                   </Select>
                 </div>
-                <div>
+                <div className="xl:w-3/12">
                   <DatePicker.RangePicker
                     showTime
                     allowEmpty
                     className="datepickerStatus"
+                    style={{ width: `100%` }}
                     disabled={!isAllowedToGetTaskList}
                     value={
                       fromdatefilterstate === ""
@@ -1889,7 +1901,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     }}
                   />
                 </div>
-                <div>
+                <div className="xl:w-2/12">
                   <TreeSelect
                     style={{ width: `100%` }}
                     allowClear
@@ -1922,7 +1934,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     }}
                   ></TreeSelect>
                 </div>
-                <div>
+                <div className="xl:w-2/12">
                   <Select
                     style={{ width: `100%` }}
                     value={statusfilterstate === "" ? null : statusfilterstate}

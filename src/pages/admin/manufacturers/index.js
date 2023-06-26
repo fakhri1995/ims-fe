@@ -78,10 +78,15 @@ const ManufacturersIndex = ({ dataProfile, sidemenu, initProps }) => {
   //3.onChange
   //search nama
   const onChangeSearch = (e) => {
+    let datatemp = displaydata2;
     if (e.target.value === "") {
       setdisplaydata(displaydata3);
       setnamasearchact(false);
     } else {
+      datatemp = datatemp.filter((flt) => {
+        return flt.name.toLowerCase().includes(e.target.value.toLowerCase());
+      });
+      setdisplaydata(datatemp);
       setnamasearchact(true);
       setnamavalue(e.target.value);
     }

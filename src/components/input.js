@@ -5,7 +5,7 @@ import { Label } from "./typography";
 
 const InputRequired = ({ label, name, defaultValue, onChangeInput, value }) => {
   return (
-    <div className="flex flex-col mb-5">
+    <div className="flex flex-col mb-5 px-3">
       <div className="flex mb-1">
         <Label>{label}</Label>
         <span className="namaField"></span>

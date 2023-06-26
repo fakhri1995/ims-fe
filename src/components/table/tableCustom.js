@@ -870,6 +870,7 @@ const TableCustomRoleAssessment = ({
     <Table
       className="tableRoleAssessment"
       dataSource={dataSource}
+      rowKey={(record) => record.id}
       columns={columns}
       loading={loading}
       scroll={{ x: 200 }}

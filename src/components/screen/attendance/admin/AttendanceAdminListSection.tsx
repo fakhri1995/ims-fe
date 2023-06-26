@@ -107,6 +107,8 @@ export const AttendanceAdminListSection: FC<
     []
   );
 
+  let timer: NodeJS.Timeout; // use for delay time in table's search
+
   /** 1 -> Hadir, 2 -> Absen */
   const [activeTab, setActiveTab] = useState<"1" | "2">("1");
   const [isExportDrawerShown, setIsExportDrawerShown] = useState(false);
@@ -186,6 +188,11 @@ export const AttendanceAdminListSection: FC<
                     event.target.value === ""
                   ) {
                     setQueryParams({ keyword: "" });
+                  } else {
+                    clearTimeout(timer);
+                    timer = setTimeout(() => {
+                      setQueryParams({ keyword: event.target.value });
+                    }, 500);
                   }
                 }}
               />

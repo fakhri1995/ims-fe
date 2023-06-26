@@ -71,7 +71,6 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [loadingRoleTypes, setLoadingRoleTypes] = useState(false);
 
   const [dataRoles, setDataRoles] = useState([]);
-  const [dataRoleList, setDataRoleList] = useState([]);
   const [dataRoleTypes, setDataRoleTypes] = useState([]);
   const [dataRawRoles, setDataRawRoles] = useState({
     current_page: "",
@@ -119,47 +118,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   });
 
   // 3. UseEffect
-  // 3.1. Get Roles List
-  useEffect(() => {
-    if (!isAllowedToGetRolesList) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Recruitment Role List"
-      );
-      setLoadingRoleList(false);
-      return;
-    }
-
-    setLoadingRoleList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRolesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRoleList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingRoleList(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingRoleList(false);
-      });
-  }, [isAllowedToGetRolesList, refresh]);
-
-  // 3.2. Get Roles
+  // 3.1. Get Roles
   useEffect(() => {
     if (!isAllowedToGetRoles) {
       permissionWarningNotification("Mendapatkan", "Daftar Role");
@@ -167,37 +126,42 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingRoles(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoles?rows=10`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawRoles(res2.data);
-          setDataRoles(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingRoles(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentRoles?page=${pageRoles}&rows=${rowsRoles}&recruitment_role_type_id=${roleTypeId}&keyword=${searchingFilterRoles}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawRoles(res2.data);
+            setDataRoles(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingRoles(false);
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-        setLoadingRoles(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+          setLoadingRoles(false);
         });
-        setLoadingRoles(false);
-      });
-  }, [isAllowedToGetRoles, refresh]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetRoles, refresh, searchingFilterRoles, roleTypeId]);
 
   // 3.3. Get Role Types
   useEffect(() => {
@@ -437,7 +401,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Role ({dataRoleList.length})
+                Semua Role ({dataRawRoles?.total})
               </h4>
 
               <ButtonSys
@@ -464,11 +428,7 @@ const RoleManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterRoles("");
-                    } else {
-                      setSearchingFilterRoles(e.target.value);
-                    }
+                    setSearchingFilterRoles(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetRoles}

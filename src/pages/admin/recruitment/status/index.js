@@ -83,7 +83,6 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [drawUpdate, setDrawUpdate] = useState(false);
 
   const [dataStatuses, setdataStatuses] = useState([]);
-  const [dataStatusesList, setdataStatusesList] = useState([]);
   const [dataRawStatus, setDataRawStatus] = useState({
     current_page: "",
     data: [],
@@ -140,47 +139,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [drawread, setdrawread] = useState(false);
 
   // 3. UseEffect
-  // 3.1. Get Status List
-  useEffect(() => {
-    if (!isAllowedToGetStatusesList) {
-      permissionWarningNotification(
-        "Mendapatkan",
-        "Data Recruitment Status List"
-      );
-      setLoadingStatusList(false);
-      return;
-    }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setdataStatusesList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingStatusList(false);
-      })
-      .catch((err) => {
-        // console.log(err);
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetStatusesList, refresh]);
-
-  // 3.2. Get Status
+  // 3.1. Get Status
   useEffect(() => {
     if (!isAllowedToGetStatuses) {
       permissionWarningNotification("Mendapatkan", "Dafta");
@@ -188,37 +147,42 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setLoadingStatus(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?rows=10`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawStatus(res2.data);
-          setdataStatuses(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingStatus(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatuses?keyword=${searchingFilterStatus}&rows=${rowsStatus}&page=${pageStatus}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawStatus(res2.data);
+            setdataStatuses(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingStatus(false);
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-        setLoadingStatus(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+          setLoadingStatus(false);
         });
-        setLoadingStatus(false);
-      });
-  }, [isAllowedToGetStatuses, refresh]);
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetStatuses, refresh, searchingFilterStatus]);
 
   // 4. Event
   const onFilterStatus = () => {
@@ -443,7 +407,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
           <div className="col-span-4 flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
             <div className="flex items-center justify-between mb-6">
               <h4 className="mig-heading--4 ">
-                Semua Status ({dataStatusesList.length})
+                Semua Status ({dataRawStatus?.total})
               </h4>
 
               <ButtonSys
@@ -470,11 +434,7 @@ const RegistrationManagementIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setSearchingFilterStatus("");
-                    } else {
-                      setSearchingFilterStatus(e.target.value);
-                    }
+                    setSearchingFilterStatus(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetStatuses}
