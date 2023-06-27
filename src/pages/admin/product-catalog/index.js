@@ -20,7 +20,7 @@ import { useEffect, useState } from "react";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ASSETS_GET, MODELS_GET, MODEL_ADD } from "lib/features";
+import { ASSETS_GET, MODELS_GET, MODEL_ADD, PRODUCTS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import {
@@ -32,7 +32,7 @@ import {
 } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import { createKeyPressHandler } from "../../../lib/helper";
+import { createKeyPressHandler, currency } from "../../../lib/helper";
 import httpcookie from "cookie";
 
 const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
@@ -45,7 +45,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToSeeModels = hasPermission(MODELS_GET);
+  const isAllowedToSeeModels = hasPermission(PRODUCTS_GET);
   const isAllowedToSeeAssets = hasPermission(ASSETS_GET);
   const isAllowedToAddModel = hasPermission(MODEL_ADD);
   const [searchingFilterProducts, setSearchingFilterProducts] = useState("");
@@ -68,6 +68,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [isActive, setIsActive] = useState(null);
   const [namaKategori, setNamaKategori] = useState(null);
   const [showModalDelete, setShowModalDelete] = useState(false);
+  const [keywordCategory, setKeywordCategory] = useState("");
   //2.useState
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
@@ -147,7 +148,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: (a, b) => a.price - b.price,
       render: (price) => (
         <div>
-          <p>Rp {price}</p>
+          <p>{currency(price)}</p>
         </div>
       ),
     },
@@ -156,7 +157,11 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       dataIndex: "model_inventory",
       render: (model_inventory) => (
         <div>
-          <p>{model_inventory.inventories_count}</p>
+          <p>
+            {model_inventory.inventories_count
+              ? model_inventory.inventories_count
+              : 0}
+          </p>
         </div>
       ),
     },
@@ -201,19 +206,23 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       title: "Kategori Produk",
       dataIndex: ["name", "products_count"],
       sorter: (a, b) => a.name.length - b.name.length,
-      render: (text, row) =>
-        row["products_count"] == 0 ? (
-          <div className={"flex"}>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
-            <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
-              <p className={"text-warning text-[10px]"}>Out of stock</p>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
-          </div>
-        ),
+      render: (text, row) => (
+        // row["products_count"] == 0 ? (
+        //   <div className={"flex"}>
+        //     <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+        //     <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
+        //       <p className={"text-warning text-[10px]"}>Out of stock</p>
+        //     </div>
+        //   </div>
+        // ) : (
+        //   <div>
+        //     <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+        //   </div>
+        // ),
+        <div>
+          <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+        </div>
+      ),
     },
     {
       title: "Jumlah Produk",
@@ -257,7 +266,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   const handleDeleteCategory = () => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProductInventoryCategory?id=${categoryId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteCategory?id=${categoryId}`,
       {
         method: "DELETE",
         headers: {
@@ -295,13 +304,8 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   //3.onChange
   const onChangeSearch = (e) => {
-    if (e.target.value === "") {
-      setQueryParams({
-        name: undefined,
-      });
-    } else {
-      setnamavalue(e.target.value);
-    }
+    console.log("change category ", e);
+    setKeywordCategory(e.target.value);
   };
   const onChangeSkuSearch = (e) => {
     if (e.target.value === "") {
@@ -408,14 +412,14 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   useEffect(() => {
     getCategories();
-  }, []);
+  }, [keywordCategory]);
 
   const getCategories = () => {
     const payload = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
     });
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventoryCategories${payload}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCategories?keyword=${keywordCategory}`,
       {
         method: `GET`,
         headers: {
@@ -455,13 +459,13 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
         name: categoryName,
       };
       method = "PUT";
-      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProductInventoryCategory`;
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/updateCategory`;
     } else {
       payload = {
         name: categoryName,
       };
       method = "POST";
-      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProductInventoryCategory`;
+      url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addCategory`;
     }
 
     categoryName &&
@@ -732,12 +736,12 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               </p>
             </div>
             <div className={"flex"}>
-              <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center mr-6 cursor-pointer">
+              <div
+                onClick={() => setModalKategori(true)}
+                className=" col-span-1 md:col-span-1 flex md:justify-end items-center mr-6 cursor-pointer"
+              >
                 <div className={"bg-open py-2 px-6 rounded-sm"}>
-                  <div
-                    onClick={() => setModalKategori(true)}
-                    className="cursor-pointer"
-                  >
+                  <div className="cursor-pointer">
                     <p className={"text-white text-xs"}>Kelola Kategori</p>
                   </div>
                 </div>

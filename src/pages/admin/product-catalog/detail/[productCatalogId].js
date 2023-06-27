@@ -67,6 +67,7 @@ import st from "../../../../components/layout-dashboard.module.css";
 import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import {
   createKeyPressHandler,
+  currency,
   generateStaticAssetUrl,
   momentFormatDate,
   permissionWarningNotification,
@@ -146,6 +147,8 @@ const ProductCatalogDetail = ({
     sku: withDefault(StringParam, undefined),
   });
   const [praloading, setpraloading] = useState(true);
+  const [migIdSearch, setMigIdSearch] = useState("");
+  const [searchModel, setSearchModel] = useState(false);
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
     message: "",
@@ -395,6 +398,7 @@ const ProductCatalogDetail = ({
     },
   });
   const [displaydataproduk, setdisplaydataproduk] = useState([]);
+  const [displaydatamodel, setdisplaydatamodel] = useState([]);
   const columnsTableProduk = [
     {
       title: "ID Produk",
@@ -413,371 +417,30 @@ const ProductCatalogDetail = ({
   ];
   const columnsTable = [
     {
-      title: "Nama",
-      dataIndex: ["name", "inventories_count"],
-      sorter: (a, b) => a.name.length - b.name.length,
-      render: (text, row) =>
-        row["inventories_count"] == 0 ? (
-          <div className={"flex"}>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
-            <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
-              <p className={"text-warning text-[10px]"}>Out of stock</p>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
-          </div>
-        ),
+      title: "MIG ID",
+      dataIndex: "mig_id",
     },
     {
-      title: "SKU",
-      dataIndex: "sku",
-      render: (skuValue) => (!!skuValue ? skuValue : "-"),
-      sorter: true,
+      title: "Nomor Serial",
+      dataIndex: "mig_id",
     },
     {
-      title: "Asset Type",
-      dataIndex: "asset_name",
+      title: "Lokasi",
+      dataIndex: "location_inventory",
+      render: (location_inventory) => <p>{location_inventory.name}</p>,
     },
     {
-      title: "Jumlah Item",
-      dataIndex: "inventories_count",
-      sorter: (a, b) => a.inventories_count - b.inventories_count,
+      title: "Tipe Aset",
+      dataIndex: "model_inventory",
+      render: (model_inventory) => <p>{model_inventory.asset.asset_name}</p>,
     },
     {
-      title: "Status",
-      dataIndex: "status_item",
-      render: (status_item) => (
+      title: "Status Item",
+      dataIndex: ["status_condition", "status_usage", "location_inventory"],
+      render: (text, row) => (
         <div className={"flex"}>
-          <div className={""}>
-            {status_item.pemakaian == "pakai_sewa" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <PakaiSewaIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Pakai Sewa
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini sedang digunakan
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <PakaiSewaIconSvg />
-                </div>
-              </Tooltip>
-            ) : status_item.pemakaian == "pakai_internal" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <PakaiInternalIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Pakai Internal
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini sedang dipakai oleh internal.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <PakaiInternalIconSvg />
-                </div>
-              </Tooltip>
-            ) : status_item.pemakaian == "tesedia" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <TersediaIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Tersedia
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini tersedia
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <TersediaIconSvg />
-                </div>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <ReplacementIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Replacement
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini sebagai pengganti
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <ReplacementIconSvg />
-                </div>
-              </Tooltip>
-            )}
-          </div>
-          <div className={"ml-2.5"}>
-            {status_item.kondisi_barang == "bagus" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <div
-                        className={
-                          "w-2 h-2 bg-secondary100 rounded-full self-center"
-                        }
-                      />
-                      <div className={"ml-[14px]"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Bagus
-                        </p>
-                      </div>
-                    </div>
-                    <p className={"text-mono30 text-[10px] mt-1 ml-[24px]"}>
-                      Kondisi barang ini bagus.
-                    </p>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <div className={"w-2 h-2 bg-secondary100 rounded-full"} />
-                </div>
-              </Tooltip>
-            ) : status_item.kondisi_barang == "abu" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <div
-                        className={"w-2 h-2 bg-closed rounded-full self-center"}
-                      />
-                      <div className={"ml-[14px]"}>
-                        <p className={"text-xs text-mono50 font-semibold"}>
-                          Abu-abu
-                        </p>
-                      </div>
-                    </div>
-                    <p className={"text-mono30 text-[10px] mt-1 ml-[24px]"}>
-                      Kondisi barang ini abu-abu.
-                    </p>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-mono50 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <div className={"w-2 h-2 bg-closed rounded-full"} />
-                </div>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <div
-                        className={
-                          "w-2 h-2 bg-warning rounded-full self-center"
-                        }
-                      />
-                      <div className={"ml-[14px]"}>
-                        <p className={"text-xs text-mono30 font-semibold"}>
-                          Buruk
-                        </p>
-                      </div>
-                    </div>
-                    <p className={"text-mono30 text-[10px] mt-1 ml-[26px]"}>
-                      Kondisi barang ini buruk.
-                    </p>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-state1 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <div className={"w-2 h-2 bg-warning rounded-full"} />
-                </div>
-              </Tooltip>
-            )}
-          </div>
-          <div className={"ml-2.5"}>
-            {status_item.status_sewa == "periode" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <PeriodeIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p className={"text-xs text-primary100 font-semibold"}>
-                          Periode
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini masih dalam periode sewa
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-primary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <PeriodeIconSvg />
-                </div>
-              </Tooltip>
-            ) : status_item.status_sewa == "luar_periode" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <LuarPeriodeIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p className={"text-xs text-state2 font-semibold"}>
-                          Luar Periode
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini diluar periode waktu sewa.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-state2 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <LuarPeriodeIconSvg />
-                </div>
-              </Tooltip>
-            ) : (
-              <p></p>
-            )}
-          </div>
+          {renderStatusItem(row["status_usage"], row["location_inventory"])}
+          {renderStatusItemCondition(row["status_condition"].name)}
         </div>
       ),
     },
@@ -804,6 +467,268 @@ const ProductCatalogDetail = ({
       value: "Iphone",
     },
   ];
+
+  const renderStatusItem = (status_usage, location) => {
+    return (
+      <div className={""}>
+        {console.log("status usage ", status_usage)}
+        {status_usage.name == "In Used" ? (
+          renderUsage(location)
+        ) : status_usage.name == "In Stock" ? (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex"}>
+                  <TersediaIconSvg size={16} />
+                  <div className={"ml-2"}>
+                    <p className={"text-xs text-secondary100 font-semibold"}>
+                      Tersedia
+                    </p>
+                    <p className={"text-mono30 text-[10px] mt-1"}>
+                      Barang ini tersedia
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-secondary100 bg-secondary100 flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <TersediaIconSvg size={8} color={"ffffff"} />
+            </div>
+          </Tooltip>
+        ) : (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex"}>
+                  <ReplacementIconSvg size={16} />
+                  <div className={"ml-2"}>
+                    <p className={"text-xs text-secondary100 font-semibold"}>
+                      Replacement
+                    </p>
+                    <p className={"text-mono30 text-[10px] mt-1"}>
+                      Barang ini sebagai pengganti
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-secondary100 bg-secondary100 flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <ReplacementIconSvg />
+            </div>
+          </Tooltip>
+        )}
+      </div>
+    );
+  };
+
+  const renderUsage = (location) => {
+    if (location.name == "Mitramas Infosys Global") {
+      return (
+        <Tooltip
+          color="white"
+          title={
+            <div
+              className={"p-2 bg-white rounded-[5px]"}
+              style={{
+                boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+              }}
+            >
+              <div className={"flex"}>
+                <PakaiInternalIconSvg size={16} />
+                <div className={"ml-2"}>
+                  <p className={"text-xs text-secondary100 font-semibold"}>
+                    Pakai Internal
+                  </p>
+                  <p className={"text-mono30 text-[10px] mt-1"}>
+                    Barang ini sedang dipakai oleh internal.
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+          placement="bottom"
+        >
+          <div
+            className={
+              "border-secondary100 bg-secondary100 flex border border-solid rounded-[5px] w-[24px] h-[24px] justify-center items-center"
+            }
+          >
+            <PakaiInternalIconSvg size={8} color={"#ffffff"} />
+          </div>
+        </Tooltip>
+      );
+    } else {
+      return (
+        <Tooltip
+          color="white"
+          title={
+            <div
+              className={"p-2 bg-white rounded-[5px]"}
+              style={{
+                boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+              }}
+            >
+              <div className={"flex"}>
+                <PakaiSewaIconSvg size={16} />
+                <div className={"ml-2"}>
+                  <p className={"text-xs text-secondary100 font-semibold"}>
+                    Pakai Sewa
+                  </p>
+                  <p className={"text-mono30 text-[10px] mt-1"}>
+                    Barang ini sedang digunakan
+                  </p>
+                </div>
+              </div>
+            </div>
+          }
+          placement="bottom"
+        >
+          <div
+            className={
+              "border-secondary100 bg-secondary100 flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+            }
+          >
+            <PakaiSewaIconSvg size={8} color={"ffffff"} />
+          </div>
+        </Tooltip>
+      );
+    }
+  };
+
+  const renderStatusItemCondition = (status_condition) => {
+    return (
+      <div className={"ml-4"}>
+        {status_condition == "Good" ? (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex"}>
+                  <div
+                    className={"w-2 h-2 bg-primary100 rounded-full self-center"}
+                  />
+                  <div className={"ml-[14px]"}>
+                    <p className={"text-xs text-primary100 font-semibold"}>
+                      Bagus
+                    </p>
+                  </div>
+                </div>
+                <p className={"text-mono30 text-[10px] mt-1 ml-[24px]"}>
+                  Kondisi barang ini bagus.
+                </p>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-primary100 bg-primary100 flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <div className={"w-2 h-2 bg-white rounded-full"} />
+            </div>
+          </Tooltip>
+        ) : status_condition == "Grey" ? (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex"}>
+                  <div
+                    className={"w-2 h-2 bg-closed rounded-full self-center"}
+                  />
+                  <div className={"ml-[14px]"}>
+                    <p className={"text-xs text-mono50 font-semibold"}>
+                      Abu-abu
+                    </p>
+                  </div>
+                </div>
+                <p className={"text-mono30 text-[10px] mt-1 ml-[24px]"}>
+                  Kondisi barang ini abu-abu.
+                </p>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-mono50 bg-mono50 flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <div className={"w-2 h-2 bg-white rounded-full"} />
+            </div>
+          </Tooltip>
+        ) : (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex"}>
+                  <div
+                    className={"w-2 h-2 bg-warning rounded-full self-center"}
+                  />
+                  <div className={"ml-[14px]"}>
+                    <p className={"text-xs text-mono30 font-semibold"}>Buruk</p>
+                  </div>
+                </div>
+                <p className={"text-mono30 text-[10px] mt-1 ml-[26px]"}>
+                  Kondisi barang ini buruk.
+                </p>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-state1 bg-warning flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <div className={"w-2 h-2 bg-white rounded-full"} />
+            </div>
+          </Tooltip>
+        )}
+      </div>
+    );
+  };
   const [rowstate, setrowstate] = useState(0);
   const [showModalDelete, setShowModalDelete] = useState(false);
 
@@ -827,6 +752,9 @@ const ProductCatalogDetail = ({
         console.log("data detail ", res2.data.model_inventory);
         if (res2.success) {
           setDataDetail(res2.data);
+          if (res2.data.model_id) {
+            getDataModel(res2.data.model_id);
+          }
           //  setdisplaydata(res2.data.model_inventory)
         } else {
           notification.error({
@@ -846,6 +774,70 @@ const ProductCatalogDetail = ({
       });
   }, [isAllowedToGetTasks, productCatalogId]);
 
+  const getDataModel = (id) => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories?id=${id}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("data model ", res2.data);
+        if (res2.success) {
+          setdisplayentiredata(res2.data);
+          setdisplaydatamodel(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingTasks(false);
+      });
+  };
+
+  const searchGetModel = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories?id=${dataDetail.model_id}&mig_id=${migIdSearch}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("data model ", res2.data);
+        if (res2.success) {
+          setdisplayentiredata(res2.data);
+          setdisplaydatamodel(res2.data.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingTasks(false);
+      });
+  };
   useEffect(() => {
     if (!isAllowedToAddTask) {
       return;
@@ -874,7 +866,7 @@ const ProductCatalogDetail = ({
       });
   }, [
     isAllowedToAddTask,
-    searchingFilterProducts.length > 2,
+    searchingFilterProducts,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -1223,7 +1215,7 @@ const ProductCatalogDetail = ({
                         Harga Produk
                       </p>
                       <p className={"mt-2 text-sm text-mono30"}>
-                        Rp {dataDetail?.price}
+                        {dataDetail ? currency(dataDetail.price) : "0"}
                       </p>
                     </div>
                   </div>
@@ -1253,11 +1245,16 @@ const ProductCatalogDetail = ({
                         <Input
                           style={{ width: `100%`, marginRight: `0.5rem` }}
                           placeholder="MIG ID"
+                          value={migIdSearch}
+                          onChange={(e) => setMigIdSearch(e.target.value)}
                           allowClear
                         ></Input>
                       </div>
                     </div>
-                    <div className="w-1/12 flex bg-primary100 justify-center items-center rounded-[5px] px-6 py-2">
+                    <div
+                      onClick={() => searchGetModel()}
+                      className="w-1/12 flex bg-primary100 justify-center items-center rounded-[5px] px-6 py-2 cursor-pointer"
+                    >
                       <SearchOutlined style={{ color: "#FFFFFF" }} />
                       <p className={"ml-2 text-white text-xs"}>Cari</p>
                     </div>
@@ -1265,15 +1262,15 @@ const ProductCatalogDetail = ({
                 </div>
                 {console.log("isi data tabel ", displaydata)}
                 <Table
-                  className="tableTypeTask"
+                  className="tableTypeTask pb-6"
                   pagination={{
-                    simple: true,
+                    showSizeChanger: true,
                     current: queryParams.page,
                     pageSize: queryParams.rows,
                     total: displayentiredata.data.total,
                   }}
                   scroll={{ x: 200 }}
-                  dataSource={displaydata}
+                  dataSource={displaydatamodel}
                   columns={columnsTable}
                   // loading={praloading}
                   onRow={(record, rowIndex) => {
@@ -1281,9 +1278,9 @@ const ProductCatalogDetail = ({
                       onMouseOver: (event) => {
                         setrowstate(record.id);
                       },
-                      onClick: (event) => {
-                        rt.push(`/admin/product-catalog/detail/${record.id}`);
-                      },
+                      // onClick: (event) => {
+                      //   rt.push(`/admin/product-catalog/detail/${record.id}`);
+                      // },
                     };
                   }}
                   rowClassName={(record, idx) => {

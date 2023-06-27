@@ -331,6 +331,12 @@ export const PROJECT_DELETE = "PROJECT_DELETE";
 export const PROJECTS_COUNT_GET = "PROJECTS_COUNT_GET";
 export const PROJECTS_DEADLINE_GET = "PROJECTS_DEADLINE_GET";
 
+/*Product Catalog */
+export const PRODUCT_GET = "PRODUCT_GET";
+export const PRODUCTS_GET = "PRODUCTS_GET";
+export const PRODUCT_ADD = "PRODUCT_ADD";
+export const PRODUCT_UPDATE = "PRODUCT_UPDATE";
+export const PRODUCT_DELETE = "PRODUCT_DELETE";
 /** Project Status */
 export const PROJECT_STATUS_GET = "PROJECT_STATUS_GET";
 export const PROJECT_STATUSES_GET = "PROJECT_STATUSES_GET";

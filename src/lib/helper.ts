@@ -319,3 +319,10 @@ export const timeRead = (total: number) => {
   let value = Math.ceil(total / wordsPerMinute);
   return value;
 };
+
+export const currency = (money: number) => {
+  return money.toLocaleString("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+};
