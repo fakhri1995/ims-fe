@@ -389,32 +389,44 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
       return;
     }
 
-    setloadingtickets(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
-        dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`
-      }?page=${queryParams.page}&rows=${
-        queryParams.rows
-      }&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
-        queryParams.sort_by
-      }&sort_type=${queryParams.sort_type}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatarawtickets(res2.data);
-        setdatatickets(res2.data.data);
-        // setdatafilterttickets(res2.data.data);
-        setloadingtickets(false);
-      });
+    const fetchData = async () => {
+      setloadingtickets(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/${
+          dataProfile.data.role === 1 ? `getTickets` : `getClientTickets`
+        }?page=${queryParams.page}&rows=${
+          queryParams.rows
+        }&ticket_id=${searcingfiltertickets}&type_id=${tickettypefiltertickets}&from=${fromfiltertickets}&to=${tofiltertickets}&location_id=${locfiltertickets}&status_id=${statusfiltertickets}&sort_by=${
+          queryParams.sort_by
+        }&sort_type=${queryParams.sort_type}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setdatarawtickets(res2.data);
+          setdatatickets(res2.data.data);
+          // setdatafilterttickets(res2.data.data);
+          setloadingtickets(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
   }, [
     refreshcreateticketscreate,
     isAllowedGetTickets,
+    searcingfiltertickets,
+    tickettypefiltertickets,
+    fromfiltertickets,
+    tofiltertickets,
+    locfiltertickets,
+    statusfiltertickets,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -679,17 +691,16 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               <div className="col-span-2 md:col-span-4 lg:col-span-3 xl:col-span-4 flex flex-col mb-6">
                 {/* BUAT TIKET */}
                 <div
-                  className="shadow-md rounded-md bg-gradient-to-br from-primary100 to-state4 transition ease-in-out hover:from-primary75 cursor-pointer p-5 md:mx-3 flex items-center mb-2"
+                  className="btn-gradient shadow-md rounded-md transition ease-in-out cursor-pointer p-5 md:mx-3 flex items-center mb-2 "
                   onClick={() => {
                     if (!canCreateNewTicket) {
                       permissionWarningNotification("Membuat", "Tiket Baru");
                       return;
                     }
-
                     setdrawerticketscreate(true);
                   }}
                 >
-                  <div className=" mr-5">
+                  <div className="mr-5">
                     <TicketIconSvg size={40} color={`#ffffff`} />
                   </div>
                   <div className=" flex flex-col">
@@ -867,15 +878,15 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             {/* Start: Search criteria */}
-            <div className="mb-4 grid grid-cols-2 lg:flex gap-2 lg:gap-1">
-              {/* Search by keyword (kata kunci) */}
-              <div className="">
+            <div className="mb-4 grid grid-cols-2 lg:flex gap-2 lg:justify-between">
+              {/* Search by keyword (nomor tiket) */}
+              <div className="lg:w-2/12">
                 <Input
                   value={
                     searcingfiltertickets === "" ? null : searcingfiltertickets
                   }
                   style={{ width: `100%` }}
-                  placeholder="Kata Kunci.."
+                  placeholder="Masukkan Nomor Tiket..."
                   allowClear
                   onChange={(e) => {
                     if (e.target.value === "") {
@@ -890,7 +901,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by ticket (dropdown) */}
-              <div className="">
+              <div className="lg:w-2/12">
                 <Select
                   value={
                     tickettypefiltertickets === ""
@@ -917,7 +928,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Filter by date */}
-              <div className="">
+              <div className="lg:w-3/12">
                 <DatePicker.RangePicker
                   style={{ width: `100%` }}
                   allowEmpty
@@ -936,7 +947,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by location */}
-              <div className="">
+              <div className="lg:w-2/12">
                 <TreeSelect
                   style={{ width: `100%` }}
                   allowClear
@@ -972,7 +983,7 @@ const TicketIndex2 = ({ dataProfile, sidemenu, initProps }) => {
               </div>
 
               {/* Search by status (dropdown) */}
-              <div className="">
+              <div className="lg:w-2/12">
                 <Select
                   value={
                     statusfiltertickets === "" ? null : statusfiltertickets

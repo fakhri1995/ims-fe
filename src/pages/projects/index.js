@@ -257,8 +257,8 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
           setLoadingProjects(false);
         });
     };
-    const timer = setTimeout(() => fetchData(), 500);
 
+    const timer = setTimeout(() => fetchData(), 500);
     return () => clearTimeout(timer);
   }, [
     isAllowedToGetProjects,

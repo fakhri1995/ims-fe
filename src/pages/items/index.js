@@ -8,6 +8,7 @@ import {
   TableColumnsType,
   Tooltip,
   TreeSelect,
+  notification,
 } from "antd";
 import {
   NumberParam,
@@ -90,6 +91,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
   const [namaasset, setnamaasset] = useState(() => queryParams.asset_id);
   const [rowstate, setrowstate] = useState(0);
+  const [loadingTable, setLoadingTable] = useState(true);
   const [praloading, setpraloading] = useState(true);
   const [praloading2, setpraloading2] = useState(true);
   const [modelfilter, setmodelfilter] = useState([]);
@@ -346,19 +348,40 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
       addQueryPrefix: true,
     });
 
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setdisplaydata(res2.data.data);
-        setTotalItems(res2.data.total);
-      });
+    const fetchData = async () => {
+      setLoadingTable(true);
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getInventories${payload}`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          setdisplaydata(res2.data.data);
+          setTotalItems(res2.data.total);
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingTable(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     dataRefresher,
+    queryParams.mig_id,
+    queryParams.asset_id,
+    queryParams.model_id,
+    queryParams.location_id,
+    queryParams.status_condition,
+    queryParams.status_usage,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -416,9 +439,11 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
   /** Data fetching for "Cari Asset Type" input field */
   useEffect(() => {
     if (!isAllowedToShowInventoryList || !isAllowedToSearchAssetType) {
+      setpraloading2(false);
       return;
     }
 
+    setpraloading2(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getAssets`, {
       method: `GET`,
       headers: {
@@ -442,6 +467,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
         recursiveSearchAsset(res2.data, Number(namaasset));
         setassetdata(res2.data);
+        setpraloading2(false);
       });
   }, [isAllowedToShowInventoryList, isAllowedToSearchAssetType]);
 
@@ -491,6 +517,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     disabled={!isAllowedToShowInventoryList}
                   ></Input>
                 </div>
+
                 <div className="col-span-2 mr-1">
                   <TreeSelect
                     allowClear
@@ -533,6 +560,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
                     }}
                   />
                 </div>
+
                 {praloading2 ? (
                   <>
                     <Spin />
@@ -707,7 +735,7 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
             scroll={{ x: 200 }}
             dataSource={displaydata}
             columns={columnsTable}
-            loading={praloading}
+            loading={loadingTable}
             onRow={(record, rowIndex) => {
               return {
                 onMouseOver: (event) => {

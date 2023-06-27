@@ -267,9 +267,6 @@ function Requesters({
     //     dataIndex: 'actionss',
     //     render: (text, record, index) => {
     //         return {
-    //             // props: {
-    //             //     style: { backgroundColor: index % 2 == 1 ? '#f2f2f2' : '#fff' },
-    //             // },
     //             children:
     //                 <>
     //                     {/* {
@@ -290,20 +287,6 @@ function Requesters({
     //                 </>
     //         }
     //     }
-    //     // render: (text, record, index) => (
-    //     //     <>
-    //     //         {
-    //     //             actions[index] ?
-    //     //                 <>{actions[index]}
-    //     //                     <Button onClick={() => { rt.push(`/admin/requesters/${record.user_id}`) }} style={{ paddingTop: `0`, paddingBottom: `0.3rem` }}>
-    //     //                         <EditOutlined />
-    //     //                     </Button>
-    //     //                 </>
-    //     //                 :
-    //     //                 null
-    //     //         }
-    //     //     </>
-    //     // )
     // }
   ];
 
@@ -335,68 +318,68 @@ function Requesters({
       { addQueryPrefix: true }
     );
 
-    setpraloading(true);
-    setdatarawloading(true);
-    setdatarawloading2(true);
-    fetch(
-      // `${
-      //   process.env.NEXT_PUBLIC_BACKEND_URL
-      // }/getRequesterList?name=${name1}&company_id=${
-      //   location_id1 === "" && company_id1 === "null"
-      //     ? ""
-      //     : location_id1 === ""
-      //     ? company_id1
-      //     : location_id1
-      // }${is_enabled1 === "" ? "" : `&is_enabled=${is_enabled1}`}`,
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterList${queryPayload}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setrawdata(res2.data);
-        setdatarawloading(false);
-        setdatarawloading2(false);
-
-        var dataDD = [];
-        if (!res2) {
-          dataDD = [];
-          notification["error"]({
-            message: res2.message.errorInfo.status_detail,
-            duration: 3,
-          });
-          rt.push("/dashboard/admin");
-        } else {
-          dataDD = res2.data.data.map((doc, idx) => {
-            return {
-              id: doc.id,
-              profile_image: generateStaticAssetUrl(doc.profile_image?.link),
-              // profile_image:
-              //   doc.profile_image === "" || doc.profile_image === "-"
-              //     ? `/default-users.jpeg`
-              //     : doc.profile_image,
-              name: doc.name,
-              email: doc.email,
-              phone_number: doc.phone_number,
-              company_id: doc.company_id,
-              company_name: doc.company_name,
-              is_enabled: doc.is_enabled,
-              position: doc.position,
-            };
-          });
+    const fetchData = async () => {
+      setpraloading(true);
+      // setdatarawloading(true);
+      // setdatarawloading2(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRequesterList${queryPayload}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+            "Content-Type": "application/json",
+          },
         }
-        // setdataraw(res2.data);
-        setDataSource(dataDD);
-        setpraloading(false);
-      });
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setrawdata(res2.data);
+          // setdatarawloading(false);
+          // setdatarawloading2(false);
+
+          var dataDD = [];
+          if (!res2) {
+            dataDD = [];
+            notification["error"]({
+              message: res2.message.errorInfo.status_detail,
+              duration: 3,
+            });
+            rt.push("/dashboard/admin");
+          } else {
+            dataDD = res2.data.data.map((doc, idx) => {
+              return {
+                id: doc.id,
+                profile_image: generateStaticAssetUrl(doc.profile_image?.link),
+                // profile_image:
+                //   doc.profile_image === "" || doc.profile_image === "-"
+                //     ? `/default-users.jpeg`
+                //     : doc.profile_image,
+                name: doc.name,
+                email: doc.email,
+                phone_number: doc.phone_number,
+                company_id: doc.company_id,
+                company_name: doc.company_name,
+                is_enabled: doc.is_enabled,
+                position: doc.position,
+              };
+            });
+          }
+          // setdataraw(res2.data);
+          setDataSource(dataDD);
+          setpraloading(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetRequesterList,
     triggerRefetchAgentList,
+    queryParams.name,
+    queryParams.is_enabled,
+    queryParams.company_id,
+    queryParams.location_id,
     queryParams.rows,
     queryParams.page,
   ]);
@@ -559,7 +542,7 @@ function Requesters({
                       >
                         {datacompany.map((doc, idx) => {
                           return (
-                            <Select.Option value={doc.id}>
+                            <Select.Option key={doc.id} value={doc.id}>
                               {doc.name}
                             </Select.Option>
                           );
@@ -657,6 +640,7 @@ function Requesters({
                 dataSource={dataKK}
                 columns={columnsDD}
                 loading={praloading}
+                rowKey={(record) => record.id}
                 onRow={(record, rowIndex) => {
                   return {
                     onMouseOver: (event) => {

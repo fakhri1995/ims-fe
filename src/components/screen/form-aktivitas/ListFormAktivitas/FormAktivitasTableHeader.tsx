@@ -34,6 +34,7 @@ export const FormAktivitasTableHeader: FC<IFormAktivitasTableHeader> = memo(
                 ) {
                   onSearchTriggered("");
                 }
+                setTimeout(() => onSearchTriggered(event.target.value), 1000);
               }}
             />
           </Form.Item>

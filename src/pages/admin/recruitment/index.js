@@ -177,7 +177,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     recruitment_role_id: withDefault(NumberParam, undefined),
     recruitment_stage_id: withDefault(NumberParam, undefined),
     recruitment_status_id: withDefault(NumberParam, undefined),
-    keyword: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -210,7 +209,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // filter search & selected options
   const [searchingFilterRecruitments, setSearchingFilterRecruitments] =
-    useState(undefined);
+    useState("");
   const [selectedRoleId, setSelectedRoleId] = useState(undefined);
   const [selectedStage, setSelectedStage] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
@@ -385,36 +384,45 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       addQueryPrefix: true,
     });
 
-    setLoadingRecruitments(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataRawRecruitments(res2.data);
-          setDataRecruitments(res2.data.data);
-        } else {
+    const fetchData = async () => {
+      setLoadingRecruitments(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments${payload}&keyword=${searchingFilterRecruitments}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawRecruitments(res2.data);
+            setDataRecruitments(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingRecruitments(false);
+        })
+        .catch((err) => {
           notification.error({
-            message: `${res2.message}`,
+            message: `${err.response}`,
             duration: 3,
           });
-        }
-        setLoadingRecruitments(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
+          setLoadingRecruitments(false);
         });
-        setLoadingRecruitments(false);
-      });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     isAllowedToGetRecruitments,
     refresh,
+    searchingFilterRecruitments,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -422,7 +430,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     queryParams.recruitment_role_id,
     queryParams.recruitment_stage_id,
     queryParams.recruitment_status_id,
-    queryParams.keyword,
   ]);
 
   // 3.4. Get Stage List
@@ -577,16 +584,7 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   }, [isAllowedToGetRecruitmentVerification, modalSendAccess, refresh]);
 
-  // 3.6. Disable update stage or status if notes empty
-  // useEffect(() => {
-  //   dataUpdateStage.notes ? setDisableUpdate(false) : setDisableUpdate(true);
-  // }, [dataUpdateStage]);
-
-  // useEffect(() => {
-  //   dataUpdateStatus.notes ? setDisableUpdate(false) : setDisableUpdate(true);
-  // }, [dataUpdateStatus]);
-
-  // 3.7. Set options in import excel
+  // 3.6. Set options in import excel
   useEffect(() => {
     let roleOptions = dataRoleList.map((role) => {
       let newOption = {
@@ -633,7 +631,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
   }, [dataStatusList]);
 
   // 4. Event
-
   const onManageRecruitmentButtonClicked = useCallback(() => {
     rt.push("/admin/recruitment/role");
   }, []);
@@ -644,7 +641,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
       recruitment_role_id: selectedRoleId,
       recruitment_stage_id: selectedStage,
       recruitment_status_id: selectedStatus,
-      keyword: searchingFilterRecruitments,
     });
   };
 
@@ -1372,8 +1368,6 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  // DEBUG
-
   return (
     <Layout
       tok={initProps}
@@ -1665,16 +1659,11 @@ const RecruitmentCandidateIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by keyword (kata kunci) */}
               <div className="w-full md:w-4/12">
                 <Input
-                  defaultValue={queryParams.keyword}
+                  defaultValue={searchingFilterRecruitments}
                   style={{ width: `100%` }}
                   placeholder="Kata Kunci.."
                   allowClear
                   onChange={(e) => {
-                    if (e.target.value === "") {
-                      setQueryParams({
-                        keyword: undefined,
-                      });
-                    }
                     setSearchingFilterRecruitments(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}

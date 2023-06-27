@@ -645,25 +645,36 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    setloadingtasks(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatarawtask(res2.data);
-        setdatatasks(res2.data.data);
-        setloadingtasks(false);
-      });
+    const fetchData = async () => {
+      setloadingtasks(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getUserTasks?page=${queryParams.page}&rows=${queryParams.rows}&sort_by=${queryParams.sort_by}&sort_type=${queryParams.sort_type}&keyword=${searchstate}&task_type=${tasktypefilterstate}&location=${lokasifilterstate}&from=${fromdatefilterstate}&to=${todatefilterstate}&status=[${statusfilterstate}]`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setdatarawtask(res2.data);
+          setdatatasks(res2.data.data);
+          setloadingtasks(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     /* drawertaskcreate, */ viewtaskpick,
     isAllowedToGetUserTasks,
+    searchstate,
+    tasktypefilterstate,
+    lokasifilterstate,
+    fromdatefilterstate,
+    todatefilterstate,
+    statusfilterstate,
     queryParams.page,
     queryParams.rows,
     queryParams.sort_by,
@@ -764,27 +775,41 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
       return;
     }
 
-    setloadingtaskpick(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskPickList?rows=${rowstaskpick}&page=${pagetaskpick}&keyword=${searchfilterstatetaskpick}&task_type=${tasktypefilterstatetaskpick}&location=${lokasifilterstatetaskpick}&from=${fromdatefilterstatetaskpick}&to=${todatefilterstatetaskpick}&sort_by=${sortstatetaskpick.sort_by}&sort_type=${sortstatetaskpick.sort_type}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        setdatarawtaskpick(res2.data);
-        setdatataskpick(res2.data.data);
-        setloadingtaskpick(false);
-      });
+    const fetchData = async () => {
+      setloadingtaskpick(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getTaskPickList?rows=${rowstaskpick}&page=${pagetaskpick}&keyword=${searchfilterstatetaskpick}&task_type=${tasktypefilterstatetaskpick}&location=${lokasifilterstatetaskpick}&from=${fromdatefilterstatetaskpick}&to=${todatefilterstatetaskpick}&sort_by=${sortstatetaskpick.sort_by}&sort_type=${sortstatetaskpick.sort_type}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          setdatarawtaskpick(res2.data);
+          setdatataskpick(res2.data.data);
+          setloadingtaskpick(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
   }, [
     viewtaskpick,
     reloadpick,
     loadingfiltertaskpick,
     isAllowedToGetTaskPickList,
+    rowstaskpick,
+    pagetaskpick,
+    searchfilterstatetaskpick,
+    tasktypefilterstatetaskpick,
+    lokasifilterstatetaskpick,
+    fromdatefilterstatetaskpick,
+    todatefilterstatetaskpick,
+    sortstatetaskpick.sort_by,
+    sortstatetaskpick.sort_type,
   ]);
 
   // useEffect(() => {
@@ -821,8 +846,8 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                       <H1>Open Task</H1>
                     </div>
                   </div>
-                  <div className=" flex items-center mb-4">
-                    <div className="mx-1 w-3/12">
+                  <div className="grid grid-cols-2 lg:flex items-center mb-4 gap-2 lg:gap-x-1">
+                    <div className="lg:w-3/12">
                       <Input
                         value={searchfilterstatetaskpick}
                         style={{ width: `100%` }}
@@ -838,7 +863,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         }}
                       />
                     </div>
-                    <div className="mx-1 w-2/12">
+                    <div className="lg:w-3/12">
                       <Select
                         value={
                           tasktypefilterstatetaskpick === ""
@@ -893,11 +918,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         ))}
                       </Select>
                     </div>
-                    <div className=" w-3/12 mx-1">
+                    <div className="lg:w-3/12">
                       <DatePicker.RangePicker
                         showTime
                         allowEmpty
                         className="datepickerStatus"
+                        style={{ width: `100%` }}
                         disabled={!isAllowedToGetTaskPickList}
                         value={
                           fromdatefilterstatetaskpick === ""
@@ -913,7 +939,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         }}
                       />
                     </div>
-                    <div className=" mx-1 w-3/12">
+                    <div className="lg:w-2/12">
                       <TreeSelect
                         style={{ width: `100%` }}
                         allowClear
@@ -950,7 +976,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                         }}
                       ></TreeSelect>
                     </div>
-                    <div className="mx-1 w-1/12">
+                    <div className="text-right col-span-2">
                       <Buttonsys
                         type={`primary`}
                         onClick={onFilterTaskPick}
@@ -1630,7 +1656,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <H1>Semua Task</H1>
               </div>
               <div className="grid grid-cols-3 lg:flex items-center mb-4 gap-2 lg:gap-x-1">
-                <div className="">
+                <div className="lg:w-2/12">
                   <Input
                     value={searchstate}
                     style={{ width: `100%` }}
@@ -1647,7 +1673,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     onKeyPress={onKeyPressHandler}
                   />
                 </div>
-                <div className="">
+                <div className="lg:w-2/12">
                   <Select
                     value={
                       tasktypefilterstate === "" ? null : tasktypefilterstate
@@ -1698,11 +1724,12 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     ))}
                   </Select>
                 </div>
-                <div className="">
+                <div className="lg:w-3/12">
                   <DatePicker.RangePicker
                     showTime
                     allowEmpty
                     className="datepickerStatus"
+                    style={{ width: `100%` }}
                     disabled={!isAllowedToGetUserTasks}
                     value={
                       fromdatefilterstate === ""
@@ -1718,7 +1745,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     }}
                   />
                 </div>
-                <div className="">
+                <div className="lg:w-2/12">
                   <TreeSelect
                     style={{ width: `100%` }}
                     allowClear
@@ -1750,7 +1777,7 @@ const TaskIndex = ({ initProps, dataProfile, sidemenu }) => {
                     }}
                   ></TreeSelect>
                 </div>
-                <div className="">
+                <div className="lg:w-2/12">
                   <Select
                     style={{ width: `100%` }}
                     value={statusfilterstate === "" ? null : statusfilterstate}

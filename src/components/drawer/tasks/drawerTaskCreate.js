@@ -885,7 +885,7 @@ const DrawerTaskCreate = ({
                             ? "/image/staffTask.png"
                             : `${doc.image}`
                         }
-                        className=" object-contain w-10 h-10"
+                        className="w-10 h-10 bg-cover object-cover rounded-full"
                         alt=""
                       />
                     </div>
