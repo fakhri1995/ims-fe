@@ -108,6 +108,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   const [relationItem, setRelationItem] = useState(false);
   const [relation, setRelation] = useState(null);
   const [modelChoose, setModelChoose] = useState(null);
+  const [productIdValue, setProductIdValue] = useState(null);
   const [displayentiredata, setdisplayentiredata] = useState({
     success: false,
     message: "",
@@ -125,216 +126,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
       to: 0,
       total: 0,
     },
-  });
-  const [dataDummy, setDataDummy] = useState({
-    success: true,
-    message: "Data Berhasil Diambil",
-    data: {
-      current_page: 1,
-      data: [
-        {
-          id: 5,
-          asset_id: 33,
-          name: "ATM GRG H22VL",
-          description: "",
-          sku: "ATM_GRG_H22VL",
-          manufacturer_id: 1,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM",
-          asset_deleted_at: null,
-          count: 68,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 6,
-          asset_id: 33,
-          name: "ATM Diebold 529",
-          description: "",
-          sku: "ATM_Die_529",
-          manufacturer_id: 8,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM",
-          asset_deleted_at: null,
-          count: 34,
-          status_item: {
-            pemakaian: "pakai_internal",
-            kondisi_barang: "abu",
-            status_sewa: "luar_periode",
-          },
-        },
-        {
-          id: 7,
-          asset_id: 33,
-          name: "ATM Hyosung Monimax 5600S",
-          description: "",
-          sku: "ATM_HYO_MON_5600S",
-          manufacturer_id: 9,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM",
-          asset_deleted_at: null,
-          count: 4,
-          status_item: {
-            pemakaian: "tersedia",
-            kondisi_barang: "buruk",
-            status_sewa: "luar_periode",
-          },
-        },
-        {
-          id: 8,
-          asset_id: 38,
-          name: "UPS HPH SERIES",
-          description: "",
-          sku: "",
-          manufacturer_id: 5,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 1,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: null,
-          },
-        },
-        {
-          id: 9,
-          asset_id: 38,
-          name: "UPS EP ISO",
-          description: "",
-          sku: "",
-          manufacturer_id: 4,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 9,
-          status_item: {
-            pemakaian: "replacement",
-            kondisi_barang: "bagus",
-            status_sewa: "luar_periode",
-          },
-        },
-        {
-          id: 10,
-          asset_id: 38,
-          name: "UPS NH PLUS",
-          description: "",
-          sku: "",
-          manufacturer_id: 5,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 2,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 11,
-          asset_id: 38,
-          name: "UPS GT3-3",
-          description: "",
-          sku: "",
-          manufacturer_id: 4,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 2,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 12,
-          asset_id: 38,
-          name: "UPS PCL HT",
-          description: "",
-          sku: "",
-          manufacturer_id: 10,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 1,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 13,
-          asset_id: 44,
-          name: "CDM Controller",
-          description: "",
-          sku: "GRG_CDMController",
-          manufacturer_id: 1,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM & CRM Part / ATM & CRM Rotable Part",
-          asset_deleted_at: null,
-          count: 1,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 14,
-          asset_id: 44,
-          name: "Note Feeder GRG",
-          description: "",
-          sku: "GRG_NoteFeeder",
-          manufacturer_id: 1,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM & CRM Part / ATM & CRM Rotable Part",
-          asset_deleted_at: null,
-          count: 8,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-      ],
-      first_page_url: "https://service.mig.id/getModels?page=1",
-      from: 1,
-      last_page: 2,
-      last_page_url: "https://service.mig.id/getModels?page=2",
-      next_page_url: "https://service.mig.id/getModels?page=2",
-      path: "https://service.mig.id/getModels",
-      per_page: "10",
-      prev_page_url: null,
-      to: 10,
-      total: 15,
-    },
-    status: 200,
   });
   const [displaydata, setdisplaydata] = useState([]);
   const columnsTable = [
@@ -708,36 +499,10 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
       ),
     },
   ];
-  const dataListProduct = [
-    {
-      id: 1234,
-      value: "Dekstop",
-    },
-    {
-      id: 2344,
-      value: "Laptop",
-    },
-    {
-      id: 3234,
-      value: "Tablet",
-    },
-    {
-      id: 6234,
-      value: "Macbook",
-    },
-    {
-      id: 7234,
-      value: "Iphone",
-    },
-  ];
   const [rowstate, setrowstate] = useState(0);
   const [modalTambahProduk, setModalTambahProduk] = useState(false);
   const [modelId, setModelId] = useState(null);
   const [countItem, setCountItem] = useState("");
-  useEffect(() => {
-    setdisplayentiredata(dataDummy);
-    setdisplaydata(dataDummy.data.data);
-  }, []);
 
   const changeSwitchValue = () => {
     setSwitchValue(!switchValue);
@@ -752,12 +517,46 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     console.log("product id bro ", productId);
     if (productId) {
+      setProductIdValue(productId);
       getDetailProduct();
+    } else {
+      generateProductId();
     }
     getCategories();
     getModels();
   }, []);
 
+  const generateProductId = () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventoryId`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("generate id ", res2.data);
+        if (res2.success) {
+          setProductIdValue(res2.data);
+          //  setDataDetail(res2.data)
+          //  setdisplaydata(res2.data.model_inventory)
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        // setLoadingTasks(false);
+      });
+  };
   const getDetailProduct = () => {
     fetch(
       `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventory?id=${productId}`,
@@ -779,7 +578,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
           setCategoryChoose(res2.data.category_id);
           setDescription(res2.data.description);
           setPrice(res2.data.price);
-          setPerPrice(res2.data.price_option_id);
+          setPerPrice(res2.data.price_option);
           if (res2.data.model_id != null) {
             setSwitchValue(true);
             setModelId(res2.data.model_id);
@@ -809,15 +608,12 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     const payload = QueryString.stringify(queryParams, {
       addQueryPrefix: true,
     });
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventoryCategories${payload}`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      }
-    )
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getCategories${payload}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+    })
       .then((res) => res.json())
       .then((res2) => {
         console.log("datanya apis ", res2);
@@ -861,7 +657,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     let payload = "";
     if (switchValue) {
       payload = {
-        id: productId ? productId : null,
+        id: productIdValue,
         name: productName,
         description: description,
         price: Number(price),
@@ -872,7 +668,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
       };
     } else {
       payload = {
-        id: productId ? productId : null,
+        id: productIdValue,
         name: productName,
         description: description,
         price: Number(price),
@@ -1040,7 +836,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                       <InfoCircleIconSvg color={"#808080"} size={16} />
                     </div>
                     <Input
-                      value={"1111"}
+                      value={productIdValue}
                       disabled={true}
                       className={"mt-4 h-[52px]"}
                       placeholder="Masukkan ID Produk"
@@ -1129,19 +925,19 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                         onChange={(value) => setPerPrice(value)}
                         options={[
                           {
-                            value: 1,
+                            value: "Jam",
                             label: "Per Jam",
                           },
                           {
-                            value: 2,
+                            value: "Hari",
                             label: "Per Hari",
                           },
                           {
-                            value: 3,
+                            value: "Bulan",
                             label: "Per Bulan",
                           },
                           {
-                            value: 4,
+                            value: "Tahun",
                             label: "Per Tahun",
                           },
                         ]}
@@ -1238,245 +1034,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
  * @param {*} idxlogs
  * @returns {object}
  */
-const _activityLogMapFn = (logs, maindata) => {
-  const result = [];
-
-  logs.forEach((doclogs) => {
-    const datenew = moment(doclogs.date).locale("id").format("LLL");
-    var descnew = "";
-
-    const desckondisiOld = doclogs.properties
-      ? doclogs.properties.old
-        ? doclogs.properties.old.status_condition === 1
-          ? "Good"
-          : doclogs.properties.old.status_condition === 2
-          ? "Grey"
-          : doclogs.properties.old.status_condition === 3
-          ? "Bad"
-          : null
-        : null
-      : null;
-
-    const desckondisiBaru = doclogs.properties
-      ? doclogs.properties.attributes
-        ? doclogs.properties.attributes.status_condition === 1
-          ? "Good"
-          : doclogs.properties.attributes.status_condition === 2
-          ? "Grey"
-          : doclogs.properties.attributes.status_condition === 3
-          ? "Bad"
-          : null
-        : null
-      : null;
-
-    const descusageOld = doclogs.properties
-      ? doclogs.properties.old
-        ? doclogs.properties.old.status_usage === 1
-          ? "In Used"
-          : doclogs.properties.old.status_usage === 2
-          ? "In Stock"
-          : doclogs.properties.old.status_usage === 3
-          ? "Replacement"
-          : null
-        : null
-      : null;
-
-    const descusageBaru = doclogs.properties
-      ? doclogs.properties.attributes
-        ? doclogs.properties.attributes.status_usage === 1
-          ? "In Used"
-          : doclogs.properties.attributes.status_usage === 2
-          ? "In Stock"
-          : doclogs.properties.attributes.status_usage === 3
-          ? "Replacement"
-          : null
-        : null
-      : null;
-
-    const desc1 = doclogs.description.split(" ");
-
-    if (desc1[0] === "Created") {
-      if (desc1[2] === "Relationship") {
-        desc1[0] === "Created"
-          ? (descnew =
-              descnew +
-              `Penambahan Relationship "${doclogs.properties.attributes.relationship}"`)
-          : null;
-        desc1[0] === "Deleted"
-          ? (descnew =
-              descnew +
-              `Penghapusan Relationship "${doclogs.properties.old.relationship}"`)
-          : null;
-      } else if (desc1[1] === "Association") {
-        descnew = descnew + `Association Baru: ${doclogs.properties}`;
-      } else if (doclogs.properties.attributes?.list_parts) {
-        descnew =
-          descnew +
-          `Inisialisasi Pembuatan Item Part "${maindata.inventory_parts
-            .filter((docfil) =>
-              doclogs.properties.attributes?.list_parts.includes(docfil.id)
-            )
-            .map((docmap) => docmap.inventory_name)
-            .join(", ")}"`;
-      } else {
-        descnew =
-          descnew +
-          `Penambahan Item ke Induk "${doclogs.properties.attributes?.parent_id?.mig_id}"`;
-
-        // descnew =
-        //   descnew +
-        //   `Pembuatan Item Baru bernama "${doclogs.properties.attributes?.inventory_name}"`;
-      }
-    }
-
-    desc1[0] === "Notes" ? (descnew = descnew + `Penambahan Notes`) : null;
-
-    if (desc1[0] === "Updated") {
-      if ("attributes" in doclogs.properties && "old" in doclogs.properties) {
-        const old = doclogs.properties.old;
-        const attributes = doclogs.properties.attributes;
-        for (const [key, _] of Object.entries(attributes)) {
-          let descnew = "";
-
-          if (key === "status_condition") {
-            descnew =
-              descnew +
-              `Pengubahan status kondisi dari ${desckondisiOld} ke ${desckondisiBaru}`;
-          } else if (key === "status_usage") {
-            descnew =
-              descnew +
-              `Pengubahan status pemakaian dari ${descusageOld} ke ${descusageBaru}`;
-          } else if (key === "inventory_name") {
-            descnew =
-              descnew +
-              `Pengubahan Nama Item dari "${old.inventory_name}" ke "${attributes.inventory_name}"`;
-          } else if (key === "serial_number") {
-            descnew =
-              descnew +
-              `Pengubahan Serial Number Item dari "${old.serial_number}" ke "${attributes.serial_number}"`;
-          } else if (key === "location") {
-            descnew =
-              descnew +
-              `Pengubahan Location Item dari "${
-                old.location_id === null ? "-" : old.location_name
-              }" ke "${attributes.location_name}"`;
-          } else if (key === "vendor_id") {
-            descnew =
-              descnew +
-              `Pengubahan Vendor Item dari "${
-                old.vendor_id === null ? "-" : old.vendor_name
-              }" ke "${attributes.vendor_name}"`;
-          } else if (key === "manufacturer_id") {
-            descnew =
-              descnew +
-              `Pengubahan Manufacturer Item dari "${
-                old.manufacturer_id === null ? "-" : old.manufacturer_name
-              }" ke "${attributes.manufacturer_name}"`;
-          } else if (key === "deskripsi") {
-            descnew = descnew + `Pengubahan Deskripsi Item`;
-          } else if (key === "owned_by") {
-            descnew =
-              descnew +
-              `Pengubahan Owner Item dari "${
-                old.owned_by === null ? "-" : old.owner_name
-              }" ke "${attributes.owner_name}"`;
-          } else if (
-            key === "list_parts" &&
-            attributes.list_parts?.length > old.list_parts?.length
-          ) {
-            const listpartsnew = attributes.list_parts?.filter(
-              (docfil) =>
-                old.list_parts?.map((part) => part.id).includes(docfil.id) ===
-                false
-            );
-            descnew =
-              descnew +
-              `Penambahan Item "${listpartsnew
-                ?.map((part) => part.mig_id)
-                .join(", ")}" menjadi Item Part`;
-          } else if (
-            key === "list_parts" &&
-            attributes.list_parts?.length < old.list_parts?.length
-          ) {
-            const listpartsold = old.list_parts?.filter(
-              (docfil) =>
-                attributes.list_parts
-                  ?.map((part) => part.id)
-                  .includes(docfil.id) === false
-            );
-            descnew =
-              descnew +
-              `Pengeluaran Item Part "${listpartsold
-                ?.map((part) => part.mig_id)
-                .join(", ")}"`;
-          } else if (
-            key === "list_parts" &&
-            attributes.list_parts?.length === old.list_parts?.length
-          ) {
-            const listpartsnew = attributes.list_parts?.filter(
-              (docfil) =>
-                old.list_parts?.map((part) => part.id).includes(docfil.id) ===
-                false
-            );
-            const listpartsold = old.list_parts?.filter(
-              (docfil) =>
-                attributes.list_parts
-                  ?.map((part) => part.id)
-                  .includes(docfil.id) === false
-            );
-            descnew =
-              descnew +
-              `Pergantian Item Part "${listpartsold
-                ?.map((part) => part.mig_id)
-                .join(", ")}" menjadi "${listpartsnew
-                ?.map((part) => part.mig_id)
-                .join(", ")}"`;
-          } else {
-            continue;
-          }
-
-          const producing = {
-            ...doclogs,
-            date: datenew,
-            description: descnew,
-          };
-          result.push(producing);
-        }
-
-        return;
-      }
-    }
-
-    if (desc1[0] === "Deleted") {
-      if (desc1[2] === "Relationship") {
-        desc1[0] === "Created"
-          ? (descnew =
-              descnew +
-              `Penambahan Relationship "${doclogs.properties.attributes.relationship}"`)
-          : null;
-        desc1[0] === "Deleted"
-          ? (descnew =
-              descnew +
-              `Penghapusan Relationship "${doclogs.properties.old.relationship}"`)
-          : null;
-      } else if (desc1[1] === "Association") {
-        descnew = descnew + `Association Dihapus: ${doclogs.properties}`;
-      } else {
-        descnew =
-          descnew +
-          `Pengeluaran Item dari Induk "${doclogs.properties?.old?.parent_id?.mig_id}"`;
-      }
-    }
-
-    result.push({
-      ...doclogs,
-      date: datenew,
-      description: descnew,
-    });
-  });
-
-  return result;
-};
 
 export async function getServerSideProps({ req, res, params }) {
   var initProps = {};
@@ -1519,7 +1076,7 @@ export async function getServerSideProps({ req, res, params }) {
     props: {
       initProps,
       dataProfile,
-      sidemenu: "3",
+      sidemenu: "113",
     },
   };
 }

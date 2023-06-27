@@ -204,7 +204,7 @@ const KatalogIconSvg = () => {
   );
   return <Icon component={katalogIconSvg}></Icon>;
 };
-const PakaiInternalIconSvg = ({ size }) => {
+const PakaiInternalIconSvg = ({ size, color }) => {
   const pakaiinternalIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -213,7 +213,7 @@ const PakaiInternalIconSvg = ({ size }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#00589F"
+      stroke={color ? color : "#00589F"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -232,7 +232,7 @@ const PakaiInternalIconSvg = ({ size }) => {
   return <Icon component={pakaiinternalIconSvg}></Icon>;
 };
 
-const PakaiSewaIconSvg = ({ size }) => {
+const PakaiSewaIconSvg = ({ size, color }) => {
   const pakaisewaIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -241,7 +241,7 @@ const PakaiSewaIconSvg = ({ size }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#00589F"
+      stroke={color ? color : "#00589F"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -254,7 +254,7 @@ const PakaiSewaIconSvg = ({ size }) => {
   );
   return <Icon component={pakaisewaIconSvg}></Icon>;
 };
-const TersediaIconSvg = ({ size }) => {
+const TersediaIconSvg = ({ size, color }) => {
   const tersediaIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -263,7 +263,7 @@ const TersediaIconSvg = ({ size }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#00589F"
+      stroke={color ? color : "#00589F"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -681,7 +681,7 @@ const ReplacementIconSvg = ({ size, color }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#00589F"
+      stroke={color ? color : "#00589F"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
