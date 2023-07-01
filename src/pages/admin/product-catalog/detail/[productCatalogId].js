@@ -63,8 +63,8 @@ import {
   ReplacementIconSvg,
   TersediaIconSvg,
 } from "../../../../components/icon";
+import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
-import LayoutDashboard from "../../../../components/layout-dashboardNew";
 import {
   createKeyPressHandler,
   currency,
@@ -134,8 +134,11 @@ const ProductCatalogDetail = ({
     activeTab = active;
   }
   var pathArr = rt.pathname.split("/").slice(1);
-  pathArr.splice(2, 2);
-  pathArr[pathArr.length - 1] = "Detail Product";
+  pathArr.splice(3, 3);
+  console.log("path array 0 s", pathArr);
+  // pathArr[0]="Katalog";
+  // pathArr[1]="Produk";
+  console.log("path array ", pathArr);
   const [dataDetail, setDataDetail] = useState(null);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -146,6 +149,7 @@ const ProductCatalogDetail = ({
     name: withDefault(StringParam, undefined),
     sku: withDefault(StringParam, undefined),
   });
+  const [isiPath, setIsiPath] = useState(pathArr);
   const [praloading, setpraloading] = useState(true);
   const [migIdSearch, setMigIdSearch] = useState("");
   const [searchModel, setSearchModel] = useState(false);
@@ -166,216 +170,6 @@ const ProductCatalogDetail = ({
       to: 0,
       total: 0,
     },
-  });
-  const [dataDummy, setDataDummy] = useState({
-    success: true,
-    message: "Data Berhasil Diambil",
-    data: {
-      current_page: 1,
-      data: [
-        {
-          id: 5,
-          asset_id: 33,
-          name: "ATM GRG H22VL",
-          description: "",
-          sku: "ATM_GRG_H22VL",
-          manufacturer_id: 1,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM",
-          asset_deleted_at: null,
-          count: 68,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 6,
-          asset_id: 33,
-          name: "ATM Diebold 529",
-          description: "",
-          sku: "ATM_Die_529",
-          manufacturer_id: 8,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM",
-          asset_deleted_at: null,
-          count: 34,
-          status_item: {
-            pemakaian: "pakai_internal",
-            kondisi_barang: "abu",
-            status_sewa: "luar_periode",
-          },
-        },
-        {
-          id: 7,
-          asset_id: 33,
-          name: "ATM Hyosung Monimax 5600S",
-          description: "",
-          sku: "ATM_HYO_MON_5600S",
-          manufacturer_id: 9,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM",
-          asset_deleted_at: null,
-          count: 4,
-          status_item: {
-            pemakaian: "tersedia",
-            kondisi_barang: "buruk",
-            status_sewa: "luar_periode",
-          },
-        },
-        {
-          id: 8,
-          asset_id: 38,
-          name: "UPS HPH SERIES",
-          description: "",
-          sku: "",
-          manufacturer_id: 5,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 1,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: null,
-          },
-        },
-        {
-          id: 9,
-          asset_id: 38,
-          name: "UPS EP ISO",
-          description: "",
-          sku: "",
-          manufacturer_id: 4,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 9,
-          status_item: {
-            pemakaian: "replacement",
-            kondisi_barang: "bagus",
-            status_sewa: "luar_periode",
-          },
-        },
-        {
-          id: 10,
-          asset_id: 38,
-          name: "UPS NH PLUS",
-          description: "",
-          sku: "",
-          manufacturer_id: 5,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 2,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 11,
-          asset_id: 38,
-          name: "UPS GT3-3",
-          description: "",
-          sku: "",
-          manufacturer_id: 4,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 2,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 12,
-          asset_id: 38,
-          name: "UPS PCL HT",
-          description: "",
-          sku: "",
-          manufacturer_id: 10,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "UPS",
-          asset_deleted_at: null,
-          count: 1,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 13,
-          asset_id: 44,
-          name: "CDM Controller",
-          description: "",
-          sku: "GRG_CDMController",
-          manufacturer_id: 1,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM & CRM Part / ATM & CRM Rotable Part",
-          asset_deleted_at: null,
-          count: 1,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-        {
-          id: 14,
-          asset_id: 44,
-          name: "Note Feeder GRG",
-          description: "",
-          sku: "GRG_NoteFeeder",
-          manufacturer_id: 1,
-          required_sn: 1,
-          is_consumable: 0,
-          deleted_at: null,
-          asset_name: "ATM & CRM Part / ATM & CRM Rotable Part",
-          asset_deleted_at: null,
-          count: 8,
-          status_item: {
-            pemakaian: "pakai_sewa",
-            kondisi_barang: "bagus",
-            status_sewa: "periode",
-          },
-        },
-      ],
-      first_page_url: "https://service.mig.id/getModels?page=1",
-      from: 1,
-      last_page: 2,
-      last_page_url: "https://service.mig.id/getModels?page=2",
-      next_page_url: "https://service.mig.id/getModels?page=2",
-      path: "https://service.mig.id/getModels",
-      per_page: "10",
-      prev_page_url: null,
-      to: 10,
-      total: 15,
-    },
-    status: 200,
   });
   const [searchingFilterProducts, setSearchingFilterProducts] = useState("");
   const [displaydata, setdisplaydata] = useState([]);
@@ -402,7 +196,7 @@ const ProductCatalogDetail = ({
   const columnsTableProduk = [
     {
       title: "ID Produk",
-      dataIndex: "id",
+      dataIndex: "product_id",
     },
     {
       title: "Nama Produk",
@@ -445,29 +239,6 @@ const ProductCatalogDetail = ({
       ),
     },
   ];
-  const dataListProduct = [
-    {
-      id: 1234,
-      value: "Dekstop",
-    },
-    {
-      id: 2344,
-      value: "Laptop",
-    },
-    {
-      id: 3234,
-      value: "Tablet",
-    },
-    {
-      id: 6234,
-      value: "Macbook",
-    },
-    {
-      id: 7234,
-      value: "Iphone",
-    },
-  ];
-
   const renderStatusItem = (status_usage, location) => {
     return (
       <div className={""}>
@@ -752,6 +523,8 @@ const ProductCatalogDetail = ({
         console.log("data detail ", res2.data.model_inventory);
         if (res2.success) {
           setDataDetail(res2.data);
+          pathArr[2] = res2.data.name;
+          setIsiPath(pathArr);
           if (res2.data.model_id) {
             getDataModel(res2.data.model_id);
           }
@@ -968,7 +741,7 @@ const ProductCatalogDetail = ({
       sidemenu={sidemenu}
       tok={initProps}
       st={st}
-      pathArr={pathArr}
+      pathArr={isiPath}
     >
       <div
         className="w-full h-auto grid grid-cols-1 md:grid-cols-4"
@@ -976,7 +749,7 @@ const ProductCatalogDetail = ({
       >
         <div className=" col-span-1 md:col-span-4 mb-8">
           <Sticky containerSelectorFocus="#createAgentsWrapper">
-            <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
+            <div className=" col-span-4 flex justify-between py-5 pr-[21px] pl-[35px] border-t border-b bg-white">
               <div className="flex items-center">
                 <div className="flex">
                   <h3 className="font-semibold py-2 text-2xl mb-0 mr-6">
@@ -1087,7 +860,7 @@ const ProductCatalogDetail = ({
                   style={{ boxShadow: "0px 4px 40px rgba(0, 0, 0, 0.1)" }}
                 >
                   <p className={"text-base font-semibold text-mono30"}>
-                    List Produk
+                    Daftar Produk
                   </p>
                   <div className={"mt-4"}>
                     <Input
@@ -1191,7 +964,7 @@ const ProductCatalogDetail = ({
                         Product ID
                       </p>
                       <p className={"mt-2 text-sm text-mono30"}>
-                        {dataDetail?.id}
+                        {dataDetail?.product_id}
                       </p>
                     </div>
                     <div className={"w-1/2 flex flex-col"}>

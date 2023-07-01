@@ -629,9 +629,25 @@ ol {
   height: 52px;
   padding: 11px 11px;
 }
+.example .ant-select {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  color: rgba(0, 0, 0, 0.85);
+  font-size: 14px;
+  font-variant: tabular-nums;
+  line-height: 1.5715;
+  list-style: none;
+  font-feature-settings: "tnum";
+  position: relative;
+  display: inline-block;
+  align-items: center;
+  justify-self: unset;
+}
 .exampe .ant-select-single .ant-select-selector .ant-select-selection-search {
   position: absolute;
   top: 11px;
+  align-self: center;
   right: 11px;
   bottom: 0;
   left: 11px;
