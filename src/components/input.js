@@ -359,6 +359,17 @@ const RadioNotRequired = ({
   );
 };
 
+const InputProduk = ({
+  rows,
+  label,
+  name,
+  defaultValue,
+  onChangeInput,
+  value,
+}) => {
+  return <Input className={"h-[52px]"} />;
+};
+
 export {
   InputRequired,
   InputNotRequired,
@@ -372,4 +383,5 @@ export {
   TimeNotRequired,
   TextAreaRequired,
   TextAreaNotRequired,
+  InputProduk,
 };
