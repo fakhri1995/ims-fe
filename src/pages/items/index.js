@@ -32,6 +32,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { ClockIconSvg, ClockXIconSvg } from "../../components/icon";
 import Layout from "../../components/layout-dashboard2";
 import st from "../../components/layout-dashboard.module.css";
 import { createKeyPressHandler } from "../../lib/helper";
@@ -220,19 +221,29 @@ const ItemsIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <div key={index} className="justify-center flex">
-              {record.status_usage.id === 1 && (
-                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">
-                  In Used
+              {record.status_usage?.id === 1 && (
+                <div className="rounded-md h-auto px-4 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600 flex space-x-2 items-center whitespace-nowrap">
+                  <p>In Used: Sewa</p>
+                  {record.status_rent?.id === 1 ? (
+                    <ClockXIconSvg size={20} color={"#BF4A40"} />
+                  ) : (
+                    <ClockIconSvg size={20} color={"#35763B"} />
+                  )}
                 </div>
               )}
-              {record.status_usage.id === 2 && (
-                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-green-100 border border-green-200 text-green-600">
+              {record.status_usage?.id === 2 && (
+                <div className="rounded-md h-auto px-4 text-center py-1 bg-green-100 border border-green-200 text-green-600">
                   In Stock
                 </div>
               )}
-              {record.status_usage.id === 3 && (
-                <div className="rounded-md w-7/12 h-auto px-1 text-center py-1 bg-red-100 border border-red-200 text-red-600">
+              {record.status_usage?.id === 3 && (
+                <div className="rounded-md h-auto px-4 text-center py-1 bg-red-100 border border-red-200 text-red-600">
                   Replacement
+                </div>
+              )}
+              {record.status_usage?.id === 4 && (
+                <div className="rounded-md h-auto px-4 text-center py-1 bg-blue-100 border border-blue-200 text-blue-600">
+                  In Used: Internal
                 </div>
               )}
             </div>

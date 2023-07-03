@@ -39,6 +39,7 @@ import {
   INVENTORY_PART_REMOVE,
   INVENTORY_PART_REPLACE,
   INVENTORY_STATUS_CONDITION,
+  INVENTORY_STATUS_RENT,
   INVENTORY_STATUS_USAGE, // <Overview>
   INVENTORY_UPDATE,
   MODELS_GET,
@@ -49,6 +50,7 @@ import {
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { ClockIconSvg, ClockXIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard2";
 import st from "../../../components/layout-dashboard.module.css";
 import httpcookie from "cookie";
@@ -825,7 +827,7 @@ const KonfigurasiPart = ({
             size="large"
             disabled={!isAllowedToAddParts}
             onClick={() => {
-              /*console.log(mainpartdata); console.log(dataremoved)*/ rt.push(
+              rt.push(
                 `/items/createpart/${itemid}?nama=${mainpartdata.mig_id}`
               );
             }}
@@ -914,7 +916,7 @@ const KonfigurasiPart = ({
               >
                 {models.map((docmodels, idxmodels) => {
                   return (
-                    <Select.Option value={docmodels.id}>
+                    <Select.Option key={docmodels.id} value={docmodels.id}>
                       {docmodels.name}
                     </Select.Option>
                   );
@@ -1326,7 +1328,6 @@ const Relationship = ({ initProps, maindata, itemid }) => {
   const handleAddRelationshipItem = () => {
     setloadingadd(true);
     delete dataApiadd.backup_connected_id;
-    // console.log(dataApiadd)
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRelationshipInventories`, {
       method: "POST",
       headers: {
@@ -1465,7 +1466,6 @@ const Relationship = ({ initProps, maindata, itemid }) => {
           dataApiadd.type_id === -1 && setdetailtipedataadd(res2.data);
           dataApiadd.type_id === -2 && setdetailtipedataadd(res2.data);
           dataApiadd.type_id === -4 && setdetailtipedataadd(res2.data.data);
-          // console.log();
         });
     }
   }, [detailtipeadd, subloctrig, isAllowedToGetRelationship]);
@@ -1601,7 +1601,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                   onClick={() => {
                     setmodaladd(
                       false
-                    ); /*setdataApiadd({ ...dataApiadd, relationship_id: null, type_id: null, connected_id: null })*/ /*console.log(dataApiadd)*/
+                    ); /*setdataApiadd({ ...dataApiadd, relationship_id: null, type_id: null, connected_id: null })*/
                   }}
                   style={{ marginRight: `1rem` }}
                 >
@@ -1656,7 +1656,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                 </div>
                 {displaydatarelations.map((doc, idx) => {
                   return (
-                    <div className="flex">
+                    <div key={doc.id} className="flex">
                       <div
                         className={`hover:bg-ternary cursor-pointer hover:text-black p-3 w-6/12 ${
                           relationselectedidxadd === idx &&
@@ -1797,7 +1797,9 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                   >
                     {detailtipedataadd.map((doc, idx) => {
                       return (
-                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                        <Select.Option key={doc.id} value={doc.id}>
+                          {doc.name}
+                        </Select.Option>
                       );
                     })}
                   </Select>
@@ -1848,7 +1850,9 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                   >
                     {detailtipedataadd.map((doc, idx) => {
                       return (
-                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                        <Select.Option key={doc.id} value={doc.id}>
+                          {doc.name}
+                        </Select.Option>
                       );
                     })}
                   </Select>
@@ -1933,7 +1937,7 @@ const Relationship = ({ initProps, maindata, itemid }) => {
                   >
                     {detailtipedataadd.map((doc, idx) => {
                       return (
-                        <Select.Option value={doc.id}>
+                        <Select.Option key={doc.id} value={doc.id}>
                           {doc.mig_id}
                         </Select.Option>
                       );
@@ -1998,6 +2002,7 @@ const Association = ({ initProps, itemid, maindata, praloading }) => {
             {maindata.associations.map((doc, idx) => {
               return (
                 <div
+                  key={doc.id}
                   className="rounded-md shadow-md py-4 px-5 border mb-4 flex justify-between w-10/12 cursor-pointer"
                   onClick={() => {
                     rt.push(`/tickets/detail/${doc.ticket_id}`);
@@ -2238,6 +2243,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     INVENTORY_STATUS_CONDITION
   );
   const isAllowedToChangeStatusUsage = hasPermission(INVENTORY_STATUS_USAGE); // for /changeStatusUsage and /getChangeStatusUsageDetailList
+  const isAllowedToChangeStatusRent = hasPermission(INVENTORY_STATUS_RENT); // for /changeStatusRent
+
   const isAllowedToGetInventory = hasPermission(INVENTORY_GET); // for /getInventory and /getInventoryRelations
   const isAllowedToGetModels = hasPermission(MODELS_GET);
   const isAllowedToGetRelationship = hasPermission(RELATIONSHIP_INVENTORY_GET);
@@ -2262,6 +2269,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     inventory_name: "",
     status_condition: "",
     status_usage: "",
+    status_rent: "",
     location: "",
     is_exist: "",
     deskripsi: "",
@@ -2333,6 +2341,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [vendor, setvendor] = useState("");
   const [praloading, setpraloading] = useState(true);
   const [praloading2, setpraloading2] = useState(true);
+  const [refresh, setRefresh] = useState(-1);
+
   //delete
   const [modaldelete, setmodaldelete] = useState(false);
   const [loadingdelete, setloadingdelete] = useState(false);
@@ -2344,8 +2354,9 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   const [kondisi, setkondisi] = useState("");
   const [notekondisi, setnotekondisi] = useState("");
   const [modalkondisi, setmodalkondisi] = useState(false);
-  const [displaykondisi, setdisplaykondisi] = useState(true);
+  // const [displaykondisi, setdisplaykondisi] = useState(true);
   const [loadingkondisi, setloadingkondisi] = useState(false);
+
   //status pemakaian
   const [changeusage, setchangeusage] = useState({
     id: Number(itemid),
@@ -2357,10 +2368,24 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
   });
   const [disabledusage, setdisabledusage] = useState(true);
   const [modalusage, setmodalusage] = useState(false);
-  const [displayusage, setdisplayusage] = useState(true);
+  // const [displayusage, setdisplayusage] = useState(true);
   const [loadingchangecompanyusage, setloadingchangecompanyusage] =
     useState(false);
   const [loadingusage, setloadingusage] = useState(false);
+
+  // status sewa
+  const [displayRent, setDisplayRent] = useState(false);
+  const [modalRent, setModalRent] = useState(false);
+  const [loadingRent, setLoadingRent] = useState(false);
+  const [changeRent, setChangeRent] = useState({
+    id: Number(itemid),
+    status_rent: "",
+    notes: "",
+    relationship_type_id: "",
+    connected_id: "",
+    detail_connected_id: null,
+  });
+
   // const [agents, setagents] = useState([])
   // const [requesters, setrequesters] = useState([])
   const [detaillist, setdetaillist] = useState([]);
@@ -2451,21 +2476,29 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setloadingkondisi(false);
         setmodalkondisi(false);
         if (res2.success) {
           notification["success"]({
             message: "Status Kondisi berhasil diubah",
             duration: 2,
           });
-          window.location.href = `/items/detail/${itemid}`;
-        } else if (!res2.success) {
+          rt.push(`/items/detail/${itemid}`);
+          setRefresh((prev) => prev + 1);
+          // window.location.href = `/items/detail/${itemid}`;
+        } else {
           notification["error"]({
             message: res2.message,
             duration: 3,
           });
         }
-      });
+      })
+      .catch((err) => {
+        notification.error({
+          message: err?.response,
+          duration: 3,
+        });
+      })
+      .finally(() => setloadingkondisi(false));
   };
   const handleUsageItem = () => {
     setloadingusage(true);
@@ -2479,21 +2512,71 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
     })
       .then((res) => res.json())
       .then((res2) => {
-        setloadingusage(false);
         setmodalusage(false);
         if (res2.success) {
           notification["success"]({
             message: "Status Pemakaian berhasil diubah",
             duration: 2,
           });
-          window.location.href = `/items/detail/${itemid}`;
-        } else if (!res2.success) {
+          rt.push(`/items/detail/${itemid}`);
+          setRefresh((prev) => prev + 1);
+          // window.location.href = `/items/detail/${itemid}`;
+        } else {
           notification["error"]({
             message: res2.message,
             duration: 3,
           });
         }
-      });
+      })
+      .catch((err) => {
+        notification.error({
+          message: err?.response,
+          duration: 3,
+        });
+      })
+      .finally(() => setloadingusage(false));
+  };
+
+  const handleRentItem = () => {
+    if (!isAllowedToChangeStatusRent) {
+      permissionWarningNotification("Mengubah", "Status Sewa");
+      setLoadingRent(false);
+      return;
+    }
+
+    setLoadingRent(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/changeStatusRent`, {
+      method: "PUT",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(changeRent),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setModalRent(false);
+        if (res2.success) {
+          notification.success({
+            message: "Status Sewa berhasil diubah",
+            duration: 2,
+          });
+          rt.push(`/items/detail/${itemid}`);
+          setRefresh((prev) => prev + 1);
+        } else {
+          notification.error({
+            message: res2?.message?.errorInfo?.[2],
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: err?.response,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingRent(false));
   };
 
   //useEffect
@@ -2582,7 +2665,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             setpraloading2(false);
           });
       });
-  }, [isAllowedToGetInventory]);
+  }, [isAllowedToGetInventory, refresh]);
 
   /** Data fetching for list of model and pass them into <KonfigurasiPart> component */
   useEffect(() => {
@@ -2691,6 +2774,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
       });
   }, [isAllowedToGetRelationship, isAllowedToDeleteItem]);
 
+  // console.log(changeRent);
+  // console.log({ changeusage });
   return (
     <Layout
       st={st}
@@ -2705,101 +2790,136 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
       >
         <div className=" col-span-1 md:col-span-4 mb-8">
           <Sticky containerSelectorFocus="#createAgentsWrapper">
-            <div className=" col-span-4 flex justify-between py-5 px-4 border-t border-b bg-white">
-              <div className="flex items-center">
-                <div className="flex flex-col">
+            <div className="col-span-4 grid grid-cols-1 xl:grid-cols-12 gap-6 justify-between py-5 px-4 border-t border-b bg-white">
+              <div className="xl:col-span-9 grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+                <div className="lg:col-span-5 flex flex-col">
                   <p className=" text-gray-400 mb-0">Item:</p>
-                  <h1 className="font-semibold py-2 text-2xl mb-0 mr-20">
+                  <h1 className="font-semibold py-2 text-2xl mb-0">
                     {maindata.mig_id} - {maindata.model_inventory.name}
                   </h1>
                 </div>
                 {praloading ? null : (
-                  <>
-                    <div className="flex flex-col mr-7 p-2">
+                  <div
+                    className={`lg:col-span-7 grid gap-4 ${
+                      maindata?.status_usage === 1
+                        ? "md:grid-cols-3"
+                        : "md:grid-cols-2"
+                    }`}
+                  >
+                    <div className="flex flex-col">
                       <p className="mb-1">Status Pemakaian:</p>
-                      {displayusage ? (
+                      <Select
+                        style={{ width: `100%` }}
+                        placeholder="Masukkan Status Pemakaian"
+                        value={
+                          !maindata.status_usage ? null : maindata.status_usage
+                        }
+                        disabled={!isAllowedToChangeStatusUsage}
+                        onChange={(value) => {
+                          setdisabledusage((prev) => {
+                            if (value !== 1) {
+                              return false;
+                            } else {
+                              return true;
+                            }
+                          });
+                          setchangeusage({
+                            ...changeusage,
+                            status_usage: value,
+                          });
+                          setmodalusage(true);
+                        }}
+                      >
+                        <Select.Option value={1}>
+                          <strong>In Used: Sewa</strong>
+                        </Select.Option>
+                        <Select.Option value={2}>
+                          <strong>In Stock</strong>
+                        </Select.Option>
+                        <Select.Option value={3}>
+                          <strong>Replacement</strong>
+                        </Select.Option>
+                        <Select.Option value={4}>
+                          <strong>In Used: Internal</strong>
+                        </Select.Option>
+                      </Select>
+                    </div>
+                    {maindata?.status_usage === 1 && (
+                      <div className="flex flex-col">
+                        <p className="mb-1">Status Sewa:</p>
                         <Select
-                          style={{ width: `10rem` }}
-                          placeholder="Masukkan Status Pemakaian"
-                          defaultValue={
-                            maindata.status_usage === 0 ||
-                            maindata.status_usage === null
-                              ? null
-                              : maindata.status_usage
+                          style={{ width: `100%` }}
+                          placeholder="Masukkan Status Sewa"
+                          value={
+                            !maindata.status_rent ? 2 : maindata.status_rent
                           }
-                          disabled={!isAllowedToChangeStatusUsage}
+                          disabled={!isAllowedToChangeStatusRent}
                           onChange={(value) => {
-                            setdisabledusage((prev) => {
-                              if (value !== 1) {
-                                return false;
-                              } else {
-                                return true;
-                              }
+                            setChangeRent({
+                              ...changeRent,
+                              status_rent: value,
                             });
-                            setchangeusage({
-                              ...changeusage,
-                              status_usage: value,
-                            });
-                            setmodalusage(true);
-                            setdisplayusage(false);
+                            setModalRent(true);
                           }}
                         >
-                          <Select.Option value={1}>
-                            <strong>In Used</strong>
-                          </Select.Option>
                           <Select.Option value={2}>
-                            <strong>In Stock</strong>
+                            <div className="flex items-center space-x-2">
+                              <ClockIconSvg size={20} color={"#35763B"} />
+                              <strong>In Period</strong>
+                            </div>
                           </Select.Option>
-                          <Select.Option value={3}>
-                            <strong>Replacement</strong>
+                          <Select.Option value={1}>
+                            <div className="flex items-center space-x-2">
+                              <ClockXIconSvg size={20} color={"#BF4A40"} />
+                              <strong>Out Period</strong>
+                            </div>
                           </Select.Option>
                         </Select>
-                      ) : null}
-                    </div>
-                    <div className="flex flex-col p-2">
+                      </div>
+                    )}
+                    <div className="flex flex-col">
                       <p className="mb-1">Kondisi:</p>
-                      {displaykondisi ? (
-                        <Select
-                          style={{ width: `10rem` }}
-                          placeholder="Masukkan Status Kondisi"
-                          defaultValue={
-                            maindata.status_condition === 0 ||
-                            maindata.status_condition === null
-                              ? null
-                              : maindata.status_condition
-                          }
-                          onChange={(value) => {
-                            setkondisi(value);
-                            setmodalkondisi(true);
-                            setdisplaykondisi(false);
-                          }}
-                          disabled={!isAllowedToChangeStatusCondition}
-                        >
-                          <Select.Option value={1}>
-                            <div className="p-1 flex w-full items-center">
-                              <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
-                              <p className="mb-0 font-semibold">Good</p>
-                            </div>
-                          </Select.Option>
-                          <Select.Option value={2}>
-                            <div className="p-1 flex w-full items-center">
-                              <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
-                              <p className="mb-0 font-semibold">Grey</p>
-                            </div>
-                          </Select.Option>
-                          <Select.Option value={3}>
-                            <div className="p-1 flex w-full items-center">
-                              <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
-                              <p className="mb-0 font-semibold">Bad</p>
-                            </div>
-                          </Select.Option>
-                        </Select>
-                      ) : null}
+                      {/* {displaykondisi ? ( */}
+                      <Select
+                        style={{ width: `100%` }}
+                        placeholder="Masukkan Status Kondisi"
+                        value={
+                          !maindata.status_condition
+                            ? null
+                            : maindata.status_condition
+                        }
+                        onChange={(value) => {
+                          setkondisi(value);
+                          setmodalkondisi(true);
+                          // setdisplaykondisi(false);
+                        }}
+                        disabled={!isAllowedToChangeStatusCondition}
+                      >
+                        <Select.Option value={1}>
+                          <div className="flex w-full items-center">
+                            <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
+                            <p className="mb-0 font-semibold">Good</p>
+                          </div>
+                        </Select.Option>
+                        <Select.Option value={2}>
+                          <div className="flex w-full items-center">
+                            <div className="w-3 h-3 rounded-full bg-gray-500 mr-1"></div>
+                            <p className="mb-0 font-semibold">Grey</p>
+                          </div>
+                        </Select.Option>
+                        <Select.Option value={3}>
+                          <div className="flex w-full items-center">
+                            <div className="w-3 h-3 rounded-full bg-red-500 mr-1"></div>
+                            <p className="mb-0 font-semibold">Bad</p>
+                          </div>
+                        </Select.Option>
+                      </Select>
+                      {/* ) : null} */}
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
-              <div className="flex space-x-2 items-center">
+              <div className="xl:col-span-3 flex space-x-2 items-center justify-end">
                 <Button
                   style={{ marginRight: `1rem` }}
                   disabled={!isAllowedToAddNotes}
@@ -2933,6 +3053,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal Ubah Status Pemakaian */}
       <Modal
         title={
           <div className="flex justify-between p-5 mt-5">
@@ -2945,7 +3067,6 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                   type="default"
                   onClick={() => {
                     setmodalusage(false);
-                    setdisplayusage(true);
                   }}
                   style={{ marginRight: `1rem` }}
                 >
@@ -2966,7 +3087,6 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         visible={modalusage}
         onCancel={() => {
           setmodalusage(false);
-          setdisplayusage(true);
         }}
         footer={null}
         width={760}
@@ -2976,10 +3096,11 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             <p className="mb-0">
               Status Pemakaian <span className="usagemodal"></span>
             </p>
-            <Select disabled defaultValue={changeusage.status_usage}>
-              <Select.Option value={1}>In Used</Select.Option>
+            <Select disabled value={changeusage.status_usage}>
+              <Select.Option value={1}>In Used: Sewa</Select.Option>
               <Select.Option value={2}>In Stock</Select.Option>
               <Select.Option value={3}>Replacement</Select.Option>
+              <Select.Option value={4}>In Used: Internal</Select.Option>
             </Select>
             <style jsx>
               {`
@@ -3072,11 +3193,15 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                   >
                     {changeusage.relationship_type_id === -1 &&
                       detaillist.map((doc, idx) => (
-                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                        <Select.Option key={doc.id} value={doc.id}>
+                          {doc.name}
+                        </Select.Option>
                       ))}
                     {changeusage.relationship_type_id === -2 &&
                       detaillist.map((doc, idx) => (
-                        <Select.Option value={doc.id}>{doc.name}</Select.Option>
+                        <Select.Option key={doc.id} value={doc.id}>
+                          {doc.name}
+                        </Select.Option>
                       ))}
                     {/* {
                                             changeusage.relationship_type_id === 3 &&
@@ -3138,6 +3263,82 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           </div>
         </div>
       </Modal>
+
+      {/* Modal Ubah Status Sewa */}
+      <Modal
+        title={
+          <div className="flex justify-between p-5 mt-5">
+            <h1 className="font-bold text-xl">
+              Form Ubah Status Sewa {maindata.inventory_name}
+            </h1>
+            <div className="flex">
+              <>
+                <Button
+                  type="default"
+                  onClick={() => {
+                    setModalRent(false);
+                  }}
+                  style={{ marginRight: `1rem` }}
+                >
+                  Batal
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={handleRentItem}
+                  loading={loadingRent}
+                >
+                  Simpan
+                </Button>
+              </>
+            </div>
+          </div>
+        }
+        visible={modalRent}
+        onCancel={() => {
+          setModalRent(false);
+        }}
+        footer={null}
+        width={600}
+      >
+        <div className="flex flex-col mb-3">
+          <div className="flex flex-col mb-3">
+            <p className="mb-0">
+              Status Sewa <span className="kondisimodal"></span>
+            </p>
+            <Select disabled value={changeRent.status_rent}>
+              <Select.Option value={1}>
+                <p className="mb-0">Out Period</p>
+              </Select.Option>
+              <Select.Option value={2}>
+                <p className="mb-0">In Period</p>
+              </Select.Option>
+            </Select>
+            <style jsx>
+              {`
+                                .kondisimodal::before{
+                                    content: '*';
+                                    color: red;
+                                }
+                            `}
+            </style>
+          </div>
+          <div className="flex flex-col mb-3">
+            <p className="mb-0">Notes</p>
+            <Input.TextArea
+              rows={3}
+              placeholder="Masukkan Notes"
+              onChange={(e) => {
+                setChangeRent((prev) => ({
+                  ...prev,
+                  notes: e.target.value,
+                }));
+              }}
+            ></Input.TextArea>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Modal Ubah Status Kondisi */}
       <Modal
         title={
           <div className="flex justify-between p-5 mt-5">
@@ -3150,7 +3351,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
                   type="default"
                   onClick={() => {
                     setmodalkondisi(false);
-                    setdisplaykondisi(true);
+                    // setdisplaykondisi(true);
                   }}
                   style={{ marginRight: `1rem` }}
                 >
@@ -3170,7 +3371,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
         visible={modalkondisi}
         onCancel={() => {
           setmodalkondisi(false);
-          setdisplaykondisi(true);
+          // setdisplaykondisi(true);
         }}
         footer={null}
         width={600}
@@ -3180,7 +3381,7 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
             <p className="mb-0">
               Status Kondisi <span className="kondisimodal"></span>
             </p>
-            <Select disabled defaultValue={kondisi}>
+            <Select disabled value={kondisi}>
               <Select.Option value={1}>
                 <p className="mb-0">Good</p>
               </Select.Option>
@@ -3212,6 +3413,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           </div>
         </div>
       </Modal>
+
+      {/* Modal Tambah Notes */}
       <Modal
         title={
           <div className="flex justify-between p-5 mt-5">
@@ -3259,6 +3462,8 @@ const ItemDetail = ({ initProps, dataProfile, sidemenu, itemid }) => {
           ></Input.TextArea>
         </div>
       </Modal>
+
+      {/* Modal Hapus Item */}
       <Modal
         title={
           <h1 className="font-semibold">
