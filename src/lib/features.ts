@@ -72,6 +72,7 @@ export const SIDEBAR_CMS_MESSAGE = "SIDEBAR_CMS_MESSAGE";
 export const SIDEBAR_CMS_FORM_SOLUTION = "SIDEBAR_CMS_FORM_SOLUTION";
 export const SIDEBAR_CMS_BLOG = "SIDEBAR_CMS_BLOG";
 export const SIDEBAR_CMS_PRODUCT = "SIDEBAR_CMS_PRODUCT";
+
 /** Resume */
 export const SIDEBAR_RESUME = "SIDEBAR_RESUME";
 export const SIDEBAR_RESUME_ROLE_ASSESSMENT = "SIDEBAR_RESUME_ROLE_ASSESSMENT";
@@ -81,6 +82,10 @@ export const SIDEBAR_RESUME_DAFTAR_KANDIDAT = "SIDEBAR_RESUME_DAFTAR_KANDIDAT";
 export const SIDEBAR_RECRUITMENT = "SIDEBAR_RECRUITMENT";
 export const SIDEBAR_RECRUITMENT_CANDIDATE = "SIDEBAR_RECRUITMENT_CANDIDATE";
 export const SIDEBAR_RECRUITMENT_SETUP = "SIDEBAR_RECRUITMENT_SETUP";
+
+/** Contract Management */
+export const SIDEBAR_CONTRACT = "SIDEBAR_CONTRACT";
+export const SIDEBAR_CONTRACT_LIST = "SIDEBAR_CONTRACT_LIST";
 
 /**
  * Daftar feature untuk halaman Attendance.
@@ -1091,6 +1096,12 @@ export const INVENTORY_STATUS_USAGE = "INVENTORY_STATUS_USAGE";
  * - [x] pages/items/detail/[itemId]
  */
 export const INVENTORY_STATUS_CONDITION = "INVENTORY_STATUS_CONDITION";
+/**
+ * /changeStatusCondition
+ *
+ * - [x] pages/items/detail/[itemId]
+ */
+export const INVENTORY_STATUS_RENT = "INVENTORY_STATUS_RENT";
 /**
  * /getInventoryAddable
  * /addInventoryParts
