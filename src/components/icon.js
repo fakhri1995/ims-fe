@@ -940,6 +940,31 @@ const ClockIconSvg = ({ size, color }) => {
   );
   return <Icon component={clockIconSvg}></Icon>;
 };
+
+const ClockXIconSvg = ({ size, color }) => {
+  const clockXIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-clock-x"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M20.926 13.15a9 9 0 1 0 -7.835 7.784" />
+      <path d="M12 7v5l2 2" />
+      <path d="M22 22l-5 -5" />
+      <path d="M17 22l5 -5" />
+    </svg>
+  );
+  return <Icon component={clockXIconSvg}></Icon>;
+};
+
 const ClipboardcheckIconSvg = ({ size, color }) => {
   const clipboardcheckIconSvg = () => (
     <svg
@@ -2581,7 +2606,7 @@ const AlertCircleIconSvg = ({ size, color }) => {
   const alertCircleIconSvg = () => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      class="icon icon-tabler icon-tabler-alert-circle"
+      className="icon icon-tabler icon-tabler-alert-circle"
       width="24"
       height="24"
       viewBox="0 0 24 24"
@@ -2658,6 +2683,7 @@ export {
   MoveIconSvg,
   AlertIconSvg,
   ClockIconSvg,
+  ClockXIconSvg,
   ClipboardcheckIconSvg,
   MappinIconSvg,
   ListcheckIconSvg,
