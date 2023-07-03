@@ -166,6 +166,11 @@ const LogsSection = ({
                   dataIndex: "id",
                   key: "id",
                   render: (_, log) => {
+                    // remove html tag in description
+                    const stringDescription = log?.description?.replace(
+                      /(<([^>]+)>)/gi,
+                      ""
+                    );
                     return (
                       <div
                         key={log?.id}
@@ -196,9 +201,9 @@ const LogsSection = ({
                           </p>
                         </div>
                         <p>
-                          {log?.description?.length > 140
-                            ? log?.description?.slice(0, 140) + "..."
-                            : log?.description}
+                          {stringDescription?.length > 140
+                            ? stringDescription?.slice(0, 140) + "..."
+                            : stringDescription}
                         </p>
                       </div>
                     );
