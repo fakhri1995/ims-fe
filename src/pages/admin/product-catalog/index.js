@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import QueryString from "qs";
 import { useEffect, useState } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -148,7 +149,13 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: (a, b) => a.price - b.price,
       render: (price) => (
         <div>
-          <p>{currency(price)}</p>
+          <CurrencyFormat
+            type="text"
+            thousandSeparator={"."}
+            decimalSeparator={","}
+            value={price}
+            prefix={"Rp "}
+          />
         </div>
       ),
     },

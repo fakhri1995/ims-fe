@@ -680,8 +680,8 @@ const ReplacementIconSvg = ({ size, color }) => {
       width={size ? size : "8"}
       height={size ? size : "8"}
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke={color ? color : "#00589F"}
+      strokeWidth="2"
+      stroke={color ? color : "#FFFFFF"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -703,7 +703,7 @@ const PeriodeIconSvg = ({ size, color }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#35763B"
+      stroke="#FFFFFF"
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -725,7 +725,7 @@ const LuarPeriodeIconSvg = ({ size, color }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#DDB44A"
+      stroke="#FFFFFF"
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"

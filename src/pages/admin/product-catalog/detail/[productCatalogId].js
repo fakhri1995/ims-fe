@@ -230,11 +230,17 @@ const ProductCatalogDetail = ({
     },
     {
       title: "Status Item",
-      dataIndex: ["status_condition", "status_usage", "location_inventory"],
+      dataIndex: [
+        "status_condition",
+        "status_usage",
+        "location_inventory",
+        "status_rent",
+      ],
       render: (text, row) => (
         <div className={"flex"}>
           {renderStatusItem(row["status_usage"], row["location_inventory"])}
           {renderStatusItemCondition(row["status_condition"].name)}
+          {renderStatusRent(row["status_rent"])}
         </div>
       ),
     },
@@ -289,7 +295,7 @@ const ProductCatalogDetail = ({
                 }}
               >
                 <div className={"flex"}>
-                  <ReplacementIconSvg size={16} />
+                  <ReplacementIconSvg size={16} color={"#FFFFFF"} />
                   <div className={"ml-2"}>
                     <p className={"text-xs text-secondary100 font-semibold"}>
                       Replacement
@@ -392,7 +398,7 @@ const ProductCatalogDetail = ({
 
   const renderStatusItemCondition = (status_condition) => {
     return (
-      <div className={"ml-4"}>
+      <div className={"ml-2.5"}>
         {status_condition == "Good" ? (
           <Tooltip
             color="white"
@@ -496,6 +502,84 @@ const ProductCatalogDetail = ({
               <div className={"w-2 h-2 bg-white rounded-full"} />
             </div>
           </Tooltip>
+        )}
+      </div>
+    );
+  };
+
+  const renderStatusRent = (status_rent) => {
+    return (
+      <div className={"ml-2.5"}>
+        {status_rent == null ? (
+          <p></p>
+        ) : status_rent.id == 0 ? (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex"}>
+                  <PeriodeIconSvg size={16} />
+                  <div className={"ml-2"}>
+                    <p className={"text-xs text-primary100 font-semibold"}>
+                      Periode
+                    </p>
+                    <p className={"text-mono30 text-[10px] mt-1"}>
+                      Barang ini masih dalam periode sewa
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-primary100 bg-primary100 flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <PeriodeIconSvg />
+            </div>
+          </Tooltip>
+        ) : status_rent.id == 1 ? (
+          <Tooltip
+            color="white"
+            title={
+              <div
+                className={"p-2 bg-white rounded-[5px]"}
+                style={{
+                  boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
+                }}
+              >
+                <div className={"flex bg-warning"}>
+                  <LuarPeriodeIconSvg size={16} />
+                  <div className={"ml-2"}>
+                    <p className={"text-xs text-state2 font-semibold"}>
+                      Luar Periode
+                    </p>
+                    <p className={"text-mono30 text-[10px] mt-1"}>
+                      Barang ini diluar periode waktu sewa.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            }
+            placement="bottom"
+          >
+            <div
+              className={
+                "border-state2 bg-warning flex justify-center items-center border border-solid rounded-[5px] w-[24px] h-[24px]"
+              }
+            >
+              <LuarPeriodeIconSvg />
+            </div>
+          </Tooltip>
+        ) : (
+          <p></p>
         )}
       </div>
     );

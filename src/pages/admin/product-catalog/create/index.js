@@ -34,6 +34,7 @@ import {
 import { useRouter } from "next/router";
 import QueryString from "qs";
 import { useEffect, useState } from "react";
+import CurrencyFormat from "react-currency-format";
 import Sticky from "wil-react-sticky";
 
 import { useAccessControl } from "contexts/access-control";
@@ -912,15 +913,27 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                   <div className={"w-1/2 flex"}>
                     <div className={"w-2/3"}>
                       <p className={"text-mono30 text-xs"}>Harga</p>
-                      <Input
-                        prefix={"Rp "}
-                        onChange={(e) => setPrice(e.target.value)}
-                        className={"mt-4 h-[52px]"}
-                        value={price}
-                        placeholder="Masukkan Harga Produk"
-                      />
+
+                      <div className={""}>
+                        <CurrencyFormat
+                          customInput={Input}
+                          placeholder={"Masukkan Harga Produk"}
+                          className={"mt-4 h-[52px]"}
+                          value={price ? price : 0}
+                          thousandSeparator={"."}
+                          decimalSeparator={","}
+                          prefix={"Rp"}
+                          allowNegative={false}
+                          onValueChange={(values) => {
+                            const { formattedValue, value, floatValue } =
+                              values;
+                            setPrice(floatValue);
+                          }}
+                          renderText={(value) => <p>{value}</p>}
+                        />
+                      </div>
                     </div>
-                    <div className={"w-1/3 ml-4 example"}>
+                    <div className={"w-1/3 ml-4 example mt-8"}>
                       <p className={"text-mono30 text-xs"}></p>
                       <Select
                         size="large"
