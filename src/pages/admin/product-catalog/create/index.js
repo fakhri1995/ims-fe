@@ -97,6 +97,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     sku: withDefault(StringParam, undefined),
   });
   const [instanceForm] = Form.useForm();
+  const [fetchingCategory, setFetchingCategory] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
   const [dataCategories, setDataCategories] = useState([]);
   const [dataModels, setDataModels] = useState([]);
@@ -517,7 +518,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
   useEffect(() => {
     console.log("product id bro ", productId);
     if (productId) {
-      setProductIdValue(productId);
       getDetailProduct();
     } else {
       generateProductId();
@@ -577,6 +577,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
           });
           setCategoryChoose(res2.data.category_id);
           setDescription(res2.data.description);
+          setProductIdValue(res2.data.product_id);
           setPrice(res2.data.price);
           setPerPrice(res2.data.price_option);
           if (res2.data.model_id != null) {
@@ -657,24 +658,27 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
     let payload = "";
     if (switchValue) {
       payload = {
-        id: productIdValue,
+        id: productId ? productId : null,
+        product_id: productIdValue,
         name: productName,
         description: description,
         price: Number(price),
-        price_option_id: perPrice,
+        price_option: perPrice,
         category_id: categoryChoose,
         is_active: 1,
         model_id: modelId,
       };
     } else {
       payload = {
-        id: productIdValue,
+        id: productId ? productId : null,
+        product_id: productIdValue,
         name: productName,
         description: description,
         price: Number(price),
-        price_option_id: perPrice,
+        price_option: perPrice,
         category_id: categoryChoose,
         is_active: 1,
+        model_id: null,
       };
     }
 
@@ -837,7 +841,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                     <Input
                       value={productIdValue}
-                      disabled={true}
+                      onChange={(e) => setProductIdValue(e.target.value)}
                       className={"mt-4 h-[52px]"}
                       placeholder="Masukkan ID Produk"
                     />
@@ -858,9 +862,9 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                           setCategoryChoose(value);
                         }}
                         filterOption={(input, option) =>
-                          (option?.label ?? "")
+                          option.children
                             .toLowerCase()
-                            .includes(input.toLowerCase())
+                            .indexOf(input.toLowerCase()) >= 0
                         }
                       >
                         {dataCategories?.map((kategori) => (

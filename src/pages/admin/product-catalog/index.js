@@ -104,12 +104,12 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   const columnsTable = [
     {
       title: "ID Produk",
-      dataIndex: "id",
+      dataIndex: "product_id",
     },
     {
       title: "Nama Produk",
       dataIndex: ["name", "model_inventory"],
-      sorter: (a, b) => a.name.length - b.name.length,
+      // sorter: (a, b) => a.name.length - b.name.length,
       render: (text, row) =>
         row["model_inventory"].inventories_count == 0 ? (
           <div className={"flex"}>
@@ -120,7 +120,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
           </div>
         ) : (
           <div>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
+            <p className={"text-[14px] text-mono30"}>{row["name"]}</p>
           </div>
         ),
     },
@@ -129,7 +129,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       dataIndex: "category",
       render: (category) => (
         <div>
-          <p>{category.name}</p>
+          <p>{category ? category.name : "-"}</p>
         </div>
       ),
     },
@@ -155,12 +155,15 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     {
       title: "Jumlah Item",
       dataIndex: "model_inventory",
+      sorter: (a, b) =>
+        a.model_inventory.inventories_count -
+        b.model_inventory.inventories_count,
       render: (model_inventory) => (
         <div>
           <p>
             {model_inventory.inventories_count
               ? model_inventory.inventories_count
-              : 0}
+              : "-"}
           </p>
         </div>
       ),
@@ -391,7 +394,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     )
       .then((res) => res.json())
       .then((res2) => {
-        console.log("datanya model ", res2.data.data);
+        // console.log("datanya model ", res2.data.data);
         setdisplayentiredata(res2);
         setdisplaydata(res2.data.data);
         setpraloading(false);
@@ -407,6 +410,8 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.name,
     queryParams.asset_id,
     queryParams.sku,
+    queryParams.category_id,
+    queryParams.is_active,
     statusSearch == true,
   ]);
 
