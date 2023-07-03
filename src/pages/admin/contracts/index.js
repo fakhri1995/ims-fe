@@ -1,378 +1,726 @@
-import DeleteOutlined from "@ant-design/icons/DeleteOutlined";
-import EditOutlined from "@ant-design/icons/EditOutlined";
-import { Button, Modal, Table, Tabs, notification } from "antd";
-import Link from "next/link";
+import {
+  AppstoreOutlined,
+  CloseOutlined,
+  DownOutlined,
+  MailOutlined,
+  SearchOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  DatePicker,
+  Dropdown,
+  Empty,
+  Form,
+  Input,
+  Menu,
+  Select,
+  Spin,
+  Switch,
+  Table,
+  notification,
+} from "antd";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
 import { useRouter } from "next/router";
-import { useState } from "react";
-import Sticky from "wil-react-sticky";
+import QueryString from "qs";
+import React from "react";
+import { useEffect, useState } from "react";
+import { useCallback } from "react";
+import { useRef } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
+import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
+import { AccessControl } from "components/features/AccessControl";
+import { AddNewFormButton } from "components/screen/resume";
+
+import { useAccessControl } from "contexts/access-control";
+
+import { useAxiosClient } from "hooks/use-axios-client";
+
+import {
+  COMPANY_CLIENTS_GET,
+  RECRUITMENTS_ADD,
+  RECRUITMENTS_DELETE,
+  RECRUITMENTS_GET,
+  RECRUITMENTS_UPDATE_STAGE,
+  RECRUITMENTS_UPDATE_STATUS,
+  RECRUITMENT_ACCOUNT_GENERATE,
+  RECRUITMENT_ACCOUNT_TOKEN_GET,
+  RECRUITMENT_ADD,
+  RECRUITMENT_COUNT_GET,
+  RECRUITMENT_EMAIL_SEND,
+  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
+  RECRUITMENT_EXCEL_TEMPLATE_GET,
+  RECRUITMENT_GET,
+  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
+  RECRUITMENT_PREVIEW_GET,
+  RECRUITMENT_ROLES_LIST_GET,
+  RECRUITMENT_STAGES_LIST_GET,
+  RECRUITMENT_STATUSES_LIST_GET,
+  RECRUITMENT_UPDATE_STAGE,
+  RECRUITMENT_UPDATE_STATUS,
+  SIDEBAR_RECRUITMENT_SETUP,
+} from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
+
+import { CompanyService } from "apis/company";
+import { ContractService } from "apis/contract";
+
+import SettingsIcon from "assets/vectors/icon-settings.svg";
+
+import ButtonSys from "../../../components/button";
+import { SearchIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";
+import { createKeyPressHandler } from "../../../lib/helper";
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart,
+  LineElement,
+  LinearScale,
+  PointElement,
+  Tooltip,
+} from "chart.js";
 import httpcookie from "cookie";
 
-function Contracts({ initProps, dataProfile, dataContracts, sidemenu }) {
-  const rt = useRouter();
-  const tok = initProps;
-  const pathArr = rt.pathname.split("/").slice(1);
-  // const pathArr = ['admin', 'contracts']
-  // const { originPath } = rt.query
-  const { TabPane } = Tabs;
-  // console.log(dataContracts)
+Chart.register(
+  ArcElement,
+  Tooltip,
+  CategoryScale,
+  LinearScale,
+  LineElement,
+  BarElement,
+  PointElement
+);
 
-  //--------hook modal delete contracts-------------
-  const [warningDelete, setWarningDelete] = useState({
-    istrue: false,
-    key: null,
-    nomor_kontrak: "",
+const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
+  // 1. Init
+  /**
+   * Dependencies
+   */
+  const axiosClient = useAxiosClient();
+  const { hasPermission, isPending: isAccessControlPending } =
+    useAccessControl();
+
+  const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
+  const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
+  const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
+  const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
+  const isAllowedToAddRecruitments = hasPermission(RECRUITMENTS_ADD);
+  const isAllowedToDeleteRecruitments = hasPermission(RECRUITMENTS_DELETE);
+  const isAllowedToGetContractCount = hasPermission(RECRUITMENT_COUNT_GET);
+
+  const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
+
+  const isAllowedToGetRecruitmentStatusesList = hasPermission(
+    RECRUITMENT_STATUSES_LIST_GET
+  );
+
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 10),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    duration: withDefault(StringParam, undefined),
+    company_id: withDefault(NumberParam, undefined),
+    contract_status_id: withDefault(NumberParam, undefined),
   });
-  const onClickModalDeleteContract = (istrue, record) => {
-    setWarningDelete({
-      ...warningDelete,
-      ["istrue"]: istrue,
-      ["key"]: record.key,
-      ["nomor_kontrak"]: record.nomor_kontrak,
-    });
-  };
-  const [modaldelete, setmodaldelete] = useState(false);
-  //-------------------------------------------
 
-  //------------get data contracts-------------------
-  var contracts;
-  if (dataContracts.data == null) {
-    console.log("nodata");
-    contracts = [];
-  } else {
-    contracts = dataContracts.data.map((doc, idx) => {
-      return {
-        idx: idx,
-        key: doc.id,
-        id: doc.id,
-        id_client_company: doc.id_client_company,
-        id_tipe_kontrak: doc.id_tipe_kontrak,
-        nomor_kontrak: doc.nomor_kontrak,
-        tanggal_mulai: doc.tanggal_mulai,
-        tanggal_selesai: doc.tanggal_selesai,
-        is_active: doc.is_active,
-      };
-    });
-  }
-  //------------------------------------------------
+  const rt = useRouter();
+  // Breadcrumb url
+  const pathArr = rt.pathname.split("/").slice(1);
 
-  //------------------handle delete contract-------------------
-  const handleDeleteContract = (key) => {
-    setmodaldelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${key}`, {
-      method: "DELETE",
+  // Breadcrumb title
+  const pathTitleArr = [...pathArr];
+  pathTitleArr.splice(1, 1);
+  pathTitleArr.splice(1, 1, "Kontrak");
+
+  // 2. Use state
+  // 2.1. Table Contract
+  // filter data
+  const [loadingStatusList, setLoadingStatusList] = useState(false);
+  const [dataStatusList, setDataStatusList] = useState([]);
+
+  // filter search & selected options
+  const [searchingFilterContracts, setSearchingFilterContracts] = useState("");
+  const [selectedDuration, setSelectedDuration] = useState(undefined);
+  const [selectedCompany, setSelectedCompany] = useState(undefined);
+  const [selectedStatus, setSelectedStatus] = useState(undefined);
+
+  // table data
+  const [loadingContracts, setLoadingContracts] = useState(true);
+  const [dataContracts, setDataContracts] = useState([]);
+  const [dataRawContracts, setDataRawContracts] = useState({
+    current_page: "",
+    data: [],
+    first_page_url: "",
+    from: null,
+    last_page: null,
+    last_page_url: "",
+    next_page_url: "",
+    path: "",
+    per_page: null,
+    prev_page_url: null,
+    to: null,
+    total: null,
+  });
+
+  const [refresh, setRefresh] = useState(-1);
+  const [dataRowClicked, setDataRowClicked] = useState({});
+  const tempIdClicked = useRef(-1);
+  const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
+
+  // 3. UseEffect & UseQuery
+  // 3.1. Get Contract Count
+  const { data: dataCount, isLoading: loadingDataCount } = useQuery(
+    [RECRUITMENT_COUNT_GET],
+    () =>
+      ContractService.getCountContract(initProps, isAllowedToGetContractCount),
+    {
+      enabled: isAllowedToGetContractCount,
+      refetchOnMount: false,
+      select: (response) => response.data,
+    }
+  );
+
+  // 3.2. Get Company List
+  const { data: dataCompanyList, isLoading: loadingCompanyList } = useQuery(
+    [COMPANY_CLIENTS_GET],
+    () => CompanyService.getCompanyClientList(axiosClient, true),
+    {
+      enabled: isAllowedToGetCompanyClients,
+      refetchOnMount: false,
+      select: (response) => response.data.data,
+    }
+  );
+
+  // 3.3. Get Contracts
+  useEffect(() => {
+    if (!isAllowedToGetRecruitments) {
+      permissionWarningNotification("Mendapatkan", "Daftar Recruitment");
+      setLoadingContracts(false);
+      return;
+    }
+
+    const payload = QueryString.stringify(queryParams, {
+      addQueryPrefix: true,
+    });
+
+    const fetchData = async () => {
+      setLoadingContracts(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments${payload}&keyword=${searchingFilterContracts}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawContracts(res2.data);
+            setDataContracts(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+          setLoadingContracts(false);
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+          setLoadingContracts(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+    return () => clearTimeout(timer);
+  }, [
+    isAllowedToGetRecruitments,
+    refresh,
+    searchingFilterContracts,
+    queryParams.page,
+    queryParams.rows,
+    queryParams.sort_by,
+    queryParams.sort_type,
+    queryParams.duration,
+    queryParams.company_id,
+    queryParams.contract_status_id,
+  ]);
+
+  // 3.5. Get Status List
+  useEffect(() => {
+    if (!isAllowedToGetRecruitmentStatusesList) {
+      permissionWarningNotification("Mendapatkan", "Recruitment Statuses List");
+      setLoadingStatusList(false);
+      return;
+    }
+
+    setLoadingStatusList(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
+      method: `GET`,
       headers: {
-        Authorization: JSON.parse(tok),
-        "Content-Type": "application/json",
+        Authorization: JSON.parse(initProps),
       },
-      body: JSON.stringify({
-        id: key,
-      }),
     })
       .then((res) => res.json())
       .then((res2) => {
-        setmodaldelete(false);
         if (res2.success) {
-          setWarningDelete(false, null);
-          notification["success"]({
+          setDataStatusList(res2.data);
+        } else {
+          notification.error({
+            message: `${res2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingStatusList(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+        setLoadingStatusList(false);
+      });
+  }, [isAllowedToGetRecruitmentStatusesList, refresh]);
+
+  // 4. Event
+  const onManageRecruitmentButtonClicked = useCallback(() => {
+    rt.push("/admin/recruitment/role");
+  }, []);
+
+  // 4.1. Filter Table
+  const onFilterRecruitments = () => {
+    setQueryParams({
+      duration: selectedDuration,
+      company_id: selectedCompany,
+      contract_status_id: selectedStatus,
+    });
+  };
+
+  const { onKeyPressHandler } = createKeyPressHandler(
+    onFilterRecruitments,
+    "Enter"
+  );
+
+  // 4.2. Create Recruitments (from excel import)
+  const handleCreateRecruitments = (data) => {
+    if (!isAllowedToAddRecruitments) {
+      permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
+      return;
+    }
+    setLoadingCreate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitments`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        setRefresh((prev) => prev + 1);
+        if (response2.success) {
+          notification.success({
+            message: `Kandidat berhasil ditambahkan.`,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Gagal menambahkan kandidat. ${response2.message}`,
+            duration: 3,
+          });
+        }
+        setLoadingCreate(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan kandidat. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingCreate(false);
+      });
+  };
+
+  // 4.7. Delete Recruitments
+  const onOpenDeleteModal = () => {
+    setModalDelete(true);
+  };
+
+  const handleDeleteRecruitments = () => {
+    const payload = {
+      ids: selectedRecruitmentIds,
+    };
+
+    if (!isAllowedToDeleteRecruitments) {
+      permissionWarningNotification("Menghapus", "Kandidat");
+      return;
+    }
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitments`, {
+      method: "DELETE",
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        setRefresh((prev) => prev + 1);
+        if (res2.success) {
+          notification.success({
             message: res2.message,
             duration: 3,
           });
           setTimeout(() => {
-            rt.push(`/admin/contracts`);
+            setModalDelete(false);
+            setBulk(false);
+            setSelectedRecruitmentIds([]);
           }, 500);
-        } else if (!res2.success) {
-          setWarningDelete(false, null);
-          notification["error"]({
-            message: res2.message,
+        } else {
+          notification.error({
+            message: `Gagal menghapus kandidat. ${response2.message}`,
             duration: 3,
           });
         }
+        setLoadingDelete(false);
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus kandidat. ${err.response}`,
+          duration: 3,
+        });
+        setLoadingDelete(false);
+        setModalDelete(false);
       });
   };
-  //---------------------------------------------------------
 
-  //------------------------kolom table----------------------
-  const columnsDD = [
+  // "Semua Kandidat" Table's columns
+  const columnContracts = [
     {
       title: "No",
-      dataIndex: "idx",
-      key: "idx",
-      width: 10,
-      render(text, record) {
+      key: "number",
+      dataIndex: "num",
+      render: (text, record, index) => {
         return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: <div>{record.idx + 1}</div>,
-        };
-      },
-    },
-    // {
-    //     title: 'Company ID',
-    //     dataIndex: 'id_client_company',
-    //     key: 'id_client_company',
-    //     width: 50,
-    //     render(text, record) {
-    //         return {
-    //             props: {
-    //                 style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
-    //             },
-    //             children: <div><Link href={{
-    //                 pathname: `/inventories/${record.key}`,
-    //                 query: {
-    //                     originPath: 'Admin'
-    //                 }
-    //             }}><a>{record.id_client_company}</a></Link>
-    //             </div>,
-    //         };
-    //     },
-    // },
-    // {
-    //     title: 'Tipe Kontrak ID',
-    //     dataIndex: 'id_tipe_kontrak',
-    //     key: 'id_tipe_kontrak',
-    //     width: 50,
-    //     render(text, record) {
-    //         return {
-    //             props: {
-    //                 style: { background: record.idx % 2 == 1 ? '#f2f2f2' : '#fff' },
-    //             },
-    //             children: <div>{record.id_tipe_kontrak}
-    //             </div>,
-    //         };
-    //     },
-    // },
-    {
-      title: "Nomor Kontrak",
-      dataIndex: "nomor_kontrak",
-      key: "nomor_kontrak",
-      width: 200,
-      render(text, record) {
-        return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
           children: (
-            <>
-              {
-                <div>
-                  <Link
-                    href={{
-                      pathname: `/admin/contracts/${record.key}`,
-                    }}
-                  >
-                    <a>{record.nomor_kontrak}</a>
-                  </Link>
-                </div>
-              }
-            </>
+            <div className="flex justify-center">
+              {dataRawContracts?.from + index}
+            </div>
           ),
         };
       },
     },
+    {
+      title: "Nama Kontrak",
+      key: "name",
+      dataIndex: "name",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <div className="xl:w-40">{record.name ? record.name : ""}</div>
+          ),
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
+        : false,
+    },
+    {
+      title: "Judul Kontrak",
+      key: "role",
+      dataIndex: "role",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.role?.name}</>,
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+        : false,
+    },
+    {
+      title: "Nama Klien",
+      key: "stage",
+      dataIndex: "stage",
+      render: (text, record, index) => {
+        return {
+          children: <div>PT Bukopin</div>,
+        };
+      },
+    },
+    {
+      title: "Tanggal Berlaku",
+      key: "stage",
+      dataIndex: "stage",
+      render: (text, record, index) => {
+        return {
+          children: <div>26 September 2021</div>,
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.stage?.name
+              .toLowerCase()
+              .localeCompare(b.stage?.name.toLowerCase())
+        : false,
+    },
+    {
+      title: "Sisa Durasi",
+      key: "role",
+      dataIndex: "role",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.role?.name}</>,
+        };
+      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+        : false,
+    },
+
     {
       title: "Status",
-      dataIndex: "is_active",
-      key: "is_active",
-      width: 50,
-      align: "center",
-      render(text, record) {
-        return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: (
-            <>
-              {record.is_active ? (
-                <div className="p-1 rounded-md text-white border border-green-500 bg-green-500 text-center text-xs">
-                  Active
-                </div>
-              ) : (
-                <div className="p-1 rounded-md text-white border border-gray-500 bg-gray-500 text-center text-xs">
-                  Terminated
-                </div>
-              )}
-              {/* <div>{record.is_active ? "Aktif" : "Non-Aktif"}
-                            </div> */}
-            </>
-          ),
-        };
-      },
-    },
-    {
-      title: "Tanggal Mulai",
-      dataIndex: "tanggal_mulai",
-      key: "tanggal_mulai",
-      width: 50,
-      render(text, record) {
-        return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: <div>{record.tanggal_mulai}</div>,
-        };
-      },
-    },
-    {
-      title: "Tanggal Selesai",
-      dataIndex: "tanggal_selesai",
-      key: "tanggal_selesai",
-      width: 150,
-      render(text, record) {
-        return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: <div>{record.tanggal_selesai}</div>,
-        };
-      },
-    },
-    {
-      title: "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0", // Non-breakable space is char 0xa0 (160 dec)
-      dataIndex: "actionss",
-      key: "action",
-      width: 50,
+      key: "status",
+      dataIndex: "status",
       render: (text, record, index) => {
         return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
           children: (
             <>
-              {
-                <Button>
-                  <Link
-                    href={{
-                      pathname: `/admin/contracts/update/${record.key}`,
-                    }}
-                  >
-                    <EditOutlined />
-                  </Link>
-                </Button>
-              }
+              <div
+                className="rounded-md py-1 hover:cursor-pointer text-center"
+                style={{
+                  width: `100%`,
+                  backgroundColor: `${record.status?.color}10`,
+                  color: `${record.status?.color}`,
+                }}
+              >
+                {
+                  dataStatusList.find(
+                    (status) => status.id === record.contract_status_id
+                  )?.name
+                }
+              </div>
             </>
           ),
         };
       },
-    },
-    {
-      title: "\xa0\xa0\xa0\xa0\xa0\xa0\xa0\xa0", // Non-breakable space is char 0xa0 (160 dec)
-      dataIndex: "actionss",
-      key: "action",
-      width: 100,
-      render: (text, record, index) => {
-        return {
-          props: {
-            style: { background: record.idx % 2 == 1 ? "#f2f2f2" : "#fff" },
-          },
-          children: (
-            <>
-              {
-                <Button
-                  onClick={() => {
-                    onClickModalDeleteContract(true, record);
-                  }}
-                >
-                  <a>
-                    <DeleteOutlined />
-                  </a>
-                </Button>
-              }
-            </>
-          ),
-        };
-      },
+      sorter: isAllowedToGetRecruitments
+        ? (a, b) =>
+            a.status?.name
+              .toLowerCase()
+              .localeCompare(b.status?.name.toLowerCase())
+        : false,
     },
   ];
-  //------------------------------------------------------------------------
+
+  // if (isAccessControlPending) {
+  //   return null;
+  // }
 
   return (
     <Layout
-      tok={tok}
+      tok={initProps}
       dataProfile={dataProfile}
-      pathArr={pathArr}
       sidemenu={sidemenu}
-      /*originPath={originPath}*/ st={st}
+      st={st}
+      pathArr={pathArr}
+      pathTitleArr={pathTitleArr}
     >
-      <>
-        <div className="w-full h-auto grid grid-cols-1 md:grid-cols-4">
+      <div className="flex flex-col gap-6" id="mainWrapper">
+        <div className="grid grid-cols-1 lg:grid-cols-2 md:px-5 gap-6">
           <div
-            className=" col-span-1 md:col-span-4 flex flex-col"
-            id="formAgentsWrapper"
+            className="flex flex-row items-center w-full 
+						justify-between px-6 py-2 shadow-md rounded-md bg-white
+						divide-x divide-gray-300"
           >
-            <Sticky containerSelectorFocus="#formAgentsWrapper">
-              <div className="flex justify-between p-4 border-gray-400 border-t border-b bg-white mb-8">
-                <h1 className="font-semibold text-base w-auto pt-2">
-                  Contracts
-                </h1>
-                {
-                  // [196].every((curr) => dataProfile.data.registered_feature.includes(curr)) &&
-                  <div className="flex space-x-2">
-                    <Link href={`/admin/contracts/create`}>
-                      <Button type="primary" size="large">
-                        Add New
-                      </Button>
-                    </Link>
-                  </div>
-                }
-              </div>
-            </Sticky>
+            <div className="flex flex-row items-center justify-between w-full">
+              <h4 className="font-semibold lg:mig-heading--4">Kontrak Aktif</h4>
+              <Spin spinning={loadingDataCount}>
+                <p className="text-4xl lg:text-5xl text-primary100">
+                  {dataCount?.recruitment_roles_count}
+                </p>
+              </Spin>
+            </div>
+          </div>
+          <AddNewFormButton
+            title="Buat Kontrak"
+            subtitle="Jumat, 07 Januari 2021"
+            // onButtonClicked={onManageRecruitmentButtonClicked}
+            disabled={!isAllowedToSetupRecruitment}
+          />
+        </div>
+        <div className="md:px-5">
+          {/* Table Kontrak */}
+          <div className="flex flex-col shadow-md rounded-md bg-white p-5 mb-6">
+            <div className="flex flex-col gap-4 md:flex-row md:justify-between w-full md:items-center mb-4">
+              <h4 className="mig-heading--4 w-full md:w-2/12">Kontrak</h4>
+              {/* Start: Search criteria */}
 
-            <div className="col-span-3 flex flex-col space-y-3">
-              <Table
-                scroll={{ x: 400 }}
-                dataSource={contracts}
-                columns={columnsDD}
-                onRow={(record, rowIndex) => {}}
-              ></Table>
+              {/* Filter by duration (dropdown) */}
+              <div className="w-full md:w-2/12">
+                <Select
+                  defaultValue={queryParams.duration}
+                  allowClear
+                  name={`role`}
+                  disabled={!isAllowedToGetCompanyClients}
+                  placeholder="Rentang Durasi"
+                  style={{ width: `100%` }}
+                  onChange={(value) => {
+                    setQueryParams({ duration: value });
+                    setSelectedDuration(value);
+                  }}
+                >
+                  {dataCompanyList?.map((role) => (
+                    <Select.Option key={role.id} value={role.id}>
+                      {role.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Filter by company client */}
+              <div className="w-full md:w-2/12">
+                <Select
+                  defaultValue={queryParams.company_id}
+                  allowClear
+                  name={`company`}
+                  disabled={!isAllowedToGetCompanyClients}
+                  placeholder="Semua Klien"
+                  style={{ width: `100%` }}
+                  onChange={(value) => {
+                    setQueryParams({ company_id: value });
+                    setSelectedCompany(value);
+                  }}
+                >
+                  {dataCompanyList?.map((company) => (
+                    <Select.Option key={company.id} value={company.id}>
+                      {company.name}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Search by status (dropdown) */}
+              <div className="w-full md:w-2/12">
+                <Select
+                  defaultValue={queryParams.contract_status_id}
+                  allowClear
+                  name={`status`}
+                  disabled={!isAllowedToGetRecruitmentStatusesList}
+                  placeholder="Semua Status"
+                  style={{ width: `100%` }}
+                  onChange={(value) => {
+                    setQueryParams({ contract_status_id: value });
+                    setSelectedStatus(value);
+                  }}
+                >
+                  {dataStatusList.map((status) => (
+                    <Select.Option key={status.id} value={status.id}>
+                      <div className="flex items-center">
+                        <div
+                          className="rounded-full w-4 h-4 mr-2"
+                          style={{ backgroundColor: `${status.color}` }}
+                        />
+                        <p className="truncate">{status.name}</p>
+                      </div>
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+
+              {/* Search by keyword (kata kunci) */}
+              <div className="w-full md:w-4/12">
+                <Input
+                  defaultValue={searchingFilterContracts}
+                  style={{ width: `100%` }}
+                  placeholder="Cari.."
+                  allowClear
+                  onChange={(e) => {
+                    setSearchingFilterContracts(e.target.value);
+                  }}
+                  onKeyPress={onKeyPressHandler}
+                  disabled={!isAllowedToGetRecruitments}
+                />
+              </div>
+
+              {/* End: Search criteria */}
+
+              <div className="flex justify-end">
+                <ButtonSys
+                  type={`primary`}
+                  onClick={onFilterRecruitments}
+                  disabled={!isAllowedToGetRecruitments}
+                >
+                  <div className="flex flex-row space-x-2.5 w-full items-center">
+                    <SearchIconSvg size={15} color={`#ffffff`} />
+                    <p>Cari</p>
+                  </div>
+                </ButtonSys>
+              </div>
             </div>
 
-            <Modal
-              title="Konfirmasi untuk menghapus grup"
-              visible={warningDelete.istrue}
-              onOk={() => {
-                handleDeleteContract(warningDelete.key);
-              }}
-              onCancel={() => setWarningDelete(false, null)}
-              okButtonProps={{ disabled: modaldelete }}
-            >
-              Apakah anda yakin ingin menghapus kontrak{" "}
-              <strong>{warningDelete.nomor_kontrak}</strong>?
-            </Modal>
+            <div>
+              <TableCustomRecruitmentCandidate
+                dataSource={dataContracts}
+                columns={columnContracts}
+                loading={loadingContracts}
+                total={dataRawContracts?.total}
+                tempIdClicked={tempIdClicked}
+                setTriggerRowClicked={setTriggerRowClicked}
+                queryParams={queryParams}
+                setQueryParams={setQueryParams}
+              />
+            </div>
           </div>
-          {/* <div className="flex flex-col space-y-3 px-4">
-                        <div className="font-semibold text-sm">Groups</div>
-                        <p className="font-normal text-sm">
-                            You can organize your agents into specific Groups like “Sales” and “Product Management”. Segmenting them into divisions lets you easily assign tickets, create specific canned responses, manage workflows and generate group-level reports. Note that the same agent can be a member of multiple groups as well
-                        </p>
-                    </div> */}
         </div>
-      </>
+      </div>
     </Layout>
   );
-}
+};
 
 export async function getServerSideProps({ req, res }) {
-  var initProps = {};
-  if (req && req.headers) {
-    const cookies = req.headers.cookie;
-    if (!cookies) {
-      res.writeHead(302, { Location: "/login" });
-      res.end();
-    }
-    if (typeof cookies === "string") {
-      const cookiesJSON = httpcookie.parse(cookies);
-      initProps = cookiesJSON.token;
-    }
+  let initProps = {};
+  if (!req.headers.cookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
   }
-
+  const cookiesJSON1 = httpcookie.parse(req.headers.cookie);
+  if (!cookiesJSON1.token) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/login",
+      },
+    };
+  }
+  initProps = cookiesJSON1.token;
   const resourcesGP = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`,
     {
-      method: `GET`,
+      method: "GET",
       headers: {
         Authorization: JSON.parse(initProps),
       },
@@ -381,31 +729,13 @@ export async function getServerSideProps({ req, res }) {
   const resjsonGP = await resourcesGP.json();
   const dataProfile = resjsonGP;
 
-  // if (![194, 195, 196, 197, 198, 199, 200, 201, 202, 203, 204, 205, 206].every((curr) => dataProfile.data.registered_feature.includes(curr))) {
-  //     res.writeHead(302, { Location: '/dashboard/admin' })
-  //     res.end()
-  // }
-
-  const resourcesGetContracts = await fetch(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContracts`,
-    {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    }
-  );
-  const resjsonGetContracts = await resourcesGetContracts.json();
-  const dataContracts = resjsonGetContracts;
-
   return {
     props: {
       initProps,
       dataProfile,
-      dataContracts,
-      sidemenu: "4",
+      sidemenu: "contract-list",
     },
   };
 }
 
-export default Contracts;
+export default ContractIndex;
