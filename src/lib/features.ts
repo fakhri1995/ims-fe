@@ -342,6 +342,13 @@ export const PRODUCTS_GET = "PRODUCTS_GET";
 export const PRODUCT_ADD = "PRODUCT_ADD";
 export const PRODUCT_UPDATE = "PRODUCT_UPDATE";
 export const PRODUCT_DELETE = "PRODUCT_DELETE";
+
+/*Category Product */
+export const CATEGORY_GET = "CATEGORY_GET";
+export const CATEGORIES_GET = "CATEGORIES_GET";
+export const CATEGORY_ADD = "CATEGORY_ADD";
+export const CATEGORY_UPDATE = "CATEGORY_UPDATE";
+export const CATEGORY_DELETE = "CATEGORY_DELETE";
 /** Project Status */
 export const PROJECT_STATUS_GET = "PROJECT_STATUS_GET";
 export const PROJECT_STATUSES_GET = "PROJECT_STATUSES_GET";

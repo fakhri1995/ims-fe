@@ -21,7 +21,14 @@ import CurrencyFormat from "react-currency-format";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ASSETS_GET, MODELS_GET, MODEL_ADD, PRODUCTS_GET } from "lib/features";
+import {
+  ASSETS_GET,
+  CATEGORY_ADD,
+  MODELS_GET,
+  MODEL_ADD,
+  PRODUCTS_GET,
+  PRODUCT_ADD,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import {
@@ -48,7 +55,8 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   }
   const isAllowedToSeeModels = hasPermission(PRODUCTS_GET);
   const isAllowedToSeeAssets = hasPermission(ASSETS_GET);
-  const isAllowedToAddModel = hasPermission(MODEL_ADD);
+  const isAllowedToAddProduct = hasPermission(PRODUCT_ADD);
+  const isAllowedToSeeCategory = hasPermission(CATEGORY_ADD);
   const [searchingFilterProducts, setSearchingFilterProducts] = useState("");
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -181,19 +189,27 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (model_inventory) =>
         model_inventory.inventories_count <= 0 ? (
           <div
-            className={
-              "bg-statusarchived py-1 px-4 rounded-[5px] flex justify-center"
-            }
+            className={"bg-notice py-1 px-4 rounded-[5px] flex justify-center"}
           >
-            <p className={"text-state2 text-[10px] items-center"}>Archived</p>
+            <p
+              style={{ fontWeight: "500", lineHeight: "16px" }}
+              className={"text-white text-[10px] items-center"}
+            >
+              Archived
+            </p>
           </div>
         ) : (
           <div
             className={
-              "bg-statusactive py-1 px-4 rounded-[5px] flex justify-center"
+              "bg-primary100 py-1 px-4 rounded-[5px] flex justify-center"
             }
           >
-            <p className={"text-primary100 text-[10px]"}>Active</p>
+            <p
+              style={{ fontWeight: "500", lineHeight: "16px" }}
+              className={"text-white text-[10px]"}
+            >
+              Active
+            </p>
           </div>
         ),
     },
@@ -760,7 +776,10 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
               <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center cursor-pointer">
                 <div className={"bg-primary100 py-2 px-6 rounded-sm"}>
-                  <Link href={"/admin/product-catalog/create"}>
+                  <Link
+                    href={"/admin/product-catalog/create"}
+                    disabled={!isAllowedToAddProduct}
+                  >
                     <p className={"text-white text-xs"}>Tambah Produk</p>
                   </Link>
                 </div>
