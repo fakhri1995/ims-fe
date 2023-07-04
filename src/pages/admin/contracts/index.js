@@ -77,7 +77,7 @@ import ButtonSys from "../../../components/button";
 import { SearchIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
-import { TableCustomRecruitmentCandidate } from "../../../components/table/tableCustom";
+import { TableCustomContractList } from "../../../components/table/tableCustom";
 import { createKeyPressHandler } from "../../../lib/helper";
 import {
   ArcElement,
@@ -111,7 +111,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     useAccessControl();
 
   const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
-  const isAllowedToGetRecruitments = hasPermission(RECRUITMENTS_GET);
+  const isAllowedToGetContracts = hasPermission(RECRUITMENTS_GET);
   const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
   const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
   const isAllowedToAddRecruitments = hasPermission(RECRUITMENTS_ADD);
@@ -120,7 +120,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
-  const isAllowedToGetRecruitmentStatusesList = hasPermission(
+  const isAllowedToGetContractStatusList = hasPermission(
     RECRUITMENT_STATUSES_LIST_GET
   );
 
@@ -145,10 +145,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 2. Use state
   // 2.1. Table Contract
-  // filter data
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
-  const [dataStatusList, setDataStatusList] = useState([]);
-
   // filter search & selected options
   const [searchingFilterContracts, setSearchingFilterContracts] = useState("");
   const [selectedDuration, setSelectedDuration] = useState(undefined);
@@ -156,22 +152,20 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
   // table data
-  const [loadingContracts, setLoadingContracts] = useState(true);
-  const [dataContracts, setDataContracts] = useState([]);
-  const [dataRawContracts, setDataRawContracts] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
+  // const [dataRawContracts, setDataRawContracts] = useState({
+  //   current_page: "",
+  //   data: [],
+  //   first_page_url: "",
+  //   from: null,
+  //   last_page: null,
+  //   last_page_url: "",
+  //   next_page_url: "",
+  //   path: "",
+  //   per_page: null,
+  //   prev_page_url: null,
+  //   to: null,
+  //   total: null,
+  // });
 
   const [refresh, setRefresh] = useState(-1);
   const [dataRowClicked, setDataRowClicked] = useState({});
@@ -203,100 +197,39 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 3.3. Get Contracts
-  useEffect(() => {
-    if (!isAllowedToGetRecruitments) {
-      permissionWarningNotification("Mendapatkan", "Daftar Recruitment");
-      setLoadingContracts(false);
-      return;
-    }
+  const { data: dataRawContracts, isLoading: loadingDataRawContracts } =
+    useQuery(
+      [RECRUITMENTS_GET, queryParams],
+      () =>
+        ContractService.getContracts(
+          initProps,
+          isAllowedToGetContracts,
+          queryParams,
+          searchingFilterContracts
+        ),
+      {
+        enabled: isAllowedToGetContracts,
+        refetchOnMount: false,
+        select: (response) => response.data,
+      }
+    );
 
-    const payload = QueryString.stringify(queryParams, {
-      addQueryPrefix: true,
-    });
-
-    const fetchData = async () => {
-      setLoadingContracts(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitments${payload}&keyword=${searchingFilterContracts}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawContracts(res2.data);
-            setDataContracts(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-          setLoadingContracts(false);
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-          setLoadingContracts(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetRecruitments,
-    refresh,
-    searchingFilterContracts,
-    queryParams.page,
-    queryParams.rows,
-    queryParams.sort_by,
-    queryParams.sort_type,
-    queryParams.duration,
-    queryParams.company_id,
-    queryParams.contract_status_id,
-  ]);
+  console.log({ dataRawContracts });
 
   // 3.5. Get Status List
-  useEffect(() => {
-    if (!isAllowedToGetRecruitmentStatusesList) {
-      permissionWarningNotification("Mendapatkan", "Recruitment Statuses List");
-      setLoadingStatusList(false);
-      return;
+  const { data: dataStatusList, isLoading: loadingStatusList } = useQuery(
+    [RECRUITMENT_STATUSES_LIST_GET],
+    () =>
+      ContractService.getStatusList(
+        initProps,
+        isAllowedToGetContractStatusList
+      ),
+    {
+      enabled: isAllowedToGetContractStatusList,
+      refetchOnMount: false,
+      select: (response) => response.data,
     }
-
-    setLoadingStatusList(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getRecruitmentStatusesList`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          setDataStatusList(res2.data);
-        } else {
-          notification.error({
-            message: `${res2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingStatusList(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `${err.response}`,
-          duration: 3,
-        });
-        setLoadingStatusList(false);
-      });
-  }, [isAllowedToGetRecruitmentStatusesList, refresh]);
+  );
 
   // 4. Event
   const onManageRecruitmentButtonClicked = useCallback(() => {
@@ -357,60 +290,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       });
   };
 
-  // 4.7. Delete Recruitments
-  const onOpenDeleteModal = () => {
-    setModalDelete(true);
-  };
-
-  const handleDeleteRecruitments = () => {
-    const payload = {
-      ids: selectedRecruitmentIds,
-    };
-
-    if (!isAllowedToDeleteRecruitments) {
-      permissionWarningNotification("Menghapus", "Kandidat");
-      return;
-    }
-    setLoadingDelete(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteRecruitments`, {
-      method: "DELETE",
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        setRefresh((prev) => prev + 1);
-        if (res2.success) {
-          notification.success({
-            message: res2.message,
-            duration: 3,
-          });
-          setTimeout(() => {
-            setModalDelete(false);
-            setBulk(false);
-            setSelectedRecruitmentIds([]);
-          }, 500);
-        } else {
-          notification.error({
-            message: `Gagal menghapus kandidat. ${response2.message}`,
-            duration: 3,
-          });
-        }
-        setLoadingDelete(false);
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menghapus kandidat. ${err.response}`,
-          duration: 3,
-        });
-        setLoadingDelete(false);
-        setModalDelete(false);
-      });
-  };
-
   // "Semua Kandidat" Table's columns
   const columnContracts = [
     {
@@ -438,7 +317,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           ),
         };
       },
-      sorter: isAllowedToGetRecruitments
+      sorter: isAllowedToGetContracts
         ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
         : false,
     },
@@ -451,7 +330,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.role?.name}</>,
         };
       },
-      sorter: isAllowedToGetRecruitments
+      sorter: isAllowedToGetContracts
         ? (a, b) =>
             a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
         : false,
@@ -475,7 +354,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <div>26 September 2021</div>,
         };
       },
-      sorter: isAllowedToGetRecruitments
+      sorter: isAllowedToGetContracts
         ? (a, b) =>
             a.stage?.name
               .toLowerCase()
@@ -491,7 +370,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <>{record.role?.name}</>,
         };
       },
-      sorter: isAllowedToGetRecruitments
+      sorter: isAllowedToGetContracts
         ? (a, b) =>
             a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
         : false,
@@ -513,17 +392,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   color: `${record.status?.color}`,
                 }}
               >
-                {
-                  dataStatusList.find(
-                    (status) => status.id === record.contract_status_id
-                  )?.name
-                }
+                {record?.status?.name}
               </div>
             </>
           ),
         };
       },
-      sorter: isAllowedToGetRecruitments
+      sorter: isAllowedToGetContracts
         ? (a, b) =>
             a.status?.name
               .toLowerCase()
@@ -625,7 +500,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   defaultValue={queryParams.contract_status_id}
                   allowClear
                   name={`status`}
-                  disabled={!isAllowedToGetRecruitmentStatusesList}
+                  disabled={!isAllowedToGetContractStatusList}
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
@@ -633,7 +508,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                     setSelectedStatus(value);
                   }}
                 >
-                  {dataStatusList.map((status) => (
+                  {dataStatusList?.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
                       <div className="flex items-center">
                         <div
@@ -658,7 +533,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                     setSearchingFilterContracts(e.target.value);
                   }}
                   onKeyPress={onKeyPressHandler}
-                  disabled={!isAllowedToGetRecruitments}
+                  disabled={!isAllowedToGetContracts}
                 />
               </div>
 
@@ -668,7 +543,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                 <ButtonSys
                   type={`primary`}
                   onClick={onFilterRecruitments}
-                  disabled={!isAllowedToGetRecruitments}
+                  disabled={!isAllowedToGetContracts}
                 >
                   <div className="flex flex-row space-x-2.5 w-full items-center">
                     <SearchIconSvg size={15} color={`#ffffff`} />
@@ -679,13 +554,12 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             </div>
 
             <div>
-              <TableCustomRecruitmentCandidate
-                dataSource={dataContracts}
+              <TableCustomContractList
+                rt={rt}
+                dataSource={dataRawContracts?.data}
                 columns={columnContracts}
-                loading={loadingContracts}
+                loading={loadingDataRawContracts}
                 total={dataRawContracts?.total}
-                tempIdClicked={tempIdClicked}
-                setTriggerRowClicked={setTriggerRowClicked}
                 queryParams={queryParams}
                 setQueryParams={setQueryParams}
               />
