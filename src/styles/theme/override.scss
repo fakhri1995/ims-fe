@@ -319,6 +319,15 @@ ol {
   background: inherit;
 }
 
+.tableNotes .ant-table-cell {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.tableBordered .ant-table-pagination.ant-pagination {
+  margin: 16px;
+}
+
 .slick-dots li button:before {
   color: green !important;
 }

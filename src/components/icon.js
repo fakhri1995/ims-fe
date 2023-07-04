@@ -1441,7 +1441,7 @@ const FileTextIconSvg = ({ size, color }) => {
       width={size}
       height={size}
       viewBox="0 0 24 24"
-      strokeWidth="1.0"
+      strokeWidth="1.5"
       stroke={color}
       fill="none"
       strokeLinecap="round"
@@ -2646,6 +2646,77 @@ const PaperclipIconSvg = ({ size, color }) => {
   return <Icon component={paperclipIconSvg}></Icon>;
 };
 
+const WritingIconSvg = ({ size, color }) => {
+  const writingIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-writing"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M20 17v-12c0 -1.121 -.879 -2 -2 -2s-2 .879 -2 2v12l2 2l2 -2z" />
+      <path d="M16 7h4" />
+      <path d="M18 19h-13a2 2 0 1 1 0 -4h4a2 2 0 1 0 0 -4h-3" />
+    </svg>
+  );
+  return <Icon component={writingIconSvg}></Icon>;
+};
+
+const CutIconSvg = ({ size, color }) => {
+  const cutIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-cut"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M7 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+      <path d="M17 17m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+      <path d="M9.15 14.85l8.85 -10.85" />
+      <path d="M6 4l8.85 10.85" />
+    </svg>
+  );
+  return <Icon component={cutIconSvg}></Icon>;
+};
+
+const BellRingingIconSvg = ({ size, color }) => {
+  const bellRingingIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-bell-ringing"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" />
+      <path d="M9 17v1a3 3 0 0 0 6 0v-1" />
+      <path d="M21 6.727a11.05 11.05 0 0 0 -2.794 -3.727" />
+      <path d="M3 6.727a11.05 11.05 0 0 1 2.792 -3.727" />
+    </svg>
+  );
+  return <Icon component={bellRingingIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -2756,4 +2827,7 @@ export {
   DeleteTablerIconSvg,
   AlertCircleIconSvg,
   PaperclipIconSvg,
+  WritingIconSvg,
+  CutIconSvg,
+  BellRingingIconSvg,
 };
