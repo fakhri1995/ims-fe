@@ -328,6 +328,15 @@ ol {
   margin: 16px;
 }
 
+.tableBordered .ant-table-thead th {
+  background-color: transparent;
+  border: 0;
+}
+
+.tableBordered .ant-table-tbody td {
+  border: 0;
+}
+
 .slick-dots li button:before {
   color: green !important;
 }

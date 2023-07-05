@@ -34,7 +34,7 @@ const ContractServiceSection = () => {
           <Table
             className="tableBordered border-2 rounded-md"
             dataSource={dataSource}
-            rowKey={(record) => record.id}
+            rowKey={(record) => record.key}
             // loading={loading}
             scroll={{ x: 200 }}
             pagination={{

@@ -47,18 +47,11 @@ import ModalStaffList from "components/modal/projects/modalStaffList";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  PROJECTS_GET,
-  PROJECT_DELETE,
-  PROJECT_GET,
-  PROJECT_STATUSES_GET,
-  PROJECT_TASKS_COUNT_GET,
-  PROJECT_TASKS_DEADLINE_GET,
-  PROJECT_TASKS_GET,
-  PROJECT_TASK_ADD,
-  PROJECT_TASK_DELETE,
-  PROJECT_TASK_GET,
-  PROJECT_TASK_UPDATE,
-  PROJECT_UPDATE,
+  CONTRACTS_GET,
+  CONTRACT_ADD,
+  CONTRACT_DELETE,
+  CONTRACT_GET,
+  CONTRACT_UPDATE,
 } from "lib/features";
 import {
   createKeyPressHandler,
@@ -73,6 +66,7 @@ import {
   FileTextIconSvg,
   WritingIconSvg,
 } from "../../../components/icon";
+import ContractActivitySection from "../../../components/screen/contract/detail/ContractActivitySection";
 import ContractInfoSection from "../../../components/screen/contract/detail/ContractInfoSection";
 import ContractNotesSection from "../../../components/screen/contract/detail/ContractNotesSection";
 import ContractServiceSection from "../../../components/screen/contract/detail/ContractServiceSection";
@@ -109,35 +103,11 @@ const ContractDetailIndex = ({
    */
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
-  if (isAccessControlPending) {
-    return null;
-  }
 
-  const isAllowedToGetProjects = hasPermission(PROJECTS_GET);
-  const isAllowedToGetProject = hasPermission(PROJECT_GET);
-  const isAllowedToUpdateProject = hasPermission(PROJECT_UPDATE);
-  const isAllowedToDeleteProject = hasPermission(PROJECT_DELETE);
-
-  const isAllowedToAddTask = hasPermission(PROJECT_TASK_ADD);
-  const isAllowedToGetTask = hasPermission(PROJECT_TASK_GET);
-  const isAllowedToUpdateTask = hasPermission(PROJECT_TASK_UPDATE);
-  const isAllowedToGetTasks = hasPermission(PROJECT_TASKS_GET);
-  const isAllowedToDeleteTask = hasPermission(PROJECT_TASK_DELETE);
-
-  const isAllowedToGetStatuses = hasPermission(PROJECT_STATUSES_GET);
-
-  const isAllowedToGetTaskStatusCount = hasPermission(PROJECT_TASKS_COUNT_GET);
-  const isAllowedToGetTaskDeadlineCount = hasPermission(
-    PROJECT_TASKS_DEADLINE_GET
-  );
-
-  const [queryParams, setQueryParams] = useQueryParams({
-    page: withDefault(NumberParam, 1),
-    rows: withDefault(NumberParam, 6),
-    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "deadline"),
-    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    status_ids: withDefault(StringParam, undefined),
-  });
+  const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
+  const isAllowedToGetContract = hasPermission(CONTRACT_GET);
+  const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
+  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
 
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
@@ -152,66 +122,7 @@ const ContractDetailIndex = ({
   ];
 
   // 2. useState
-  const [refresh, setRefresh] = useState(-1); // use for all data except project notes & tasks
-  const [refreshTasks, setRefreshTasks] = useState(-1);
-
-  // 2.1. Charts
-  const [loadingChart, setLoadingChart] = useState(false);
-  const [taskStatusCount, setTaskStatusCount] = useState([]);
-  const [taskTotal, setTaskTotal] = useState(0);
-
-  const [dataTaskDeadline, setDataTaskDeadline] = useState({
-    deadline: {
-      today_deadline: 0,
-      tomorrow_deadline: 0,
-      first_range_deadline: 0,
-      second_range_deadline: 0,
-      third_range_deadline: 0,
-    },
-    date: {
-      first_start_date: "",
-      first_end_date: "",
-      second_start_date: "",
-      second_end_date: "",
-      third_start_date: "",
-      third_end_date: "",
-    },
-  });
-  const [dateFilter, setDateFilter] = useState(false);
-  const [dateState, setDateState] = useState({
-    from: "",
-    to: "",
-  });
-
-  // 2.2. Table Task List
-  // filter data
-  const [loadingStatusList, setLoadingStatusList] = useState(false);
-  const [dataStatusList, setDataStatusList] = useState([]);
-
-  // filter search & selected options
-  const [searchingFilterTasks, setSearchingFilterTasks] = useState("");
-  const [selectedStatus, setSelectedStatus] = useState(undefined);
-  const [selectedSortType, setSelectedSortType] = useState(undefined);
-
-  // table data
-  const [loadingTasks, setLoadingTasks] = useState(true);
-  const [dataTasks, setDataTasks] = useState([]);
-  const [dataRawTasks, setDataRawTasks] = useState({
-    current_page: "",
-    data: [],
-    first_page_url: "",
-    from: null,
-    last_page: null,
-    last_page_url: "",
-    next_page_url: "",
-    path: "",
-    per_page: null,
-    prev_page_url: null,
-    to: null,
-    total: null,
-  });
-
-  const [dataRowClicked, setDataRowClicked] = useState({});
+  const [refresh, setRefresh] = useState(-1);
 
   // 2.3. Project Detail
   const [dataProject, setDataProject] = useState({});
@@ -231,13 +142,18 @@ const ContractDetailIndex = ({
 
   // 4. Event
 
+  // Breadcrumb Text
   const pageBreadcrumbValue = useMemo(
     () => [
-      { name: "Manajemen Proyek", hrefValue: "/projects" },
-      { name: dataProject?.name, hrefValue: `/projects/${contractId}` },
+      { name: "Kontrak", hrefValue: "/admin/contracts" },
+      { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
     ],
     [dataProject.name]
   );
+
+  if (isAccessControlPending) {
+    return null;
+  }
 
   return (
     <LayoutDashboard
@@ -309,87 +225,23 @@ const ContractDetailIndex = ({
             </Tabs.TabPane>
 
             <Tabs.TabPane tab="Aktivitas" key={2}>
-              <h4 className="mig-heading--4 mb-6">Aktivitas</h4>
-              <Timeline>
-                <Timeline.Item color="#35763B">
-                  <p className="text-mono50">Kontrak dibuat oleh [nama user]</p>
-                  <p className="mig-caption text-mono80">
-                    Senin, 17 Januari 2022 10:00 WIB
-                  </p>
-                </Timeline.Item>
-                <Timeline.Item color="#35763B">
-                  <p className="text-mono50">Kontrak dibuat oleh [nama user]</p>
-                  <p className="mig-caption text-mono80">
-                    Senin, 17 Januari 2022 10:00 WIB
-                  </p>
-                </Timeline.Item>
-              </Timeline>
+              <ContractActivitySection />
             </Tabs.TabPane>
           </Tabs>
         </section>
 
         {/* Detail Kontrak & Daftar Service */}
         <div className="md:col-span-8 ">
-          <ContractInfoSection />
+          <ContractInfoSection initProps={initProps} contractId={contractId} />
 
           <ContractServiceSection />
         </div>
       </div>
 
       {/* Modal Project */}
-      <AccessControl hasPermission={PROJECT_UPDATE}>
-        <ModalProjectUpdate
-          initProps={initProps}
-          visible={modalUpdateProject}
-          onvisible={setModalUpdateProject}
-          isAllowedToUpdateProject={isAllowedToUpdateProject}
-          isAllowedToDeleteProject={isAllowedToDeleteProject}
-          setRefresh={setRefresh}
-          dataProject={dataProject}
-          dataStatusList={dataStatusList}
-        />
-      </AccessControl>
-
-      <AccessControl hasPermission={PROJECT_GET}>
-        <ModalStaffList
-          visible={modalStaffs}
-          onvisible={setModalStaffs}
-          dataStaffs={dataProject?.project_staffs}
-          taskName={dataProject?.name}
-        />
-      </AccessControl>
-
-      {/* Modal Task */}
-      <AccessControl hasPermission={PROJECT_TASK_ADD}>
-        <ModalProjectTaskCreate
-          initProps={initProps}
-          visible={modalAddTask}
-          onvisible={setModalAddTask}
-          isAllowedToUpdateTask={isAllowedToUpdateTask}
-          isAllowedToDeleteTask={isAllowedToDeleteTask}
-          isAllowedToGetProjects={isAllowedToGetProjects}
-          isAllowedToGetProject={isAllowedToGetProject}
-          setRefreshTasks={setRefreshTasks}
-          defaultProject={dataProject}
-          taskId={currentTaskId}
-        />
-      </AccessControl>
-      <AccessControl hasPermission={PROJECT_TASK_GET}>
-        <ModalProjectTaskDetailUpdate
-          initProps={initProps}
-          visible={modalDetailTask}
-          onvisible={setModalDetailTask}
-          isAllowedToGetTask={isAllowedToGetTask}
-          isAllowedToUpdateTask={isAllowedToUpdateTask}
-          isAllowedToDeleteTask={isAllowedToDeleteTask}
-          isAllowedToGetProjects={isAllowedToGetProjects}
-          isAllowedToGetProject={isAllowedToGetProject}
-          isAllowedToGetStatuses={isAllowedToGetStatuses}
-          setRefreshTasks={setRefreshTasks}
-          taskId={currentTaskId}
-          dataStatusList={dataStatusList}
-        />
-      </AccessControl>
+      {/* <AccessControl hasPermission={PROJECT_UPDATE}>
+        <ModalProjectUpdate />
+      </AccessControl> */}
     </LayoutDashboard>
   );
 };

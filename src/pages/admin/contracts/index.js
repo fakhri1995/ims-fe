@@ -44,27 +44,11 @@ import { useAxiosClient } from "hooks/use-axios-client";
 
 import {
   COMPANY_CLIENTS_GET,
-  RECRUITMENTS_ADD,
-  RECRUITMENTS_DELETE,
-  RECRUITMENTS_GET,
-  RECRUITMENTS_UPDATE_STAGE,
-  RECRUITMENTS_UPDATE_STATUS,
-  RECRUITMENT_ACCOUNT_GENERATE,
-  RECRUITMENT_ACCOUNT_TOKEN_GET,
-  RECRUITMENT_ADD,
-  RECRUITMENT_COUNT_GET,
-  RECRUITMENT_EMAIL_SEND,
-  RECRUITMENT_EMAIL_TEMPLATES_LIST_GET,
-  RECRUITMENT_EXCEL_TEMPLATE_GET,
-  RECRUITMENT_GET,
-  RECRUITMENT_JALUR_DAFTARS_LIST_GET,
-  RECRUITMENT_PREVIEW_GET,
-  RECRUITMENT_ROLES_LIST_GET,
-  RECRUITMENT_STAGES_LIST_GET,
+  CONTRACTS_COUNT_GET,
+  CONTRACTS_GET,
+  CONTRACT_ADD,
+  CONTRACT_GET,
   RECRUITMENT_STATUSES_LIST_GET,
-  RECRUITMENT_UPDATE_STAGE,
-  RECRUITMENT_UPDATE_STATUS,
-  SIDEBAR_RECRUITMENT_SETUP,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
@@ -78,7 +62,7 @@ import { SearchIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { TableCustomContractList } from "../../../components/table/tableCustom";
-import { createKeyPressHandler } from "../../../lib/helper";
+import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -110,13 +94,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  const isAllowedToSetupRecruitment = hasPermission(SIDEBAR_RECRUITMENT_SETUP);
-  const isAllowedToGetContracts = hasPermission(RECRUITMENTS_GET);
-  const isAllowedToGetRecruitment = hasPermission(RECRUITMENT_GET);
-  const isAllowedToAddRecruitment = hasPermission(RECRUITMENT_ADD);
-  const isAllowedToAddRecruitments = hasPermission(RECRUITMENTS_ADD);
-  const isAllowedToDeleteRecruitments = hasPermission(RECRUITMENTS_DELETE);
-  const isAllowedToGetContractCount = hasPermission(RECRUITMENT_COUNT_GET);
+  const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
+  const isAllowedToGetContract = hasPermission(CONTRACT_GET);
+  const isAllowedToAddContract = hasPermission(CONTRACT_ADD);
+  const isAllowedToGetContractCount = hasPermission(CONTRACTS_COUNT_GET);
 
   const isAllowedToGetCompanyClients = hasPermission(COMPANY_CLIENTS_GET);
 
@@ -175,7 +156,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect & UseQuery
   // 3.1. Get Contract Count
   const { data: dataCount, isLoading: loadingDataCount } = useQuery(
-    [RECRUITMENT_COUNT_GET],
+    [CONTRACTS_COUNT_GET],
     () =>
       ContractService.getCountContract(initProps, isAllowedToGetContractCount),
     {
@@ -199,7 +180,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.3. Get Contracts
   const { data: dataRawContracts, isLoading: loadingDataRawContracts } =
     useQuery(
-      [RECRUITMENTS_GET, queryParams],
+      [CONTRACTS_GET, queryParams],
       () =>
         ContractService.getContracts(
           initProps,
@@ -252,7 +233,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 4.2. Create Recruitments (from excel import)
   const handleCreateRecruitments = (data) => {
-    if (!isAllowedToAddRecruitments) {
+    if (!isAllowedToAddContract) {
       permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
       return;
     }
@@ -307,64 +288,56 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       },
     },
     {
-      title: "Nama Kontrak",
-      key: "name",
-      dataIndex: "name",
+      title: "Nomor Kontrak",
+      key: "contract_number",
+      dataIndex: "contract_number",
       render: (text, record, index) => {
         return {
-          children: (
-            <div className="xl:w-40">{record.name ? record.name : ""}</div>
-          ),
-        };
-      },
-      sorter: isAllowedToGetContracts
-        ? (a, b) => a.name?.toLowerCase() > b.name?.toLowerCase()
-        : false,
-    },
-    {
-      title: "Judul Kontrak",
-      key: "role",
-      dataIndex: "role",
-      render: (text, record, index) => {
-        return {
-          children: <>{record.role?.name}</>,
+          children: <div className="xl:w-40">{text || "-"}</div>,
         };
       },
       sorter: isAllowedToGetContracts
         ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+            a.contract_number?.toLowerCase() > b.contract_number?.toLowerCase()
+        : false,
+    },
+    {
+      title: "Judul Kontrak",
+      key: "title",
+      dataIndex: "title",
+      render: (text, record, index) => {
+        return {
+          children: <>{record.title || "-"}</>,
+        };
+      },
+      sorter: isAllowedToGetContracts
+        ? (a, b) => a.title?.toLowerCase().localeCompare(b.title?.toLowerCase())
         : false,
     },
     {
       title: "Nama Klien",
-      key: "stage",
-      dataIndex: "stage",
+      key: "client_name",
+      dataIndex: "client_name",
       render: (text, record, index) => {
         return {
-          children: <div>PT Bukopin</div>,
+          children: <div>{record.client_name || "_"}</div>,
         };
       },
     },
     {
       title: "Tanggal Berlaku",
-      key: "stage",
-      dataIndex: "stage",
+      key: "initial_date",
+      dataIndex: "initial_date",
       render: (text, record, index) => {
         return {
-          children: <div>26 September 2021</div>,
+          children: <div>{momentFormatDate(text)}</div>,
         };
       },
-      sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.stage?.name
-              .toLowerCase()
-              .localeCompare(b.stage?.name.toLowerCase())
-        : false,
     },
     {
       title: "Sisa Durasi",
-      key: "role",
-      dataIndex: "role",
+      key: "duration_left",
+      dataIndex: "duration_left",
       render: (text, record, index) => {
         return {
           children: <>{record.role?.name}</>,
@@ -407,9 +380,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
   ];
 
-  // if (isAccessControlPending) {
-  //   return null;
-  // }
+  if (isAccessControlPending) {
+    return null;
+  }
 
   return (
     <Layout
@@ -440,7 +413,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             title="Buat Kontrak"
             subtitle="Jumat, 07 Januari 2021"
             // onButtonClicked={onManageRecruitmentButtonClicked}
-            disabled={!isAllowedToSetupRecruitment}
+            disabled={!isAllowedToAddContract}
           />
         </div>
         <div className="md:px-5">
