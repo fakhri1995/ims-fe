@@ -169,17 +169,11 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     },
     {
       title: "Jumlah Item",
-      dataIndex: "model_inventory",
-      sorter: (a, b) =>
-        a.model_inventory.inventories_count -
-        b.model_inventory.inventories_count,
-      render: (model_inventory) => (
+      dataIndex: "inventories_count",
+      sorter: (a, b) => a.inventories_count - b.inventories_count,
+      render: (inventories_count) => (
         <div>
-          <p>
-            {model_inventory.inventories_count
-              ? model_inventory.inventories_count
-              : "-"}
-          </p>
+          <p>{inventories_count ? inventories_count : "-"}</p>
         </div>
       ),
     },
@@ -220,6 +214,12 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     setShowFormKategori(true);
     setCategoryId(id);
     setCategoryName(nama);
+  };
+
+  const onChangeProductSearch = (e) => {
+    setQueryParams({
+      keyword: e.target.value === "" ? undefined : e.target.value,
+    });
   };
 
   const columnsTable2 = [
@@ -405,9 +405,9 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       addQueryPrefix: true,
     });
 
-    setpraloading(true);
+    // setpraloading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventories${payload}&keyword=${searchingFilterProducts}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventories${payload}`,
       {
         method: `GET`,
         headers: {
@@ -435,6 +435,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.sku,
     queryParams.category_id,
     queryParams.is_active,
+    queryParams.keyword,
     statusSearch == true,
   ]);
 
@@ -792,11 +793,10 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="col-span-4 mr-2">
                   <Input
                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                    defaultValue={searchingFilterProducts}
+                    defaultValue={queryParams.keyword}
                     placeholder="Cari produk dengan kata kunci"
-                    onChange={(e) => {
-                      setSearchingFilterProducts(e.target.value);
-                    }}
+                    onChange={onChangeProductSearch}
+                    onKeyPress={onKeyPressHandler}
                     allowClear
                     disabled={!isAllowedToSeeModels}
                   ></Input>

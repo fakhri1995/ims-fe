@@ -129,379 +129,6 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
       total: 0,
     },
   });
-  const [displaydata, setdisplaydata] = useState([]);
-  const columnsTable = [
-    {
-      title: "Nama",
-      dataIndex: ["name", "count"],
-      sorter: (a, b) => a.name.length - b.name.length,
-      render: (text, row) =>
-        row["count"] == 0 ? (
-          <div className={"flex"}>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
-            <div className="py-1 px-4 bg-outofstock ml-[10px] rounded-[5px]">
-              <p className={"text-warning text-[10px]"}>Out of stock</p>
-            </div>
-          </div>
-        ) : (
-          <div>
-            <p className={"text-[14px] text-warning"}>{row["name"]}</p>
-          </div>
-        ),
-    },
-    {
-      title: "SKU",
-      dataIndex: "sku",
-      render: (skuValue) => (!!skuValue ? skuValue : "-"),
-      sorter: true,
-    },
-    {
-      title: "Asset Type",
-      dataIndex: "asset_name",
-    },
-    {
-      title: "Jumlah Item",
-      dataIndex: "count",
-      sorter: (a, b) => a.count - b.count,
-    },
-    {
-      title: "Status",
-      dataIndex: "status_item",
-      render: (status_item) => (
-        <div className={"flex"}>
-          <div className={""}>
-            {status_item.pemakaian == "pakai_sewa" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <PakaiSewaIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Pakai Sewa
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini sedang digunakan
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <PakaiSewaIconSvg />
-                </div>
-              </Tooltip>
-            ) : status_item.pemakaian == "pakai_internal" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <PakaiInternalIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Pakai Internal
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini sedang dipakai oleh internal.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <PakaiInternalIconSvg />
-                </div>
-              </Tooltip>
-            ) : status_item.pemakaian == "tesedia" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <TersediaIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Tersedia
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini tersedia
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <TersediaIconSvg />
-                </div>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <ReplacementIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Replacement
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini sebagai pengganti
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <ReplacementIconSvg />
-                </div>
-              </Tooltip>
-            )}
-          </div>
-          <div className={"ml-2.5"}>
-            {status_item.kondisi_barang == "bagus" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <div
-                        className={
-                          "w-2 h-2 bg-secondary100 rounded-full self-center"
-                        }
-                      />
-                      <div className={"ml-[14px]"}>
-                        <p
-                          className={"text-xs text-secondary100 font-semibold"}
-                        >
-                          Bagus
-                        </p>
-                      </div>
-                    </div>
-                    <p className={"text-mono30 text-[10px] mt-1 ml-[24px]"}>
-                      Kondisi barang ini bagus.
-                    </p>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-secondary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <div className={"w-2 h-2 bg-secondary100 rounded-full"} />
-                </div>
-              </Tooltip>
-            ) : status_item.kondisi_barang == "abu" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <div
-                        className={"w-2 h-2 bg-closed rounded-full self-center"}
-                      />
-                      <div className={"ml-[14px]"}>
-                        <p className={"text-xs text-mono50 font-semibold"}>
-                          Abu-abu
-                        </p>
-                      </div>
-                    </div>
-                    <p className={"text-mono30 text-[10px] mt-1 ml-[24px]"}>
-                      Kondisi barang ini abu-abu.
-                    </p>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-mono50 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <div className={"w-2 h-2 bg-closed rounded-full"} />
-                </div>
-              </Tooltip>
-            ) : (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <div
-                        className={
-                          "w-2 h-2 bg-warning rounded-full self-center"
-                        }
-                      />
-                      <div className={"ml-[14px]"}>
-                        <p className={"text-xs text-mono30 font-semibold"}>
-                          Buruk
-                        </p>
-                      </div>
-                    </div>
-                    <p className={"text-mono30 text-[10px] mt-1 ml-[26px]"}>
-                      Kondisi barang ini buruk.
-                    </p>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-state1 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <div className={"w-2 h-2 bg-warning rounded-full"} />
-                </div>
-              </Tooltip>
-            )}
-          </div>
-          <div className={"ml-2.5"}>
-            {status_item.status_sewa == "periode" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <PeriodeIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p className={"text-xs text-primary100 font-semibold"}>
-                          Periode
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini masih dalam periode sewa
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-primary100 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <PeriodeIconSvg />
-                </div>
-              </Tooltip>
-            ) : status_item.status_sewa == "luar_periode" ? (
-              <Tooltip
-                color="white"
-                title={
-                  <div
-                    className={"p-2 bg-white rounded-[5px]"}
-                    style={{
-                      boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
-                    }}
-                  >
-                    <div className={"flex"}>
-                      <LuarPeriodeIconSvg size={16} />
-                      <div className={"ml-2"}>
-                        <p className={"text-xs text-state2 font-semibold"}>
-                          Luar Periode
-                        </p>
-                        <p className={"text-mono30 text-[10px] mt-1"}>
-                          Barang ini diluar periode waktu sewa.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                }
-                placement="bottom"
-              >
-                <div
-                  className={
-                    "border-state2 flex justify-center border border-solid rounded-[5px] px-4 py-2"
-                  }
-                >
-                  <LuarPeriodeIconSvg />
-                </div>
-              </Tooltip>
-            ) : (
-              <p></p>
-            )}
-          </div>
-        </div>
-      ),
-    },
-  ];
-  const [rowstate, setrowstate] = useState(0);
   const [modalTambahProduk, setModalTambahProduk] = useState(false);
   const [modelId, setModelId] = useState(null);
   const [countItem, setCountItem] = useState("");
@@ -679,7 +306,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
         price_option: perPrice,
         category_id: categoryChoose,
         is_active: 1,
-        model_id: null,
+        model_id: 0,
       };
     }
 
@@ -748,7 +375,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
               <div className="flex items-center">
                 <div className="flex">
                   <h3 className="font-semibold py-2 text-2xl mb-0 mr-6">
-                    Form Tambah Produk
+                    Form {productId ? "Ubah" : "Tambah"} Produk
                   </h3>
                 </div>
               </div>
@@ -768,11 +395,13 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                   </div>
                   <div className={"mt-6"}>
                     <p className={"text-sm text-mono30"}>
-                      Apakah Anda yakin ingin menambah data produk ?
+                      Apakah Anda yakin ingin{" "}
+                      {productId ? "mengubah " : "menambah "} data produk ?
                     </p>
                   </div>
                   <div className={"mt-14 flex justify-between"}>
                     <div
+                      onClick={() => setModalTambahProduk(false)}
                       className={
                         "border border-primary100 py-2 px-6 cursor-pointer rounded-[5px]"
                       }
@@ -781,7 +410,7 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                     </div>
                     <div
                       className={
-                        "bg-state1 py-2 px-6 cursor-pointer rounded-[5px]"
+                        "bg-open py-2 px-6 cursor-pointer rounded-[5px]"
                       }
                     >
                       <div
@@ -790,7 +419,8 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                       >
                         <PlusIconSvg size={16} color={"white"} />
                         <p className={"ml-2 text-white text-xs self-center"}>
-                          Ya, saya yakin menambah data produk
+                          Ya, saya yakin {productId ? "mengubah " : "menambah "}{" "}
+                          data produk
                         </p>
                       </div>
                     </div>
@@ -820,7 +450,9 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                   // disabled={!isAllowedToDeleteItem}
                   onClick={instanceForm.submit}
                 >
-                  <p className={"text-white text-xs"}>Tambah</p>
+                  <p className={"text-white text-xs"}>
+                    {productId ? "Simpan" : "Tambah"}
+                  </p>
                 </div>
               </div>
             </div>
