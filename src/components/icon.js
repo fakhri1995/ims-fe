@@ -725,7 +725,7 @@ const LuarPeriodeIconSvg = ({ size, color }) => {
       height={size ? size : "8"}
       viewBox="0 0 24 24"
       strokeWidth="1.5"
-      stroke="#FFFFFF"
+      stroke={color ? color : "#FFFFFF"}
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"

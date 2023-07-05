@@ -555,8 +555,8 @@ const ProductCatalogDetail = ({
                   boxShadow: "2px 4px 20px 5px rgba(0, 0, 0, 0.15)",
                 }}
               >
-                <div className={"flex bg-warning"}>
-                  <LuarPeriodeIconSvg size={16} />
+                <div className={"flex bg-white"}>
+                  <LuarPeriodeIconSvg size={16} color={"#BF4A40"} />
                   <div className={"ml-2"}>
                     <p className={"text-xs text-state2 font-semibold"}>
                       Luar Periode
