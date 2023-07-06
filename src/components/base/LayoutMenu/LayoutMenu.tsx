@@ -42,6 +42,8 @@ import {
   SIDEBAR_CMS_PRODUCT,
   SIDEBAR_COMPANY,
   SIDEBAR_COMPANY_PROFILE,
+  SIDEBAR_CONTRACT,
+  SIDEBAR_CONTRACT_LIST,
   SIDEBAR_DASHBOARD,
   SIDEBAR_EMPLOYEE,
   SIDEBAR_EMPLOYEE_LIST,
@@ -429,6 +431,21 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
           )}
         </SubMenu>
       )}
+
+      {/* Contract Management */}
+      {/* {hasPermission(SIDEBAR_CONTRACT) && (
+        <SubMenu
+          title="Kontrak"
+          key="contract"
+          icon={<ResumeIconSvg className="text-[#597e8d]" />}
+        >
+          {hasPermission(SIDEBAR_CONTRACT_LIST) && (
+            <Menu.Item key="contract-list">
+              <Link href="/admin/contracts">Kontrak</Link>
+            </Menu.Item>
+          )}
+        </SubMenu>
+      )} */}
     </>
   );
 
