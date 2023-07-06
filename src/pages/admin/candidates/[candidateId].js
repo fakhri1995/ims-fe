@@ -33,6 +33,7 @@ import {
 import AssessmentResultCard from "../../../components/cards/resume/AssessmentResultCard";
 import BasicInfoCard from "../../../components/cards/resume/BasicInfoCard";
 import SkillCard from "../../../components/cards/resume/SkillCard";
+import SummaryCard from "../../../components/cards/resume/SummaryCard";
 import AcademicCard from "../../../components/cards/resume/academic/AcademicCard";
 import AchievementCard from "../../../components/cards/resume/achievement/AchievementCard";
 import CertificationCard from "../../../components/cards/resume/certification/CertificationCard";
@@ -502,6 +503,21 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           loadingUpdate={loadingUpdate}
         />
 
+        <SummaryCard
+          dataDisplay={dataDisplay}
+          dataUpdateBasic={dataUpdateBasic}
+          setDataUpdateBasic={setDataUpdateBasic}
+          handleUpdate={handleUpdateSection}
+          handleDelete={handleDeleteResume}
+          praloading={praloading}
+          assessmentRoles={assessmentRoles}
+          isAllowedToDeleteCandidate={isAllowedToDeleteCandidate}
+          isAllowedToGetAssessmentList={isAllowedToGetAssessmentList}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          loadingDelete={loadingDelete}
+          loadingUpdate={loadingUpdate}
+        />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
@@ -678,7 +694,43 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             </Text>
           </View>
         </View>
-
+        {/*Summary Section */}
+        <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
+          <Text style={styles.sectionHeader}>SUMMARY</Text>
+          <View style={{}}>
+            <Html
+              // hyphenationCallback={e => breakText(e)}
+              style={styles.desc}
+              stylesheet={{
+                p: {
+                  margin: 0,
+                  marginBottom: 2,
+                  color: "#808080",
+                  lineHeight: 1.5,
+                  marginRight: 10,
+                },
+                ul: {
+                  margin: 0,
+                  paddingLeft: 0,
+                  color: "#808080",
+                  lineHeight: 1.5,
+                  marginRight: 10,
+                },
+                ".ql-indent-1": { marginLeft: 30 },
+                ".ql-indent-2": { marginLeft: 40 },
+                ".ql-indent-3": { marginLeft: 50 },
+              }}
+            >
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
+              efficitur purus lacus, eget volutpat nisl porta eu. Maecenas
+              hendrerit justo at vehicula blandit. Quisque condimentum elit
+              mauris, ut facilisis sem efficitur tincidunt. Sed a tincidunt
+              augue. Nam dictum, elit eget commodo placerat, quam mauris rutrum
+              quam, a iaculis tortor nisi quis nunc. Nullam sollicitudin euismod
+              turpis at dapibus. Donec at eleifend magna, sed pulvinar eros.
+            </Html>
+          </View>
+        </View>
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume.experiences?.length !== 0 && (

@@ -627,6 +627,12 @@ const ProductCreate = ({ initProps, dataProfile, sidemenu }) => {
                         <p className={"text-mono30 text-xs"}>Pilih Model</p>
                         <Select
                           size="large"
+                          showSearch
+                          filterOption={(input, option) =>
+                            option.children
+                              .toLowerCase()
+                              .indexOf(input.toLowerCase()) >= 0
+                          }
                           value={modelId}
                           onChange={(value) => changeModel(value)}
                           className={"w-full mt-4"}
