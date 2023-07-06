@@ -373,6 +373,17 @@ export const PROJECT_NOTE_DELETE = "PROJECT_NOTE_DELETE";
 export const PROJECT_LOGS_GET = "PROJECT_LOGS_GET";
 
 /**
+ * Daftar feature untuk Contract Management.
+ * @see
+ */
+
+export const CONTRACTS_GET = "CONTRACTS_GET";
+export const CONTRACT_GET = "CONTRACT_GET";
+export const CONTRACT_ADD = "CONTRACT_ADD";
+export const CONTRACT_UPDATE = "CONTRACT_UPDATE";
+export const CONTRACT_DELETE = "CONTRACT_DELETE";
+
+/**
  * Daftar feature untuk User Management.
  *
  * @see https://mighty-mig.atlassian.net/wiki/spaces/MIGHTY/pages/72187905/User+Management

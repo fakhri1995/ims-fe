@@ -8,6 +8,7 @@ import SquarePlusIcon from "assets/vectors/icon-square-plus.svg";
 
 export interface IAddNewFormButton {
   title: string;
+  subtitle: string;
   disabled: boolean;
   icon: any;
 
@@ -15,7 +16,7 @@ export interface IAddNewFormButton {
 }
 
 export const AddNewFormButton: FC<IAddNewFormButton> = memo(
-  ({ title, icon, disabled, onButtonClicked }) => {
+  ({ title, subtitle, icon, disabled, onButtonClicked }) => {
     return (
       <button
         className="mig-platform w-full flex items-center transition-colors text-white relative bg-primary100 disabled:bg-gray-200 hover:bg-primary75 overflow-hidden"
@@ -28,6 +29,9 @@ export const AddNewFormButton: FC<IAddNewFormButton> = memo(
 
         <div className="flex flex-col text-left">
           <span className="font-bold text-sm">{title}</span>
+          {subtitle && (
+            <span className="mig-caption opacity-50">{subtitle}</span>
+          )}
         </div>
 
         <BlobUpperIcon className="absolute -right-32 -bottom-4" />
