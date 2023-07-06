@@ -759,7 +759,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               </p>
               <p className={"text-sm text-mono30 mt-2"}>
                 <span className={"font-semibold"}>
-                  {displayentiredata.data.total}{" "}
+                  {displayentiredata.data ? displayentiredata.data.total : "0 "}{" "}
                 </span>
                 Produk ditampilkan
               </p>
@@ -857,7 +857,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               showSizeChanger: true,
               current: queryParams.page,
               pageSize: queryParams.rows,
-              total: displayentiredata.data.total,
+              total: displayentiredata.data ? displayentiredata.data.total : 0,
             }}
             scroll={{ x: 200 }}
             dataSource={displaydata}
