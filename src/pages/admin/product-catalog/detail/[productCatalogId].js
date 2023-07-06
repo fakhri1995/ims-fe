@@ -295,7 +295,7 @@ const ProductCatalogDetail = ({
                 }}
               >
                 <div className={"flex"}>
-                  <ReplacementIconSvg size={16} color={"#FFFFFF"} />
+                  <ReplacementIconSvg size={16} color={"#00589F"} />
                   <div className={"ml-2"}>
                     <p className={"text-xs text-secondary100 font-semibold"}>
                       Replacement
