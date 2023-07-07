@@ -22,6 +22,15 @@ import { ContractService } from "apis/contract";
 import { momentFormatDate } from "../../../../lib/helper";
 import { FileTextIconSvg } from "../../../icon";
 
+// enum for extras detail
+const extrasType = {
+  TEXT: "1",
+  LIST: "2",
+  FILE: "3",
+};
+
+export const { TEXT, LIST, FILE } = extrasType;
+
 const ContractInfoSection = ({ initProps, contractId }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
@@ -49,15 +58,6 @@ const ContractInfoSection = ({ initProps, contractId }) => {
   if (isAccessControlPending) {
     return null;
   }
-
-  // enum for extras detail
-  const extrasType = {
-    TEXT: "1",
-    LIST: "2",
-    FILE: "3",
-  };
-
-  const { TEXT, LIST, FILE } = extrasType;
 
   const getExtrasDetail = (type, value) => {
     switch (type) {

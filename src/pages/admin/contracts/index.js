@@ -132,6 +132,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
+  const [loadingAdd, setLoadingAdd] = useState(false);
   // table data
   // const [dataRawContracts, setDataRawContracts] = useState({
   //   current_page: "",
@@ -213,8 +214,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4. Event
-  const onManageRecruitmentButtonClicked = useCallback(() => {
-    rt.push("/admin/recruitment/role");
+  const onAddContract = useCallback(() => {
+    handleAddContract();
   }, []);
 
   // 4.1. Filter Table
@@ -232,46 +233,44 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4.2. Create Recruitments (from excel import)
-  const handleCreateRecruitments = (data) => {
+  const handleAddContract = () => {
     if (!isAllowedToAddContract) {
-      permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
+      permissionWarningNotification("Menambah", "Kontrak");
       return;
     }
-    setLoadingCreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitments`, {
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
         if (response2.success) {
-          notification.success({
-            message: `Kandidat berhasil ditambahkan.`,
-            duration: 3,
-          });
+          setTimeout(() => {
+            rt.push(
+              `/admin/contracts/create?id=${response2.data?.id}&prevpath=add`
+            );
+          }, 500);
         } else {
           notification.error({
-            message: `Gagal menambahkan kandidat. ${response2.message}`,
+            message: `Gagal menambahkan kontrak. ${response2.message}`,
             duration: 3,
           });
         }
-        setLoadingCreate(false);
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambahkan kandidat. ${err.response}`,
+          message: `Gagal menambahkan kontrak. ${err.response}`,
           duration: 3,
         });
-        setLoadingCreate(false);
-      });
+      })
+      .finally(() => setLoadingAdd(false));
   };
 
-  // "Semua Kandidat" Table's columns
+  // Kontrak Table's columns
   const columnContracts = [
     {
       title: "No",
@@ -412,8 +411,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           <AddNewFormButton
             title="Buat Kontrak"
             subtitle="Jumat, 07 Januari 2021"
-            // onButtonClicked={onManageRecruitmentButtonClicked}
-            disabled={!isAllowedToAddContract}
+            onButtonClicked={onAddContract}
+            disabled={!isAllowedToAddContract || loadingAdd}
           />
         </div>
         <div className="md:px-5">

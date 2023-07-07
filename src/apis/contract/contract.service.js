@@ -136,6 +136,7 @@ export class ContractService {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
+          console.log({ res2 });
           return res2;
         } else {
           notification.error({
@@ -150,8 +151,6 @@ export class ContractService {
           duration: 3,
         });
       });
-
-    setTimeout(() => apiRes, 500);
 
     return apiRes;
   };
