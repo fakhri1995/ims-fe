@@ -4,7 +4,7 @@ import {
   DownloadOutlined,
 } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Form, Input, Select, Spin } from "antd";
+import { Form, Input, Select, Spin, Switch } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -14,12 +14,13 @@ import { useEffect } from "react";
 
 import { AccessControl } from "components/features/AccessControl";
 
-import { RESUME_DELETE } from "lib/features";
+import { RESUME_DELETE, RESUME_GET } from "lib/features";
 
 import { ResumePDFTemplate } from "../../../pages/admin/candidates/[candidateId]";
 import ButtonSys from "../../button";
 import {
   CheckIconSvg,
+  DownloadIcon2Svg,
   EditIconSvg,
   EmailIconSvg,
   InfoCircleIconSvg,
@@ -27,6 +28,7 @@ import {
   OneUserIconSvg,
   PhoneIconSvg,
 } from "../../icon";
+import ModalCore from "../../modal/modalCore";
 import { ModalHapus2 } from "../../modal/modalCustom";
 
 const BasicInfoCard = ({
@@ -49,7 +51,8 @@ const BasicInfoCard = ({
   const [instanceForm] = Form.useForm();
   const [isShowInput, setIsShowInput] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
-
+  const [openDownloadModal, setOpenDownloadModal] = useState(false);
+  const [showLogoStatus, setShowLogoStatus] = useState(true);
   const onChangeInput = (e) => {
     setDataUpdateBasic({
       ...dataUpdateBasic,
@@ -297,17 +300,15 @@ const BasicInfoCard = ({
             </ButtonSys>
           )}
           {!isGuest && isOnClient && (
-            <PDFDownloadLink
-              document={<ResumePDFTemplate dataResume={dataDisplay} />}
-              fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
+            <ButtonSys
+              type={"default"}
+              onClick={() => setOpenDownloadModal(true)}
             >
-              <ButtonSys type={"default"}>
-                <div className="flex flex-row space-x-2 items-center">
-                  <DownloadOutlined />
-                  <p className="whitespace-nowrap">Download Resume</p>
-                </div>
-              </ButtonSys>
-            </PDFDownloadLink>
+              <div className="flex flex-row space-x-2 items-center">
+                <DownloadOutlined />
+                <p className="whitespace-nowrap">Download Resume</p>
+              </div>
+            </ButtonSys>
           )}
           {isGuest && (
             <ButtonSys
@@ -361,7 +362,61 @@ const BasicInfoCard = ({
           </div>
         </div>
       )}
-
+      <AccessControl hasPermission={RESUME_GET}>
+        <ModalCore
+          title={"Unduh Resume"}
+          visible={openDownloadModal}
+          onCancel={() => setOpenDownloadModal(false)}
+          footer={<></>}
+        >
+          <div className="flex flex-col space-y-5 ml-1">
+            <p className="">
+              Klik untuk mengunduh resume kandidat dengan nama&nbsp;
+              <strong>{dataDisplay.name}</strong>
+            </p>
+            <div className={"mt-6 flex"}>
+              <Switch
+                checked={showLogoStatus}
+                onChange={() => setShowLogoStatus(!showLogoStatus)}
+              />
+              <p className={"ml-4 text-mono30 text-xs self-center"}>
+                {showLogoStatus
+                  ? "Menampilkan Logo Migsys"
+                  : "Tidak Menampilkan Logo Migsys"}
+              </p>
+            </div>
+            <div className={"flex self-end"}>
+              <p
+                onClick={() => setOpenDownloadModal(false)}
+                className={
+                  "flex items-center mr-8 text-xs text-mono50 cursor-pointer"
+                }
+              >
+                Batalkan
+              </p>
+              <PDFDownloadLink
+                document={
+                  <ResumePDFTemplate
+                    dataResume={dataDisplay}
+                    logoStatus={showLogoStatus}
+                  />
+                }
+                fileName={`CV-${dataDisplay?.assessment?.name}-${dataDisplay?.name}.pdf`}
+              >
+                <ButtonSys
+                  type={"primary"}
+                  // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                >
+                  <div className={"flex flex-row"}>
+                    <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                    <p className={"ml-2 text-xs text-white"}>Unduh Resume</p>
+                  </div>
+                </ButtonSys>
+              </PDFDownloadLink>
+            </div>
+          </div>
+        </ModalCore>
+      </AccessControl>
       <AccessControl hasPermission={RESUME_DELETE}>
         <ModalHapus2
           title={`Peringatan`}
