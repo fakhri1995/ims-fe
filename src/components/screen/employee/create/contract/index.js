@@ -584,6 +584,7 @@ const EmployeeContractForm = ({
           <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
           <ButtonSys
             type={`defaultInput`}
+            beforeUpload={beforeUploadDocument}
             onChangeGambar={onUploadChange}
             inputAccept=".pdf"
             disabled={uploadDocumentLoading}

@@ -340,9 +340,10 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        setDataContract((prev) => ({ ...prev, id: response2.data.id }));
-        if (!response2.success) {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          setDataContract((prev) => ({ ...prev, id: response2?.data?.id }));
+        } else {
           notification.error({
             message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
             duration: 3,
@@ -682,9 +683,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   type={"default"}
                   className="flex flex-row"
                   onClick={() => {
+                    handleAutoSaveOnTabChange();
                     let numTab = Number(currentTab);
                     currentTab > 1 && setCurrentTab(String(numTab - 1));
-                    handleAutoSaveOnTabChange();
                   }}
                 >
                   <LeftOutlined />
@@ -772,13 +773,14 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             tabBarGutter={60}
             className="px-1"
             activeKey={currentTab}
-            onTabClick={(key) => setCurrentTab(key)}
-            onChange={(key) => {
-              // add employee contract if there's no contract yet
+            onTabClick={(key) => {
+              setCurrentTab(key);
               handleAutoSaveOnTabChange();
-              key == "2" &&
-                dataEmployee.contracts?.length === 0 &&
+
+              // add employee contract if there's no contract yet
+              if (key == "2" && !dataEmployee.contracts?.length) {
                 handleAddEmployeeContract();
+              }
             }}
           >
             <Tabs.TabPane tab="Profil Karyawan" key="1">
