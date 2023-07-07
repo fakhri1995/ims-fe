@@ -36,9 +36,10 @@ const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 const SummaryCard = ({
   dataDisplay,
   setDataDisplay,
-  handleUpdate,
-  dataUpdateBasic,
-  setDataUpdateBasic,
+  handleAddSection,
+  handleUpdateSection,
+  dataSummary,
+  setDataSummary,
   praloading,
   assessmentRoles,
   handleDelete,
@@ -54,7 +55,6 @@ const SummaryCard = ({
   const [isShowInput, setIsShowInput] = useState(false);
   const [modalDelete, setModalDelete] = useState(false);
   const [isAddDescription, setIsAddDescription] = useState(false);
-  const [dataSummary, setDataSummary] = useState("");
   const onChangeInput = (e) => {
     setDataUpdateBasic({
       ...dataUpdateBasic,
@@ -86,7 +86,11 @@ const SummaryCard = ({
 
   // console.log(dataUpdateBasic);
   // console.log(dataDisplay)
-
+  const clearDataUpdate = () => {
+    setDataSummary({
+      description: "",
+    });
+  };
   return (
     <div className="col-span-2 shadow-lg rounded-md bg-white p-5 mt-6">
       <div className="flex flex-row items-center justify-between mb-4 ">
@@ -104,24 +108,29 @@ const SummaryCard = ({
           <div className={"w-11/12"}>
             <ReactQuill
               theme="snow"
-              value={dataSummary}
+              value={dataSummary.description}
               modules={modules}
               formats={formats}
               className="h-44 pb-10"
               onChange={(value) => {
-                setDataSummary(value);
+                setDataSummary({
+                  ...dataSummary,
+                  description: value,
+                });
               }}
             />
           </div>
           <div className={"w-1/12 justify-center space-x-4"}>
             <button
-              //   onClick={() => {
-              //     if (dataUpdateExp.id) {
-              //       handleUpdateSection("experience", dataUpdateExp);
-              //     }
-              //     setIsUpdate(false);
-              //     clearDataUpdate();
-              //   }}
+              onClick={() => {
+                if (dataSummary.id) {
+                  handleUpdateSection("summary", dataSummary);
+                } else {
+                  handleAddSection("summary", dataSummary);
+                }
+                setIsAddDescription(false);
+                clearDataUpdate();
+              }}
               className="bg-transparent"
             >
               <CheckIconSvg size={24} color={"#35763B"} />
@@ -143,6 +152,10 @@ const SummaryCard = ({
               type={"dashed"}
               onClick={() => {
                 // clearDataUpdate();
+                setDataSummary({
+                  id: dataDisplay.summaries.id,
+                  description: dataDisplay.summaries.description,
+                });
                 setIsAddDescription(true);
               }}
             >

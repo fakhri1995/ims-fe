@@ -1,6 +1,6 @@
 import { DownloadOutlined } from "@ant-design/icons";
 import { PDFDownloadLink } from "@react-pdf/renderer";
-import { Input, Modal, Select, Spin, notification } from "antd";
+import { Input, Modal, Select, Spin, Switch, notification } from "antd";
 import {
   NumberParam,
   StringParam,
@@ -26,6 +26,7 @@ import {
 
 import ButtonSys from "../../../components/button";
 import { ChartDoughnut } from "../../../components/chart/chartCustom";
+import { DownloadIcon2Svg, DownloadIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import ModalCore from "../../../components/modal/modalCore";
@@ -91,6 +92,7 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [loadingResumeCountData, setLoadingResumeCountData] = useState(true);
   const [dataCountResumes, setDataCountResumes] = useState(0);
   const [topCandidateCount, setTopCandidateCount] = useState([]);
+  const [showLogoStatus, setShowLogoStatus] = useState(true);
 
   // 2.2. Table Semua Kandidat
   const [dataTable, setDataTable] = useState([]);
@@ -522,22 +524,53 @@ const CandidatesIndex = ({ initProps, dataProfile, sidemenu }) => {
         >
           <Spin spinning={loadingResumeData}>
             {isOnClient && (
-              <div className="flex flex-col items-center space-y-5">
+              <div className="flex flex-col space-y-5 ml-1">
                 <p className="">
                   Klik untuk mengunduh resume kandidat dengan nama&nbsp;
                   <strong>{dataResume.name}</strong>
                 </p>
-                <PDFDownloadLink
-                  document={<ResumePDFTemplate dataResume={dataResume} />}
-                  fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
-                >
-                  <ButtonSys
-                    type={"default"}
-                    // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                <div className={"mt-6 flex"}>
+                  <Switch
+                    checked={showLogoStatus}
+                    onChange={() => setShowLogoStatus(!showLogoStatus)}
+                  />
+                  <p className={"ml-4 text-mono30 text-xs self-center"}>
+                    {showLogoStatus
+                      ? "Menampilkan Logo Migsys"
+                      : "Tidak Menampilkan Logo Migsys"}
+                  </p>
+                </div>
+                <div className={"flex self-end"}>
+                  <p
+                    onClick={() => setOpenDownloadModal(false)}
+                    className={
+                      "flex items-center mr-8 text-xs text-mono50 cursor-pointer"
+                    }
                   >
-                    <DownloadOutlined />
-                  </ButtonSys>
-                </PDFDownloadLink>
+                    Batalkan
+                  </p>
+                  <PDFDownloadLink
+                    document={
+                      <ResumePDFTemplate
+                        dataResume={dataResume}
+                        logoStatus={showLogoStatus}
+                      />
+                    }
+                    fileName={`CV-${dataResume?.assessment?.name}-${dataResume?.name}.pdf`}
+                  >
+                    <ButtonSys
+                      type={"primary"}
+                      // onClick={() => rt.push('/admin/candidates/pdfTemplate')}
+                    >
+                      <div className={"flex flex-row"}>
+                        <DownloadIcon2Svg size={16} color={"#fffffff"} />
+                        <p className={"ml-2 text-xs text-white"}>
+                          Unduh Resume
+                        </p>
+                      </div>
+                    </ButtonSys>
+                  </PDFDownloadLink>
+                </div>
               </div>
             )}
           </Spin>

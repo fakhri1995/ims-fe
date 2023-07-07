@@ -111,6 +111,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     achievements: [],
     assessment: {},
     assessment_results: [],
+    summaries: {},
   });
   const [assessmentRoles, setAssessmentRoles] = useState([]);
   const [loadingRoleList, setLoadingRoleList] = useState(false);
@@ -125,6 +126,11 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     assessment_id: "",
     city: "",
     province: "",
+  });
+
+  const [dataSummary, setDataSummary] = useState({
+    id: "",
+    description: "",
   });
 
   // 1.3. delete
@@ -505,9 +511,10 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
 
         <SummaryCard
           dataDisplay={dataDisplay}
-          dataUpdateBasic={dataUpdateBasic}
-          setDataUpdateBasic={setDataUpdateBasic}
-          handleUpdate={handleUpdateSection}
+          dataSummary={dataSummary}
+          setDataSummary={setDataSummary}
+          handleAddSection={handleAddSection}
+          handleUpdateSection={handleUpdateSection}
           handleDelete={handleDeleteResume}
           praloading={praloading}
           assessmentRoles={assessmentRoles}
@@ -622,7 +629,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
   );
 };
 
-export const ResumePDFTemplate = ({ dataResume }) => {
+export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   const isAllResultEmpty = dataResume.assessment_results?.every(
     (result) => result.value === ""
   );
@@ -721,13 +728,7 @@ export const ResumePDFTemplate = ({ dataResume }) => {
                 ".ql-indent-3": { marginLeft: 50 },
               }}
             >
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce
-              efficitur purus lacus, eget volutpat nisl porta eu. Maecenas
-              hendrerit justo at vehicula blandit. Quisque condimentum elit
-              mauris, ut facilisis sem efficitur tincidunt. Sed a tincidunt
-              augue. Nam dictum, elit eget commodo placerat, quam mauris rutrum
-              quam, a iaculis tortor nisi quis nunc. Nullam sollicitudin euismod
-              turpis at dapibus. Donec at eleifend magna, sed pulvinar eros.
+              {dataResume.summaries?.description}
             </Html>
           </View>
         </View>
@@ -1060,24 +1061,26 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             <Text render={({ totalPages }) => `${totalPages}`} />
           </View>
 
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text
-              style={{
-                fontSize: 6,
-                fontFamily: "Inter",
-                fontWeight: 700,
-                letterSpacing: 1,
-                marginRight: 5,
-              }}
-            >
-              {" "}
-              APPROVED BY:
-            </Text>
-            <Image
-              style={{ width: 80, height: 31.86 }}
-              src={`/image/LogoMig2.png`}
-            />
-          </View>
+          {logoStatus && (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text
+                style={{
+                  fontSize: 6,
+                  fontFamily: "Inter",
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  marginRight: 5,
+                }}
+              >
+                {" "}
+                APPROVED BY:
+              </Text>
+              <Image
+                style={{ width: 80, height: 31.86 }}
+                src={`/image/LogoMig2.png`}
+              />
+            </View>
+          )}
         </View>
       </Page>
     </Document>
