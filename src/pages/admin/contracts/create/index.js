@@ -53,6 +53,7 @@ import {
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
+import ContractExtrasForm from "../../../../components/screen/contract/create/ContractExtrasForm";
 import {
   FILE,
   LIST,
@@ -106,7 +107,6 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   });
 
   // 2. Use Query & Use Effect
-
   // 2.1. Get Contract
   const {
     data: dataContract,
@@ -167,141 +167,96 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }));
   };
 
-  // Conditonal render in Komponen Tambahan Kontrak field
-  const showExtrasContentForm = (type, value, idx) => {
-    switch (type) {
-      case TEXT:
-        return (
-          <Form.Item
-            name={"value"}
-            rules={[
-              {
-                required: true,
-                message: "Isi deskripsi wajib diisi",
-              },
-            ]}
-            className="col-span-2"
-          >
-            <>
-              <Input
-                name={"value"}
-                value={value}
-                onChange={(e) => {
-                  let newValue = e.target.value;
-                  const tempExtras = [...dataContractUpdate.extras];
-                  tempExtras[idx].value = newValue;
-                  setDataContractUpdate((prev) => ({
-                    ...prev,
-                    extras: tempExtras,
-                  }));
-                }}
-                placeholder="Masukkan isi deskripsi"
-              />
-            </>
-          </Form.Item>
-        );
+  // Save Employee Contract
+  // const handleUpdateContract = (contractData) => {
+  //   if (!isAllowedToUpdateContract) {
+  //     permissionWarningNotification("Menyimpan", "Kontrak");
+  //     return;
+  //   }
 
-      case LIST:
-        const valueList = dataContractUpdate?.extras?.[idx]?.value || [];
-        return (
-          <div className="col-span-2 mb-6">
-            <ul className="mb-4 space-y-3">
-              {valueList?.map((item, valIdx) => (
-                <li key={valIdx}>
-                  <div className="flex flex-row space-x-2 items-center">
-                    <Input
-                      name={`value-${valIdx}`}
-                      value={item}
-                      onChange={(e) => {
-                        valueList.splice(valIdx, 1, e.target.value);
-                        const tempExtras = [...dataContractUpdate.extras];
-                        tempExtras[idx].value = valueList;
-                        setDataContractUpdate((prev) => ({
-                          ...prev,
-                          extras: tempExtras,
-                        }));
-                      }}
-                      placeholder={`Masukkan isi ${valIdx + 1}`}
-                    />
+  //   /** Setup form data to be sent in API */
+  //   let payload = contractData;
 
-                    <button
-                      type="button"
-                      className="bg-transparent hover:opacity-70"
-                      onClick={(e) => {
-                        valueList.splice(valIdx, 1);
-                        const tempExtras = [...dataContractUpdate.extras];
-                        tempExtras[idx].value = valueList;
-                        setDataContractUpdate((prev) => ({
-                          ...prev,
-                          extras: tempExtras,
-                        }));
-                      }}
-                    >
-                      <XIconSvg size={20} color={"#BF4A40"} />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <div className="text-right">
-              <ButtonSys
-                type={"default"}
-                onClick={() => {
-                  valueList.push("");
-                  const tempExtras = [...dataContractUpdate.extras];
-                  tempExtras[idx].value = valueList;
-                  setDataContractUpdate((prev) => ({
-                    ...prev,
-                    extras: tempExtras,
-                  }));
-                }}
-              >
-                <div className="flex items-center space-x-2">
-                  <PlusOutlined />
-                  <p>Tambah List</p>
-                </div>
-              </ButtonSys>
-            </div>
-          </div>
-        );
+  //   // Mapping file list to required format in API updateEmployeeContract form-data
+  //   if (contractData?.extras?.length) {
+  //     let fileObjectList = contractData?.extras?.map(
+  //       (file, idx) => file?.originFileObj
+  //     );
 
-      case FILE:
-        return (
-          <Form.Item
-            name={"value"}
-            rules={[
-              {
-                required: true,
-                message: "Isi deskripsi wajib diisi",
-              },
-            ]}
-            className="col-span-2"
-          >
-            <>
-              <Input
-                name={"value"}
-                value={value}
-                onChange={(e) => {
-                  let newValue = e.target.value;
-                  const tempExtras = [...dataContractUpdate.extras];
-                  tempExtras[idx].value = newValue;
-                  setDataContractUpdate((prev) => ({
-                    ...prev,
-                    extras: tempExtras,
-                  }));
-                }}
-                placeholder="Masukkan isi deskripsi"
-              />
-            </>
-          </Form.Item>
-        );
-    }
-  };
+  //     fileObjectList?.forEach((file, idx) => {
+  //       payload[`extras[${idx}]`] = file;
+  //     });
+  //   }
+
+  //   // Mapping removed file list to required format
+  //   if (contractData?.removed_file_ids?.length) {
+  //     contractData?.removed_file_ids?.forEach((removedFileId, idx) => {
+  //       payload[`contract_file_delete_ids[${idx}]`] = removedFileId;
+  //     });
+  //   }
+
+  //   // Mapping salaries list to required format
+  //   if (contractData?.salaries?.length > 0) {
+  //     let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
+  //       let obj = {};
+  //       obj[`salaries[${idx}][employee_salary_column_id]`] =
+  //         benefit?.employee_salary_column_id;
+  //       obj[`salaries[${idx}][value]`] = benefit?.value;
+  //       obj[`salaries[${idx}][is_amount_for_bpjs]`] =
+  //         benefit?.is_amount_for_bpjs;
+  //       return obj;
+  //     });
+
+  //     let allBenefitObject = {};
+  //     for (let benefitObject of benefitObjectList) {
+  //       Object.assign(allBenefitObject, benefitObject);
+  //     }
+
+  //     payload = {
+  //       ...payload,
+  //       ...allBenefitObject,
+  //     };
+  //   }
+
+  //   // convert object to form data
+  //   const payloadFormData = objectToFormData(payload);
+
+  //   setLoadingUpdate(true);
+  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
+  //     method: "POST",
+  //     headers: {
+  //       Authorization: JSON.parse(initProps),
+  //     },
+  //     body: payloadFormData,
+  //   })
+  //     .then((response) => response.json())
+  //     .then((response2) => {
+  //       if (response2.success) {
+  //         notification.success({
+  //           message: `Kontrak karyawan berhasil ditambahkan.`,
+  //           duration: 3,
+  //         });
+  //       } else {
+  //         notification.error({
+  //           message: `Gagal menyimpan kontrak karyawan. ${response2.message}`,
+  //           duration: 3,
+  //         });
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       notification.error({
+  //         message: `Gagal menyimpan kontrak karyawan. ${err.response}`,
+  //         duration: 3,
+  //       });
+  //     })
+  //     .finally(() => {
+  //       setLoadingUpdate(false);
+  //     });
+  // };
 
   if (isAccessControlPending) {
     return null;
   }
-  console.log({ dataContractUpdate });
 
   return (
     <LayoutDashboard
@@ -527,7 +482,6 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             Komponen Tambahan Kontrak
           </h4>
 
-          {/* Form dinamis */}
           <div className="col-span-6">
             <div className="col-span-6 mb-6">
               <ButtonSys
@@ -551,108 +505,18 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               </ButtonSys>
             </div>
 
-            {dataContractUpdate?.extras?.map(
-              ({ key, type, name, value }, idx) => (
-                <div
-                  key={key || idx}
-                  className="col-span-6 grid grid-cols-1 md:grid-cols-2 shadow-lg rounded-md 
-                    bg-white gap-x-3 md:gap-x-6 p-3 md:p-6 mb-6"
-                >
-                  <Form.Item
-                    name={"name"}
-                    rules={[
-                      {
-                        required: true,
-                        message: "Judul deskripsi wajib diisi",
-                      },
-                    ]}
-                  >
-                    <Input
-                      name={"name"}
-                      value={name}
-                      onChange={(e) => {
-                        let newName = e.target.value;
-                        const tempExtras = [...dataContractUpdate.extras];
-                        tempExtras[idx].name = newName;
-                        setDataContractUpdate((prev) => ({
-                          ...prev,
-                          extras: tempExtras,
-                        }));
-                      }}
-                      placeholder="Masukkan judul deskripsi"
-                    />
-                  </Form.Item>
-                  <Form.Item>
-                    <Select
-                      name={"type"}
-                      value={type}
-                      onChange={(value) => {
-                        const tempExtras = [...dataContractUpdate.extras];
-                        tempExtras[idx].type = value;
-                        setDataContractUpdate((prev) => ({
-                          ...prev,
-                          extras: tempExtras,
-                        }));
-                      }}
-                      // disabled={!isAllowedToGetCompanyClients}
-                    >
-                      <>
-                        <Select.Option key={TEXT} value={TEXT}>
-                          <div className="flex space-x-2 items-center">
-                            <AlignJustifiedIconSvg
-                              color={"#35763B"}
-                              size={20}
-                            />
-                            <p className="text-primary100 font-bold">Teks</p>
-                          </div>
-                        </Select.Option>
-                        {/* <Select.Option key={2} value={TEXT}>
-                            Date
-                          </Select.Option> */}
-                        <Select.Option key={LIST} value={LIST}>
-                          <div className="flex space-x-2 items-center">
-                            <SquareCheckIconSvg color={"#35763B"} size={20} />
-                            <p className="text-primary100 font-bold">List</p>
-                          </div>
-                        </Select.Option>
-                        <Select.Option key={FILE} value={FILE}>
-                          <div className="flex space-x-2 items-center">
-                            <FileTextIconSvg color={"#35763B"} size={20} />
-                            <p className="text-primary100 font-bold">File</p>
-                          </div>
-                        </Select.Option>
-                      </>
-                    </Select>
-                  </Form.Item>
-
-                  {showExtrasContentForm(type, value, idx)}
-
-                  <div className="col-span-2 flex justify-end space-x-4">
-                    <button
-                      type="button"
-                      className="bg-transparent hover:opacity-70"
-                      // onClick={() => remove(description)}
-                    >
-                      <CopyIconSvg size={24} color={"#4D4D4D"} />
-                    </button>
-                    <button
-                      type="button"
-                      className="bg-transparent hover:opacity-70"
-                      onClick={(e) => {
-                        const tempExtras = [...dataContractUpdate.extras];
-                        tempExtras.splice(idx, 1);
-                        setDataContractUpdate((prev) => ({
-                          ...prev,
-                          extras: tempExtras,
-                        }));
-                      }}
-                    >
-                      <TrashIconSvg size={24} />
-                    </button>
-                  </div>
-                </div>
-              )
-            )}
+            {/* Form dinamis */}
+            {dataContractUpdate?.extras?.map((item, idx) => (
+              <ContractExtrasForm
+                key={item?.key || idx}
+                type={item?.type}
+                name={item?.name}
+                value={item?.value}
+                idx={idx}
+                dataContractUpdate={dataContractUpdate}
+                setDataContractUpdate={setDataContractUpdate}
+              />
+            ))}
           </div>
         </Form>
       </div>
