@@ -640,7 +640,6 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   }
 
   function checkDataDescription(data) {
-    console.log("check data description ", data);
     if (data.description != undefined) {
       let checkDescription = parse(data.description);
       //jika kosong
