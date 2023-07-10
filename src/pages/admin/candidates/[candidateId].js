@@ -702,36 +702,38 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           </View>
         </View>
         {/*Summary Section */}
-        <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
-          <Text style={styles.sectionHeader}>SUMMARY</Text>
-          <View style={{}}>
-            <Html
-              // hyphenationCallback={e => breakText(e)}
-              style={styles.desc}
-              stylesheet={{
-                p: {
-                  margin: 0,
-                  marginBottom: 2,
-                  color: "#808080",
-                  lineHeight: 1.5,
-                  marginRight: 10,
-                },
-                ul: {
-                  margin: 0,
-                  paddingLeft: 0,
-                  color: "#808080",
-                  lineHeight: 1.5,
-                  marginRight: 10,
-                },
-                ".ql-indent-1": { marginLeft: 30 },
-                ".ql-indent-2": { marginLeft: 40 },
-                ".ql-indent-3": { marginLeft: 50 },
-              }}
-            >
-              {dataResume.summaries?.description}
-            </Html>
+        {dataResume.summaries && (
+          <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
+            <Text style={styles.sectionHeader}>SUMMARY</Text>
+            <View style={{}}>
+              <Html
+                // hyphenationCallback={e => breakText(e)}
+                style={styles.desc}
+                stylesheet={{
+                  p: {
+                    margin: 0,
+                    marginBottom: 2,
+                    color: "#808080",
+                    lineHeight: 1.5,
+                    marginRight: 10,
+                  },
+                  ul: {
+                    margin: 0,
+                    paddingLeft: 0,
+                    color: "#808080",
+                    lineHeight: 1.5,
+                    marginRight: 10,
+                  },
+                  ".ql-indent-1": { marginLeft: 30 },
+                  ".ql-indent-2": { marginLeft: 40 },
+                  ".ql-indent-3": { marginLeft: 50 },
+                }}
+              >
+                {dataResume.summaries?.description}
+              </Html>
+            </View>
           </View>
-        </View>
+        )}
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume.experiences?.length !== 0 && (
