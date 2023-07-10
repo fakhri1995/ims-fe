@@ -94,7 +94,6 @@ const SummaryCard = ({
   };
 
   function checkDataDescription(data) {
-    console.log("check data description ", data);
     if (data.description != undefined) {
       let checkDescription = parse(data.description);
       //jika kosong
@@ -113,7 +112,6 @@ const SummaryCard = ({
           <h3 className="mig-heading--3">Summary</h3>
         </div>
       </div>
-      {console.log("data display bro ", dataDisplay)}
       {isAddDescription == false &&
         dataDisplay.summaries != null &&
         checkDataDescription(dataDisplay.summaries) && (
