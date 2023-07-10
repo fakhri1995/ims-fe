@@ -78,6 +78,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
   // 1. USE STATE
   const [refresh, setRefresh] = useState(-1);
+  const [refreshContract, setRefreshContract] = useState(-1);
   const [loadingAdd, setLoadingAdd] = useState(false);
   const [loadingDelete, setLoadingDelete] = useState(false);
   const [loadingEmployee, setLoadingEmployee] = useState(false);
@@ -88,6 +89,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   const [currentTab, setCurrentTab] = useState("1");
   const prevTab = useRef();
 
+  const [formDataChanged, setFormDataChanged] = useState(false);
   const [disablePublish, setDisablePublish] = useState(true);
   const [dataEmployee, setDataEmployee] = useState({
     id: null,
@@ -340,9 +342,10 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     })
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
-        setDataContract((prev) => ({ ...prev, id: response2.data.id }));
-        if (!response2.success) {
+        if (response2.success) {
+          setRefresh((prev) => prev + 1);
+          setDataContract((prev) => ({ ...prev, id: response2?.data?.id }));
+        } else {
           notification.error({
             message: `Gagal menambahkan kontrak karyawan. ${response2.message}`,
             duration: 3,
@@ -381,7 +384,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
         .then((response) => response.json())
         .then((response2) => {
-          setRefresh((prev) => prev + 1);
+          // setRefresh((prev) => prev + 1);
           if (response2.success) {
             setShowSuccessIcon(true);
             setTimeout(() => setShowSuccessIcon(false), 1000);
@@ -409,6 +412,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
         .finally(() => {
           setLoadingUpdate(false);
+          setFormDataChanged(false);
         });
     }
   };
@@ -482,7 +486,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             setShowSuccessIcon(true);
             setTimeout(() => {
               setShowSuccessIcon(false);
-              // setRefreshContract((prev) => prev + 1);
+              setRefreshContract((prev) => prev + 1);
             }, 1000);
           } else {
             notification.error({
@@ -499,6 +503,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         })
         .finally(() => {
           setLoadingUpdate(false);
+          setFormDataChanged(false);
         });
     }
   };
@@ -573,21 +578,24 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       })
       .finally(() => {
         setLoadingUpdate(false);
+        setFormDataChanged(false);
       });
   };
 
-  const handleAutoSaveOnTabChange = () => {
-    if (prevTab.current == "1") {
-      debouncedSaveProfile.cancel();
-      handleSaveProfile(0, dataEmployee);
-    } else if (prevTab.current == "2") {
-      debouncedSaveContract.cancel();
-      handleSaveContract(dataContract);
-    } else {
-      debouncedSaveInventory.cancel();
-      handleSaveInventory(inventoryList[0]);
+  const handleAutoSaveOnTabChange = useCallback(() => {
+    if (formDataChanged) {
+      if (prevTab.current == "1") {
+        debouncedSaveProfile.cancel();
+        handleSaveProfile(0, dataEmployee);
+      } else if (prevTab.current == "2") {
+        debouncedSaveContract.cancel();
+        handleSaveContract(dataContract);
+      } else {
+        debouncedSaveInventory.cancel();
+        handleSaveInventory(inventoryList[0]);
+      }
     }
-  };
+  }, [prevTab.current, dataEmployee, dataContract, inventoryList]);
 
   const handleCancelAddEmployee = () => {
     if (!isAllowedToDeleteEmployee) {
@@ -638,6 +646,11 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   };
 
+  // flag if there's any value changing in Form
+  const handleFormChange = () => {
+    setFormDataChanged(true);
+  };
+
   return (
     <LayoutDashboard
       dataProfile={dataProfile}
@@ -682,9 +695,9 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   type={"default"}
                   className="flex flex-row"
                   onClick={() => {
+                    handleAutoSaveOnTabChange();
                     let numTab = Number(currentTab);
                     currentTab > 1 && setCurrentTab(String(numTab - 1));
-                    handleAutoSaveOnTabChange();
                   }}
                 >
                   <LeftOutlined />
@@ -724,6 +737,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   <button
                     onClick={() => {
                       debouncedSaveInventory.cancel();
+
                       handleSaveProfile(1, dataEmployee);
                       dataEmployee.contracts.length !== 0 &&
                         handleSaveContract(dataContract);
@@ -755,7 +769,13 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                   onClick={() => {
                     let numTab = Number(currentTab);
                     currentTab < 3 && setCurrentTab(String(numTab + 1));
-                    handleAutoSaveOnTabChange();
+
+                    // add employee contract if there's no contract yet
+                    if (!dataEmployee.contracts?.length) {
+                      handleAddEmployeeContract();
+                    } else {
+                      handleAutoSaveOnTabChange();
+                    }
                   }}
                   disabled={loadingUpdate}
                 >
@@ -772,13 +792,14 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             tabBarGutter={60}
             className="px-1"
             activeKey={currentTab}
-            onTabClick={(key) => setCurrentTab(key)}
-            onChange={(key) => {
-              // add employee contract if there's no contract yet
+            onTabClick={(key) => {
+              setCurrentTab(key);
               handleAutoSaveOnTabChange();
-              key == "2" &&
-                dataEmployee.contracts?.length === 0 &&
+
+              // add employee contract if there's no contract yet
+              if (key == "2" && !dataEmployee.contracts?.length) {
                 handleAddEmployeeContract();
+              }
             }}
           >
             <Tabs.TabPane tab="Profil Karyawan" key="1">
@@ -787,6 +808,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 dataEmployee={dataEmployee}
                 setDataEmployee={setDataEmployee}
                 debouncedApiCall={debouncedSaveProfile}
+                handleFormChange={handleFormChange}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Kontrak Karyawan" key="2">
@@ -799,6 +821,8 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 contractId={dataContract?.id || dataEmployee?.contract?.id}
                 currentTab={currentTab}
                 prevpath={prevpath}
+                refreshContract={refreshContract}
+                handleFormChange={handleFormChange}
               />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Inventaris & Piranti" key="3">
@@ -811,6 +835,7 @@ const EmployeeCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 refresh={refresh}
                 setRefresh={setRefresh}
                 handleSaveInventory={handleSaveInventory}
+                handleFormChange={handleFormChange}
               />
             </Tabs.TabPane>
           </Tabs>

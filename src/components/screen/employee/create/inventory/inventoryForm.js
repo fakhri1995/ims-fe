@@ -48,6 +48,7 @@ const InventoryForm = ({
   debouncedApiCall,
   handleSaveInventory,
   isFormAddEmployee,
+  handleFormChange,
 }) => {
   /**
    * Dependencies
@@ -394,7 +395,11 @@ const InventoryForm = ({
   return (
     <>
       <div>
-        <Form layout="vertical" className="md:grid md:grid-cols-2 md:gap-x-8">
+        <Form
+          onValuesChange={handleFormChange && handleFormChange}
+          layout="vertical"
+          className="md:grid md:grid-cols-2 md:gap-x-8"
+        >
           <div className="flex flex-row items-center space-x-1 col-span-2 mb-3">
             <h5 className="mig-heading--5">INVENTARIS {idx + 1}/PIRANTI 1</h5>
             {isFormAddEmployee && isAllowedToDeleteInventory && (
