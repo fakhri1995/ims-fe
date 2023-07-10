@@ -24,6 +24,7 @@ const EmployeeProfileForm = ({
   dataEmployee,
   setDataEmployee,
   debouncedApiCall,
+  handleFormChange,
 }) => {
   /**
    * Dependencies
@@ -158,6 +159,7 @@ const EmployeeProfileForm = ({
     <Form
       layout="vertical"
       form={instanceForm}
+      onValuesChange={handleFormChange && handleFormChange}
       className="md:grid md:grid-cols-2 md:gap-x-8"
     >
       <Form.Item label="ID Card" className="relative col-span-2 w-full">

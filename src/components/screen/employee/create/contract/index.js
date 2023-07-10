@@ -16,10 +16,7 @@ import {
 } from "antd";
 import moment from "moment";
 import { useRouter } from "next/router";
-import React from "react";
-import { useState } from "react";
-import { useEffect } from "react";
-import { useCallback } from "react";
+import { React, useCallback, useEffect, useState } from "react";
 import CurrencyFormat from "react-currency-format";
 
 import { AccessControl } from "components/features/AccessControl";
@@ -62,7 +59,8 @@ const EmployeeContractForm = ({
   prevpath,
   contractId,
   employeeId,
-  currentTab,
+  refreshContract,
+  handleFormChange, // only used in create employee
 }) => {
   /**
    * Dependencies
@@ -89,9 +87,6 @@ const EmployeeContractForm = ({
   const isAllowedToAddSalaryColumn = hasPermission(EMPLOYEE_SALARY_COLUMN_ADD);
   const isAllowedToDeleteSalaryColumn = hasPermission(
     EMPLOYEE_SALARY_COLUMN_DELETE
-  );
-  const isAllowedToUpdateSalaryColumn = hasPermission(
-    EMPLOYEE_SALARY_COLUMN_UPDATE
   );
 
   // INIT
@@ -278,10 +273,6 @@ const EmployeeContractForm = ({
       return;
     }
 
-    if (currentTab != 2) {
-      return;
-    }
-
     if (contractId) {
       setPraLoading(true);
       fetch(
@@ -345,8 +336,7 @@ const EmployeeContractForm = ({
           setPraLoading(false);
         });
     }
-    // }
-  }, [isAllowedToGetEmployeeContract, contractId, refresh, currentTab]);
+  }, [isAllowedToGetEmployeeContract, contractId, refresh, refreshContract]);
 
   // 3.5. Update data contract when delete icon in file upload is clicked
   useEffect(() => {
@@ -403,25 +393,25 @@ const EmployeeContractForm = ({
   };
 
   // 4.2. Handle before upload file
-  const beforeUploadDocument = useCallback((file, fileList) => {
-    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
-    const isReachedMaxFileSize =
-      checkMaxFileSizeFilter(file, fileList) === Upload.LIST_IGNORE;
-    const allowedFileTypes = "application/pdf";
+  // const beforeUploadDocument = useCallback((file, fileList) => {
+  //   const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+  //   const isReachedMaxFileSize =
+  //     checkMaxFileSizeFilter(file, fileList) === Upload.LIST_IGNORE;
+  //   const allowedFileTypes = "application/pdf";
 
-    if (file.type !== allowedFileTypes) {
-      notification.error({
-        message: "File harus memiliki format .pdf",
-      });
-      return Upload.LIST_IGNORE;
-    }
+  //   if (file.type !== allowedFileTypes) {
+  //     notification.error({
+  //       message: "File harus memiliki format .pdf",
+  //     });
+  //     return Upload.LIST_IGNORE;
+  //   }
 
-    if (isReachedMaxFileSize) {
-      return Upload.LIST_IGNORE;
-    }
+  //   if (isReachedMaxFileSize) {
+  //     return Upload.LIST_IGNORE;
+  //   }
 
-    return file;
-  }, []);
+  //   return file;
+  // }, []);
 
   // 4.3. Handle upload file
   const onUploadChange = async (e) => {
@@ -442,15 +432,15 @@ const EmployeeContractForm = ({
       contract_files: newFiles,
     });
 
+    handleFormChange && handleFormChange();
     setUploadDocumentLoading(false);
   };
 
-  // console.log({ removedFileIds });
-  // console.log({ dataContract });
   return (
     <Form
       layout="vertical"
       form={instanceForm}
+      onValuesChange={handleFormChange && handleFormChange}
       className="md:grid md:grid-cols-2 md:gap-x-8"
     >
       <h5 className="mig-heading--5 col-span-2 mb-3">INFORMASI UMUM</h5>
@@ -584,7 +574,7 @@ const EmployeeContractForm = ({
           <em className="text-mono50 mr-10">Unggah File PDF (Maksimal 5 MB)</em>
           <ButtonSys
             type={`defaultInput`}
-            beforeUpload={beforeUploadDocument}
+            // beforeUpload={beforeUploadDocument}
             onChangeGambar={onUploadChange}
             inputAccept=".pdf"
             disabled={uploadDocumentLoading}
@@ -630,6 +620,7 @@ const EmployeeContractForm = ({
                 }));
 
                 setRemovedFileIds((prev) => [...prev, doc?.id || 0]);
+                handleFormChange && handleFormChange();
               }}
             >
               <DeleteOutlined className="text-[#00000045] hover:text-[#00000080] m-2 p-2" />
@@ -823,6 +814,8 @@ const EmployeeContractForm = ({
                     gaji_pokok: floatValue || 0,
                   });
                 }
+
+                handleFormChange && handleFormChange();
               }}
               renderText={(value) => <p>{value}</p>}
             />
@@ -982,6 +975,7 @@ const EmployeeContractForm = ({
                     ...prev,
                     pph21: Number(floatValue) || 0,
                   }));
+                  handleFormChange && handleFormChange();
                 }}
                 renderText={(value) => <p>{value}</p>}
               />
