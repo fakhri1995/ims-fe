@@ -6,6 +6,7 @@ import {
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Form, Input, Select, Spin } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import parse from "html-react-parser";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -98,6 +99,11 @@ const SummaryCard = ({
           <h3 className="mig-heading--3">Summary</h3>
         </div>
       </div>
+      {isAddDescription == false && dataDisplay.summaries && (
+        <div className={"mb-4"}>
+          <p>{parse(dataDisplay.summaries.description)}</p>
+        </div>
+      )}
       <hr />
       {praloading ? (
         <div className=" flex justify-center">
@@ -152,10 +158,12 @@ const SummaryCard = ({
               type={"dashed"}
               onClick={() => {
                 // clearDataUpdate();
-                setDataSummary({
-                  id: dataDisplay.summaries.id,
-                  description: dataDisplay.summaries.description,
-                });
+                if (dataDisplay.summaries) {
+                  setDataSummary({
+                    id: dataDisplay.summaries.id,
+                    description: dataDisplay.summaries.description,
+                  });
+                }
                 setIsAddDescription(true);
               }}
             >
