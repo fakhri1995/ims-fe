@@ -24,6 +24,7 @@ const EmployeeInventoryForm = ({
   refresh,
   setRefresh,
   handleSaveInventory,
+  handleFormChange,
 }) => {
   /**
    * Dependencies
@@ -168,6 +169,7 @@ const EmployeeInventoryForm = ({
           setRefresh={setRefresh}
           handleSaveInventory={handleSaveInventory}
           isFormAddEmployee={true}
+          handleFormChange={handleFormChange && handleFormChange}
         />
       ))}
 
