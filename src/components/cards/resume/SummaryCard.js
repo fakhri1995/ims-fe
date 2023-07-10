@@ -6,6 +6,7 @@ import {
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { Form, Input, Select, Spin } from "antd";
 import TextArea from "antd/lib/input/TextArea";
+import parse from "html-react-parser";
 import moment from "moment";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/router";
@@ -91,6 +92,20 @@ const SummaryCard = ({
       description: "",
     });
   };
+
+  function checkDataDescription(data) {
+    console.log("check data description ", data);
+    if (data.description != undefined) {
+      let checkDescription = parse(data.description);
+      //jika kosong
+      if (checkDescription.props.children.type) {
+        return false;
+      } else {
+        return true;
+      }
+    } else return false;
+  }
+
   return (
     <div className="col-span-2 shadow-lg rounded-md bg-white p-5 mt-6">
       <div className="flex flex-row items-center justify-between mb-4 ">
@@ -98,6 +113,17 @@ const SummaryCard = ({
           <h3 className="mig-heading--3">Summary</h3>
         </div>
       </div>
+      {console.log("data display bro ", dataDisplay)}
+      {isAddDescription == false &&
+        dataDisplay.summaries != null &&
+        checkDataDescription(dataDisplay.summaries) && (
+          <div className={"mb-4"}>
+            <p>
+              {dataDisplay.summaries.description &&
+                parse(dataDisplay.summaries?.description)}
+            </p>
+          </div>
+        )}
       <hr />
       {praloading ? (
         <div className=" flex justify-center">
@@ -152,10 +178,12 @@ const SummaryCard = ({
               type={"dashed"}
               onClick={() => {
                 // clearDataUpdate();
-                setDataSummary({
-                  id: dataDisplay.summaries.id,
-                  description: dataDisplay.summaries.description,
-                });
+                if (dataDisplay.summaries) {
+                  setDataSummary({
+                    id: dataDisplay.summaries.id,
+                    description: dataDisplay.summaries.description,
+                  });
+                }
                 setIsAddDescription(true);
               }}
             >

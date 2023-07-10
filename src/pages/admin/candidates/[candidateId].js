@@ -8,6 +8,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { notification } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
@@ -638,6 +639,19 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
     return [text];
   }
 
+  function checkDataDescription(data) {
+    console.log("check data description ", data);
+    if (data.description != undefined) {
+      let checkDescription = parse(data.description);
+      //jika kosong
+      if (checkDescription.props.children.type) {
+        return false;
+      } else {
+        return true;
+      }
+    } else return false;
+  }
+
   return (
     <Document>
       <Page size={"A4"} style={styles.page} wrap>
@@ -702,36 +716,38 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           </View>
         </View>
         {/*Summary Section */}
-        <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
-          <Text style={styles.sectionHeader}>SUMMARY</Text>
-          <View style={{}}>
-            <Html
-              // hyphenationCallback={e => breakText(e)}
-              style={styles.desc}
-              stylesheet={{
-                p: {
-                  margin: 0,
-                  marginBottom: 2,
-                  color: "#808080",
-                  lineHeight: 1.5,
-                  marginRight: 10,
-                },
-                ul: {
-                  margin: 0,
-                  paddingLeft: 0,
-                  color: "#808080",
-                  lineHeight: 1.5,
-                  marginRight: 10,
-                },
-                ".ql-indent-1": { marginLeft: 30 },
-                ".ql-indent-2": { marginLeft: 40 },
-                ".ql-indent-3": { marginLeft: 50 },
-              }}
-            >
-              {dataResume.summaries?.description}
-            </Html>
+        {dataResume.summaries && checkDataDescription(dataResume.summaries) && (
+          <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
+            <Text style={styles.sectionHeader}>SUMMARY</Text>
+            <View style={{}}>
+              <Html
+                // hyphenationCallback={e => breakText(e)}
+                style={styles.desc}
+                stylesheet={{
+                  p: {
+                    margin: 0,
+                    marginBottom: 2,
+                    color: "#808080",
+                    lineHeight: 1.5,
+                    marginRight: 10,
+                  },
+                  ul: {
+                    margin: 0,
+                    paddingLeft: 0,
+                    color: "#808080",
+                    lineHeight: 1.5,
+                    marginRight: 10,
+                  },
+                  ".ql-indent-1": { marginLeft: 30 },
+                  ".ql-indent-2": { marginLeft: 40 },
+                  ".ql-indent-3": { marginLeft: 50 },
+                }}
+              >
+                {dataResume.summaries?.description}
+              </Html>
+            </View>
           </View>
-        </View>
+        )}
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume.experiences?.length !== 0 && (
