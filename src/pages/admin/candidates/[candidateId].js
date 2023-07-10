@@ -8,6 +8,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { notification } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
@@ -638,6 +639,19 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
     return [text];
   }
 
+  function checkDataDescription(data) {
+    console.log("check data description ", data);
+    if (data.description != undefined) {
+      let checkDescription = parse(data.description);
+      //jika kosong
+      if (checkDescription.props.children.type) {
+        return false;
+      } else {
+        return true;
+      }
+    } else return false;
+  }
+
   return (
     <Document>
       <Page size={"A4"} style={styles.page} wrap>
@@ -702,7 +716,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
           </View>
         </View>
         {/*Summary Section */}
-        {dataResume.summaries && (
+        {dataResume.summaries && checkDataDescription(dataResume.summaries) && (
           <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
             <Text style={styles.sectionHeader}>SUMMARY</Text>
             <View style={{}}>
