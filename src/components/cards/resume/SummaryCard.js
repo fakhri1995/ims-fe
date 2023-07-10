@@ -92,6 +92,20 @@ const SummaryCard = ({
       description: "",
     });
   };
+
+  function checkDataDescription(data) {
+    console.log("check data description ", data);
+    if (data.description != undefined) {
+      let checkDescription = parse(data.description);
+      //jika kosong
+      if (checkDescription.props.children.type) {
+        return false;
+      } else {
+        return true;
+      }
+    } else return false;
+  }
+
   return (
     <div className="col-span-2 shadow-lg rounded-md bg-white p-5 mt-6">
       <div className="flex flex-row items-center justify-between mb-4 ">
@@ -100,14 +114,16 @@ const SummaryCard = ({
         </div>
       </div>
       {console.log("data display bro ", dataDisplay)}
-      {isAddDescription == false && dataDisplay.summaries != null && (
-        <div className={"mb-4"}>
-          <p>
-            {dataDisplay.summaries.description &&
-              parse(dataDisplay.summaries?.description)}
-          </p>
-        </div>
-      )}
+      {isAddDescription == false &&
+        dataDisplay.summaries != null &&
+        checkDataDescription(dataDisplay.summaries) && (
+          <div className={"mb-4"}>
+            <p>
+              {dataDisplay.summaries.description &&
+                parse(dataDisplay.summaries?.description)}
+            </p>
+          </div>
+        )}
       <hr />
       {praloading ? (
         <div className=" flex justify-center">
