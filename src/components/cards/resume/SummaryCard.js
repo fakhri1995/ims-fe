@@ -99,9 +99,13 @@ const SummaryCard = ({
           <h3 className="mig-heading--3">Summary</h3>
         </div>
       </div>
-      {isAddDescription == false && dataDisplay.summaries && (
+      {console.log("data display bro ", dataDisplay)}
+      {isAddDescription == false && dataDisplay.summaries != null && (
         <div className={"mb-4"}>
-          <p>{parse(dataDisplay.summaries.description)}</p>
+          <p>
+            {dataDisplay.summaries.description &&
+              parse(dataDisplay.summaries?.description)}
+          </p>
         </div>
       )}
       <hr />
