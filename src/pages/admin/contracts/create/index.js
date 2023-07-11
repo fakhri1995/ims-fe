@@ -1,17 +1,10 @@
 import {
+  ArrowRightOutlined,
   CloseOutlined,
-  MinusCircleOutlined,
-  PlusOutlined,
+  DeleteOutlined,
+  ProfileOutlined,
 } from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Select,
-  Space,
-  notification,
-} from "antd";
+import { DatePicker, Form, Input, Select, Tabs, notification } from "antd";
 import parse from "html-react-parser";
 import moment from "moment";
 import { useRouter } from "next/router";
@@ -41,25 +34,18 @@ import { RequesterService } from "apis/user";
 
 import ButtonSys from "../../../../components/button";
 import {
-  AlignJustifiedIconSvg,
-  CheckIconSvg,
-  CheckboxIconSvg,
-  CopyIconSvg,
-  FileTextIconSvg,
+  ArrowNarrowRightIconSvg,
   PlusIconSvg,
-  SquareCheckIconSvg,
-  TrashIconSvg,
-  XIconSvg,
 } from "../../../../components/icon";
 import LayoutDashboard from "../../../../components/layout-dashboard";
 import st from "../../../../components/layout-dashboard.module.css";
 import ContractExtrasForm from "../../../../components/screen/contract/create/ContractExtrasForm";
+import ContractServiceForm from "../../../../components/screen/contract/create/ContractServiceForm";
 import {
   FILE,
   LIST,
   TEXT,
 } from "../../../../components/screen/contract/detail/ContractInfoSection";
-import EmployeeProfileForm from "../../../../components/screen/employee/create/profile";
 import {
   objectToFormData,
   permissionWarningNotification,
@@ -105,6 +91,10 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     is_posted: 0,
     extras: [], //{type:0, name:"", value:""}
   });
+
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [disablePublish, setDisablePublish] = useState(false);
 
   // 2. Use Query & Use Effect
   // 2.1. Get Contract
@@ -152,6 +142,25 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
   );
 
+  // 2.4. Disable "Simpan Kontrak" button if any required field is empty
+  useEffect(() => {
+    const requiredContractFields = [
+      { data: dataContractUpdate.contract_number, name: "No Kontrak" },
+      { data: dataContractUpdate.title, name: "Judul Kontrak" },
+      { data: dataContractUpdate.client_id, name: "Klien" },
+      { data: dataContractUpdate.requester_id, name: "Requester" },
+      { data: dataContractUpdate.initial_date, name: "Tanggal Dibuat" },
+      { data: dataContractUpdate.start_date, name: "Tanggal Berlaku" },
+      { data: dataContractUpdate.end_date, name: "Tanggal Selesai" },
+    ];
+
+    if (!requiredContractFields.every((field) => Boolean(field.data))) {
+      setDisablePublish(true);
+    } else {
+      setDisablePublish(false);
+    }
+  }, [dataContractUpdate]);
+
   // 3. Handler
   const onChangeInput = (e) => {
     setDataContractUpdate((prev) => ({
@@ -168,95 +177,129 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
   };
 
   // Save Employee Contract
-  // const handleUpdateContract = (contractData) => {
-  //   if (!isAllowedToUpdateContract) {
-  //     permissionWarningNotification("Menyimpan", "Kontrak");
-  //     return;
-  //   }
+  const handleUpdateContract = (contractData, isPosted) => {
+    if (!isAllowedToUpdateContract) {
+      permissionWarningNotification("Mengubah", "Kontrak");
+      return;
+    }
 
-  //   /** Setup form data to be sent in API */
-  //   let payload = contractData;
+    /** Setup form data to be sent in API */
+    let payload = { ...contractData, is_posted: isPosted };
 
-  //   // Mapping file list to required format in API updateEmployeeContract form-data
-  //   if (contractData?.extras?.length) {
-  //     let fileObjectList = contractData?.extras?.map(
-  //       (file, idx) => file?.originFileObj
-  //     );
+    // Mapping extras list to required format in API updateContract form-data
+    if (contractData?.extras?.length > 0) {
+      let extrasObjectList = contractData?.extras?.map((extra, idx) => {
+        let obj = {};
+        obj[`extras[${idx}][type]`] = extra?.type;
+        obj[`extras[${idx}][name]`] = extra?.name;
+        obj[`extras[${idx}][value]`] = extra?.value;
+        return obj;
+      });
 
-  //     fileObjectList?.forEach((file, idx) => {
-  //       payload[`extras[${idx}]`] = file;
-  //     });
-  //   }
+      let allExtrasObject = {};
+      for (let extraObject of extrasObjectList) {
+        Object.assign(allExtrasObject, extraObject);
+      }
 
-  //   // Mapping removed file list to required format
-  //   if (contractData?.removed_file_ids?.length) {
-  //     contractData?.removed_file_ids?.forEach((removedFileId, idx) => {
-  //       payload[`contract_file_delete_ids[${idx}]`] = removedFileId;
-  //     });
-  //   }
+      payload = {
+        ...payload,
+        ...allExtrasObject,
+      };
+    }
 
-  //   // Mapping salaries list to required format
-  //   if (contractData?.salaries?.length > 0) {
-  //     let benefitObjectList = contractData?.salaries?.map((benefit, idx) => {
-  //       let obj = {};
-  //       obj[`salaries[${idx}][employee_salary_column_id]`] =
-  //         benefit?.employee_salary_column_id;
-  //       obj[`salaries[${idx}][value]`] = benefit?.value;
-  //       obj[`salaries[${idx}][is_amount_for_bpjs]`] =
-  //         benefit?.is_amount_for_bpjs;
-  //       return obj;
-  //     });
+    // convert object to form data
+    const payloadFormData = objectToFormData(payload);
 
-  //     let allBenefitObject = {};
-  //     for (let benefitObject of benefitObjectList) {
-  //       Object.assign(allBenefitObject, benefitObject);
-  //     }
+    setLoadingUpdate(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateContract`, {
+      method: "POST",
+      headers: {
+        Authorization: JSON.parse(initProps),
+      },
+      body: payloadFormData,
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          notification.success({
+            message: `Kontrak berhasil diubah.`,
+            duration: 3,
+          });
+          if (isPosted) {
+            setTimeout(() => {
+              rt.push(`/admin/contracts/${dataContract?.id}`);
+            }, 1000);
+          } else {
+            setTimeout(() => {
+              rt.push(`/admin/contracts`);
+            }, 1000);
+          }
+        } else {
+          notification.error({
+            message: `Gagal mengubah kontrak. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal mengubah kontrak. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => {
+        setLoadingUpdate(false);
+      });
+  };
 
-  //     payload = {
-  //       ...payload,
-  //       ...allBenefitObject,
-  //     };
-  //   }
+  const handleDeleteContract = () => {
+    if (!isAllowedToDeleteContract) {
+      permissionWarningNotification("Menghapus", "Kontrak");
+      return;
+    }
 
-  //   // convert object to form data
-  //   const payloadFormData = objectToFormData(payload);
-
-  //   setLoadingUpdate(true);
-  //   fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateEmployeeContract`, {
-  //     method: "POST",
-  //     headers: {
-  //       Authorization: JSON.parse(initProps),
-  //     },
-  //     body: payloadFormData,
-  //   })
-  //     .then((response) => response.json())
-  //     .then((response2) => {
-  //       if (response2.success) {
-  //         notification.success({
-  //           message: `Kontrak karyawan berhasil ditambahkan.`,
-  //           duration: 3,
-  //         });
-  //       } else {
-  //         notification.error({
-  //           message: `Gagal menyimpan kontrak karyawan. ${response2.message}`,
-  //           duration: 3,
-  //         });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       notification.error({
-  //         message: `Gagal menyimpan kontrak karyawan. ${err.response}`,
-  //         duration: 3,
-  //       });
-  //     })
-  //     .finally(() => {
-  //       setLoadingUpdate(false);
-  //     });
-  // };
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${dataContract?.id}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          rt.push("/admin/contracts");
+          setTimeout(() => {
+            notification.success({
+              message: response.message,
+              duration: 3,
+            });
+          }, 1000);
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus kontrak. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
+  };
 
   if (isAccessControlPending) {
     return null;
   }
+
+  // console.log({ dataContractUpdate });
 
   return (
     <LayoutDashboard
@@ -269,34 +312,55 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     >
       <div className="grid grid-cols-1 shadow-lg rounded-md bg-white p-3 md:py-7 md:px-6">
         {/* Form Header */}
-        <div className="flex flex-row items-center justify-between mb-7">
-          <h4 className="mig-heading--4">Form Tambah Kontrak</h4>
-          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
-            <ButtonSys
-              color={"danger"}
-              type={"default"}
-              onClick={() => rt.back()}
-            >
-              <div className="flex flex-row space-x-2">
-                <CloseOutlined />
-                <p>Batalkan</p>
-              </div>
-            </ButtonSys>
-            <ButtonSys
-              type={"primary"}
-              // onClick={handleSaveEmployee}
-              // disabled={!isAllowedToUpdateContract || disablePublish}
-            >
-              <div className="flex flex-row space-x-2">
-                <CheckIconSvg color={"white"} size={16} />
-                <p>Simpan</p>
-              </div>
-            </ButtonSys>
-          </div>
-        </div>
-
-        {/* Form Body */}
         <Form layout="vertical" className="md:grid md:grid-cols-6 md:gap-x-6">
+          <div className="col-span-6 flex flex-row items-center justify-between mb-7">
+            <h4 className="mig-heading--4">Form Tambah Kontrak</h4>
+            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
+              <ButtonSys
+                color={"danger"}
+                type={"default"}
+                onClick={() => {
+                  if (prevpath == "add") {
+                    handleDeleteContract();
+                  } else {
+                    rt.push("/admin/contracts");
+                  }
+                }}
+              >
+                <div className="flex flex-row space-x-2">
+                  {prevpath == "add" ? <DeleteOutlined /> : <CloseOutlined />}
+                  <p>Batalkan</p>
+                </div>
+              </ButtonSys>
+              <ButtonSys
+                type={"default"}
+                className="flex flex-row"
+                onClick={() => handleUpdateContract(dataContractUpdate, 0)}
+                disabled={
+                  !isAllowedToUpdateContract ||
+                  !dataContractUpdate.contract_number ||
+                  !dataContractUpdate.title
+                }
+              >
+                <div className="flex flex-row space-x-2">
+                  <ProfileOutlined />
+                  <p className="ml-2">Simpan Draft</p>
+                </div>
+              </ButtonSys>
+              <ButtonSys
+                type={"primary"}
+                onClick={() => handleUpdateContract(dataContractUpdate, 1)}
+                disabled={!isAllowedToUpdateContract || disablePublish}
+              >
+                <div className="flex flex-row space-x-2">
+                  <p>Simpan Kontrak</p>
+                  <ArrowNarrowRightIconSvg color={"white"} size={16} />
+                </div>
+              </ButtonSys>
+            </div>
+          </div>
+
+          {/* Form Body */}
           <Form.Item
             label="No Kontrak"
             name={"contract_number"}
@@ -310,7 +374,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <div>
               <Input
-                value={dataContractUpdate.contract_number}
+                value={dataContractUpdate?.contract_number}
                 name={"contract_number"}
                 onChange={onChangeInput}
                 placeholder="Masukkan nomor kontrak"
@@ -330,7 +394,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           >
             <div>
               <Input
-                value={dataContractUpdate.title}
+                value={dataContractUpdate?.title}
                 name={"title"}
                 onChange={onChangeInput}
                 placeholder="Masukkan judul kontrak"
@@ -419,61 +483,94 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
           </Form.Item>
 
           {/* Tanggal Dibuat */}
-          <div className="mb-6 col-span-2">
-            <p className="mb-2">Tanggal Dibuat</p>
-            <DatePicker
-              allowClear
-              allowEmpty
-              value={
-                moment(dataContractUpdate.initial_date).isValid()
-                  ? moment(dataContractUpdate.initial_date)
-                  : null
-              }
-              placeholder={"Pilih tanggal dibuat"}
-              style={{ width: `100%` }}
-              onChange={(dates, datestrings) => {
-                onChangeSelect(datestrings, "initial_date");
-              }}
-            />
-          </div>
+          <Form.Item
+            label="Tanggal Dibuat"
+            name={"initial_date"}
+            rules={[
+              {
+                required: true,
+                message: "Tanggal dibuat wajib diisi",
+              },
+            ]}
+            className="mb-6 col-span-2"
+          >
+            <div>
+              <DatePicker
+                allowClear
+                allowEmpty
+                value={
+                  moment(dataContractUpdate?.initial_date).isValid()
+                    ? moment(dataContractUpdate?.initial_date)
+                    : null
+                }
+                placeholder={"Pilih tanggal dibuat"}
+                style={{ width: `100%` }}
+                onChange={(dates, datestrings) => {
+                  onChangeSelect(datestrings, "initial_date");
+                }}
+              />
+            </div>
+          </Form.Item>
 
           {/* Tanggal Berlaku */}
-          <div className="mb-6 col-span-2">
-            <p className="mb-2">Tanggal Berlaku</p>
-            <DatePicker
-              allowClear
-              allowEmpty
-              value={
-                moment(dataContractUpdate.start_date).isValid()
-                  ? moment(dataContractUpdate.start_date)
-                  : null
-              }
-              placeholder={"Pilih tanggal berlaku"}
-              style={{ width: `100%` }}
-              onChange={(dates, datestrings) => {
-                onChangeSelect(datestrings, "start_date");
-              }}
-            />
-          </div>
+          <Form.Item
+            label="Tanggal Berlaku"
+            name={"start_date"}
+            rules={[
+              {
+                required: true,
+                message: "Tanggal dibuat wajib diisi",
+              },
+            ]}
+            className="mb-6 col-span-2"
+          >
+            <div>
+              <DatePicker
+                allowClear
+                allowEmpty
+                value={
+                  moment(dataContractUpdate?.start_date).isValid()
+                    ? moment(dataContractUpdate?.start_date)
+                    : null
+                }
+                placeholder={"Pilih tanggal berlaku"}
+                style={{ width: `100%` }}
+                onChange={(dates, datestrings) => {
+                  onChangeSelect(datestrings, "start_date");
+                }}
+              />
+            </div>
+          </Form.Item>
 
           {/* Tanggal Selesai */}
-          <div className="mb-6 col-span-2">
-            <p className="mb-2">Tanggal Selesai</p>
-            <DatePicker
-              allowClear
-              allowEmpty
-              value={
-                moment(dataContractUpdate.end_date).isValid()
-                  ? moment(dataContractUpdate.end_date)
-                  : null
-              }
-              placeholder={"Pilih tanggal selesai"}
-              style={{ width: `100%` }}
-              onChange={(dates, datestrings) => {
-                onChangeSelect(datestrings, "end_date");
-              }}
-            />
-          </div>
+          <Form.Item
+            label="Tanggal Berlaku"
+            name={"end_date"}
+            rules={[
+              {
+                required: true,
+                message: "Tanggal berlaku wajib diisi",
+              },
+            ]}
+            className="mb-6 col-span-2"
+          >
+            <div>
+              <DatePicker
+                allowClear
+                allowEmpty
+                value={
+                  moment(dataContractUpdate?.end_date).isValid()
+                    ? moment(dataContractUpdate?.end_date)
+                    : null
+                }
+                placeholder={"Pilih tanggal selesai"}
+                style={{ width: `100%` }}
+                onChange={(dates, datestrings) => {
+                  onChangeSelect(datestrings, "end_date");
+                }}
+              />
+            </div>
+          </Form.Item>
 
           <hr className="col-span-6 mb-6" />
 
@@ -518,6 +615,14 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
               />
             ))}
           </div>
+
+          <hr className="col-span-6 mb-6" />
+
+          <Tabs className="col-span-6">
+            <Tabs.TabPane tab="Service">
+              <ContractServiceForm initProps={initProps} />
+            </Tabs.TabPane>
+          </Tabs>
         </Form>
       </div>
     </LayoutDashboard>
