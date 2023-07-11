@@ -1,6 +1,6 @@
-import { PlusOutlined } from "@ant-design/icons";
-import { Form, Input, Select } from "antd";
-import React from "react";
+import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Popconfirm, Select, Upload } from "antd";
+import React, { useCallback, useEffect, useState } from "react";
 
 import ButtonSys from "../../../../components/button";
 import {
@@ -16,6 +16,7 @@ import {
   LIST,
   TEXT,
 } from "../../../../components/screen/contract/detail/ContractInfoSection";
+import { beforeUploadFileMaxSize } from "../../../../lib/helper";
 
 const ContractExtrasForm = ({
   type,
@@ -25,6 +26,63 @@ const ContractExtrasForm = ({
   dataContractUpdate,
   setDataContractUpdate,
 }) => {
+  // Use State
+  const [fileList, setFileList] = useState([]);
+  const [uploadFileLoading, setUploadFileLoading] = useState(false);
+
+  // 2. Use Effect
+
+  // Handler
+  const beforeUploadFile = useCallback((uploadedFile) => {
+    const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
+    const isReachedMaxFileSize =
+      checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
+    const allowedFileTypes = "application/pdf";
+
+    if (uploadedFile.type !== allowedFileTypes) {
+      notification.error({
+        message: "File harus memilki format .pdf",
+      });
+      return Upload.LIST_IGNORE;
+    }
+
+    if (isReachedMaxFileSize) {
+      return Upload.LIST_IGNORE;
+    }
+
+    let tempExtras = [...dataContractUpdate?.extras];
+    tempExtras[idx].value = uploadedFile;
+    setDataContractUpdate((prev) => ({
+      ...prev,
+      extras: tempExtras,
+    }));
+  }, []);
+
+  const onUploadChange = useCallback(({ file }) => {
+    setUploadFileLoading(file.status === "uploading");
+
+    if (file.status !== "removed") {
+      setFileList([file]);
+    }
+  }, []);
+
+  const onUploadRemove = useCallback(() => {
+    setFileList([]);
+    setUploadFileLoading(null);
+
+    let tempExtras = [...dataContractUpdate?.extras];
+    tempExtras[idx].value = uploadedFile;
+    setDataContractUpdate((prev) => ({
+      ...prev,
+      extras: "",
+    }));
+
+    // use for auto save
+    // if (debouncedApiCall) {
+    //   debouncedApiCall(data[idx]);
+    // }
+  }, []);
+
   // Conditonal render in Komponen Tambahan Kontrak field
   const showExtrasContentField = (type, value, idx) => {
     switch (type) {
@@ -60,7 +118,7 @@ const ContractExtrasForm = ({
         );
 
       case LIST:
-        const valueList = dataContractUpdate?.extras?.[idx]?.value || [];
+        const valueList = dataContractUpdate?.extras?.[idx]?.value || [""];
         return (
           <div className="col-span-2 mb-6">
             <ul className="mb-4 space-y-3">
@@ -82,21 +140,23 @@ const ContractExtrasForm = ({
                       placeholder={`Masukkan isi ${valIdx + 1}`}
                     />
 
-                    <button
-                      type="button"
-                      className="bg-transparent hover:opacity-70"
-                      onClick={(e) => {
-                        valueList.splice(valIdx, 1);
-                        const tempExtras = [...dataContractUpdate.extras];
-                        tempExtras[idx].value = valueList;
-                        setDataContractUpdate((prev) => ({
-                          ...prev,
-                          extras: tempExtras,
-                        }));
-                      }}
-                    >
-                      <XIconSvg size={20} color={"#BF4A40"} />
-                    </button>
+                    {valueList.length > 1 && (
+                      <button
+                        type="button"
+                        className="bg-transparent hover:opacity-70"
+                        onClick={(e) => {
+                          valueList.splice(valIdx, 1);
+                          const tempExtras = [...dataContractUpdate.extras];
+                          tempExtras[idx].value = valueList;
+                          setDataContractUpdate((prev) => ({
+                            ...prev,
+                            extras: tempExtras,
+                          }));
+                        }}
+                      >
+                        <XIconSvg size={20} color={"#BF4A40"} />
+                      </button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -125,32 +185,30 @@ const ContractExtrasForm = ({
 
       case FILE:
         return (
-          <Form.Item
-            name={"value"}
-            rules={[
-              {
-                required: true,
-                message: "Isi deskripsi wajib diisi",
-              },
-            ]}
-            className="col-span-2"
-          >
-            <>
-              <Input
-                name={"value"}
-                value={value}
-                onChange={(e) => {
-                  let newValue = e.target.value;
-                  const tempExtras = [...dataContractUpdate.extras];
-                  tempExtras[idx].value = newValue;
-                  setDataContractUpdate((prev) => ({
-                    ...prev,
-                    extras: tempExtras,
-                  }));
-                }}
-                placeholder="Masukkan isi deskripsi"
-              />
-            </>
+          <Form.Item name={"value"} className="col-span-2">
+            <div className="relative">
+              <em className="text-mono50 mr-3">Unggah File (Maksimal 5 MB)</em>
+              <Upload
+                accept=".pdf"
+                listType="text"
+                maxCount={1}
+                beforeUpload={beforeUploadFile}
+                onChange={onUploadChange}
+                onRemove={onUploadRemove}
+                disabled={uploadFileLoading}
+                fileList={fileList}
+              >
+                <Button
+                  className="btn-sm btn font-semibold px-6 border
+                  text-primary100 hover:bg-primary75 border-primary100 
+                  hover:border-primary75 hover:text-white bg-white space-x-2
+                  focus:border-primary75 focus:text-primary100"
+                >
+                  <UploadOutlined />
+                  <p>Unggah File</p>
+                </Button>
+              </Upload>
+            </div>
           </Form.Item>
         );
     }
@@ -227,14 +285,27 @@ const ContractExtrasForm = ({
         <button
           type="button"
           className="bg-transparent hover:opacity-70"
-          // onClick={() => remove(description)}
+          onClick={() => {
+            const tempExtras = [...dataContractUpdate.extras];
+            const copiedItem = { ...tempExtras[idx] };
+            tempExtras.splice(idx, 0, copiedItem);
+            setDataContractUpdate((prev) => ({
+              ...prev,
+              extras: tempExtras,
+            }));
+          }}
         >
           <CopyIconSvg size={24} color={"#4D4D4D"} />
         </button>
-        <button
-          type="button"
-          className="bg-transparent hover:opacity-70"
-          onClick={(e) => {
+        <Popconfirm
+          title={
+            <p className="w-40">
+              Apakah Anda yakin ingin menghapus komponen ini?
+            </p>
+          }
+          okText={"Ya"}
+          cancelText={"Tidak"}
+          onConfirm={() => {
             const tempExtras = [...dataContractUpdate.extras];
             tempExtras.splice(idx, 1);
             setDataContractUpdate((prev) => ({
@@ -243,8 +314,10 @@ const ContractExtrasForm = ({
             }));
           }}
         >
-          <TrashIconSvg size={24} />
-        </button>
+          <button type="button" className="bg-transparent hover:opacity-70">
+            <TrashIconSvg size={24} />
+          </button>
+        </Popconfirm>
       </div>
     </div>
   );

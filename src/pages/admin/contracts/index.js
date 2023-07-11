@@ -19,6 +19,7 @@ import {
   Table,
   notification,
 } from "antd";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -196,7 +197,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  console.log({ dataRawContracts });
+  // console.log({ dataRawContracts });
 
   // 3.5. Get Status List
   const { data: dataStatusList, isLoading: loadingStatusList } = useQuery(
@@ -410,7 +411,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
           <AddNewFormButton
             title="Buat Kontrak"
-            subtitle="Jumat, 07 Januari 2021"
+            subtitle={moment().format("dddd, DD MMMM YYYY")}
             onButtonClicked={onAddContract}
             disabled={!isAllowedToAddContract || loadingAdd}
           />

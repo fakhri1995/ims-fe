@@ -1,4 +1,5 @@
 import { PrinterOutlined, UpOutlined } from "@ant-design/icons";
+import { Spin } from "antd";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 
@@ -50,7 +51,7 @@ const ContractInfoSection = ({ initProps, contractId }) => {
       ),
     {
       enabled: isAllowedToGetContract,
-      refetchOnMount: false,
+      refetchOnMount: true,
       select: (response) => response.data,
     }
   );
@@ -83,70 +84,78 @@ const ContractInfoSection = ({ initProps, contractId }) => {
     }
   };
 
+  // console.log({ loadingDataContract });
+
   return (
     <section className="grid grid-cols-2 shadow-md rounded-md bg-white p-6 mb-4 gap-6">
-      <div className="col-span-2 flex flex-col lg:flex-row lg:justify-between ">
-        <div className="flex space-x-2 items-center mb-4 lg:mb-0">
-          <h4 className="mig-heading--4">
-            {dataContract?.contract_number || "-"}
-          </h4>
-          <p className="bg-backdrop text-primary100 px-2 py-1 rounded-md font-bold">
-            Aktif
-          </p>
-        </div>
-        <ButtonSys type={"default"}>
-          <div className="flex space-x-2 items-center">
-            <PrinterOutlined />
-            <p>Cetak Kontrak</p>
+      {loadingDataContract ? (
+        <Spin className="col-span-2" spinning={loadingDataContract} />
+      ) : (
+        <>
+          <div className="col-span-2 flex flex-col lg:flex-row lg:justify-between ">
+            <div className="flex space-x-2 items-center mb-4 lg:mb-0">
+              <h4 className="mig-heading--4">
+                {dataContract?.contract_number || "-"}
+              </h4>
+              <p className="bg-backdrop text-primary100 px-2 py-1 rounded-md font-bold">
+                Aktif
+              </p>
+            </div>
+            <ButtonSys type={"default"}>
+              <div className="flex space-x-2 items-center">
+                <PrinterOutlined />
+                <p>Cetak Kontrak</p>
+              </div>
+            </ButtonSys>
           </div>
-        </ButtonSys>
-      </div>
 
-      {/* Main detail */}
-      <div className="col-span-2">
-        <h5 className="mig-caption--bold mb-2">Judul Kontrak</h5>
-        <p>{dataContract?.title || "-"}</p>
-      </div>
-
-      <div className="">
-        <h5 className="mig-caption--bold mb-2">Requester</h5>
-        <p>{dataContract?.requester?.name || "-"}</p>
-      </div>
-
-      <div className="">
-        <h5 className="mig-caption--bold mb-2">Klien</h5>
-        <p>{dataContract?.client?.name || "-"}</p>
-      </div>
-      <div className="">
-        <h5 className="mig-caption--bold mb-2">Tanggal Dimulai</h5>
-        <p>{momentFormatDate(dataContract?.start_date)}</p>
-      </div>
-
-      <div className="">
-        <h5 className="mig-caption--bold mb-2">Tanggal Selesai</h5>
-        <p>{momentFormatDate(dataContract?.end_date)}</p>
-      </div>
-
-      <div className="">
-        <h5 className="mig-caption--bold mb-2">Durasi Kontrak</h5>
-        <p>{dataContract?.duration || "-"}</p>
-      </div>
-
-      <div className="">
-        <h5 className="mig-caption--bold mb-2">Tanggal Dibuat</h5>
-        <p>{momentFormatDate(dataContract?.initial_date)}</p>
-      </div>
-
-      <hr className="col-span-2" />
-
-      {/* Extras */}
-      {dataContract?.extras?.length > 0 &&
-        dataContract?.extras?.map((item) => (
-          <div key={item?.key} className="col-span-2">
-            <h5 className="mig-caption--bold mb-2">{item?.name || "-"}</h5>
-            {getExtrasDetail(item?.type, item?.value)}
+          {/* Main detail */}
+          <div className="col-span-2">
+            <h5 className="mig-caption--bold mb-2">Judul Kontrak</h5>
+            <p>{dataContract?.title || "-"}</p>
           </div>
-        ))}
+
+          <div className="">
+            <h5 className="mig-caption--bold mb-2">Requester</h5>
+            <p>{dataContract?.requester?.name || "-"}</p>
+          </div>
+
+          <div className="">
+            <h5 className="mig-caption--bold mb-2">Klien</h5>
+            <p>{dataContract?.client?.name || "-"}</p>
+          </div>
+          <div className="">
+            <h5 className="mig-caption--bold mb-2">Tanggal Dimulai</h5>
+            <p>{momentFormatDate(dataContract?.start_date)}</p>
+          </div>
+
+          <div className="">
+            <h5 className="mig-caption--bold mb-2">Tanggal Selesai</h5>
+            <p>{momentFormatDate(dataContract?.end_date)}</p>
+          </div>
+
+          <div className="">
+            <h5 className="mig-caption--bold mb-2">Durasi Kontrak</h5>
+            <p>{dataContract?.duration || "-"}</p>
+          </div>
+
+          <div className="">
+            <h5 className="mig-caption--bold mb-2">Tanggal Dibuat</h5>
+            <p>{momentFormatDate(dataContract?.initial_date)}</p>
+          </div>
+
+          <hr className="col-span-2" />
+
+          {/* Extras */}
+          {dataContract?.extras?.length > 0 &&
+            dataContract?.extras?.map((item) => (
+              <div key={item?.key} className="col-span-2">
+                <h5 className="mig-caption--bold mb-2">{item?.name || "-"}</h5>
+                {getExtrasDetail(item?.type, item?.value)}
+              </div>
+            ))}
+        </>
+      )}
     </section>
   );
 };
