@@ -1,9 +1,16 @@
-import { Avatar, Tooltip } from "antd";
+import { PlusCircleFilled } from "@ant-design/icons";
+import { Avatar, Tooltip, notification } from "antd";
 import moment from "moment";
 import React from "react";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
-import { InfoCircleIconSvg, OneUserIconSvg, UserIconSvg } from "../../icon";
+import {
+  InfoCircleIconSvg,
+  OneUserIconSvg,
+  PlusIconSvg,
+  SquarePlusIconSvg,
+  UserIconSvg,
+} from "../../icon";
 
 const TaskCard = ({
   title,
@@ -12,129 +19,182 @@ const TaskCard = ({
   toDate,
   status,
   taskStaffs,
+  dataProfile,
   onClick,
 }) => {
   const currentDate = new Date();
   const deadline = new Date(toDate ?? "0000-00-00 00:00:00");
   const isPastDeadline = Boolean(currentDate > deadline && status?.is_active);
 
+  function checkTask() {
+    // console.log('current task ',taskStaffs)
+    // console.log('current profile ',dataProfile)
+    if (taskStaffs.length > 0) {
+      let check = 0;
+      for (let a = 0; a < taskStaffs.length; a++) {
+        if (taskStaffs[a].id == dataProfile.data.id) {
+          return true;
+        }
+      }
+      if (check == 0) {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  const addAktifitas = () => {
+    notification.success({
+      message: (
+        <>
+          {" "}
+          <p>
+            Task berhasil ditambahkan ke aktivitas{" "}
+            <a
+              style={{ lineHeight: "20px", fontWeight: "700" }}
+              className={"text-primary100 text-sm"}
+              href="www.google.com"
+            >
+              Lihat aktivitas
+            </a>
+          </p>
+        </>
+      ),
+
+      duration: 3,
+    });
+  };
   return (
-    <div
-      onClick={onClick}
-      className="grid grid-cols-1 space-y-4 bg-white h-full px-4 py-6 md:p-3 shadow-lg rounded-md hover:cursor-pointer"
-    >
-      {isPastDeadline && (
-        <div className="bg-warning bg-opacity-20 rounded-md p-1 flex space-x-2 items-center">
-          <InfoCircleIconSvg color={"#BF4A40"} size={16} />
-          <p className="text-warning text-[10px]">
-            <strong>Task</strong> ini sudah melewati batas waktu yang telah
-            ditentukan.{" "}
-          </p>
-        </div>
-      )}
-      <div className="grid grid-cols-6 gap-2 ">
-        <div className="col-span-4 flex flex-col justify-between space-y-4">
-          <div className="space-y-1">
-            <h4
-              className={`mig-heading--4 ${isPastDeadline && "text-warning"}`}
-            >
-              {title} ({taskId})
-            </h4>
-            <h5
-              className={`mig-heading--5 ${
-                isPastDeadline ? "text-warning" : "text-mono50"
-              } `}
-            >
-              {projectName}
-            </h5>
+    <div className={"bg-white h-full  shadow-lg rounded-md testhover"}>
+      <div
+        onClick={onClick}
+        className="grid grid-cols-1 space-y-4 px-4 py-6 md:p-3 hover:cursor-pointer"
+      >
+        {isPastDeadline && (
+          <div className="bg-warning bg-opacity-20 rounded-md p-1 flex space-x-2 items-center">
+            <InfoCircleIconSvg color={"#BF4A40"} size={16} />
+            <p className="text-warning text-[10px]">
+              <strong>Task</strong> ini sudah melewati batas waktu yang telah
+              ditentukan.{" "}
+            </p>
           </div>
-          <p
-            className={`rounded-md p-1 text-center`}
-            style={{
-              backgroundColor: status?.color ? status?.color + "20" : "#E6E6E6",
-              color: status?.color ?? "#808080",
-            }}
-          >
-            {status?.name ?? "-"}
-          </p>
-        </div>
-        <div className="col-span-2 flex flex-col justify-between">
-          {moment(toDate).isValid() ? (
-            <div
-              className={`flex flex-col space-y-1 text-right ${
-                isPastDeadline ? "text-warning" : "text-mono50"
-              }`}
-            >
-              <p className="mig-caption--bold">Task Deadline:</p>
-              <p className="mig-caption">
-                {momentFormatDate(toDate, "-", "ddd, D MMMM YYYY")}
-              </p>
-            </div>
-          ) : (
-            <div />
-          )}
-          {taskStaffs?.length > 1 ? (
-            <div className="flex items-center justify-end">
-              <Avatar.Group
-                size={24}
-                maxCount={2}
-                className="cursor-help"
-                maxStyle={{
-                  color: "#f56a00",
-                  backgroundColor: "#fde3cf",
-                }}
+        )}
+        <div className="grid grid-cols-6 gap-2 ">
+          <div className="col-span-4 flex flex-col justify-between space-y-4">
+            <div className="space-y-1">
+              <h4
+                className={`mig-heading--4 ${isPastDeadline && "text-warning"}`}
               >
-                {taskStaffs.map((staff) => (
-                  <Tooltip key={staff.id} title={staff?.name} placement="top">
-                    <Avatar
-                      src={generateStaticAssetUrl(
-                        staff?.profile_image?.link ??
-                          "staging/Users/default_user.png"
-                      )}
-                      className=""
-                      size={24}
-                    />
-                  </Tooltip>
-                ))}
-              </Avatar.Group>
+                {title} ({taskId})
+              </h4>
+              <h5
+                className={`mig-heading--5 ${
+                  isPastDeadline ? "text-warning" : "text-mono50"
+                } `}
+              >
+                {projectName}
+              </h5>
             </div>
-          ) : taskStaffs?.length > 0 ? (
-            <div className="flex space-x-2 items-center justify-end">
-              <p
-                className={`mig-caption--bold ${
-                  isPastDeadline ? "text-warning" : "text-mono30"
+            <p
+              className={`rounded-md p-1 text-center`}
+              style={{
+                backgroundColor: status?.color
+                  ? status?.color + "20"
+                  : "#E6E6E6",
+                color: status?.color ?? "#808080",
+              }}
+            >
+              {status?.name ?? "-"}
+            </p>
+          </div>
+          <div className="col-span-2 flex flex-col justify-between">
+            {moment(toDate).isValid() ? (
+              <div
+                className={`flex flex-col space-y-1 text-right ${
+                  isPastDeadline ? "text-warning" : "text-mono50"
                 }`}
               >
-                {taskStaffs?.[0]?.name}
-              </p>
-              {taskStaffs?.[0]?.profile_image?.link ? (
-                <img
-                  src={generateStaticAssetUrl(
-                    taskStaffs?.[0]?.profile_image?.link ??
-                      "staging/Users/default_user.png"
-                  )}
-                  alt={taskStaffs?.[0]?.profile_image?.description}
-                  className="w-6 h-6 bg-cover object-cover rounded-full"
-                />
-              ) : isPastDeadline ? (
-                <div
-                  className={`bg-warning rounded-full w-6 h-6 flex items-center justify-center`}
+                <p className="mig-caption--bold">Task Deadline:</p>
+                <p className="mig-caption">
+                  {momentFormatDate(toDate, "-", "ddd, D MMMM YYYY")}
+                </p>
+              </div>
+            ) : (
+              <div />
+            )}
+            {taskStaffs?.length > 1 ? (
+              <div className="flex items-center justify-end">
+                <Avatar.Group
+                  size={24}
+                  maxCount={2}
+                  className="cursor-help"
+                  maxStyle={{
+                    color: "#f56a00",
+                    backgroundColor: "#fde3cf",
+                  }}
                 >
-                  <OneUserIconSvg size={12} color={"#ffffff"} />
-                </div>
-              ) : (
-                <div
-                  className={`bg-primary100 rounded-full w-6 h-6 flex items-center justify-center`}
+                  {taskStaffs.map((staff) => (
+                    <Tooltip key={staff.id} title={staff?.name} placement="top">
+                      <Avatar
+                        src={generateStaticAssetUrl(
+                          staff?.profile_image?.link ??
+                            "staging/Users/default_user.png"
+                        )}
+                        className=""
+                        size={24}
+                      />
+                    </Tooltip>
+                  ))}
+                </Avatar.Group>
+              </div>
+            ) : taskStaffs?.length > 0 ? (
+              <div className="flex space-x-2 items-center justify-end">
+                <p
+                  className={`mig-caption--bold ${
+                    isPastDeadline ? "text-warning" : "text-mono30"
+                  }`}
                 >
-                  <OneUserIconSvg size={12} color={"#ffffff"} />
-                </div>
-              )}
-            </div>
-          ) : (
-            <></>
-          )}
+                  {taskStaffs?.[0]?.name}
+                </p>
+                {taskStaffs?.[0]?.profile_image?.link ? (
+                  <img
+                    src={generateStaticAssetUrl(
+                      taskStaffs?.[0]?.profile_image?.link ??
+                        "staging/Users/default_user.png"
+                    )}
+                    alt={taskStaffs?.[0]?.profile_image?.description}
+                    className="w-6 h-6 bg-cover object-cover rounded-full"
+                  />
+                ) : isPastDeadline ? (
+                  <div
+                    className={`bg-warning rounded-full w-6 h-6 flex items-center justify-center`}
+                  >
+                    <OneUserIconSvg size={12} color={"#ffffff"} />
+                  </div>
+                ) : (
+                  <div
+                    className={`bg-primary100 rounded-full w-6 h-6 flex items-center justify-center`}
+                  >
+                    <OneUserIconSvg size={12} color={"#ffffff"} />
+                  </div>
+                )}
+              </div>
+            ) : (
+              <></>
+            )}
+          </div>
         </div>
       </div>
+      {/* {
+      checkTask() &&
+      <div onClick={()=>addAktifitas()} className={'w-full bg-primary100 mt-4 py-2 flex justify-center rounded-b-[5px] hover:cursor-pointer testhoverbutton'}>
+            <div className={'flex justify-center'}>
+            <PlusIconSvg color={'white'} size={20} />
+            <p className={'text-white text-xs ml-2.5 self-center'}>Tambahkan ke Aktifitas</p>
+            </div>
+    </div>
+    } */}
     </div>
   );
 };
