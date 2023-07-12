@@ -1154,6 +1154,7 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                           toDate={task?.end_date}
                           status={task?.status}
                           taskStaffs={task.task_staffs}
+                          dataProfile={dataProfile}
                           onClick={() => {
                             setCurrentTaskId(task.id);
                             setModalDetailTask(true);

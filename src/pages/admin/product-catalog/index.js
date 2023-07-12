@@ -17,10 +17,18 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import QueryString from "qs";
 import { useEffect, useState } from "react";
+import CurrencyFormat from "react-currency-format";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { ASSETS_GET, MODELS_GET, MODEL_ADD, PRODUCTS_GET } from "lib/features";
+import {
+  ASSETS_GET,
+  CATEGORY_ADD,
+  MODELS_GET,
+  MODEL_ADD,
+  PRODUCTS_GET,
+  PRODUCT_ADD,
+} from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
 import {
@@ -47,7 +55,8 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
   }
   const isAllowedToSeeModels = hasPermission(PRODUCTS_GET);
   const isAllowedToSeeAssets = hasPermission(ASSETS_GET);
-  const isAllowedToAddModel = hasPermission(MODEL_ADD);
+  const isAllowedToAddProduct = hasPermission(PRODUCT_ADD);
+  const isAllowedToSeeCategory = hasPermission(CATEGORY_ADD);
   const [searchingFilterProducts, setSearchingFilterProducts] = useState("");
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -148,23 +157,23 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       sorter: (a, b) => a.price - b.price,
       render: (price) => (
         <div>
-          <p>{currency(price)}</p>
+          <CurrencyFormat
+            type="text"
+            thousandSeparator={"."}
+            decimalSeparator={","}
+            value={price}
+            prefix={"Rp "}
+          />
         </div>
       ),
     },
     {
       title: "Jumlah Item",
-      dataIndex: "model_inventory",
-      sorter: (a, b) =>
-        a.model_inventory.inventories_count -
-        b.model_inventory.inventories_count,
-      render: (model_inventory) => (
+      dataIndex: "inventories_count",
+      sorter: (a, b) => a.inventories_count - b.inventories_count,
+      render: (inventories_count) => (
         <div>
-          <p>
-            {model_inventory.inventories_count
-              ? model_inventory.inventories_count
-              : "-"}
-          </p>
+          <p>{inventories_count ? inventories_count : "-"}</p>
         </div>
       ),
     },
@@ -174,19 +183,27 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       render: (model_inventory) =>
         model_inventory.inventories_count <= 0 ? (
           <div
-            className={
-              "bg-statusarchived py-1 px-4 rounded-[5px] flex justify-center"
-            }
+            className={"bg-notice py-1 px-4 rounded-[5px] flex justify-center"}
           >
-            <p className={"text-state2 text-[10px] items-center"}>Archived</p>
+            <p
+              style={{ fontWeight: "500", lineHeight: "16px" }}
+              className={"text-white text-[10px] items-center"}
+            >
+              Archived
+            </p>
           </div>
         ) : (
           <div
             className={
-              "bg-statusactive py-1 px-4 rounded-[5px] flex justify-center"
+              "bg-primary100 py-1 px-4 rounded-[5px] flex justify-center"
             }
           >
-            <p className={"text-primary100 text-[10px]"}>Active</p>
+            <p
+              style={{ fontWeight: "500", lineHeight: "16px" }}
+              className={"text-white text-[10px]"}
+            >
+              Active
+            </p>
           </div>
         ),
     },
@@ -197,6 +214,12 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     setShowFormKategori(true);
     setCategoryId(id);
     setCategoryName(nama);
+  };
+
+  const onChangeProductSearch = (e) => {
+    setQueryParams({
+      keyword: e.target.value === "" ? undefined : e.target.value,
+    });
   };
 
   const columnsTable2 = [
@@ -382,9 +405,9 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
       addQueryPrefix: true,
     });
 
-    setpraloading(true);
+    // setpraloading(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventories${payload}&keyword=${searchingFilterProducts}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProductInventories${payload}`,
       {
         method: `GET`,
         headers: {
@@ -412,6 +435,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
     queryParams.sku,
     queryParams.category_id,
     queryParams.is_active,
+    queryParams.keyword,
     statusSearch == true,
   ]);
 
@@ -735,7 +759,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               </p>
               <p className={"text-sm text-mono30 mt-2"}>
                 <span className={"font-semibold"}>
-                  {displayentiredata.data.total}{" "}
+                  {displayentiredata.data ? displayentiredata.data.total : "0 "}{" "}
                 </span>
                 Produk ditampilkan
               </p>
@@ -753,7 +777,10 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               </div>
               <div className=" col-span-1 md:col-span-1 flex md:justify-end items-center cursor-pointer">
                 <div className={"bg-primary100 py-2 px-6 rounded-sm"}>
-                  <Link href={"/admin/product-catalog/create"}>
+                  <Link
+                    href={"/admin/product-catalog/create"}
+                    disabled={!isAllowedToAddProduct}
+                  >
                     <p className={"text-white text-xs"}>Tambah Produk</p>
                   </Link>
                 </div>
@@ -766,11 +793,10 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
                 <div className="col-span-4 mr-2">
                   <Input
                     style={{ width: `100%`, marginRight: `0.5rem` }}
-                    defaultValue={searchingFilterProducts}
+                    defaultValue={queryParams.keyword}
                     placeholder="Cari produk dengan kata kunci"
-                    onChange={(e) => {
-                      setSearchingFilterProducts(e.target.value);
-                    }}
+                    onChange={onChangeProductSearch}
+                    onKeyPress={onKeyPressHandler}
                     allowClear
                     disabled={!isAllowedToSeeModels}
                   ></Input>
@@ -831,7 +857,7 @@ const ProductCatalogIndex = ({ initProps, dataProfile, sidemenu }) => {
               showSizeChanger: true,
               current: queryParams.page,
               pageSize: queryParams.rows,
-              total: displayentiredata.data.total,
+              total: displayentiredata.data ? displayentiredata.data.total : 0,
             }}
             scroll={{ x: 200 }}
             dataSource={displaydata}

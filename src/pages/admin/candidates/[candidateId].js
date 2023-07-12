@@ -8,6 +8,7 @@ import {
   View,
 } from "@react-pdf/renderer";
 import { notification } from "antd";
+import parse from "html-react-parser";
 import moment from "moment";
 import { useRouter } from "next/router";
 import React from "react";
@@ -33,6 +34,7 @@ import {
 import AssessmentResultCard from "../../../components/cards/resume/AssessmentResultCard";
 import BasicInfoCard from "../../../components/cards/resume/BasicInfoCard";
 import SkillCard from "../../../components/cards/resume/SkillCard";
+import SummaryCard from "../../../components/cards/resume/SummaryCard";
 import AcademicCard from "../../../components/cards/resume/academic/AcademicCard";
 import AchievementCard from "../../../components/cards/resume/achievement/AchievementCard";
 import CertificationCard from "../../../components/cards/resume/certification/CertificationCard";
@@ -110,6 +112,7 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     achievements: [],
     assessment: {},
     assessment_results: [],
+    summaries: {},
   });
   const [assessmentRoles, setAssessmentRoles] = useState([]);
   const [loadingRoleList, setLoadingRoleList] = useState(false);
@@ -124,6 +127,11 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
     assessment_id: "",
     city: "",
     province: "",
+  });
+
+  const [dataSummary, setDataSummary] = useState({
+    id: "",
+    description: "",
   });
 
   // 1.3. delete
@@ -502,6 +510,22 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
           loadingUpdate={loadingUpdate}
         />
 
+        <SummaryCard
+          dataDisplay={dataDisplay}
+          dataSummary={dataSummary}
+          setDataSummary={setDataSummary}
+          handleAddSection={handleAddSection}
+          handleUpdateSection={handleUpdateSection}
+          handleDelete={handleDeleteResume}
+          praloading={praloading}
+          assessmentRoles={assessmentRoles}
+          isAllowedToDeleteCandidate={isAllowedToDeleteCandidate}
+          isAllowedToGetAssessmentList={isAllowedToGetAssessmentList}
+          isAllowedToUpdateCandidate={isAllowedToUpdateCandidate}
+          loadingDelete={loadingDelete}
+          loadingUpdate={loadingUpdate}
+        />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <div className="flex flex-col w-full gap-6">
             {/* SECTION ACADEMIC */}
@@ -606,13 +630,27 @@ const CandidateDetail = ({ initProps, dataProfile, sidemenu, candidateId }) => {
   );
 };
 
-export const ResumePDFTemplate = ({ dataResume }) => {
+export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
   const isAllResultEmpty = dataResume.assessment_results?.every(
     (result) => result.value === ""
   );
 
   function breakText(text) {
     return [text];
+  }
+
+  function checkDataDescription(data) {
+    if (data.description != undefined) {
+      let checkDescription = parse(data.description);
+      //jika kosong
+      if (checkDescription.length > 1) {
+        return true;
+      } else if (checkDescription.props.children.type) {
+        return false;
+      } else {
+        return true;
+      }
+    } else return false;
   }
 
   return (
@@ -678,7 +716,39 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             </Text>
           </View>
         </View>
-
+        {/*Summary Section */}
+        {dataResume.summaries && checkDataDescription(dataResume.summaries) && (
+          <View style={{ ...styles.rowOneCol, paddingBottom: 30 }}>
+            <Text style={styles.sectionHeader}>SUMMARY</Text>
+            <View style={{}}>
+              <Html
+                // hyphenationCallback={e => breakText(e)}
+                style={styles.desc}
+                stylesheet={{
+                  p: {
+                    margin: 0,
+                    marginBottom: 2,
+                    color: "#808080",
+                    lineHeight: 1.5,
+                    marginRight: 10,
+                  },
+                  ul: {
+                    margin: 0,
+                    paddingLeft: 0,
+                    color: "#808080",
+                    lineHeight: 1.5,
+                    marginRight: 10,
+                  },
+                  ".ql-indent-1": { marginLeft: 30 },
+                  ".ql-indent-2": { marginLeft: 40 },
+                  ".ql-indent-3": { marginLeft: 50 },
+                }}
+              >
+                {dataResume.summaries?.description}
+              </Html>
+            </View>
+          </View>
+        )}
         {/* Body */}
         {/* EXPERIENCE SECTION */}
         {dataResume.experiences?.length !== 0 && (
@@ -1008,24 +1078,26 @@ export const ResumePDFTemplate = ({ dataResume }) => {
             <Text render={({ totalPages }) => `${totalPages}`} />
           </View>
 
-          <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Text
-              style={{
-                fontSize: 6,
-                fontFamily: "Inter",
-                fontWeight: 700,
-                letterSpacing: 1,
-                marginRight: 5,
-              }}
-            >
-              {" "}
-              APPROVED BY:
-            </Text>
-            <Image
-              style={{ width: 80, height: 31.86 }}
-              src={`/image/LogoMig2.png`}
-            />
-          </View>
+          {logoStatus && (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+              <Text
+                style={{
+                  fontSize: 6,
+                  fontFamily: "Inter",
+                  fontWeight: 700,
+                  letterSpacing: 1,
+                  marginRight: 5,
+                }}
+              >
+                {" "}
+                APPROVED BY:
+              </Text>
+              <Image
+                style={{ width: 80, height: 31.86 }}
+                src={`/image/LogoMig2.png`}
+              />
+            </View>
+          )}
         </View>
       </Page>
     </Document>

@@ -1,9 +1,26 @@
-import { AppstoreAddOutlined } from "@ant-design/icons";
-import { ConfigProvider, Modal, Tabs } from "antd";
-import { Table } from "antd";
+import {
+  AppstoreAddOutlined,
+  FileAddOutlined,
+  FileImageFilled,
+  SearchOutlined,
+} from "@ant-design/icons";
+import { Checkbox, ConfigProvider, Input, Modal, Table, Tabs } from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
-import { FC, useCallback, useMemo, useReducer, useState } from "react";
+import {
+  NumberParam,
+  StringParam,
+  useQueryParams,
+  withDefault,
+} from "next-query-params";
+import {
+  FC,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
@@ -32,6 +49,7 @@ import {
 } from "apis/attendance";
 import { AuthService, AuthServiceQueryKeys } from "apis/auth";
 
+import { FileImportIconSvg } from "../../../../components/icon";
 import { AttendanceStaffAktivitasDrawer } from "./AttendanceStaffAktivitasDrawer";
 
 const { TabPane } = Tabs;
@@ -62,7 +80,36 @@ export const AttendanceStaffAktivitasSection: FC<
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+  const [showModalTask, setShowModalTask] = useState(false);
 
+  const [dataTask, setDataTask] = useState([
+    {
+      id: 1,
+      task_name: "Diskusi PRD Attendance (T-2213)",
+      project_name: "Diskusi PRD",
+      is_selected: false,
+    },
+    {
+      id: 2,
+      task_name: "Pengembangan Tampilan Attendance (T-2214)",
+      project_name: "Pengembangan Tampilan",
+      is_selected: false,
+    },
+    {
+      id: 3,
+      task_name: "Revisi Tampilan Mobile Log Activity (T-2222)",
+      project_name: "Revisi Tampilan",
+      is_selected: false,
+    },
+  ]);
+  const [loadingTasks, setLoadingTasks] = useState(true);
+  const [queryParams, setQueryParams] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 6),
+    sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "deadline"),
+    sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
+    status_ids: withDefault(StringParam, undefined),
+  });
   const [activityDrawerState, dispatch] = useReducer(
     _aktivitasDrawerToggleReducer,
     { visible: false }
@@ -203,6 +250,14 @@ export const AttendanceStaffAktivitasSection: FC<
     dispatch({ type: "create", visible: true });
   }, [userAttendanceForm, attendeeStatus]);
 
+  const onImportTask = () => {
+    setShowModalTask(!showModalTask);
+  };
+
+  useEffect(() => {
+    setLoadingTasks(false);
+  }, []);
+
   return (
     <>
       <section className="mig-platform space-y-6">
@@ -217,8 +272,92 @@ export const AttendanceStaffAktivitasSection: FC<
             <TabPane tab="Hari Ini" key="1" />
             <TabPane tab="Riwayat" key="2" />
           </Tabs>
+          {/* <Modal
+            title="Import Task ke Aktivitas"
+            open={showModalTask}
+            width={502}
+            footer={null}
+            onCancel={() => setShowModalTask(false)}
+          >
+            <div className="col-span-4">
+              <Input
+                style={{ width: `100%` }}
+                suffix={<SearchOutlined />}
+                // defaultValue={queryParams.keyword}
+                placeholder="Cari Task.."
+              // onChange={onChangeProductSearch}
+              // onKeyPress={onKeyPressHandler}
+              // allowClear
+              // disabled={!isAllowedToSeeModels}
+              />
+            </div>
+            <div className={"mt-7 flex justify-between"}>
+              <p className={'text-mono30 text-base font-bold '} style={{ lineHeight: '24px' }}>List Task</p>
+              <button className={'bg-transparent'}><p className={'text-primary100 text-sm font-bold'} style={{ lineHeight: '24px' }}>Pilih semua</p></button>
+            </div>
+            <Table
+              rowKey={(record) => record.id}
+              className=""
+              showHeader={false}
+              dataSource={dataTask}
+              loading={loadingTasks}
+              pagination={{
+                current: queryParams.page,
+                pageSize: queryParams.rows,
+                total: dataTask.length,
+                showSizeChanger: true,
+              }}
+              onChange={(pagination, filters, sorter, extra) => {
+
+
+                setQueryParams({
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+              columns={[
+                {
+                  title: "Task",
+                  dataIndex: "name",
+                  key: "name",
+                  render: (_, task) => {
+
+                    return (
+
+                      <div key={task.id} className="flex-none rounded-md ">
+                        <div className={'flex px-4 py-2 border border-inputkategori'}>
+                          <div className={'w-11/12'}>
+                            <p className={'text-xs font-bold text-mono30'} style={{ lineHeight: '20px' }}>{task.task_name}</p>
+                            <p className={'text-xs text-mono50'} style={{ lineHeight: '16px' }}>[{task.project_name}]</p>
+                          </div>
+                          <div className={'w-1/12 self-center items-end'}>
+                            <Checkbox />
+                          </div>
+                        </div>
+
+                      </div>
+                    );
+                  },
+                },
+              ]}
+            />
+            <div className={'mt-6 flex justify-end'}>
+              <p className={'mr-12 self-center hover:cursor-pointer text-sm'} style={{lineHeight:'16px'}}>Batal</p>
+              <div className={'px-6 py-2 bg-mono80 rounded-[5px] hover:cursor-pointer'}>
+              <p className={'text-sm'} style={{lineHeight:'16px'}}>Import Task</p>
+              </div>
+            </div>
+          </Modal> */}
 
           <div className="flex space-x-6 md:w-1/2 justify-end items-center">
+            {/* <ButtonSys
+              type="default"
+              onClick={onImportTask}
+              disabled={!isAllowedToAddActivity}
+            >
+              <FileImportIconSvg />
+              <p className={'ml-2'}>Import Task</p>
+            </ButtonSys> */}
             <ButtonSys
               type="primary"
               onClick={mOnAddActivityButtonClicked}

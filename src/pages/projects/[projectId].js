@@ -1347,8 +1347,10 @@ const ProjectDetailIndex = ({
                       const currentProject = dataProjectList?.find(
                         (project) => project.id === task.project_id
                       );
+
                       return (
                         <div key={task.id} className="flex-none rounded-md ">
+                          {console.log("current project isi ", task)}
                           <TaskCard
                             title={task?.name}
                             taskId={task?.ticket_number}
@@ -1356,6 +1358,7 @@ const ProjectDetailIndex = ({
                             toDate={task?.end_date}
                             status={task?.status}
                             taskStaffs={task?.task_staffs}
+                            dataProfile={dataProfile}
                             onClick={() => {
                               setCurrentTaskId(task?.id);
                               setModalDetailTask(true);
