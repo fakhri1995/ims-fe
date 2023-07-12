@@ -30,7 +30,16 @@ const ContractExtrasForm = ({
   const [fileList, setFileList] = useState([]);
   const [uploadFileLoading, setUploadFileLoading] = useState(false);
 
-  // 2. Use Effect
+  // Use Effect
+  // 2.1. Display filename when available
+  // useEffect(() => {
+  //   if (dataContractUpdate?.extras[idx]?.type === FILE) {
+  //     const currentFileName = dataContractUpdate?.extras[idx]?.value?.link?.split("/")[2];
+  //     setFileList([{ name: currentFileName }]);
+  //   } else {
+  //     setFileList([]);
+  //   }
+  // }, [dataContractUpdate?.extras]);
 
   // Handler
   const beforeUploadFile = useCallback((uploadedFile) => {
@@ -71,16 +80,11 @@ const ContractExtrasForm = ({
     setUploadFileLoading(null);
 
     let tempExtras = [...dataContractUpdate?.extras];
-    tempExtras[idx].value = uploadedFile;
+    tempExtras[idx].value = null;
     setDataContractUpdate((prev) => ({
       ...prev,
-      extras: "",
+      extras: tempExtras,
     }));
-
-    // use for auto save
-    // if (debouncedApiCall) {
-    //   debouncedApiCall(data[idx]);
-    // }
   }, []);
 
   // Conditonal render in Komponen Tambahan Kontrak field
@@ -118,7 +122,11 @@ const ContractExtrasForm = ({
         );
 
       case LIST:
-        const valueList = dataContractUpdate?.extras?.[idx]?.value || [""];
+        const valueList = Array.isArray(
+          dataContractUpdate?.extras?.[idx]?.value
+        )
+          ? dataContractUpdate?.extras?.[idx]?.value
+          : [""];
         return (
           <div className="col-span-2 mb-6">
             <ul className="mb-4 space-y-3">
@@ -217,7 +225,7 @@ const ContractExtrasForm = ({
   return (
     <div
       className="col-span-6 grid grid-cols-1 md:grid-cols-2 shadow-lg rounded-md 
-                    bg-white gap-x-3 md:gap-x-6 p-3 md:p-6 mb-6"
+      bg-white gap-x-3 md:gap-x-6 p-3 md:p-6 mb-6"
     >
       <Form.Item
         rules={[
@@ -249,6 +257,7 @@ const ContractExtrasForm = ({
           onChange={(value) => {
             const tempExtras = [...dataContractUpdate.extras];
             tempExtras[idx].type = value;
+            tempExtras[idx].value = null;
             setDataContractUpdate((prev) => ({
               ...prev,
               extras: tempExtras,
