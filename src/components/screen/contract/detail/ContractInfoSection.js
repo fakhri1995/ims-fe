@@ -170,7 +170,7 @@ const ContractInfoSection = ({ initProps, contractId }) => {
                 Aktif
               </p>
             </div>
-            <div className="flex flex-col md:flex-row md:items-center gap-2">
+            <div className="flex flex-col xl:flex-row xl:items-center gap-2">
               <ButtonSys
                 type={"default"}
                 color="danger"
