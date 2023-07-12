@@ -115,12 +115,15 @@ const ContractServiceForm = ({ initProps }) => {
           },
         ]}
       />
-
+      {/* <AccessControl
+        hasPermission={CONTRACT_SERVICE_ADD}
+      > */}
       <ModalServiceCreate
         initProps={initProps}
         visible={modalCreate}
         onvisible={setModalCreate}
       />
+      {/* </AccessControl> */}
     </>
   );
 };

@@ -544,12 +544,12 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
           {/* Tanggal Selesai */}
           <Form.Item
-            label="Tanggal Berlaku"
+            label="Tanggal Selesai"
             name={"end_date"}
             rules={[
               {
                 required: true,
-                message: "Tanggal berlaku wajib diisi",
+                message: "Tanggal selesai wajib diisi",
               },
             ]}
             className="mb-6 col-span-2"
