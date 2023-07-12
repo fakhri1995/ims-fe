@@ -95,9 +95,13 @@ const SummaryCard = ({
 
   function checkDataDescription(data) {
     if (data.description != undefined) {
+      console.log("datanya bro ", data);
       let checkDescription = parse(data.description);
+      console.log("deskription ", checkDescription);
       //jika kosong
-      if (checkDescription.props.children.type) {
+      if (checkDescription.length > 1) {
+        return true;
+      } else if (checkDescription.props.children.type) {
         return false;
       } else {
         return true;

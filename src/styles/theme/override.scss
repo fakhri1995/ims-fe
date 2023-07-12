@@ -684,6 +684,14 @@ ol {
   .ant-select-selector {
   cursor: pointer;
 }
+.testhoverbutton {
+  display: none;
+}
+
+.testhover:hover .testhoverbutton {
+  display: inline-block;
+}
+
 // .ant-table-thead > tr > th {
 //   background-color: white;
 // }

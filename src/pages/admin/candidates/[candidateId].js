@@ -643,7 +643,9 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
     if (data.description != undefined) {
       let checkDescription = parse(data.description);
       //jika kosong
-      if (checkDescription.props.children.type) {
+      if (checkDescription.length > 1) {
+        return true;
+      } else if (checkDescription.props.children.type) {
         return false;
       } else {
         return true;
