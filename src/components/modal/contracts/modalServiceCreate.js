@@ -257,12 +257,12 @@ const ModalServiceCreate = ({
       visible={visible}
       onCancel={handleClose}
       maskClosable={false}
-      width={800}
+      width={700}
       footer={
         <Spin spinning={loading}>
           <div className="flex space-x-2 justify-end items-center">
             <button
-              onClick={handleDeleteProject}
+              onClick={handleClose}
               className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
             >
               Batal

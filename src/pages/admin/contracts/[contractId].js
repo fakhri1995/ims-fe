@@ -1,4 +1,4 @@
-import { PrinterOutlined, UpOutlined } from "@ant-design/icons";
+import { RightOutlined } from "@ant-design/icons";
 import {
   Avatar,
   Collapse,
@@ -66,6 +66,7 @@ import {
   FileTextIconSvg,
   WritingIconSvg,
 } from "../../../components/icon";
+import ContractActionSection from "../../../components/screen/contract/detail/ContractActionSection";
 import ContractActivitySection from "../../../components/screen/contract/detail/ContractActivitySection";
 import ContractInfoSection from "../../../components/screen/contract/detail/ContractInfoSection";
 import ContractNotesSection from "../../../components/screen/contract/detail/ContractNotesSection";
@@ -123,9 +124,10 @@ const ContractDetailIndex = ({
 
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
+  const [dataContract, setDataContract] = useState({});
+  const [isMobileView, setIsMobileView] = useState(false);
 
   // 2.3. Project Detail
-  const [dataProject, setDataProject] = useState({});
   const [loadingProject, setLoadingProject] = useState(false);
   const [currentStatus, setCurrentStatus] = useState({});
 
@@ -139,6 +141,22 @@ const ContractDetailIndex = ({
   const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
+  // Responsive view for action button section
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsMobileView(true); // Set smaller page size for smaller devices
+      } else {
+        setIsMobileView(false); // Set default page size for larger devices
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   // 4. Event
 
@@ -148,7 +166,7 @@ const ContractDetailIndex = ({
       { name: "Kontrak", hrefValue: "/admin/contracts" },
       { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
     ],
-    [dataProject.name]
+    [dataContract.name]
   );
 
   if (isAccessControlPending) {
@@ -169,53 +187,31 @@ const ContractDetailIndex = ({
         id="mainWrapper"
       >
         {/* Action Buttons */}
-        <section className="md:col-span-12 grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
-          <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
-            <WritingIconSvg size={32} color={"#35763B"} />
-            <span className="ml-4">
-              <p className="mb-2 mig-caption--bold text-primary100">
-                Tambah Adendum Kontrak
-              </p>
-              <p className="mig-caption text-primary75">
-                s.d. 05 Desember 2022
-              </p>
-            </span>
-          </div>
-
-          <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
-            <CutIconSvg size={32} color={"#35763B"} />
-            <span className="ml-4">
-              <p className="mb-2 mig-caption--bold text-primary100">
-                Batalkan Kontrak
-              </p>
-              <p className="mig-caption text-primary75">Belum ada pembatalan</p>
-            </span>
-          </div>
-
-          <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
-            <BellRingingIconSvg size={32} color={"#35763B"} />
-            <span className="ml-4">
-              <p className="mb-2 mig-caption--bold text-primary100">
-                Atur Notifikasi
-              </p>
-              <p className="mig-caption text-primary75">
-                50 hari sebelum berakhir (Klien, Int)
-              </p>
-            </span>
-          </div>
-
-          <div className="flex flex-row min-w-min p-2 lg:p-4 bg-backdrop rounded-md items-center">
-            <FileTextIconSvg size={32} color={"#35763B"} />
-            <span className="ml-4">
-              <p className="mb-2 mig-caption--bold text-primary100">
-                Template Invoice
-              </p>
-              <p className="mig-caption text-primary75">
-                Template belum terisi
-              </p>
-            </span>
-          </div>
-        </section>
+        {isMobileView ? (
+          <Collapse
+            className="md:col-span-12 shadow-md rounded-md bg-white py-3 px-2"
+            bordered={false}
+            ghost={true}
+            expandIconPosition="right"
+            expandIcon={({ isActive }) => (
+              <RightOutlined rotate={isActive ? 90 : 0} />
+            )}
+          >
+            <Collapse.Panel
+              header={
+                <p className="mig-caption--bold">Menu Lainnya Detail Kontrak</p>
+              }
+            >
+              <section className="grid grid-cols-1 gap-2">
+                <ContractActionSection />
+              </section>
+            </Collapse.Panel>
+          </Collapse>
+        ) : (
+          <section className="md:col-span-12 grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
+            <ContractActionSection />
+          </section>
+        )}
 
         {/* Catatan & Aktivitas */}
         <section className="md:col-span-4 shadow-md rounded-md bg-white p-6 order-last md:order-none">
