@@ -1,9 +1,11 @@
-import { PrinterOutlined, UpOutlined } from "@ant-design/icons";
-import { Spin } from "antd";
+import { DeleteOutlined, PrinterOutlined, UpOutlined } from "@ant-design/icons";
+import { Spin, notification } from "antd";
+import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -20,8 +22,14 @@ import {
 
 import { ContractService } from "apis/contract";
 
-import { momentFormatDate } from "../../../../lib/helper";
+import {
+  generateStaticAssetUrl,
+  getFileName,
+  momentFormatDate,
+  permissionWarningNotification,
+} from "../../../../lib/helper";
 import { FileTextIconSvg } from "../../../icon";
+import { ModalHapus2 } from "../../../modal/modalCustom";
 
 // enum for extras detail
 const extrasType = {
@@ -40,7 +48,13 @@ const ContractInfoSection = ({ initProps, contractId }) => {
   const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
   const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
 
-  // 1. Use Query
+  const rt = useRouter();
+
+  // Use State
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+
+  // Use Query
   const { data: dataContract, isLoading: loadingDataContract } = useQuery(
     [CONTRACT_GET],
     () =>
@@ -56,10 +70,58 @@ const ContractInfoSection = ({ initProps, contractId }) => {
     }
   );
 
+  // Handler
+  const handleDeleteContract = () => {
+    if (!isAllowedToDeleteContract) {
+      permissionWarningNotification("Menghapus", "Kontrak");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${contractId}`,
+      {
+        method: `DELETE`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+          "Content-Type": "application/json",
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setModalDelete(false);
+          rt.push(`/admin/contracts`);
+          setTimeout(
+            () =>
+              notification.success({
+                message: response.message,
+                duration: 3,
+              }),
+            1000
+          );
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
+  };
+
   if (isAccessControlPending) {
     return null;
   }
 
+  // Conditional render
   const getExtrasDetail = (type, value) => {
     switch (type) {
       case TEXT:
@@ -79,6 +141,13 @@ const ContractInfoSection = ({ initProps, contractId }) => {
           <div className="flex space-x-2 items-center">
             <FileTextIconSvg size={24} color={"#35763B"} />
             <p className="text-primary100">Document_000323.pdf</p>
+            <a
+              href={generateStaticAssetUrl(value?.link)}
+              target="_blank"
+              className="text-primary100"
+            >
+              {getFileName(value?.link)}
+            </a>
           </div>
         );
     }
@@ -101,12 +170,25 @@ const ContractInfoSection = ({ initProps, contractId }) => {
                 Aktif
               </p>
             </div>
-            <ButtonSys type={"default"}>
-              <div className="flex space-x-2 items-center">
-                <PrinterOutlined />
-                <p>Cetak Kontrak</p>
-              </div>
-            </ButtonSys>
+            <div className="flex flex-col md:flex-row md:items-center gap-2">
+              <ButtonSys
+                type={"default"}
+                color="danger"
+                onClick={() => setModalDelete(true)}
+              >
+                <div className="flex space-x-2 items-center">
+                  <DeleteOutlined />
+                  <p>Hapus Kontrak</p>
+                </div>
+              </ButtonSys>
+
+              <ButtonSys type={"default"}>
+                <div className="flex space-x-2 items-center">
+                  <PrinterOutlined />
+                  <p>Cetak Kontrak</p>
+                </div>
+              </ButtonSys>
+            </div>
           </div>
 
           {/* Main detail */}
@@ -156,6 +238,25 @@ const ContractInfoSection = ({ initProps, contractId }) => {
             ))}
         </>
       )}
+
+      <AccessControl hasPermission={CONTRACT_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={handleDeleteContract}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"kontrak"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
+            <strong>{dataContract?.contract_number}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </section>
   );
 };

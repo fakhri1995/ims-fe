@@ -52,6 +52,7 @@ import {
   CONTRACTS_COUNT_GET,
   CONTRACTS_GET,
   CONTRACT_ADD,
+  CONTRACT_DELETE,
   CONTRACT_GET,
   CONTRACT_UPDATE,
   RECRUITMENT_STATUSES_LIST_GET,
@@ -67,6 +68,7 @@ import ButtonSys from "../../../components/button";
 import { SearchIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomContractList } from "../../../components/table/tableCustom";
 import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
 import {
@@ -103,6 +105,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
   const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
+  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
   const isAllowedToAddContract = hasPermission(CONTRACT_ADD);
   const isAllowedToGetContractCount = hasPermission(CONTRACTS_COUNT_GET);
 
@@ -146,6 +149,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
   const [loadingAdd, setLoadingAdd] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
 
   // Modal Duration Range Filter
   const [modalDuration, setModalDuration] = useState(false);
@@ -174,12 +179,11 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect & UseQuery
   // 3.1. Get Contract Count
   const { data: dataCount, isLoading: loadingDataCount } = useQuery(
-    [CONTRACTS_COUNT_GET],
+    [CONTRACTS_COUNT_GET, refresh],
     () =>
       ContractService.getCountContract(initProps, isAllowedToGetContractCount),
     {
       enabled: isAllowedToGetContractCount,
-      refetchOnMount: false,
       select: (response) => response.data,
     }
   );
@@ -249,7 +253,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.2. Create Recruitments (from excel import)
+  // 4.2. Create Contract
   const handleAddContract = () => {
     if (!isAllowedToAddContract) {
       permissionWarningNotification("Menambah", "Kontrak");
@@ -285,6 +289,48 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         });
       })
       .finally(() => setLoadingAdd(false));
+  };
+
+  // 4.3. Delete Contract
+  // Handler
+  const handleDeleteContract = (id) => {
+    if (!isAllowedToDeleteContract) {
+      permissionWarningNotification("Menghapus", "Kontrak");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
+      method: `DELETE`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setModalDelete(false);
+          setRefresh((prev) => prev + 1);
+
+          notification.success({
+            message: response.message,
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: response.message,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menghapus proyek. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingDelete(false));
   };
 
   // Kontrak Table's columns
@@ -425,12 +471,12 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   <ButtonSys
                     type={"default"}
                     color={"danger"}
-                    // disabled={!isAllowedToSendEmailRecruitment}
-                    // onClick={(event) => {
-                    //   event.stopPropagation();
-                    //   setDataRowClicked(record);
-                    //   setEmailDrawerShown(true);
-                    // }}
+                    disabled={!isAllowedToDeleteContract}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setDataRowClicked(record);
+                      setModalDelete(true);
+                    }}
                   >
                     <DeleteOutlined />
                   </ButtonSys>
@@ -690,6 +736,26 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             />
           </div>
         </Modal>
+      </AccessControl>
+
+      {/* Modal Delete Contract */}
+      <AccessControl hasPermission={CONTRACT_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => handleDeleteContract(dataRowClicked?.id)}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"kontrak"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
+            <strong>{dataRowClicked?.contract_number}</strong>?
+          </p>
+        </ModalHapus2>
       </AccessControl>
     </Layout>
   );

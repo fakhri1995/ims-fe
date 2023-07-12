@@ -233,11 +233,6 @@ const ContractDetailIndex = ({
           <ContractServiceSection />
         </div>
       </div>
-
-      {/* Modal Project */}
-      {/* <AccessControl hasPermission={PROJECT_UPDATE}>
-        <ModalProjectUpdate />
-      </AccessControl> */}
     </LayoutDashboard>
   );
 };
