@@ -1,7 +1,9 @@
 import {
   AppstoreOutlined,
   CloseOutlined,
+  DeleteOutlined,
   DownOutlined,
+  EditOutlined,
   MailOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
@@ -13,12 +15,15 @@ import {
   Form,
   Input,
   Menu,
+  Modal,
   Select,
+  Space,
   Spin,
   Switch,
   Table,
   notification,
 } from "antd";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
@@ -47,7 +52,9 @@ import {
   CONTRACTS_COUNT_GET,
   CONTRACTS_GET,
   CONTRACT_ADD,
+  CONTRACT_DELETE,
   CONTRACT_GET,
+  CONTRACT_UPDATE,
   RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
@@ -61,6 +68,7 @@ import ButtonSys from "../../../components/button";
 import { SearchIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
+import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomContractList } from "../../../components/table/tableCustom";
 import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
 import {
@@ -96,6 +104,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
+  const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
+  const isAllowedToDeleteContract = hasPermission(CONTRACT_DELETE);
   const isAllowedToAddContract = hasPermission(CONTRACT_ADD);
   const isAllowedToGetContractCount = hasPermission(CONTRACTS_COUNT_GET);
 
@@ -124,6 +134,12 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   pathTitleArr.splice(1, 1);
   pathTitleArr.splice(1, 1, "Kontrak");
 
+  const durationRangeList = [
+    { number: 1, unit: "Bulan" },
+    { number: 3, unit: "Bulan" },
+    { number: 1, unit: "Tahun" },
+  ];
+
   // 2. Use state
   // 2.1. Table Contract
   // filter search & selected options
@@ -132,6 +148,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
+  const [loadingAdd, setLoadingAdd] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
+
+  // Modal Duration Range Filter
+  const [modalDuration, setModalDuration] = useState(false);
+  const [durationInput, setDurationInput] = useState(0);
   // table data
   // const [dataRawContracts, setDataRawContracts] = useState({
   //   current_page: "",
@@ -156,12 +179,11 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3. UseEffect & UseQuery
   // 3.1. Get Contract Count
   const { data: dataCount, isLoading: loadingDataCount } = useQuery(
-    [CONTRACTS_COUNT_GET],
+    [CONTRACTS_COUNT_GET, refresh],
     () =>
       ContractService.getCountContract(initProps, isAllowedToGetContractCount),
     {
       enabled: isAllowedToGetContractCount,
-      refetchOnMount: false,
       select: (response) => response.data,
     }
   );
@@ -195,7 +217,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  console.log({ dataRawContracts });
+  // console.log({ dataRawContracts });
 
   // 3.5. Get Status List
   const { data: dataStatusList, isLoading: loadingStatusList } = useQuery(
@@ -213,8 +235,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4. Event
-  const onManageRecruitmentButtonClicked = useCallback(() => {
-    rt.push("/admin/recruitment/role");
+  const onAddContract = useCallback(() => {
+    handleAddContract();
   }, []);
 
   // 4.1. Filter Table
@@ -231,47 +253,87 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     "Enter"
   );
 
-  // 4.2. Create Recruitments (from excel import)
-  const handleCreateRecruitments = (data) => {
+  // 4.2. Create Contract
+  const handleAddContract = () => {
     if (!isAllowedToAddContract) {
-      permissionWarningNotification("Menambah", "Rekrutmen Kandidat");
+      permissionWarningNotification("Menambah", "Kontrak");
       return;
     }
-    setLoadingCreate(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addRecruitments`, {
+    setLoadingAdd(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
       method: "POST",
       headers: {
         Authorization: JSON.parse(initProps),
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(data),
     })
       .then((response) => response.json())
       .then((response2) => {
-        setRefresh((prev) => prev + 1);
         if (response2.success) {
+          setTimeout(() => {
+            rt.push(
+              `/admin/contracts/create?id=${response2.data?.id}&prevpath=add`
+            );
+          }, 500);
+        } else {
+          notification.error({
+            message: `Gagal menambahkan kontrak. ${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Gagal menambahkan kontrak. ${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingAdd(false));
+  };
+
+  // 4.3. Delete Contract
+  // Handler
+  const handleDeleteContract = (id) => {
+    if (!isAllowedToDeleteContract) {
+      permissionWarningNotification("Menghapus", "Kontrak");
+      return;
+    }
+
+    setLoadingDelete(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContract?id=${id}`, {
+      method: `DELETE`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((response) => {
+        if (response.success) {
+          setModalDelete(false);
+          setRefresh((prev) => prev + 1);
+
           notification.success({
-            message: `Kandidat berhasil ditambahkan.`,
+            message: response.message,
             duration: 3,
           });
         } else {
           notification.error({
-            message: `Gagal menambahkan kandidat. ${response2.message}`,
+            message: response.message,
             duration: 3,
           });
         }
-        setLoadingCreate(false);
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menambahkan kandidat. ${err.response}`,
+          message: `Gagal menghapus proyek. ${err.response}`,
           duration: 3,
         });
-        setLoadingCreate(false);
-      });
+      })
+      .finally(() => setLoadingDelete(false));
   };
 
-  // "Semua Kandidat" Table's columns
+  // Kontrak Table's columns
   const columnContracts = [
     {
       title: "No",
@@ -348,7 +410,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
         : false,
     },
-
     {
       title: "Status",
       key: "status",
@@ -357,16 +418,24 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         return {
           children: (
             <>
-              <div
-                className="rounded-md py-1 hover:cursor-pointer text-center"
-                style={{
-                  width: `100%`,
-                  backgroundColor: `${record.status?.color}10`,
-                  color: `${record.status?.color}`,
-                }}
-              >
-                {record?.status?.name}
-              </div>
+              {record.is_posted ? (
+                <div
+                  className="rounded-md py-1 px-4 hover:cursor-pointer text-center text-white"
+                  style={{
+                    width: `100%`,
+                    backgroundColor: `${record.status?.color}`,
+                  }}
+                >
+                  {record?.status?.name}
+                </div>
+              ) : (
+                <div
+                  className="rounded-md py-1 px-4 hover:cursor-pointer text-center 
+                bg-mono50 text-white"
+                >
+                  Draft
+                </div>
+              )}
             </>
           ),
         };
@@ -376,6 +445,50 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             a.status?.name
               .toLowerCase()
               .localeCompare(b.status?.name.toLowerCase())
+        : false,
+    },
+    {
+      title: "Action",
+      key: "action_button",
+      dataIndex: "action_button",
+      render: (text, record, index) => {
+        return {
+          children: (
+            <>
+              {!record.is_posted && (
+                <div className="flex flex-col md:flex-row space-x-2 items-center">
+                  <ButtonSys
+                    type={"default"}
+                    color={"secondary100"}
+                    disabled={!isAllowedToUpdateContract}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      rt.push(`/admin/contracts/create?id=${record.id}`);
+                    }}
+                  >
+                    <EditOutlined />
+                  </ButtonSys>
+                  <ButtonSys
+                    type={"default"}
+                    color={"danger"}
+                    disabled={!isAllowedToDeleteContract}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setDataRowClicked(record);
+                      setModalDelete(true);
+                    }}
+                  >
+                    <DeleteOutlined />
+                  </ButtonSys>
+                </div>
+              )}
+            </>
+          ),
+        };
+      },
+      sorter: isAllowedToGetContracts
+        ? (a, b) =>
+            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
         : false,
     },
   ];
@@ -411,9 +524,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
           <AddNewFormButton
             title="Buat Kontrak"
-            subtitle="Jumat, 07 Januari 2021"
-            // onButtonClicked={onManageRecruitmentButtonClicked}
-            disabled={!isAllowedToAddContract}
+            subtitle={moment().format("dddd, DD MMMM YYYY")}
+            onButtonClicked={onAddContract}
+            disabled={!isAllowedToAddContract || loadingAdd}
           />
         </div>
         <div className="md:px-5">
@@ -426,22 +539,63 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by duration (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.duration}
+                  // defaultValue={queryParams.duration}
                   allowClear
                   name={`role`}
                   disabled={!isAllowedToGetCompanyClients}
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ duration: value });
+                    // setQueryParams({ duration: value });
                     setSelectedDuration(value);
                   }}
+                  dropdownRender={(options) => (
+                    <>
+                      {options}
+                      <p
+                        onClick={() => setModalDuration(true)}
+                        className={`flex justify-center py-1 px-2 text-center 
+                        rounded hover:bg-primary100 hover:text-white hover:cursor-pointer`}
+                      >
+                        Custom Range
+                      </p>
+                    </>
+                  )}
                 >
-                  {dataCompanyList?.map((role) => (
-                    <Select.Option key={role.id} value={role.id}>
-                      {role.name}
+                  {durationRangeList?.map((range, idx) => (
+                    <Select.Option
+                      key={idx + 1}
+                      value={`${range.number} ${range.unit}`}
+                    >
+                      <p
+                        className={`px-2 text-center rounded  
+                        ${
+                          selectedDuration ===
+                            `${range.number} ${range.unit}` &&
+                          "bg-primary100 text-white"
+                        }`}
+                      >
+                        {range.number} {range.unit}
+                      </p>
                     </Select.Option>
                   ))}
+                  {durationInput && (
+                    <Select.Option
+                      key={5}
+                      value={`${durationInput} Bulan (Custom)`}
+                    >
+                      <p
+                        className={`px-2 text-center rounded
+                      ${
+                        selectedDuration ===
+                          `${durationInput} Bulan (Custom)` &&
+                        "bg-primary100 text-white"
+                      }`}
+                      >
+                        {durationInput} Bulan (Custom)
+                      </p>
+                    </Select.Option>
+                  )}
                 </Select>
               </div>
 
@@ -540,6 +694,69 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           </div>
         </div>
       </div>
+
+      {/* Modal Duration Range */}
+      <AccessControl hasPermission={CONTRACTS_GET}>
+        <Modal
+          title={"Masukkan Jumlah Bulan"}
+          visible={modalDuration}
+          onCancel={() => setModalDuration(false)}
+          maskClosable={false}
+          footer={
+            <div className="flex space-x-2 justify-end items-center">
+              <button
+                onClick={() => setModalDuration(false)}
+                className="bg-transparent text-mono50 py-2 px-6 hover:text-mono80"
+              >
+                Batal
+              </button>
+              <ButtonSys
+                type={"primary"}
+                onClick={() => {
+                  // let tempDurationRange = [...durationRangeList];
+                  // tempDurationRange.push(`${durationInput} Bulan`);
+                  // setDurationRangeList(tempDurationRange);
+                  setModalDuration(false);
+                }}
+              >
+                <p>Tambah</p>
+              </ButtonSys>
+            </div>
+          }
+          // loading={loading}
+        >
+          <div className="space-y-2">
+            <p>Jumlah Bulan</p>
+            <Input
+              type="number"
+              min={0}
+              placeholder="Masukkan jumlah bulan"
+              value={durationInput}
+              onChange={(e) => setDurationInput(e.target.value)}
+            />
+          </div>
+        </Modal>
+      </AccessControl>
+
+      {/* Modal Delete Contract */}
+      <AccessControl hasPermission={CONTRACT_DELETE}>
+        <ModalHapus2
+          title={`Peringatan`}
+          visible={modalDelete}
+          onvisible={setModalDelete}
+          onOk={() => handleDeleteContract(dataRowClicked?.id)}
+          onCancel={() => {
+            setModalDelete(false);
+          }}
+          itemName={"kontrak"}
+          loading={loadingDelete}
+        >
+          <p className="mb-4">
+            Apakah Anda yakin ingin melanjutkan penghapusan kontrak{" "}
+            <strong>{dataRowClicked?.contract_number}</strong>?
+          </p>
+        </ModalHapus2>
+      </AccessControl>
     </Layout>
   );
 };
