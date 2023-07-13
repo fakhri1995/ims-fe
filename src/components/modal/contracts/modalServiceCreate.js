@@ -16,13 +16,16 @@ import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
+import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { GROUPS_GET, USERS_GET } from "lib/features";
+import { PRODUCTS_GET } from "lib/features";
 import { permissionWarningNotification } from "lib/helper";
 
+import { ContractService } from "../../../apis/contract/contract.service";
+import { ProductCatalogService } from "../../../apis/product-catalog";
 import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { PlusIconSvg } from "../../icon";
@@ -36,82 +39,49 @@ const ModalServiceCreate = ({
   onvisible,
   isAllowedToUpdateProject,
   isAllowedToDeleteProject,
-  currentProject,
+  dataContractUpdate,
 }) => {
   const { hasPermission } = useAccessControl();
-  const isAllowedToGetUsers = hasPermission(USERS_GET);
-  const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
+
+  // const isAllowedToAddContractService = hasPermission(CONTRACT_SERVICE_ADD);
+  // const isAllowedToUpdateContractService = hasPermission(CONTRACT_SERVICE_UPDATE);
+
   const [form] = Form.useForm();
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
-  const [dataServiceList, setDataServiceList] = useState([dataService]);
-  const [dataService, setDataService] = useState({
-    type: "",
+
+  const dataService = {
+    id: null,
+    name: "",
     pax: 0,
     price: "",
-    duration: 0,
-  });
+    priceOption: "",
+    inventoriesCount: 0,
+  };
+  const [dataServiceList, setDataServiceList] = useState([dataService]);
 
   const [loading, setLoading] = useState(false);
-  const [isSwitchGroup, setIsSwitchGroup] = useState(false);
+  const [serviceTypeSearch, setServiceTypeSearch] = useState("");
 
-  const [dataStaffsOrGroups, setDataStaffsOrGroups] = useState([]);
-  const [selectedGroups, setSelectedGroups] = useState([]);
-
-  // 2 USE EFFECT
-  // 2.1. Get users or groups for task staff options
-  useEffect(() => {
-    if (!visible) {
-      return;
-    }
-
-    if (isSwitchGroup) {
-      if (!isAllowedToGetGroups) {
-        permissionWarningNotification("Mendapatkan", "Daftar Group");
-        return;
+  // 2. USE QUERY & USE EFFECT
+  // 2.1. Get Contract Service List
+  const { data: dataServiceTypeList, isLoading: loadingServiceTypeList } =
+    useQuery(
+      [PRODUCTS_GET, serviceTypeSearch],
+      () =>
+        ProductCatalogService.getInventories(
+          initProps,
+          isAllowedToGetProductInventories,
+          serviceTypeSearch
+        ),
+      {
+        enabled: isAllowedToGetProductInventories,
+        select: (response) => response.data.data,
       }
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterGroupsWithUsers`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataStaffsOrGroups(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar grup",
-            duration: 3,
-          })
-        );
-    } else {
-      if (!isAllowedToGetUsers) {
-        permissionWarningNotification("Mendapatkan", "Daftar User");
-        return;
-      }
-
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          setDataStaffsOrGroups(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar user",
-            duration: 3,
-          })
-        );
-    }
-  }, [isAllowedToGetGroups, isAllowedToGetUsers, isSwitchGroup, visible]);
+    );
 
   // 3. HANDLER
   const clearData = () => {
@@ -124,132 +94,7 @@ const ModalServiceCreate = ({
     clearData();
   };
 
-  const onSearchUsers = (searchKey, setData) => {
-    if (!isAllowedToGetUsers) {
-      permissionWarningNotification("Mendapatkan", "Daftar User");
-      return;
-    }
-
-    if (searchTimeoutRef.current) {
-      clearTimeout(searchTimeoutRef.current);
-    }
-
-    setLoading(true);
-    searchTimeoutRef.current = setTimeout(() => {
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getFilterUsers?type=1&name=${searchKey}`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          setData(res2.data);
-        })
-        .catch((err) =>
-          notification.error({
-            message: "Gagal mendapatkan daftar user",
-            duration: 3,
-          })
-        )
-        .finally(() => setLoading(false));
-    }, 500);
-  };
-
-  const handleUpdateProject = () => {
-    if (!isAllowedToUpdateProject) {
-      permissionWarningNotification("Mengubah", "Proyek");
-      return;
-    }
-
-    const payload = {
-      ...dataService,
-      id: currentProject?.id,
-      proposed_bys: currentProject?.proposed_bys?.map((staff) =>
-        Number(staff.id)
-      ),
-      project_staffs: dataService?.project_staffs?.map((staff) =>
-        Number(staff.key)
-      ),
-    };
-
-    setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateProject`, {
-      method: `PUT`,
-      headers: {
-        Authorization: JSON.parse(initProps),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    })
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          handleClose();
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-          rt.push(`projects/${currentProject?.id}`);
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal mengubah proyek. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoading(false));
-  };
-
-  const handleDeleteProject = () => {
-    if (!isAllowedToDeleteProject) {
-      permissionWarningNotification("Menghapus", "Proyek");
-      return;
-    }
-
-    setLoading(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProject?id=${currentProject?.id}`,
-      {
-        method: `DELETE`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.success) {
-          handleClose();
-          notification.success({
-            message: response.message,
-            duration: 3,
-          });
-        } else {
-          notification.error({
-            message: response.message,
-            duration: 3,
-          });
-        }
-      })
-      .catch((err) => {
-        notification.error({
-          message: `Gagal menghapus proyek. ${err.response}`,
-          duration: 3,
-        });
-      })
-      .finally(() => setLoading(false));
-  };
+  // console.log({ dataServiceList });
 
   return (
     <Modal
@@ -269,8 +114,8 @@ const ModalServiceCreate = ({
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={handleUpdateProject}
-              disabled={!isAllowedToUpdateProject || !dataService.name}
+              onClick={() => onvisible(false)}
+              disabled={!dataService.name}
             >
               <p>Tambah & Simpan</p>
             </ButtonSys>
@@ -285,7 +130,7 @@ const ModalServiceCreate = ({
             <div className="grid grid-cols-2 gap-x-6">
               <Form.Item
                 label="Jenis Service"
-                name={"type"}
+                name={"name"}
                 rules={[
                   {
                     required: true,
@@ -296,17 +141,24 @@ const ModalServiceCreate = ({
                 <div className="w-full mb-2">
                   <Select
                     showSearch
-                    value={1}
-                    // disabled={!isAllowedToGetServices}
                     placeholder={"Pilih jenis service"}
+                    value={service?.id}
+                    name={"name"}
+                    disabled={!isAllowedToGetProductInventories}
                     style={{ width: `100%` }}
-                    // onSearch={(value) =>
-                    //   !isSwitchGroup &&
-                    //   onSearchUsers(value, setDataStaffsOrGroups)
-                    // }
-                    // onChange={(value, option) => {
+                    onChange={(value, option) => {
+                      let tempServiceList = [...dataServiceList];
+                      tempServiceList[idx].id = value;
+                      tempServiceList[idx].price = option.price;
+                      tempServiceList[idx].priceOption = option.price_option;
+                      tempServiceList[idx].name = option.inventories_count;
+                      tempServiceList[idx].inventoriesCount = option.children;
 
-                    // }}
+                      setDataServiceList(tempServiceList);
+                    }}
+                    onSearch={(value) => {
+                      setServiceTypeSearch(value);
+                    }}
                     optionFilterProp="children"
                     filterOption={(input, option) =>
                       (option?.children ?? "")
@@ -314,15 +166,14 @@ const ModalServiceCreate = ({
                         .includes(input.toLowerCase())
                     }
                   >
-                    {dataStaffsOrGroups.map((item) => {
+                    {dataServiceTypeList?.map((item) => {
                       return (
                         <Select.Option
                           key={item?.id}
-                          value={item.id}
-                          position={item?.position}
-                          users={item?.users}
-                          name={item?.name}
-                          profile_image={item?.profile_image}
+                          value={item?.id}
+                          inventories_count={item.inventories_count}
+                          price={item.price}
+                          price_option={item.price_option}
                         >
                           {item?.name}
                         </Select.Option>
@@ -333,7 +184,6 @@ const ModalServiceCreate = ({
               </Form.Item>
               <Form.Item
                 label="Pax"
-                name={"quantity"}
                 rules={[
                   {
                     required: true,
@@ -345,6 +195,14 @@ const ModalServiceCreate = ({
                   type="number"
                   placeholder="Pilih jumlah service"
                   min={1}
+                  value={service?.pax}
+                  max={dataService.inventoriesCount}
+                  onChange={(e) => {
+                    let tempServiceList = [...dataServiceList];
+                    tempServiceList[idx].pax = e.target.value;
+
+                    setDataServiceList(tempServiceList);
+                  }}
                 />
               </Form.Item>
 
@@ -365,32 +223,62 @@ const ModalServiceCreate = ({
                       addonBefore="Rp."
                       placeholder="Isi harga produk"
                       type="number"
+                      value={service?.price}
+                      onChange={(e) => {
+                        let tempServiceList = [...dataServiceList];
+                        tempServiceList[idx].price = e.target.value;
+
+                        setDataServiceList(tempServiceList);
+                      }}
                     />
                   </>
                 </Form.Item>
 
-                <div className="mt-1.5">
-                  <Select defaultValue={3}>
-                    <Select.Option key={1} value={1}>
-                      per Jam
-                    </Select.Option>
-                    <Select.Option key={2} value={2}>
-                      per Hari
-                    </Select.Option>
-                    <Select.Option key={3} value={3}>
-                      per Bulan
-                    </Select.Option>
-                    <Select.Option key={4} value={4}>
-                      per Tahun
-                    </Select.Option>
-                  </Select>
-                </div>
+                <Form.Item
+                  name={"priceOption"}
+                  rules={[
+                    {
+                      required: true,
+                      message: "Satuan durasi service wajib diisi",
+                    },
+                  ]}
+                  className="mt-8"
+                >
+                  <>
+                    <Select
+                      name={"priceOption"}
+                      defaultValue={"bulan"}
+                      value={service?.priceOption}
+                      onChange={(value) => {
+                        let tempServiceList = [...dataServiceList];
+                        tempServiceList[idx].priceOption = value;
+
+                        setDataServiceList(tempServiceList);
+                      }}
+                    >
+                      <Select.Option key={1} value={"jam"}>
+                        per Jam
+                      </Select.Option>
+                      <Select.Option key={2} value={"hari"}>
+                        per Hari
+                      </Select.Option>
+                      <Select.Option key={3} value={"bulan"}>
+                        per Bulan
+                      </Select.Option>
+                      <Select.Option key={4} value={"tahun"}>
+                        per Tahun
+                      </Select.Option>
+                    </Select>
+                  </>
+                </Form.Item>
               </div>
 
               <button
                 onClick={() => {
-                  const newService = { ...dataService };
-                  setDataServiceList((prev) => [...prev, newService]);
+                  // const newService = { ...dataService };
+                  const tempServiceList = [...dataServiceList];
+                  tempServiceList.splice(idx + 1, 0, dataService);
+                  setDataServiceList(tempServiceList);
                 }}
                 type="button"
                 className="border border-dashed border-mono90 

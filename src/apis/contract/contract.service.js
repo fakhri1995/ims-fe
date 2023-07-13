@@ -4,6 +4,7 @@ import QueryString from "qs";
 import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 export class ContractService {
+  // TODO: change endpoint
   static getCountContract = async (initProps, feature) => {
     if (!feature) {
       permissionWarningNotification("Mendapatkan", "Data Contract Count");
@@ -40,6 +41,7 @@ export class ContractService {
     return apiRes;
   };
 
+  // TODO: change endpoint
   static getStatusList = async (initProps, feature) => {
     if (!feature) {
       permissionWarningNotification("Mendapatkan", "Data Contract Status");
@@ -136,7 +138,6 @@ export class ContractService {
       .then((res) => res.json())
       .then((res2) => {
         if (res2.success) {
-          console.log({ res2 });
           return res2;
         } else {
           notification.error({

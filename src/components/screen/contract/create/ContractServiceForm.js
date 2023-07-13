@@ -1,36 +1,51 @@
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
 import { Table } from "antd";
 import React, { useState } from "react";
+import { useQuery } from "react-query";
 
+import { useAccessControl } from "contexts/access-control";
+
+import { CONTRACTS_GET } from "lib/features";
+
+import { ProductCatalogService } from "../../../../apis/product-catalog";
 import { beforeUploadFileMaxSize } from "../../../../lib/helper";
 import ButtonSys from "../../../button";
 import { EditSquareIconSvg, PlusIconSvg, TrashIconSvg } from "../../../icon";
 import ModalServiceCreate from "../../../modal/contracts/modalServiceCreate";
+import ModalServiceUpdate from "../../../modal/contracts/modalServiceUpdate";
 import { FILE, LIST, TEXT } from "../detail/ContractInfoSection";
 
-const ContractServiceForm = ({ initProps }) => {
-  // Use State
-  const [modalCreate, setModalCreate] = useState(false);
+const ContractServiceForm = ({
+  initProps,
+  dataContractUpdate,
+  setDataContractUpdate,
+}) => {
+  const { hasPermission } = useAccessControl();
 
-  // 2. Use Effect
+  // Use State
+  const [modalServiceCreate, setModalServiceCreate] = useState(false);
+  const [modalServiceUpdate, setModalServiceUpdate] = useState(false);
+  const [dataRowClicked, setDataRowClicked] = useState({});
 
   // Handler
 
   const dataSource = [
     {
       key: "1",
-      service: "PC",
-      type: "Hardware",
+      id: 1,
+      name: "PC Hardware",
       pax: 5,
       price: "500000",
+      priceOption: "bulan",
       subtotal: "10000000",
     },
     {
       key: "2",
-      service: "ATM",
-      type: "Hardware",
+      id: 2,
+      name: "ATM Hardware",
       pax: 3,
       price: "400000",
+      priceOption: "bulan",
       subtotal: "2400000",
     },
   ];
@@ -47,7 +62,7 @@ const ContractServiceForm = ({ initProps }) => {
         footer={() => (
           <button
             type="button"
-            onClick={() => setModalCreate(true)}
+            onClick={() => setModalServiceCreate(true)}
             className="bg-transparent flex items-center space-x-2 text-primary100"
           >
             <PlusIconSvg size={16} color={"#35763B"} />
@@ -62,13 +77,9 @@ const ContractServiceForm = ({ initProps }) => {
           },
           {
             title: "Service",
-            dataIndex: "service",
+            dataIndex: "name",
             width: "400px",
-            render: (text, record) => (
-              <p className="">
-                {text} <span>{record?.type}</span>
-              </p>
-            ),
+            render: (text, record) => <p className="">{text}</p>,
           },
           {
             title: "Pax",
@@ -77,9 +88,10 @@ const ContractServiceForm = ({ initProps }) => {
           {
             title: "Harga",
             dataIndex: "price",
-            render: (text) => (
+            render: (text, record) => (
               <p className="">
-                Rp {Number(text)?.toLocaleString("id-ID") || "-"}/bulan
+                Rp {Number(text)?.toLocaleString("id-ID") || "-"}/
+                {record.priceOption}
               </p>
             ),
           },
@@ -94,12 +106,15 @@ const ContractServiceForm = ({ initProps }) => {
           },
           {
             dataIndex: "action_button",
-            render: (text) => (
+            render: (text, record) => (
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
                   className="bg-transparent hover:opacity-70"
-                  onClick={() => setModalCreate(true)}
+                  onClick={() => {
+                    setDataRowClicked(record);
+                    setModalServiceUpdate(true);
+                  }}
                 >
                   <EditSquareIconSvg size={24} color={"#CCCCCC"} />
                 </button>
@@ -107,6 +122,8 @@ const ContractServiceForm = ({ initProps }) => {
                 <button
                   type="button"
                   className="bg-transparent hover:opacity-70"
+                  // TODO: implement delete service in selected row
+                  // onClick={()}
                 >
                   <TrashIconSvg size={24} color={"#BF4A40"} />
                 </button>
@@ -120,10 +137,21 @@ const ContractServiceForm = ({ initProps }) => {
       > */}
       <ModalServiceCreate
         initProps={initProps}
-        visible={modalCreate}
-        onvisible={setModalCreate}
+        visible={modalServiceCreate}
+        onvisible={setModalServiceCreate}
+        dataContractUpdate={dataContractUpdate}
+        setDataContractUpdate={setDataContractUpdate}
       />
       {/* </AccessControl> */}
+
+      <ModalServiceUpdate
+        initProps={initProps}
+        visible={modalServiceUpdate}
+        onvisible={setModalServiceUpdate}
+        currentService={dataRowClicked}
+        dataContractUpdate={dataContractUpdate}
+        setDataContractUpdate={setDataContractUpdate}
+      />
     </>
   );
 };
