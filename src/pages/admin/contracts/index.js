@@ -190,11 +190,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 3.2. Get Company List
   const { data: dataCompanyList, isLoading: loadingCompanyList } = useQuery(
-    [COMPANY_CLIENTS_GET],
+    [COMPANY_CLIENTS_GET, refresh],
     () => CompanyService.getCompanyClientList(axiosClient, true),
     {
       enabled: isAllowedToGetCompanyClients,
-      refetchOnMount: false,
       select: (response) => response.data.data,
     }
   );
@@ -202,7 +201,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 3.3. Get Contracts
   const { data: dataRawContracts, isLoading: loadingDataRawContracts } =
     useQuery(
-      [CONTRACTS_GET, queryParams],
+      [CONTRACTS_GET, queryParams, searchingFilterContracts, refresh],
       () =>
         ContractService.getContracts(
           initProps,
@@ -212,7 +211,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         ),
       {
         enabled: isAllowedToGetContracts,
-        refetchOnMount: false,
         select: (response) => response.data,
       }
     );
@@ -310,8 +308,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
-          setModalDelete(false);
           setRefresh((prev) => prev + 1);
+          setModalDelete(false);
 
           notification.success({
             message: response.message,

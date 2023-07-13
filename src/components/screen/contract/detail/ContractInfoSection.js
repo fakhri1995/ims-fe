@@ -141,13 +141,13 @@ const ContractInfoSection = ({ initProps, contractId }) => {
           <div className="flex space-x-2 items-center">
             <FileTextIconSvg size={24} color={"#35763B"} />
             <p className="text-primary100">Document_000323.pdf</p>
-            <a
+            {/* <a
               href={generateStaticAssetUrl(value?.link)}
               target="_blank"
               className="text-primary100"
             >
               {getFileName(value?.link)}
-            </a>
+            </a> */}
           </div>
         );
     }
