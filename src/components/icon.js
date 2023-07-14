@@ -2763,6 +2763,51 @@ const FileImportIconSvg = ({ size, color }) => {
   return <Icon component={fileImportIconSvg}></Icon>;
 };
 
+const SquareCheckIconSvg = ({ size, color }) => {
+  const squareCheckIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-square-check"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M3 3m0 2a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2z" />
+      <path d="M9 12l2 2l4 -4" />
+    </svg>
+  );
+  return <Icon component={squareCheckIconSvg}></Icon>;
+};
+
+const ArrowNarrowRightIconSvg = ({ size, color }) => {
+  const arrowNarrowRightIconSvg = () => (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="icon icon-tabler icon-tabler-arrow-narrow-right"
+      width={size ? size : 20}
+      height={size ? size : 20}
+      viewBox="0 0 24 24"
+      strokeWidth="1.5"
+      stroke={color ? color : "#4D4D4D"}
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M5 12l14 0" />
+      <path d="M15 16l4 -4" />
+      <path d="M15 8l4 4" />
+    </svg>
+  );
+  return <Icon component={arrowNarrowRightIconSvg}></Icon>;
+};
+
 export {
   DashboardIconSvg,
   TicketIconSvg,
@@ -2877,5 +2922,7 @@ export {
   WritingIconSvg,
   CutIconSvg,
   BellRingingIconSvg,
+  SquareCheckIconSvg,
+  ArrowNarrowRightIconSvg,
   FileImportIconSvg,
 };

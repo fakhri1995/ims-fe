@@ -4,6 +4,7 @@ import { objectToFormData } from "lib/helper";
 
 import type {
   CreateRequesterPayload,
+  IGetRequesterListSucceedResponse,
   UpdateRequesterPayload,
 } from "./requester.types";
 
@@ -49,6 +50,23 @@ export class RequesterService {
           "Content-Type": "multipart/form-data",
         },
       }
+    );
+  }
+
+  /**
+   * Update existing requester.
+   *
+   * @access GET /getRequesterList
+   */
+  static async getRequesterList(
+    axiosClient: AxiosInstance
+    // params?:
+  ) {
+    // const querySearch = QueryString.stringify(params, { addQueryPrefix: true });
+
+    return axiosClient.get<IGetRequesterListSucceedResponse>(
+      "/getRequesterList"
+      // + querySearch
     );
   }
 }
