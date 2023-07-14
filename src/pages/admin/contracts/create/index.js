@@ -338,8 +338,8 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 onClick={() => handleUpdateContract(dataContractUpdate, 0)}
                 disabled={
                   !isAllowedToUpdateContract ||
-                  !dataContractUpdate.contract_number ||
-                  !dataContractUpdate.title
+                  (!dataContractUpdate.contract_number &&
+                    !dataContractUpdate.title)
                 }
               >
                 <div className="flex flex-row space-x-2">
@@ -620,7 +620,11 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
           <Tabs className="col-span-6">
             <Tabs.TabPane tab="Service">
-              <ContractServiceForm initProps={initProps} />
+              <ContractServiceForm
+                initProps={initProps}
+                dataContractUpdate={dataContractUpdate}
+                setDataContractUpdate={setDataContractUpdate}
+              />
             </Tabs.TabPane>
           </Tabs>
         </Form>

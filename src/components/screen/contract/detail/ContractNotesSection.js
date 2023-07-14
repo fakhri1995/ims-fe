@@ -3,6 +3,7 @@ import { Collapse, Input, Spin, Table, notification } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
 import { useEffect } from "react";
+import { useQuery } from "react-query";
 import TextareaAutosize from "react-textarea-autosize";
 
 import ButtonSys from "components/button";
@@ -14,7 +15,7 @@ import ModalProjectNote from "components/modal/projects/modalProjectNote";
 import { useAccessControl } from "contexts/access-control";
 
 import {
-  PROJECT_NOTES_GET,
+  CONTRACT_NOTES_GET,
   PROJECT_NOTE_ADD,
   PROJECT_NOTE_DELETE,
 } from "lib/features";
@@ -23,6 +24,8 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "lib/helper";
+
+import { ContractService } from "apis/contract";
 
 const ContractNotesSection = ({ initProps, contractId }) => {
   // 1. Init
@@ -34,21 +37,18 @@ const ContractNotesSection = ({ initProps, contractId }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetNotes = hasPermission(PROJECT_NOTES_GET);
+  const isAllowedToGetNotes = hasPermission(CONTRACT_NOTES_GET);
   const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
   const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
 
   // 2. useState
   const [refreshNotes, setRefreshNotes] = useState(-1);
 
-  const [dataRawProjectNotes, setDataRawProjectNotes] = useState({});
-  const [dataProjectNotes, setDataProjectNotes] = useState([]);
   const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
 
   const [searchingFilterNotes, setSearchingFilterNotes] = useState("");
   const [pageProjectNotes, setPageProjectNotes] = useState(1);
 
-  const [isNoteInput, setIsNoteInput] = useState(false);
   const [dataInputNote, setDataInputNote] = useState("");
   const [dataCurrentNote, setDataCurrentNote] = useState("");
 
@@ -56,58 +56,24 @@ const ContractNotesSection = ({ initProps, contractId }) => {
   const [modalAddNote, setModalAddNote] = useState(false);
   const [loadingAddNote, setLoadingAddNote] = useState(false);
 
-  // 3. useEffect
-  // 3.1. Get Project Notes
-  useEffect(() => {
-    if (!isAllowedToGetNotes) {
-      permissionWarningNotification("Mendapatkan", "Catatan Proyek");
-      setLoadingProjectNotes(false);
-      return;
+  // 3. useQuery & useEffect
+  // 3.1. Get Contract Notes
+  const { data: dataContractNotes, isLoading: loadingContractNotes } = useQuery(
+    [CONTRACT_NOTES_GET, searchingFilterNotes, refreshNotes],
+    () =>
+      ContractService.getNotes(
+        initProps,
+        isAllowedToGetNotes,
+        contractId,
+        searchingFilterNotes
+      ),
+    {
+      enabled: isAllowedToGetNotes,
+      select: (response) => response.data.data,
     }
+  );
 
-    const fetchData = async () => {
-      setLoadingProjectNotes(true);
-      fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${contractId}&keyword=${searchingFilterNotes}&page=${pageProjectNotes}&rows=5`,
-        {
-          method: `GET`,
-          headers: {
-            Authorization: JSON.parse(initProps),
-          },
-        }
-      )
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            setDataRawProjectNotes(res2.data);
-            setDataProjectNotes(res2.data.data);
-          } else {
-            notification.error({
-              message: `${res2.message}`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `${err.response}`,
-            duration: 3,
-          });
-        })
-        .finally(() => {
-          setLoadingProjectNotes(false);
-        });
-    };
-
-    const timer = setTimeout(() => fetchData(), 500);
-
-    return () => clearTimeout(timer);
-  }, [
-    isAllowedToGetNotes,
-    refreshNotes,
-    searchingFilterNotes,
-    pageProjectNotes,
-  ]);
+  // console.log({ dataContractNotes });
 
   // 4. Event
   const handleAddNote = (notes) => {
@@ -185,17 +151,17 @@ const ContractNotesSection = ({ initProps, contractId }) => {
         <Table
           rowKey={(record) => record.id}
           showHeader={false}
-          dataSource={dataProjectNotes}
-          loading={loadingProjectNotes}
+          dataSource={dataContractNotes}
+          loading={loadingContractNotes}
           className="tableNotes"
-          pagination={{
-            current: pageProjectNotes,
-            pageSize: 5,
-            total: dataRawProjectNotes?.total,
-          }}
-          onChange={(pagination) => {
-            setPageProjectNotes(pagination.current);
-          }}
+          // pagination={{
+          //   current: pageProjectNotes,
+          //   pageSize: 5,
+          //   total: dataRawProjectNotes?.total,
+          // }}
+          // onChange={(pagination) => {
+          //   setPageProjectNotes(pagination.current);
+          // }}
           onRow={(record, rowIndex) => {
             return {
               onClick: () => {
@@ -253,7 +219,7 @@ const ContractNotesSection = ({ initProps, contractId }) => {
       </div>
 
       {/* Modal Notes */}
-      <AccessControl hasPermission={PROJECT_NOTES_GET}>
+      <AccessControl hasPermission={CONTRACT_NOTES_GET}>
         <ModalProjectNote
           initProps={initProps}
           visible={modalDetailNote}

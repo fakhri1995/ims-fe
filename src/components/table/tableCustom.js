@@ -2056,7 +2056,9 @@ const TableCustomContractList = ({
             setrowstate(record.id);
           },
           onClick: () => {
-            record.id && rt.push(`/admin/contracts/${record.id}`);
+            record.id &&
+              record.is_posted &&
+              rt.push(`/admin/contracts/${record.id}`);
           },
         };
       }}

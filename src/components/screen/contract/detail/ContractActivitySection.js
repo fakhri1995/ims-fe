@@ -1,4 +1,5 @@
 import { PlusOutlined, UpOutlined } from "@ant-design/icons";
+import { useQuery } from "@chakra-ui/react";
 import { Collapse, Input, Spin, Table, Timeline, notification } from "antd";
 import TextArea from "antd/lib/input/TextArea";
 import React, { useState } from "react";
@@ -24,6 +25,8 @@ import {
   permissionWarningNotification,
 } from "lib/helper";
 
+import { ContractService } from "../../../../apis/contract/contract.service";
+
 const ContractActivitySection = ({ initProps, contractId }) => {
   // 1. Init
   /**
@@ -34,13 +37,30 @@ const ContractActivitySection = ({ initProps, contractId }) => {
   if (isAccessControlPending) {
     return null;
   }
-  const isAllowedToGetNotes = hasPermission(PROJECT_NOTES_GET);
+
+  // TODO: change constant
+  const isAllowedToGetLogs = hasPermission(PROJECT_NOTES_GET);
   const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
   const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
 
   // 2. useState
 
-  // 3. useEffect
+  // 3. useQuery & useEffect
+  // 3.1. Get Contract Activity Logs
+  // const { data: dataActivityLogs, isLoading: loadingActivityLogs } = useQuery(
+  //   [CONTRACT_LOGS_GET, refresh],
+  //   () =>
+  //     ContractService.getNotes(
+  //       initProps,
+  //       isAllowedToGetLogs,
+  //       contractId
+
+  //     ),
+  //   {
+  //     enabled: isAllowedToGetLogs,
+  //     select: (response) => response.data.data,
+  //   }
+  // );
 
   return (
     <section>
