@@ -144,7 +144,7 @@ const ContractDetailIndex = ({
   // Responsive view for action button section
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         setIsMobileView(true); // Set smaller page size for smaller devices
       } else {
         setIsMobileView(false); // Set default page size for larger devices
