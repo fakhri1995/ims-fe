@@ -186,15 +186,21 @@ const TaskCard = ({
           </div>
         </div>
       </div>
-      {/* {
-      checkTask() &&
-      <div onClick={()=>addAktifitas()} className={'w-full bg-primary100 mt-4 py-2 flex justify-center rounded-b-[5px] hover:cursor-pointer testhoverbutton'}>
-            <div className={'flex justify-center'}>
-            <PlusIconSvg color={'white'} size={20} />
-            <p className={'text-white text-xs ml-2.5 self-center'}>Tambahkan ke Aktifitas</p>
-            </div>
-    </div>
-    } */}
+      {checkTask() && (
+        <div
+          onClick={() => addAktifitas()}
+          className={
+            "w-full bg-primary100 mt-4 py-2 flex justify-center rounded-b-[5px] hover:cursor-pointer testhoverbutton"
+          }
+        >
+          <div className={"flex justify-center"}>
+            <PlusIconSvg color={"white"} size={20} />
+            <p className={"text-white text-xs ml-2.5 self-center"}>
+              Tambahkan ke Aktifitas
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

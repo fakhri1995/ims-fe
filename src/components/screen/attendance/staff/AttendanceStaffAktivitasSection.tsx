@@ -73,7 +73,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
-
+  const [tabActiveKey2, setTabActiveKey2] = useState<"3" | "4" | string>("3");
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetUserAttendanceActivities(tabActiveKey === "1" ? "today" : "past");
   const { attendeeStatus } = useGetAttendeeInfo();
@@ -87,21 +87,27 @@ export const AttendanceStaffAktivitasSection: FC<
       id: 1,
       task_name: "Diskusi PRD Attendance (T-2213)",
       project_name: "Diskusi PRD",
-      is_selected: false,
+      updated_at: "2023-06-07 16:52:57",
+      is_selected: true,
     },
     {
       id: 2,
       task_name: "Pengembangan Tampilan Attendance (T-2214)",
       project_name: "Pengembangan Tampilan",
-      is_selected: false,
+      updated_at: "2023-06-07 16:52:57",
+      is_selected: true,
     },
     {
       id: 3,
       task_name: "Revisi Tampilan Mobile Log Activity (T-2222)",
       project_name: "Revisi Tampilan",
-      is_selected: false,
+      updated_at: "2023-06-07 16:52:57",
+      is_selected: true,
     },
   ]);
+
+  const [dataTaskSelected, setDataTaskSelected] = useState([]);
+  const [dataTaskTempSelected, setDataTaskTempSelected] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -256,119 +262,124 @@ export const AttendanceStaffAktivitasSection: FC<
 
   useEffect(() => {
     setLoadingTasks(false);
+    handleSelectAllTask();
   }, []);
 
-  return (
-    <>
-      <section className="mig-platform space-y-6">
-        <h3 className="mig-heading--4">Aktivitas</h3>
+  const handleSelectAllTask = () => {
+    let dataTemp = [];
+    for (let a = 0; a < dataTask.length; a++) {
+      dataTemp.push(dataTask[a].id);
+    }
+    setDataTaskSelected(dataTemp);
+    setDataTaskTempSelected(dataTask);
+  };
 
-        <div className="flex items-center justify-between">
-          <Tabs
-            defaultActiveKey="1"
-            className="md:w-1/2"
-            onChange={setTabActiveKey}
-          >
-            <TabPane tab="Hari Ini" key="1" />
-            <TabPane tab="Riwayat" key="2" />
-          </Tabs>
-          {/* <Modal
-            title="Import Task ke Aktivitas"
-            open={showModalTask}
-            width={502}
-            footer={null}
-            onCancel={() => setShowModalTask(false)}
-          >
-            <div className="col-span-4">
-              <Input
-                style={{ width: `100%` }}
-                suffix={<SearchOutlined />}
-                // defaultValue={queryParams.keyword}
-                placeholder="Cari Task.."
-              // onChange={onChangeProductSearch}
-              // onKeyPress={onKeyPressHandler}
-              // allowClear
-              // disabled={!isAllowedToSeeModels}
-              />
-            </div>
-            <div className={"mt-7 flex justify-between"}>
-              <p className={'text-mono30 text-base font-bold '} style={{ lineHeight: '24px' }}>List Task</p>
-              <button className={'bg-transparent'}><p className={'text-primary100 text-sm font-bold'} style={{ lineHeight: '24px' }}>Pilih semua</p></button>
-            </div>
-            <Table
-              rowKey={(record) => record.id}
-              className=""
-              showHeader={false}
-              dataSource={dataTask}
-              loading={loadingTasks}
-              pagination={{
-                current: queryParams.page,
-                pageSize: queryParams.rows,
-                total: dataTask.length,
-                showSizeChanger: true,
-              }}
-              onChange={(pagination, filters, sorter, extra) => {
+  const handleUnSelectAllTask = () => {
+    let dataTaskTemp = [];
+    for (let a = 0; a < dataTaskTempSelected.length; a++) {
+      dataTaskTemp.push({
+        id: dataTaskTempSelected[a].id,
+        task_name: dataTaskTempSelected[a].task_name,
+        project_name: dataTaskTempSelected[a].project_name,
+        is_selected: false,
+      });
+    }
+    setDataTaskSelected([]);
+    setDataTaskTempSelected([...dataTaskTemp]);
+  };
 
+  const handleOnSelectTask = (value) => {
+    console.log("selected ", value);
+    let dataTaskTemp = [];
+    for (let a = 0; a < dataTaskTempSelected.length; a++) {
+      if (value.target.value == dataTaskTempSelected[a].id) {
+        dataTaskTemp.push({
+          id: dataTaskTempSelected[a].id,
+          task_name: dataTaskTempSelected[a].task_name,
+          project_name: dataTaskTempSelected[a].project_name,
+          is_selected: value.target.checked,
+        });
+      } else {
+        dataTaskTemp.push({
+          id: dataTaskTempSelected[a].id,
+          task_name: dataTaskTempSelected[a].task_name,
+          project_name: dataTaskTempSelected[a].project_name,
+          is_selected: dataTaskTempSelected[a].is_selected,
+        });
+      }
+    }
+    let dataTemp = dataTaskSelected;
+    if (dataTemp.length == 0) {
+      dataTemp.push(value.target.value);
+    } else if (dataTaskTempSelected.length > 1) {
+      if (value.target.checked == false) {
+        dataTemp = dataTemp.filter(function (item) {
+          return item !== value.target.value;
+        });
+      } else {
+        dataTemp.push(value.target.value);
+      }
+      setDataTaskSelected(dataTemp);
+    }
+    setDataTaskTempSelected([...dataTaskTemp]);
 
-                setQueryParams({
-                  page: pagination.current,
-                  rows: pagination.pageSize,
-                });
-              }}
-              columns={[
-                {
-                  title: "Task",
-                  dataIndex: "name",
-                  key: "name",
-                  render: (_, task) => {
+    // let dataTaskTemp = dataTaskTempSelected;
+    // if (dataTaskTemp.length == 0) {
+    //   dataTaskTemp.push(value.target.value);
+    // } else if (dataTaskTempSelected.length > 1) {
+    //   if (value.target.checked == false) {
+    //     dataTaskTemp = dataTaskTemp.filter(function (item) {
+    //       return item !== value.target.value;
+    //     });
+    //   } else {
+    //     dataTaskTemp.push(value.target.value);
+    //   }
+    // }
+    // setDataTaskTempSelected([...dataTaskTemp]);
+  };
 
-                    return (
+  const handleSelectTask = () => {
+    if (dataTaskSelected.length == dataTaskTempSelected.length) {
+      handleUnSelectAllTask();
+    } else {
+      handleSelectAllTask();
+    }
+  };
+  const columnsTable: ColumnsType = [
+    {
+      key: "id",
+      title: "No.",
+      render: (_, __, index) => `${(currentPage - 1) * pageSize + index + 1}.`,
+      width: 64,
+    },
+    {
+      key: "id",
+      title: "Waktu Pengisian",
+      dataIndex: "updated_at",
+      sorter: (a: string, b: string) => {
+        const lhsDate = new Date(a);
+        const rhsDate = new Date(b);
 
-                      <div key={task.id} className="flex-none rounded-md ">
-                        <div className={'flex px-4 py-2 border border-inputkategori'}>
-                          <div className={'w-11/12'}>
-                            <p className={'text-xs font-bold text-mono30'} style={{ lineHeight: '20px' }}>{task.task_name}</p>
-                            <p className={'text-xs text-mono50'} style={{ lineHeight: '16px' }}>[{task.project_name}]</p>
-                          </div>
-                          <div className={'w-1/12 self-center items-end'}>
-                            <Checkbox />
-                          </div>
-                        </div>
+        return isBefore(rhsDate, lhsDate) ? -1 : 1;
+      },
+      render: (value) => {
+        const formattedDate = formatDateToLocale(
+          new Date(value),
+          tabActiveKey === "1" ? "HH:mm" : "dd MMM yyyy, HH:mm"
+        );
 
-                      </div>
-                    );
-                  },
-                },
-              ]}
-            />
-            <div className={'mt-6 flex justify-end'}>
-              <p className={'mr-12 self-center hover:cursor-pointer text-sm'} style={{lineHeight:'16px'}}>Batal</p>
-              <div className={'px-6 py-2 bg-mono80 rounded-[5px] hover:cursor-pointer'}>
-              <p className={'text-sm'} style={{lineHeight:'16px'}}>Import Task</p>
-              </div>
-            </div>
-          </Modal> */}
-
-          <div className="flex space-x-6 md:w-1/2 justify-end items-center">
-            {/* <ButtonSys
-              type="default"
-              onClick={onImportTask}
-              disabled={!isAllowedToAddActivity}
-            >
-              <FileImportIconSvg />
-              <p className={'ml-2'}>Import Task</p>
-            </ButtonSys> */}
-            <ButtonSys
-              type="primary"
-              onClick={mOnAddActivityButtonClicked}
-              disabled={!isAllowedToAddActivity}
-            >
-              <AppstoreAddOutlined className="mr-2" />
-              Masukkan Aktivitas
-            </ButtonSys>
-          </div>
-        </div>
-
+        return <>{formattedDate}</>;
+      },
+    },
+    {
+      key: "id",
+      title: "Nama Task",
+      dataIndex: "task_name",
+    },
+  ];
+  function checkFormOrTask() {
+    if (tabActiveKey2 == "3") {
+      return (
         <ConfigProvider
           renderEmpty={() => (
             <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
@@ -389,6 +400,247 @@ export const AttendanceStaffAktivitasSection: FC<
             }}
           />
         </ConfigProvider>
+      );
+    } else if (tabActiveKey == "1" && tabActiveKey2 == "4") {
+      return (
+        <Table
+          rowKey={(record) => record.id}
+          className=""
+          showHeader={false}
+          dataSource={dataTaskTempSelected}
+          loading={loadingTasks}
+          pagination={{
+            current: queryParams.page,
+            pageSize: queryParams.rows,
+            total: dataTask.length,
+            showSizeChanger: true,
+          }}
+          onChange={(pagination, filters, sorter, extra) => {
+            setQueryParams({
+              page: pagination.current,
+              rows: pagination.pageSize,
+            });
+          }}
+          columns={[
+            {
+              title: "Task",
+              dataIndex: "name",
+              key: "name",
+              render: (_, task) => {
+                return (
+                  <div key={task.id} className="flex-none rounded-md ">
+                    <div
+                      className={"flex px-4 py-2 border border-inputkategori"}
+                    >
+                      <div className={"w-11/12"}>
+                        <p
+                          className={"text-xs font-bold text-mono30"}
+                          style={{ lineHeight: "20px" }}
+                        >
+                          {task.task_name}
+                        </p>
+                        <p
+                          className={"text-xs text-mono50"}
+                          style={{ lineHeight: "16px" }}
+                        >
+                          [{task.project_name}]
+                        </p>
+                      </div>
+                      <div className={"w-1/12 self-center flex justify-end"}>
+                        <p>08.33</p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              },
+            },
+          ]}
+        />
+      );
+    } else {
+      return (
+        <Table<typeof dataSource[0]>
+          columns={columnsTable}
+          dataSource={dataTaskTempSelected}
+          pagination={tablePaginationConf}
+          loading={isDataSourceLoading}
+          scroll={{ x: "max-content" }}
+          className="tableTypeTask"
+          onRow={(datum) => {
+            return {
+              className: "hover:cursor-pointer",
+              onClick: () => mOnRowItemClicked(datum),
+            };
+          }}
+        />
+      );
+    }
+  }
+  return (
+    <>
+      <section className="mig-platform">
+        <h3 className="mig-heading--4">Aktivitas</h3>
+
+        <div className="flex items-center justify-between">
+          <Tabs
+            defaultActiveKey="1"
+            className="md:w-1/2"
+            onChange={setTabActiveKey}
+          >
+            <TabPane tab="Hari Ini" key="1" />
+            <TabPane tab="Riwayat" key="2" />
+          </Tabs>
+
+          <Modal
+            title="Import Task ke Aktivitas"
+            open={showModalTask}
+            width={502}
+            footer={null}
+            onCancel={() => setShowModalTask(false)}
+          >
+            <div className="col-span-4">
+              <Input
+                style={{ width: `100%` }}
+                suffix={<SearchOutlined />}
+                // defaultValue={queryParams.keyword}
+                placeholder="Cari Task.."
+                // onChange={onChangeProductSearch}
+                // onKeyPress={onKeyPressHandler}
+                // allowClear
+                // disabled={!isAllowedToSeeModels}
+              />
+            </div>
+            <div className={"mt-7 flex justify-between"}>
+              <p
+                className={"text-mono30 text-base font-bold "}
+                style={{ lineHeight: "24px" }}
+              >
+                List Task
+              </p>
+              <button
+                className={"bg-transparent"}
+                onClick={() => handleSelectTask()}
+              >
+                <p
+                  className={"text-primary100 text-sm font-bold"}
+                  style={{ lineHeight: "24px" }}
+                >
+                  {dataTaskSelected.length == dataTaskTempSelected.length
+                    ? "Hapus Semua"
+                    : "Pilih semua"}
+                </p>
+              </button>
+            </div>
+            <Table
+              rowKey={(record) => record.id}
+              className=""
+              showHeader={false}
+              dataSource={dataTaskTempSelected}
+              loading={loadingTasks}
+              pagination={{
+                current: queryParams.page,
+                pageSize: queryParams.rows,
+                total: dataTask.length,
+                showSizeChanger: true,
+              }}
+              onChange={(pagination, filters, sorter, extra) => {
+                setQueryParams({
+                  page: pagination.current,
+                  rows: pagination.pageSize,
+                });
+              }}
+              columns={[
+                {
+                  title: "Task",
+                  dataIndex: "name",
+                  key: "name",
+                  render: (_, task) => {
+                    return (
+                      <div key={task.id} className="flex-none rounded-md ">
+                        <div
+                          className={
+                            "flex px-4 py-2 border border-inputkategori"
+                          }
+                        >
+                          <div className={"w-11/12"}>
+                            <p
+                              className={"text-xs font-bold text-mono30"}
+                              style={{ lineHeight: "20px" }}
+                            >
+                              {task.task_name}
+                            </p>
+                            <p
+                              className={"text-xs text-mono50"}
+                              style={{ lineHeight: "16px" }}
+                            >
+                              [{task.project_name}]
+                            </p>
+                          </div>
+                          <div className={"w-1/12 self-center items-end"}>
+                            <Checkbox
+                              key={task.id}
+                              value={task.id}
+                              checked={task.is_selected}
+                              onChange={(e) => {
+                                handleOnSelectTask(e);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  },
+                },
+              ]}
+            />
+            <div className={"mt-6 flex justify-end"}>
+              <p
+                className={"mr-12 self-center hover:cursor-pointer text-sm"}
+                style={{ lineHeight: "16px" }}
+              >
+                Batal
+              </p>
+              <div
+                className={
+                  "px-6 py-2 bg-mono80 rounded-[5px] hover:cursor-pointer"
+                }
+              >
+                <p className={"text-sm"} style={{ lineHeight: "16px" }}>
+                  Import Task
+                </p>
+              </div>
+            </div>
+          </Modal>
+
+          <div className="flex space-x-6 md:w-1/2 justify-end items-center">
+            <ButtonSys
+              type="default"
+              onClick={onImportTask}
+              disabled={!isAllowedToAddActivity}
+            >
+              <FileImportIconSvg />
+              <p className={"ml-2"}>Import Task</p>
+            </ButtonSys>
+            <ButtonSys
+              type="primary"
+              onClick={mOnAddActivityButtonClicked}
+              disabled={!isAllowedToAddActivity}
+            >
+              <AppstoreAddOutlined className="mr-2" />
+              Masukkan Aktivitas
+            </ButtonSys>
+          </div>
+        </div>
+        <Tabs
+          defaultActiveKey="3"
+          className="md:w-1/2"
+          onChange={setTabActiveKey2}
+        >
+          <TabPane tab="Form" key="3" />
+          <TabPane tab="Task" key="4" />
+        </Tabs>
+
+        {checkFormOrTask()}
       </section>
 
       {(isAllowedToAddActivity ||
