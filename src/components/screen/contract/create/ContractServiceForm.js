@@ -7,13 +7,9 @@ import { useAccessControl } from "contexts/access-control";
 
 import { CONTRACTS_GET } from "lib/features";
 
-import { ProductCatalogService } from "../../../../apis/product-catalog";
-import { beforeUploadFileMaxSize } from "../../../../lib/helper";
-import ButtonSys from "../../../button";
 import { EditSquareIconSvg, PlusIconSvg, TrashIconSvg } from "../../../icon";
 import ModalServiceCreate from "../../../modal/contracts/modalServiceCreate";
 import ModalServiceUpdate from "../../../modal/contracts/modalServiceUpdate";
-import { FILE, LIST, TEXT } from "../detail/ContractInfoSection";
 
 const ContractServiceForm = ({
   initProps,
@@ -132,9 +128,7 @@ const ContractServiceForm = ({
           },
         ]}
       />
-      {/* <AccessControl
-        hasPermission={CONTRACT_SERVICE_ADD}
-      > */}
+
       <ModalServiceCreate
         initProps={initProps}
         visible={modalServiceCreate}
@@ -142,7 +136,6 @@ const ContractServiceForm = ({
         dataContractUpdate={dataContractUpdate}
         setDataContractUpdate={setDataContractUpdate}
       />
-      {/* </AccessControl> */}
 
       <ModalServiceUpdate
         initProps={initProps}
