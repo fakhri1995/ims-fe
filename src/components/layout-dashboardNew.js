@@ -76,13 +76,13 @@ function LayoutDashboard({
         setloadingspin(false);
         if (res2.success) {
           jscookie.remove("token");
-          console.log("token abis logout: " + jscookie.get("token"));
+          // console.log("token abis logout: " + jscookie.get("token"));
           rt.push("/login");
         }
       })
       .catch((err) => {
         setloadingspin(false);
-        console.log(err.message);
+        // console.log(err.message);
       });
   };
 
@@ -477,6 +477,7 @@ function LayoutDashboard({
               st={st}
             ></LayoutMenuHeader>
 
+            {/* Breadcrumb for mobile view */}
             {pathArr ? (
               <Breadcrumb
                 separator=">"
@@ -489,12 +490,59 @@ function LayoutDashboard({
                 className={st.breadcrumbClientsSmall}
               >
                 {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}
-                {childBreacrumbDD.length !== 0
-                  ? childBreacrumbDD.map((doc, idx) => {
+                {isUseNewBreadcrumbStrategy
+                  ? fixedBreadcrumbValues?.map((breadcrumbItem, idx) => {
+                      const isEmptyHrefValue =
+                        breadcrumbItem.hrefValue === undefined ||
+                        breadcrumbItem.hrefValue === "";
+
+                      let breadcrumbContent = null;
+
+                      if (isEmptyHrefValue) {
+                        breadcrumbContent = (
+                          <strong>{breadcrumbItem.name}</strong>
+                        );
+                      } else {
+                        const isShouldPushBack =
+                          breadcrumbItem.hrefValue.toLowerCase() === "back";
+
+                        if (isShouldPushBack) {
+                          breadcrumbContent = (
+                            <a
+                              href="#"
+                              className="font-bold"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                rt.back();
+                              }}
+                            >
+                              {breadcrumbItem.name}
+                            </a>
+                          );
+                        } else {
+                          breadcrumbContent = (
+                            <Link href={breadcrumbItem.hrefValue}>
+                              <a className="font-bold">{breadcrumbItem.name}</a>
+                            </Link>
+                          );
+                        }
+                      }
+
+                      return (
+                        <Breadcrumb.Item key={idx}>
+                          {breadcrumbContent}
+                        </Breadcrumb.Item>
+                      );
+                    })
+                  : childBreacrumbDD.length !== 0 &&
+                    childBreacrumbDD.map((doc, idx) => {
                       pathBuilder = pathBuilder + `/${pathArr[idx]}`;
                       if (idx === 0) {
                         return (
-                          <Breadcrumb.Item key={idx} href={`dashboard/${doc}`}>
+                          <Breadcrumb.Item
+                            key={idx}
+                            href={`/${doc?.toLowerCase()}`}
+                          >
                             {" "}
                             <strong>{doc}</strong>{" "}
                           </Breadcrumb.Item>
@@ -524,8 +572,7 @@ function LayoutDashboard({
                           </Breadcrumb.Item>
                         );
                       }
-                    })
-                  : null}
+                    })}
               </Breadcrumb>
             ) : null}
           </Header>
