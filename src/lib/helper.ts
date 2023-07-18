@@ -184,6 +184,63 @@ export const objectToFormData = <T extends Object>(entry: T) => {
 };
 
 /**
+ * Transforming an object into FormData. The idea is to craft a valid `FormData`
+ *  even the value of the given object has Array as its value
+ *  OR inside the Array has some object with another Array as it's value
+ *
+ * @example
+ * ```ts
+ * const payload = objectToFormData({
+ *    name: "Kennan",
+ *    roles: [1, 2, 3],
+ *   extras: [{
+ *             id: 1,
+ *             name: "desc 1",
+ *             value: [1, 2, 3]
+ *            }, {
+ *             id: 2,
+ *             name: "desc 2",
+ *             value: [4, 5, 6]
+ *            }]
+ * });
+ * // use the payload directly to an axios method with `Content-Type`: `multipart/form-data`
+ * ```
+ *
+ * @param entry Any JavaScript literal object
+ */
+export const objectToFormDataNew = <T extends Object>(entry: T) => {
+  const formData = new FormData();
+
+  for (const [k, v] of Object.entries(entry)) {
+    if (v instanceof Array) {
+      for (let i = 0; i < v.length; ++i) {
+        for (const [a, b] of Object.entries(v[i])) {
+          if (b instanceof Array) {
+            for (const item in b) {
+              formData.append(`${k}[${i}][${a}][${item}]`, b[item]);
+            }
+          } else {
+            formData.append(`${k}[${i}][${a}]`, b as string | Blob);
+          }
+        }
+      }
+
+      continue;
+    }
+
+    // prevent null object converted to string
+    let value: any = v;
+    if (v === null) {
+      value = "";
+    }
+
+    formData.append(k, value);
+  }
+
+  return formData;
+};
+
+/**
  * Transform client side Date data to acceptable DTO.
  *
  * Sebenernya backend juga bisa terima nilai date dengan `Date.toString()`, tapi just in case suatu saat akan ada validasi

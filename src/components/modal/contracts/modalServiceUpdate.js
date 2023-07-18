@@ -1,17 +1,4 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Spin,
-  Switch,
-  Tag,
-  notification,
-} from "antd";
-import moment from "moment";
-import dynamic from "next/dynamic";
+import { Form, Input, Modal, Select, Spin } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
 import { useEffect } from "react";
@@ -22,29 +9,20 @@ import "react-quill/dist/quill.snow.css";
 import { useAccessControl } from "contexts/access-control";
 
 import { PRODUCTS_GET } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
 
-import { ContractService } from "../../../apis/contract/contract.service";
 import { ProductCatalogService } from "../../../apis/product-catalog";
-import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
-import { PlusIconSvg } from "../../icon";
-
-// Quill library for text editor has to be imported dynamically
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
 
 const ModalServiceUpdate = ({
   initProps,
   visible,
   onvisible,
-  currentService,
   dataContractUpdate,
   setDataContractUpdate,
+  currentIdx,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
-  // const isAllowedToAddContractService = hasPermission(CONTRACT_SERVICE_ADD);
-  // const isAllowedToUpdateContractService = hasPermission(CONTRACT_SERVICE_UPDATE);
   const [form] = Form.useForm();
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
@@ -55,8 +33,7 @@ const ModalServiceUpdate = ({
     name: "",
     pax: 0,
     price: "",
-    priceOption: "",
-    inventoriesCount: 0,
+    unit: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -64,11 +41,14 @@ const ModalServiceUpdate = ({
   const [serviceTypeSearch, setServiceTypeSearch] = useState("");
 
   // 2. USE QUERY & USE EFFECT
+  // 2.1. Set current service data
   useEffect(() => {
-    setDataService(currentService);
-  }, [currentService]);
+    if (visible) {
+      setDataService(dataContractUpdate?.services?.[currentIdx]);
+    }
+  }, [dataContractUpdate.services, visible]);
 
-  // 2.1. Get Contract Service Type List
+  // 2.2. Get Contract Service Type List
   const { data: dataServiceTypeList, isLoading: loadingServiceTypeList } =
     useQuery(
       [PRODUCTS_GET, serviceTypeSearch],
@@ -86,7 +66,7 @@ const ModalServiceUpdate = ({
 
   // 3. HANDLER
   const clearData = () => {
-    setDataService({ id: 0, name: "", pax: 0, price: "", priceOption: "" });
+    setDataService({ id: 0, name: "", pax: 0, price: "", unit: "" });
     form.resetFields();
   };
 
@@ -94,8 +74,22 @@ const ModalServiceUpdate = ({
     onvisible(false);
     clearData();
   };
+
+  const handleSave = () => {
+    let tempServiceList = [...dataContractUpdate.services];
+    tempServiceList.splice(currentIdx, 1, dataService);
+    setDataContractUpdate((prev) => ({
+      ...prev,
+      services: tempServiceList,
+    }));
+
+    handleClose();
+  };
+
   // console.log({ dataServiceTypeList });
-  // console.log({ dataService });
+  // console.log({ currentService });
+  console.log({ currentIdx });
+  console.log({ dataService });
 
   return (
     <Modal
@@ -115,8 +109,8 @@ const ModalServiceUpdate = ({
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={() => onvisible(false)}
-              disabled={!dataService.name}
+              onClick={handleSave}
+              disabled={!dataService?.name}
             >
               <p>Simpan</p>
             </ButtonSys>
@@ -140,18 +134,17 @@ const ModalServiceUpdate = ({
             <div className="w-full mb-2">
               <Select
                 showSearch
-                value={dataService?.id}
+                value={dataService?.product_id}
                 disabled={!isAllowedToGetProductInventories}
                 placeholder={"Pilih jenis service"}
                 style={{ width: `100%` }}
                 onChange={(value, option) => {
                   setDataService((prev) => ({
                     ...prev,
-                    id: value,
+                    product_id: value,
                     price: option.price,
-                    priceOption: option.price_option,
+                    unit: option.price_option,
                     name: option.children,
-                    inventoriesCount: option.inventories_count,
                   }));
                 }}
                 onSearch={(value) => {
@@ -169,7 +162,6 @@ const ModalServiceUpdate = ({
                     <Select.Option
                       key={item?.id}
                       value={item?.id}
-                      inventories_count={item.inventories_count}
                       price={item.price}
                       price_option={item.price_option}
                     >
@@ -182,7 +174,7 @@ const ModalServiceUpdate = ({
           </Form.Item>
           <Form.Item
             label="Pax"
-            name={"quantity"}
+            name={"pax"}
             rules={[
               {
                 required: true,
@@ -195,7 +187,6 @@ const ModalServiceUpdate = ({
                 type="number"
                 placeholder="Pilih jumlah service"
                 min={1}
-                max={dataService.inventoriesCount}
                 value={dataService?.pax}
                 onChange={(e) => {
                   setDataService((prev) => ({ ...prev, pax: e.target.value }));
@@ -233,7 +224,7 @@ const ModalServiceUpdate = ({
             </Form.Item>
 
             <Form.Item
-              name={"priceOption"}
+              name={"unit"}
               rules={[
                 {
                   required: true,
@@ -244,11 +235,11 @@ const ModalServiceUpdate = ({
             >
               <>
                 <Select
-                  name={"priceOption"}
+                  name={"unit"}
                   defaultValue={"bulan"}
-                  value={dataService?.priceOption}
+                  value={dataService?.unit}
                   onChange={(value) => {
-                    setDataService((prev) => ({ ...prev, priceOption: value }));
+                    setDataService((prev) => ({ ...prev, unit: value }));
                   }}
                 >
                   <Select.Option key={1} value={"jam"}>

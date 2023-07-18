@@ -47,7 +47,7 @@ import {
   TEXT,
 } from "../../../../components/screen/contract/detail/ContractInfoSection";
 import {
-  objectToFormData,
+  objectToFormDataNew,
   permissionWarningNotification,
 } from "../../../../lib/helper";
 import httpcookie from "cookie";
@@ -89,7 +89,8 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     start_date: "",
     end_date: "",
     is_posted: 0,
-    extras: [], //{type:0, name:"", value:""}
+    extras: [], //{key:"", type:0, name:"", value:""}
+    services: [],
   });
 
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -103,7 +104,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     isLoading: loadingDataContract,
     isFetched: isFetchedContract,
   } = useQuery(
-    [CONTRACT_GET],
+    [CONTRACT_GET, contractId],
     () =>
       ContractService.getContract(
         initProps,
@@ -112,6 +113,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
       ),
     {
       enabled: isAllowedToGetContract,
+      refetchOnMount: true,
       select: (response) => response.data,
     }
   );
@@ -176,6 +178,10 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }));
   };
 
+  // for (const value of objectToFormDataNew(dataContractUpdate).entries()) {
+  //   console.log(value);
+  // }
+
   // Save Employee Contract
   const handleUpdateContract = (contractData, isPosted) => {
     if (!isAllowedToUpdateContract) {
@@ -184,31 +190,73 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
     }
 
     /** Setup form data to be sent in API */
+
     let payload = { ...contractData, is_posted: isPosted };
 
     // Mapping extras list to required format in API updateContract form-data
-    if (contractData?.extras?.length > 0) {
-      let extrasObjectList = contractData?.extras?.map((extra, idx) => {
-        let obj = {};
-        obj[`extras[${idx}][type]`] = extra?.type;
-        obj[`extras[${idx}][name]`] = extra?.name;
-        obj[`extras[${idx}][value]`] = extra?.value;
-        return obj;
-      });
+    // if (contractData?.extras?.length) {
+    //   let extrasObjectList = contractData?.extras?.map((extra, idx) => {
+    //     let obj = {};
+    //     obj[`extras[${idx}][type]`] = extra?.type;
+    //     obj[`extras[${idx}][name]`] = extra?.name;
 
-      let allExtrasObject = {};
-      for (let extraObject of extrasObjectList) {
-        Object.assign(allExtrasObject, extraObject);
-      }
+    //     if (extra?.key) {
+    //       obj[`extras[${idx}][key]`] = extra?.key;
+    //     }
 
-      payload = {
-        ...payload,
-        ...allExtrasObject,
-      };
-    }
+    //     if (extra?.type == LIST) {
+    //       extra.value?.map(
+    //         (item, valIdx) => (obj[`extras[${idx}][value][${valIdx}]`] = item)
+    //       );
+    //     } else {
+    //       obj[`extras[${idx}][value]`] = extra?.value;
+    //     }
 
+    //     if (extra?.is_deleted) {
+    //       obj[`extras[${idx}][is_deleted]`] = 1;
+    //     }
+
+    //     return obj;
+    //   });
+
+    //   let allExtrasObject = {};
+    //   for (let extraObject of extrasObjectList) {
+    //     Object.assign(allExtrasObject, extraObject);
+    //   }
+
+    //   payload = {
+    //     ...payload,
+    //     ...allExtrasObject,
+    //   };
+    // }
+
+    // Mapping service list to required format in API updateContract form-data
+    // if (contractData?.services?.length) {
+    //   let serviceObjectList = contractData?.services?.map((service, idx) => {
+    //     let obj = {};
+    //     obj[`services[${idx}][product_id]`] = service?.product_id;
+    //     obj[`services[${idx}][name]`] = service?.name;
+    //     obj[`services[${idx}][pax]`] = service?.pax;
+    //     obj[`services[${idx}][price]`] = service?.price;
+    //     obj[`services[${idx}][unit]`] = service?.unit;
+
+    //     return obj;
+    //   });
+
+    //   let allServicesObject = {};
+    //   for (let serviceObject of serviceObjectList) {
+    //     Object.assign(allServicesObject, serviceObject);
+    //   }
+
+    //   payload = {
+    //     ...payload,
+    //     ...allServicesObject,
+    //   };
+    // }
+
+    console.log({ payload });
     // convert object to form data
-    const payloadFormData = objectToFormData(payload);
+    const payloadFormData = objectToFormDataNew(payload);
 
     setLoadingUpdate(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/updateContract`, {
@@ -315,7 +363,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
         <Form layout="vertical" className="md:grid md:grid-cols-6 md:gap-x-6">
           <div className="col-span-6 flex flex-row items-center justify-between mb-7">
             <h4 className="mig-heading--4">Form Tambah Kontrak</h4>
-            <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-6 items-end md:items-center">
+            <div className="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-6 items-end lg:items-center">
               <ButtonSys
                 color={"danger"}
                 type={"default"}
@@ -603,17 +651,19 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
             </div>
 
             {/* Form dinamis */}
-            {dataContractUpdate?.extras?.map((item, idx) => (
-              <ContractExtrasForm
-                key={item?.key || idx}
-                type={item?.type}
-                name={item?.name}
-                value={item?.value}
-                idx={idx}
-                dataContractUpdate={dataContractUpdate}
-                setDataContractUpdate={setDataContractUpdate}
-              />
-            ))}
+            {dataContractUpdate?.extras?.map((item, idx) =>
+              !item?.is_deleted ? (
+                <ContractExtrasForm
+                  key={item?.key || idx}
+                  type={item?.type}
+                  name={item?.name}
+                  value={item?.value}
+                  idx={idx}
+                  dataContractUpdate={dataContractUpdate}
+                  setDataContractUpdate={setDataContractUpdate}
+                />
+              ) : null
+            )}
           </div>
 
           <hr className="col-span-6 mb-6" />
