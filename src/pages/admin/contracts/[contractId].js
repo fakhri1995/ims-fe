@@ -113,32 +113,14 @@ const ContractDetailIndex = ({
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
-  const dataColorBar = [
-    "#2F80ED",
-    "#BF4A40",
-    "#ED962F",
-    "#DDB44A",
-    "#6AAA70",
-    "#808080",
-  ];
-
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
   const [dataContract, setDataContract] = useState({});
   const [isMobileView, setIsMobileView] = useState(false);
 
   // 2.3. Project Detail
-  const [loadingProject, setLoadingProject] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState({});
 
   // 2.4. Modal
-  const [modalUpdateProject, setModalUpdateProject] = useState(false);
-  const [modalStaffs, setModalStaffs] = useState(false);
-  const [modalAddTask, setModalAddTask] = useState(false);
-  const [modalDetailTask, setModalDetailTask] = useState(false);
-
-  const [dataProjectList, setDataProjectList] = useState([]);
-  const [currentTaskId, setCurrentTaskId] = useState(0);
 
   // 3. UseEffect
   // Responsive view for action button section
@@ -217,11 +199,17 @@ const ContractDetailIndex = ({
         <section className="md:col-span-4 shadow-md rounded-md bg-white p-6 order-last md:order-none">
           <Tabs defaultActiveKey={1}>
             <Tabs.TabPane tab="Catatan" key={1}>
-              <ContractNotesSection initProps={initProps} contractId={1} />
+              <ContractNotesSection
+                initProps={initProps}
+                contractId={contractId}
+              />
             </Tabs.TabPane>
 
             <Tabs.TabPane tab="Aktivitas" key={2}>
-              <ContractActivitySection />
+              <ContractActivitySection
+                initProps={initProps}
+                contractId={contractId}
+              />
             </Tabs.TabPane>
           </Tabs>
         </section>

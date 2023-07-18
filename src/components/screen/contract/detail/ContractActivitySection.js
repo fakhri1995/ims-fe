@@ -15,6 +15,7 @@ import ModalProjectNote from "components/modal/projects/modalProjectNote";
 import { useAccessControl } from "contexts/access-control";
 
 import {
+  CONTRACT_LOGS_GET,
   PROJECT_NOTES_GET,
   PROJECT_NOTE_ADD,
   PROJECT_NOTE_DELETE,
@@ -25,7 +26,7 @@ import {
   permissionWarningNotification,
 } from "lib/helper";
 
-import { ContractService } from "../../../../apis/contract/contract.service";
+import { ContractService } from "apis/contract";
 
 const ContractActivitySection = ({ initProps, contractId }) => {
   // 1. Init
@@ -39,28 +40,75 @@ const ContractActivitySection = ({ initProps, contractId }) => {
   }
 
   // TODO: change constant
-  const isAllowedToGetLogs = hasPermission(PROJECT_NOTES_GET);
-  const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
-  const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
+  const isAllowedToGetLogs = hasPermission(CONTRACT_LOGS_GET);
 
   // 2. useState
+  const [dataRawLogs, setDataRawLogs] = useState({});
+  const [dataLogs, setDataLogs] = useState([]);
+  const [loadingLogs, setLoadingLogs] = useState(false);
 
-  // 3. useQuery & useEffect
+  const [searchingFilterLogs, setSearchingFilterLogs] = useState("");
+  const [pageLogs, setPageLogs] = useState(1);
+
+  // 3. useEffect
   // 3.1. Get Contract Activity Logs
-  // const { data: dataActivityLogs, isLoading: loadingActivityLogs } = useQuery(
-  //   [CONTRACT_LOGS_GET, refresh],
-  //   () =>
-  //     ContractService.getNotes(
-  //       initProps,
-  //       isAllowedToGetLogs,
-  //       contractId
+  useEffect(() => {
+    if (!isAllowedToGetLogs) {
+      permissionWarningNotification("Mendapatkan", "Log Aktivitas Kontrak");
+      setLoadingLogs(false);
+      return;
+    }
 
-  //     ),
+    const fetchData = async () => {
+      setLoadingLogs(true);
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${contractId}&keyword=${searchingFilterLogs}&page=${pageLogs}&rows=5`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(initProps),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            setDataRawLogs(res2.data);
+            setDataLogs(res2.data.data);
+          } else {
+            notification.error({
+              message: `${res2.message}`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `${err.response}`,
+            duration: 3,
+          });
+        })
+        .finally(() => {
+          setLoadingLogs(false);
+        });
+    };
+
+    const timer = setTimeout(() => fetchData(), 500);
+
+    return () => clearTimeout(timer);
+  }, [isAllowedToGetLogs, searchingFilterLogs, pageLogs]);
+
+  // const { data: dataActivityLogs, isLoading: loadingActivityLogs } = useQuery(
+  //   [CONTRACT_LOGS_GET],
+  //   () => ContractService.getLogs(initProps, isAllowedToGetLogs, contractId),
   //   {
-  //     enabled: isAllowedToGetLogs,
+  //     enabled: isTabActive,
+  //     refetchOnMount: false,
   //     select: (response) => response.data.data,
   //   }
   // );
+
+  // console.log({ dataLogs });
 
   return (
     <section>
