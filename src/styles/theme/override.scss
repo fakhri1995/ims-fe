@@ -377,6 +377,10 @@ ol {
   @apply bg-primary100;
 }
 
+.ant-tabs.tabResponsive {
+  display: grid;
+}
+
 /** UPLOAD */
 .ant-upload-span a:hover {
   color: #35763b;
