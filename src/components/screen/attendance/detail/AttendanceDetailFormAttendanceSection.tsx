@@ -1,7 +1,8 @@
-import { ConfigProvider, Table } from "antd";
+import { ConfigProvider, Table, Tabs } from "antd";
 import { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
-import { FC, useMemo, useState } from "react";
+import moment from "moment";
+import { FC, useEffect, useMemo, useState } from "react";
 import React from "react";
 
 import { DataEmptyState } from "components/states/DataEmptyState";
@@ -14,8 +15,10 @@ import { useGetAttendanceDetailDataSource } from "apis/attendance";
 /**
  * Component AttendanceDetailFormAttendanceSection's props.
  */
+const { TabPane } = Tabs;
 export interface IAttendanceDetailFormAttendanceSection {
   attendanceId?: number;
+  token?: string;
 }
 
 /**
@@ -23,10 +26,11 @@ export interface IAttendanceDetailFormAttendanceSection {
  */
 export const AttendanceDetailFormAttendanceSection: FC<
   IAttendanceDetailFormAttendanceSection
-> = ({ attendanceId }) => {
+> = ({ attendanceId, token }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-
+  const [dataTasks, setDataTasks] = useState([]);
+  const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const { dataSource, dynamicNameFieldPairs, isDataSourceLoading } =
     useGetAttendanceDetailDataSource(attendanceId);
   const tableColums = useMemo<ColumnsType>(() => {
@@ -78,22 +82,78 @@ export const AttendanceDetailFormAttendanceSection: FC<
     []
   );
 
+  useEffect(() => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivitiesAdmin?id=${attendanceId}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(token),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          setDataTasks(res2.data);
+        }
+      });
+  }, []);
+
   return (
     <section className="mig-platform space-y-6 text-gray-500">
-      <ConfigProvider
-        renderEmpty={() => (
-          <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
-        )}
-      >
-        <Table<typeof dataSource[0]>
-          columns={tableColums}
-          dataSource={dataSource}
-          pagination={tablePaginationConf}
-          loading={isDataSourceLoading}
-          scroll={{ x: "max-content" }}
-          className="tableTypeTask"
-        />
-      </ConfigProvider>
+      <div className="flex items-center justify-between">
+        <Tabs
+          defaultActiveKey="1"
+          className="md:w-1/2"
+          onChange={setTabActiveKey}
+        >
+          <TabPane tab="Form" key="1" />
+          <TabPane tab="Task" key="2" />
+        </Tabs>
+      </div>
+
+      {tabActiveKey == "1" ? (
+        <ConfigProvider
+          renderEmpty={() => (
+            <DataEmptyState caption="Belum ada aktivitas. Silakan masukkan aktivitas untuk hari ini" />
+          )}
+        >
+          <Table<typeof dataSource[0]>
+            columns={tableColums}
+            dataSource={dataSource}
+            pagination={tablePaginationConf}
+            loading={isDataSourceLoading}
+            scroll={{ x: "max-content" }}
+            className="tableTypeTask"
+          />
+        </ConfigProvider>
+      ) : (
+        dataTasks.length > 0 &&
+        dataTasks.map((task, index) => (
+          <div key={task.id} className="flex-none rounded-md ">
+            <div className={"flex px-4 py-2 border border-inputkategori"}>
+              <div className={"w-11/12"}>
+                <p
+                  className={"text-xs font-bold text-mono30"}
+                  style={{ lineHeight: "20px" }}
+                >
+                  {task.activity} (T-{task.task_id})
+                </p>
+                <p
+                  className={"text-xs text-mono50"}
+                  style={{ lineHeight: "16px" }}
+                >
+                  [{task.activity}]
+                </p>
+              </div>
+              <div className={"w-1/12 self-center flex justify-end"}>
+                <p>{moment(task.updated_at).format("HH:mm")}</p>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
     </section>
   );
 };

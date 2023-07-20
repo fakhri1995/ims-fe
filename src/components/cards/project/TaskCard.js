@@ -1,7 +1,9 @@
 import { PlusCircleFilled } from "@ant-design/icons";
 import { Avatar, Tooltip, notification } from "antd";
 import moment from "moment";
+import { useRouter } from "next/router";
 import React from "react";
+import { useEffect } from "react";
 
 import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import {
@@ -14,17 +16,20 @@ import {
 
 const TaskCard = ({
   title,
+  idTask,
   taskId,
   projectName,
   toDate,
   status,
   taskStaffs,
   dataProfile,
+  initProps,
   onClick,
 }) => {
   const currentDate = new Date();
   const deadline = new Date(toDate ?? "0000-00-00 00:00:00");
   const isPastDeadline = Boolean(currentDate > deadline && status?.is_active);
+  const rt = useRouter();
 
   function checkTask() {
     // console.log('current task ',taskStaffs)
@@ -44,26 +49,62 @@ const TaskCard = ({
     }
   }
 
-  const addAktifitas = () => {
-    notification.success({
-      message: (
-        <>
-          {" "}
-          <p>
-            Task berhasil ditambahkan ke aktivitas{" "}
-            <a
-              style={{ lineHeight: "20px", fontWeight: "700" }}
-              className={"text-primary100 text-sm"}
-              href="www.google.com"
-            >
-              Lihat aktivitas
-            </a>
-          </p>
-        </>
-      ),
+  const notifAdd = () => {
+    rt.push(`/attendance/staff`);
+  };
 
-      duration: 3,
-    });
+  const addAktifitas = (idTask) => {
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivity`;
+    let method = "POST";
+    let payload = {
+      task_id: idTask,
+    };
+
+    fetch(url, {
+      method: method,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
+      .then((response) => response.json())
+      .then((response2) => {
+        console.log("response add inventory ", response2);
+        if (response2.success) {
+          notification.success({
+            message: (
+              <>
+                {" "}
+                <p>
+                  Task berhasil ditambahkan ke aktivitas{" "}
+                  <p
+                    style={{ lineHeight: "20px", fontWeight: "700" }}
+                    className={"text-primary100 text-sm hover:cursor-pointer"}
+                    onClick={() => notifAdd()}
+                  >
+                    Lihat aktivitas
+                  </p>
+                </p>
+              </>
+            ),
+
+            duration: 3,
+          });
+        } else {
+          notification.error({
+            message: `Task Gagal ditambahkan ke aktivitas!`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `Task Gagal ditambahkan ke aktivitas`,
+          duration: 3,
+        });
+        // setLoadingAdd(false);
+      });
   };
   return (
     <div className={"bg-white h-full  shadow-lg rounded-md testhover"}>
@@ -188,7 +229,7 @@ const TaskCard = ({
       </div>
       {checkTask() && (
         <div
-          onClick={() => addAktifitas()}
+          onClick={() => addAktifitas(idTask)}
           className={
             "w-full bg-primary100 mt-4 py-2 flex justify-center rounded-b-[5px] hover:cursor-pointer testhoverbutton"
           }
