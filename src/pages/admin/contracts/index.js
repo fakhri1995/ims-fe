@@ -102,10 +102,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
-  if (isAccessControlPending) {
-    return null;
-  }
-
   const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
   const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
@@ -257,10 +253,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 4.2. Create Contract
   const handleAddContract = () => {
-    if (!isAllowedToAddContract) {
-      permissionWarningNotification("Menambah", "Kontrak");
-      return;
-    }
+    // if (!isAllowedToAddContract) {
+    //   permissionWarningNotification("Menambah", "Kontrak");
+    //   return;
+    // }
     setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
       method: "POST",
@@ -276,12 +272,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             rt.push(
               `/admin/contracts/create?id=${response2.data?.id}&prevpath=add`
             );
+            setLoadingAdd(false);
           }, 500);
         } else {
           notification.error({
             message: `Gagal menambahkan kontrak. ${response2.message}`,
             duration: 3,
           });
+          setLoadingAdd(false);
         }
       })
       .catch((err) => {
@@ -289,8 +287,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           message: `Gagal menambahkan kontrak. ${err.response}`,
           duration: 3,
         });
-      })
-      .finally(() => setLoadingAdd(false));
+        setLoadingAdd(false);
+      });
   };
 
   // 4.3. Delete Contract
@@ -494,6 +492,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
   ];
+
+  if (isAccessControlPending) {
+    return null;
+  }
 
   return (
     <Layout
