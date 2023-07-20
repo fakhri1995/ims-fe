@@ -1,23 +1,18 @@
-import { PlusOutlined, UpOutlined } from "@ant-design/icons";
-import { Collapse, Input, Spin, Table, notification } from "antd";
-import TextArea from "antd/lib/input/TextArea";
+import { Input, Table, notification } from "antd";
 import React, { useState } from "react";
-import { useEffect } from "react";
 import { useQuery } from "react-query";
-import TextareaAutosize from "react-textarea-autosize";
 
 import ButtonSys from "components/button";
 import { AccessControl } from "components/features/AccessControl";
 import { PlusIconSvg } from "components/icon";
 import ModalCore from "components/modal/modalCore";
-import ModalProjectNote from "components/modal/projects/modalProjectNote";
 
 import { useAccessControl } from "contexts/access-control";
 
 import {
   CONTRACT_NOTES_GET,
-  PROJECT_NOTE_ADD,
-  PROJECT_NOTE_DELETE,
+  CONTRACT_NOTE_ADD,
+  CONTRACT_NOTE_DELETE,
 } from "lib/features";
 import {
   generateStaticAssetUrl,
@@ -26,6 +21,8 @@ import {
 } from "lib/helper";
 
 import { ContractService } from "apis/contract";
+
+import ModalContractNote from "../../../modal/contracts/modalContractNote";
 
 const ContractNotesSection = ({ initProps, contractId }) => {
   // 1. Init
@@ -38,16 +35,13 @@ const ContractNotesSection = ({ initProps, contractId }) => {
     return null;
   }
   const isAllowedToGetNotes = hasPermission(CONTRACT_NOTES_GET);
-  const isAllowedToAddNote = hasPermission(PROJECT_NOTE_ADD);
-  const isAllowedToDeleteNote = hasPermission(PROJECT_NOTE_DELETE);
+  const isAllowedToAddNote = hasPermission(CONTRACT_NOTE_ADD);
+  const isAllowedToDeleteNote = hasPermission(CONTRACT_NOTE_DELETE);
 
   // 2. useState
   const [refreshNotes, setRefreshNotes] = useState(-1);
 
-  const [loadingProjectNotes, setLoadingProjectNotes] = useState(false);
-
-  const [searchingFilterNotes, setSearchingFilterNotes] = useState("");
-  const [pageProjectNotes, setPageProjectNotes] = useState(1);
+  const [pageNotes, setPageNotes] = useState(1);
 
   const [dataInputNote, setDataInputNote] = useState("");
   const [dataCurrentNote, setDataCurrentNote] = useState("");
@@ -59,42 +53,37 @@ const ContractNotesSection = ({ initProps, contractId }) => {
   // 3. useQuery & useEffect
   // 3.1. Get Contract Notes
   const { data: dataContractNotes, isLoading: loadingContractNotes } = useQuery(
-    [CONTRACT_NOTES_GET, searchingFilterNotes, refreshNotes],
+    [CONTRACT_NOTES_GET, refreshNotes, pageNotes],
     () =>
       ContractService.getNotes(
         initProps,
         isAllowedToGetNotes,
         contractId,
-        searchingFilterNotes
+        pageNotes
       ),
     {
       enabled: isAllowedToGetNotes,
-      select: (response) => response.data.data,
+      select: (response) => response.data,
     }
   );
 
-  // console.log({ dataContractNotes });
-
   // 4. Event
-  const handleAddNote = (notes) => {
+  const handleAddNote = () => {
     if (!isAllowedToAddNote) {
-      permissionWarningNotification("Menambah", "Catatan");
+      permissionWarningNotification("Menambah", "Catatan Kontrak");
       return;
     }
 
-    const payload = { notes: notes };
-    setLoadingProjectNotes(true);
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/addProjectLogNotes?project_id=${contractId}`,
-      {
-        method: `POST`,
-        headers: {
-          Authorization: JSON.parse(initProps),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    )
+    const payload = { contract_id: contractId, notes: dataInputNote };
+    setLoadingAddNote(true);
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContractLogNotes`, {
+      method: `POST`,
+      headers: {
+        Authorization: JSON.parse(initProps),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    })
       .then((res) => res.json())
       .then((response) => {
         if (response.success) {
@@ -117,13 +106,16 @@ const ContractNotesSection = ({ initProps, contractId }) => {
           duration: 3,
         });
       })
-      .finally(() => setLoadingProjectNotes(false));
+      .finally(() => {
+        setLoadingAddNote(false);
+        setModalAddNote(false);
+      });
   };
 
   return (
     <section>
       <div className="grid">
-        <div className="flex justify-between mb-6">
+        <div className="flex justify-between ">
           <h4 className="mig-heading--4 ">Catatan</h4>
           <button
             className="bg-transparent hover:bg-gray-100 rounded-md"
@@ -133,35 +125,20 @@ const ContractNotesSection = ({ initProps, contractId }) => {
           </button>
         </div>
 
-        {/* Search by keyword (kata kunci) */}
-        <Input
-          defaultValue={searchingFilterNotes}
-          style={{ width: `100%` }}
-          placeholder="Kata Kunci.."
-          allowClear
-          onChange={(e) => {
-            if (!e.target.value) {
-              setSearchingFilterNotes("");
-            }
-            setSearchingFilterNotes(e.target.value);
-          }}
-          disabled={!isAllowedToGetNotes}
-        />
-
         <Table
           rowKey={(record) => record.id}
           showHeader={false}
-          dataSource={dataContractNotes}
+          dataSource={dataContractNotes?.data}
           loading={loadingContractNotes}
           className="tableNotes"
-          // pagination={{
-          //   current: pageProjectNotes,
-          //   pageSize: 5,
-          //   total: dataRawProjectNotes?.total,
-          // }}
-          // onChange={(pagination) => {
-          //   setPageProjectNotes(pagination.current);
-          // }}
+          pagination={{
+            current: pageNotes,
+            pageSize: 5,
+            total: dataContractNotes?.total,
+          }}
+          onChange={(pagination) => {
+            setPageNotes(pagination.current);
+          }}
           onRow={(record, rowIndex) => {
             return {
               onClick: () => {
@@ -218,9 +195,9 @@ const ContractNotesSection = ({ initProps, contractId }) => {
         />
       </div>
 
-      {/* Modal Notes */}
+      {/* Modal Detail Notes */}
       <AccessControl hasPermission={CONTRACT_NOTES_GET}>
-        <ModalProjectNote
+        <ModalContractNote
           initProps={initProps}
           visible={modalDetailNote}
           onvisible={setModalDetailNote}
@@ -231,7 +208,7 @@ const ContractNotesSection = ({ initProps, contractId }) => {
       </AccessControl>
 
       {/* Modal Add Notes */}
-      <AccessControl hasPermission={PROJECT_NOTE_ADD}>
+      <AccessControl hasPermission={CONTRACT_NOTE_ADD}>
         <ModalCore
           title={`Tambah Catatan`}
           visible={modalAddNote}
@@ -240,17 +217,17 @@ const ContractNotesSection = ({ initProps, contractId }) => {
             setDataInputNote("");
           }}
           footer={
-            <Spin spinning={loadingAddNote}>
-              <div className="flex justify-end">
-                <ButtonSys
-                  type={"primary"}
-                  onClick={handleAddNote}
-                  disabled={!isAllowedToAddNote || !dataInputNote.length}
-                >
-                  Tambah
-                </ButtonSys>
-              </div>
-            </Spin>
+            <div className="flex justify-end">
+              <ButtonSys
+                type={"primary"}
+                onClick={handleAddNote}
+                disabled={
+                  !isAllowedToAddNote || !dataInputNote.length || loadingAddNote
+                }
+              >
+                Tambah
+              </ButtonSys>
+            </div>
           }
           loading={loadingAddNote}
         >

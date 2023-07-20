@@ -1,32 +1,11 @@
-import { PlusOutlined, UpOutlined } from "@ant-design/icons";
-import { useQuery } from "@chakra-ui/react";
-import { Collapse, Input, Spin, Table, Timeline, notification } from "antd";
-import TextArea from "antd/lib/input/TextArea";
+import { Spin, Timeline, notification } from "antd";
 import React, { useState } from "react";
 import { useEffect } from "react";
-import TextareaAutosize from "react-textarea-autosize";
-
-import ButtonSys from "components/button";
-import { AccessControl } from "components/features/AccessControl";
-import { PlusIconSvg } from "components/icon";
-import ModalCore from "components/modal/modalCore";
-import ModalProjectNote from "components/modal/projects/modalProjectNote";
 
 import { useAccessControl } from "contexts/access-control";
 
-import {
-  CONTRACT_LOGS_GET,
-  PROJECT_NOTES_GET,
-  PROJECT_NOTE_ADD,
-  PROJECT_NOTE_DELETE,
-} from "lib/features";
-import {
-  generateStaticAssetUrl,
-  momentFormatDate,
-  permissionWarningNotification,
-} from "lib/helper";
-
-import { ContractService } from "apis/contract";
+import { CONTRACT_LOGS_GET } from "lib/features";
+import { momentFormatDate, permissionWarningNotification } from "lib/helper";
 
 const ContractActivitySection = ({ initProps, contractId }) => {
   // 1. Init
@@ -39,7 +18,6 @@ const ContractActivitySection = ({ initProps, contractId }) => {
     return null;
   }
 
-  // TODO: change constant
   const isAllowedToGetLogs = hasPermission(CONTRACT_LOGS_GET);
 
   // 2. useState
@@ -47,7 +25,6 @@ const ContractActivitySection = ({ initProps, contractId }) => {
   const [dataLogs, setDataLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(false);
 
-  const [searchingFilterLogs, setSearchingFilterLogs] = useState("");
   const [pageLogs, setPageLogs] = useState(1);
 
   // 3. useEffect
@@ -62,7 +39,7 @@ const ContractActivitySection = ({ initProps, contractId }) => {
     const fetchData = async () => {
       setLoadingLogs(true);
       fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${contractId}&keyword=${searchingFilterLogs}&page=${pageLogs}&rows=5`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractLogs?contract_id=${contractId}&page=${pageLogs}&rows=7`,
         {
           method: `GET`,
           headers: {
@@ -96,37 +73,32 @@ const ContractActivitySection = ({ initProps, contractId }) => {
     const timer = setTimeout(() => fetchData(), 500);
 
     return () => clearTimeout(timer);
-  }, [isAllowedToGetLogs, searchingFilterLogs, pageLogs]);
-
-  // const { data: dataActivityLogs, isLoading: loadingActivityLogs } = useQuery(
-  //   [CONTRACT_LOGS_GET],
-  //   () => ContractService.getLogs(initProps, isAllowedToGetLogs, contractId),
-  //   {
-  //     enabled: isTabActive,
-  //     refetchOnMount: false,
-  //     select: (response) => response.data.data,
-  //   }
-  // );
+  }, [isAllowedToGetLogs]);
 
   // console.log({ dataLogs });
 
   return (
     <section>
       <h4 className="mig-heading--4 mb-6">Aktivitas</h4>
-      <Timeline>
-        <Timeline.Item color="#35763B">
-          <p className="text-mono50">Kontrak dibuat oleh [nama user]</p>
-          <p className="mig-caption text-mono80">
-            Senin, 17 Januari 2022 10:00 WIB
-          </p>
-        </Timeline.Item>
-        <Timeline.Item color="#35763B">
-          <p className="text-mono50">Kontrak dibuat oleh [nama user]</p>
-          <p className="mig-caption text-mono80">
-            Senin, 17 Januari 2022 10:00 WIB
-          </p>
-        </Timeline.Item>
-      </Timeline>
+      <Spin spinning={loadingLogs}>
+        <Timeline>
+          {dataLogs?.map((log) => (
+            <Timeline.Item key={log?.id} color="#35763B">
+              <p className="text-mono50">
+                {log?.description?.replace(/\.$/, "")} oleh {log?.causer?.name}
+              </p>
+              <p className="mig-caption text-mono80">
+                {momentFormatDate(
+                  log?.created_at,
+                  "-",
+                  "dddd, DD MMMM YYYY HH:mm"
+                )}{" "}
+                WIB
+              </p>
+            </Timeline.Item>
+          ))}
+        </Timeline>
+      </Spin>
     </section>
   );
 };
