@@ -102,6 +102,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
+  if (isAccessControlPending) {
+    return null;
+  }
+
   const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
   const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
@@ -490,10 +494,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
   ];
-
-  if (isAccessControlPending) {
-    return null;
-  }
 
   return (
     <Layout

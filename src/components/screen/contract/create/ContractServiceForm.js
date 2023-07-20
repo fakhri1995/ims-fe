@@ -5,8 +5,6 @@ import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACTS_GET } from "lib/features";
-
 import { EditSquareIconSvg, PlusIconSvg, TrashIconSvg } from "../../../icon";
 import ModalServiceCreate from "../../../modal/contracts/modalServiceCreate";
 import ModalServiceUpdate from "../../../modal/contracts/modalServiceUpdate";
@@ -26,28 +24,7 @@ const ContractServiceForm = ({
 
   // Handler
 
-  // const dataSource = [
-  //   {
-  //     key: "1",
-  //     id: 1,
-  //     name: "PC Hardware",
-  //     pax: 5,
-  //     price: "500000",
-  //     priceOption: "bulan",
-  //     subtotal: "10000000",
-  //   },
-  //   {
-  //     key: "2",
-  //     id: 2,
-  //     name: "ATM Hardware",
-  //     pax: 3,
-  //     price: "400000",
-  //     priceOption: "bulan",
-  //     subtotal: "2400000",
-  //   },
-  // ];
-
-  console.log({ dataContractUpdate });
+  // console.log({ dataContractUpdate });
   return (
     <>
       <Table
@@ -75,7 +52,7 @@ const ContractServiceForm = ({
           },
           {
             title: "Service",
-            dataIndex: "product_id",
+            dataIndex: "name",
             width: "400px",
             render: (text, record) => <p className="">{text}</p>,
           },
@@ -89,7 +66,9 @@ const ContractServiceForm = ({
             render: (text, record) => (
               <p className="">
                 Rp {Number(text)?.toLocaleString("id-ID") || "-"}
-                <span className="text-mono50">/{record?.unit}</span>
+                <span className="text-mono50">
+                  /{record?.unit?.toLowerCase()}
+                </span>
               </p>
             ),
           },
