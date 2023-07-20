@@ -68,7 +68,9 @@ const { TabPane } = Tabs;
 /**
  * Component AttendanceStaffAktivitasSection's props.
  */
-export interface IAttendanceStaffAktivitasSection {}
+export interface IAttendanceStaffAktivitasSection {
+  dataToken?: string;
+}
 
 /**
  * Component AttendanceStaffAktivitasSection
