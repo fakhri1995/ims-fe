@@ -51,8 +51,8 @@ const ContractServiceSection = ({ dataServices, loading }) => {
               },
               {
                 title: "Service",
-                dataIndex: "name",
-                render: (text, record) => <p className="">{text}</p>,
+                dataIndex: ["product", "name"],
+                render: (text) => <p className="">{text}</p>,
               },
               {
                 title: "Pax",

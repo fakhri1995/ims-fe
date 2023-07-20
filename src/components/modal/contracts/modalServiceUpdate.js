@@ -30,7 +30,8 @@ const ModalServiceUpdate = ({
   // 1. USE STATE
   const [dataService, setDataService] = useState({
     id: null,
-    name: "",
+    product_id: null,
+    product: { name: "" },
     pax: 0,
     price: "",
     unit: "",
@@ -66,7 +67,14 @@ const ModalServiceUpdate = ({
 
   // 3. HANDLER
   const clearData = () => {
-    setDataService({ id: 0, name: "", pax: 0, price: "", unit: "" });
+    setDataService({
+      id: null,
+      product_id: null,
+      product: { name: "" },
+      pax: 0,
+      price: "",
+      unit: "",
+    });
     form.resetFields();
   };
 
@@ -88,8 +96,6 @@ const ModalServiceUpdate = ({
 
   // console.log({ dataServiceTypeList });
   // console.log({ currentService });
-  console.log({ currentIdx });
-  console.log({ dataService });
 
   return (
     <Modal
@@ -144,7 +150,7 @@ const ModalServiceUpdate = ({
                     product_id: value,
                     price: option.price,
                     unit: option.price_option,
-                    name: option.children,
+                    product: { name: option.children },
                   }));
                 }}
                 onSearch={(value) => {

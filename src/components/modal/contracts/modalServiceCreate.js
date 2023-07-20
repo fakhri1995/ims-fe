@@ -46,7 +46,8 @@ const ModalServiceCreate = ({
   // 1. USE STATE
   const dataService = {
     id: null,
-    name: "",
+    product_id: null,
+    product: { name: "" },
     pax: 0,
     price: "",
     unit: "bulan",
@@ -96,6 +97,7 @@ const ModalServiceCreate = ({
   };
 
   // console.log({ dataService });
+  // console.log({ dataContractUpdate });
 
   return (
     <Modal
@@ -116,7 +118,7 @@ const ModalServiceCreate = ({
             <ButtonSys
               type={"primary"}
               onClick={handleSave}
-              // disabled={!dataServiceList[0]?.dataService?.name}
+              // disabled={!dataServiceList[0]?.dataService?.product}
             >
               <p>Tambah & Simpan</p>
             </ButtonSys>
@@ -152,7 +154,7 @@ const ModalServiceCreate = ({
                       tempServiceList[idx].product_id = value;
                       tempServiceList[idx].price = option.price;
                       tempServiceList[idx].unit = option.price_option;
-                      tempServiceList[idx].name = option.children;
+                      tempServiceList[idx].product = { name: option.children };
 
                       setDataServiceList(tempServiceList);
                     }}

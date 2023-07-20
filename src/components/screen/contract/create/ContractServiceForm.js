@@ -52,9 +52,9 @@ const ContractServiceForm = ({
           },
           {
             title: "Service",
-            dataIndex: "name",
+            dataIndex: ["product", "name"],
             width: "400px",
-            render: (text, record) => <p className="">{text}</p>,
+            render: (text) => <p className="">{text}</p>,
           },
           {
             title: "Pax",
@@ -104,10 +104,8 @@ const ContractServiceForm = ({
                 <button
                   type="button"
                   className="bg-transparent hover:opacity-70"
-                  // TODO: implement delete service in selected row
                   onClick={() => {
                     const tempServices = [...dataContractUpdate?.services];
-                    // TODO: recheck if API is fixed
                     tempServices.splice(index, 1);
 
                     setDataContractUpdate((prev) => ({
