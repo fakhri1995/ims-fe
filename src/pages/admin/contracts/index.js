@@ -1,28 +1,5 @@
-import {
-  AppstoreOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  MailOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Dropdown,
-  Empty,
-  Form,
-  Input,
-  Menu,
-  Modal,
-  Select,
-  Space,
-  Spin,
-  Switch,
-  Table,
-  notification,
-} from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Input, Modal, Select, Spin, notification } from "antd";
 import moment from "moment";
 import {
   NumberParam,
@@ -31,14 +8,10 @@ import {
   withDefault,
 } from "next-query-params";
 import { useRouter } from "next/router";
-import QueryString from "qs";
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCallback } from "react";
-import { useRef } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { useQuery } from "react-query";
-import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
@@ -61,8 +34,6 @@ import { permissionWarningNotification } from "lib/helper";
 
 import { CompanyService } from "apis/company";
 import { ContractService } from "apis/contract";
-
-import SettingsIcon from "assets/vectors/icon-settings.svg";
 
 import ButtonSys from "../../../components/button";
 import { SearchIconSvg } from "../../../components/icon";
@@ -148,33 +119,15 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
-  const [loadingAdd, setLoadingAdd] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-
   // Modal Duration Range Filter
   const [modalDuration, setModalDuration] = useState(false);
   const [durationInput, setDurationInput] = useState(0);
-  // table data
-  // const [dataRawContracts, setDataRawContracts] = useState({
-  //   current_page: "",
-  //   data: [],
-  //   first_page_url: "",
-  //   from: null,
-  //   last_page: null,
-  //   last_page_url: "",
-  //   next_page_url: "",
-  //   path: "",
-  //   per_page: null,
-  //   prev_page_url: null,
-  //   to: null,
-  //   total: null,
-  // });
 
   const [refresh, setRefresh] = useState(-1);
+  const [loadingAdd, setLoadingAdd] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
-  const tempIdClicked = useRef(-1);
-  const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Contract Count
@@ -188,9 +141,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   );
 
-  // 3.2. Get Company List
+  // 3.2. Get Company Client List
   const { data: dataCompanyList, isLoading: loadingCompanyList } = useQuery(
-    [COMPANY_CLIENTS_GET, refresh],
+    [COMPANY_CLIENTS_GET],
     () => CompanyService.getCompanyClientList(axiosClient, true),
     {
       enabled: isAllowedToGetCompanyClients,
@@ -215,8 +168,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  // console.log({ dataRawContracts });
-
   // 3.5. Get Status List
   const { data: dataStatusList, isLoading: loadingStatusList } = useQuery(
     [RECRUITMENT_STATUSES_LIST_GET],
@@ -233,10 +184,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4. Event
-  const onAddContract = useCallback(() => {
-    handleAddContract();
-  }, []);
-
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
     setQueryParams({
@@ -252,6 +199,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4.2. Create Contract
+  const onAddContract = useCallback(() => {
+    handleAddContract();
+  }, []);
+
   const handleAddContract = () => {
     // if (!isAllowedToAddContract) {
     //   permissionWarningNotification("Menambah", "Kontrak");
@@ -292,7 +243,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // 4.3. Delete Contract
-  // Handler
   const handleDeleteContract = (id) => {
     if (!isAllowedToDeleteContract) {
       permissionWarningNotification("Menghapus", "Kontrak");
@@ -395,6 +345,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <div>{momentFormatDate(text)}</div>,
         };
       },
+      sorter: isAllowedToGetContracts
+        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
+        : false,
     },
     {
       title: "Sisa Durasi",
@@ -402,12 +355,11 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: "duration_left",
       render: (text, record, index) => {
         return {
-          children: <>{record.role?.name}</>,
+          children: <>{text}</>,
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
         : false,
     },
     {
@@ -441,14 +393,18 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.status?.name
-              .toLowerCase()
-              .localeCompare(b.status?.name.toLowerCase())
+        ? (a, b) => {
+            const dataStatusListIds = dataStatusList?.map(
+              (status) => status?.id
+            );
+            const indexA = dataStatusListIds?.indexOf(a?.status?.id);
+            const indexB = dataStatusListIds?.indexOf(b?.status?.id);
+            return indexA - indexB;
+          }
         : false,
     },
     {
-      title: "Action",
+      title: "Aksi",
       key: "action_button",
       dataIndex: "action_button",
       render: (text, record, index) => {
@@ -546,7 +502,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    // setQueryParams({ duration: value });
+                    setQueryParams({ duration: value });
                     setSelectedDuration(value);
                   }}
                   dropdownRender={(options) => (
@@ -657,7 +613,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Cari.."
                   allowClear
                   onChange={(e) => {
-                    setSearchingFilterContracts(e.target.value);
+                    setTimeout(
+                      () => setSearchingFilterContracts(e.target.value),
+                      1000
+                    );
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetContracts}
@@ -712,18 +671,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               </button>
               <ButtonSys
                 type={"primary"}
-                onClick={() => {
-                  // let tempDurationRange = [...durationRangeList];
-                  // tempDurationRange.push(`${durationInput} Bulan`);
-                  // setDurationRangeList(tempDurationRange);
-                  setModalDuration(false);
-                }}
+                onClick={() => setModalDuration(false)}
               >
                 <p>Tambah</p>
               </ButtonSys>
             </div>
           }
-          // loading={loading}
+          // loading={}
         >
           <div className="space-y-2">
             <p>Jumlah Bulan</p>
