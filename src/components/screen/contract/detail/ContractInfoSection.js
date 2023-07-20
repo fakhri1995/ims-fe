@@ -20,8 +20,6 @@ import {
   RECRUITMENT_STATUSES_LIST_GET,
 } from "lib/features";
 
-import { ContractService } from "apis/contract";
-
 import {
   generateStaticAssetUrl,
   getFileName,
@@ -40,7 +38,12 @@ const extrasType = {
 
 export const { TEXT, LIST, FILE } = extrasType;
 
-const ContractInfoSection = ({ initProps, contractId }) => {
+const ContractInfoSection = ({
+  initProps,
+  contractId,
+  dataContract,
+  loadingDataContract,
+}) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
@@ -55,20 +58,6 @@ const ContractInfoSection = ({ initProps, contractId }) => {
   const [modalDelete, setModalDelete] = useState(false);
 
   // Use Query
-  const { data: dataContract, isLoading: loadingDataContract } = useQuery(
-    [CONTRACT_GET],
-    () =>
-      ContractService.getContract(
-        initProps,
-        isAllowedToGetContract,
-        contractId
-      ),
-    {
-      enabled: isAllowedToGetContract,
-      refetchOnMount: true,
-      select: (response) => response.data,
-    }
-  );
 
   // Handler
   const handleDeleteContract = () => {

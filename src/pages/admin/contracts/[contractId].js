@@ -26,6 +26,7 @@ import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
 import { Doughnut, Line } from "react-chartjs-2";
+import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
 import TaskCard from "components/cards/project/TaskCard";
@@ -59,6 +60,8 @@ import {
   momentFormatDate,
   permissionWarningNotification,
 } from "lib/helper";
+
+import { ContractService } from "apis/contract";
 
 import {
   BellRingingIconSvg,
@@ -113,38 +116,19 @@ const ContractDetailIndex = ({
   const rt = useRouter();
   const pathArr = rt.pathname.split("/").slice(1);
 
-  const dataColorBar = [
-    "#2F80ED",
-    "#BF4A40",
-    "#ED962F",
-    "#DDB44A",
-    "#6AAA70",
-    "#808080",
-  ];
-
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
-  const [dataContract, setDataContract] = useState({});
   const [isMobileView, setIsMobileView] = useState(false);
 
   // 2.3. Project Detail
-  const [loadingProject, setLoadingProject] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState({});
 
   // 2.4. Modal
-  const [modalUpdateProject, setModalUpdateProject] = useState(false);
-  const [modalStaffs, setModalStaffs] = useState(false);
-  const [modalAddTask, setModalAddTask] = useState(false);
-  const [modalDetailTask, setModalDetailTask] = useState(false);
 
-  const [dataProjectList, setDataProjectList] = useState([]);
-  const [currentTaskId, setCurrentTaskId] = useState(0);
-
-  // 3. UseEffect
+  // 3. Use Effect & Use Query
   // Responsive view for action button section
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 1024) {
         setIsMobileView(true); // Set smaller page size for smaller devices
       } else {
         setIsMobileView(false); // Set default page size for larger devices
@@ -158,6 +142,22 @@ const ContractDetailIndex = ({
     };
   }, []);
 
+  // get contract detail
+  const { data: dataContract, isLoading: loadingDataContract } = useQuery(
+    [CONTRACT_GET],
+    () =>
+      ContractService.getContract(
+        initProps,
+        isAllowedToGetContract,
+        contractId
+      ),
+    {
+      enabled: isAllowedToGetContract,
+      refetchOnMount: true,
+      select: (response) => response.data,
+    }
+  );
+
   // 4. Event
 
   // Breadcrumb Text
@@ -166,7 +166,7 @@ const ContractDetailIndex = ({
       { name: "Kontrak", hrefValue: "/admin/contracts" },
       { name: "Detail Kontrak", hrefValue: `/admin/contracts/${contractId}` },
     ],
-    [dataContract.name]
+    []
   );
 
   if (isAccessControlPending) {
@@ -217,20 +217,34 @@ const ContractDetailIndex = ({
         <section className="md:col-span-4 shadow-md rounded-md bg-white p-6 order-last md:order-none">
           <Tabs defaultActiveKey={1}>
             <Tabs.TabPane tab="Catatan" key={1}>
-              <ContractNotesSection initProps={initProps} contractId={1} />
+              <ContractNotesSection
+                initProps={initProps}
+                contractId={contractId}
+              />
             </Tabs.TabPane>
 
             <Tabs.TabPane tab="Aktivitas" key={2}>
-              <ContractActivitySection />
+              <ContractActivitySection
+                initProps={initProps}
+                contractId={contractId}
+              />
             </Tabs.TabPane>
           </Tabs>
         </section>
 
         {/* Detail Kontrak & Daftar Service */}
         <div className="md:col-span-8 ">
-          <ContractInfoSection initProps={initProps} contractId={contractId} />
+          <ContractInfoSection
+            initProps={initProps}
+            contractId={contractId}
+            dataContract={dataContract}
+            loadingDataContract={loadingDataContract}
+          />
 
-          <ContractServiceSection />
+          <ContractServiceSection
+            dataServices={dataContract?.services}
+            loading={loadingDataContract}
+          />
         </div>
       </div>
     </LayoutDashboard>

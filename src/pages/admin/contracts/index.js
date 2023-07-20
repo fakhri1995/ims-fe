@@ -102,6 +102,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const { hasPermission, isPending: isAccessControlPending } =
     useAccessControl();
 
+  if (isAccessControlPending) {
+    return null;
+  }
+
   const isAllowedToGetContracts = hasPermission(CONTRACTS_GET);
   const isAllowedToGetContract = hasPermission(CONTRACT_GET);
   const isAllowedToUpdateContract = hasPermission(CONTRACT_UPDATE);
@@ -377,17 +381,17 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "Nama Klien",
       key: "client_name",
-      dataIndex: "client_name",
+      dataIndex: ["client", "name"],
       render: (text, record, index) => {
         return {
-          children: <div>{record.client_name || "_"}</div>,
+          children: <div>{text || "_"}</div>,
         };
       },
     },
     {
       title: "Tanggal Berlaku",
-      key: "initial_date",
-      dataIndex: "initial_date",
+      key: "start_date",
+      dataIndex: "start_date",
       render: (text, record, index) => {
         return {
           children: <div>{momentFormatDate(text)}</div>,
@@ -454,7 +458,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {!record.is_posted && (
-                <div className="flex flex-col md:flex-row space-x-2 items-center">
+                <div className="flex flex-col md:flex-row gap-2 items-center">
                   <ButtonSys
                     type={"default"}
                     color={"secondary100"}
@@ -490,10 +494,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         : false,
     },
   ];
-
-  if (isAccessControlPending) {
-    return null;
-  }
 
   return (
     <Layout

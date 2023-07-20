@@ -384,6 +384,7 @@ export const CONTRACT_UPDATE = "CONTRACT_UPDATE";
 export const CONTRACT_DELETE = "CONTRACT_DELETE";
 export const CONTRACTS_COUNT_GET = "CONTRACTS_COUNT_GET";
 export const CONTRACT_NOTES_GET = "CONTRACT_NOTES_GET";
+export const CONTRACT_LOGS_GET = "CONTRACT_LOGS_GET";
 
 /**
  * Daftar feature untuk User Management.

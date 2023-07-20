@@ -30,36 +30,27 @@ import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { PlusIconSvg } from "../../icon";
 
-// Quill library for text editor has to be imported dynamically
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-
 const ModalServiceCreate = ({
   initProps,
   visible,
   onvisible,
-  isAllowedToUpdateProject,
-  isAllowedToDeleteProject,
   dataContractUpdate,
+  setDataContractUpdate,
 }) => {
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
-
-  // const isAllowedToAddContractService = hasPermission(CONTRACT_SERVICE_ADD);
-  // const isAllowedToUpdateContractService = hasPermission(CONTRACT_SERVICE_UPDATE);
-
   const [form] = Form.useForm();
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
-
   const dataService = {
     id: null,
-    name: "",
+    product_id: null,
+    product: { name: "" },
     pax: 0,
     price: "",
-    priceOption: "",
-    inventoriesCount: 0,
+    unit: "bulan",
   };
   const [dataServiceList, setDataServiceList] = useState([dataService]);
 
@@ -67,7 +58,7 @@ const ModalServiceCreate = ({
   const [serviceTypeSearch, setServiceTypeSearch] = useState("");
 
   // 2. USE QUERY & USE EFFECT
-  // 2.1. Get Contract Service List
+  // 2.1. Get Contract Service Type List
   const { data: dataServiceTypeList, isLoading: loadingServiceTypeList } =
     useQuery(
       [PRODUCTS_GET, serviceTypeSearch],
@@ -94,7 +85,19 @@ const ModalServiceCreate = ({
     clearData();
   };
 
-  // console.log({ dataServiceList });
+  const handleSave = () => {
+    let tempServiceList = [...dataContractUpdate.services];
+    tempServiceList.push(...dataServiceList);
+    setDataContractUpdate((prev) => ({
+      ...prev,
+      services: tempServiceList,
+    }));
+
+    handleClose();
+  };
+
+  // console.log({ dataService });
+  // console.log({ dataContractUpdate });
 
   return (
     <Modal
@@ -114,8 +117,8 @@ const ModalServiceCreate = ({
             </button>
             <ButtonSys
               type={"primary"}
-              onClick={() => onvisible(false)}
-              disabled={!dataService.name}
+              onClick={handleSave}
+              // disabled={!dataServiceList[0]?.dataService?.product}
             >
               <p>Tambah & Simpan</p>
             </ButtonSys>
@@ -142,17 +145,16 @@ const ModalServiceCreate = ({
                   <Select
                     showSearch
                     placeholder={"Pilih jenis service"}
-                    value={service?.id}
+                    value={service?.product_id}
                     name={"name"}
                     disabled={!isAllowedToGetProductInventories}
                     style={{ width: `100%` }}
                     onChange={(value, option) => {
                       let tempServiceList = [...dataServiceList];
-                      tempServiceList[idx].id = value;
+                      tempServiceList[idx].product_id = value;
                       tempServiceList[idx].price = option.price;
-                      tempServiceList[idx].priceOption = option.price_option;
-                      tempServiceList[idx].name = option.inventories_count;
-                      tempServiceList[idx].inventoriesCount = option.children;
+                      tempServiceList[idx].unit = option.price_option;
+                      tempServiceList[idx].product = { name: option.children };
 
                       setDataServiceList(tempServiceList);
                     }}
@@ -171,7 +173,6 @@ const ModalServiceCreate = ({
                         <Select.Option
                           key={item?.id}
                           value={item?.id}
-                          inventories_count={item.inventories_count}
                           price={item.price}
                           price_option={item.price_option}
                         >
@@ -196,7 +197,6 @@ const ModalServiceCreate = ({
                   placeholder="Pilih jumlah service"
                   min={1}
                   value={service?.pax}
-                  max={dataService.inventoriesCount}
                   onChange={(e) => {
                     let tempServiceList = [...dataServiceList];
                     tempServiceList[idx].pax = e.target.value;
@@ -235,7 +235,7 @@ const ModalServiceCreate = ({
                 </Form.Item>
 
                 <Form.Item
-                  name={"priceOption"}
+                  name={"unit"}
                   rules={[
                     {
                       required: true,
@@ -246,26 +246,26 @@ const ModalServiceCreate = ({
                 >
                   <>
                     <Select
-                      name={"priceOption"}
-                      defaultValue={"bulan"}
-                      value={service?.priceOption}
+                      name={"unit"}
+                      defaultValue={"Bulan"}
+                      value={service?.unit}
                       onChange={(value) => {
                         let tempServiceList = [...dataServiceList];
-                        tempServiceList[idx].priceOption = value;
+                        tempServiceList[idx].unit = value;
 
                         setDataServiceList(tempServiceList);
                       }}
                     >
-                      <Select.Option key={1} value={"jam"}>
+                      <Select.Option key={"jam"} value={"jam"}>
                         per Jam
                       </Select.Option>
-                      <Select.Option key={2} value={"hari"}>
+                      <Select.Option key={"hari"} value={"hari"}>
                         per Hari
                       </Select.Option>
-                      <Select.Option key={3} value={"bulan"}>
+                      <Select.Option key={"bulan"} value={"bulan"}>
                         per Bulan
                       </Select.Option>
-                      <Select.Option key={4} value={"tahun"}>
+                      <Select.Option key={"tahun"} value={"tahun"}>
                         per Tahun
                       </Select.Option>
                     </Select>
@@ -275,7 +275,6 @@ const ModalServiceCreate = ({
 
               <button
                 onClick={() => {
-                  // const newService = { ...dataService };
                   const tempServiceList = [...dataServiceList];
                   tempServiceList.splice(idx + 1, 0, dataService);
                   setDataServiceList(tempServiceList);

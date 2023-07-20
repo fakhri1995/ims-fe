@@ -556,10 +556,10 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
       pathArr={pathArr}
     >
       <div className=" flex flex-col">
-        <div className=" grid grid-cols-11 px-5">
-          <div className=" col-span-3 flex flex-col">
+        <div className=" grid grid-cols-1 md:grid-cols-11 px-5">
+          <div className="col-span-3 flex flex-col">
             {/* Informasi Umum Tiket */}
-            <div className=" flex flex-col mb-2 mr-2 shadow-md rounded-md bg-white p-5">
+            <div className=" flex flex-col mb-2 md:mr-2 shadow-md rounded-md bg-white p-5">
               <div className=" flex flex-col mb-4">
                 <div className=" flex items-center justify-center mb-2">
                   <div className="mr-2">
@@ -650,7 +650,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               )}
             </div>
             {/* INFORMASI DETAIL TIKET */}
-            <div className="flex flex-col my-2 mr-2 shadow-md rounded-md bg-white p-5">
+            <div className="flex flex-col my-2 md:mr-2 shadow-md rounded-md bg-white p-5">
               <div className=" mb-7">
                 <H1>Detail Masalah</H1>
               </div>
@@ -687,15 +687,15 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   {displaydata?.ticketable?.location?.full_location}
                 </p>
               </div>
-              <div className=" flex flex-col mb-5">
+              <div className=" flex flex-col mb-5 ">
                 <Label>Deskripsi Kerusakan:</Label>
-                <p className=" mb-0 text-gray-600">
+                <p className=" mb-0 text-gray-600 break-words">
                   {displaydata?.ticketable?.description}
                 </p>
               </div>
             </div>
             {/* BUKTI KEJADIAN TIKET */}
-            <div className="flex flex-col my-2 mr-2 shadow-md rounded-md bg-white p-5">
+            <div className="flex flex-col my-2 md:mr-2 shadow-md rounded-md bg-white p-5">
               <div className=" mb-7">
                 <H1>Bukti Kejadian</H1>
               </div>
@@ -720,7 +720,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
               )}
             </div>
             {/* EKSPOR TIKET */}
-            <div className="flex items-center justify-center mb-2 mr-2 shadow-md rounded-md bg-white p-5">
+            <div className="flex items-center justify-center mb-2 md:mr-2 shadow-md rounded-md bg-white p-5">
               {loadingexportticket ? (
                 <>
                   <Spin />
@@ -773,8 +773,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
           </div>
           <div className=" col-span-8 flex flex-col">
             {/* STATUS ASSIGN DEADLINE TIKET */}
-            <div className=" w-full flex justify-between mb-2 ml-2 shadow-md rounded-md bg-white p-5">
-              <div className=" w-1/2 pr-8 flex items-center justify-between mb-2">
+            <div className=" w-full flex justify-between mb-2 md:ml-2 shadow-md rounded-md bg-white p-5">
+              <div className="w-1/2 pr-8 flex items-center justify-between mb-2">
                 <div className=" flex flex-col">
                   <div className="mb-2">
                     <Label>Status</Label>
@@ -992,8 +992,8 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 ) : null}
               </div>
             </div>
-            <div className="flex w-full">
-              <div className="w-6/12 mx-2 flex flex-col">
+            <div className="flex w-full flex-col md:flex-row">
+              <div className="w-full md:w-6/12 md:mx-2 flex flex-col">
                 {/* Task */}
                 {dataProfile.data.role === 1 && (
                   <div className="my-2">
@@ -1289,7 +1289,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                   </>
                 )}
               </div>
-              <div className="flex flex-col w-6/12">
+              <div className="flex flex-col w-full md:w-6/12">
                 {/* CATATAN TIKET */}
                 {!isClient && (
                   <TicketDetailCatatanCard
@@ -1364,7 +1364,7 @@ const TicketDetail = ({ dataProfile, sidemenu, initProps, ticketid }) => {
                 /> */}
 
                 {/* AKTIVITAS TIKET */}
-                <div className="shadow-md rounded-md bg-white p-5 mt-2 ml-2">
+                <div className="shadow-md rounded-md bg-white p-5 mt-2 md:ml-2">
                   <div className=" flex items-center justify-between mb-5">
                     <H1>Aktivitas</H1>
                   </div>

@@ -5,8 +5,6 @@ import { useQuery } from "react-query";
 
 import { useAccessControl } from "contexts/access-control";
 
-import { CONTRACTS_GET } from "lib/features";
-
 import { EditSquareIconSvg, PlusIconSvg, TrashIconSvg } from "../../../icon";
 import ModalServiceCreate from "../../../modal/contracts/modalServiceCreate";
 import ModalServiceUpdate from "../../../modal/contracts/modalServiceUpdate";
@@ -22,35 +20,16 @@ const ContractServiceForm = ({
   const [modalServiceCreate, setModalServiceCreate] = useState(false);
   const [modalServiceUpdate, setModalServiceUpdate] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
+  const [currentIdx, setCurrentIdx] = useState(-1);
 
   // Handler
 
-  const dataSource = [
-    {
-      key: "1",
-      id: 1,
-      name: "PC Hardware",
-      pax: 5,
-      price: "500000",
-      priceOption: "bulan",
-      subtotal: "10000000",
-    },
-    {
-      key: "2",
-      id: 2,
-      name: "ATM Hardware",
-      pax: 3,
-      price: "400000",
-      priceOption: "bulan",
-      subtotal: "2400000",
-    },
-  ];
-
+  // console.log({ dataContractUpdate });
   return (
     <>
       <Table
         className="tableBordered border-2 rounded-md"
-        dataSource={dataSource}
+        dataSource={dataContractUpdate?.services}
         rowKey={(record) => record.key}
         // loading={loading}
         scroll={{ x: 200 }}
@@ -73,9 +52,9 @@ const ContractServiceForm = ({
           },
           {
             title: "Service",
-            dataIndex: "name",
+            dataIndex: ["product", "name"],
             width: "400px",
-            render: (text, record) => <p className="">{text}</p>,
+            render: (text) => <p className="">{text}</p>,
           },
           {
             title: "Pax",
@@ -86,29 +65,36 @@ const ContractServiceForm = ({
             dataIndex: "price",
             render: (text, record) => (
               <p className="">
-                Rp {Number(text)?.toLocaleString("id-ID") || "-"}/
-                {record.priceOption}
+                Rp {Number(text)?.toLocaleString("id-ID") || "-"}
+                <span className="text-mono50">
+                  /{record?.unit?.toLowerCase()}
+                </span>
               </p>
             ),
           },
           {
             title: "Subtotal",
             dataIndex: "subtotal",
-            render: (text) => (
-              <p className="">
-                Rp {Number(text)?.toLocaleString("id-ID") || "-"}
-              </p>
-            ),
+            render: (text, record) => {
+              let tempSubtotal = Number(record?.pax) * Number(record?.price);
+              return (
+                <p className="">
+                  Rp{" "}
+                  {Number(text || tempSubtotal)?.toLocaleString("id-ID") || "-"}
+                </p>
+              );
+            },
           },
           {
             dataIndex: "action_button",
-            render: (text, record) => (
+            render: (text, record, index) => (
               <div className="flex items-center space-x-2">
                 <button
                   type="button"
                   className="bg-transparent hover:opacity-70"
                   onClick={() => {
                     setDataRowClicked(record);
+                    setCurrentIdx(index);
                     setModalServiceUpdate(true);
                   }}
                 >
@@ -118,8 +104,15 @@ const ContractServiceForm = ({
                 <button
                   type="button"
                   className="bg-transparent hover:opacity-70"
-                  // TODO: implement delete service in selected row
-                  // onClick={()}
+                  onClick={() => {
+                    const tempServices = [...dataContractUpdate?.services];
+                    tempServices.splice(index, 1);
+
+                    setDataContractUpdate((prev) => ({
+                      ...prev,
+                      services: tempServices,
+                    }));
+                  }}
                 >
                   <TrashIconSvg size={24} color={"#BF4A40"} />
                 </button>
@@ -141,9 +134,9 @@ const ContractServiceForm = ({
         initProps={initProps}
         visible={modalServiceUpdate}
         onvisible={setModalServiceUpdate}
-        currentService={dataRowClicked}
         dataContractUpdate={dataContractUpdate}
         setDataContractUpdate={setDataContractUpdate}
+        currentIdx={currentIdx}
       />
     </>
   );

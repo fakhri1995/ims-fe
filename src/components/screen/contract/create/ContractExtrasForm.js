@@ -32,28 +32,33 @@ const ContractExtrasForm = ({
 
   // Use Effect
   // 2.1. Display filename when available
-  // useEffect(() => {
-  //   if (dataContractUpdate?.extras[idx]?.type === FILE) {
-  //     const currentFileName = dataContractUpdate?.extras[idx]?.value?.link?.split("/")[2];
-  //     setFileList([{ name: currentFileName }]);
-  //   } else {
-  //     setFileList([]);
-  //   }
-  // }, [dataContractUpdate?.extras]);
+  useEffect(() => {
+    if (dataContractUpdate?.extras[idx]?.type === FILE) {
+      const currentFileName =
+        dataContractUpdate?.extras[idx]?.value?.link?.split("/")[2];
+      setFileList([{ name: currentFileName }]);
+    } else {
+      setFileList([]);
+    }
+  }, []);
 
   // Handler
   const beforeUploadFile = useCallback((uploadedFile) => {
     const checkMaxFileSizeFilter = beforeUploadFileMaxSize();
     const isReachedMaxFileSize =
       checkMaxFileSizeFilter(uploadedFile) === Upload.LIST_IGNORE;
-    const allowedFileTypes = "application/pdf";
+    const allowedFileTypes = [
+      "application/pdf",
+      "image/png",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    ];
 
-    if (uploadedFile.type !== allowedFileTypes) {
-      notification.error({
-        message: "File harus memilki format .pdf",
-      });
-      return Upload.LIST_IGNORE;
-    }
+    // if (!allowedFileTypes.includes(uploadedFile.type)) {
+    //   notification.error({
+    //     message: "File harus memiliki format .pdf, .png, atau .docx",
+    //   });
+    //   return Upload.LIST_IGNORE;
+    // }
 
     if (isReachedMaxFileSize) {
       return Upload.LIST_IGNORE;
@@ -197,7 +202,7 @@ const ContractExtrasForm = ({
             <div className="relative">
               <em className="text-mono50 mr-3">Unggah File (Maksimal 5 MB)</em>
               <Upload
-                accept=".pdf"
+                accept=".pdf,.docx,.png"
                 listType="text"
                 maxCount={1}
                 beforeUpload={beforeUploadFile}
@@ -222,6 +227,7 @@ const ContractExtrasForm = ({
     }
   };
 
+  console.log({ dataContractUpdate });
   return (
     <div
       className="col-span-6 grid grid-cols-1 md:grid-cols-2 shadow-lg rounded-md 
@@ -316,7 +322,12 @@ const ContractExtrasForm = ({
           cancelText={"Tidak"}
           onConfirm={() => {
             const tempExtras = [...dataContractUpdate.extras];
-            tempExtras.splice(idx, 1);
+            // TODO: recheck if API is fixed
+            if (tempExtras[idx].key) {
+              tempExtras[idx].is_deleted = 1;
+            } else {
+              tempExtras.splice(idx, 1);
+            }
             setDataContractUpdate((prev) => ({
               ...prev,
               extras: tempExtras,
