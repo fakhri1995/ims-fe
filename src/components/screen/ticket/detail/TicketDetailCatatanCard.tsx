@@ -166,7 +166,7 @@ export const TicketDetailCatatanCard: FC<ITicketDetailCatatanCard> = ({
 
   return (
     <>
-      <div className=" shadow-md rounded-md bg-white p-5 my-2 ml-2">
+      <div className=" shadow-md rounded-md bg-white p-5 my-2 md:ml-2">
         <div className=" flex items-center justify-between mb-5">
           <H1>Catatan</H1>
           <div

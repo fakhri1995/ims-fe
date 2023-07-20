@@ -73,13 +73,13 @@ function LayoutDashboard({
         setloadingspin(false);
         if (res2.success) {
           jscookie.remove("token");
-          console.log("token abis logout: " + jscookie.get("token"));
+          // console.log("token abis logout: " + jscookie.get("token"));
           rt.push("/login");
         }
       })
       .catch((err) => {
         setloadingspin(false);
-        console.log(err.message);
+        // console.log(err.message);
       });
   };
   useEffect(() => {
@@ -247,6 +247,8 @@ function LayoutDashboard({
                 className={st.breadcrumbClientsSmall}
               >
                 {/* {pathArr[0] !== "dashboard" && <Breadcrumb.Item href={`/dashboard/${pathArr[0]}`}><strong>{pathArr[0]}</strong></Breadcrumb.Item>} */}
+
+                {(pathBuilder = "")}
                 {childBreacrumbDD.length !== 0
                   ? childBreacrumbDD.map((doc, idx) => {
                       pathBuilder = pathBuilder + `/${pathArr[idx]}`;

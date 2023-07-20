@@ -253,10 +253,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
 
   // 4.2. Create Contract
   const handleAddContract = () => {
-    if (!isAllowedToAddContract) {
-      permissionWarningNotification("Menambah", "Kontrak");
-      return;
-    }
+    // if (!isAllowedToAddContract) {
+    //   permissionWarningNotification("Menambah", "Kontrak");
+    //   return;
+    // }
     setLoadingAdd(true);
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/addContract`, {
       method: "POST",
@@ -272,12 +272,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             rt.push(
               `/admin/contracts/create?id=${response2.data?.id}&prevpath=add`
             );
+            setLoadingAdd(false);
           }, 500);
         } else {
           notification.error({
             message: `Gagal menambahkan kontrak. ${response2.message}`,
             duration: 3,
           });
+          setLoadingAdd(false);
         }
       })
       .catch((err) => {
@@ -285,8 +287,8 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           message: `Gagal menambahkan kontrak. ${err.response}`,
           duration: 3,
         });
-      })
-      .finally(() => setLoadingAdd(false));
+        setLoadingAdd(false);
+      });
   };
 
   // 4.3. Delete Contract
@@ -377,17 +379,17 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     {
       title: "Nama Klien",
       key: "client_name",
-      dataIndex: "client_name",
+      dataIndex: ["client", "name"],
       render: (text, record, index) => {
         return {
-          children: <div>{record.client_name || "_"}</div>,
+          children: <div>{text || "_"}</div>,
         };
       },
     },
     {
       title: "Tanggal Berlaku",
-      key: "initial_date",
-      dataIndex: "initial_date",
+      key: "start_date",
+      dataIndex: "start_date",
       render: (text, record, index) => {
         return {
           children: <div>{momentFormatDate(text)}</div>,
@@ -454,7 +456,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {!record.is_posted && (
-                <div className="flex flex-col md:flex-row space-x-2 items-center">
+                <div className="flex flex-col md:flex-row gap-2 items-center">
                   <ButtonSys
                     type={"default"}
                     color={"secondary100"}

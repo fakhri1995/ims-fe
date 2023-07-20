@@ -6,7 +6,7 @@ import ButtonSys from "components/button";
 
 import { FileTextIconSvg } from "../../../icon";
 
-const ContractServiceSection = () => {
+const ContractServiceSection = ({ dataServices, loading }) => {
   const dataSource = [
     {
       key: "1",
@@ -33,9 +33,9 @@ const ContractServiceSection = () => {
         <Tabs.TabPane tab="Service">
           <Table
             className="tableBordered border-2 rounded-md"
-            dataSource={dataSource}
+            dataSource={dataServices}
             rowKey={(record) => record.key}
-            // loading={loading}
+            loading={loading}
             scroll={{ x: 200 }}
             pagination={{
               // current: queryParams.page,
@@ -51,12 +51,8 @@ const ContractServiceSection = () => {
               },
               {
                 title: "Service",
-                dataIndex: "service",
-                render: (text, record) => (
-                  <p className="">
-                    {text} <span>{record?.type}</span>
-                  </p>
-                ),
+                dataIndex: ["product", "name"],
+                render: (text) => <p className="">{text}</p>,
               },
               {
                 title: "Pax",
@@ -65,20 +61,29 @@ const ContractServiceSection = () => {
               {
                 title: "Harga",
                 dataIndex: "price",
-                render: (text) => (
+                render: (text, record) => (
                   <p className="">
-                    Rp {Number(text)?.toLocaleString("id-ID") || "-"}/bulan
+                    Rp {Number(text)?.toLocaleString("id-ID") || "-"}
+                    <span className="text-mono50">
+                      /{record?.unit?.toLowerCase()}
+                    </span>
                   </p>
                 ),
               },
               {
                 title: "Subtotal",
                 dataIndex: "subtotal",
-                render: (text) => (
-                  <p className="">
-                    Rp {Number(text)?.toLocaleString("id-ID") || "-"}
-                  </p>
-                ),
+                render: (text, record) => {
+                  let tempSubtotal =
+                    Number(record?.pax) * Number(record?.price);
+                  return (
+                    <p className="">
+                      Rp{" "}
+                      {Number(text || tempSubtotal)?.toLocaleString("id-ID") ||
+                        "-"}
+                    </p>
+                  );
+                },
               },
             ]}
           />
