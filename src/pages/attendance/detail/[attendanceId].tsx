@@ -70,6 +70,7 @@ const AttendanceDetailPage: NextPage<ProtectedPageProps> = ({
               {/* Form attendances detail */}
               <AttendanceDetailFormAttendanceSection
                 attendanceId={attendanceId}
+                token={token}
               />
             </div>
 

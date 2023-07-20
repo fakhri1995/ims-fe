@@ -4,15 +4,25 @@ import {
   FileImageFilled,
   SearchOutlined,
 } from "@ant-design/icons";
-import { Checkbox, ConfigProvider, Input, Modal, Table, Tabs } from "antd";
+import {
+  Checkbox,
+  ConfigProvider,
+  Input,
+  Modal,
+  Table,
+  Tabs,
+  notification,
+} from "antd";
 import type { ColumnsType } from "antd/lib/table";
 import { isBefore } from "date-fns";
+import moment from "moment";
 import {
   NumberParam,
   StringParam,
   useQueryParams,
   withDefault,
 } from "next-query-params";
+import QueryString from "qs";
 import {
   FC,
   useCallback,
@@ -37,6 +47,7 @@ import {
   ATTENDANCE_ACTIVITY_UPDATE,
 } from "lib/features";
 import {
+  createKeyPressHandler,
   generateStaticAssetUrl,
   getFileName,
   permissionWarningNotification,
@@ -57,14 +68,16 @@ const { TabPane } = Tabs;
 /**
  * Component AttendanceStaffAktivitasSection's props.
  */
-export interface IAttendanceStaffAktivitasSection {}
+export interface IAttendanceStaffAktivitasSection {
+  dataToken?: string;
+}
 
 /**
  * Component AttendanceStaffAktivitasSection
  */
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
-> = () => {
+> = (dataToken) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
@@ -108,6 +121,28 @@ export const AttendanceStaffAktivitasSection: FC<
 
   const [dataTaskSelected, setDataTaskSelected] = useState([]);
   const [dataTaskTempSelected, setDataTaskTempSelected] = useState([]);
+  const [displayentiredata, setdisplayentiredata] = useState({
+    success: false,
+    message: "",
+    data: {
+      current_page: 0,
+      data: [],
+      first_page_url: "",
+      from: 0,
+      last_page: 0,
+      last_page_url: "",
+      next_page_url: null,
+      path: "",
+      per_page: "",
+      prev_page_url: "",
+      to: 0,
+      total: 0,
+    },
+  });
+  const [displayDataImport, setDisplayDataImport] = useState([]);
+  const [displayDataImportTemp, setDisplayDataImportTemp] = useState([]);
+  const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
+  const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
   const [queryParams, setQueryParams] = useQueryParams({
     page: withDefault(NumberParam, 1),
@@ -115,6 +150,13 @@ export const AttendanceStaffAktivitasSection: FC<
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ "deadline"),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     status_ids: withDefault(StringParam, undefined),
+  });
+
+  const [queryParams2, setQueryParams2] = useQueryParams({
+    page: withDefault(NumberParam, 1),
+    rows: withDefault(NumberParam, 20),
+    keyword: withDefault(StringParam, undefined),
+    is_active: withDefault(NumberParam, 1),
   });
   const [activityDrawerState, dispatch] = useReducer(
     _aktivitasDrawerToggleReducer,
@@ -257,61 +299,205 @@ export const AttendanceStaffAktivitasSection: FC<
   }, [userAttendanceForm, attendeeStatus]);
 
   const onImportTask = () => {
-    setShowModalTask(!showModalTask);
+    if (attendeeStatus !== "checkin") {
+      Modal.error({
+        centered: true,
+        title: "Perhatian!",
+        content:
+          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+        okText: "Kembali",
+        closable: true,
+      });
+    } else {
+      setShowModalTask(!showModalTask);
+    }
+  };
+
+  const importMultipleTask = () => {
+    if (attendeeStatus !== "checkin") {
+      Modal.error({
+        centered: true,
+        title: "Perhatian!",
+        content:
+          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+        okText: "Kembali",
+        closable: true,
+      });
+    } else {
+      let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivities`;
+      let method = "POST";
+      let payload = {
+        task_ids: dataTaskSelected,
+      };
+
+      fetch(url, {
+        method: method,
+        headers: {
+          Authorization: JSON.parse(dataToken.dataToken),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      })
+        .then((response) => response.json())
+        .then((response2) => {
+          if (response2.success) {
+            notification.success({
+              message: (
+                <>
+                  {" "}
+                  <p>Task berhasil ditambahkan ke aktivitas</p>
+                </>
+              ),
+
+              duration: 3,
+            });
+            getDataTaskActivities();
+          } else {
+            notification.error({
+              message: `Task Gagal ditambahkan ke aktivitas!`,
+              duration: 3,
+            });
+          }
+        })
+        .catch((err) => {
+          notification.error({
+            message: `Task Gagal ditambahkan ke aktivitas`,
+            duration: 3,
+          });
+          // setLoadingAdd(false);
+        });
+    }
+  };
+
+  const getDataTaskActivities = () => {
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(dataToken.dataToken),
+        },
+      }
+    )
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          if (res2.data) {
+            if (res2.data.today_activities) {
+              setDisplayDataTaskToday(res2.data.today_activities);
+            }
+            if (res2.data.last_two_month_activities) {
+              setDisplayDataTaskHistory(res2.data.last_two_month_activities);
+            }
+          }
+        }
+      });
+  };
+
+  // const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
+
+  const onChangeProductSearch = (e) => {
+    setQueryParams2({
+      keyword: e.target.value === "" ? undefined : e.target.value,
+    });
   };
 
   useEffect(() => {
     setLoadingTasks(false);
-    handleSelectAllTask();
+    setDataTaskTempSelected(dataTask);
+    getDataTaskActivities();
+    // handleSelectAllTask();
   }, []);
+
+  useEffect(() => {
+    const payload = QueryString.stringify(queryParams2, {
+      addQueryPrefix: true,
+    });
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(dataToken.dataToken),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        if (res2.success) {
+          // setdisplayentiredata(res2)
+          let datafromapi = res2.data.data;
+          let dataTemp = [];
+          let dataTemp2 = [];
+          for (let a = 0; a < datafromapi.length; a++) {
+            dataTemp.push({
+              id: datafromapi[a].id,
+              ticket_number: datafromapi[a].ticket_number,
+              name: datafromapi[a].name,
+              start_date: datafromapi[a].start_date,
+              end_date: datafromapi[a].end_date,
+              is_selected: true,
+            });
+            dataTemp2.push(datafromapi[a].id);
+          }
+          setDisplayDataImport(dataTemp);
+          setDisplayDataImportTemp(dataTemp);
+          setDataTaskSelected(dataTemp2);
+        }
+      });
+  }, [queryParams2.page, queryParams2.rows, queryParams2.keyword]);
 
   const handleSelectAllTask = () => {
     let dataTemp = [];
-    for (let a = 0; a < dataTask.length; a++) {
-      dataTemp.push(dataTask[a].id);
+    for (let a = 0; a < displayDataImport.length; a++) {
+      dataTemp.push(displayDataImport[a].id);
     }
     setDataTaskSelected(dataTemp);
-    setDataTaskTempSelected(dataTask);
+    setDisplayDataImportTemp(displayDataImport);
   };
 
   const handleUnSelectAllTask = () => {
     let dataTaskTemp = [];
-    for (let a = 0; a < dataTaskTempSelected.length; a++) {
+    for (let a = 0; a < displayDataImportTemp.length; a++) {
       dataTaskTemp.push({
-        id: dataTaskTempSelected[a].id,
-        task_name: dataTaskTempSelected[a].task_name,
-        project_name: dataTaskTempSelected[a].project_name,
+        id: displayDataImportTemp[a].id,
+        ticket_number: displayDataImportTemp[a].ticket_number,
+        name: displayDataImportTemp[a].name,
+        start_date: displayDataImportTemp[a].start_date,
+        end_date: displayDataImportTemp[a].end_date,
         is_selected: false,
       });
     }
     setDataTaskSelected([]);
-    setDataTaskTempSelected([...dataTaskTemp]);
+    setDisplayDataImportTemp(dataTaskTemp);
   };
 
   const handleOnSelectTask = (value) => {
-    console.log("selected ", value);
     let dataTaskTemp = [];
-    for (let a = 0; a < dataTaskTempSelected.length; a++) {
-      if (value.target.value == dataTaskTempSelected[a].id) {
+    for (let a = 0; a < displayDataImportTemp.length; a++) {
+      if (value.target.value == displayDataImportTemp[a].id) {
         dataTaskTemp.push({
-          id: dataTaskTempSelected[a].id,
-          task_name: dataTaskTempSelected[a].task_name,
-          project_name: dataTaskTempSelected[a].project_name,
+          id: displayDataImportTemp[a].id,
+          ticket_number: displayDataImportTemp[a].ticket_number,
+          name: displayDataImportTemp[a].name,
+          start_date: displayDataImportTemp[a].start_date,
+          end_date: displayDataImportTemp[a].end_date,
           is_selected: value.target.checked,
         });
       } else {
         dataTaskTemp.push({
-          id: dataTaskTempSelected[a].id,
-          task_name: dataTaskTempSelected[a].task_name,
-          project_name: dataTaskTempSelected[a].project_name,
-          is_selected: dataTaskTempSelected[a].is_selected,
+          id: displayDataImportTemp[a].id,
+          ticket_number: displayDataImportTemp[a].ticket_number,
+          name: displayDataImportTemp[a].name,
+          start_date: displayDataImportTemp[a].start_date,
+          end_date: displayDataImportTemp[a].end_date,
+          is_selected: displayDataImportTemp[a].is_selected,
         });
       }
+
+      //check selected
     }
     let dataTemp = dataTaskSelected;
     if (dataTemp.length == 0) {
       dataTemp.push(value.target.value);
-    } else if (dataTaskTempSelected.length > 1) {
+    } else if (displayDataImport.length >= 1) {
       if (value.target.checked == false) {
         dataTemp = dataTemp.filter(function (item) {
           return item !== value.target.value;
@@ -321,25 +507,11 @@ export const AttendanceStaffAktivitasSection: FC<
       }
       setDataTaskSelected(dataTemp);
     }
-    setDataTaskTempSelected([...dataTaskTemp]);
-
-    // let dataTaskTemp = dataTaskTempSelected;
-    // if (dataTaskTemp.length == 0) {
-    //   dataTaskTemp.push(value.target.value);
-    // } else if (dataTaskTempSelected.length > 1) {
-    //   if (value.target.checked == false) {
-    //     dataTaskTemp = dataTaskTemp.filter(function (item) {
-    //       return item !== value.target.value;
-    //     });
-    //   } else {
-    //     dataTaskTemp.push(value.target.value);
-    //   }
-    // }
-    // setDataTaskTempSelected([...dataTaskTemp]);
+    setDisplayDataImportTemp([...dataTaskTemp]);
   };
 
   const handleSelectTask = () => {
-    if (dataTaskSelected.length == dataTaskTempSelected.length) {
+    if (dataTaskSelected.length == displayDataImport.length) {
       handleUnSelectAllTask();
     } else {
       handleSelectAllTask();
@@ -374,7 +546,7 @@ export const AttendanceStaffAktivitasSection: FC<
     {
       key: "id",
       title: "Nama Task",
-      dataIndex: "task_name",
+      dataIndex: "activity",
     },
   ];
   function checkFormOrTask() {
@@ -407,25 +579,13 @@ export const AttendanceStaffAktivitasSection: FC<
           rowKey={(record) => record.id}
           className=""
           showHeader={false}
-          dataSource={dataTaskTempSelected}
+          dataSource={displayDataTaskToday}
           loading={loadingTasks}
-          pagination={{
-            current: queryParams.page,
-            pageSize: queryParams.rows,
-            total: dataTask.length,
-            showSizeChanger: true,
-          }}
-          onChange={(pagination, filters, sorter, extra) => {
-            setQueryParams({
-              page: pagination.current,
-              rows: pagination.pageSize,
-            });
-          }}
           columns={[
             {
               title: "Task",
-              dataIndex: "name",
-              key: "name",
+              dataIndex: "activity",
+              key: "activity",
               render: (_, task) => {
                 return (
                   <div key={task.id} className="flex-none rounded-md ">
@@ -437,17 +597,17 @@ export const AttendanceStaffAktivitasSection: FC<
                           className={"text-xs font-bold text-mono30"}
                           style={{ lineHeight: "20px" }}
                         >
-                          {task.task_name}
+                          {task.activity} (T-{task.task_id})
                         </p>
                         <p
                           className={"text-xs text-mono50"}
                           style={{ lineHeight: "16px" }}
                         >
-                          [{task.project_name}]
+                          [{task.activity}]
                         </p>
                       </div>
                       <div className={"w-1/12 self-center flex justify-end"}>
-                        <p>08.33</p>
+                        <p>{moment(task.updated_at).format("HH:mm")}</p>
                       </div>
                     </div>
                   </div>
@@ -461,8 +621,8 @@ export const AttendanceStaffAktivitasSection: FC<
       return (
         <Table<typeof dataSource[0]>
           columns={columnsTable}
-          dataSource={dataTaskTempSelected}
-          pagination={tablePaginationConf}
+          dataSource={displayDataTaskHistory}
+          // pagination={tablePaginationConf}
           loading={isDataSourceLoading}
           scroll={{ x: "max-content" }}
           className="tableTypeTask"
@@ -498,109 +658,86 @@ export const AttendanceStaffAktivitasSection: FC<
             footer={null}
             onCancel={() => setShowModalTask(false)}
           >
-            <div className="col-span-4">
-              <Input
-                style={{ width: `100%` }}
-                suffix={<SearchOutlined />}
-                // defaultValue={queryParams.keyword}
-                placeholder="Cari Task.."
-                // onChange={onChangeProductSearch}
-                // onKeyPress={onKeyPressHandler}
-                // allowClear
-                // disabled={!isAllowedToSeeModels}
-              />
-            </div>
-            <div className={"mt-7 flex justify-between"}>
-              <p
-                className={"text-mono30 text-base font-bold "}
-                style={{ lineHeight: "24px" }}
-              >
-                List Task
-              </p>
-              <button
-                className={"bg-transparent"}
-                onClick={() => handleSelectTask()}
-              >
+            {displayDataImport.length > 0 && (
+              <div className="col-span-4">
+                <Input
+                  style={{ width: `100%` }}
+                  suffix={<SearchOutlined />}
+                  defaultValue={queryParams2.keyword}
+                  placeholder="Cari Task.."
+                  onChange={onChangeProductSearch}
+                  // onKeyPress={onKeyPressHandler}
+                  allowClear
+                  // disabled={!isAllowedToSeeModels}
+                />
+              </div>
+            )}
+            {displayDataImport.length > 0 && (
+              <div className={"mt-7 flex justify-between"}>
                 <p
-                  className={"text-primary100 text-sm font-bold"}
+                  className={"text-mono30 text-base font-bold "}
                   style={{ lineHeight: "24px" }}
                 >
-                  {dataTaskSelected.length == dataTaskTempSelected.length
-                    ? "Hapus Semua"
-                    : "Pilih semua"}
+                  List Task
                 </p>
-              </button>
-            </div>
-            <Table
-              rowKey={(record) => record.id}
-              className=""
-              showHeader={false}
-              dataSource={dataTaskTempSelected}
-              loading={loadingTasks}
-              pagination={{
-                current: queryParams.page,
-                pageSize: queryParams.rows,
-                total: dataTask.length,
-                showSizeChanger: true,
-              }}
-              onChange={(pagination, filters, sorter, extra) => {
-                setQueryParams({
-                  page: pagination.current,
-                  rows: pagination.pageSize,
-                });
-              }}
-              columns={[
-                {
-                  title: "Task",
-                  dataIndex: "name",
-                  key: "name",
-                  render: (_, task) => {
-                    return (
-                      <div key={task.id} className="flex-none rounded-md ">
-                        <div
-                          className={
-                            "flex px-4 py-2 border border-inputkategori"
-                          }
-                        >
-                          <div className={"w-11/12"}>
-                            <p
-                              className={"text-xs font-bold text-mono30"}
-                              style={{ lineHeight: "20px" }}
-                            >
-                              {task.task_name}
-                            </p>
-                            <p
-                              className={"text-xs text-mono50"}
-                              style={{ lineHeight: "16px" }}
-                            >
-                              [{task.project_name}]
-                            </p>
-                          </div>
-                          <div className={"w-1/12 self-center items-end"}>
-                            <Checkbox
-                              key={task.id}
-                              value={task.id}
-                              checked={task.is_selected}
-                              onChange={(e) => {
-                                handleOnSelectTask(e);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  },
-                },
-              ]}
-            />
-            <div className={"mt-6 flex justify-end"}>
+                <button
+                  className={"bg-transparent"}
+                  onClick={() => handleSelectTask()}
+                >
+                  <p
+                    className={"text-primary100 text-sm font-bold"}
+                    style={{ lineHeight: "24px" }}
+                  >
+                    {dataTaskSelected.length == displayDataImportTemp.length
+                      ? "Hapus Semua"
+                      : "Pilih semua"}
+                  </p>
+                </button>
+              </div>
+            )}
+            {displayDataImportTemp.length > 0 &&
+              displayDataImportTemp.map((task, index) => (
+                <div key={task.id} className="flex-none rounded-md ">
+                  <div className={"flex px-4 py-2 border border-inputkategori"}>
+                    <div className={"w-11/12"}>
+                      <p
+                        className={"text-xs font-bold text-mono30"}
+                        style={{ lineHeight: "20px" }}
+                      >
+                        {task.name}
+                      </p>
+                      <p
+                        className={"text-xs text-mono50"}
+                        style={{ lineHeight: "16px" }}
+                      >
+                        [{task.name}]
+                      </p>
+                    </div>
+                    <div className={"w-1/12 self-center items-end"}>
+                      <Checkbox
+                        key={task.id}
+                        value={task.id}
+                        checked={task.is_selected}
+                        onChange={(e) => {
+                          handleOnSelectTask(e);
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            <div
+              onClick={() => setShowModalTask(false)}
+              className={"mt-6 flex justify-end hover:cursor-pointer "}
+            >
               <p
-                className={"mr-12 self-center hover:cursor-pointer text-sm"}
+                className={"mr-12 self-center text-sm"}
                 style={{ lineHeight: "16px" }}
               >
                 Batal
               </p>
               <div
+                onClick={() => importMultipleTask()}
                 className={
                   "px-6 py-2 bg-mono80 rounded-[5px] hover:cursor-pointer"
                 }

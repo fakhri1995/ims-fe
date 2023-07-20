@@ -1149,11 +1149,13 @@ const ProjectIndex = ({ dataProfile, sidemenu, initProps }) => {
                       <div key={task.id} className="flex-none rounded-md ">
                         <TaskCard
                           title={task?.name}
+                          idTask={task.id}
                           taskId={task?.ticket_number}
                           projectName={currentProject?.name}
                           toDate={task?.end_date}
                           status={task?.status}
                           taskStaffs={task.task_staffs}
+                          initProps={initProps}
                           dataProfile={dataProfile}
                           onClick={() => {
                             setCurrentTaskId(task.id);
