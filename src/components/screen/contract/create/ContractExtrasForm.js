@@ -1,5 +1,13 @@
 import { PlusOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Popconfirm, Select, Upload } from "antd";
+import {
+  Button,
+  Form,
+  Input,
+  Popconfirm,
+  Select,
+  Upload,
+  notification,
+} from "antd";
 import React, { useCallback, useEffect, useState } from "react";
 
 import ButtonSys from "../../../../components/button";
@@ -50,15 +58,17 @@ const ContractExtrasForm = ({
     const allowedFileTypes = [
       "application/pdf",
       "image/png",
+      "image/jpeg",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
 
-    // if (!allowedFileTypes.includes(uploadedFile.type)) {
-    //   notification.error({
-    //     message: "File harus memiliki format .pdf, .png, atau .docx",
-    //   });
-    //   return Upload.LIST_IGNORE;
-    // }
+    if (!allowedFileTypes.includes(uploadedFile.type)) {
+      notification.error({
+        message:
+          "File harus memiliki format .pdf, .png, .jpeg, .jpg, atau .docx",
+      });
+      return Upload.LIST_IGNORE;
+    }
 
     if (isReachedMaxFileSize) {
       return Upload.LIST_IGNORE;
@@ -202,7 +212,7 @@ const ContractExtrasForm = ({
             <div className="relative">
               <em className="text-mono50 mr-3">Unggah File (Maksimal 5 MB)</em>
               <Upload
-                accept=".pdf,.docx,.png"
+                accept=".pdf, .docx, .png, .jpeg, .jpg"
                 listType="text"
                 maxCount={1}
                 beforeUpload={beforeUploadFile}

@@ -354,7 +354,7 @@ export const momentFormatDate = (
  * assert(fileName, "CV-Flutter-Developer-Michael-Roni.pdf");
  * ```
  */
-export const getFileName = (pathString: string) => {
+export const getFileName = (pathString: string = "") => {
   const splittedArr = pathString.split("/");
   return splittedArr[splittedArr.length - 1];
 };
