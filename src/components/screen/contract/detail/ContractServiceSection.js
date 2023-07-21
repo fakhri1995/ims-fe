@@ -1,35 +1,11 @@
-import { PrinterOutlined, UpOutlined } from "@ant-design/icons";
 import { Table, Tabs } from "antd";
-import React, { useState } from "react";
-
-import ButtonSys from "components/button";
-
-import { FileTextIconSvg } from "../../../icon";
+import React from "react";
 
 const ContractServiceSection = ({ dataServices, loading }) => {
-  const dataSource = [
-    {
-      key: "1",
-      service: "PC",
-      type: "Hardware",
-      pax: 5,
-      price: "500000",
-      subtotal: "10000000",
-    },
-    {
-      key: "2",
-      service: "ATM",
-      type: "Hardware",
-      pax: 3,
-      price: "400000",
-      subtotal: "2400000",
-    },
-  ];
-
   return (
     <section className="grid shadow-md rounded-md bg-white p-6 mb-4 gap-6">
       <h4 className="mig-heading--4">Daftar Service</h4>
-      <Tabs>
+      <Tabs className="tabResponsive">
         <Tabs.TabPane tab="Service">
           <Table
             className="tableBordered border-2 rounded-md"
@@ -38,10 +14,8 @@ const ContractServiceSection = ({ dataServices, loading }) => {
             loading={loading}
             scroll={{ x: 200 }}
             pagination={{
-              // current: queryParams.page,
-              // pageSize: queryParams.rows,
-              // total: total,
-              showSizeChanger: true,
+              pageSize: 5,
+              showSizeChanger: false,
             }}
             columns={[
               {

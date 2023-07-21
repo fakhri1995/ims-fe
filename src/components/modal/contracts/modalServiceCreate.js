@@ -1,20 +1,6 @@
-import {
-  Button,
-  DatePicker,
-  Form,
-  Input,
-  Modal,
-  Select,
-  Spin,
-  Switch,
-  Tag,
-  notification,
-} from "antd";
-import moment from "moment";
-import dynamic from "next/dynamic";
+import { Form, Input, Modal, Select, Spin } from "antd";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
-import { useEffect } from "react";
 import { useRef } from "react";
 import { useQuery } from "react-query";
 import "react-quill/dist/quill.snow.css";
@@ -22,11 +8,8 @@ import "react-quill/dist/quill.snow.css";
 import { useAccessControl } from "contexts/access-control";
 
 import { PRODUCTS_GET } from "lib/features";
-import { permissionWarningNotification } from "lib/helper";
 
-import { ContractService } from "../../../apis/contract/contract.service";
 import { ProductCatalogService } from "../../../apis/product-catalog";
-import { generateStaticAssetUrl } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { PlusIconSvg } from "../../icon";
 
@@ -40,8 +23,6 @@ const ModalServiceCreate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
   const [form] = Form.useForm();
-  const rt = useRouter();
-  const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
   const dataService = {
@@ -223,6 +204,7 @@ const ModalServiceCreate = ({
                       addonBefore="Rp."
                       placeholder="Isi harga produk"
                       type="number"
+                      min={0}
                       value={service?.price}
                       onChange={(e) => {
                         let tempServiceList = [...dataServiceList];

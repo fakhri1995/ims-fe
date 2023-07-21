@@ -4,7 +4,6 @@ import QueryString from "qs";
 import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 export class ContractService {
-  // TODO: change endpoint
   static getCountContract = async (initProps, feature) => {
     if (!feature) {
       permissionWarningNotification("Mendapatkan", "Data Contract Count");
@@ -12,7 +11,7 @@ export class ContractService {
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountRecruitment`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractActiveCount`,
       {
         method: `GET`,
         headers: {
@@ -44,7 +43,7 @@ export class ContractService {
   // TODO: change endpoint
   static getStatusList = async (initProps, feature) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Data Contract Status");
+      permissionWarningNotification("Mendapatkan", "Daftar Contract Status");
       return;
     }
 
@@ -115,8 +114,6 @@ export class ContractService {
         });
       });
 
-    setTimeout(() => apiRes, 500);
-
     return apiRes;
   };
 
@@ -156,19 +153,14 @@ export class ContractService {
     return apiRes;
   };
 
-  // TODO: change endpoint
-  static getNotes = async (initProps, feature, contractId, keyword) => {
+  static getNotes = async (initProps, feature, contractId, page) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Contract Notes");
+      permissionWarningNotification("Mendapatkan", "Daftar Contract Notes");
       return;
     }
 
-    // const payload = QueryString.stringify(queryParams, {
-    //   addQueryPrefix: true,
-    // });
-
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogNotes?project_id=${contractId}&keyword=${keyword}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractLogNotes?contract_id=${contractId}&rows=5&page=${page}`,
       {
         method: `GET`,
         headers: {
@@ -199,15 +191,17 @@ export class ContractService {
     return apiRes;
   };
 
-  // TODO: change endpoint
   static getLogs = async (initProps, feature, contractId) => {
     if (!feature) {
-      permissionWarningNotification("Mendapatkan", "Contract Activity Logs");
+      permissionWarningNotification(
+        "Mendapatkan",
+        "Daftar Contract Activity Logs"
+      );
       return;
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectLogs?project_id=${contractId}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractLogs?contract_id=${contractId}`,
       {
         method: `GET`,
         headers: {
