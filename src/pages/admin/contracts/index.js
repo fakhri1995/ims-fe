@@ -92,7 +92,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
     duration: withDefault(StringParam, undefined),
-    company_id: withDefault(NumberParam, undefined),
+    client_ids: withDefault(NumberParam, undefined),
     contract_status_id: withDefault(NumberParam, undefined),
   });
 
@@ -188,7 +188,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const onFilterRecruitments = () => {
     setQueryParams({
       duration: selectedDuration,
-      company_id: selectedCompany,
+      client_ids: selectedCompany,
       contract_status_id: selectedStatus,
     });
   };
@@ -351,15 +351,15 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     },
     {
       title: "Sisa Durasi",
-      key: "duration_left",
-      dataIndex: "duration_left",
+      key: "duration",
+      dataIndex: "duration",
       render: (text, record, index) => {
         return {
           children: <>{text}</>,
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
+        ? (a, b) => a?.duration?.localeCompare(b?.start_date)
         : false,
     },
     {
@@ -371,19 +371,32 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.is_posted ? (
-                <div
-                  className="rounded-md py-1 px-4 hover:cursor-pointer text-center text-white"
-                  style={{
-                    width: `100%`,
-                    backgroundColor: `${record.status?.color}`,
-                  }}
-                >
-                  {record?.status?.name}
-                </div>
+                text == 1 ? (
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
+                   text-white bg-warning whitespace-nowrap"
+                  >
+                    Berlangsung
+                  </div>
+                ) : text == 2 ? (
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
+                    text-white bg-secondary100 whitespace-nowrap"
+                  >
+                    Segera Berakhir
+                  </div>
+                ) : (
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
+                    text-white bg-primary100 whitespace-nowrap"
+                  >
+                    Selesai
+                  </div>
+                )
               ) : (
                 <div
                   className="rounded-md py-1 px-4 hover:cursor-pointer text-center 
-                bg-mono50 text-white"
+                   bg-mono50 text-white"
                 >
                   Draft
                 </div>
@@ -473,7 +486,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               <h4 className="font-semibold lg:mig-heading--4">Kontrak Aktif</h4>
               <Spin spinning={loadingDataCount}>
                 <p className="text-4xl lg:text-5xl text-primary100">
-                  {dataCount?.recruitment_roles_count}
+                  {dataCount?.total}
                 </p>
               </Spin>
             </div>
@@ -558,20 +571,20 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by company client */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.company_id}
+                  defaultValue={queryParams.client_ids}
                   allowClear
-                  name={`company`}
+                  name={`client`}
                   disabled={!isAllowedToGetCompanyClients}
                   placeholder="Semua Klien"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ company_id: value });
+                    setQueryParams({ client_ids: value });
                     setSelectedCompany(value);
                   }}
                 >
-                  {dataCompanyList?.map((company) => (
-                    <Select.Option key={company.id} value={company.id}>
-                      {company.name}
+                  {dataCompanyList?.map((client) => (
+                    <Select.Option key={client.id} value={client.id}>
+                      {client.name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -615,7 +628,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   onChange={(e) => {
                     setTimeout(
                       () => setSearchingFilterContracts(e.target.value),
-                      1000
+                      500
                     );
                   }}
                   onKeyPress={onKeyPressHandler}

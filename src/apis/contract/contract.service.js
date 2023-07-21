@@ -4,7 +4,6 @@ import QueryString from "qs";
 import { objectToFormData, permissionWarningNotification } from "lib/helper";
 
 export class ContractService {
-  // TODO: change endpoint
   static getCountContract = async (initProps, feature) => {
     if (!feature) {
       permissionWarningNotification("Mendapatkan", "Data Contract Count");
@@ -12,7 +11,7 @@ export class ContractService {
     }
 
     const apiRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getCountRecruitment`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getContractActiveCount`,
       {
         method: `GET`,
         headers: {
