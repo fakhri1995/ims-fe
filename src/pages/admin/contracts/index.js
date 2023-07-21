@@ -41,7 +41,11 @@ import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomContractList } from "../../../components/table/tableCustom";
-import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
+import {
+  convertDaysToString,
+  createKeyPressHandler,
+  momentFormatDate,
+} from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -91,9 +95,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    duration: withDefault(StringParam, undefined),
+    duration_day: withDefault(NumberParam, undefined),
     client_ids: withDefault(NumberParam, undefined),
-    contract_status_id: withDefault(NumberParam, undefined),
+    status_ids: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -106,9 +110,32 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   pathTitleArr.splice(1, 1, "Kontrak");
 
   const durationRangeList = [
-    { number: 1, unit: "Bulan" },
-    { number: 3, unit: "Bulan" },
-    { number: 1, unit: "Tahun" },
+    { name: "1 Bulan", value: 30 },
+    { name: "3 Bulan", value: 90 },
+    { name: "1 Tahun", value: 365 },
+  ];
+
+  const dataStatusList = [
+    {
+      id: "segeraberakhir",
+      name: "Segera Berakhir",
+      color: "#BF4A40",
+    },
+    {
+      id: "draft",
+      name: "Draft",
+      color: "#808080",
+    },
+    {
+      id: "berlangsung",
+      name: "Berlangsung",
+      color: "#00589F",
+    },
+    {
+      id: "selesai",
+      name: "Selesai",
+      color: "#35763B",
+    },
   ];
 
   // 2. Use state
@@ -168,28 +195,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  // 3.5. Get Status List
-  const { data: dataStatusList, isLoading: loadingStatusList } = useQuery(
-    [RECRUITMENT_STATUSES_LIST_GET],
-    () =>
-      ContractService.getStatusList(
-        initProps,
-        isAllowedToGetContractStatusList
-      ),
-    {
-      enabled: isAllowedToGetContractStatusList,
-      refetchOnMount: false,
-      select: (response) => response.data,
-    }
-  );
-
   // 4. Event
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
     setQueryParams({
-      duration: selectedDuration,
+      duration_day: selectedDuration,
       client_ids: selectedCompany,
-      contract_status_id: selectedStatus,
+      status_ids: selectedStatus,
     });
   };
 
@@ -332,7 +344,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: ["client", "name"],
       render: (text, record, index) => {
         return {
-          children: <div>{text || "_"}</div>,
+          children: <div>{text || "-"}</div>,
         };
       },
     },
@@ -353,13 +365,15 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       title: "Sisa Durasi",
       key: "duration",
       dataIndex: "duration",
-      render: (text, record, index) => {
+      render: (duration, record, index) => {
+        // let endDate = moment("2023-09-08");
+        // let startDate = moment("2023-08-09");
         return {
-          children: <>{text}</>,
+          children: <>{convertDaysToString(Math.abs(duration))}</>,
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) => a?.duration?.localeCompare(b?.start_date)
+        ? (a, b) => b?.duration - a?.duration
         : false,
     },
     {
@@ -371,19 +385,19 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.is_posted ? (
-                text == 1 ? (
+                text == "berlangsung" ? (
                   <div
                     className="rounded-md py-1 px-4 hover:cursor-pointer text-center
                    text-white bg-warning whitespace-nowrap"
                   >
-                    Berlangsung
+                    Segera Berakhir
                   </div>
-                ) : text == 2 ? (
+                ) : text == "segeraberakhir" ? (
                   <div
                     className="rounded-md py-1 px-4 hover:cursor-pointer text-center
                     text-white bg-secondary100 whitespace-nowrap"
                   >
-                    Segera Berakhir
+                    Berlangsung
                   </div>
                 ) : (
                   <div
@@ -410,56 +424,60 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             const dataStatusListIds = dataStatusList?.map(
               (status) => status?.id
             );
-            const indexA = dataStatusListIds?.indexOf(a?.status?.id);
-            const indexB = dataStatusListIds?.indexOf(b?.status?.id);
-            return indexA - indexB;
+            const indexA = dataStatusListIds?.indexOf(a?.status);
+            const indexB = dataStatusListIds?.indexOf(b?.status);
+            return indexB - indexA;
           }
         : false,
     },
-    {
-      title: "Aksi",
-      key: "action_button",
-      dataIndex: "action_button",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <>
-              {!record.is_posted && (
-                <div className="flex flex-col md:flex-row gap-2 items-center">
-                  <ButtonSys
-                    type={"default"}
-                    color={"secondary100"}
-                    disabled={!isAllowedToUpdateContract}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      rt.push(`/admin/contracts/create?id=${record.id}`);
-                    }}
-                  >
-                    <EditOutlined />
-                  </ButtonSys>
-                  <ButtonSys
-                    type={"default"}
-                    color={"danger"}
-                    disabled={!isAllowedToDeleteContract}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setDataRowClicked(record);
-                      setModalDelete(true);
-                    }}
-                  >
-                    <DeleteOutlined />
-                  </ButtonSys>
-                </div>
-              )}
-            </>
-          ),
-        };
-      },
-      sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
-        : false,
-    },
+    dataRawContracts?.data?.some((item) => !item.is_posted)
+      ? {
+          title: "Aksi",
+          key: "action_button",
+          dataIndex: "action_button",
+          render: (text, record, index) => {
+            return {
+              children: (
+                <>
+                  {!record.is_posted && (
+                    <div className="flex flex-col md:flex-row gap-2 items-center">
+                      <ButtonSys
+                        type={"default"}
+                        color={"secondary100"}
+                        disabled={!isAllowedToUpdateContract}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          rt.push(`/admin/contracts/create?id=${record.id}`);
+                        }}
+                      >
+                        <EditOutlined />
+                      </ButtonSys>
+                      <ButtonSys
+                        type={"default"}
+                        color={"danger"}
+                        disabled={!isAllowedToDeleteContract}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setDataRowClicked(record);
+                          setModalDelete(true);
+                        }}
+                      >
+                        <DeleteOutlined />
+                      </ButtonSys>
+                    </div>
+                  )}
+                </>
+              ),
+            };
+          },
+          sorter: isAllowedToGetContracts
+            ? (a, b) =>
+                a.role?.name
+                  .toLowerCase()
+                  .localeCompare(b.role?.name.toLowerCase())
+            : false,
+        }
+      : {},
   ];
 
   if (isAccessControlPending) {
@@ -508,14 +526,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by duration (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  // defaultValue={queryParams.duration}
+                  defaultValue={queryParams.duration_day}
                   allowClear
                   name={`role`}
                   disabled={!isAllowedToGetCompanyClients}
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ duration: value });
+                    setQueryParams({ duration_day: value });
                     setSelectedDuration(value);
                   }}
                   dropdownRender={(options) => (
@@ -531,33 +549,25 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </>
                   )}
                 >
-                  {durationRangeList?.map((range, idx) => (
-                    <Select.Option
-                      key={idx + 1}
-                      value={`${range.number} ${range.unit}`}
-                    >
+                  {durationRangeList?.map((item, idx) => (
+                    <Select.Option key={idx + 1} value={item.value}>
                       <p
                         className={`px-2 text-center rounded  
                         ${
-                          selectedDuration ===
-                            `${range.number} ${range.unit}` &&
+                          selectedDuration === item.value &&
                           "bg-primary100 text-white"
                         }`}
                       >
-                        {range.number} {range.unit}
+                        {item.name}
                       </p>
                     </Select.Option>
                   ))}
                   {durationInput && (
-                    <Select.Option
-                      key={5}
-                      value={`${durationInput} Bulan (Custom)`}
-                    >
+                    <Select.Option key={5} value={durationInput * 30}>
                       <p
                         className={`px-2 text-center rounded
                       ${
-                        selectedDuration ===
-                          `${durationInput} Bulan (Custom)` &&
+                        selectedDuration === durationInput * 30 &&
                         "bg-primary100 text-white"
                       }`}
                       >
@@ -593,14 +603,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by status (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.contract_status_id}
+                  defaultValue={queryParams.status_ids}
                   allowClear
                   name={`status`}
                   disabled={!isAllowedToGetContractStatusList}
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ contract_status_id: value });
+                    setQueryParams({ status_ids: value });
                     setSelectedStatus(value);
                   }}
                 >

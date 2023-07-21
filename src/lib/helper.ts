@@ -383,3 +383,20 @@ export const currency = (money: number) => {
     currency: "IDR",
   });
 };
+
+/**
+ * Convert number of days to string "X Tahun Y Bulan Z Hari"
+ *
+ */
+export const convertDaysToString = (dayTotal: number) => {
+  const years = Math.floor(dayTotal / 365);
+  const months = Math.floor((dayTotal % 365) / 30);
+  const days = (dayTotal % 365) % 30;
+  let str = "";
+
+  if (years > 0) str += `${years} Tahun `;
+  if (months > 0) str += `${months} Bulan `;
+  if (days > 0) str += `${days} Hari`;
+
+  return str;
+};
