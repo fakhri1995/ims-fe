@@ -1353,6 +1353,8 @@ const ProjectDetailIndex = ({
                           {console.log("current project isi ", task)}
                           <TaskCard
                             title={task?.name}
+                            idTask={task?.id}
+                            initProps={initProps}
                             taskId={task?.ticket_number}
                             projectName={currentProject?.name}
                             toDate={task?.end_date}

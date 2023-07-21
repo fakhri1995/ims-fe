@@ -54,6 +54,7 @@ const TaskCard = ({
   };
 
   const addAktifitas = (idTask) => {
+    console.log("hasil initprops ", initProps);
     let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivity`;
     let method = "POST";
     let payload = {
