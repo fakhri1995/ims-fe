@@ -1,49 +1,13 @@
 import { RightOutlined } from "@ant-design/icons";
-import {
-  Avatar,
-  Collapse,
-  DatePicker,
-  Input,
-  Select,
-  Spin,
-  Table,
-  Tabs,
-  Timeline,
-  Tooltip,
-  notification,
-} from "antd";
-import parse from "html-react-parser";
-import moment from "moment";
-import {
-  NumberParam,
-  StringParam,
-  useQueryParams,
-  withDefault,
-} from "next-query-params";
+import { Collapse, Tabs } from "antd";
 import { useRouter } from "next/router";
-import QueryString from "qs";
 import React, { useState } from "react";
 import { useEffect } from "react";
 import { useMemo } from "react";
-import { Doughnut, Line } from "react-chartjs-2";
 import { useQuery } from "react-query";
 
-import ButtonSys from "components/button";
-import TaskCard from "components/cards/project/TaskCard";
-import { AccessControl } from "components/features/AccessControl";
-import {
-  CalendartimeIconSvg,
-  ClipboardListIconSvg,
-  EditSquareIconSvg,
-  PlusIconSvg,
-  SearchIconSvg,
-} from "components/icon";
 import st from "components/layout-dashboard.module.css";
 import LayoutDashboard from "components/layout-dashboardNew";
-import ModalProjectTaskCreate from "components/modal/projects/modalProjectTaskCreate";
-import ModalProjectTaskDetailUpdate from "components/modal/projects/modalProjectTaskDetailUpdate";
-import ModalProjectUpdate from "components/modal/projects/modalProjectUpdate";
-import ModalStaffList from "components/modal/projects/modalStaffList";
 
 import { useAccessControl } from "contexts/access-control";
 
@@ -54,21 +18,9 @@ import {
   CONTRACT_GET,
   CONTRACT_UPDATE,
 } from "lib/features";
-import {
-  createKeyPressHandler,
-  generateStaticAssetUrl,
-  momentFormatDate,
-  permissionWarningNotification,
-} from "lib/helper";
 
 import { ContractService } from "apis/contract";
 
-import {
-  BellRingingIconSvg,
-  CutIconSvg,
-  FileTextIconSvg,
-  WritingIconSvg,
-} from "../../../components/icon";
 import ContractActionSection from "../../../components/screen/contract/detail/ContractActionSection";
 import ContractActivitySection from "../../../components/screen/contract/detail/ContractActivitySection";
 import ContractInfoSection from "../../../components/screen/contract/detail/ContractInfoSection";
@@ -119,10 +71,6 @@ const ContractDetailIndex = ({
   // 2. useState
   const [refresh, setRefresh] = useState(-1);
   const [isMobileView, setIsMobileView] = useState(false);
-
-  // 2.3. Project Detail
-
-  // 2.4. Modal
 
   // 3. Use Effect & Use Query
   // Responsive view for action button section
@@ -208,14 +156,14 @@ const ContractDetailIndex = ({
             </Collapse.Panel>
           </Collapse>
         ) : (
-          <section className="md:col-span-12 grid grid-cols-1 md:grid-cols-4 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
+          <section className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6 shadow-md rounded-md bg-white p-4 lg:p-6">
             <ContractActionSection />
           </section>
         )}
 
         {/* Catatan & Aktivitas */}
-        <section className="md:col-span-4 shadow-md rounded-md bg-white p-6 order-last md:order-none">
-          <Tabs defaultActiveKey={1}>
+        <section className="md:col-span-4 h-max shadow-md rounded-md bg-white p-6 order-last md:order-none">
+          <Tabs defaultActiveKey={1} className="tabResponsive">
             <Tabs.TabPane tab="Catatan" key={1}>
               <ContractNotesSection
                 initProps={initProps}

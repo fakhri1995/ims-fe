@@ -24,8 +24,6 @@ const ModalServiceUpdate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetProductInventories = hasPermission(PRODUCTS_GET);
   const [form] = Form.useForm();
-  const rt = useRouter();
-  const searchTimeoutRef = useRef(null);
 
   // 1. USE STATE
   const [dataService, setDataService] = useState({
@@ -116,7 +114,7 @@ const ModalServiceUpdate = ({
             <ButtonSys
               type={"primary"}
               onClick={handleSave}
-              disabled={!dataService?.name}
+              disabled={!dataService?.product}
             >
               <p>Simpan</p>
             </ButtonSys>
@@ -218,6 +216,7 @@ const ModalServiceUpdate = ({
                   addonBefore="Rp."
                   placeholder="Isi harga produk"
                   type="number"
+                  min={0}
                   value={dataService?.price}
                   onChange={(e) => {
                     setDataService((prev) => ({

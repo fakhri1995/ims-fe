@@ -7,7 +7,7 @@ import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
 import ButtonSys from "../../button";
 import { ModalHapus2 } from "../modalCustom";
 
-const ModalProjectNote = ({
+const ModalContractNote = ({
   initProps,
   visible,
   onvisible,
@@ -22,13 +22,13 @@ const ModalProjectNote = ({
   // 2. HANDLER
   const handleDeleteNote = () => {
     if (!isAllowedToDeleteNote) {
-      permissionWarningNotification("Menghapus", "Catatan Proyek");
+      permissionWarningNotification("Menghapus", "Catatan Kontrak");
       setLoadingDelete(false);
       return;
     }
     setLoadingDelete(true);
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteProjectLogNotes?id=${dataNote?.id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/deleteContractLogNotes?id=${dataNote?.id}`,
       {
         method: "DELETE",
         headers: {
@@ -49,14 +49,14 @@ const ModalProjectNote = ({
           setRefreshNotes((prev) => prev + 1);
         } else {
           notification.error({
-            message: `Gagal menghapus catatan proyek.`,
+            message: `Gagal menghapus catatan kontrak.`,
             duration: 3,
           });
         }
       })
       .catch((err) => {
         notification.error({
-          message: `Gagal menghapus catatan proyek. ${err?.response}`,
+          message: `Gagal menghapus catatan kontrak. ${err?.response}`,
           duration: 3,
         });
       })
@@ -135,4 +135,4 @@ const ModalProjectNote = ({
   );
 };
 
-export default ModalProjectNote;
+export default ModalContractNote;

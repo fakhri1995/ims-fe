@@ -21,6 +21,7 @@ import {
 } from "lib/features";
 
 import {
+  convertDaysToString,
   generateStaticAssetUrl,
   getFileName,
   momentFormatDate,
@@ -129,14 +130,13 @@ const ContractInfoSection = ({
         return (
           <div className="flex space-x-2 items-center">
             <FileTextIconSvg size={24} color={"#35763B"} />
-            <p className="text-primary100">Document_000323.pdf</p>
-            {/* <a
+            <a
               href={generateStaticAssetUrl(value?.link)}
               target="_blank"
               className="text-primary100"
             >
               {getFileName(value?.link)}
-            </a> */}
+            </a>
           </div>
         );
     }
@@ -207,7 +207,11 @@ const ContractInfoSection = ({
 
           <div className="">
             <h5 className="mig-caption--bold mb-2">Durasi Kontrak</h5>
-            <p>{dataContract?.duration || "-"}</p>
+            <p>
+              {dataContract?.duration
+                ? convertDaysToString(Math.abs(dataContract?.duration))
+                : "-"}
+            </p>
           </div>
 
           <div className="">

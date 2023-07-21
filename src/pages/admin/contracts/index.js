@@ -1,28 +1,5 @@
-import {
-  AppstoreOutlined,
-  CloseOutlined,
-  DeleteOutlined,
-  DownOutlined,
-  EditOutlined,
-  MailOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
-import {
-  Button,
-  DatePicker,
-  Dropdown,
-  Empty,
-  Form,
-  Input,
-  Menu,
-  Modal,
-  Select,
-  Space,
-  Spin,
-  Switch,
-  Table,
-  notification,
-} from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Input, Modal, Select, Spin, notification } from "antd";
 import moment from "moment";
 import {
   NumberParam,
@@ -31,14 +8,10 @@ import {
   withDefault,
 } from "next-query-params";
 import { useRouter } from "next/router";
-import QueryString from "qs";
 import React from "react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useCallback } from "react";
-import { useRef } from "react";
-import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { useQuery } from "react-query";
-import { ReactSpreadsheetImport } from "react-spreadsheet-import";
 
 import { AccessControl } from "components/features/AccessControl";
 import { AddNewFormButton } from "components/screen/resume";
@@ -62,15 +35,17 @@ import { permissionWarningNotification } from "lib/helper";
 import { CompanyService } from "apis/company";
 import { ContractService } from "apis/contract";
 
-import SettingsIcon from "assets/vectors/icon-settings.svg";
-
 import ButtonSys from "../../../components/button";
 import { SearchIconSvg } from "../../../components/icon";
 import Layout from "../../../components/layout-dashboard";
 import st from "../../../components/layout-dashboard.module.css";
 import { ModalHapus2 } from "../../../components/modal/modalCustom";
 import { TableCustomContractList } from "../../../components/table/tableCustom";
-import { createKeyPressHandler, momentFormatDate } from "../../../lib/helper";
+import {
+  convertDaysToString,
+  createKeyPressHandler,
+  momentFormatDate,
+} from "../../../lib/helper";
 import {
   ArcElement,
   BarElement,
@@ -120,9 +95,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    duration: withDefault(StringParam, undefined),
-    company_id: withDefault(NumberParam, undefined),
-    contract_status_id: withDefault(NumberParam, undefined),
+    duration_day: withDefault(NumberParam, undefined),
+    client_ids: withDefault(NumberParam, undefined),
+    status_ids: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -135,9 +110,32 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   pathTitleArr.splice(1, 1, "Kontrak");
 
   const durationRangeList = [
-    { number: 1, unit: "Bulan" },
-    { number: 3, unit: "Bulan" },
-    { number: 1, unit: "Tahun" },
+    { name: "1 Bulan", value: 30 },
+    { name: "3 Bulan", value: 90 },
+    { name: "1 Tahun", value: 365 },
+  ];
+
+  const dataStatusList = [
+    {
+      id: "segeraberakhir",
+      name: "Segera Berakhir",
+      color: "#BF4A40",
+    },
+    {
+      id: "draft",
+      name: "Draft",
+      color: "#808080",
+    },
+    {
+      id: "berlangsung",
+      name: "Berlangsung",
+      color: "#00589F",
+    },
+    {
+      id: "selesai",
+      name: "Selesai",
+      color: "#35763B",
+    },
   ];
 
   // 2. Use state
@@ -148,33 +146,15 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   const [selectedCompany, setSelectedCompany] = useState(undefined);
   const [selectedStatus, setSelectedStatus] = useState(undefined);
 
-  const [loadingAdd, setLoadingAdd] = useState(false);
-  const [loadingDelete, setLoadingDelete] = useState(false);
-  const [modalDelete, setModalDelete] = useState(false);
-
   // Modal Duration Range Filter
   const [modalDuration, setModalDuration] = useState(false);
   const [durationInput, setDurationInput] = useState(0);
-  // table data
-  // const [dataRawContracts, setDataRawContracts] = useState({
-  //   current_page: "",
-  //   data: [],
-  //   first_page_url: "",
-  //   from: null,
-  //   last_page: null,
-  //   last_page_url: "",
-  //   next_page_url: "",
-  //   path: "",
-  //   per_page: null,
-  //   prev_page_url: null,
-  //   to: null,
-  //   total: null,
-  // });
 
   const [refresh, setRefresh] = useState(-1);
+  const [loadingAdd, setLoadingAdd] = useState(false);
+  const [loadingDelete, setLoadingDelete] = useState(false);
+  const [modalDelete, setModalDelete] = useState(false);
   const [dataRowClicked, setDataRowClicked] = useState({});
-  const tempIdClicked = useRef(-1);
-  const [triggerRowClicked, setTriggerRowClicked] = useState(-1);
 
   // 3. UseEffect & UseQuery
   // 3.1. Get Contract Count
@@ -188,9 +168,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     }
   );
 
-  // 3.2. Get Company List
+  // 3.2. Get Company Client List
   const { data: dataCompanyList, isLoading: loadingCompanyList } = useQuery(
-    [COMPANY_CLIENTS_GET, refresh],
+    [COMPANY_CLIENTS_GET],
     () => CompanyService.getCompanyClientList(axiosClient, true),
     {
       enabled: isAllowedToGetCompanyClients,
@@ -215,34 +195,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       }
     );
 
-  // console.log({ dataRawContracts });
-
-  // 3.5. Get Status List
-  const { data: dataStatusList, isLoading: loadingStatusList } = useQuery(
-    [RECRUITMENT_STATUSES_LIST_GET],
-    () =>
-      ContractService.getStatusList(
-        initProps,
-        isAllowedToGetContractStatusList
-      ),
-    {
-      enabled: isAllowedToGetContractStatusList,
-      refetchOnMount: false,
-      select: (response) => response.data,
-    }
-  );
-
   // 4. Event
-  const onAddContract = useCallback(() => {
-    handleAddContract();
-  }, []);
-
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
     setQueryParams({
-      duration: selectedDuration,
-      company_id: selectedCompany,
-      contract_status_id: selectedStatus,
+      duration_day: selectedDuration,
+      client_ids: selectedCompany,
+      status_ids: selectedStatus,
     });
   };
 
@@ -252,6 +211,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   );
 
   // 4.2. Create Contract
+  const onAddContract = useCallback(() => {
+    handleAddContract();
+  }, []);
+
   const handleAddContract = () => {
     // if (!isAllowedToAddContract) {
     //   permissionWarningNotification("Menambah", "Kontrak");
@@ -292,7 +255,6 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   };
 
   // 4.3. Delete Contract
-  // Handler
   const handleDeleteContract = (id) => {
     if (!isAllowedToDeleteContract) {
       permissionWarningNotification("Menghapus", "Kontrak");
@@ -382,7 +344,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       dataIndex: ["client", "name"],
       render: (text, record, index) => {
         return {
-          children: <div>{text || "_"}</div>,
+          children: <div>{text || "-"}</div>,
         };
       },
     },
@@ -395,19 +357,23 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: <div>{momentFormatDate(text)}</div>,
         };
       },
+      sorter: isAllowedToGetContracts
+        ? (a, b) => a?.start_date?.localeCompare(b?.start_date)
+        : false,
     },
     {
       title: "Sisa Durasi",
-      key: "duration_left",
-      dataIndex: "duration_left",
-      render: (text, record, index) => {
+      key: "duration",
+      dataIndex: "duration",
+      render: (duration, record, index) => {
+        // let endDate = moment("2023-09-08");
+        // let startDate = moment("2023-08-09");
         return {
-          children: <>{record.role?.name}</>,
+          children: <>{convertDaysToString(Math.abs(duration))}</>,
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
+        ? (a, b) => b?.duration - a?.duration
         : false,
     },
     {
@@ -419,19 +385,32 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.is_posted ? (
-                <div
-                  className="rounded-md py-1 px-4 hover:cursor-pointer text-center text-white"
-                  style={{
-                    width: `100%`,
-                    backgroundColor: `${record.status?.color}`,
-                  }}
-                >
-                  {record?.status?.name}
-                </div>
+                text == "berlangsung" ? (
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
+                   text-white bg-warning whitespace-nowrap"
+                  >
+                    Segera Berakhir
+                  </div>
+                ) : text == "segeraberakhir" ? (
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
+                    text-white bg-secondary100 whitespace-nowrap"
+                  >
+                    Berlangsung
+                  </div>
+                ) : (
+                  <div
+                    className="rounded-md py-1 px-4 hover:cursor-pointer text-center
+                    text-white bg-primary100 whitespace-nowrap"
+                  >
+                    Selesai
+                  </div>
+                )
               ) : (
                 <div
                   className="rounded-md py-1 px-4 hover:cursor-pointer text-center 
-                bg-mono50 text-white"
+                   bg-mono50 text-white"
                 >
                   Draft
                 </div>
@@ -441,56 +420,64 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.status?.name
-              .toLowerCase()
-              .localeCompare(b.status?.name.toLowerCase())
+        ? (a, b) => {
+            const dataStatusListIds = dataStatusList?.map(
+              (status) => status?.id
+            );
+            const indexA = dataStatusListIds?.indexOf(a?.status);
+            const indexB = dataStatusListIds?.indexOf(b?.status);
+            return indexB - indexA;
+          }
         : false,
     },
-    {
-      title: "Action",
-      key: "action_button",
-      dataIndex: "action_button",
-      render: (text, record, index) => {
-        return {
-          children: (
-            <>
-              {!record.is_posted && (
-                <div className="flex flex-col md:flex-row gap-2 items-center">
-                  <ButtonSys
-                    type={"default"}
-                    color={"secondary100"}
-                    disabled={!isAllowedToUpdateContract}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      rt.push(`/admin/contracts/create?id=${record.id}`);
-                    }}
-                  >
-                    <EditOutlined />
-                  </ButtonSys>
-                  <ButtonSys
-                    type={"default"}
-                    color={"danger"}
-                    disabled={!isAllowedToDeleteContract}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      setDataRowClicked(record);
-                      setModalDelete(true);
-                    }}
-                  >
-                    <DeleteOutlined />
-                  </ButtonSys>
-                </div>
-              )}
-            </>
-          ),
-        };
-      },
-      sorter: isAllowedToGetContracts
-        ? (a, b) =>
-            a.role?.name.toLowerCase().localeCompare(b.role?.name.toLowerCase())
-        : false,
-    },
+    dataRawContracts?.data?.some((item) => !item.is_posted)
+      ? {
+          title: "Aksi",
+          key: "action_button",
+          dataIndex: "action_button",
+          render: (text, record, index) => {
+            return {
+              children: (
+                <>
+                  {!record.is_posted && (
+                    <div className="flex flex-col md:flex-row gap-2 items-center">
+                      <ButtonSys
+                        type={"default"}
+                        color={"secondary100"}
+                        disabled={!isAllowedToUpdateContract}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          rt.push(`/admin/contracts/create?id=${record.id}`);
+                        }}
+                      >
+                        <EditOutlined />
+                      </ButtonSys>
+                      <ButtonSys
+                        type={"default"}
+                        color={"danger"}
+                        disabled={!isAllowedToDeleteContract}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setDataRowClicked(record);
+                          setModalDelete(true);
+                        }}
+                      >
+                        <DeleteOutlined />
+                      </ButtonSys>
+                    </div>
+                  )}
+                </>
+              ),
+            };
+          },
+          sorter: isAllowedToGetContracts
+            ? (a, b) =>
+                a.role?.name
+                  .toLowerCase()
+                  .localeCompare(b.role?.name.toLowerCase())
+            : false,
+        }
+      : {},
   ];
 
   if (isAccessControlPending) {
@@ -517,7 +504,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               <h4 className="font-semibold lg:mig-heading--4">Kontrak Aktif</h4>
               <Spin spinning={loadingDataCount}>
                 <p className="text-4xl lg:text-5xl text-primary100">
-                  {dataCount?.recruitment_roles_count}
+                  {dataCount?.total}
                 </p>
               </Spin>
             </div>
@@ -539,14 +526,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by duration (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  // defaultValue={queryParams.duration}
+                  defaultValue={queryParams.duration_day}
                   allowClear
                   name={`role`}
                   disabled={!isAllowedToGetCompanyClients}
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    // setQueryParams({ duration: value });
+                    setQueryParams({ duration_day: value });
                     setSelectedDuration(value);
                   }}
                   dropdownRender={(options) => (
@@ -562,33 +549,25 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                     </>
                   )}
                 >
-                  {durationRangeList?.map((range, idx) => (
-                    <Select.Option
-                      key={idx + 1}
-                      value={`${range.number} ${range.unit}`}
-                    >
+                  {durationRangeList?.map((item, idx) => (
+                    <Select.Option key={idx + 1} value={item.value}>
                       <p
                         className={`px-2 text-center rounded  
                         ${
-                          selectedDuration ===
-                            `${range.number} ${range.unit}` &&
+                          selectedDuration === item.value &&
                           "bg-primary100 text-white"
                         }`}
                       >
-                        {range.number} {range.unit}
+                        {item.name}
                       </p>
                     </Select.Option>
                   ))}
                   {durationInput && (
-                    <Select.Option
-                      key={5}
-                      value={`${durationInput} Bulan (Custom)`}
-                    >
+                    <Select.Option key={5} value={durationInput * 30}>
                       <p
                         className={`px-2 text-center rounded
                       ${
-                        selectedDuration ===
-                          `${durationInput} Bulan (Custom)` &&
+                        selectedDuration === durationInput * 30 &&
                         "bg-primary100 text-white"
                       }`}
                       >
@@ -602,20 +581,20 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by company client */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.company_id}
+                  defaultValue={queryParams.client_ids}
                   allowClear
-                  name={`company`}
+                  name={`client`}
                   disabled={!isAllowedToGetCompanyClients}
                   placeholder="Semua Klien"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ company_id: value });
+                    setQueryParams({ client_ids: value });
                     setSelectedCompany(value);
                   }}
                 >
-                  {dataCompanyList?.map((company) => (
-                    <Select.Option key={company.id} value={company.id}>
-                      {company.name}
+                  {dataCompanyList?.map((client) => (
+                    <Select.Option key={client.id} value={client.id}>
+                      {client.name}
                     </Select.Option>
                   ))}
                 </Select>
@@ -624,14 +603,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by status (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.contract_status_id}
+                  defaultValue={queryParams.status_ids}
                   allowClear
                   name={`status`}
                   disabled={!isAllowedToGetContractStatusList}
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ contract_status_id: value });
+                    setQueryParams({ status_ids: value });
                     setSelectedStatus(value);
                   }}
                 >
@@ -657,7 +636,10 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
                   placeholder="Cari.."
                   allowClear
                   onChange={(e) => {
-                    setSearchingFilterContracts(e.target.value);
+                    setTimeout(
+                      () => setSearchingFilterContracts(e.target.value),
+                      500
+                    );
                   }}
                   onKeyPress={onKeyPressHandler}
                   disabled={!isAllowedToGetContracts}
@@ -712,18 +694,13 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               </button>
               <ButtonSys
                 type={"primary"}
-                onClick={() => {
-                  // let tempDurationRange = [...durationRangeList];
-                  // tempDurationRange.push(`${durationInput} Bulan`);
-                  // setDurationRangeList(tempDurationRange);
-                  setModalDuration(false);
-                }}
+                onClick={() => setModalDuration(false)}
               >
                 <p>Tambah</p>
               </ButtonSys>
             </div>
           }
-          // loading={loading}
+          // loading={}
         >
           <div className="space-y-2">
             <p>Jumlah Bulan</p>
