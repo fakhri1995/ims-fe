@@ -157,6 +157,7 @@ export const AttendanceStaffAktivitasSection: FC<
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 20),
     keyword: withDefault(StringParam, undefined),
+    user_id: withDefault(StringParam, undefined),
     is_active: withDefault(NumberParam, 1),
   });
   const [activityDrawerState, dispatch] = useReducer(
@@ -353,7 +354,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
                 duration: 3,
               });
-              getDataTaskActivities(userId);
+              getDataTaskActivities();
             } else {
               notification.error({
                 message: `Task Gagal ditambahkan ke aktivitas!`,
@@ -372,27 +373,9 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
-  const getProfile = () => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(dataToken.dataToken),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        console.log("oke bro ", res2);
-        if (res2.success) {
-          if (res2.data) {
-            setUserId(res2.data.id);
-            getDataTaskActivities(res2.data.id);
-          }
-        }
-      });
-  };
-  const getDataTaskActivities = (id) => {
+  const getDataTaskActivities = () => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities?user_id=${id}`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
       {
         method: `GET`,
         headers: {
@@ -426,11 +409,33 @@ export const AttendanceStaffAktivitasSection: FC<
   useEffect(() => {
     setLoadingTasks(false);
     setDataTaskTempSelected(dataTask);
-    getProfile();
+    getDataTaskActivities();
     // handleSelectAllTask();
   }, []);
 
   useEffect(() => {
+    if (userId) {
+      getDataModal();
+    } else {
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(dataToken.dataToken),
+        },
+      })
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            if (res2.data) {
+              setQueryParams2({ user_id: res2.data.id });
+              getDataModal();
+            }
+          }
+        });
+    }
+  }, [queryParams2.page, queryParams2.rows, queryParams2.keyword]);
+
+  const getDataModal = () => {
     const payload = QueryString.stringify(queryParams2, {
       addQueryPrefix: true,
     });
@@ -446,7 +451,7 @@ export const AttendanceStaffAktivitasSection: FC<
           // setdisplayentiredata(res2)
           let datafromapi = res2.data.data;
           let dataTemp = [];
-          let dataTemp2 = [];
+          // let dataTemp2 = [];
           for (let a = 0; a < datafromapi.length; a++) {
             dataTemp.push({
               id: datafromapi[a].id,
@@ -454,17 +459,16 @@ export const AttendanceStaffAktivitasSection: FC<
               name: datafromapi[a].name,
               start_date: datafromapi[a].start_date,
               end_date: datafromapi[a].end_date,
-              is_selected: true,
+              is_selected: false,
             });
-            dataTemp2.push(datafromapi[a].id);
+            // dataTemp2.push(datafromapi[a].id);
           }
           setDisplayDataImport(dataTemp);
           setDisplayDataImportTemp(dataTemp);
-          setDataTaskSelected(dataTemp2);
+          // setDataTaskSelected(dataTemp2);
         }
       });
-  }, [queryParams2.page, queryParams2.rows, queryParams2.keyword]);
-
+  };
   const handleSelectAllTask = () => {
     let dataTemp = [];
     for (let a = 0; a < displayDataImport.length; a++) {
@@ -624,7 +628,7 @@ export const AttendanceStaffAktivitasSection: FC<
                           className={"text-xs text-mono50"}
                           style={{ lineHeight: "16px" }}
                         >
-                          [{task.activity}]
+                          [{task.project ? task.project.name : " - "}]
                         </p>
                       </div>
                       <div className={"w-1/12 self-center flex justify-end"}>
@@ -723,13 +727,13 @@ export const AttendanceStaffAktivitasSection: FC<
                         className={"text-xs font-bold text-mono30"}
                         style={{ lineHeight: "20px" }}
                       >
-                        {task.name}
+                        {task.name} T-{task.id}
                       </p>
                       <p
                         className={"text-xs text-mono50"}
                         style={{ lineHeight: "16px" }}
                       >
-                        [{task.name}]
+                        [{task.project ? task.project.name : " - "}]
                       </p>
                     </div>
                     <div className={"w-1/12 self-center items-end"}>
