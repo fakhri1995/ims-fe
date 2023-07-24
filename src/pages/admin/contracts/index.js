@@ -95,9 +95,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
     rows: withDefault(NumberParam, 10),
     sort_by: withDefault(StringParam, /** @type {"name"|"count"} */ undefined),
     sort_type: withDefault(StringParam, /** @type {"asc"|"desc"} */ undefined),
-    duration_day: withDefault(NumberParam, undefined),
+    duration: withDefault(NumberParam, undefined),
     client_ids: withDefault(NumberParam, undefined),
-    status_ids: withDefault(StringParam, undefined),
+    status_types: withDefault(StringParam, undefined),
   });
 
   const rt = useRouter();
@@ -199,9 +199,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
   // 4.1. Filter Table
   const onFilterRecruitments = () => {
     setQueryParams({
-      duration_day: selectedDuration,
+      duration: selectedDuration,
       client_ids: selectedCompany,
-      status_ids: selectedStatus,
+      status_types: selectedStatus,
     });
   };
 
@@ -373,7 +373,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
         };
       },
       sorter: isAllowedToGetContracts
-        ? (a, b) => b?.duration - a?.duration
+        ? (a, b) => a?.duration - b?.duration
         : false,
     },
     {
@@ -426,7 +426,7 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
             );
             const indexA = dataStatusListIds?.indexOf(a?.status);
             const indexB = dataStatusListIds?.indexOf(b?.status);
-            return indexB - indexA;
+            return indexA - indexB;
           }
         : false,
     },
@@ -526,14 +526,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Filter by duration (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.duration_day}
+                  defaultValue={queryParams.duration}
                   allowClear
                   name={`role`}
                   disabled={!isAllowedToGetCompanyClients}
                   placeholder="Rentang Durasi"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ duration_day: value });
+                    setQueryParams({ duration: value });
                     setSelectedDuration(value);
                   }}
                   dropdownRender={(options) => (
@@ -603,22 +603,23 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
               {/* Search by status (dropdown) */}
               <div className="w-full md:w-2/12">
                 <Select
-                  defaultValue={queryParams.status_ids}
+                  defaultValue={queryParams.status_types}
                   allowClear
                   name={`status`}
                   disabled={!isAllowedToGetContractStatusList}
                   placeholder="Semua Status"
                   style={{ width: `100%` }}
                   onChange={(value) => {
-                    setQueryParams({ status_ids: value });
+                    setQueryParams({ status_types: value });
                     setSelectedStatus(value);
                   }}
+                  optionLabelProp="children"
                 >
                   {dataStatusList?.map((status) => (
                     <Select.Option key={status.id} value={status.id}>
                       <div className="flex items-center">
                         <div
-                          className="rounded-full w-4 h-4 mr-2"
+                          className="rounded-full w-4 h-4 p-2 mr-2"
                           style={{ backgroundColor: `${status.color}` }}
                         />
                         <p className="truncate">{status.name}</p>
