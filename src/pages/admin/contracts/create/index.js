@@ -188,67 +188,6 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
 
     let payload = { ...contractData, is_posted: isPosted };
 
-    // Mapping extras list to required format in API updateContract form-data
-    // if (contractData?.extras?.length) {
-    //   let extrasObjectList = contractData?.extras?.map((extra, idx) => {
-    //     let obj = {};
-    //     obj[`extras[${idx}][type]`] = extra?.type;
-    //     obj[`extras[${idx}][name]`] = extra?.name;
-
-    //     if (extra?.key) {
-    //       obj[`extras[${idx}][key]`] = extra?.key;
-    //     }
-
-    //     if (extra?.type == LIST) {
-    //       extra.value?.map(
-    //         (item, valIdx) => (obj[`extras[${idx}][value][${valIdx}]`] = item)
-    //       );
-    //     } else {
-    //       obj[`extras[${idx}][value]`] = extra?.value;
-    //     }
-
-    //     if (extra?.is_deleted) {
-    //       obj[`extras[${idx}][is_deleted]`] = 1;
-    //     }
-
-    //     return obj;
-    //   });
-
-    //   let allExtrasObject = {};
-    //   for (let extraObject of extrasObjectList) {
-    //     Object.assign(allExtrasObject, extraObject);
-    //   }
-
-    //   payload = {
-    //     ...payload,
-    //     ...allExtrasObject,
-    //   };
-    // }
-
-    // Mapping service list to required format in API updateContract form-data
-    // if (contractData?.services?.length) {
-    //   let serviceObjectList = contractData?.services?.map((service, idx) => {
-    //     let obj = {};
-    //     obj[`services[${idx}][product_id]`] = service?.product_id;
-    //     obj[`services[${idx}][name]`] = service?.name;
-    //     obj[`services[${idx}][pax]`] = service?.pax;
-    //     obj[`services[${idx}][price]`] = service?.price;
-    //     obj[`services[${idx}][unit]`] = service?.unit;
-
-    //     return obj;
-    //   });
-
-    //   let allServicesObject = {};
-    //   for (let serviceObject of serviceObjectList) {
-    //     Object.assign(allServicesObject, serviceObject);
-    //   }
-
-    //   payload = {
-    //     ...payload,
-    //     ...allServicesObject,
-    //   };
-    // }
-
     // convert object to form data
     const payloadFormData = objectToFormDataNew(payload);
 
@@ -668,6 +607,7 @@ const ContractCreateIndex = ({ initProps, dataProfile, sidemenu }) => {
                 initProps={initProps}
                 dataContractUpdate={dataContractUpdate}
                 setDataContractUpdate={setDataContractUpdate}
+                loading={loadingDataContract}
               />
             </Tabs.TabPane>
           </Tabs>

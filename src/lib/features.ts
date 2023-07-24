@@ -336,19 +336,6 @@ export const PROJECT_DELETE = "PROJECT_DELETE";
 export const PROJECTS_COUNT_GET = "PROJECTS_COUNT_GET";
 export const PROJECTS_DEADLINE_GET = "PROJECTS_DEADLINE_GET";
 
-/*Product Catalog */
-export const PRODUCT_GET = "PRODUCT_GET";
-export const PRODUCTS_GET = "PRODUCTS_GET";
-export const PRODUCT_ADD = "PRODUCT_ADD";
-export const PRODUCT_UPDATE = "PRODUCT_UPDATE";
-export const PRODUCT_DELETE = "PRODUCT_DELETE";
-
-/*Category Product */
-export const CATEGORY_GET = "CATEGORY_GET";
-export const CATEGORIES_GET = "CATEGORIES_GET";
-export const CATEGORY_ADD = "CATEGORY_ADD";
-export const CATEGORY_UPDATE = "CATEGORY_UPDATE";
-export const CATEGORY_DELETE = "CATEGORY_DELETE";
 /** Project Status */
 export const PROJECT_STATUS_GET = "PROJECT_STATUS_GET";
 export const PROJECT_STATUSES_GET = "PROJECT_STATUSES_GET";
@@ -372,11 +359,26 @@ export const PROJECT_NOTE_ADD = "PROJECT_NOTE_ADD";
 export const PROJECT_NOTE_DELETE = "PROJECT_NOTE_DELETE";
 export const PROJECT_LOGS_GET = "PROJECT_LOGS_GET";
 
+/*Product Catalog */
+export const PRODUCT_GET = "PRODUCT_GET";
+export const PRODUCTS_GET = "PRODUCTS_GET";
+export const PRODUCT_ADD = "PRODUCT_ADD";
+export const PRODUCT_UPDATE = "PRODUCT_UPDATE";
+export const PRODUCT_DELETE = "PRODUCT_DELETE";
+
+/*Category Product */
+export const CATEGORY_GET = "CATEGORY_GET";
+export const CATEGORIES_GET = "CATEGORIES_GET";
+export const CATEGORY_ADD = "CATEGORY_ADD";
+export const CATEGORY_UPDATE = "CATEGORY_UPDATE";
+export const CATEGORY_DELETE = "CATEGORY_DELETE";
+
 /**
  * Daftar feature untuk Contract Management.
  * @see
  */
 
+/** Contract */
 export const CONTRACTS_GET = "CONTRACTS_GET";
 export const CONTRACT_GET = "CONTRACT_GET";
 export const CONTRACT_ADD = "CONTRACT_ADD";
@@ -384,10 +386,10 @@ export const CONTRACT_UPDATE = "CONTRACT_UPDATE";
 export const CONTRACT_DELETE = "CONTRACT_DELETE";
 export const CONTRACTS_COUNT_GET = "CONTRACTS_COUNT_GET";
 
+/** Contract Notes & Logs */
 export const CONTRACT_NOTES_GET = "CONTRACT_NOTES_GET";
 export const CONTRACT_NOTE_ADD = "CONTRACT_NOTE_ADD";
 export const CONTRACT_NOTE_DELETE = "CONTRACT_NOTE_DELETE";
-
 export const CONTRACT_LOGS_GET = "CONTRACT_LOGS_GET";
 
 /**

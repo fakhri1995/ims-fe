@@ -13,9 +13,8 @@ const ContractServiceForm = ({
   initProps,
   dataContractUpdate,
   setDataContractUpdate,
+  loading,
 }) => {
-  const { hasPermission } = useAccessControl();
-
   // Use State
   const [modalServiceCreate, setModalServiceCreate] = useState(false);
   const [modalServiceUpdate, setModalServiceUpdate] = useState(false);
@@ -30,8 +29,8 @@ const ContractServiceForm = ({
       <Table
         className="tableBordered border-2 rounded-md"
         dataSource={dataContractUpdate?.services}
-        rowKey={(record) => record.key}
-        // loading={loading}
+        rowKey={(record) => record.id}
+        loading={loading}
         scroll={{ x: 200 }}
         pagination={false}
         footer={() => (

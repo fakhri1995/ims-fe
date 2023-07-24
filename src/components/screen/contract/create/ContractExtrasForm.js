@@ -237,7 +237,6 @@ const ContractExtrasForm = ({
     }
   };
 
-  console.log({ dataContractUpdate });
   return (
     <div
       className="col-span-6 grid grid-cols-1 md:grid-cols-2 shadow-lg rounded-md 
