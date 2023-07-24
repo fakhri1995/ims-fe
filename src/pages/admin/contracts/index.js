@@ -385,14 +385,14 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
           children: (
             <>
               {record.is_posted ? (
-                text == "berlangsung" ? (
+                text == "segeraberakhir" ? (
                   <div
                     className="rounded-md py-1 px-4 hover:cursor-pointer text-center
                    text-white bg-warning whitespace-nowrap"
                   >
                     Segera Berakhir
                   </div>
-                ) : text == "segeraberakhir" ? (
+                ) : text == "berlangsung" ? (
                   <div
                     className="rounded-md py-1 px-4 hover:cursor-pointer text-center
                     text-white bg-secondary100 whitespace-nowrap"
