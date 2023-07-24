@@ -80,7 +80,10 @@ const StaffAttendancePage: NextPage<ProtectedPageProps> = ({
           {/* Section: Aktivitas Table */}
           <div className="grid grid-cols-12 space-y-6">
             <div className="col-span-full">
-              <AttendanceStaffAktivitasSection dataToken={token} />
+              <AttendanceStaffAktivitasSection
+                dataToken={token}
+                idUser={dataProfile.data.id}
+              />
             </div>
 
             <div className="col-span-full">
