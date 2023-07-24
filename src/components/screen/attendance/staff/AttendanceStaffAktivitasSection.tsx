@@ -141,6 +141,7 @@ export const AttendanceStaffAktivitasSection: FC<
   });
   const [displayDataImport, setDisplayDataImport] = useState([]);
   const [displayDataImportTemp, setDisplayDataImportTemp] = useState([]);
+  const [userId, setUserId] = useState(null);
   const [displayDataTaskToday, setDisplayDataTaskToday] = useState([]);
   const [displayDataTaskHistory, setDisplayDataTaskHistory] = useState([]);
   const [loadingTasks, setLoadingTasks] = useState(true);
@@ -352,7 +353,7 @@ export const AttendanceStaffAktivitasSection: FC<
 
                 duration: 3,
               });
-              getDataTaskActivities();
+              getDataTaskActivities(userId);
             } else {
               notification.error({
                 message: `Task Gagal ditambahkan ke aktivitas!`,
@@ -371,9 +372,27 @@ export const AttendanceStaffAktivitasSection: FC<
     }
   };
 
-  const getDataTaskActivities = () => {
+  const getProfile = () => {
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
+      method: `GET`,
+      headers: {
+        Authorization: JSON.parse(dataToken.dataToken),
+      },
+    })
+      .then((res) => res.json())
+      .then((res2) => {
+        console.log("oke bro ", res2);
+        if (res2.success) {
+          if (res2.data) {
+            setUserId(res2.data.id);
+            getDataTaskActivities(res2.data.id);
+          }
+        }
+      });
+  };
+  const getDataTaskActivities = (id) => {
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities?user_id=${id}`,
       {
         method: `GET`,
         headers: {
@@ -407,7 +426,7 @@ export const AttendanceStaffAktivitasSection: FC<
   useEffect(() => {
     setLoadingTasks(false);
     setDataTaskTempSelected(dataTask);
-    getDataTaskActivities();
+    getProfile();
     // handleSelectAllTask();
   }, []);
 
