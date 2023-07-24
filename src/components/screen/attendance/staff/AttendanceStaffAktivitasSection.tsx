@@ -314,58 +314,60 @@ export const AttendanceStaffAktivitasSection: FC<
   };
 
   const importMultipleTask = () => {
-    if (attendeeStatus !== "checkin") {
-      Modal.error({
-        centered: true,
-        title: "Perhatian!",
-        content:
-          "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
-        okText: "Kembali",
-        closable: true,
-      });
-    } else {
-      let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivities`;
-      let method = "POST";
-      let payload = {
-        task_ids: dataTaskSelected,
-      };
-
-      fetch(url, {
-        method: method,
-        headers: {
-          Authorization: JSON.parse(dataToken.dataToken),
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      })
-        .then((response) => response.json())
-        .then((response2) => {
-          if (response2.success) {
-            notification.success({
-              message: (
-                <>
-                  {" "}
-                  <p>Task berhasil ditambahkan ke aktivitas</p>
-                </>
-              ),
-
-              duration: 3,
-            });
-            getDataTaskActivities();
-          } else {
-            notification.error({
-              message: `Task Gagal ditambahkan ke aktivitas!`,
-              duration: 3,
-            });
-          }
-        })
-        .catch((err) => {
-          notification.error({
-            message: `Task Gagal ditambahkan ke aktivitas`,
-            duration: 3,
-          });
-          // setLoadingAdd(false);
+    if (dataTaskSelected.length > 0) {
+      if (attendeeStatus !== "checkin") {
+        Modal.error({
+          centered: true,
+          title: "Perhatian!",
+          content:
+            "Anda perlu Check In terlebih dahulu untuk menambahkan atau memperbarui aktivitas!",
+          okText: "Kembali",
+          closable: true,
         });
+      } else {
+        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}/addAttendanceTaskActivities`;
+        let method = "POST";
+        let payload = {
+          task_ids: dataTaskSelected,
+        };
+
+        fetch(url, {
+          method: method,
+          headers: {
+            Authorization: JSON.parse(dataToken.dataToken),
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        })
+          .then((response) => response.json())
+          .then((response2) => {
+            if (response2.success) {
+              notification.success({
+                message: (
+                  <>
+                    {" "}
+                    <p>Task berhasil ditambahkan ke aktivitas</p>
+                  </>
+                ),
+
+                duration: 3,
+              });
+              getDataTaskActivities();
+            } else {
+              notification.error({
+                message: `Task Gagal ditambahkan ke aktivitas!`,
+                duration: 3,
+              });
+            }
+          })
+          .catch((err) => {
+            notification.error({
+              message: `Task Gagal ditambahkan ke aktivitas`,
+              duration: 3,
+            });
+            // setLoadingAdd(false);
+          });
+      }
     }
   };
 
@@ -658,28 +660,26 @@ export const AttendanceStaffAktivitasSection: FC<
             footer={null}
             onCancel={() => setShowModalTask(false)}
           >
-            {displayDataImport.length > 0 && (
-              <div className="col-span-4">
-                <Input
-                  style={{ width: `100%` }}
-                  suffix={<SearchOutlined />}
-                  defaultValue={queryParams2.keyword}
-                  placeholder="Cari Task.."
-                  onChange={onChangeProductSearch}
-                  // onKeyPress={onKeyPressHandler}
-                  allowClear
-                  // disabled={!isAllowedToSeeModels}
-                />
-              </div>
-            )}
-            {displayDataImport.length > 0 && (
-              <div className={"mt-7 flex justify-between"}>
-                <p
-                  className={"text-mono30 text-base font-bold "}
-                  style={{ lineHeight: "24px" }}
-                >
-                  List Task
-                </p>
+            <div className="col-span-4">
+              <Input
+                style={{ width: `100%` }}
+                suffix={<SearchOutlined />}
+                defaultValue={queryParams2.keyword}
+                placeholder="Cari Task.."
+                onChange={onChangeProductSearch}
+                // onKeyPress={onKeyPressHandler}
+                allowClear
+                // disabled={!isAllowedToSeeModels}
+              />
+            </div>
+            <div className={"mt-7 flex justify-between mb-4"}>
+              <p
+                className={"text-mono30 text-base font-bold "}
+                style={{ lineHeight: "24px" }}
+              >
+                List Task
+              </p>
+              {displayDataImportTemp.length > 0 && (
                 <button
                   className={"bg-transparent"}
                   onClick={() => handleSelectTask()}
@@ -693,9 +693,9 @@ export const AttendanceStaffAktivitasSection: FC<
                       : "Pilih semua"}
                   </p>
                 </button>
-              </div>
-            )}
-            {displayDataImportTemp.length > 0 &&
+              )}
+            </div>
+            {displayDataImportTemp.length > 0 ? (
               displayDataImportTemp.map((task, index) => (
                 <div key={task.id} className="flex-none rounded-md ">
                   <div className={"flex px-4 py-2 border border-inputkategori"}>
@@ -725,7 +725,11 @@ export const AttendanceStaffAktivitasSection: FC<
                     </div>
                   </div>
                 </div>
-              ))}
+              ))
+            ) : (
+              <p className={"mt-4 text-center"}>Tidak Ada Data</p>
+            )}
+
             <div
               onClick={() => setShowModalTask(false)}
               className={"mt-6 flex justify-end hover:cursor-pointer "}
@@ -739,10 +743,19 @@ export const AttendanceStaffAktivitasSection: FC<
               <div
                 onClick={() => importMultipleTask()}
                 className={
-                  "px-6 py-2 bg-mono80 rounded-[5px] hover:cursor-pointer"
+                  dataTaskSelected.length > 0
+                    ? "px-6 py-2 bg-primary100 rounded-[5px] hover:cursor-pointer"
+                    : "px-6 py-2 bg-mono80 rounded-[5px]"
                 }
               >
-                <p className={"text-sm"} style={{ lineHeight: "16px" }}>
+                <p
+                  className={
+                    dataTaskSelected.length > 0
+                      ? "text-sm text-white"
+                      : "text-sm text-mono30"
+                  }
+                  style={{ lineHeight: "16px" }}
+                >
                   Import Task
                 </p>
               </div>
