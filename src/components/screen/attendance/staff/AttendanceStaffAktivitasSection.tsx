@@ -69,7 +69,8 @@ const { TabPane } = Tabs;
  * Component AttendanceStaffAktivitasSection's props.
  */
 export interface IAttendanceStaffAktivitasSection {
-  dataToken?: string;
+  dataToken: string;
+  idUser: number;
 }
 
 /**
@@ -77,7 +78,7 @@ export interface IAttendanceStaffAktivitasSection {
  */
 export const AttendanceStaffAktivitasSection: FC<
   IAttendanceStaffAktivitasSection
-> = (dataToken) => {
+> = ({ dataToken, idUser }) => {
   const axiosClient = useAxiosClient();
   const { hasPermission } = useAccessControl();
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
@@ -157,7 +158,7 @@ export const AttendanceStaffAktivitasSection: FC<
     page: withDefault(NumberParam, 1),
     rows: withDefault(NumberParam, 20),
     keyword: withDefault(StringParam, undefined),
-    user_id: withDefault(StringParam, undefined),
+    user_id: withDefault(NumberParam, idUser),
     is_active: withDefault(NumberParam, 1),
   });
   const [activityDrawerState, dispatch] = useReducer(
@@ -336,7 +337,7 @@ export const AttendanceStaffAktivitasSection: FC<
         fetch(url, {
           method: method,
           headers: {
-            Authorization: JSON.parse(dataToken.dataToken),
+            Authorization: JSON.parse(dataToken),
             "Content-Type": "application/json",
           },
           body: JSON.stringify(payload),
@@ -379,7 +380,7 @@ export const AttendanceStaffAktivitasSection: FC<
       {
         method: `GET`,
         headers: {
-          Authorization: JSON.parse(dataToken.dataToken),
+          Authorization: JSON.parse(dataToken),
         },
       }
     )
@@ -414,26 +415,7 @@ export const AttendanceStaffAktivitasSection: FC<
   }, []);
 
   useEffect(() => {
-    if (userId) {
-      getDataModal();
-    } else {
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/detailProfile`, {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken.dataToken),
-        },
-      })
-        .then((res) => res.json())
-        .then((res2) => {
-          if (res2.success) {
-            if (res2.data) {
-              setQueryParams2({ user_id: res2.data.id });
-              setUserId(res2.data.id);
-              getDataModal();
-            }
-          }
-        });
-    }
+    getDataModal();
   }, [queryParams2.page, queryParams2.rows, queryParams2.keyword]);
 
   const getDataModal = () => {
@@ -443,7 +425,7 @@ export const AttendanceStaffAktivitasSection: FC<
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`, {
       method: `GET`,
       headers: {
-        Authorization: JSON.parse(dataToken.dataToken),
+        Authorization: JSON.parse(dataToken),
       },
     })
       .then((res) => res.json())
