@@ -428,6 +428,7 @@ export const AttendanceStaffAktivitasSection: FC<
           if (res2.success) {
             if (res2.data) {
               setQueryParams2({ user_id: res2.data.id });
+              setUserId(res2.data.id);
               getDataModal();
             }
           }
