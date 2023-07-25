@@ -366,10 +366,9 @@ const ContractIndex = ({ dataProfile, sidemenu, initProps }) => {
       key: "duration",
       dataIndex: "duration",
       render: (duration, record, index) => {
-        // let endDate = moment("2023-09-08");
-        // let startDate = moment("2023-08-09");
+        const absDuration = Math.abs(duration);
         return {
-          children: <>{convertDaysToString(Math.abs(duration))}</>,
+          children: <>{convertDaysToString(absDuration)}</>,
         };
       },
       sorter: isAllowedToGetContracts
