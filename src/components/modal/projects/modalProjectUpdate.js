@@ -1,3 +1,4 @@
+import { CloseCircleOutlined } from "@ant-design/icons";
 import {
   DatePicker,
   Input,
@@ -41,6 +42,8 @@ const ModalProjectUpdate = ({
   const { hasPermission } = useAccessControl();
   const isAllowedToGetUsers = hasPermission(USERS_GET);
   const isAllowedToGetGroups = hasPermission(GROUPS_GET);
+  // TODO: change constant
+  const isAllowedToGetTagList = hasPermission(GROUPS_GET);
 
   const rt = useRouter();
   const searchTimeoutRef = useRef(null);
@@ -55,6 +58,7 @@ const ModalProjectUpdate = ({
     end_date: "",
     project_staffs: [],
     description: "",
+    tags: [],
   });
 
   const [loading, setLoading] = useState(false);
@@ -64,6 +68,9 @@ const ModalProjectUpdate = ({
   const [isEditTitle, setIsEditTitle] = useState(false);
   const [isSwitchGroup, setIsSwitchGroup] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([]);
+
+  const [loadingTagList, setLoadingTagList] = useState(false);
+  const [tagList, setTagList] = useState([]);
 
   const [modalDelete, setModalDelete] = useState(false);
 
@@ -84,6 +91,7 @@ const ModalProjectUpdate = ({
         ...dataProject,
         proposed_bys: updatedProposedBys,
         project_staffs: updatedProjectStaffs,
+        tags: [], // TODO: delete this if API is ready
       });
     }
   }, [dataProject, visible]);
@@ -184,6 +192,14 @@ const ModalProjectUpdate = ({
     }, 500);
   };
 
+  const onSearchTags = (value) => {
+    if (value) {
+      handleGetTagList(value);
+    } else {
+      setTagList([]);
+    }
+  };
+
   const handleUpdateProject = () => {
     if (!isAllowedToUpdateProject) {
       permissionWarningNotification("Mengubah", "Proyek");
@@ -278,6 +294,42 @@ const ModalProjectUpdate = ({
         });
       })
       .finally(() => setLoading(false));
+  };
+
+  const handleGetTagList = (value) => {
+    if (!isAllowedToGetTagList) {
+      return;
+    }
+
+    // TODO: change endpoint if ready
+    setLoadingTagList(true);
+    fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getSkillLists?name=${value}`,
+      {
+        method: `GET`,
+        headers: {
+          Authorization: JSON.parse(initProps),
+        },
+      }
+    )
+      .then((response) => response.json())
+      .then((response2) => {
+        if (response2.success) {
+          setTagList(response2.data);
+        } else {
+          notification.error({
+            message: `${response2.message}`,
+            duration: 3,
+          });
+        }
+      })
+      .catch((err) => {
+        notification.error({
+          message: `${err.response}`,
+          duration: 3,
+        });
+      })
+      .finally(() => setLoadingTagList(false));
   };
 
   // Used in staff field (diajukan oleh & staff proyek)
@@ -723,6 +775,64 @@ const ModalProjectUpdate = ({
               }));
             }}
           />
+        </div>
+
+        <div className="md:col-span-2">
+          {/* Tag List */}
+          <div className="mb-2">
+            {dataUpdateProject?.tags?.map((tag, idx) => (
+              <Tag
+                key={tag}
+                closable
+                onClose={() => {
+                  let tempTags = [...dataUpdateProject.tags];
+                  tempTags.splice(idx, 1);
+                  setDataUpdateProject((prev) => ({
+                    ...prev,
+                    tags: tempTags,
+                  }));
+                }}
+                color="#35763B1A"
+                closeIcon={<CloseCircleOutlined />}
+                className="text-primary100 mb-3"
+              >
+                {tag}
+              </Tag>
+            ))}
+          </div>
+
+          {/* Input Tag */}
+          <p className="mb-2">Tag Proyek</p>
+          <Select
+            showSearch
+            placeholder="Cari Tag..."
+            allowClear
+            defaultActiveFirstOption={false}
+            optionFilterProp="children"
+            notFoundContent={null}
+            onChange={(value) => {
+              let newTags = [...dataUpdateProject?.tags];
+
+              if (value) {
+                newTags.push(value);
+                setDataUpdateProject((prev) => ({
+                  ...prev,
+                  tags: newTags,
+                }));
+              }
+            }}
+            onSearch={onSearchTags}
+            className="w-full"
+            disabled={!isAllowedToGetTagList || loadingTagList}
+          >
+            {tagList
+              .filter((tag) => !dataUpdateProject?.tags?.includes(tag.name))
+              ?.map((tag) => (
+                <Select.Option key={tag?.id} value={tag.name}>
+                  {tag?.name}
+                </Select.Option>
+              ))}
+          </Select>
         </div>
       </div>
     </Modal>
