@@ -5,7 +5,14 @@ import { useRouter } from "next/router";
 import React from "react";
 import { useEffect } from "react";
 
-import { generateStaticAssetUrl, momentFormatDate } from "../../../lib/helper";
+import { AccessControl } from "../../../components/features/AccessControl";
+import { useAccessControl } from "../../../contexts/access-control";
+import { ATTENDANCE_TASK_ACTIVITY_ADD } from "../../../lib/features";
+import {
+  generateStaticAssetUrl,
+  momentFormatDate,
+  permissionWarningNotification,
+} from "../../../lib/helper";
 import {
   InfoCircleIconSvg,
   OneUserIconSvg,
@@ -30,7 +37,10 @@ const TaskCard = ({
   const deadline = new Date(toDate ?? "0000-00-00 00:00:00");
   const isPastDeadline = Boolean(currentDate > deadline && status?.is_active);
   const rt = useRouter();
-
+  const { hasPermission } = useAccessControl();
+  const isAllowedToAddTaskActivities = hasPermission(
+    ATTENDANCE_TASK_ACTIVITY_ADD
+  );
   function checkTask() {
     // console.log('current task ',taskStaffs)
     // console.log('current profile ',dataProfile)
@@ -229,19 +239,21 @@ const TaskCard = ({
         </div>
       </div>
       {checkTask() && (
-        <div
-          onClick={() => addAktifitas(idTask)}
-          className={
-            "w-full bg-primary100 mt-4 py-2 flex justify-center rounded-b-[5px] hover:cursor-pointer testhoverbutton"
-          }
-        >
-          <div className={"flex justify-center"}>
-            <PlusIconSvg color={"white"} size={20} />
-            <p className={"text-white text-xs ml-2.5 self-center"}>
-              Tambahkan ke Aktifitas
-            </p>
+        <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITY_ADD}>
+          <div
+            onClick={() => addAktifitas(idTask)}
+            className={
+              "w-full bg-primary100 mt-4 py-2 flex justify-center rounded-b-[5px] hover:cursor-pointer testhoverbutton"
+            }
+          >
+            <div className={"flex justify-center"}>
+              <PlusIconSvg color={"white"} size={20} />
+              <p className={"text-white text-xs ml-2.5 self-center"}>
+                Tambahkan ke Aktifitas
+              </p>
+            </div>
           </div>
-        </div>
+        </AccessControl>
       )}
     </div>
   );

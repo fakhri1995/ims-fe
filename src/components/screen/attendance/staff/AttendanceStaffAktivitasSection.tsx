@@ -34,6 +34,7 @@ import {
 import { useQuery } from "react-query";
 
 import ButtonSys from "components/button";
+import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
 import { useAccessControl } from "contexts/access-control";
@@ -45,6 +46,8 @@ import {
   ATTENDANCE_ACTIVITY_ADD,
   ATTENDANCE_ACTIVITY_DELETE,
   ATTENDANCE_ACTIVITY_UPDATE,
+  ATTENDANCE_TASK_ACTIVITIES_GET,
+  ATTENDANCE_TASK_ACTIVITY_ADD,
 } from "lib/features";
 import {
   createKeyPressHandler,
@@ -84,7 +87,12 @@ export const AttendanceStaffAktivitasSection: FC<
   const isAllowedToAddActivity = hasPermission(ATTENDANCE_ACTIVITY_ADD);
   const isAllowedToUpdateActivity = hasPermission(ATTENDANCE_ACTIVITY_UPDATE);
   const isAllowedToDeleteActivity = hasPermission(ATTENDANCE_ACTIVITY_DELETE);
-
+  const isAllowedToGetTaskActivities = hasPermission(
+    ATTENDANCE_TASK_ACTIVITIES_GET
+  );
+  const isAllowedToAddTaskActivities = hasPermission(
+    ATTENDANCE_TASK_ACTIVITY_ADD
+  );
   /** 1 => Hari Ini, 2 => Riwayat */
   const [tabActiveKey, setTabActiveKey] = useState<"1" | "2" | string>("1");
   const [tabActiveKey2, setTabActiveKey2] = useState<"3" | "4" | string>("3");
@@ -375,28 +383,32 @@ export const AttendanceStaffAktivitasSection: FC<
   };
 
   const getDataTaskActivities = () => {
-    fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
-      {
-        method: `GET`,
-        headers: {
-          Authorization: JSON.parse(dataToken),
-        },
-      }
-    )
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          if (res2.data) {
-            if (res2.data.today_activities) {
-              setDisplayDataTaskToday(res2.data.today_activities);
-            }
-            if (res2.data.last_two_month_activities) {
-              setDisplayDataTaskHistory(res2.data.last_two_month_activities);
+    if (!isAllowedToGetTaskActivities) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
+    } else {
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getAttendanceTaskActivities`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            if (res2.data) {
+              if (res2.data.today_activities) {
+                setDisplayDataTaskToday(res2.data.today_activities);
+              }
+              if (res2.data.last_two_month_activities) {
+                setDisplayDataTaskHistory(res2.data.last_two_month_activities);
+              }
             }
           }
-        }
-      });
+        });
+    }
   };
 
   // const { onKeyPressHandler } = createKeyPressHandler(onFinalClick, "Enter");
@@ -416,41 +428,53 @@ export const AttendanceStaffAktivitasSection: FC<
 
   useEffect(() => {
     getDataModal();
-  }, [queryParams2.page, queryParams2.rows, queryParams2.keyword]);
+  }, [
+    queryParams2.page,
+    queryParams2.rows,
+    queryParams2.keyword,
+    isAllowedToGetTaskActivities,
+  ]);
 
   const getDataModal = () => {
-    const payload = QueryString.stringify(queryParams2, {
-      addQueryPrefix: true,
-    });
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`, {
-      method: `GET`,
-      headers: {
-        Authorization: JSON.parse(dataToken),
-      },
-    })
-      .then((res) => res.json())
-      .then((res2) => {
-        if (res2.success) {
-          // setdisplayentiredata(res2)
-          let datafromapi = res2.data.data;
-          let dataTemp = [];
-          // let dataTemp2 = [];
-          for (let a = 0; a < datafromapi.length; a++) {
-            dataTemp.push({
-              id: datafromapi[a].id,
-              ticket_number: datafromapi[a].ticket_number,
-              name: datafromapi[a].name,
-              start_date: datafromapi[a].start_date,
-              end_date: datafromapi[a].end_date,
-              is_selected: false,
-            });
-            // dataTemp2.push(datafromapi[a].id);
-          }
-          setDisplayDataImport(dataTemp);
-          setDisplayDataImportTemp(dataTemp);
-          // setDataTaskSelected(dataTemp2);
-        }
+    if (!isAllowedToGetTaskActivities) {
+      permissionWarningNotification("Mendapatkan", "Daftar Task");
+    } else {
+      const payload = QueryString.stringify(queryParams2, {
+        addQueryPrefix: true,
       });
+      fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/getProjectTasks${payload}`,
+        {
+          method: `GET`,
+          headers: {
+            Authorization: JSON.parse(dataToken),
+          },
+        }
+      )
+        .then((res) => res.json())
+        .then((res2) => {
+          if (res2.success) {
+            // setdisplayentiredata(res2)
+            let datafromapi = res2.data.data;
+            let dataTemp = [];
+            // let dataTemp2 = [];
+            for (let a = 0; a < datafromapi.length; a++) {
+              dataTemp.push({
+                id: datafromapi[a].id,
+                ticket_number: datafromapi[a].ticket_number,
+                name: datafromapi[a].name,
+                start_date: datafromapi[a].start_date,
+                end_date: datafromapi[a].end_date,
+                is_selected: false,
+              });
+              // dataTemp2.push(datafromapi[a].id);
+            }
+            setDisplayDataImport(dataTemp);
+            setDisplayDataImportTemp(dataTemp);
+            // setDataTaskSelected(dataTemp2);
+          }
+        });
+    }
   };
   const handleSelectAllTask = () => {
     let dataTemp = [];
@@ -769,14 +793,16 @@ export const AttendanceStaffAktivitasSection: FC<
           </Modal>
 
           <div className="flex space-x-6 md:w-1/2 justify-end items-center">
-            <ButtonSys
-              type="default"
-              onClick={onImportTask}
-              disabled={!isAllowedToAddActivity}
-            >
-              <FileImportIconSvg />
-              <p className={"ml-2"}>Import Task</p>
-            </ButtonSys>
+            <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+              <ButtonSys
+                type="default"
+                onClick={onImportTask}
+                disabled={!isAllowedToAddTaskActivities}
+              >
+                <FileImportIconSvg />
+                <p className={"ml-2"}>Import Task</p>
+              </ButtonSys>
+            </AccessControl>
             <ButtonSys
               type="primary"
               onClick={mOnAddActivityButtonClicked}
@@ -793,7 +819,9 @@ export const AttendanceStaffAktivitasSection: FC<
           onChange={setTabActiveKey2}
         >
           <TabPane tab="Form" key="3" />
-          <TabPane tab="Task" key="4" />
+          <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+            <TabPane tab="Task" key="4" />
+          </AccessControl>
         </Tabs>
 
         {checkFormOrTask()}
