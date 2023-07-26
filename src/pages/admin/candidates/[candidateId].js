@@ -1069,7 +1069,7 @@ export const ResumePDFTemplate = ({ dataResume, logoStatus }) => {
 };
 
 // .ttf link taken from https://developers.google.com/fonts/docs/developer_api?apix_params=%7B%22sort%22%3A%22ALPHA%22%7D
-// click "Execute" then search for desired font in the API response
+// click "Execute" then search for desired font in the API response, remember to change the link into https
 Font.register({
   family: "Inter",
   fonts: [
@@ -1088,12 +1088,12 @@ Font.register({
   family: "Inter Tight",
   fonts: [
     {
-      src: "http://fonts.gstatic.com/s/intertight/v3/NGShv5HMAFg6IuGlBNMjxLsC66ZMtb8hyW62x0xCHy5XgqoUPvi5.ttf",
+      src: "https://fonts.gstatic.com/s/intertight/v3/NGShv5HMAFg6IuGlBNMjxLsC66ZMtb8hyW62x0xCHy5XgqoUPvi5.ttf",
       fontStyle: "italic",
       fontWeight: 400,
     },
     {
-      src: "http://fonts.gstatic.com/s/intertight/v3/NGShv5HMAFg6IuGlBNMjxLsC66ZMtb8hyW62x0ylGC5XgqoUPvi5.ttf",
+      src: "https://fonts.gstatic.com/s/intertight/v3/NGShv5HMAFg6IuGlBNMjxLsC66ZMtb8hyW62x0ylGC5XgqoUPvi5.ttf",
       fontStyle: "italic",
       fontWeight: 700,
     },
