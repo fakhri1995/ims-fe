@@ -95,9 +95,9 @@ const SummaryCard = ({
 
   function checkDataDescription(data) {
     if (data.description != undefined) {
-      console.log("datanya bro ", data);
+      // console.log("datanya bro ", data);
       let checkDescription = parse(data.description);
-      console.log("deskription ", checkDescription);
+      // console.log("deskription ", checkDescription);
       //jika kosong
       if (checkDescription.length > 1) {
         return true;
@@ -120,10 +120,10 @@ const SummaryCard = ({
         dataDisplay.summaries != null &&
         checkDataDescription(dataDisplay.summaries) && (
           <div className={"mb-4"}>
-            <p>
+            <div>
               {dataDisplay.summaries.description &&
                 parse(dataDisplay.summaries?.description)}
-            </p>
+            </div>
           </div>
         )}
       <hr />
