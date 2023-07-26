@@ -5,9 +5,14 @@ import moment from "moment";
 import { FC, useEffect, useMemo, useState } from "react";
 import React from "react";
 
+import { AccessControl } from "components/features/AccessControl";
 import { DataEmptyState } from "components/states/DataEmptyState";
 
+import { useAccessControl } from "contexts/access-control";
+
 import { formatDateToLocale } from "lib/date-utils";
+import { ATTENDANCE_TASK_ACTIVITIES_GET } from "lib/features";
+import { permissionWarningNotification } from "lib/helper";
 import { getAntdTablePaginationConfig } from "lib/standard-config";
 
 import { useGetAttendanceDetailDataSource } from "apis/attendance";
@@ -27,6 +32,10 @@ export interface IAttendanceDetailFormAttendanceSection {
 export const AttendanceDetailFormAttendanceSection: FC<
   IAttendanceDetailFormAttendanceSection
 > = ({ attendanceId, token }) => {
+  const { hasPermission } = useAccessControl();
+  const isAllowedToGetTaskActivities = hasPermission(
+    ATTENDANCE_TASK_ACTIVITIES_GET
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [dataTasks, setDataTasks] = useState([]);
@@ -109,7 +118,9 @@ export const AttendanceDetailFormAttendanceSection: FC<
           onChange={setTabActiveKey}
         >
           <TabPane tab="Form" key="1" />
-          <TabPane tab="Task" key="2" />
+          <AccessControl hasPermission={ATTENDANCE_TASK_ACTIVITIES_GET}>
+            <TabPane tab="Task" key="2" />
+          </AccessControl>
         </Tabs>
       </div>
 
