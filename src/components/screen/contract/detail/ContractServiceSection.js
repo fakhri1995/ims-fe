@@ -10,7 +10,7 @@ const ContractServiceSection = ({ dataServices, loading }) => {
           <Table
             className="tableBordered border-2 rounded-md"
             dataSource={dataServices}
-            rowKey={(record) => record.key}
+            rowKey={(record) => record.id}
             loading={loading}
             scroll={{ x: 200 }}
             pagination={{

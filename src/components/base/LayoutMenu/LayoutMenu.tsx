@@ -433,7 +433,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
       )}
 
       {/* Contract Management */}
-      {hasPermission(SIDEBAR_CONTRACT) && (
+      {/* {hasPermission(SIDEBAR_CONTRACT) && (
         <SubMenu
           title="Kontrak"
           key="contract"
@@ -445,7 +445,7 @@ export const LayoutMenu: FC<ILayoutMenu> = ({
             </Menu.Item>
           )}
         </SubMenu>
-      )}
+      )} */}
     </>
   );
 
